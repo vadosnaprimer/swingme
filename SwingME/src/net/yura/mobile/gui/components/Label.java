@@ -114,7 +114,7 @@ public class Label extends Component {
 		if (verticalAlignment == Graphics.VCENTER) {	
 			y = (height - combinedheight)/2;
 		}
-		else if (verticalAlignment == Graphics.RIGHT) {	
+		else if (verticalAlignment == Graphics.BOTTOM) {	
 			y = (height - combinedheight) -padding;
 		}
 		

@@ -98,7 +98,7 @@ public class ImageBorder implements Border {
         final int cw = g.getClipWidth();
         final int ch = g.getClipHeight();
         
-        g.setClip(dest_x,dest_y,dest_w,dest_h);
+        g.clipRect(dest_x,dest_y,dest_w,dest_h);
         
         for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
             for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
