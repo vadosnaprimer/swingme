@@ -35,7 +35,7 @@ public class DropDownMenu extends Button implements ActionListener{
 	}
 
 
-	public void workoutSize() {
+	public void doLayout() {
 		if (list!=null) {
                     
 			Vector items = list.getItems();
@@ -173,7 +173,7 @@ public class DropDownMenu extends Button implements ActionListener{
 			super.setText("");
 		}
 		
-		workoutSize();
+		//workoutSize();
 	}
 
 	public void actionPerformed(String actionCommand) {

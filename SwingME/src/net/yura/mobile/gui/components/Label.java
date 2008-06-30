@@ -16,14 +16,14 @@ public class Label extends Component {
 	
 	private String string;
 	private Image icon;
-	private int padding=2;	
-	private int gap=2;
+	protected int padding=2;	
+	protected int gap=2;
 	
-    private int verticalAlignment = Graphics.VCENTER;
-    private int horizontalAlignment = Graphics.LEFT;
-    
-    private int verticalTextPosition = Graphics.VCENTER;
-    private int horizontalTextPosition = Graphics.RIGHT;
+        private int verticalAlignment = Graphics.VCENTER;
+        private int horizontalAlignment = Graphics.LEFT;
+
+        private int verticalTextPosition = Graphics.VCENTER;
+        private int horizontalTextPosition = Graphics.RIGHT;
 	
 	public Label(String text) {
 		
@@ -55,7 +55,7 @@ public class Label extends Component {
 		this.icon = icon;
 		selectable = false;
 		if (text!=null) { setText(text); }
-		else { workoutSize(); }
+		//else { workoutSize(); }
 		foreground = RootPane.getDefaultStyle().foreground;
 	}
 
@@ -70,11 +70,11 @@ public class Label extends Component {
 	public void setText(String a) {
 		
 		string = a;
-		workoutSize();
+		//workoutSize();
 		
 	}
 	
-	protected void workoutSize() {
+	public void doLayout() {
 		
 		int w = getCombinedWidth();
 		int h = getCombinedHeight();
@@ -183,7 +183,7 @@ public class Label extends Component {
 
 	}
 
-	private int getCombinedWidth() {
+	protected int getCombinedWidth() {
             return getCombinedWidth(string,icon);
 	}
         
@@ -202,7 +202,7 @@ public class Label extends Component {
 		}
         }
 	
-	private int getCombinedHeight() {
+	protected int getCombinedHeight() {
 		int fw = (font!=null)?font.getHeight():0;
 		if (verticalTextPosition == Graphics.VCENTER) {
 			if (icon == null && font == null) return 0;
@@ -234,7 +234,7 @@ public class Label extends Component {
 
 	public void setIcon(Image icon) {
 		this.icon = icon;
-		workoutSize();
+		//workoutSize();
 	}
 
         public void setValue(Object obj) {

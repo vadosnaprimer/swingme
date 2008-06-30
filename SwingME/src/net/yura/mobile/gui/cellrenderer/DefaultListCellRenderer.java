@@ -55,6 +55,8 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
                         setBackground(-1);
                 }
 		
+                doLayout();
+                
 		return this;
 	}
         // max width!

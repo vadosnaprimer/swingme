@@ -42,7 +42,7 @@ public class Spinner extends Label {
 		selectable = true;
 	}
 	
-	public void workoutSize() {
+	public void doLayout() {
 		if (list!=null && !list.isEmpty()) {
 
                                 int count = 0;
@@ -187,7 +187,7 @@ public class Spinner extends Label {
 		if (data == null || data.size() == 0) {
 			return;
 		}
-		workoutSize();
+		//workoutSize();
 		setIndex(0);
 	}
 	

@@ -58,6 +58,8 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
         setBorder( cellHasFocus?focus:(isSelected?open:none) );
         
+        doLayout();
+        
         return this;
     }
 

@@ -105,6 +105,8 @@ public abstract class Component {
 
 	public void focusGained() { }
 
+        public void doLayout() { }
+        
 	public void setBackground(int a) {
 	
 		background = a;

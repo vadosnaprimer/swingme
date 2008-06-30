@@ -141,12 +141,12 @@ public class Panel extends Component {
 		
 		for(int i = 0; i < components.size(); i++) {
 			
-			Object component = components.elementAt(i);
+			Component component = (Component)components.elementAt(i);
 			
-			if (component instanceof Panel) {
+			//if (component instanceof Panel) {
 				
-				((Panel)component).doLayout();
-			}
+				component.doLayout();
+			//}
 			
 		}
 		

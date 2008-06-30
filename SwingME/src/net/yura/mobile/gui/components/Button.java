@@ -119,14 +119,12 @@ public class Button extends Label implements ActionListener {
 		
 		actionCommand=ac;
 	}
-	
-	/**
-	 * Does nothing????
-	 * @param int - time since last frame, should be 16..16 number format
-	 * @param Keypad - Keypad object
-	 */
-	public boolean keyEvent(KeyEvent keypad)
-	{
+
+	public boolean keyEvent(KeyEvent keyEvent) {
+            return handelKeyEvent(keyEvent);        
+        }
+
+        public boolean handelKeyEvent(KeyEvent keypad) {
 		if (keypad.justPressedAction(Canvas.FIRE)) {
 
 			fireActionPerformed();
@@ -135,6 +133,7 @@ public class Button extends Label implements ActionListener {
 		}
 		return false;
 	}
+        
 	public void fireActionPerformed() {
 		
 		if (al!=null) {
