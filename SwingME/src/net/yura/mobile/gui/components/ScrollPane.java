@@ -1,0 +1,508 @@
+package net.yura.mobile.gui.components;
+
+import javax.microedition.lcdui.Graphics;
+
+import net.yura.mobile.gui.RootPane;
+
+/**
+ * @author Yura Mamyrin
+ */
+
+public class ScrollPane extends Panel { // MScrollableComponent
+	
+	public static final int MODE_NONE=-1;
+	public static final int MODE_SCROLLBARS=0;
+	public static final int MODE_SCROLLARROWS=1;
+	public static final int MODE_INDICATOR=2;
+	
+	private int mode;
+	private int barThickness;
+	
+	private int scrollTrackCol;
+	private int scrollBarCol;
+	
+	public ScrollPane() {
+		this(MODE_SCROLLBARS);
+	}
+	public ScrollPane(int m) {
+		
+		setMode(m);
+
+		scrollTrackCol = RootPane.getDefaultStyle().scrollTrackCol;
+		scrollBarCol = RootPane.getDefaultStyle().scrollBarCol;
+	}
+        
+        public ScrollPane(Component reguserpanel) {
+            this(reguserpanel,MODE_SCROLLBARS);
+        }
+        
+	public ScrollPane(Component reguserpanel,int a) {
+		this(a);
+		add(reguserpanel);
+	}
+
+	public void setMode(int m) {
+		
+		mode = m;
+	}
+	
+	public void setSize(int w, int h){
+		super.setSize(w,h);
+		barThickness = getBarThickness(w,h);
+	}
+	
+	public static int getBarThickness(int w,int h) {
+		
+		return Math.max(6, Math.min(w / 20, h / 20));
+		
+	}
+	
+	public Component getComponent() {
+		
+		return ((Component)getComponents().elementAt(0));
+		
+	}
+	
+	public void add(Component a) {
+		
+		removeAll();
+		
+		super.add(a);
+		//component = a;
+		//a.setOwner(owner);
+		//if (a instanceof Panel) {
+		//	((Panel)a).setScrollPanel(this);
+		//}
+
+		a.setPosition(getViewPortX(), getViewPortY());
+		
+		a.setScrollPanel(this);
+		
+		// TODO does it take into account the border?
+	}
+
+	public void add(Component component,String constraint){
+		throw new RuntimeException("must use add");
+	}
+	
+	public void remove(Component a){
+		super.remove(a);
+		
+		//if (a instanceof Panel) {
+		//	((Panel)a).setScrollPanel(null);
+		//}
+		
+		a.setScrollPanel(null);
+	}
+	
+    //public void setOwner(MPanel owner){
+    //	super.setOwner(owner);
+    //	
+	//	component.setOwner(owner);
+    //}
+
+	public boolean makeVisible(Component newone,boolean smartscroll) {
+
+		if (getComponent().getHeight() > getHeight() ||
+			getComponent().getWidth() > getWidth()		
+		) {
+
+			return makeVisible(
+					newone.getXWithBorder(),
+					newone.getYWithBorder(),
+					newone.getWidthWithBorder(),
+					newone.getHeightWithBorder(),
+					smartscroll
+			);
+		}
+		
+		// everything is ok and we dont have to scroll
+		return true;
+	
+	}
+	
+	
+	
+	public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
+		
+		//System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
+		//System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
+		//if(true)throw new RuntimeException();
+		
+		int right = x+w;
+		int bottom = y+h;
+		
+		
+		
+		int componentX = -getComponent().getX();
+		int componentY = -getComponent().getY();
+		
+		int viewX=getViewPortX();
+		int viewY=getViewPortY();
+		int viewHeight = getViewPortHeight();
+		int viewWidth = getViewPortWidth(viewHeight);
+
+		
+		
+		if (right > (viewX + componentX + viewWidth)){
+			componentX = right - viewWidth;
+		}
+		
+		if (bottom > (viewY + componentY + viewHeight)){
+			componentY = bottom - viewHeight;
+		}
+		
+		if (x < (viewX + componentX)){
+			componentX = x-viewX;
+		}
+		
+		if (y < (viewY + componentY)){
+			componentY = y-viewY;
+		}
+		
+		// check we r not scrolling off the content panel
+		if ((viewX+componentX+viewWidth)>getComponent().getWidth()) { componentX=getComponent().getWidth()-viewWidth-viewX; }
+		if ((viewY+componentY+viewHeight)>getComponent().getHeight()) { componentY=getComponent().getHeight()-viewHeight-viewY; }
+		if (componentX<-viewX) { componentX=-viewX; }
+		if (componentY<-viewY) { componentY=-viewY; }
+		
+		int xdiff=-componentX -getComponent().getX();
+		int ydiff=-componentY -getComponent().getY();
+		
+		boolean goodscroll=true;
+		
+		if (smartscroll) {
+		
+			if (Math.abs(xdiff) > viewWidth) {
+				
+				xdiff = (xdiff>0)?viewWidth*2/3:-viewWidth*2/3;
+				
+				goodscroll = false;
+			
+			}
+			
+			if (Math.abs(ydiff) > viewHeight) {
+				
+				ydiff = (ydiff>0)?viewHeight*2/3:-viewHeight*2/3;
+				
+				goodscroll = false;
+	
+			}
+		}
+		
+		getComponent().setBounds( getComponent().getX()+xdiff , getComponent().getY()+ydiff , getComponent().getWidth(), getComponent().getHeight());
+		
+		//getComponent().setBounds(15, 15, getComponent().getWidth(), getComponent().getHeight());
+		
+		//System.out.println("new pos: x="+component.getX()+" y="+component.getY() );
+		
+		repaint();
+		
+		return goodscroll;
+		
+	}
+	
+	
+	protected int getViewPortHeight() {
+		switch (mode) {
+			case MODE_SCROLLBARS: return height-getViewPortY()-((getComponent().getWidth()> (width-getViewPortX()) )?barThickness:0);
+			case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?height-(barThickness*2):height;
+			case MODE_NONE:
+			case MODE_INDICATOR: return height;
+			default: throw new RuntimeException();
+		}
+	}
+	protected int getViewPortWidth(int vph) {
+		switch (mode) {
+			case MODE_SCROLLBARS: return width-getViewPortX()-((getComponent().getHeight()>vph)?barThickness:0);
+			case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?width-(barThickness*2):width;
+			case MODE_NONE:
+			case MODE_INDICATOR: return width;
+			default: throw new RuntimeException();
+		}
+	}
+	protected int getViewPortX() {
+		switch (mode) {
+			case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?barThickness:0;
+			case MODE_SCROLLBARS:
+			case MODE_NONE:
+			case MODE_INDICATOR: return 0;
+			default: throw new RuntimeException();
+		}
+	}
+	protected int getViewPortY() {
+		switch (mode) {
+			case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?barThickness:0;
+			case MODE_SCROLLBARS:
+			case MODE_NONE:
+			case MODE_INDICATOR: return 0;
+			default: throw new RuntimeException();
+		}
+	}
+	
+	public void doLayout() {
+		
+		super.doLayout();
+		
+		int viewHeight=getViewPortHeight();
+		int viewWidth=getViewPortWidth(viewHeight);
+		
+                // another hack to expand to whole area of scrollpane
+                if (getComponent().getHeight() <viewHeight) {
+                    getComponent().setSize(getComponent().getWidth(), viewHeight);
+                }
+                
+                
+		// this is a hack to make it easer to code panels and not have a tiny amount of side scrolling
+		// as even though this is technically correct, it is very annoying to use this panel
+		// now panels that are the width of the scrollpane or less are set to the width of the viewPort
+		
+		// TODO this hack is only for MODE_SCROLLBARS
+		
+		// if we have no lower scroll bar AND the width of the component is less then or equal to the width of the scrollpane
+		if ( getComponent().getWidth() <= (width-getViewPortX())) {
+			
+			//System.out.println("HACK "+getComponent()+" "+viewWidth);
+			getComponent().setSize(viewWidth, getComponent().getHeight());
+			
+			// redo the layout as we have changed the width
+			super.doLayout();
+			
+			// do it again in case it was reset by the layout
+			getComponent().setSize(viewWidth, getComponent().getHeight());
+
+		}
+
+	}
+	
+    //public void focusGained() {
+		
+    //	owner.setFocusedComponent(component);
+
+    //}
+	
+	//protected void keyPressEvent(int keyCode, int gameKeyCode, int number) { }
+
+	public void paintChildren(Graphics g) {
+		
+		int a=g.getClipX();
+		int b=g.getClipY();
+		int c=g.getClipWidth();
+		int d=g.getClipHeight();
+		
+		int viewX=getViewPortX();
+		int viewY=getViewPortY();
+		int viewHeight=getViewPortHeight();
+		int viewWidth=getViewPortWidth(viewHeight);
+		
+		// dont care about clipping for the
+		// scrollbars as they r painted over the top
+		g.clipRect(viewX, viewY, viewWidth, viewHeight);
+	
+	    super.paintChildren(g);
+		
+	    g.setClip(a,b,c,d);
+	    
+	    //g.setColor(0x00FF0000);
+	    //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
+
+	    paintDecoration(g);
+	}
+	
+	protected void paintDecoration(final Graphics g) {
+		
+		switch (mode) {
+			case MODE_NONE: return;
+			case MODE_SCROLLBARS: drawScrollBars(g); return;
+			case MODE_SCROLLARROWS: drawScrollArrows(g,false); return;
+			case MODE_INDICATOR: drawScrollArrows(g,true); return;
+			default: throw new RuntimeException();
+		}
+		
+	}
+	
+	private void drawScrollBars(final Graphics g) {
+	
+		int viewHeight=getViewPortHeight();
+		int viewWidth=getViewPortWidth(viewHeight);
+		
+		int bararroww = barThickness - 4;
+		int bararrowh = (barThickness - 4) / 2;
+		
+		int offset = (barThickness - bararroww)/2 +1;
+
+		int viewX=getViewPortX();
+		int viewY=getViewPortY();
+		
+		// NEEDS to be same check as in getViewPortHeight
+		if ( getComponent().getWidth() > (width-getViewPortX()) ) {
+
+			g.setColor(scrollBarCol);
+			g.fillRect(viewX, height - barThickness, viewWidth, barThickness);
+			g.setColor(scrollTrackCol);
+			g.drawRect(viewX, height - barThickness, viewWidth - 1, barThickness - 1);
+			
+			g.drawLine(viewX+barThickness - 1, viewY+viewHeight, viewX+barThickness - 1, height-1);
+			g.drawLine(viewX+viewWidth - barThickness, viewY+viewHeight, viewX+viewWidth - barThickness, height-1);
+			
+			drawLeftArrow(g, viewX+offset, viewY+viewHeight + 2, bararrowh, bararroww);
+			drawRightArrow(g, viewX+viewWidth - barThickness + offset, viewY+viewHeight + 2, bararrowh, bararroww);
+
+			int space = viewWidth - barThickness * 2 - 2;
+			
+			g.fillRect(
+					viewX+barThickness+1+ ((viewX-getComponent().getX())*space)/getComponent().getWidth(),
+					viewY+viewHeight + 2,
+					(viewWidth*space)/getComponent().getWidth(),
+					barThickness - 4
+			);
+		}
+		
+		// NEEDS to be same check as in getViewPortWidth
+		if ( getComponent().getHeight() > viewHeight ) {
+
+			g.setColor(scrollBarCol);
+			g.fillRect(width-barThickness, viewY, barThickness, viewHeight);
+			g.setColor(scrollTrackCol);
+			g.drawRect(width-barThickness, viewY, barThickness - 1, viewHeight - 1);
+			
+			g.drawLine(viewX+viewWidth, viewY+barThickness - 1, width-1, viewY+barThickness - 1);
+			g.drawLine(viewX+viewWidth, viewY+viewHeight - barThickness, width-1, viewY+viewHeight - barThickness);
+			
+			
+			drawUpArrow(g, viewX+viewWidth + 2, viewY+offset, bararroww, bararrowh);
+			drawDownArrow(g, viewX+viewWidth + 2, viewY+viewHeight -barThickness +offset, bararroww, bararrowh);
+			
+			int space = viewHeight - barThickness * 2 - 2;
+			
+			g.fillRect(
+					viewX+viewWidth + 2,
+					viewY+barThickness+1+ ((viewY-getComponent().getY())*space)/getComponent().getHeight(),
+					barThickness - 4,
+					(viewHeight*space)/getComponent().getHeight()
+			);
+		}
+
+	}
+
+	private void drawScrollArrows(final Graphics g,boolean indicator) {
+		
+		
+		
+		int viewHeight=getViewPortHeight();
+		int viewWidth=getViewPortWidth(viewHeight);
+		
+		int viewX=getViewPortX();
+		int viewY=getViewPortY();
+		
+		int d = barThickness*2;
+		int gap=2;
+		
+		if (getComponent().getWidth() > width) {
+			
+			if ( getComponent().getX() < viewX ) {
+				g.setColor(scrollTrackCol);
+			}
+			else {
+				g.setColor(scrollBarCol);
+			}
+			
+			if (indicator) {
+				drawLeftArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d);
+			}
+			else {
+						drawLeftArrow(g, 0, (height-d)/2, barThickness, d);
+			}
+			
+			if ( (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth ) {
+				g.setColor(scrollTrackCol);
+			}
+			else {
+				g.setColor(scrollBarCol);
+			}
+			
+			if (indicator) {
+				drawRightArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d);
+			}
+			else {
+						drawRightArrow(g, width - barThickness , (height-d)/2, barThickness, d);
+			}
+
+		}
+		
+		if (getComponent().getHeight() > height) {
+			
+			if (getComponent().getY() < viewY) {
+				g.setColor(scrollTrackCol);
+			}
+			else {
+				g.setColor(scrollBarCol);
+			}
+			
+			if (indicator) {
+				drawUpArrow(g, (width-d)/2, height+gap, d, barThickness);
+			}
+			else {
+						drawUpArrow(g, (width-d)/2, 0, d, barThickness);
+			}
+			
+			if ( (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight ) {
+				g.setColor(scrollTrackCol);
+			}
+			else {
+				g.setColor(scrollBarCol);
+			}
+			
+			if (indicator) {
+				drawDownArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness);
+			}
+			else {
+						drawDownArrow(g, (width-d)/2,height-barThickness, d, barThickness);
+			}
+			
+		}
+	}
+	
+    public static void drawDownArrow(Graphics g, int x, int y, int w, int h) {
+        for (int i=0; i<h; i++) {
+            g.fillRect(x+i, y+i, w-2*i, 1);
+        }
+    }
+    
+    public static void drawUpArrow(Graphics g, int x, int y, int w, int h) {
+        for (int i=0; i<h; i++) {
+            g.fillRect(x+i, y+h-i-1, w-2*i, 1);
+        }
+    }
+    
+    public static void drawLeftArrow(Graphics g, int x, int y, int w, int h) {
+        for (int i=0; i<h/2; i++) {
+            g.fillRect(x+w-i-1, y+i, i+1, 1);
+        }
+        for (int i=h/2; i<h; i++) {
+            g.fillRect(x+i-h/2, y+i, w-i+h/2, 1);
+        }
+    }
+    
+    public static void drawRightArrow(Graphics g, int x, int y, int w, int h) {
+        for (int i=0; i<h/2; i++) {
+            g.fillRect(x, y+i, i+1, 1); 
+        }
+        for (int i=h/2; i<h; i++) {
+            g.fillRect(x, y+i, w-i+h/2, 1);
+        }
+    }
+	public int getScrollTrackCol() {
+		return scrollTrackCol;
+	}
+	public void setScrollTrackCol(int scrollTrackCol) {
+		this.scrollTrackCol = scrollTrackCol;
+	}
+	public int getScrollBarCol() {
+		return scrollBarCol;
+	}
+	public void setScrollBarCol(int scrollBarCol) {
+		this.scrollBarCol = scrollBarCol;
+	}
+
+}
