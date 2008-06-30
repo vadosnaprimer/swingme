@@ -142,7 +142,12 @@ public class MainPane extends RootPane implements ActionListener {
                                             int code = (code3==0)?code2:code3;
                                             if (code!=0) {
                                                 infoLabel.setText("keyEvent: "+code +"\nKeyText: "+keypad.getKeyText(code));
-                                                if (code>0) { infoLabel.append("\nchar: "+(char)code); }
+                                                if (code>0) {
+                                                    infoLabel.append("\nchar: "+(char)code);
+                                                    
+                                                    infoLabel.append("\ninput char: "+ keypad.getKeyChar(0, false) );
+                                                    
+                                                }
                                                 int gcode = keypad.getKeyAction(code);
                                                 if (gcode!=0) {
                                                     infoLabel.append("\ngame action: "+gcode+"\n");

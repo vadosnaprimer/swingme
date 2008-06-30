@@ -19,11 +19,11 @@ public class Label extends Component {
 	protected int padding=2;	
 	protected int gap=2;
 	
-        private int verticalAlignment = Graphics.VCENTER;
-        private int horizontalAlignment = Graphics.LEFT;
+        protected int verticalAlignment = Graphics.VCENTER;
+        protected int horizontalAlignment = Graphics.LEFT;
 
-        private int verticalTextPosition = Graphics.VCENTER;
-        private int horizontalTextPosition = Graphics.RIGHT;
+        protected int verticalTextPosition = Graphics.VCENTER;
+        protected int horizontalTextPosition = Graphics.RIGHT;
 	
 	public Label(String text) {
 		
@@ -202,7 +202,11 @@ public class Label extends Component {
 		}
         }
 	
-	protected int getCombinedHeight() {
+        protected int getCombinedHeight() {
+            return getCombinedHeight(icon);
+        }
+        
+	protected int getCombinedHeight(Image icon) {
 		int fw = (font!=null)?font.getHeight():0;
 		if (verticalTextPosition == Graphics.VCENTER) {
 			if (icon == null && font == null) return 0;
@@ -234,7 +238,6 @@ public class Label extends Component {
 
 	public void setIcon(Image icon) {
 		this.icon = icon;
-		//workoutSize();
 	}
 
         public void setValue(Object obj) {

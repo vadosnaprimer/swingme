@@ -12,16 +12,20 @@ import net.yura.mobile.util.Option;
 
 public class Spinner extends Label {
 
+        private static final int lineTickness = 1;
+    
 	private Image selectedImage;
 	private Image nonSelectedImage;
-	private int textWidth; // TODO WRONG! should not be kept
+        
 	private int index = 0;
 	
 	private Vector list;
 
 	private int borderColor;
 	private int activeBorderColor;
+        
 	private boolean continuous = false;
+        
 	private boolean leftPress = false;
 	private boolean rightPress = false;
 
@@ -40,34 +44,61 @@ public class Spinner extends Label {
 		activeBorderColor = RootPane.getDefaultStyle().itemActiveBorderColor;
 		
 		selectable = true;
+
+                setHorizontalAlignment(Graphics.HCENTER);
 	}
 	
 	public void doLayout() {
-		if (list!=null && !list.isEmpty()) {
+            
+            if (list!=null && !list.isEmpty()) {
 
-                                int count = 0;
-                            
-				for (int i = 0; i < list.size(); i ++){
-					
-                                    Object obj = list.elementAt(i);
+                    int maxWidth = 0;
+                    int maxHeight=0;
+                    
+                    for (int i = 0; i < list.size(); i ++){
 
-                                    int len = getCombinedWidth(String.valueOf(obj),(obj instanceof Option)?((Option)obj).getIcon():null);
-      
-				    if (count < len){
-                                        count = len;
-				    }
-					
-				}
-				textWidth = count + 2;
-				
-				int w = textWidth + (getFont().getWidth('E') + 1) * 2 + 5;
-				int h = getFont().getHeight() + 1;
-				
-				if (w > width) width = w;
-				if (h > height) height = h;
-			}
+                        Object obj = list.elementAt(i);
+
+                        int len = getCombinedWidth(String.valueOf(obj),(obj instanceof Option)?((Option)obj).getIcon():null);
+
+                        if (maxWidth < len){
+                            maxWidth = len;
+                        }
+                        
+                        int hi = getCombinedHeight( (obj instanceof Option)?((Option)obj).getIcon():null );
+                                
+                        if (maxHeight < hi){
+                            maxHeight = hi;
+                        }
+                                
+
+                    }
+
+                    int w = maxWidth + getArrowWidth()*2 + gap*2 + lineTickness*2 + padding*2;
+                    int h = maxHeight + lineTickness*2 + padding*2;
+
+                    if (w > width) width = w;
+                    if (h > height) height = h;
+
+                    if (width > RootPane.getDefaultStyle().defaultWidth) {
+                        width = RootPane.getDefaultStyle().defaultWidth;
+                    }
+                    
+                    setIndex(index);
+                }
 
 	}
+        
+        private int getArrowWidth() {
+            
+            if (nonSelectedImage!=null) {
+                return nonSelectedImage.getWidth();
+            }
+            else {
+                return getFont().getHeight()/2;
+            }
+        }
+        
 	
 	public boolean keyEvent(KeyEvent keypad){
 		if (keypad.justPressedAction(Canvas.LEFT)){
@@ -83,83 +114,89 @@ public class Spinner extends Label {
 			rightPress = false;
 		}
 		
-		if (keypad.justPressedAction(Canvas.LEFT) && index == 0) {
+		if (leftPress && index == 0) {
 			if (continuous == true){
-				if (index == 0){
-					index = list.size()-1;
-					setIndex(index);
-				}
+				setIndex(list.size()-1);
+
 			}
 		}
-		else if (keypad.justPressedAction(Canvas.LEFT)){
+		else if (leftPress) {
 			setIndex(index-1);
 		}
-		else if (keypad.justPressedAction(Canvas.RIGHT) && index == list.size()-1) {
+		else if (rightPress && index == list.size()-1) {
 			if (continuous == true){
-				if (index == list.size() - 1){
-					index = 0;
-					setIndex(index);
-				}
+				setIndex(0);
 			}
 		} 
-		else if (keypad.justPressedAction(Canvas.RIGHT)){
+		else if (rightPress){
 			setIndex(index+1);
 		}
 		
-		repaint();
-		return leftPress || rightPress || keypad.justReleasedAction(Canvas.LEFT) || keypad.justReleasedAction(Canvas.RIGHT);
+                boolean letgo = keypad.justReleasedAction(Canvas.LEFT) || keypad.justReleasedAction(Canvas.RIGHT);
+                
+		if (letgo) repaint();
+		return leftPress || rightPress || letgo;
 	}
-	
-	/**
-	 * Draws the button at given y position with set alignment
-	 * @param Graphics - the graphics object
-	 * @param int - Y position
-	 * @return int - height of the item
-	 */
-	public void paintComponent(Graphics g){
-		
-		int boxX = getFont().getWidth('E') + 1;
-		int x = 0;
-		int y = 0;
 
-		if (getNonSelectedImage() == null){
-			// check focused, and set colour accordingly
-			if (isFocused()){
-				g.setColor(activeBorderColor);
-			}
-			else{
-				g.setColor(borderColor);
-			}
-			g.drawRect(boxX, y, textWidth + 4, height-1);
-			
-			// check if left button pressed, then set colour accordingly
-			if (leftPress){
-				g.setColor(activeBorderColor);
-			}
-			else{
-				g.setColor(borderColor);
-			}
-			ScrollPane.drawLeftArrow(g, x, y+1, boxX-1, height-2);
-			
-			// check if right button pressed, then set colour accordingly			
-			if (rightPress){
-				g.setColor(activeBorderColor);
-			}
-			else{
-				g.setColor(borderColor);
-			}
-			ScrollPane.drawRightArrow(g, boxX + textWidth + 6, y+1, boxX-1, height-2);
-		}
-		else{
-			g.setColor(borderColor);
-			g.drawImage(nonSelectedImage, (height-nonSelectedImage.getHeight())/2, (height-nonSelectedImage.getHeight())/2 , 0 );
-			ScrollPane.drawLeftArrow(g, x, y+1, boxX-1, height-4);
-			g.drawRect(boxX, y, textWidth + 4, height-1);
-			ScrollPane.drawRightArrow(g, boxX + textWidth + 6, y+1, boxX-1, height-4);
-		}
-		g.translate(x + boxX + 1, 0);
-		super.paintComponent(g);
-		g.translate(-x - boxX - 1, 0);
+	public void paintComponent(Graphics g){
+
+            int arrowWidth = getArrowWidth();
+            
+            if (isFocused()){
+                    g.setColor(activeBorderColor);
+            }
+            else{
+                    g.setColor(borderColor);
+            }
+            g.drawRect(arrowWidth+gap, 0, width -gap*2 - arrowWidth*2 -lineTickness, height-lineTickness);
+
+            if (nonSelectedImage != null) {
+                
+                    // TODO: Finish
+                    g.drawImage(nonSelectedImage, 0, (height-nonSelectedImage.getHeight())/2 , 0 );
+                    g.drawImage(selectedImage, width-arrowWidth, (height-nonSelectedImage.getHeight())/2 , 0 );
+            }
+            else {
+
+                    int arrowHeight = getFont().getHeight();
+                
+                    if (leftPress){
+                            g.setColor(activeBorderColor);
+                    }
+                    else{
+                            g.setColor(borderColor);
+                    }
+                    ScrollPane.drawLeftArrow(g, 0, (height-arrowHeight)/2, arrowWidth, arrowHeight);
+
+                    if (rightPress){
+                            g.setColor(activeBorderColor);
+                    }
+                    else{
+                            g.setColor(borderColor);
+                    }
+                    ScrollPane.drawRightArrow(g, width-arrowWidth, (height-arrowHeight)/2, arrowWidth, arrowHeight);
+            }
+
+            int xoffset = 0;
+
+            if (horizontalAlignment==Graphics.LEFT) {
+                xoffset = arrowWidth+gap+lineTickness;
+            }
+            else if (horizontalAlignment==Graphics.RIGHT) {
+                xoffset = -arrowWidth-gap-lineTickness;
+            }
+            
+            int yoffset=0;
+            if (verticalAlignment==Graphics.TOP) {
+                yoffset = lineTickness;
+            }
+            else if (verticalAlignment==Graphics.BOTTOM) {
+                yoffset = -lineTickness;
+            }
+            
+            g.translate(xoffset, yoffset);
+            super.paintComponent(g);
+            g.translate(-xoffset, -yoffset);
 	}
 	
 	public Image getSelectedImage() {
@@ -178,17 +215,10 @@ public class Spinner extends Label {
 		this.nonSelectedImage = nonSelectedImage;
 	}
 
-	public void reset() {
-		setIndex(0);
-	}
 	
 	public void setData(Vector data) {
 		this.list = data;
-		if (data == null || data.size() == 0) {
-			return;
-		}
-		//workoutSize();
-		setIndex(0);
+		index=0;
 	}
 	
 	public void setIndex(int i) {
@@ -201,8 +231,9 @@ public class Spinner extends Label {
 
 	    repaint();
 	}
+
         public int getMaxTextWidth() {
-            return textWidth; // todo: should be width -leftArrow -rightArrow
+            return width - getArrowWidth()*2 - gap*2 - lineTickness*2 - padding*2;
         }
 
 	public void focusLost() {
