@@ -312,7 +312,7 @@ public class MainPane extends RootPane implements ActionListener {
                                 
                                 tabbedPane.addTab(tab1);
                                 tabbedPane.addTab("TAB 2", image, tab2);
-                                tabbedPane.addTab("tab 3 a long one", new ScrollPane(tab3));
+                                tabbedPane.addTab("tab 3 a long one eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
                                 
                                 tabPanel.add(tabbedPane);

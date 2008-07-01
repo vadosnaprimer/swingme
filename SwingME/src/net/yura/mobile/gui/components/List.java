@@ -72,7 +72,7 @@ public class List extends Component implements ActionListener {
 	public void setCellRenderer(ListCellRenderer cellRenderer) {
 		
 		renderer = cellRenderer;
-		workoutItemSize();
+		//workoutItemSize();
 	}
 	
 	public void setListData(Vector a) {
@@ -83,13 +83,13 @@ public class List extends Component implements ActionListener {
 		}else{
 			setFocusedItemIndex(-1);
 		}
-		workoutItemSize();
+		//workoutItemSize();
 	}
 	
 	public void addListItem(Object a) {
 		
 		items.addElement(a);
-		workoutItemSize();
+		//workoutItemSize();
 	}
 	
 	
@@ -165,12 +165,12 @@ public class List extends Component implements ActionListener {
 		
     }
 	
-    public void setSize(int width, int height){
-    	super.setSize(width, height);
-    	workoutItemSize();
-    }
+    //public void setSize(int width, int height){
+    //	super.setSize(width, height);
+    //	workoutItemSize();
+    //}
 	
-	private void workoutItemSize() {
+	public void doLayout() {
 		
 		if (items!=null) {
                     
@@ -201,10 +201,10 @@ public class List extends Component implements ActionListener {
                         }
 
                         if (horizontal) {
-                            super.setSize(totalWidth,(totalHeight<height)?height:totalHeight);
+                            setSize(totalWidth,(totalHeight<height)?height:totalHeight);
                         }
                         else {
-                            super.setSize((totalWidth<width)?width:totalWidth,totalHeight);
+                            setSize((totalWidth<width)?width:totalWidth,totalHeight);
                         }
 		}
 	}
@@ -393,8 +393,7 @@ public class List extends Component implements ActionListener {
 	}
 	
 	
-	public Vector getItems()
-	{
+	public Vector getItems() {
 		return items;
 	}
 	

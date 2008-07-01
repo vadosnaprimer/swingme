@@ -25,6 +25,10 @@ public class Label extends Component {
         protected int verticalTextPosition = Graphics.VCENTER;
         protected int horizontalTextPosition = Graphics.RIGHT;
 	
+        public Label() {
+            this((String)null);
+        }
+        
 	public Label(String text) {
 		
 		this(text,RootPane.getDefaultStyle().font);

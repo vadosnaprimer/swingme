@@ -20,8 +20,9 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         private List tabList;
         private Vector tabs;
-        private ScrollPane scroll;
+        protected ScrollPane scroll;
         private int tabPosition;
+        private int currentTabIndex;
         
         public TabbedPane() {
             this(Graphics.TOP,new DefaultTabRenderer(Graphics.TOP),new MatteBorder(0, 0, 1, 0, 0x00000000));
@@ -48,10 +49,9 @@ public class TabbedPane extends Panel implements ChangeListener {
                       new EmptyBorder(-art.getTop(),-art.getLeft(),-art.getBottom(),-art.getRight())
                 ));
             }
-            
-            add(scroll,a);
-            
+
             tabPosition = a;
+            currentTabIndex = -1;
         }
 
         public void addTab(Panel p) {
@@ -65,10 +65,14 @@ public class TabbedPane extends Panel implements ChangeListener {
         public void addTab(String title, Image icon, Component component) {
             tabList.addListItem(new Option(null,title,icon));
             tabs.addElement(component);
-            //if (getComponents().size()==1) {
-            //    add(component);
-            //}
             
+            if (currentTabIndex==-1) {
+                setSelectedIndex(0);
+            }
+        }
+
+        public void doLayout() {
+
             // we can only really do this here
             // as when we have NO tabs added
             // we dont know the thickness of the tab bar
@@ -79,16 +83,40 @@ public class TabbedPane extends Panel implements ChangeListener {
                 scroll.setSize(tabList.getWidth(), height);
             }
             
+            super.doLayout();
+            
         }
-
+        
     public void changeEvent(int num) {
 
-        if (getComponentCount() > 1) {
-            remove(1);
-        }
-        add((Component)tabs.elementAt(num));
+        Component thetabtoAdd = (Component)tabs.elementAt(num);
+        
+        if (currentTabIndex==-1) {
+        
+                if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
+                    add(scroll,tabPosition);
+                }
+                
+                add(thetabtoAdd);
+                
+                if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
+                    add(scroll,tabPosition);
+                }
 
+        }
+        else {
+            
+            Component oldTab = (Component)tabs.elementAt(currentTabIndex);
+            
+            int index = getComponents().indexOf(oldTab);
+            
+            remove(index);
+            insert(thetabtoAdd, index);
+        }
+
+        currentTabIndex = num;
         doLayout();
+
     }
     
     public void setSelectedIndex(int a) {

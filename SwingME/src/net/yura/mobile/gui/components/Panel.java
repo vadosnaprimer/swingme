@@ -88,11 +88,8 @@ public class Panel extends Component {
 	}
 	
 	public void insert(Component component,int index) {
-		
-		components.insertElementAt(component, index);
-                
+		components.insertElementAt(component, index); 
                 component.setOwnerAndParent( owner,this );
-		
 	}
 	
 	public void insert(Component component,int index,String constraint) {

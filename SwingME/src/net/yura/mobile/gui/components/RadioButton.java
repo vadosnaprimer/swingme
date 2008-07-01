@@ -97,19 +97,19 @@ public class RadioButton extends Button {
         
 	public void paintExtra(Graphics g){
 
-                int size = getFont().getHeight();
-            
-                int x=padding;
+                int size = getFont().getHeight()-1;
+                // the -1 is ONLY there so it looks better on the emulator
+                
+                int x = padding;
                 int y = (height-size)/2;
                 
                 g.drawArc(x, y, size-1, size-1, 0, 360);
-                
+
 		if (isSelected()){
 
-			g.fillArc(x+2, y+2, size-5, size-5, 0, 360);
-                    
+                    int size2 = size/4;      
+	            g.fillArc(x+size2, y+size2, size-(size2*2), size-(size2*2), 0, 360);
                 }
-
 	}
 
 	
