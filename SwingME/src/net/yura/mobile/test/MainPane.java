@@ -145,8 +145,10 @@ public class MainPane extends RootPane implements ActionListener {
                                                 if (code>0) {
                                                     infoLabel.append("\nchar: "+(char)code);
                                                     
-                                                    infoLabel.append("\ninput char: "+ keypad.getKeyChar(0, false) );
-                                                    
+                                                    char inputChar = keypad.getKeyChar(0, false);
+                                                    if (inputChar!=0) {
+                                                        infoLabel.append("\ninput char: "+ inputChar );
+                                                    }
                                                 }
                                                 int gcode = keypad.getKeyAction(code);
                                                 if (gcode!=0) {

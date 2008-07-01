@@ -19,7 +19,7 @@ import net.yura.mobile.util.Option;
 public class TabbedPane extends Panel implements ChangeListener {
 
         private List tabList;
-        private Vector tabs;
+        protected Vector tabs;
         protected ScrollPane scroll;
         private int tabPosition;
         private int currentTabIndex;
@@ -117,6 +117,22 @@ public class TabbedPane extends Panel implements ChangeListener {
         currentTabIndex = num;
         doLayout();
 
+    }
+    
+    public void removeAll() {
+        
+        if (currentTabIndex!=-1) {
+            
+            remove(scroll);
+
+            remove( getComponents().indexOf( tabs.elementAt(currentTabIndex) ) );
+
+            tabs.removeAllElements();
+            tabList.setListData( new Vector() );
+            
+            currentTabIndex = -1;
+        }
+        
     }
     
     public void setSelectedIndex(int a) {

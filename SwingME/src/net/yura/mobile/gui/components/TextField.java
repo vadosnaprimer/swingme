@@ -306,7 +306,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 		g.clipRect(0, 0, width, height);
                 
                 g.setColor(active?activeTextColor:foreground);
-		font.drawString(g, textString, offset, padding, Graphics.TOP | Graphics.LEFT);
+		font.drawString(g, textString, offset, (height-font.getHeight())/2, Graphics.TOP | Graphics.LEFT);
 
                 if (showCaret) {
                     int x = font.getWidth(textString.substring(0, caretPosition));

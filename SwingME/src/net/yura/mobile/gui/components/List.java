@@ -214,6 +214,7 @@ public class List extends Component implements ActionListener {
 		if (useSelectButton) {
 			RootPane.getRootPane().setComponentCommand(0, null);
 		}
+                repaint();
 
 	}
         
@@ -417,5 +418,4 @@ public class List extends Component implements ActionListener {
         public String toString() {
             return super.toString() + items;
         }
-	
 }
