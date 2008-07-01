@@ -1,0 +1,4 @@
+TODO:
+
+add a boolean too all components that will indicate if it needs have its doLayout called
+
