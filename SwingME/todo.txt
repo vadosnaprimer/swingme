@@ -2,3 +2,30 @@ TODO:
 
 add a boolean too all components that will indicate if it needs have its doLayout called
 
+improve painting of 1 component nested in many panels, (maybe default panels to be none transparent)
+finish window decoration options, make sure works with ImageBorder
+make hitting down at the bottom of the panel, take you back to the first component
+make switching into landscape mode switch the screen round and adjust the soft keys
+make buttons support beveled borders to look like they are being clicked
+make components like Spinner and DropDown support if the label has image above the text option set
+make bitmap Font support Unicode text
+make sure everything about the theme is stored in the Theme Object and can be loaded from a text file
+make sure all components support touch screen
+make sure softkey mapping for strange devices works
+make strange sofkeys like the blackberry work, where softKeys are not really softKeys
+
+make TextField different models have different mapping for 0 *
+make TextField catch 2 letter button codes, and allow a choice of 2 letters (blackberry SureType)
+make TextField * button give option of symbols
+make TextField # switch mode between numbers and text and predictive text
+
+make TextField pencil key bring up option for different modes
+make TextField pencil key holding down allow the selection of text and copy and paste softkeys
+make TextField have an predictive text option
+make TextField have an indicator of what mode it is in
+make TextField support more then just english language for number keypads
+make TextField support right to left languages
+
+add Tree Component
+add Table Component
+

@@ -129,7 +129,7 @@ public class List extends Component implements ActionListener {
         
     }
 
-    void addChangeListener(ChangeListener aThis) {
+    public void addChangeListener(ChangeListener aThis) {
         chl = aThis;
     }
 	

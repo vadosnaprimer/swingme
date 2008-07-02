@@ -19,8 +19,8 @@ import net.yura.mobile.util.Option;
 public class TabbedPane extends Panel implements ChangeListener {
 
         private List tabList;
-        protected Vector tabs;
-        protected ScrollPane scroll;
+        private Vector tabs;
+        private ScrollPane scroll;
         private int tabPosition;
         private int currentTabIndex;
         
