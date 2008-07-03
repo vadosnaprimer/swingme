@@ -8,6 +8,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 
 public class Button extends Label implements ActionListener {
 
@@ -19,8 +20,8 @@ public class Button extends Label implements ActionListener {
 		
 	}
 	
-	protected int borderColor;
-	protected int activeBorderColor;
+	protected Border normalBorder;
+	protected Border activeBorder;
 	
 	private ActionListener al;
 	private String actionCommand;
@@ -45,12 +46,9 @@ public class Button extends Label implements ActionListener {
 		this.selected = selected;
 	}
 
-	/**
-	 * Creates a new MButtonItem with the given label, desired button alignment and style.
-	 * @param label - the button label
-	 * @param align - One of the 3 available alignments(LEFT, HCENTER, RIGHT).
-	 * @param style - FormStyle object
-	 */
+	public Button(){
+            this(null);
+        }
 	public Button(String label) {
 		
 		this(label,
@@ -69,42 +67,19 @@ public class Button extends Label implements ActionListener {
 	
 	// full constructor
 	public Button(String label, Font font,int a,int b,int c) {
-		
 		super(label, font);
-
-		//this.font = font;
-		//this.align = align;
-		
-		
-		//this.label = label;
-		
-		// the sizing is done in label
-		// as it needs to take icons into account too
-		
-		//Default button width
-		//width = font.getWidth(label) + 4;
-		
-		//if(width < (GameCanvas.m_canvasWidth/4))
-		//{
-		//	width = GameCanvas.m_canvasWidth/4;
-		//}
-		
-		//height = font.getHeight() + 2;
 		
 		background = a;
-		this.borderColor = b;
-		this.activeBorderColor = c;
 		transparent = false;
 		
-		setBorder(new LineBorder(borderColor));
+		setBorder(new LineBorder(b));
+                setActiveBorder(new LineBorder(c));
 		selectable = true;
 		
 		setForegroundByFontColorIndex(0);
 		
 	}
 
-
-	
 	public void addActionListener(ActionListener l) {
 		
 		al = l;
@@ -149,74 +124,19 @@ public class Button extends Label implements ActionListener {
 		
 		
 	}
-	/**
-	 * Draws the button at given y position with set alignment
-	 * @param Graphics - the graphics object
-	 * @param int - Y position
-	 * @return int - height of the item
-	 */
-	
-	// LOL, NONE OF THIS IS ACTUALLY NEEDED!
-	//public void paintComponent(Graphics g) {
-
-		//int x = 0;// 1;
-		//int y = 0;
-		//int ht = getHeight();
-		
-		// Calculate X position
-		//if(align == ALIGN_RIGHT)
-		//{
-		//	x = GameCanvas.m_canvasWidth - width - 1;
-		//}
-		//else if(align == ALIGN_HCENTER)
-		//{
-		//	x = (GameCanvas.m_canvasWidth - width) >> 1;
-		//}
-		
-		//Draw Button
-		//g.setColor(background);
-		//g.fillRect(0, 0, width, height);
-		
-		//Draw label
-		//font.drawString(g, label, (width >> 1), (height >> 1), Font.MIDDLE_CENTER);
-		
-		//Draw border
-		//if(isFocused())
-		//{	
-		//	g.setColor(activeBorderColor);
-		//}
-		//else
-		//{
-		//	g.setColor(borderColor);
-		//}
-		
-		//g.drawRect(0, 0, width, height);
-		
-		//return ht;
-		
-	//}	
-
-	/**
-	 * Sets the new border color for boxes.
-	 * @param int - color
-	 */
-	public void setBorderColor(int color)
-	{
-		borderColor = color;
+        
+	public void setBorder(Border b) {
+		normalBorder = b;
+                super.setBorder(b);
 	}
-	
-	/**
-	 * Set's the active box border color.
-	 * @param color
-	 */
-	public void setActiveBorderColor(int color)
-	{
-		activeBorderColor = color;
+ 
+	public void setActiveBorder(Border b) {
+		activeBorder = b;
 	}
 
 	public void focusLost() {
 
-		setMyBorderColor(borderColor);
+		super.setBorder(normalBorder);
 		setForegroundByFontColorIndex(0);
 		
 		if (useSelectButton) {
@@ -228,7 +148,7 @@ public class Button extends Label implements ActionListener {
 
 	public void focusGained() {
 
-		setMyBorderColor(activeBorderColor);
+		super.setBorder(activeBorder);
 		setForegroundByFontColorIndex(1);
 		
 		if (useSelectButton) {
@@ -237,14 +157,7 @@ public class Button extends Label implements ActionListener {
 		
 		repaint();
 	}
-	
-	private void setMyBorderColor(int c) {
-		
-		if (border!= null && border instanceof LineBorder) {
-			((LineBorder)border).setColor(c);
-		}
-		
-	}
+
 
 	public void setButtonGroup(ButtonGroup buttonGroup) {
 		
@@ -269,5 +182,11 @@ public class Button extends Label implements ActionListener {
 		this.useSelectButton = useSelectButton;
 	}
 
+        protected int getBorderColor() {
+            if (border instanceof LineBorder) {
+                return ((LineBorder)border).getColor();
+            }
+            return 0;
+        }
 	
 }

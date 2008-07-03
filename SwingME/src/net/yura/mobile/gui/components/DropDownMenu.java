@@ -12,9 +12,7 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.util.Option;
 
 public class DropDownMenu extends Button implements ActionListener{
-	
-	private int textWidth;
-	
+
 	private Image selectedImage;
 	private Image nonSelectedImage;
 	
@@ -25,7 +23,7 @@ public class DropDownMenu extends Button implements ActionListener{
 	private CommandButton[] pbuttons;
 	
 	public DropDownMenu() {
-		super((String)null);
+
 	}
 	
 	public DropDownMenu(Vector vec){
@@ -42,21 +40,27 @@ public class DropDownMenu extends Button implements ActionListener{
 
 			if (items != null){
                                 int count = 0;
-                                
+                                int hi = 0;
+                                        
 				for (int i = 0; i < items.size(); i ++){
 					
                                     Object obj = items.elementAt(i);
 
-                                    int len = getCombinedWidth(String.valueOf(obj),(obj instanceof Option)?((Option)obj).getIcon():null);
+                                    int lenW = getCombinedWidth(String.valueOf(obj),(obj instanceof Option)?((Option)obj).getIcon():null);
+                                    int lenH = getCombinedHeight((obj instanceof Option)?((Option)obj).getIcon():null);
 
-				    if (count < len){
-                                        count = len;
+                                    
+				    if (count < lenW){
+                                        count = lenW;
+				    }
+                                    if (hi < lenH){
+                                        hi = lenH;
 				    }
 					
 				}
-				textWidth = count + 2;
-				width = textWidth + (getFont().getWidth('E')) * 2;
-				height = getFont().getHeight() + 4;
+
+				width = count + padding*2 + ((nonSelectedImage == null)?hi:nonSelectedImage.getWidth());
+				height = hi + padding*2;
 			}
 			
 			int h = height * getItems().size();
@@ -97,6 +101,8 @@ public class DropDownMenu extends Button implements ActionListener{
 		return response;
 	}
 	
+        // we dont want to have the listeners notified on the click
+        // we do want them notified WHEN the drop down menu is closed
 	public void fireActionPerformed() { }
 	
 	private void createList() {
@@ -106,40 +112,29 @@ public class DropDownMenu extends Button implements ActionListener{
 			list.addActionListener(this);
 			scroll = new ScrollPane(list);
 			scroll.setTransparent(false);
-			scroll.setBorder(border);
+			scroll.setBorder(activeBorder);
 			
 		}
 		
 	}
 
-
-	/**
-	 * Draws the button at given y position with set alignment
-	 * @param Graphics - the graphics object
-	 * @param int - Y position
-	 * @return int - height of the item
-	 */
 	public void paintComponent(Graphics g){
-		int boxX = getFont().getWidth('E') + 1;
-		int x = textWidth;
-		int y = 0;
 
-			if (getNonSelectedImage() == null){
-				if (isFocused()){
-					g.setColor(activeBorderColor);
-				}
-				else{
-					g.setColor(borderColor);
-				}
-				g.drawLine(x + boxX/2, y-1, x + boxX/2 , height);
-				ScrollPane.drawDownArrow(g, x+boxX-2, y+(height/2)-2, boxX-1, height);
-			}
-			else{
-				g.setColor(borderColor);
-				g.drawImage(nonSelectedImage, (height-nonSelectedImage.getHeight())/2, (height-nonSelectedImage.getHeight())/2 , 0 );
-			}
+            if (nonSelectedImage == null){
 
-		super.paintComponent(g);
+                int w = width - height + padding*2;
+                g.setColor( getBorderColor() );
+                g.drawLine(w , 0, w , height);
+
+                int gp = 2; // gap between arrow and sides
+                ScrollPane.drawDownArrow(g, w+1+gp, (height/2)-2, width-w-gp*2-1, height);
+            }
+            else {
+
+                g.drawImage((isFocused())?selectedImage:nonSelectedImage, width-nonSelectedImage.getWidth(), (height-nonSelectedImage.getHeight())/2 , 0 );
+            }
+
+            super.paintComponent(g);
 	}
 	
 	public Image getSelectedImage() {
@@ -172,8 +167,7 @@ public class DropDownMenu extends Button implements ActionListener{
 		else {
 			super.setText("");
 		}
-		
-		//workoutSize();
+
 	}
 
 	public void actionPerformed(String actionCommand) {

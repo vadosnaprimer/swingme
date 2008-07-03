@@ -82,7 +82,7 @@ public class Label extends Component {
 		
 		int w = getCombinedWidth();
 		int h = getCombinedHeight();
-		
+
 		if (w==0 && h==0) {
 			width=0;
 			height=0;
@@ -92,6 +92,7 @@ public class Label extends Component {
 			width = w + (padding*2);
 			height = h + (padding*2);
 		}
+
 	}
 	
 	public String getText() {

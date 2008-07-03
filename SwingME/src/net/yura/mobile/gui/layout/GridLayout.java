@@ -6,26 +6,43 @@ import java.util.Vector;
 import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Panel;
-
+/**
+ * @author Yura Mamyrin
+ * @see java.awt.GridLayout
+ */
 public class GridLayout implements Layout {
 
 	private int across;
 	private int padding;
 	private int down;
         
-	public GridLayout(int acc,int down) {
+        /**
+         * @param rows the rows, with the value zero meaning any number of rows
+         * @param cols the columns, with the value zero meaning any number of columns
+         * @see java.awt.GridLayout#GridLayout(int, int) GridLayout.GridLayout
+         */
+	public GridLayout(int rows, int cols) {
 		
-		this(acc, down,RootPane.getDefaultSpace() );
+		this(rows, cols,RootPane.getDefaultSpace() );
 	}
 	
-	public GridLayout(int acc,int down,int p) {
+        /**
+         * @param rows the rows, with the value zero meaning any number of rows
+         * @param cols the columns, with the value zero meaning any number of columns
+         * @param p the padding
+         * @see java.awt.GridLayout#GridLayout(int, int, int, int) GridLayout.GridLayout
+         */
+	public GridLayout(int rows, int cols,int p) {
 		
-		across = acc;
-		padding = p;
-		this.down = down;
+		across = cols;
+		down = rows;
+                padding = p;
 	}
 	
-	public void doLayout(Panel panel, Hashtable cons) {
+        /**
+         * @see java.awt.GridLayout#layoutContainer(java.awt.Container) GridLayout.layoutContainer
+         */
+	public void layoutPanel(Panel panel, Hashtable cons) {
 
 		Vector components = panel.getComponents();
 		

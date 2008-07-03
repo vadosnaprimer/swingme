@@ -8,10 +8,14 @@ import net.yura.mobile.gui.components.Panel;
 
 /**
  * @author ymamyrin
+ * @see java.awt.BorderLayout
  */
 public class BorderLayout implements Layout {
 
-    public void doLayout(Panel panel, Hashtable cons) {
+    /**
+     * @see java.awt.BorderLayout#layoutContainer(java.awt.Container) BorderLayout.layoutContainer
+     */
+    public void layoutPanel(Panel panel, Hashtable cons) {
 
         	Vector components = panel.getComponents();
 

@@ -46,7 +46,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             if (art!=null) {
                 scroll.setBorder(new CompoundBorder(
                       art,
-                      new EmptyBorder(-art.getTop(),-art.getLeft(),-art.getBottom(),-art.getRight())
+                      new EmptyBorder(art)
                 ));
             }
 

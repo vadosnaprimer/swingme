@@ -7,6 +7,10 @@ import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Panel;
 
+/**
+ * @author Yura Mamyrin
+ * @see java.awt.FlowLayout
+ */
 public class FormFlowLayout implements Layout {
 
 	// Item spacing
@@ -23,7 +27,7 @@ public class FormFlowLayout implements Layout {
 		itemSpacing = a;
 	}
 	
-	public void doLayout(Panel panel, Hashtable cons) {
+	public void layoutPanel(Panel panel, Hashtable cons) {
 
 		int fullwidth = panel.getWidth();
 		//int compwidth = (fullwidth*4)/5;

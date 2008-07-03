@@ -10,6 +10,7 @@ import net.yura.mobile.gui.components.Panel;
 
 /**
  * @author Yura Mamyrin
+ * @see java.awt.FlowLayout
  */
 
 public class FlowLayout implements Layout {
@@ -25,7 +26,10 @@ public class FlowLayout implements Layout {
 		padding = p;
 	}
 	
-	public void doLayout(Panel panel, Hashtable cons) {
+        /**
+         * @see java.awt.FlowLayout#layoutContainer(java.awt.Container) FlowLayout.layoutContainer
+         */
+	public void layoutPanel(Panel panel, Hashtable cons) {
 
 		int width = panel.getWidth();
 		int height = panel.getHeight();

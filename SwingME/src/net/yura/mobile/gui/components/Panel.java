@@ -7,6 +7,10 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.layout.Layout;
 
+/**
+ * @author Yura Mamyrin
+ * @see java.awt.FlowLayout
+ */
 public class Panel extends Component {
 
 	private String name;
@@ -34,6 +38,10 @@ public class Panel extends Component {
 		
 	}
 	
+        /**
+         * @param lt the specified layout manager
+         * @see java.awt.Container#setLayout(java.awt.LayoutManager) Container.setLayout
+         */
 	public void setLayout(Layout lt) {
 
 		layout = lt;
@@ -53,18 +61,15 @@ public class Panel extends Component {
     	
     }
 
+    /**
+     * @param component the component to be added 
+     * @see java.awt.Container#add(java.awt.Component) Container.add
+     */
 	public void add(Component component){
 		components.addElement(component);
 		
 		component.setOwnerAndParent( owner,this );
-		
-		//if (components.size()==1) {
-			
-		//	focusComponent = component;
-		//}
-		
-		//component.setBreakOutListener(this);
-		
+
 	}
 	
        public void add(Component component,int constraint){
@@ -148,7 +153,7 @@ public class Panel extends Component {
 		}
 		
 		if (layout!=null) {
-			layout.doLayout(this,constraints);
+			layout.layoutPanel(this,constraints);
 		}
 	}
 

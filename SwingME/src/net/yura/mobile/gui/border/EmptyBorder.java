@@ -8,6 +8,10 @@ public class EmptyBorder implements Border {
 
 	protected int top,bottom,left,right;
 	
+        public EmptyBorder(Border b) {
+            this( -b.getTop(),-b.getLeft(),-b.getBottom(),-b.getRight() );
+        }
+        
 	public EmptyBorder(int top, int left, int bottom, int right) {
 		
 		this.top = top;

@@ -50,7 +50,7 @@ public class Window extends Component implements ActionListener {
                     // Font and color need to be changable
                     // move button needs to work, also moving with pointer needs to work
             
-                    Panel buttonPanel = new Panel( new GridLayout(0,1,2) );
+                    Panel buttonPanel = new Panel( new GridLayout(1,0,2) );
                     if (move) {
                         buttonPanel.add(new Button("O"));
                     }

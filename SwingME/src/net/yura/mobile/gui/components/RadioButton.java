@@ -21,6 +21,7 @@ public class RadioButton extends Button {
 		super(label);
 		
 		setBorder(null);
+                setActiveBorder(null);
 		background = -1;
 		transparent = true;
 		
@@ -50,14 +51,8 @@ public class RadioButton extends Button {
         }
 
         public void paintComponent(Graphics g){
-        
-            
-                if (isFocused()){
-			g.setColor(activeBorderColor);
-		}
-		else{
-			g.setColor(borderColor);
-		}
+
+		g.setColor( getBorderColor() );
 
 		if (isSelected()){
 			if (selectedImage == null ){

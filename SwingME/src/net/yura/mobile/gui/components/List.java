@@ -78,12 +78,10 @@ public class List extends Component implements ActionListener {
 	public void setListData(Vector a) {
 		
 		items = a;
-		if (a != null && a.size() > 0){
-			setFocusedItemIndex(0);
-		}else{
+		if (a == null || current >= a.size()){
 			setFocusedItemIndex(-1);
 		}
-		//workoutItemSize();
+
 	}
 	
 	public void addListItem(Object a) {
