@@ -1,6 +1,13 @@
 active=skin2.png
-top=20
-bottom=20
-right=20
-left=20
 
+top=5
+bottom=5
+right=5
+left=5
+
+itop=20
+ibottom=20
+iright=20
+ileft=20
+
+color=73a6f6

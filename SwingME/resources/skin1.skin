@@ -4,5 +4,11 @@ top=23
 bottom=14
 right=12
 left=12
+
+itop=23
+ibottom=14
+iright=12
+ileft=12
+
 back=Y
 
