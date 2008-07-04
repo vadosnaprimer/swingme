@@ -5,7 +5,6 @@ import javax.microedition.lcdui.Image;
 /**
  * @author Yura Mamyrin
  */
-
 public class Option {
 
 	private final String id;

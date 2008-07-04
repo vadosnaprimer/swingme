@@ -1,12 +1,38 @@
 package net.yura.mobile.util;
 
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
 
 /**
- * @author ymamyrin
+ * @author Yura Mamyrin
  */
 public class ImageUtil {
 
+
+    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
+        
+        if (src_w==0 || src_h==0 || dest_w==0 || dest_h==0) return;
+        
+        final int cx = g.getClipX();
+        final int cy = g.getClipY();
+        final int cw = g.getClipWidth();
+        final int ch = g.getClipHeight();
+        
+        g.clipRect(dest_x,dest_y,dest_w,dest_h);
+        
+        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
+            for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
+                g.drawRegion(img, src_x,  src_y, src_w, src_h, Sprite.TRANS_NONE, pos_x, pos_y,Graphics.TOP|Graphics.LEFT);
+            }
+        }
+        
+        g.setClip(cx,cy,cw,ch);
+        
+    }
+    
+    
+    
     public static final void imageColor(int ai[], int i) {
         int j = (i & 0xff0000) >> 16;
         int k = (i & 0xff00) >> 8;

@@ -2,7 +2,6 @@ package net.yura.mobile.test;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
-import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.Theme;
@@ -10,6 +9,9 @@ import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
 
+/**
+ * @author Yura Mamyrin
+ */
 public class SimpleMidlet extends Midlet implements ActionListener {
 
 	private RootPane rootpane;

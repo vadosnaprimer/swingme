@@ -11,13 +11,19 @@ import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 
-
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.DefaultListCellRenderer
+ */
 public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 
 	private int color;
 	private Border normal;
 	private Border selected;
 	
+        /**
+         * @see javax.swing.DefaultListCellRenderer#DefaultListCellRenderer() DefaultListCellRenderer.DefaultListCellRenderer
+         */
         public DefaultListCellRenderer() {
             
             this(
@@ -35,7 +41,9 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 		setBorder(normal);
 		this.color=color;
 	}
-	
+	/**
+         * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) DefaultListCellRenderer.getListCellRendererComponent
+         */
 	public Component getListCellRendererComponent(List list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) {
 

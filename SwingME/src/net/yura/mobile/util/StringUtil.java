@@ -2,6 +2,9 @@ package net.yura.mobile.util;
 
 import java.util.Vector;
 
+/**
+ * @author Yura Mamyrin
+ */
 public class StringUtil {
 
 	public static String[] split(String value, String separator) {

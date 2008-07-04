@@ -11,8 +11,6 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.Theme;
 import net.yura.mobile.gui.border.CompoundBorder;
-import net.yura.mobile.gui.border.EmptyBorder;
-import net.yura.mobile.gui.border.ImageBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.components.Button;
@@ -32,8 +30,12 @@ import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.util.Option;
 
+/**
+ * @author Yura Mamyrin
+ */
 public class MainPane extends RootPane implements ActionListener {
 
 	private Panel mainmenu;
@@ -261,15 +263,20 @@ public class MainPane extends RootPane implements ActionListener {
                                 border.add(test1);
                                 
                                 Label test2 = new Label("ImageBorder test");
-                                test2.setBorder(new ImageBorder("/skin1.skin"));
+                                test2.setBorder(new MatteBorder("/skin1.skin"));
                                 border.add(test2);
                                 
                                 Panel menu = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                                menu.setBorder(new CompoundBorder(new ImageBorder("/skin2.skin"),new EmptyBorder(-12, -12, -12, -12)));
+                                menu.setBorder(new MatteBorder("/skin2.skin"));
                                 menu.add(new Button("menu TEST item 1"));
                                 menu.add(new Button("menu TEST item 2"));
                                 menu.add(new Button("menu TEST item 3"));
                                 menu.add(new Button("menu TEST item 4"));
+                                border.add(menu);
+                                
+                                menu = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                                menu.setBorder(new MatteBorder(10,20,30,40,image));
+                                menu.add(new Button("MatteBorderTest"));
                                 border.add(menu);
 			}
 			
