@@ -11,7 +11,6 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.Theme;
 import net.yura.mobile.gui.border.CompoundBorder;
-import net.yura.mobile.gui.border.CurvedBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.ImageBorder;
 import net.yura.mobile.gui.border.LineBorder;
@@ -257,7 +256,7 @@ public class MainPane extends RootPane implements ActionListener {
                                 test1.setBorder( new CompoundBorder(
                                         new LineBorder(0x00FF0000, 3),
                                         new CompoundBorder(
-                                            new CurvedBorder(4, 0x0000FF00, 0x00FFFFFF), 
+                                            new LineBorder( 0x0000FF00, 0x00FFFFFF,4,true), 
                                             new LineBorder(0x000000FF, 3))) );
                                 border.add(test1);
                                 

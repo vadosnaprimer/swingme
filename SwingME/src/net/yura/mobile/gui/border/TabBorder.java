@@ -4,7 +4,7 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.components.Component;
 
 /**
- * @author ymamyrin
+ * @author Yura Mamyrin
  */
 public class TabBorder implements Border {
 

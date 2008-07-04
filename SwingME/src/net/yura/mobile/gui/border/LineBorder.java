@@ -1,50 +1,83 @@
 package net.yura.mobile.gui.border;
 
 import javax.microedition.lcdui.Graphics;
-
 import net.yura.mobile.gui.components.Component;
-
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.border.LineBorder
+ */
 public class LineBorder implements Border {
 
 	private int color;
 	private int thickness;
 	private int stroke;
-	// this is how constructors SHOULD LOOK!!!!!!!!
+	private int insideColor;
+        private boolean roundedCorners;
 	
+        /**
+         * creates a black border
+         */
 	public LineBorder() {
 		this(0);
 	}
-	
+	/**
+         * @param c the color for the border
+         * @see javax.swing.border.LineBorder#LineBorder(java.awt.Color) LineBorder.LineBorder
+         */
 	public LineBorder(int c) {
 		
 		this(c,1);
 	}
-	
+	/**
+         * @param c the color of the border
+         * @param t the thickness of the border
+         * @see javax.swing.border.LineBorder#LineBorder(java.awt.Color, int) LineBorder.LineBorder
+         */
 	public LineBorder(int c,int t) {
 		
-		this(c,t,Graphics.SOLID);
+		this(c,-1,t,false);
 	}
-	
-	public LineBorder(int c,int t,int s) {
+        /**
+         * @param c the color of the border
+         * @param c2 the inside color
+         * @param t the thickness of the border
+         * @param r whether or not border corners should be round
+         * @see javax.swing.border.LineBorder#LineBorder(java.awt.Color, int, boolean) LineBorder.LineBorder
+         */
+        public LineBorder(int c,int c2,int t,boolean r) {
+            this(c,c2,t,r,Graphics.SOLID);
+        }
+        
+	public LineBorder(int c,int c2,int t,boolean r,int s) {
 		
 		color=c;
 		thickness = t;
 		stroke = s;
+                insideColor = c2;
+                roundedCorners = r;
 	}
 	
-	public void paintBorder(Component c, Graphics g,
-            int width,
-            int height) {
+        /**
+         * @param c
+         * @param g
+         * @param width
+         * @param height
+         * @see javax.swing.border.LineBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) LineBorder.paintBorder
+         */
+	public void paintBorder(Component c, Graphics g, int width, int height) {
 	
+            if (!roundedCorners) {
 		g.setColor(color);
 		
 		if (thickness==1) {
 			
+                        int oldStroke = g.getStrokeStyle();
+                    
 			g.setStrokeStyle(stroke);
 			
 			g.drawRect(-1, -1, width+1, height+1);
 			
-			g.setStrokeStyle(Graphics.SOLID);
+			g.setStrokeStyle(oldStroke);
 		}
 		else {
 			g.fillRect(-thickness, -thickness, width+(thickness*2), thickness);
@@ -53,36 +86,69 @@ public class LineBorder implements Border {
 			g.fillRect(-thickness, 0, thickness, height );
 			g.fillRect(width, 0, thickness, height );
 		}
+            }
+            else {
+                
+                int a = thickness*4;
+		
+                if (insideColor!=-1) {
+                    g.setColor(insideColor);
+                    g.fillRoundRect(-thickness,-thickness,width+(2*thickness)-1,height+(2*thickness)-1,a,a);
+                }
+                
+		g.setColor(color);
+		g.drawRoundRect(-thickness,-thickness,width+(2*thickness)-1,height+(2*thickness)-1,a,a);
+            }
 	}
 
+    /**
+     * @return the thickness
+     * @see javax.swing.border.LineBorder#getBorderInsets(java.awt.Component) LineBorder.getBorderInsets
+     */
 	public int getBottom() {
 		return thickness;
 	}
 
+    /**
+     * @return the thickness
+     * @see javax.swing.border.LineBorder#getBorderInsets(java.awt.Component) LineBorder.getBorderInsets
+     */
 	public int getLeft() {
 		return thickness;
 	}
 
+    /**
+     * @return the thickness
+     * @see javax.swing.border.LineBorder#getBorderInsets(java.awt.Component) LineBorder.getBorderInsets
+     */
 	public int getRight() {
 		return thickness;
 	}
 
+    /**
+     * @return the thickness
+     * @see javax.swing.border.LineBorder#getBorderInsets(java.awt.Component) LineBorder.getBorderInsets
+     */
 	public int getTop() {
 		return thickness;
 	}
 
-	
-	
-	
-	
-	public int getColor() {
+	/**
+         * @return the color of the border
+         * @see javax.swing.border.LineBorder#getLineColor() LineBorder.getLineColor
+         */
+	public int getLineColor() {
 		return color;
 	}
 
-	public void setColor(int color) {
+	public void setLineColor(int color) {
 		this.color = color;
 	}
 
+        /**
+         * @return the thickness of the border
+         * @see javax.swing.border.LineBorder#getThickness() LineBorder.getThickness
+         */
 	public int getThickness() {
 		return thickness;
 	}

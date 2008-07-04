@@ -28,14 +28,14 @@ public class FlowLayout implements Layout {
             this( Graphics.HCENTER  );
 	}
         /**
-         * @param a can be Graphics.HCENTER oe Graphics.VCENTER
+         * @param a can be Graphics.HCENTER or Graphics.VCENTER
          */
         public FlowLayout(int a) {
 		
             this( a, RootPane.getDefaultSpace() );
 	}
         /**
-         * @param a can be Graphics.HCENTER oe Graphics.VCENTER
+         * @param a can be Graphics.HCENTER or Graphics.VCENTER
          * @param p the padding to be used
          */
 	public FlowLayout(int a,int p) {

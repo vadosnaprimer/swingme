@@ -31,7 +31,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 		super("",s);
 		
 		normal = new EmptyBorder(1,1,1,1);
-		selected = new LineBorder(c2,1,Graphics.DOTTED);
+		selected = new LineBorder(c2,-1,1,false,Graphics.DOTTED);
 		setBorder(normal);
 		this.color=color;
 	}

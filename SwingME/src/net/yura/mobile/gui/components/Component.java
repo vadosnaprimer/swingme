@@ -7,6 +7,10 @@ import net.yura.mobile.gui.RootPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
 
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.JComponent
+ */
 public abstract class Component {
 	
 	protected int posX,posY,width,height;
@@ -17,6 +21,9 @@ public abstract class Component {
 	protected int foreground;
 	protected Border border;
         
+        /**
+         * @see javax.swing.JComponent#JComponent() JComponent.JComponent
+         */
 	public Component() {
 		
 		selectable = true;
@@ -37,20 +44,32 @@ public abstract class Component {
 		this.selectable = selectable;
 	}
 
-
+    /**
+     * @return the current x coordinate of the component's origin
+     * @see javax.swing.JComponent#getX() JComponent.getX
+     */
     public int getX(){
         return posX;
     }
     
-
+    /**
+     * @return the current y coordinate of the component's origin
+     * @see javax.swing.JComponent#getY() JComponent.getY
+     */
     public int getY(){
         return posY;
     }
-	
+    /**
+     * @return the current width of this component
+     * @see javax.swing.JComponent#getWidth() JComponent.getWidth
+     */
     public int getWidth(){
         return width;
     }
-      
+    /**
+     * @return the current height of this component
+     * @see javax.swing.JComponent#getHeight() JComponent.getHeight
+     */
     public int getHeight(){
         return height;
     }
@@ -165,11 +184,18 @@ public abstract class Component {
 		
 	}
 
-
+        /**
+         * @return the border object for this component
+         * @see javax.swing.JComponent#getBorder() JComponent.getBorder
+         */
 	public Border getBorder() {
 		return border;
 	}
 
+        /**
+         * @param border the border to be rendered for this component
+         * @see javax.swing.JComponent#setBorder(javax.swing.border.Border) JComponent.setBorder
+         */
 	public void setBorder(Border border) {
 		this.border = border;
 	}

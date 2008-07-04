@@ -45,7 +45,7 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
             
             
         }
-        focus = new CompoundBorder(tb, new LineBorder(0x00000000, 1, Graphics.DOTTED));
+        focus = new CompoundBorder(tb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED));
         open = new CompoundBorder(tb, new EmptyBorder(1, 1, 1, 1));
         
         setBorder(border);

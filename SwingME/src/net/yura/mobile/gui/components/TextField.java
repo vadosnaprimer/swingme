@@ -349,7 +349,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 		
 		if (border instanceof LineBorder) {
 			
-			((LineBorder)border).setColor(borderColor);
+			((LineBorder)border).setLineColor(borderColor);
 		}
 		
 		active = false;
@@ -367,7 +367,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 
 		if (border instanceof LineBorder) {
 			
-			((LineBorder)border).setColor(activeBorderColor);
+			((LineBorder)border).setLineColor(activeBorderColor);
 		}
 		
 		active = true;

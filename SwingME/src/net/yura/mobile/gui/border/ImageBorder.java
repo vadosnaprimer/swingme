@@ -8,7 +8,7 @@ import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.util.Properties;
 
 /**
- * @author ymamyrin
+ * @author Yura Mamyrin
  */
 public class ImageBorder implements Border {
 

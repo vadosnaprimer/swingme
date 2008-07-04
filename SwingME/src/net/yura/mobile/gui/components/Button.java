@@ -184,7 +184,7 @@ public class Button extends Label implements ActionListener {
 
         protected int getBorderColor() {
             if (border instanceof LineBorder) {
-                return ((LineBorder)border).getColor();
+                return ((LineBorder)border).getLineColor();
             }
             return 0;
         }
