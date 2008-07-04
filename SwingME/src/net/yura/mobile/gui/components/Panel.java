@@ -9,7 +9,7 @@ import net.yura.mobile.gui.layout.Layout;
 
 /**
  * @author Yura Mamyrin
- * @see java.awt.FlowLayout
+ * @see javax.swing.JPanel
  */
 public class Panel extends Component {
 
@@ -324,9 +324,16 @@ public class Panel extends Component {
         }
         
         // if a layout manager is resizing us, we want to redo the layout of our children
-	public void setBoundsWithBorder(int x,int y,int width, int height){
-            super.setBoundsWithBorder(x,y,width, height);
-            doLayout();
+	public void setBoundsWithBorder(int x,int y,int w, int h){
+            
+            int oldw = width;
+            int oldh = height;
+            
+            super.setBoundsWithBorder(x,y,w,h);
+            
+            if (oldw!=width || oldh != height) {
+                doLayout();
+            }
         }
         
 	public String toString() {

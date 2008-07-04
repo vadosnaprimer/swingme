@@ -32,7 +32,6 @@ import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
-import net.yura.mobile.gui.layout.FormFlowLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.util.Option;
 
@@ -94,7 +93,7 @@ public class MainPane extends RootPane implements ActionListener {
 			
 			if (mainmenu==null) {
 			
-				mainmenu = new Panel( new FormFlowLayout() );
+				mainmenu = new Panel( new FlowLayout(Graphics.VCENTER) );
 				
 				Label helloWorld = new Label("yura.net mobile");
 				mainmenu.add(helloWorld);
@@ -189,7 +188,7 @@ public class MainPane extends RootPane implements ActionListener {
 			
 			if (componentTest==null) {
 			
-				componentTest = new Panel( new FormFlowLayout() );
+				componentTest = new Panel( new FlowLayout(Graphics.VCENTER) );
 
 				componentTest.add( new Label("a Label") );
                                 if (image!=null) { componentTest.add( new Label( image ) ); }
@@ -253,7 +252,7 @@ public class MainPane extends RootPane implements ActionListener {
 			
 			if (border==null) {
 				
-				border = new Panel( new FormFlowLayout() );
+				border = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 Label test1 = new Label("CompoundBorder test");
                                 test1.setBorder( new CompoundBorder(
                                         new LineBorder(0x00FF0000, 3),
@@ -266,7 +265,7 @@ public class MainPane extends RootPane implements ActionListener {
                                 test2.setBorder(new ImageBorder("/skin1.skin"));
                                 border.add(test2);
                                 
-                                Panel menu = new Panel(new FormFlowLayout(0));
+                                Panel menu = new Panel(new FlowLayout(Graphics.VCENTER,0));
                                 menu.setBorder(new CompoundBorder(new ImageBorder("/skin2.skin"),new EmptyBorder(-12, -12, -12, -12)));
                                 menu.add(new Button("menu TEST item 1"));
                                 menu.add(new Button("menu TEST item 2"));
@@ -293,7 +292,7 @@ public class MainPane extends RootPane implements ActionListener {
                                 tab2.setBackground(0x0000FF00);
                                 tab2.add( new Button("This is tab TWO") );
 
-                                Panel tab3 = new Panel( new FormFlowLayout() );
+                                Panel tab3 = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 List l3 = new List( new DefaultListCellRenderer() );
                                 tab3.setBackground(0x000000FF);
                                 
