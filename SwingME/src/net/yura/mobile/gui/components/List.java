@@ -8,7 +8,7 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.CommandButton;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
 
@@ -210,7 +210,7 @@ public class List extends Component implements ActionListener {
 	public void focusLost() {
 		
 		if (useSelectButton) {
-			RootPane.getRootPane().setComponentCommand(0, null);
+			DesktopPane.getDesktopPane().setComponentCommand(0, null);
 		}
                 repaint();
 
@@ -224,7 +224,7 @@ public class List extends Component implements ActionListener {
     	}
     	
 	if (useSelectButton) {
-            RootPane.getRootPane().setComponentCommand(0, selectButton);
+            DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
 	}
     	
     }

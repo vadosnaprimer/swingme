@@ -8,7 +8,7 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Theme;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
@@ -36,7 +36,7 @@ import net.yura.mobile.util.Option;
 /**
  * @author Yura Mamyrin
  */
-public class MainPane extends RootPane implements ActionListener {
+public class MainPane extends DesktopPane implements ActionListener {
 
 	private Panel mainmenu;
         private Panel componentTest;
@@ -56,9 +56,9 @@ public class MainPane extends RootPane implements ActionListener {
 
 	public void initialize() {
 		
-		mainWindow = getCurrentWindow();
+		mainWindow = getSelectedFrame();
 		
-		RootPane.setDefaultStyle( new Theme() );
+		setDefaultTheme( new Theme() );
                 
 		mainWindow.getContentPane().setBackground(0x00EEEEEE);
 		mainWindow.getContentPane().setTransparent(false);
@@ -119,7 +119,7 @@ public class MainPane extends RootPane implements ActionListener {
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     test1.getContentPane().doLayout();
                     test1.getContentPane().setBackground(0x00FFFFFF);
-                    openNewWindow(test1);
+                    add(test1);
                     
                 }
                 else if ("info".equals(actionCommand)) {
@@ -132,7 +132,13 @@ public class MainPane extends RootPane implements ActionListener {
 				info = new Panel( new BorderLayout() ) {
                                         { selectable=true; }
                                   	public void pointerEvent(int type, int x, int y) {
-                                            infoLabel.setText("pointerEvent: "+x+","+y);
+                                            infoLabel.setText("pointerEvent: "+x+","+y+"\n");
+                                            switch(type) {
+                                                case DesktopPane.DRAGGED: infoLabel.append("DRAGGED"); break;
+                                                case DesktopPane.PRESSED: infoLabel.append("PRESSED"); break;
+                                                case DesktopPane.RELEASED: infoLabel.append("RELEASED"); break;
+                                                default: infoLabel.append("Unknown"); break;
+                                            }
                                             infoLabel.repaint();
                                         }  
                                     	public boolean keyEvent(KeyEvent keypad) {
@@ -358,7 +364,7 @@ public class MainPane extends RootPane implements ActionListener {
 		mainWindow.setWindowCommand(1, c);
 		
 		//setActiveComponent(getContentPane());
-		setupActiveComponent();
+		mainWindow.setupFocusedComponent();
 		
 		mainWindow.repaint();
 	}

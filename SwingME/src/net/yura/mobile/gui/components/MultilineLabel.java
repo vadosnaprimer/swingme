@@ -3,7 +3,7 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 
 public class MultilineLabel extends Component {
 	
@@ -16,7 +16,7 @@ public class MultilineLabel extends Component {
         
 	public MultilineLabel(String text) {
 		
-		this(text,RootPane.getDefaultStyle().font,Graphics.HCENTER,RootPane.getDefaultStyle().defaultWidth);
+		this(text,DesktopPane.getDefaultTheme().font,Graphics.HCENTER,DesktopPane.getDefaultTheme().defaultWidth);
 		
 	}
 	
@@ -40,7 +40,7 @@ public class MultilineLabel extends Component {
 		align = alignment;
                 font = f;
 		selectable = false;
-		foreground = RootPane.getDefaultStyle().foreground;
+		foreground = DesktopPane.getDefaultTheme().foreground;
 		setText(text);
 	}
 	

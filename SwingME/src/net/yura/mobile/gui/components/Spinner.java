@@ -6,7 +6,7 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.util.Option;
 
@@ -40,8 +40,8 @@ public class Spinner extends Label {
 		
 		setForegroundByFontColorIndex(0);
 		
-		borderColor = RootPane.getDefaultStyle().itemBorderColor;
-		activeBorderColor = RootPane.getDefaultStyle().itemActiveBorderColor;
+		borderColor = DesktopPane.getDefaultTheme().itemBorderColor;
+		activeBorderColor = DesktopPane.getDefaultTheme().itemActiveBorderColor;
 		
 		selectable = true;
 
@@ -80,8 +80,8 @@ public class Spinner extends Label {
                     if (w > width) width = w;
                     if (h > height) height = h;
 
-                    if (width > RootPane.getDefaultStyle().defaultWidth) {
-                        width = RootPane.getDefaultStyle().defaultWidth;
+                    if (width > DesktopPane.getDefaultTheme().defaultWidth) {
+                        width = DesktopPane.getDefaultTheme().defaultWidth;
                     }
                     
                     setIndex(index);

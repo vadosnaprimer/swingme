@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.layout.Layout;
 
 /**
@@ -212,7 +212,7 @@ public class Panel extends Component {
 			if (newone.isSelectable()) {
 			
 				if ( scrollTo(newone) ) {
-					RootPane.getRootPane().setActiveComponent(newone);
+					DesktopPane.getDesktopPane().setFocusedComponent(newone);
 				}
 				
 			}
@@ -257,7 +257,7 @@ public class Panel extends Component {
 			
 				parent.breakOutAction(this, direction ,scrolltothere);
 			}
-                        else if (RootPane.getRootPane().getActiveComponent()!=null) {
+                        else if (DesktopPane.getDesktopPane().getFocusedComponent()!=null) {
                             // TODO
                             // we need to find out if we smart scrolled anywhere,
                             // or scrolled at all

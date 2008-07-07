@@ -3,7 +3,7 @@ package net.yura.mobile.gui.cellrenderer;
 import javax.microedition.lcdui.Graphics;
 
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
@@ -27,9 +27,9 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
         public DefaultListCellRenderer() {
             
             this(
-            RootPane.getDefaultStyle().font,
-            RootPane.getDefaultStyle().itemBorderColor,
-            RootPane.getDefaultStyle().itemActiveBorderColor);
+            DesktopPane.getDefaultTheme().font,
+            DesktopPane.getDefaultTheme().itemBorderColor,
+            DesktopPane.getDefaultTheme().itemActiveBorderColor);
         }
         
 	public DefaultListCellRenderer(Font s,int color,int c2) {

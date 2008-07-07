@@ -6,7 +6,7 @@ import javax.microedition.midlet.MIDlet;
 
 public abstract class Midlet extends MIDlet {
 	
-	private RootPane rootpane;
+	private DesktopPane rootpane;
 	
 	public Midlet() {
 
@@ -17,13 +17,13 @@ public abstract class Midlet extends MIDlet {
 	 * THIS METHOD WILL MAKE A NEW ROOTPANE
 	 * but nothing can be set up here as things like getHeight wont work
 	 */
-	protected abstract RootPane makeNewRootPane();
+	protected abstract DesktopPane makeNewRootPane();
 	
 	/**
 	 * this will set up everything needed to start the
 	 * app like the size and stuff
 	 */
-	protected abstract void initialize(RootPane rootpane);
+	protected abstract void initialize(DesktopPane rootpane);
 	
 	protected void destroyApp(boolean arg0) {
 

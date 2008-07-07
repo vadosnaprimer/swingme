@@ -11,7 +11,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
 
 public class TextField extends Component implements ActionListener, CommandListener {
@@ -62,7 +62,7 @@ public class TextField extends Component implements ActionListener, CommandListe
         }
         
 	public TextField(String title, String text, int maxSize, int constraints) {
-		this(title,text,maxSize,constraints,RootPane.getDefaultStyle().font);
+		this(title,text,maxSize,constraints,DesktopPane.getDefaultTheme().font);
 	}
 
 	public TextField(String title,String initialText,int max, int mod,Font f) {
@@ -74,13 +74,13 @@ public class TextField extends Component implements ActionListener, CommandListe
 
 		height = font.getHeight() + padding*2; // put some padding in
 		// give it some random width
-		width = RootPane.getDefaultStyle().defaultWidth /2; // TODO BAD!!
+		width = DesktopPane.getDefaultTheme().defaultWidth /2; // TODO BAD!!
 
-		setBackground(RootPane.getDefaultStyle().background);
-		setForeground(RootPane.getDefaultStyle().foreground);
+		setBackground(DesktopPane.getDefaultTheme().background);
+		setForeground(DesktopPane.getDefaultTheme().foreground);
 
-		borderColor = RootPane.getDefaultStyle().itemBorderColor;
-		activeBorderColor = RootPane.getDefaultStyle().itemActiveBorderColor;
+		borderColor = DesktopPane.getDefaultTheme().itemBorderColor;
+		activeBorderColor = DesktopPane.getDefaultTheme().itemActiveBorderColor;
 		
 		setBorder(new LineBorder(borderColor));
 		
@@ -118,10 +118,10 @@ public class TextField extends Component implements ActionListener, CommandListe
 		//if (!RootPane.hasclearkey) {
 		
 			if(caretPosition==0){
-				RootPane.getRootPane().setComponentCommand(1,null);
+				DesktopPane.getDesktopPane().setComponentCommand(1,null);
 			}
                         else{
-				RootPane.getRootPane().setComponentCommand(1,SOFTKEY_CLEAR);
+				DesktopPane.getDesktopPane().setComponentCommand(1,SOFTKEY_CLEAR);
 			}
 		//}
 	}
@@ -219,7 +219,7 @@ public class TextField extends Component implements ActionListener, CommandListe
                     }
 
                     textbox.setCommandListener(this);
-                    Display.getDisplay(RootPane.getRootPane().getMidlet()).setCurrent(textbox);
+                    Display.getDisplay(DesktopPane.getDesktopPane().getMidlet()).setCurrent(textbox);
                        
                     return true;
 		}
@@ -260,7 +260,7 @@ public class TextField extends Component implements ActionListener, CommandListe
                 setText(textbox.getString());
             }
             // go back to normal
-            RootPane rp = RootPane.getRootPane();
+            DesktopPane rp = DesktopPane.getDesktopPane();
             Display.getDisplay(rp.getMidlet()).setCurrent(rp);
             rp.setFullScreenMode(true);
         }
@@ -355,7 +355,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 		active = false;
 		showCaret = false;
 		
-		RootPane.getRootPane().setComponentCommand(1,null);
+		DesktopPane.getDesktopPane().setComponentCommand(1,null);
 		
                 autoAccept();
                 
@@ -373,7 +373,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 		active = true;
 		showCaret = true;
 
-		RootPane.getRootPane().animateComponent(this);
+		DesktopPane.getDesktopPane().animateComponent(this);
 		
                 updateSoftKeys();
                 

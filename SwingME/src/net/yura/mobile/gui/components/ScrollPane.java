@@ -2,7 +2,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 
 /**
  * @author Yura Mamyrin
@@ -28,8 +28,8 @@ public class ScrollPane extends Panel { // MScrollableComponent
 		
 		setMode(m);
 
-		scrollTrackCol = RootPane.getDefaultStyle().scrollTrackCol;
-		scrollBarCol = RootPane.getDefaultStyle().scrollBarCol;
+		scrollTrackCol = DesktopPane.getDefaultTheme().scrollTrackCol;
+		scrollBarCol = DesktopPane.getDefaultTheme().scrollBarCol;
 	}
         
         public ScrollPane(Component reguserpanel) {

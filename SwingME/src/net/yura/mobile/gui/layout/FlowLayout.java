@@ -4,7 +4,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Panel;
 
@@ -32,7 +32,7 @@ public class FlowLayout implements Layout {
          */
         public FlowLayout(int a) {
 		
-            this( a, RootPane.getDefaultSpace() );
+            this( a, DesktopPane.getDefaultTheme().defaultSpace );
 	}
         /**
          * @param a can be Graphics.HCENTER or Graphics.VCENTER

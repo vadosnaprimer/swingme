@@ -166,7 +166,7 @@ public class Font {
 			}
 			else {
 				
-				if (RootPane.debugMode) {
+				if (DesktopPane.debugMode) {
 					System.out.println("trying to set a font color to a unknown color: "+a);
 				}
 				setColor( colors[0] );

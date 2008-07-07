@@ -5,7 +5,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.util.ButtonGroup;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
@@ -52,10 +52,10 @@ public class Button extends Label implements ActionListener {
 	public Button(String label) {
 		
 		this(label,
-				RootPane.getDefaultStyle().font,
-				RootPane.getDefaultStyle().background,
-				RootPane.getDefaultStyle().itemBorderColor,
-				RootPane.getDefaultStyle().itemActiveBorderColor);
+				DesktopPane.getDefaultTheme().font,
+				DesktopPane.getDefaultTheme().background,
+				DesktopPane.getDefaultTheme().itemBorderColor,
+				DesktopPane.getDefaultTheme().itemActiveBorderColor);
 
 	}
 	
@@ -140,7 +140,7 @@ public class Button extends Label implements ActionListener {
 		setForegroundByFontColorIndex(0);
 		
 		if (useSelectButton) {
-			RootPane.getRootPane().setComponentCommand(0, null);
+			DesktopPane.getDesktopPane().setComponentCommand(0, null);
 		}
 		
 		repaint();
@@ -152,7 +152,7 @@ public class Button extends Label implements ActionListener {
 		setForegroundByFontColorIndex(1);
 		
 		if (useSelectButton) {
-			RootPane.getRootPane().setComponentCommand(0, selectButton);
+			DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
 		}
 		
 		repaint();

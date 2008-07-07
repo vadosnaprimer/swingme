@@ -4,10 +4,13 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.util.Option;
 
-
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.JLabel
+ */
 public class Label extends Component {
     
 	private static String extension = "...";
@@ -19,40 +22,56 @@ public class Label extends Component {
 	protected int padding=2;	
 	protected int gap=2;
 	
-        protected int verticalAlignment = Graphics.VCENTER;
-        protected int horizontalAlignment = Graphics.LEFT;
+        protected int verticalAlignment;
+        protected int horizontalAlignment;
 
-        protected int verticalTextPosition = Graphics.VCENTER;
-        protected int horizontalTextPosition = Graphics.RIGHT;
+        protected int verticalTextPosition;
+        protected int horizontalTextPosition;
 	
+        /**
+         * @see javax.swing.JLabel#JLabel() JLabel.JLabel
+         */
         public Label() {
             this((String)null);
         }
         
+        /**
+         * @param text The text to be displayed by the label
+         * @see javax.swing.JLabel#JLabel(java.lang.String) JLabel.JLabel
+         */
 	public Label(String text) {
 		
-		this(text,RootPane.getDefaultStyle().font);
+		this(text,DesktopPane.getDefaultTheme().font);
 		
 	}
 	
-        public Label(String text,Image icon) {
-		
-		this(text,RootPane.getDefaultStyle().font,icon);
-		
-	}
-        
-	public Label(String text,Font f) {
-		
-		this(text,f,null);
-		
-	}
-	
+        /**
+         * @param icon The image to be displayed by the label
+         * @see javax.swing.JLabel#JLabel(javax.swing.Icon) JLabel.JLabel
+         */
 	public Label(Image icon) {
 		
 		this(null,null,icon);
 		
 	}
-	
+        
+        /**
+         * @param text The text to be displayed by the label
+         * @param icon The image to be displayed by the label
+         * @see javax.swing.JLabel#JLabel(java.lang.String, javax.swing.Icon, int) JLabel.JLabel
+         */
+        public Label(String text,Image icon) {
+		
+		this(text,DesktopPane.getDefaultTheme().font,icon);
+		
+	}
+
+        public Label(String text,Font f) {
+		
+		this(text,f,null);
+		
+	}
+        
 	public Label(String text,Font f,Image icon) {
 		
 		setFont(f);
@@ -60,24 +79,28 @@ public class Label extends Component {
 		selectable = false;
 		if (text!=null) { setText(text); }
 		//else { workoutSize(); }
-		foreground = RootPane.getDefaultStyle().foreground;
+		foreground = DesktopPane.getDefaultTheme().foreground;
+                
+                verticalAlignment = Graphics.VCENTER;
+                horizontalAlignment = (font==null)?Graphics.HCENTER:Graphics.LEFT;
+
+                verticalTextPosition = Graphics.VCENTER;
+                horizontalTextPosition = Graphics.RIGHT;
+                
 	}
 
     public void setPadding(int padding) {
         this.padding = padding;
     }
 
+    /**
+     * @return The padding of the label
+     * @see javax.swing.JComponent#getInsets() JComponent.getInsets
+     */
     public int getPadding() {
         return padding;
     }
-	
-	public void setText(String a) {
-		
-		string = a;
-		//workoutSize();
-		
-	}
-	
+
 	public void doLayout() {
 		
 		int w = getCombinedWidth();
@@ -93,12 +116,6 @@ public class Label extends Component {
 			height = h + (padding*2);
 		}
 
-	}
-	
-	public String getText() {
-		
-		return string;
-		
 	}
 	
 	public void paintComponent(Graphics g) {
@@ -226,10 +243,38 @@ public class Label extends Component {
 		}
 	}
 	
+        /**
+         * @param a The text of the label
+         * @see javax.swing.JLabel#setText(java.lang.String) JLabel.setText
+         */
+	public void setText(String a) {
+		
+		string = a;
+		
+	}
+        
+        /**
+         * @return The text of the label
+         * @see javax.swing.JLabel#getText() JLabel.getText
+         */
+        public String getText() {
+		
+		return string;
+		
+	}
+        
+        /**
+         * @return The font of the label
+         * @see java.awt.Component#getFont() Component.getFont
+         */
 	public Font getFont() {
 		return font;
 	}
 
+        /**
+         * @param font The font of the label
+         * @see javax.swing.JComponent#setFont(java.awt.Font) JComponent.setFont
+         */
 	public void setFont(Font font) {
 		this.font = font;
 		if (font!=null) {
@@ -237,13 +282,62 @@ public class Label extends Component {
 		}
 	}
 
+        /**
+         * @return The icon of the label
+         * @see javax.swing.JLabel#getIcon() JLabel.getIcon
+         */
 	public Image getIcon() {
 		return icon;
 	}
 
+        /**
+         * @param icon The icon of the label
+         * @see javax.swing.JLabel#setIcon(javax.swing.Icon) JLabel.setIcon
+         */
 	public void setIcon(Image icon) {
 		this.icon = icon;
 	}
+
+	/**
+         * @param a One of the following constants defined in Graphics: LEFT, HCENTER, RIGHT (the default)
+         * @see javax.swing.JLabel#setHorizontalTextPosition(int) JLabel.setHorizontalTextPosition
+         */
+	public void setHorizontalTextPosition(int a) {
+		horizontalTextPosition = a;
+	}
+	
+        /**
+         * @param a One of the following constants defined in Graphics: TOP, VCENTER (the default), or BOTTOM
+         * @see javax.swing.JLabel#setVerticalTextPosition(int) JLabel.setVerticalTextPosition
+         */
+	public void setVerticalTextPosition(int a) {
+		verticalTextPosition = a;
+	}
+	
+        /**
+         * @param alignment One of the following constants defined in Graphics: LEFT (the default for text-only labels), HCENTER (the default for image-only labels), RIGHT
+         * @see javax.swing.JLabel#setHorizontalAlignment(int) JLabel.setHorizontalAlignment
+         */
+        public void setHorizontalAlignment(int alignment) {
+            horizontalAlignment = alignment;
+        }
+
+        /**
+         * @param alignment One of the following constants defined in Graphics: TOP, VCENTER (the default), or BOTTOM
+         * @see javax.swing.JLabel#setVerticalAlignment(int) JLabel.setVerticalAlignment
+         */
+        public void setVerticalAlignment(int alignment) {
+            verticalAlignment = alignment;
+        }
+
+        /**
+         * @param iconTextGap The gap, default is 2
+         * @see javax.swing.JLabel#setIconTextGap(int) JLabel.setIconTextGap
+         */
+        public void setIconTextGap(int iconTextGap) {
+            gap = iconTextGap;
+        }
+        
 
         public void setValue(Object obj) {
             
@@ -268,7 +362,7 @@ public class Label extends Component {
             // if the width has not beed set yet
             // we will assume as can take the default amount
 
-            return RootPane.getDefaultStyle().defaultWidth;
+            return DesktopPane.getDefaultTheme().defaultWidth;
 
         }
         
@@ -280,23 +374,5 @@ public class Label extends Component {
 		}
 		
 	}
-	
-	public void setHorizontalTextPosition(int a) {
-		horizontalTextPosition = a;
-	}
-	
-	public void setVerticalTextPosition(int a) {
-		verticalTextPosition = a;
-	}
-	
 
-    public void setHorizontalAlignment(int alignment) {
-        horizontalAlignment = alignment;
-    }
-    
-    public void setVerticalAlignment(int alignment) {
-        verticalAlignment = alignment;
-    }
-
-    
 }

@@ -16,6 +16,7 @@ public class Theme {
 	public int itemActiveBorderColor;
 	
 	public int defaultWidth;
+        public int defaultSpace;
 	public int barHeight;
         
         public Theme(){

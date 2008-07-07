@@ -3,7 +3,7 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
 
@@ -32,7 +32,7 @@ public abstract class Component {
 	}
 	
 	public boolean isFocused() {
-		return RootPane.getRootPane().getActiveComponent() == this;
+		return DesktopPane.getDesktopPane().getFocusedComponent() == this;
 	}
 
 
@@ -156,11 +156,11 @@ public abstract class Component {
 				owner.repaint();
 			}
 			else {
-				RootPane.getRootPane().repaintComponent(p);
+				DesktopPane.getDesktopPane().repaintComponent(p);
 			}
 		}
 		else {
-			RootPane.getRootPane().repaintComponent(this);
+			DesktopPane.getDesktopPane().repaintComponent(this);
 		}
 	}
 
@@ -301,8 +301,8 @@ public abstract class Component {
 
 		try {
 			//if (owner!=null) {
-				synchronized (RootPane.getRootPane()) {
-					RootPane.getRootPane().wait(a);
+				synchronized (DesktopPane.getDesktopPane()) {
+					DesktopPane.getDesktopPane().wait(a);
 				}
 			//}
 

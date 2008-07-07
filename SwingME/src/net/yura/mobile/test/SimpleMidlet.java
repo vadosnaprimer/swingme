@@ -3,7 +3,7 @@ package net.yura.mobile.test;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Midlet;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Theme;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Window;
@@ -14,21 +14,21 @@ import net.yura.mobile.gui.layout.FlowLayout;
  */
 public class SimpleMidlet extends Midlet implements ActionListener {
 
-	private RootPane rootpane;
+	private DesktopPane rootpane;
 	
-	protected RootPane makeNewRootPane() {
-		return new RootPane(this,0,null);
+	protected DesktopPane makeNewRootPane() {
+		return new DesktopPane(this,0,null);
 	}
 	
-	protected void initialize(RootPane rp) {
+	protected void initialize(DesktopPane rp) {
 
 		this.rootpane = rp;
 		
-		Window mainWindow = rootpane.getCurrentWindow();
+		Window mainWindow = rootpane.getSelectedFrame();
 		
                 mainWindow.setActionListener(this);
                 
-		RootPane.setDefaultStyle( new Theme() );
+		rootpane.setDefaultTheme( new Theme() );
 		
 		mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
 		

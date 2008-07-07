@@ -3,7 +3,7 @@ package net.yura.mobile.gui.layout;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Panel;
 /**
@@ -23,7 +23,7 @@ public class GridLayout implements Layout {
          */
 	public GridLayout(int rows, int cols) {
 		
-		this(rows, cols,RootPane.getDefaultSpace() );
+		this(rows, cols,DesktopPane.getDefaultTheme().defaultSpace );
 	}
 	
         /**

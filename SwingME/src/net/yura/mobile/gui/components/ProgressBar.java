@@ -1,7 +1,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 
 public class ProgressBar extends Component {
 
@@ -43,7 +43,7 @@ public class ProgressBar extends Component {
 	public void start() {
 		
 		go = true;
-		RootPane.getRootPane().animateComponent(this);
+		DesktopPane.getDesktopPane().animateComponent(this);
 	}
 
 	public void stop() {

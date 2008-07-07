@@ -1,12 +1,13 @@
 package net.yura.mobile.gui.components;
 
+import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
-import net.yura.mobile.gui.RootPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.GridLayout;
@@ -77,8 +78,10 @@ public class Window extends Component implements ActionListener {
                     contentPane.add(decoration,Graphics.TOP);
         }
     
-	public void setupActiveComponent() {
+	public void setupFocusedComponent() {
 
+            DesktopPane.getDesktopPane().setFocusedComponent(null);
+            
             if (glasspanecomponent!=null) {
                     glasspanecomponent.breakOutAction(null,Canvas.DOWN,false);
             }
@@ -118,21 +121,21 @@ public class Window extends Component implements ActionListener {
     	else if (c!=null) {
     		glasspanecomponent = c;
     		glasspanecomponent.setOwnerAndParent(this, null);
-    		old = RootPane.getRootPane().getCurrentItem();
+    		old = DesktopPane.getDesktopPane().getFocusedComponent();
     		//if (glasspanecomponent instanceof Panel) { ((Panel)glasspanecomponent).doLayout(); }
     		//glasspanecomponent.doLayout(); // TODO wrong place, will not always work
     		//owner.setActiveComponent(glasspanecomponent);
-    		setupActiveComponent();
+    		setupFocusedComponent();
     	}
     	else if (glasspanecomponent!=null) {
     		glasspanecomponent.setOwnerAndParent(null, null);
     		glasspanecomponent = null;
     		
     		if (old!=null && old.getOwner()!=null) {
-    			RootPane.getRootPane().setActiveComponent(old);
+    			DesktopPane.getDesktopPane().setFocusedComponent(old);
     		}
     		else {
-    			setupActiveComponent();
+    			setupFocusedComponent();
     		}
     		repaint();
     	}
@@ -323,11 +326,11 @@ public class Window extends Component implements ActionListener {
 	
 	public void repaint() {
 		
-		if (this == RootPane.getRootPane().getCurrentWindow() && !transparent) {
-			RootPane.getRootPane().windowRepaint();
+		if (this == DesktopPane.getDesktopPane().getSelectedFrame() && !transparent) {
+			DesktopPane.getDesktopPane().windowRepaint();
 		}
 		else {
-			RootPane.getRootPane().fullRepaint();
+			DesktopPane.getDesktopPane().fullRepaint();
 		}
 		
 	}
@@ -336,7 +339,7 @@ public class Window extends Component implements ActionListener {
          if ("close".equals(actionCommand)) {
              
              if (parent==null) {
-                RootPane.getRootPane().closeWindow(this);
+                DesktopPane.getDesktopPane().remove(this);
              }
              else {
                  parent.remove(this);
@@ -345,7 +348,10 @@ public class Window extends Component implements ActionListener {
          if ("hide".equals(actionCommand)) {
          
              if (parent==null) {
-                RootPane.getRootPane().hideWindow(this);
+                 Vector windows = DesktopPane.getDesktopPane().getAllFrames();
+                 if (windows.size()>1) {
+                     DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
+                 }
              }
          }
     }
