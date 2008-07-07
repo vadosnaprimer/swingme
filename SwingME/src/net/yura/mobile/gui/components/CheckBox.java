@@ -3,10 +3,11 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.Graphics;
 
 import javax.microedition.lcdui.Image;
-import net.yura.mobile.gui.KeyEvent;
 
 public class CheckBox extends RadioButton {
 	
+        private boolean oldState;
+    
         public CheckBox(String label,Image a,Image b) {
             super(label,a,b);
         }
@@ -15,18 +16,14 @@ public class CheckBox extends RadioButton {
             super(label);
 	}
 	
-	public boolean keyEvent(KeyEvent keyEvent){
-		boolean sel = selected;
-		boolean consumed = handelKeyEvent(keyEvent);
-		if (consumed && sel) {
+        public void fireActionPerformed() {
+                
+                if (oldState) selected=false;
+                
+                super.fireActionPerformed();
 
-			selected = false;
-
-		}
-		if (consumed) {
-                    repaint();
-                }
-		return consumed;
+                oldState = selected;
+                
 	}
 	
 

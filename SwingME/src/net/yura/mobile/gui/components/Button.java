@@ -31,21 +31,6 @@ public class Button extends Label implements ActionListener {
 	
 	private boolean useSelectButton;
 
-	/**
-	 * Creates a new MButtonItem with the given label with requested button alignment.
-	 * @param label - the button label
-	 * @param font - preffered font object
-	 * @param align - One of the 3 available alignments(LEFT, HCENTER, RIGHT).
-	 */
-	
-	public boolean isSelected() {
-		return selected;
-	}
-
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
-
 	public Button(){
             this(null);
         }
@@ -80,6 +65,14 @@ public class Button extends Label implements ActionListener {
 		
 	}
 
+        public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+        
 	public void addActionListener(ActionListener l) {
 		
 		al = l;
@@ -96,7 +89,17 @@ public class Button extends Label implements ActionListener {
 	}
 
 	public boolean keyEvent(KeyEvent keyEvent) {
-            return handelKeyEvent(keyEvent);        
+            
+            	if (keyEvent.justPressedAction(Canvas.FIRE)) {
+
+                        selected = true;
+                    
+			fireActionPerformed();
+			
+			return true;
+		}
+		return false;
+    
         }
 
         public void pointerEvent(int type, int x, int y) {
@@ -109,30 +112,17 @@ public class Button extends Label implements ActionListener {
                 }
         }
         
-        public boolean handelKeyEvent(KeyEvent keypad) {
-		if (keypad.justPressedAction(Canvas.FIRE)) {
-
-			fireActionPerformed();
-			
-			return true;
-		}
-		return false;
-	}
-        
 	public void fireActionPerformed() {
 		
+            	if (buttonGroup!=null) {
+                        // this unselects all other buttons in the same button group as this 1
+			buttonGroup.setSelected(this);
+		}
+            
 		if (al!=null) {
 			al.actionPerformed((actionCommand!=null)?actionCommand:getText());
 		}
-		if (buttonGroup!=null) {
-			selected = true;
-			buttonGroup.setSelected(this);
-		}
-		if (isSelected()==false){
-			selected = true;
-		}
-		
-		
+
 	}
         
 	public void setBorder(Border b) {

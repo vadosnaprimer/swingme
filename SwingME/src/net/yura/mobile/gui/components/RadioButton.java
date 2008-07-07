@@ -3,8 +3,6 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
-import net.yura.mobile.gui.KeyEvent;
-
 public class RadioButton extends Button {
 
 	protected Image selectedImage;
@@ -106,16 +104,12 @@ public class RadioButton extends Button {
 	            g.fillArc(x+size2, y+size2, size-(size2*2), size-(size2*2), 0, 360);
                 }
 	}
-
 	
-	public boolean keyEvent(KeyEvent keyEvent){
-		boolean consumed = handelKeyEvent(keyEvent);
-		if (consumed) {
-                    repaint();
-                }
-		return consumed;
-	}
-	
+        public void fireActionPerformed() {
+            repaint();
+            super.fireActionPerformed();
+        }
+        
 	public Image getSelectedImage() {
 		return selectedImage;
 	}
