@@ -116,7 +116,11 @@ public abstract class Component {
 		return false;
 	}
 
-	public void pointerEvent(int type, int x, int y) { }
+	public void pointerEvent(int type, int x, int y) {
+            if (selectable && type == DesktopPane.PRESSED) {
+                DesktopPane.getDesktopPane().setFocusedComponent(this);
+            }
+        }
 	
 	public void animate() { }
 	

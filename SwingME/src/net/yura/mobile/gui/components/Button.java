@@ -103,16 +103,17 @@ public class Button extends Label implements ActionListener {
         }
 
         public void pointerEvent(int type, int x, int y) {
-                
-                if (type == DesktopPane.PRESSED) {
-                    selected=true;
-                }
-                else if (selected && type == DesktopPane.RELEASED) {
-                    fireActionPerformed();
-                }
+            super.pointerEvent(type, x, y);
+            
+            if (type == DesktopPane.PRESSED) {
+                selected=true;
+            }
+            else if (selected && type == DesktopPane.RELEASED) {
+                fireActionPerformed();
+            }
         }
         
-	public void fireActionPerformed() {
+	 public void fireActionPerformed() {
 		
             	if (buttonGroup!=null) {
                         // this unselects all other buttons in the same button group as this 1
