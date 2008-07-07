@@ -71,39 +71,31 @@ public class DropDownMenu extends Button implements ActionListener{
 			scroll.doLayout();
 		}
 	}
-	
-	public boolean keyEvent(KeyEvent keypad){
 
-		boolean response = super.keyEvent(keypad);
+	public void fireActionPerformed() {
+        
+                createList();
 
-		if (response) {
-			createList();
-			
-			int y;
-			
-			if ((getYInWindow() + height + scroll.getHeight()) > owner.getHeight()){
-				y = getYInWindow() - scroll.getHeight();
-			} else{
-				y = getYInWindow() + height;
-			}
-			
-			scroll.setPosition(getXInWindow(), y);		
-			owner.setGlassPaneComponent(scroll);
-			
-			pbuttons = new CommandButton[2];
-			pbuttons[0]=owner.getPanelCommands()[0];
-			pbuttons[1]=owner.getPanelCommands()[1];
-			owner.setWindowCommand(0, null);
-			owner.setWindowCommand(1, null);
-			
-			owner.repaint();
-		}
-		return response;
-	}
-	
-        // we dont want to have the listeners notified on the click
-        // we do want them notified WHEN the drop down menu is closed
-	public void fireActionPerformed() { }
+                int y;
+
+                if ((getYInWindow() + height + scroll.getHeight()) > owner.getHeight()){
+                        y = getYInWindow() - scroll.getHeight();
+                } else{
+                        y = getYInWindow() + height;
+                }
+
+                scroll.setPosition(getXInWindow(), y);		
+                owner.setGlassPaneComponent(scroll);
+
+                pbuttons = new CommandButton[2];
+                pbuttons[0]=owner.getPanelCommands()[0];
+                pbuttons[1]=owner.getPanelCommands()[1];
+                owner.setWindowCommand(0, null);
+                owner.setWindowCommand(1, null);
+
+                owner.repaint();
+        
+        }
 	
 	private void createList() {
 		if (list==null) {

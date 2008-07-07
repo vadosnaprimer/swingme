@@ -205,7 +205,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	//}
         
 	/**
-	 * @param g - Graphics object
+	 * @param g The Graphics object
 	 */
 	public void paint(Graphics g) {
 

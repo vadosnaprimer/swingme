@@ -99,6 +99,16 @@ public class Button extends Label implements ActionListener {
             return handelKeyEvent(keyEvent);        
         }
 
+        public void pointerEvent(int type, int x, int y) {
+                
+                if (type == DesktopPane.PRESSED) {
+                    selected=true;
+                }
+                else if (selected && type == DesktopPane.RELEASED) {
+                    fireActionPerformed();
+                }
+        }
+        
         public boolean handelKeyEvent(KeyEvent keypad) {
 		if (keypad.justPressedAction(Canvas.FIRE)) {
 
