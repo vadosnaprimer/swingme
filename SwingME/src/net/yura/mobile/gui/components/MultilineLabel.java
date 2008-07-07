@@ -5,6 +5,11 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
 
+/**
+ * a component thats like a read-only TextArea
+ * @author Yura Mamyrin
+ * @see javax.swing.JTextArea
+ */
 public class MultilineLabel extends Component {
 	
         private String text;
@@ -29,26 +34,23 @@ public class MultilineLabel extends Component {
 	}
 
 	/**
-	 * Creates a new MStringObject item with the given content.
-	 * @param text - the text content
-	 * @param font - preffered font object
-	 * @param alignment - Alignment of the text, should be one of the alignment from Font class
+         * @param text the text content
+	 * @param font preffered font object
+	 * @param alignment Alignment of the text, should be one of the alignment from Font class
+         * @param width The Width
 	 */
-	public MultilineLabel(String text, Font f, int alignment,int w) {
+	public MultilineLabel(String text, Font font, int alignment,int width) {
 		
-		width = w;
+		this.width = width;
 		align = alignment;
-                font = f;
+                this.font = font;
 		selectable = false;
 		foreground = DesktopPane.getDefaultTheme().foreground;
 		setText(text);
 	}
 	
 	/**
-	 * Renders this item at given y position
-	 * @param Graphics - the graphics object
-	 * @param int - Y position
-	 * @return int - height of the item
+	 * @param g The Graphics object
 	 */
 	public void paintComponent(Graphics g) {
 
@@ -117,7 +119,7 @@ public class MultilineLabel extends Component {
 
 	/**
 	 * Set's the line spacing
-	 * @param lineSpacing - spacing between lines
+	 * @param lineSpacing spacing between lines
 	 */	
 	public void setLineSpacing(int lineSpacing) {
 		this.lineSpacing = lineSpacing;
@@ -125,12 +127,16 @@ public class MultilineLabel extends Component {
 	
 	/**
 	 * Set's the text
-	 * @param text
+	 * @param txt The text
 	 */
 	public void setText(String txt) {
                 setText(txt,getLines(txt,font,0,width));
 	}
 	
+        /**
+         * @param a The text to append
+         * @see javax.swing.JTextArea#append(java.lang.String) JTextArea.append
+         */
 	public void append(String a) {
 	
             String newtext = text + a;
@@ -169,10 +175,18 @@ public class MultilineLabel extends Component {
             return text;
 	}
 	
+        /**
+         * @param font The font to use
+         * @see javax.swing.JComponent#setFont(java.awt.Font) JComponent.setFont
+         */
 	public void setFont(Font font){
 		this.font = font;
 	}
 	
+        /**
+         * @return the font
+         * @see java.awt.Component#getFont() Component.getFont
+         */
 	public Font getFont(){
 		return font;
 	}

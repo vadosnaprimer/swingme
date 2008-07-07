@@ -389,11 +389,14 @@ public class DesktopPane extends Canvas implements Runnable {
             return currentCommands;
         }
 
+    /**
+     * @see Window#setWindowCommand
+     */
 	public void setComponentCommand(int i, CommandButton softkey) {
 
 		omponentCommands[i] = softkey;
 		repaint();
-                // TODO: is this correct, will ANY repaint do?
+                // TODO: is this correct, will ANY repaint do? (also in another place)
 
 	}
 

@@ -312,10 +312,13 @@ public class Window extends Component implements ActionListener {
         return panelCmds;
     }
 
+    /**
+     * @see DesktopPane#setComponentCommand
+     */
 	public void setWindowCommand(int i, CommandButton softkey) {
 
 		panelCmds[i] = softkey;
-		repaint(); // TODO is this correct, will ANY repaint do? also another place
+		repaint(); // TODO is this correct, will ANY repaint do? (also in another place)
 		
 	}
 	

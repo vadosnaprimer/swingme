@@ -37,13 +37,13 @@ import java.util.Hashtable;
  * object that contains a non-<code>String</code> key.
  *
  * <p>
- * The {@link #load(java.io.Reader) load(Reader)} <tt>/</tt>
- * {@link #store(java.io.Writer, java.lang.String) store(Writer, String)}
+ * The {@link java.util.Properties#load(java.io.Reader) load(Reader)} <tt>/</tt>
+ * {@link java.util.Properties#store(java.io.Writer, java.lang.String) store(Writer, String)}
  * methods load and store properties from and to a character based stream
  * in a simple line-oriented format specified below.
  *
- * The {@link #load(java.io.InputStream) load(InputStream)} <tt>/</tt>
- * {@link #store(java.io.OutputStream, java.lang.String) store(OutputStream, String)}
+ * The {@link java.util.Properties#load(java.io.InputStream) load(InputStream)} <tt>/</tt>
+ * {@link java.util.Properties#store(java.io.OutputStream, java.lang.String) store(OutputStream, String)}
  * methods work the same way as the load(Reader)/store(Writer, String) pair, except
  * the input/output stream is encoded in ISO 8859-1 character encoding.
  * Characters that cannot be directly represented in this encoding can be written using
@@ -52,45 +52,9 @@ import java.util.Hashtable;
  * sequence. The native2ascii tool can be used to convert property files to and
  * from other character encodings.
  * 
- * <p> The {@link #loadFromXML(InputStream)} and {@link
- * #storeToXML(OutputStream, String, String)} methods load and store properties
- * in a simple XML format.  By default the UTF-8 character encoding is used,
- * however a specific encoding may be specified if required.  An XML properties
- * document has the following DOCTYPE declaration:
- *
- * <pre>
- * &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
- * </pre>
- * Note that the system URI (http://java.sun.com/dtd/properties.dtd) is
- * <i>not</i> accessed when exporting or importing properties; it merely
- * serves as a string to uniquely identify the DTD, which is:
- * <pre>
- *    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
- *
- *    &lt;!-- DTD for properties --&gt;
- *
- *    &lt;!ELEMENT properties ( comment?, entry* ) &gt;
- *
- *    &lt;!ATTLIST properties version CDATA #FIXED "1.0"&gt;
- *
- *    &lt;!ELEMENT comment (#PCDATA) &gt;
- *
- *    &lt;!ELEMENT entry (#PCDATA) &gt;
- *
- *    &lt;!ATTLIST entry key CDATA #REQUIRED&gt;
- * </pre>
- * 
- * @see <a href="../../../technotes/tools/solaris/native2ascii.html">native2ascii tool for Solaris</a>
- * @see <a href="../../../technotes/tools/windows/native2ascii.html">native2ascii tool for Windows</a>
- *
- * <p>This class is thread-safe: multiple threads can share a single
- * <tt>Properties</tt> object without the need for external synchronization.
- *
- * @author  Arthur van Hoff
- * @author  Michael McCloskey
- * @author  Xueming Shen
- * @version 1.96, 08/07/06
- * @since   JDK1.0
+ * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/solaris/native2ascii.html">native2ascii tool for Solaris</a>
+ * @see <a href="http://java.sun.com/j2se/1.4.2/docs/tooldocs/windows/native2ascii.html">native2ascii tool for Windows</a>
+ * @see java.util.Properties
  */
 public class Properties extends Hashtable {
     /**
@@ -105,26 +69,6 @@ public class Properties extends Hashtable {
      * @serial
      */
     protected Properties defaults;
-
-    // THIS WILL IGNORE THE ENCODING AND NOT THROW
-    
-    /**
-     * @deprecated
-     */
-    public Properties(String resource,String encoding) {
-		try {
-			load( getClass().getResourceAsStream(resource) );
-		} catch(Throwable t) {
-			t.printStackTrace();
-		} 
-    }
-    
-    /**
-     * @deprecated
-     */
-	public Properties(String resource, int length, String encoding) {
-		this(resource, encoding);
-	}
 
     /**
      * Creates an empty property list with no default values.
@@ -981,7 +925,7 @@ public class Properties extends Hashtable {
      *          is not a string. 
      * @see     java.util.Enumeration
      * @see     java.util.Properties#defaults
-     * @see     #stringPropertyNames
+     * @see     java.util.Properties#stringPropertyNames
      */
     public Enumeration propertyNames() {
 	Hashtable h = new Hashtable();

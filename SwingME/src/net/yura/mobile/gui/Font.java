@@ -395,8 +395,7 @@ public class Font {
 	*			then the string will be rendered such that the x, y position is at the middle right of the string, i.e. the entire string will
 	*			to the left of the point with half of the string above and half below the point.
 	*/
-	public int drawString(Graphics g, String s, int x, int y, int alignment)
-	{
+	public int drawString(Graphics g, String s, int x, int y, int alignment) {
 		
             setColor( g.getColor() );
             
@@ -539,7 +538,7 @@ public class Font {
 	
 	private int renderNumber(Graphics g, int x, int y, int number, int digits) {
 		
-		int column, digit, startX = x;
+		int column, digit, sX = x;
 
 		for(digit = 0, column = 1; digit < digits; digit++)
 		{
@@ -565,7 +564,7 @@ public class Font {
 			x = drawDigit(g,x,y,digit);
 		}
 
-		return x - startX - characterSpacing;
+		return x - sX - characterSpacing;
 	}
 	
 	

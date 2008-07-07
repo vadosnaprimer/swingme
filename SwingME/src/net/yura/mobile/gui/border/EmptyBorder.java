@@ -37,7 +37,7 @@ public class EmptyBorder implements Border {
 	}
 	
 	/**
-         * @return
+         * @return The size of the bottom
          * @see javax.swing.border.EmptyBorder#getBorderInsets(java.awt.Component) EmptyBorder.getBorderInsets
          */
 	public int getBottom() {
@@ -46,7 +46,7 @@ public class EmptyBorder implements Border {
 	}
 
 	/**
-         * @return
+         * @return The size of the left
          * @see javax.swing.border.EmptyBorder#getBorderInsets(java.awt.Component) EmptyBorder.getBorderInsets
          */
 	public int getLeft() {
@@ -55,7 +55,7 @@ public class EmptyBorder implements Border {
 	}
 
 	/**
-         * @return
+         * @return The size of the right
          * @see javax.swing.border.EmptyBorder#getBorderInsets(java.awt.Component) EmptyBorder.getBorderInsets
          */
 	public int getRight() {
@@ -64,7 +64,7 @@ public class EmptyBorder implements Border {
 	}
 
 	/**
-         * @return
+         * @return The size of the top
          * @see javax.swing.border.EmptyBorder#getBorderInsets(java.awt.Component) EmptyBorder.getBorderInsets
          */
 	public int getTop() {
