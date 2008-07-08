@@ -88,8 +88,8 @@ public class DropDownMenu extends Button implements ActionListener{
                 owner.setGlassPaneComponent(scroll);
 
                 pbuttons = new CommandButton[2];
-                pbuttons[0]=owner.getPanelCommands()[0];
-                pbuttons[1]=owner.getPanelCommands()[1];
+                pbuttons[0]=owner.getWindowCommands()[0];
+                pbuttons[1]=owner.getWindowCommands()[1];
                 owner.setWindowCommand(0, null);
                 owner.setWindowCommand(1, null);
 

@@ -11,33 +11,36 @@ import net.yura.mobile.util.StringUtil;
 
 public class Font {
 	
-	private int			height;
-	private int			startX[];
-	private int			startY[];
-	private int			spaceWidth;
-	private byte		characterWidth[];
-	private Image		characterImage;
-	private int			characterSpacing;
-	
+	private int	height;
+	private int	startX[];
+	private int	startY[];
+	private int	spaceWidth;
+	private byte	characterWidth[];
+	private Image	characterImage;
+	private int	characterSpacing;
+
 	private javax.microedition.lcdui.Font systemFont=null;
 	private int	fontColor=0;
 
 	private Hashtable imageTable;
 	private int[] colors;
-	
+
 	private boolean numbermode;
-	
-	
+
 	public Font() {
+            this( javax.microedition.lcdui.Font.getDefaultFont() );
+        }
+
+	public Font(javax.microedition.lcdui.Font f) {
 		
-		setSystemFont( javax.microedition.lcdui.Font.getDefaultFont() );
+		setSystemFont( f );
 		
 		// not sure if this is needed
 		colors = new int[2];
 		colors[0]=0x00000000;
 		colors[1]=0x000000FF;
 	}
-	
+
 	public Font(String name) {
 
 		try {
@@ -192,26 +195,14 @@ public class Font {
 		height = getHeight();
 	}
 	
-	/**
-	* Sets the distance in pixels between each character.
-	* This is used when a string is rendered, between each adjacent pair of non-space characters a spacing gap is inserted.
-	* This gap may be negative in order to overlap the character images. Be careful when changing this value as it affects
-	* the width of strings and subsequently any alignment applied to them when rendered.
-	* @param	spacing The size in pixels of the gap between non-space characters (can be negative if desired).
-	*/
-	public void	setCharacterSpacing(int spacing)
+
+	public void setCharacterSpacing(int spacing)
 	{
 		characterSpacing = spacing;
 	}
 
-	/**
-	* Sets the size of a space character.
-	* A space character is defined as any character with a width of zero. The default value for the space width in a newly
-	* created font is the same width as that font's lower case 'o' character, so make sure this value is set for fonts
-	* that do not contain a lowe case 'o'.
-	* @param	width The width of the space character.
-	*/
-	public void	setSpaceWidth(int width)
+
+	public void setSpaceWidth(int width)
 	{
 		spaceWidth = width;
 	}
@@ -219,8 +210,8 @@ public class Font {
 	/**
 	* Gets the width of a single character using this font.
 	* This will return the space width for any zero-width characters as these characters are treated as spaces.
-	* @param	c The character to get the width of.
-	* @return	The width of the requested character when rendered using this font.
+	* @param c The character to get the width of.
+	* @return The width of the requested character when rendered using this font.
 	*/
 	public int getWidth(char c) {
 		
@@ -290,15 +281,7 @@ public class Font {
 		
 	}
 	
-	/**
-	* Gets the height of the font.
-	* The height of the font is defined by the character data image. It may not always be the height of the tallest
-	* character in the font, but should be the difference between the top of the character that stretches the highest
-	* above the baseline and the bottom of the one that reaches the lowest below it.
-	* @return	The height of the font in pixels.
-	*/
-	public int getHeight()
-	{
+	public int getHeight() {
 		if(systemFont != null)
 		{
 			return systemFont.getHeight();
@@ -307,12 +290,6 @@ public class Font {
 		return height;
 	}
 
-	/**
-	* Gets the width in pixels of a string rendered using this font.
-	* Be careful if you change the space width or the character spacing of the font as this will affect all string widths,
-	* so if you need to store string widths, make sure you update those stored values after changing the display properties.
-	* @return	The width of the string in pixels when rendered using this font.
-	*/
 	public int getWidth(String s) {
 
 		if (numbermode) {
@@ -375,26 +352,19 @@ public class Font {
 	 * Returns system font object, null if system font object is null and bitmap fonts being used.
 	 * @return - javax.microedition.lcdui.Font or null if bitmap fonts used.
 	 */
-	public javax.microedition.lcdui.Font getFont()
-	{
+	public javax.microedition.lcdui.Font getFont() {
 		return systemFont;
 	}
 	
-	/**
+       /**
 	* Renders a string onto a graphics object.
 	* This will draw the specified string onto the specified graphics object using this font at the requested position and alignment.
 	* @param	g The graphics object to draw onto.
 	* @param	s The string to draw.
 	* @param	x The x position in the graphics object.
 	* @param	y The y position in the graphics object.
-	* @param	alignment The alignment to use. This can be one of TOP, MIDDLE, BOTTOM (vertical alignments), LEFT, CENTER, RIGHT
-	*			(horizontal alignments) or one of the combined flags TOP_LEFT, TOP_CENTER, TOP_RIGHT, etc. The combined values are the
-	*			same as bitwise or'ing together a vertical alignment value with a horizontal alignment value and are provided for
-	*			convenience and readability of your code. The default vertical alignment is TOP and the default horizontal alignment is LEFT.
-	*			The alignment will align the specified 'handle' of the string to the x, y position, so for example if you specify MIDDLE_RIGHT
-	*			then the string will be rendered such that the x, y position is at the middle right of the string, i.e. the entire string will
-	*			to the left of the point with half of the string above and half below the point.
-	*/
+	* @param	alignment The alignment to use. 
+        */
 	public int drawString(Graphics g, String s, int x, int y, int alignment) {
 		
             setColor( g.getColor() );

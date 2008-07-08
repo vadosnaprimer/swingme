@@ -17,6 +17,7 @@ public class Window extends Component implements ActionListener {
 	private Panel contentPane;
 	private Panel glasspanecomponent;
         
+        private CommandButton[] panelCmds;
         private ActionListener actionListener;
         
         public ActionListener getActionListener() {
@@ -304,17 +305,13 @@ public class Window extends Component implements ActionListener {
 
 	public void paintComponent(Graphics g) { }
 
-	
-	
-	public CommandButton[] panelCmds;
+        public CommandButton[] getWindowCommands() {
+            return panelCmds;
+        }
 
-    public CommandButton[] getPanelCommands(){
-        return panelCmds;
-    }
-
-    /**
-     * @see DesktopPane#setComponentCommand
-     */
+        /**
+         * @see DesktopPane#setComponentCommand
+         */
 	public void setWindowCommand(int i, CommandButton softkey) {
 
 		panelCmds[i] = softkey;

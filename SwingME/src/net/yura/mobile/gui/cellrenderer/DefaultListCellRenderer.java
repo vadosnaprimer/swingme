@@ -26,20 +26,15 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
          */
         public DefaultListCellRenderer() {
             
-            this(
-            DesktopPane.getDefaultTheme().font,
-            DesktopPane.getDefaultTheme().itemBorderColor,
-            DesktopPane.getDefaultTheme().itemActiveBorderColor);
+            this(0x00808080,0);
         }
         
-	public DefaultListCellRenderer(Font s,int color,int c2) {
-		
-		super("",s);
-		
+	public DefaultListCellRenderer(int backColor,int borderColor) {
+
 		normal = new EmptyBorder(1,1,1,1);
-		selected = new LineBorder(c2,-1,1,false,Graphics.DOTTED);
+		selected = new LineBorder(borderColor,-1,1,false,Graphics.DOTTED);
 		setBorder(normal);
-		this.color=color;
+		this.color=backColor;
 	}
 	/**
          * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) DefaultListCellRenderer.getListCellRendererComponent

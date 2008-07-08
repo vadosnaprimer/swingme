@@ -384,8 +384,8 @@ public class DesktopPane extends Canvas implements Runnable {
 	}
         
         public CommandButton[] getCurrentCommands(){
-            currentCommands[0] = omponentCommands[0] == null ? currentWindow.panelCmds[0] : omponentCommands[0];
-            currentCommands[1] = omponentCommands[1] == null ? currentWindow.panelCmds[1] : omponentCommands[1];
+            currentCommands[0] = omponentCommands[0] == null ? currentWindow.getWindowCommands()[0] : omponentCommands[0];
+            currentCommands[1] = omponentCommands[1] == null ? currentWindow.getWindowCommands()[1] : omponentCommands[1];
             return currentCommands;
         }
 
@@ -415,7 +415,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 			}
 
-			CommandButton[] panelCmds = currentWindow.getPanelCommands();
+			CommandButton[] panelCmds = currentWindow.getWindowCommands();
                         ActionListener actionListener = currentWindow.getActionListener();
                         
                         boolean softkey1Action = keyevent.isDownKey(KeyEvent.KEY_SOFTKEY1) || keyevent.justReleasedKey(KeyEvent.KEY_SOFTKEY1);

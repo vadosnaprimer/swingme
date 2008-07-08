@@ -13,6 +13,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.border.Border;
 
 public class TextField extends Component implements ActionListener, CommandListener {
 	
@@ -41,8 +42,8 @@ public class TextField extends Component implements ActionListener, CommandListe
         private String label;
 	private int mode;
 
-	private int borderColor;
-	private int activeBorderColor;
+	private Border borderColor;
+	private Border activeBorderColor;
         private int activeTextColor;
 
         private StringBuffer text;
@@ -79,10 +80,10 @@ public class TextField extends Component implements ActionListener, CommandListe
 		setBackground(DesktopPane.getDefaultTheme().background);
 		setForeground(DesktopPane.getDefaultTheme().foreground);
 
-		borderColor = DesktopPane.getDefaultTheme().itemBorderColor;
-		activeBorderColor = DesktopPane.getDefaultTheme().itemActiveBorderColor;
+		borderColor = DesktopPane.getDefaultTheme().normalBorder;
+		activeBorderColor = DesktopPane.getDefaultTheme().activeBorder;
 		
-		setBorder(new LineBorder(borderColor));
+		setBorder(borderColor);
 		
 		if (font.getColors().length >1) {
 			activeTextColor = font.getColors()[1];
@@ -347,10 +348,7 @@ public class TextField extends Component implements ActionListener, CommandListe
         
 	public void focusLost() {
 		
-		if (border instanceof LineBorder) {
-			
-			((LineBorder)border).setLineColor(borderColor);
-		}
+		setBorder(borderColor);
 		
 		active = false;
 		showCaret = false;
@@ -365,10 +363,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 	
 	public void focusGained() {
 
-		if (border instanceof LineBorder) {
-			
-			((LineBorder)border).setLineColor(activeBorderColor);
-		}
+		setBorder(activeBorderColor);
 		
 		active = true;
 		showCaret = true;
@@ -417,10 +412,6 @@ public class TextField extends Component implements ActionListener, CommandListe
         
 	public void setMode(int m) {
 		mode = m;
-	}
-
-	public void setBorderColor(int color) {
-		borderColor = color;
 	}
 
 	public int getLength() {

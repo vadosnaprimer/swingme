@@ -1,5 +1,8 @@
 package net.yura.mobile.gui;
 
+import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.border.LineBorder;
+
 public class Theme {
 	
 	public int scrollBarCol=0x00FFFFFF;
@@ -12,8 +15,8 @@ public class Theme {
 	public int background;
 	public int foreground;
 	
-	public int itemBorderColor;
-	public int itemActiveBorderColor;
+	public Border normalBorder;
+	public Border activeBorder;
 	
 	public int defaultWidth;
         public int defaultSpace;
@@ -34,8 +37,8 @@ public class Theme {
 		background = 0x00FFFFFF;
 		foreground = 0;
 		
-		itemBorderColor = 0x00808080;
-		itemActiveBorderColor = 0;
+		normalBorder = new LineBorder(0x00808080);
+		activeBorder = new LineBorder(0);
 
 	}
 

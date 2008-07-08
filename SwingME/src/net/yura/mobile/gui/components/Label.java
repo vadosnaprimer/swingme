@@ -41,7 +41,7 @@ public class Label extends Component {
          */
 	public Label(String text) {
 		
-		this(text,DesktopPane.getDefaultTheme().font);
+		this(text,null);
 		
 	}
 	
@@ -63,12 +63,6 @@ public class Label extends Component {
         public Label(String text,Image icon) {
 		
 		this(text,DesktopPane.getDefaultTheme().font,icon);
-		
-	}
-
-        public Label(String text,Font f) {
-		
-		this(text,f,null);
 		
 	}
         
@@ -365,7 +359,9 @@ public class Label extends Component {
             return DesktopPane.getDefaultTheme().defaultWidth;
 
         }
-        
+        /**
+         * @deprecated 
+         */
 	public void setForegroundByFontColorIndex(int a) {
 		
 		if (a < font.getColors().length ) {

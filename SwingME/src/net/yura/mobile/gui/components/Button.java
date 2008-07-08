@@ -1,15 +1,19 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.util.ButtonGroup;
 import net.yura.mobile.gui.CommandButton;
-import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
 
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.JButton
+ */
 public class Button extends Label implements ActionListener {
 
 	private static CommandButton selectButton = new CommandButton("Select","select");
@@ -31,34 +35,47 @@ public class Button extends Label implements ActionListener {
 	
 	private boolean useSelectButton;
 
-	public Button(){
+        /**
+         * @see javax.swing.JButton#JButton() JButton.JButton
+         */
+	public Button() {
             this(null);
         }
+        
+        /**
+         * @param label the text of the button
+         * @see javax.swing.JButton#JButton(java.lang.String) JButton.JButton
+         */
 	public Button(String label) {
 		
-		this(label,
-				DesktopPane.getDefaultTheme().font,
-				DesktopPane.getDefaultTheme().background,
-				DesktopPane.getDefaultTheme().itemBorderColor,
-				DesktopPane.getDefaultTheme().itemActiveBorderColor);
+		this(label,null);
 
 	}
 	
-	public Button(String label, Font font) {
+        /**
+         * @param label the text of the button
+         * @param img the Icon image to display on the button
+         * @see javax.swing.JButton#JButton(java.lang.String, javax.swing.Icon) JButton.JButton
+         */
+	public Button(String label, Image img) {
 		
-		this(label,font,0x00FFFFFF,0x00000000,0);
+		this(label,img,
+                        DesktopPane.getDefaultTheme().background,
+                        DesktopPane.getDefaultTheme().normalBorder,
+                        DesktopPane.getDefaultTheme().activeBorder
+                );
 
 	}
 	
 	// full constructor
-	public Button(String label, Font font,int a,int b,int c) {
-		super(label, font);
+	public Button(String label, Image img,int a,Border b,Border c) {
+		super(label, img);
 		
 		background = a;
 		transparent = false;
 		
-		setBorder(new LineBorder(b));
-                setActiveBorder(new LineBorder(c));
+		setBorder(b);
+                setActiveBorder(c);
 		selectable = true;
 		
 		setForegroundByFontColorIndex(0);
