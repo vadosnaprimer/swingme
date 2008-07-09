@@ -98,7 +98,7 @@ public class Panel extends Component {
 	public void remove(Component component) {
 		components.removeElement(component);
 		
-		//component.setOwner( null );
+		component.setOwnerAndParent(null,null);
 		
 		constraints.remove(component);
 	}
@@ -126,31 +126,37 @@ public class Panel extends Component {
         
 	public void paint(Graphics g) {
 		super.paint(g);
-		
-        //System.out.println("painting"+components);
-		
-		paintChildren(g);
 
-        
-        //g.translate(-posX, -posY);
+		paintChildren(g);
 	}
 	
 	public void paintChildren(Graphics g){
-        for(int i = 0; i < components.size(); i++){
-        	Component component = (Component)components.elementAt(i);
+            
+            int clipX = g.getClipX();
+            int clipY = g.getClipY();
+            int clipWidth = g.getClipWidth();
+            int clipHeight = g.getClipHeight();
+            
+            for(int i = 0; i < components.size(); i++){
+                    Component component = (Component)components.elementAt(i);
 
-            //if((doFullRepaint || repaintComponent == component) && focusComponent != component){
-        	
-        		int cx=component.getX();
-        		int cy=component.getY();
-        	
-        		g.translate(cx,cy );
-        	
-                component.paint(g);
-                
-                g.translate(-cx, -cy);
-            //}
-        }
+                    int rx = component.getXWithBorder();
+                    int ry = component.getYWithBorder();
+                    
+                    if (!(rx>clipX+clipWidth || ry >clipY+clipHeight || rx+component.getWidthWithBorder()<clipX || ry+component.getHeightWithBorder()<clipY)) {
+
+                        int cx=component.getX();
+                        int cy=component.getY();
+
+                        g.translate(cx,cy );
+                        component.paint(g);
+                        g.translate(-cx, -cy);
+                    }
+                    //else {
+                    //    System.out.println("Wont paint "+component);
+                    //}
+
+            }
 	}
 	
 	// does nothing, but can be overridden
@@ -230,7 +236,9 @@ public class Panel extends Component {
 			}
 			else if (newone instanceof Panel) {
 
-				((Panel)newone).breakOutAction(null,direction,scrolltothere);
+				((Panel)newone).breakOutAction(null,direction,false);
+                                // here we do NOT pass scrolltothere onto the child panel
+                                // dont scroll if we go to a child, only scroll if we hit a parent
 			}
 			else if (newone!=component) {// this is just a check so it cant go into a infinite loop
 				
@@ -287,44 +295,43 @@ public class Panel extends Component {
 	
 	public boolean repaintComponent(Graphics g, Component focusComponent) {
 		
-        for(int i = 0; i < components.size(); i++){
-        	Component component = (Component)components.elementAt(i);
+                for(int i = 0; i < components.size(); i++){
+                        Component component = (Component)components.elementAt(i);
 
-        	int x=component.getX();
-        	int y=component.getY();
-        	
-            if (component == focusComponent){
+                        int x=component.getX();
+                        int y=component.getY();
 
-        		g.translate(x,y);
-                component.paint(g);
-                g.translate(-x,-y);
-                
-                return true;
-            }
-            else if (component instanceof Panel){
-            	
-            	g.translate(x,y);
-               	boolean good = ((Panel)component).repaintComponent(g,focusComponent);
-               	g.translate(-x,-y);
-        		
-        		if (good) { return good; }
-            }
-        }
+                    if (component == focusComponent){
+
+                        g.translate(x,y);
+                        component.paint(g);
+                        g.translate(-x,-y);
+
+                        return true;
+                    }
+                    else if (component instanceof Panel){
+
+                        g.translate(x,y);
+                        boolean good = ((Panel)component).repaintComponent(g,focusComponent);
+                        g.translate(-x,-y);
+
+                        if (good) { return good; }
+                    }
+                }
 		return false;
 	}
 
 	public void removeAll() {
-		
-		// TODO not recursive
+
             for(int i = 0; i < components.size(); i++){
-                    Component component = (Component)components.elementAt(i);
+                Component component = (Component)components.elementAt(i);
 
                 if (component.getOwner() == owner) {
                     component.setOwnerAndParent(null,null);
                 }
             }
             components.removeAllElements();
-		
+            constraints.clear();
 	}
 	
 	public void setName(String n) {

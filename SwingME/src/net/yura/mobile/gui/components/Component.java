@@ -146,15 +146,19 @@ public abstract class Component {
 	public void focusGained() {
         
             // default focusGained action, make me visible
-            scrollRectToVisible(
+            makeVisible();
+        
+        }
+
+        public void makeVisible() {
+                        scrollRectToVisible(
                             (border!=null)?-border.getLeft():0, 
                             (border!=null)?-border.getTop():0,
                             getWidthWithBorder(),
                             getHeightWithBorder(),
                             false);
-        
         }
-
+        
         public void doLayout() { }
         
 	public void setBackground(int a) {

@@ -120,34 +120,6 @@ public class ScrollPane extends Panel {
 		a.setScrollPanel(null);
 	}
 	
-    //public void setOwner(MPanel owner){
-    //	super.setOwner(owner);
-    //	
-	//	component.setOwner(owner);
-    //}
-
-	public boolean makeVisible(Component newone,boolean smartscroll) {
-
-		if (getComponent().getHeight() > getHeight() ||
-			getComponent().getWidth() > getWidth()		
-		) {
-
-			return makeVisible(
-					newone.getXWithBorder(),
-					newone.getYWithBorder(),
-					newone.getWidthWithBorder(),
-					newone.getHeightWithBorder(),
-					smartscroll
-			);
-		}
-		
-		// everything is ok and we dont have to scroll
-		return true;
-	
-	}
-	
-	
-	
 	public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
             
 		Component component = getComponent();
@@ -171,23 +143,30 @@ public class ScrollPane extends Panel {
 		int viewHeight = getViewPortHeight();
 		int viewWidth = getViewPortWidth(viewHeight);
 
+		// check if the viewport is maybe already looks at part of this bigger area
+                // if it is, then we dont want to scroll to any part of it
+		if (!(x<=componentX+viewX && right>=componentX+viewX+viewWidth)) {
+                    if (right > (viewX + componentX + viewWidth)){
+                            componentX = right - viewWidth;
+                    }
+
+                    if (x < (viewX + componentX)){
+                            componentX = x-viewX;
+                    }
+                }
+                
+                if (!(y<=componentY+viewY && bottom>=componentY+viewY+viewHeight)) {
+                    if (bottom > (viewY + componentY + viewHeight)){
+                            componentY = bottom - viewHeight;
+                    }
+
+                    if (y < (viewY + componentY)){
+                            componentY = y-viewY;
+                    }
+                }
+
 		
-		
-		if (right > (viewX + componentX + viewWidth)){
-			componentX = right - viewWidth;
-		}
-		
-		if (bottom > (viewY + componentY + viewHeight)){
-			componentY = bottom - viewHeight;
-		}
-		
-		if (x < (viewX + componentX)){
-			componentX = x-viewX;
-		}
-		
-		if (y < (viewY + componentY)){
-			componentY = y-viewY;
-		}
+
 		
 		// check we r not scrolling off the content panel
 		if ((viewX+componentX+viewWidth)>component.getWidth()) { componentX=component.getWidth()-viewWidth-viewX; }
