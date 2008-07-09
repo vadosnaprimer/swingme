@@ -147,8 +147,8 @@ public abstract class Component {
         
             // default focusGained action, make me visible
             scrollRectToVisible(
-                            (border!=null)?border.getLeft():0, 
-                            (border!=null)?border.getTop():0,
+                            (border!=null)?-border.getLeft():0, 
+                            (border!=null)?-border.getTop():0,
                             getWidthWithBorder(),
                             getHeightWithBorder(),
                             false);
