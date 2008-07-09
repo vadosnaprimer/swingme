@@ -236,8 +236,9 @@ public class Panel extends Component {
 			}
 			else if (newone instanceof Panel) {
 
-				((Panel)newone).breakOutAction(null,direction,false);
+				((Panel)newone).breakOutAction(null,direction,scrolltothere && DesktopPane.getDesktopPane().getFocusedComponent()==null);
                                 // here we do NOT pass scrolltothere onto the child panel
+                                // unless we have NOTHING active, then pss it on to children
                                 // dont scroll if we go to a child, only scroll if we hit a parent
 			}
 			else if (newone!=component) {// this is just a check so it cant go into a infinite loop
@@ -292,34 +293,6 @@ public class Panel extends Component {
 	public Vector getComponents() {
 		return components;
 	}
-	
-	public boolean repaintComponent(Graphics g, Component focusComponent) {
-		
-                for(int i = 0; i < components.size(); i++){
-                        Component component = (Component)components.elementAt(i);
-
-                        int x=component.getX();
-                        int y=component.getY();
-
-                    if (component == focusComponent){
-
-                        g.translate(x,y);
-                        component.paint(g);
-                        g.translate(-x,-y);
-
-                        return true;
-                    }
-                    else if (component instanceof Panel){
-
-                        g.translate(x,y);
-                        boolean good = ((Panel)component).repaintComponent(g,focusComponent);
-                        g.translate(-x,-y);
-
-                        if (good) { return good; }
-                    }
-                }
-		return false;
-	}
 
 	public void removeAll() {
 
@@ -360,6 +333,12 @@ public class Panel extends Component {
 		return ((name!=null)?(name+" "):"")+super.toString() + " "+ components;
 		
 	}
+
+        public void clip(Graphics g) {
+            if (parent!=null) {
+                parent.clip(g);
+            }
+        }
 	
 }
 

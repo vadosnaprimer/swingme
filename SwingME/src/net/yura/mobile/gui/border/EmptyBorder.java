@@ -98,4 +98,8 @@ public class EmptyBorder implements Border {
          */
 	public void paintBorder(Component c, Graphics g, int width,int height) { }
 
+        public boolean isBorderOpaque() {
+            return false;
+        }
+
 }

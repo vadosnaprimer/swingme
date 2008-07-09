@@ -88,6 +88,9 @@ public class List extends Component implements ActionListener {
 		setCellRenderer(b);
                 horizontal = h;
 		setFocusedItemIndex(-1);
+                
+                background = DesktopPane.getDefaultTheme().background;
+
 	}
 	
 	public void setCellRenderer(ListCellRenderer cellRenderer) {
@@ -270,8 +273,8 @@ public class List extends Component implements ActionListener {
                         setFocusedItemIndex(next);
                         return true;
                     }
-                    else {
-                        if (horizontal) {
+                    //else {
+                        if (horizontal && current!=-1) {
                             Component c = getComponentFor(current);
                             int y = getYInWindow();
                             scrollRectToVisible(c.getXWithBorder(),c.getHeightWithBorder()-1,c.getWidthWithBorder(),1,true);
@@ -281,7 +284,7 @@ public class List extends Component implements ActionListener {
                         }
                         
                         return false;
-                    }
+                    //}
 
                 }
                 else if (keypad.isDownAction(Canvas.UP)) {
@@ -290,8 +293,8 @@ public class List extends Component implements ActionListener {
                         setFocusedItemIndex(prev);
                         return true;
                     }
-                    else {
-                        if (horizontal) {
+                    //else {
+                        if (horizontal && current!=-1) {
                             Component c = getComponentFor(current);
                             int y = getYInWindow();
                             scrollRectToVisible(c.getXWithBorder(),0,c.getWidthWithBorder(),1,true);
@@ -300,7 +303,7 @@ public class List extends Component implements ActionListener {
                             }
                         }
                         return false;
-                    }
+                    //}
 
                 }
                 else if (keypad.isDownAction(Canvas.RIGHT)) {
@@ -309,10 +312,10 @@ public class List extends Component implements ActionListener {
                         setFocusedItemIndex(next);
                         return true;
                     }
-                    else {
+                    //else {
                         // TODO could get rid of this check and add the X pos to the width
                         // so you can scroll right even in horizontal mode
-                        if (!horizontal) {
+                        if (!horizontal && current!=-1) {
                             Component c = getComponentFor(current);
                             int x = getXInWindow();
                             scrollRectToVisible(c.getWidthWithBorder()-1,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
@@ -322,7 +325,7 @@ public class List extends Component implements ActionListener {
                         }
   
                         return false;
-                    }
+                    //}
 
                 }
                 else if (keypad.isDownAction(Canvas.LEFT)) {
@@ -331,8 +334,8 @@ public class List extends Component implements ActionListener {
                         setFocusedItemIndex(prev);
                         return true;
                     }
-                    else {
-                        if (!horizontal) {
+                    //else {
+                        if (!horizontal && current!=-1) {
                             Component c = getComponentFor(current);
                             int x = getXInWindow();
                             scrollRectToVisible(0,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
@@ -342,7 +345,7 @@ public class List extends Component implements ActionListener {
                         }
 
                         return false;
-                    }
+                    //}
 
                 }
                 else if (keypad.justPressedAction(Canvas.FIRE)) {

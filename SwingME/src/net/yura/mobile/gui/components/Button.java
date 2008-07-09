@@ -89,7 +89,6 @@ public class Button extends Label implements ActionListener {
 		super(label, img);
 		
 		background = a;
-		transparent = false;
 		
 		setBorder(b);
                 setActiveBorder(c);

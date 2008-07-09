@@ -208,6 +208,10 @@ public class MatteBorder extends EmptyBorder {
         }
 
     
+    public boolean isBorderOpaque() {
+        return back || (activeimage!=null && color!=-1);
+    }
+        
 }
 
 

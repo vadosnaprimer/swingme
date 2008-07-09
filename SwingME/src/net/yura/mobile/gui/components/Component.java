@@ -31,7 +31,7 @@ import net.yura.mobile.gui.KeyEvent;
 public abstract class Component {
 	
 	protected int posX,posY,width,height;
-	protected boolean transparent,selectable;
+	protected boolean selectable;
 	protected Window owner;
 	protected Panel parent;
 	protected int background;
@@ -44,7 +44,6 @@ public abstract class Component {
 	public Component() {
 		
 		selectable = true;
-		transparent = true;
 		background = -1;
 	}
 	
@@ -108,7 +107,7 @@ public abstract class Component {
 	
     // override and call super when things HAVE to be painted
 	public void paint(Graphics g) {
-		//System.out.println("paint "+this);
+		System.out.println("paint "+this);
 		if (border != null) {
 			
 			border.paintBorder(this, g,width,height);
@@ -167,18 +166,31 @@ public abstract class Component {
 		
 	}
 	
+        /**
+         * Opaque means it fully paint all its pixels
+         * @return true if it is NOT transparent
+         * @see javax.swing.JComponent#isOpaque() JComponent.isOpaque
+         */
+        public boolean isOpaque() {
+            if (background!=-1) return true;
+            if (border!=null) {
+                return border.isBorderOpaque();
+            }
+            return false;
+        }
+        
 	public void repaint() {
 
                 // if we are not in a window, do nothing
 		if (owner==null) return;
 		
-		if (transparent) {
+		if (!isOpaque()) {
 			
 			Panel p=parent;
 			
 			while (p!=null) {
 				
-				if (p.transparent) {
+				if (!p.isOpaque()) {
 					p = p.parent;
 				}
 				else {
@@ -234,15 +246,6 @@ public abstract class Component {
 	public void setBorder(Border border) {
 		this.border = border;
 	}
-	
-	public boolean isTransparent() {
-		return transparent;
-	}
-
-	public void setTransparent(boolean transparent) {
-		this.transparent = transparent;
-	}
-	
 	
 	public int getWidthWithBorder() {
 		
@@ -412,5 +415,11 @@ public abstract class Component {
 
 		}
 	}
-	
+        
+        
+        public Panel getRootPane() {
+            if (parent == null) { return (Panel)this; }
+            return parent.getRootPane();
+        }
+
 }

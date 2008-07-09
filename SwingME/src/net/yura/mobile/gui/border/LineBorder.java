@@ -174,6 +174,8 @@ public class LineBorder implements Border {
 		this.thickness = thickness;
 	}
 	
-	
+        public boolean isBorderOpaque() {
+            return false;
+        }
 
 }

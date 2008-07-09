@@ -42,7 +42,7 @@ public class RadioButton extends Button {
 		setBorder(null);
                 setActiveBorder(null);
 		background = -1;
-		transparent = true;
+
 		
 	}
 	

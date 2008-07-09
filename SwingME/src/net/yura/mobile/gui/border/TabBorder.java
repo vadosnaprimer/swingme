@@ -158,5 +158,9 @@ public class TabBorder implements Border {
     public int getLeft() {
         return 2;
     }
+    
+    public boolean isBorderOpaque() {
+        return false;
+    }
 
 }

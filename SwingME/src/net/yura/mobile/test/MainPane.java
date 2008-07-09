@@ -78,7 +78,6 @@ public class MainPane extends DesktopPane implements ActionListener {
 		setDefaultTheme( new Theme() );
                 
 		mainWindow.getContentPane().setBackground(0x00EEEEEE);
-		mainWindow.getContentPane().setTransparent(false);
                 
 		mainWindow.setActionListener(this);
 

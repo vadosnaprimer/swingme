@@ -107,5 +107,9 @@ public class CompoundBorder implements Border {
     public int getLeft() {
         return outsideBorder.getLeft() + insideBorder.getLeft();
     }
+    
+    public boolean isBorderOpaque() {
+        return outsideBorder.isBorderOpaque() || insideBorder.isBorderOpaque();
+    }
 
 }

@@ -121,7 +121,7 @@ public class ComboBox extends Button implements ActionListener{
 			list.setBackground(background);
 			list.addActionListener(this);
 			scroll = new ScrollPane(list);
-			scroll.setTransparent(false);
+			// TODO setbackground?? scroll.setTransparent(false);
 			scroll.setBorder(activeBorder);
 			
 		}

@@ -50,6 +50,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             //this(Graphics.RIGHT,new DefaultTabRenderer(Graphics.RIGHT),new MatteBorder(0, 1, 0, 0, 0x00000000));
             
             //this(Graphics.BOTTOM,new DefaultTabRenderer(Graphics.BOTTOM),new MatteBorder(1, 0, 0, 0, 0x00000000));
+
         }
         public TabbedPane(int a,ListCellRenderer b,Border art) {
 
@@ -70,6 +71,9 @@ public class TabbedPane extends Panel implements ChangeListener {
 
             tabPosition = a;
             currentTabIndex = -1;
+            
+            tabList.background = -1;
+
         }
 
         public void addTab(Panel p) {
@@ -165,6 +169,10 @@ public class TabbedPane extends Panel implements ChangeListener {
 
     public void setSelectable(boolean a) {
         tabList.setSelectable(a);
+    }
+    
+    public List getList() {
+        return tabList;
     }
 
 }

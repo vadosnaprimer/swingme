@@ -323,7 +323,10 @@ public class DesktopPane extends Canvas implements Runnable {
          * This is called when u call repaint() on a window
          */
 	public void windowRepaint() {
-		repaintComponent = null;
+		if (repaintComponent != null) {
+                    // the repaintComponent may be on another window
+                    serviceRepaints();
+                }
 		repaint();
 	}
 
@@ -423,7 +426,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			if(keyevent.isDownKey(Canvas.KEY_STAR)){
 
 				mem = (Runtime.getRuntime().freeMemory() >> 10) +"K/" +(Runtime.getRuntime().totalMemory() >> 10)+"K";
-				repaint();
+				fullRepaint();
 			}
 			else {
 
@@ -555,6 +558,7 @@ public class DesktopPane extends Canvas implements Runnable {
          */
 	public void setSelectedFrame(Window w) {
 		if (windows.contains(w)) {
+                        setFocusedComponent(null);
 			currentWindow = w;
 			windows.removeElement(w);
 			windows.addElement(w);
@@ -575,6 +579,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 			if (w==currentWindow) {
 
+                                setFocusedComponent(null);
 				currentWindow = (Window)windows.lastElement();
                                 currentWindow.setupFocusedComponent();
 			}
@@ -658,7 +663,7 @@ public class DesktopPane extends Canvas implements Runnable {
 				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
 				debugwindow.getContentPane().setBackground(0x00FFFFFF);
-				debugwindow.getContentPane().setTransparent(false);
+				//debugwindow.getContentPane().setTransparent(false);
 				//debugwindow.getContentPane().doLayout();
 				add(debugwindow);
                                 debugwindow.setActionListener(debugwindow);

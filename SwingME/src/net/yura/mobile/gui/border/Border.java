@@ -50,7 +50,10 @@ public interface Border {
          * @see javax.swing.border.Border#getBorderInsets(java.awt.Component) Border.getBorderInsets
          */
 	int getLeft();
-        
-        //TODO
-        // maybe add http://java.sun.com/j2se/1.4.2/docs/api/javax/swing/border/Border.html#isBorderOpaque()
+
+        /**
+         * @return Returns whether or not the border is opaque. If the border is opaque, it is responsible for filling in it's own background when painting. 
+         * @see javax.swing.border.Border#isBorderOpaque()
+         */
+        public boolean isBorderOpaque();
 }

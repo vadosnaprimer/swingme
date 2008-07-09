@@ -112,8 +112,6 @@ public class TextField extends Component implements ActionListener, CommandListe
 			activeTextColor = foreground;
 		}
                 
-                transparent = false;
-                
                 offset = padding;
                 
                 setText(initialText);

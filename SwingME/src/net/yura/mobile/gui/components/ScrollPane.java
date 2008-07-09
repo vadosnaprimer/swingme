@@ -505,5 +505,18 @@ public class ScrollPane extends Panel {
 	public void setScrollBarCol(int scrollBarCol) {
 		this.scrollBarCol = scrollBarCol;
 	}
+        
+        public void clip(Graphics g) {
+            
+            	int viewX=getXInWindow()+getViewPortX();
+		int viewY=getYInWindow()+getViewPortY();
+		int viewHeight=getViewPortHeight();
+		int viewWidth=getViewPortWidth(viewHeight);
+		
+		g.clipRect(viewX, viewY, viewWidth, viewHeight);
+            
+        }
+
+        
 
 }

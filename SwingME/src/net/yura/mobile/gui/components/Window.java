@@ -61,7 +61,6 @@ public class Window extends Component implements ActionListener {
                 contentPane.setOwnerAndParent(this,null);
                 
                 setBackground(0x00FFFFFF); // set default white background
-                transparent = false;
                 
                 panelCmds = new CommandButton[2];
                 setBorder(b);
@@ -206,84 +205,53 @@ public class Window extends Component implements ActionListener {
 	/**
 	 * This method needs to paint a component IF repaintComponent!=null
 	 * otherwise it needs to repaint the window
+         * 
+         * This method can NOT get called if repaintComponent.transparent
+         * 
 	 * @return true if it was successful and false otherwise
 	 */
 	public boolean paintWindow(Graphics g,Component repaintComponent) {
-		
-		// first try the glass if we have 1
-		if (repaintComponent!=null && glasspanecomponent!=null) {
 
-				boolean result;
-
-				// it is the glass but its transparent!
-				// so we need to repaint everything
-				if (repaintComponent == glasspanecomponent && glasspanecomponent.isTransparent()) {
-					
-					repaintComponent = null;
-					result = false;
-				}
-				else if (repaintComponent == glasspanecomponent) {
-				
-					drawGlass(g);
-					result = true;	
-				}
-				else {
-
-					int gx=glasspanecomponent.getX();
-					int gy=glasspanecomponent.getY();
-					
-					// same as in drawGlass!!
-					g.translate(gx, gy);
-					
-					result = glasspanecomponent.repaintComponent(g,repaintComponent);
-
-					g.translate(-gx, -gy);
-				}
-
-				if (result) {
-					return true;
-				}
-				
-		}
-		
-		// then try the contentpane
-		if (repaintComponent!=null) {
-			
-			boolean done;
-			
-			if (repaintComponent == contentPane) {
-				
-				contentPane.paint(g);
-				done = true;
-			}
-			else {
-				done = contentPane.repaintComponent(g,repaintComponent);
-
-			}
-
-			if (done && glasspanecomponent!=null && glasspanecomponent.isTransparent() ) {
-
-				// ah crap, we have painted it, but the glass it transparent
-				// this is not good at all, we will need to repaint the whole window
-				repaintComponent=null;
-			}
-			else if (done) {
-				drawGlass(g);
-				return true;
-			}
-			
-		}
-		
-		// redraw everything
+            	// redraw everything
 		if (repaintComponent==null)  {
-			
 			paint(g);
-
 			return true;
 		}
 
-		return false;
+                Panel root = repaintComponent.getRootPane();
 
+                // this component is NOT in this window
+                if (root!=contentPane && root!=glasspanecomponent) {
+                    return false;
+                }
+                // if the glass is transparent then we need to repaint everything
+                // as it MAY overlap something in the window
+                if (glasspanecomponent!=null && root!=glasspanecomponent && !glasspanecomponent.isOpaque()) {
+                    repaintComponent = contentPane;
+                }
+                
+                int a=g.getClipX();
+                int b=g.getClipY();
+                int c=g.getClipWidth();
+                int d=g.getClipHeight();
+                if (repaintComponent.parent!=null) {
+                    repaintComponent.parent.clip(g);
+                }
+
+                int x = repaintComponent.getXInWindow();
+                int y = repaintComponent.getYInWindow();
+                g.translate(x, y);
+                repaintComponent.paint(g);
+                g.translate(-x, -y);
+
+                g.setClip(a,b,c,d);
+                
+                if (glasspanecomponent!=null && root!=glasspanecomponent) {
+                    drawGlass(g);
+                }
+                
+                return true;
+                
 	}
 	
 	public void paint(Graphics g) {
@@ -300,7 +268,7 @@ public class Window extends Component implements ActionListener {
 		if (glasspanecomponent!=null) {
 			
 			int gx=glasspanecomponent.getX();
-    		int gy=glasspanecomponent.getY();
+                        int gy=glasspanecomponent.getY();
 			
 			g.translate(gx, gy);
 			glasspanecomponent.paint(g);
@@ -347,7 +315,7 @@ public class Window extends Component implements ActionListener {
 	
 	public void repaint() {
 		
-		if (this == DesktopPane.getDesktopPane().getSelectedFrame() && !transparent) {
+		if (this == DesktopPane.getDesktopPane().getSelectedFrame() && isOpaque()) {
 			DesktopPane.getDesktopPane().windowRepaint();
 		}
 		else {
