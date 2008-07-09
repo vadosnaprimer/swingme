@@ -1,3 +1,20 @@
+/*
+ *  This file is part of 'yura.net Swing ME'.
+ *
+ *  'yura.net Swing ME' is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  'yura.net Swing ME' is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
@@ -153,8 +170,8 @@ public class Button extends Label implements ActionListener {
 	}
 
 	public void focusLost() {
-
-		super.setBorder(normalBorder);
+                super.focusLost();
+		setBorder(normalBorder);
 		setForegroundByFontColorIndex(0);
 		
 		if (useSelectButton) {
@@ -165,8 +182,8 @@ public class Button extends Label implements ActionListener {
 	}
 
 	public void focusGained() {
-
-		super.setBorder(activeBorder);
+                super.focusGained();
+		setBorder(activeBorder);
 		setForegroundByFontColorIndex(1);
 		
 		if (useSelectButton) {
@@ -206,5 +223,7 @@ public class Button extends Label implements ActionListener {
             }
             return 0;
         }
-	
+	public String toString() {
+            return super.toString() +"("+ getText()+")";
+        }
 }

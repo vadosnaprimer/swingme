@@ -1,3 +1,20 @@
+/*
+ *  This file is part of 'yura.net Swing ME'.
+ *
+ *  'yura.net Swing ME' is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  'yura.net Swing ME' is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
@@ -12,6 +29,10 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
 
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.JList
+ */
 public class List extends Component implements ActionListener {
 
 	private static CommandButton selectButton = new CommandButton("Select","select");
@@ -208,7 +229,7 @@ public class List extends Component implements ActionListener {
 	}
 	
 	public void focusLost() {
-		
+		super.focusLost();
 		if (useSelectButton) {
 			DesktopPane.getDesktopPane().setComponentCommand(0, null);
 		}
@@ -216,18 +237,18 @@ public class List extends Component implements ActionListener {
 
 	}
         
-    public void focusGained() {
-    	
-    	if (items.size() != 0 ) {
-            if (current==-1) { current=0; }
-            setFocusedItemIndex(current);
-    	}
-    	
-	if (useSelectButton) {
-            DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
-	}
-    	
-    }
+        public void focusGained() {
+            super.focusGained();
+            if (items.size() != 0 ) {
+                if (current==-1) { current=0; }
+                setFocusedItemIndex(current);
+            }
+
+            if (useSelectButton) {
+                DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
+            }
+
+        }
 
     
 	public boolean keyEvent(KeyEvent keypad) {
@@ -373,6 +394,7 @@ public class List extends Component implements ActionListener {
                     
                     // THIS WILL NOT WORK if list in inside a panel inside a scrollpane
                     // as posX and posY will be wrong!
+                    // ALSO WILLNOT WORK IN BOXLAYOUT HCENTRE IF NOT THE FIRST COMPONENT
                     if (horizontal) {
                         scrollRectToVisible( c.getXWithBorder(), -posY, c.getWidthWithBorder(), 1,false);
                     }
@@ -387,7 +409,7 @@ public class List extends Component implements ActionListener {
                     // TODO as scroll to always does a repaint
                     // we dont need it here
                     // BUT what if we are not in a scrollPane??
-                    //repaint();
+                    repaint();
 		}
 	}
 	

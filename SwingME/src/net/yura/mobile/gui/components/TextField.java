@@ -1,3 +1,20 @@
+/*
+ *  This file is part of 'yura.net Swing ME'.
+ *
+ *  'yura.net Swing ME' is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  'yura.net Swing ME' is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
@@ -12,9 +29,12 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.border.Border;
 
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.JTextField
+ */
 public class TextField extends Component implements ActionListener, CommandListener {
 	
         private static TextBox textbox;
@@ -347,7 +367,7 @@ public class TextField extends Component implements ActionListener, CommandListe
         }
         
 	public void focusLost() {
-		
+		super.focusLost();
 		setBorder(borderColor);
 		
 		active = false;
@@ -362,7 +382,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 
 	
 	public void focusGained() {
-
+                super.focusGained();
 		setBorder(activeBorderColor);
 		
 		active = true;

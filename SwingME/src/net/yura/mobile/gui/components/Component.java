@@ -1,3 +1,20 @@
+/*
+ *  This file is part of 'yura.net Swing ME'.
+ *
+ *  'yura.net Swing ME' is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  'yura.net Swing ME' is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
@@ -126,7 +143,17 @@ public abstract class Component {
 	
 	public void focusLost() { }
 
-	public void focusGained() { }
+	public void focusGained() {
+        
+            // default focusGained action, make me visible
+            scrollRectToVisible(
+                            (border!=null)?border.getLeft():0, 
+                            (border!=null)?border.getTop():0,
+                            getWidthWithBorder(),
+                            getHeightWithBorder(),
+                            false);
+        
+        }
 
         public void doLayout() { }
         
@@ -337,13 +364,15 @@ public abstract class Component {
 		scroller = s;
 	}
 	
-	// override this to NOT to scroll, or to scroll to the label, etc
-	public boolean scrollTo(Component newone) {
-		
-		return scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , true);
-	}
-	
-	// if smart was on, returns true if the scroll did reach its destination
+	/**
+         * @param a X position inside CURRENT component
+         * @param b Y position inside CURRENT component
+         * @param c Width of area inside CURRENT component
+         * @param d Height of area inside CURRENT component
+         * @param smart use smart scroll, if true and the component is too far it will only scroll a bit and not all the way
+         * @return if smart was on, returns true if the scroll did reach its destination
+         * @see javax.swing.JComponent#scrollRectToVisible(java.awt.Rectangle) JComponent.scrollRectToVisible
+         */
 	public boolean scrollRectToVisible(int a,int b,int c,int d,boolean smart) {
 		
 		if (scroller!=null) {

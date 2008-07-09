@@ -1,3 +1,20 @@
+/*
+ *  This file is part of 'yura.net Swing ME'.
+ *
+ *  'yura.net Swing ME' is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  'yura.net Swing ME' is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
@@ -6,9 +23,10 @@ import net.yura.mobile.gui.DesktopPane;
 
 /**
  * @author Yura Mamyrin
+ * @see javax.swing.JScrollPane
  */
 
-public class ScrollPane extends Panel { // MScrollableComponent
+public class ScrollPane extends Panel {
 	
 	public static final int MODE_NONE=-1;
 	public static final int MODE_SCROLLBARS=0;
@@ -21,10 +39,22 @@ public class ScrollPane extends Panel { // MScrollableComponent
 	private int scrollTrackCol;
 	private int scrollBarCol;
 	
+        /**
+         * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
+         */
 	public ScrollPane() {
 		this(MODE_SCROLLBARS);
 	}
-	public ScrollPane(int m) {
+
+        /**
+         * @param view the component to display in the scrollpane's viewport
+         * @see javax.swing.JScrollPane#JScrollPane(java.awt.Component) JScrollPane.JScrollPane
+         */
+        public ScrollPane(Component view) {
+            this(view,MODE_SCROLLBARS);
+        }
+        
+        public ScrollPane(int m) {
 		
 		setMode(m);
 
@@ -32,13 +62,9 @@ public class ScrollPane extends Panel { // MScrollableComponent
 		scrollBarCol = DesktopPane.getDefaultTheme().scrollBarCol;
 	}
         
-        public ScrollPane(Component reguserpanel) {
-            this(reguserpanel,MODE_SCROLLBARS);
-        }
-        
-	public ScrollPane(Component reguserpanel,int a) {
+	public ScrollPane(Component view,int a) {
 		this(a);
-		add(reguserpanel);
+		add(view);
 	}
 
 	public void setMode(int m) {
@@ -124,7 +150,11 @@ public class ScrollPane extends Panel { // MScrollableComponent
 	
 	
 	public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
-		
+            
+		Component component = getComponent();
+                int oldX = component.getX();
+		int oldY = component.getY();
+
 		//System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
 		//System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
 		//if(true)throw new RuntimeException();
@@ -134,8 +164,8 @@ public class ScrollPane extends Panel { // MScrollableComponent
 		
 		
 		
-		int componentX = -getComponent().getX();
-		int componentY = -getComponent().getY();
+		int componentX = -component.getX();
+		int componentY = -component.getY();
 		
 		int viewX=getViewPortX();
 		int viewY=getViewPortY();
@@ -161,13 +191,13 @@ public class ScrollPane extends Panel { // MScrollableComponent
 		}
 		
 		// check we r not scrolling off the content panel
-		if ((viewX+componentX+viewWidth)>getComponent().getWidth()) { componentX=getComponent().getWidth()-viewWidth-viewX; }
-		if ((viewY+componentY+viewHeight)>getComponent().getHeight()) { componentY=getComponent().getHeight()-viewHeight-viewY; }
+		if ((viewX+componentX+viewWidth)>component.getWidth()) { componentX=component.getWidth()-viewWidth-viewX; }
+		if ((viewY+componentY+viewHeight)>component.getHeight()) { componentY=component.getHeight()-viewHeight-viewY; }
 		if (componentX<-viewX) { componentX=-viewX; }
 		if (componentY<-viewY) { componentY=-viewY; }
 		
-		int xdiff=-componentX -getComponent().getX();
-		int ydiff=-componentY -getComponent().getY();
+		int xdiff=-componentX -component.getX();
+		int ydiff=-componentY -component.getY();
 		
 		boolean goodscroll=true;
 		
@@ -190,13 +220,16 @@ public class ScrollPane extends Panel { // MScrollableComponent
 			}
 		}
 		
-		getComponent().setBounds( getComponent().getX()+xdiff , getComponent().getY()+ydiff , getComponent().getWidth(), getComponent().getHeight());
+		component.setBounds( component.getX()+xdiff , component.getY()+ydiff , component.getWidth(), component.getHeight());
 		
-		//getComponent().setBounds(15, 15, getComponent().getWidth(), getComponent().getHeight());
+		//component.setBounds(15, 15, component.getWidth(), component.getHeight());
 		
 		//System.out.println("new pos: x="+component.getX()+" y="+component.getY() );
 		
-		repaint();
+                // only repint if we have moved
+		if (oldX!=component.getX() || oldY!=component.getY()) {
+                    repaint();
+                }
 		
 		return goodscroll;
 		
@@ -274,14 +307,6 @@ public class ScrollPane extends Panel { // MScrollableComponent
 		}
 
 	}
-	
-    //public void focusGained() {
-		
-    //	owner.setFocusedComponent(component);
-
-    //}
-	
-	//protected void keyPressEvent(int keyCode, int gameKeyCode, int number) { }
 
 	public void paintChildren(Graphics g) {
 		
@@ -386,9 +411,7 @@ public class ScrollPane extends Panel { // MScrollableComponent
 	}
 
 	private void drawScrollArrows(final Graphics g,boolean indicator) {
-		
-		
-		
+
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
 		
