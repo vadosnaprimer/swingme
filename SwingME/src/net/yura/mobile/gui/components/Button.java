@@ -171,7 +171,7 @@ public class Button extends Label implements ActionListener {
 
 	public void focusLost() {
                 super.focusLost();
-		setBorder(normalBorder);
+		super.setBorder(normalBorder);
 		setForegroundByFontColorIndex(0);
 		
 		if (useSelectButton) {
@@ -183,7 +183,7 @@ public class Button extends Label implements ActionListener {
 
 	public void focusGained() {
                 super.focusGained();
-		setBorder(activeBorder);
+		super.setBorder(activeBorder);
 		setForegroundByFontColorIndex(1);
 		
 		if (useSelectButton) {

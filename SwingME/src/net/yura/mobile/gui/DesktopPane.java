@@ -226,7 +226,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	 */
 	public void paint(Graphics g) {
 
-                System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
+                //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
 		if (!paintdone) {
 

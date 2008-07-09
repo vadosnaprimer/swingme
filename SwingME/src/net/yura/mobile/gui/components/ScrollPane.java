@@ -25,7 +25,6 @@ import net.yura.mobile.gui.DesktopPane;
  * @author Yura Mamyrin
  * @see javax.swing.JScrollPane
  */
-
 public class ScrollPane extends Panel {
 	
 	public static final int MODE_NONE=-1;

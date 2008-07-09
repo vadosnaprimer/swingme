@@ -33,7 +33,7 @@ import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.DropDownMenu;
+import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.MultilineLabel;
@@ -226,7 +226,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 items.addElement(new Option("3","Three option"));
                                 items.addElement(new Option("4",null,image));
                                 
-                                componentTest.add( new DropDownMenu(items) );
+                                componentTest.add( new ComboBox(items) );
                                 componentTest.add( new Spinner(items, false));
                                 
                                 componentTest.add( new TextField(javax.microedition.lcdui.TextField.NUMERIC) );
