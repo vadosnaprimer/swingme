@@ -303,9 +303,12 @@ public class Window extends Component implements ActionListener {
          */
 	public void setWindowCommand(int i, CommandButton softkey) {
 
+            if (panelCmds[i]!=softkey) {
 		panelCmds[i] = softkey;
-		repaint(); // TODO is this correct, will ANY repaint do? (also in another place)
-		
+                if (DesktopPane.getDesktopPane().getSelectedFrame()==this) {
+                    DesktopPane.getDesktopPane().softkeyRepaint();
+                }
+            }
 	}
 	
 	public String toString() {

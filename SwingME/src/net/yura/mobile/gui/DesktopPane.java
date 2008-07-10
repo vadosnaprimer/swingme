@@ -306,51 +306,6 @@ public class DesktopPane extends Canvas implements Runnable {
 	}
 
         /**
-         * this method should NOT normally be called
-         * is it called when repaint() is called on a window,
-         * but that window is currently in the background
-         * or if the window is transparent
-         */
-	public void fullRepaint() {
-		// this is here coz this method should NOT be used
-                //#debug
-		System.out.println("FULL REPAINT!!! this method should NOT normally be called");
-		fullrepaint=true;
-		repaintComponent = null;
-		repaint();
-	}
-        /**
-         * This is called when u call repaint() on a window
-         */
-	public void windowRepaint() {
-		if (repaintComponent != null) {
-                    // the repaintComponent may be on another window
-                    serviceRepaints();
-                }
-		repaint();
-	}
-
-        /**
-         * this is called when you call repaint() on a component
-         * @param rc The Component to repaint
-         */
-        public void repaintComponent(Component rc) {
-
-                //System.out.println("someone asking for repaint "+rc);
-
-		if (repaintComponent!=rc && paintdone) {
-			// we want to do this no matter what
-			// kind of repaint is waiting for
-			serviceRepaints();
-		}
-
-		repaintComponent = rc;
-
-		repaint();
-
-	}
-        
-        /**
          * override this to draw softkeys how you want to
          * @param g The Graphics
          */
@@ -380,6 +335,62 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
         
+        // #####################################################################
+        // Different ways of caling repaint
+        
+        /**
+         * this method should NOT normally be called
+         * is it called when repaint() is called on a window,
+         * but that window is currently in the background
+         * or if the window is transparent
+         */
+	public void fullRepaint() {
+		// this is here coz this method should NOT be used
+                //#debug
+		System.out.println("FULL REPAINT!!! this method should NOT normally be called");
+		fullrepaint=true;
+		repaintComponent = null;
+		repaint();
+	}
+        /**
+         * This is called when u call repaint() on a window
+         */
+	public void windowRepaint() {
+		if (repaintComponent != null && paintdone) {
+                    // the repaintComponent may be on another window
+                    serviceRepaints();
+                }
+		repaint();
+	}
+
+        /**
+         * this is called when you call repaint() on a component
+         * @param rc The Component to repaint
+         */
+        public void repaintComponent(Component rc) {
+
+                //System.out.println("someone asking for repaint "+rc);
+
+		if (repaintComponent!=rc && paintdone) {
+			// we want to do this no matter what
+			// kind of repaint is waiting for
+			serviceRepaints();
+		}
+
+		repaintComponent = rc;
+
+		repaint();
+	}
+        
+        /**
+         * Repaint the softkeybar
+         */
+        public void softkeyRepaint() {
+            // TODO: is this correct, will ANY repaint do?
+            // by default calling repaint() like this will do a window repaint
+            repaint();
+        }
+
         // #####################################################################
         // action handeling
         // #####################################################################
@@ -413,9 +424,10 @@ public class DesktopPane extends Canvas implements Runnable {
      */
 	public void setComponentCommand(int i, CommandButton softkey) {
 
+            if (omponentCommands[i]!=softkey) {
 		omponentCommands[i] = softkey;
-		repaint();
-                // TODO: is this correct, will ANY repaint do? (also in another place)
+		softkeyRepaint();
+            }
 
 	}
 
