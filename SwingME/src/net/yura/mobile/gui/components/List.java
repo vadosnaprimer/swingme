@@ -250,12 +250,14 @@ public class List extends Component implements ActionListener {
             if (useSelectButton) {
                 DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
             }
-
+            
         }
 
     
 	public boolean keyEvent(KeyEvent keypad) {
 		
+                if (current==-1) { return false; }
+            
 		int next = current+1;
 		int prev = current-1;
 

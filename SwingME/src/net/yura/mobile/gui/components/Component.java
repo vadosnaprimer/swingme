@@ -107,7 +107,7 @@ public abstract class Component {
 	
     // override and call super when things HAVE to be painted
 	public void paint(Graphics g) {
-		System.out.println("paint "+this);
+		//System.out.println("paint "+this);
 		if (border != null) {
 			
 			border.paintBorder(this, g,width,height);

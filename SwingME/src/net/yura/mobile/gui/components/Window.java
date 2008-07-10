@@ -126,7 +126,7 @@ public class Window extends Component implements ActionListener {
 	
     public void setSize(int width, int height){
     	super.setSize(width, height);
-    	contentPane.setSize(width, height);
+    	contentPane.setBoundsWithBorder(0,0,width, height);
     }
 
 
