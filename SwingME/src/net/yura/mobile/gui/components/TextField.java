@@ -125,8 +125,9 @@ public class TextField extends Component implements ActionListener, CommandListe
         private void autoAccept() {
             
             if (tmpChar!=0) {
-                insertNewCharacter(tmpChar);
+                char tmp = tmpChar;
                 tmpChar=0;
+                insertNewCharacter(tmp);
             }
             
         }

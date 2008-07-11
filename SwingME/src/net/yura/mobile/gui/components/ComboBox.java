@@ -102,7 +102,7 @@ public class ComboBox extends Button implements ActionListener{
                         y = getYInWindow() + height;
                 }
 
-                scroll.setPosition(getXInWindow(), y);		
+                scroll.setLocation(getXInWindow(), y);		
                 owner.setGlassPaneComponent(scroll);
 
                 pbuttons = new CommandButton[2];

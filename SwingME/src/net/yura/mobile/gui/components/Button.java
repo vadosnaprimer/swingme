@@ -120,6 +120,9 @@ public class Button extends Label implements ActionListener {
 		
 		actionCommand=ac;
 	}
+        public ActionListener getActionListener() {
+            return al;
+        }
 
 	public boolean keyEvent(KeyEvent keyEvent) {
             
@@ -142,8 +145,11 @@ public class Button extends Label implements ActionListener {
                 selected=true;
             }
             else if (selected && type == DesktopPane.RELEASED) {
-                fireActionPerformed();
+                if (x>=0 && x<=width && y>=0 && y<=height) {
+                    fireActionPerformed();
+                }
             }
+
         }
         
 	 public void fireActionPerformed() {

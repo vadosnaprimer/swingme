@@ -180,26 +180,6 @@ public class Panel extends Component {
 		}
 	}
 
-	
-	
-	
-
-	public void pointerEvent(int type, int x, int y) {
-		 
-		for(int i = 0; i < components.size(); i++){
-			Component component = (Component)components.elementAt(i);
-			int x1 = component.getX();
-			int y1 = component.getY();
-			int x2 = x1 + component.getWidth();
-			int y2 = y1 + component.getHeight();
-			if( (x > x1 && x < x2) && (y > y1 && y < y2)){
-				component.pointerEvent(type, x-x1, y-y1 );
-			}
-		}
-		 
-	}
-
-	
 	// BREAK OUT!!!
 	// find next component in this panel
 	
@@ -338,6 +318,24 @@ public class Panel extends Component {
             if (parent!=null) {
                 parent.clip(g);
             }
+        }
+
+        public Component getComponentAt(int x, int y) {
+        	for(int i = 0; i < components.size(); i++){
+			Component component = (Component)components.elementAt(i);
+			int x1 = component.getXWithBorder();
+			int y1 = component.getYWithBorder();
+			int x2 = x1 + component.getWidthWithBorder();
+			int y2 = y1 + component.getHeightWithBorder();
+			if( x >= x1 && x <= x2 && y >= y1 && y <= y2){
+                            
+                            if (component instanceof Panel) {
+                                return ((Panel)component).getComponentAt( x-component.getX(), y-component.getY() );
+                            }
+			    return component;
+			}
+		}
+                return this;
         }
 	
 }

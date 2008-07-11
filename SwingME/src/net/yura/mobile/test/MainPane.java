@@ -48,6 +48,8 @@ import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.MatteBorder;
+import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.util.Option;
 
 /**
@@ -60,6 +62,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Panel info;
         private Panel border;
         private Panel tabPanel;
+        private Menu menu;
         
         private Image image;
         private MultilineLabel infoLabel;
@@ -130,7 +133,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("windowTest1".equals(actionCommand)) {
 
                     Window test1 = new Window( new LineBorder() );
-                    test1.makeDecoration("Window Title",image,true,true,true);
+                    test1.getContentPane().add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
                     test1.getContentPane().add(new Label("LALAL TEST 1"));
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     test1.getContentPane().doLayout();
@@ -156,6 +159,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                                 default: infoLabel.append("Unknown"); break;
                                             }
                                             infoLabel.repaint();
+
                                         }  
                                     	public boolean keyEvent(KeyEvent keypad) {
                                             int code1 = keypad.getJustPressedKey();
@@ -235,9 +239,19 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add( new MultilineLabel("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line") );
                                 
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
+                                
+                                menu = new Menu("M1");
+                                menu.add(new Button("bob"));
+                                
+                                Menu menu2 = new Menu("Sub");
+                                menu2.addActionListener(this);
+                                menu2.add(new Button("fred"));
+                                menu2.addMenuItem("item", null, "action");
+                                menu.add(menu2);
+                                
 			}
 			
-			addToScrollPane(componentTest, null,  new CommandButton("Back","mainmenu") );
+			addToScrollPane(componentTest, new CommandButton("Menu","popmenu",menu),  new CommandButton("Back","mainmenu") );
 			
 		}
 		else if ("loadpanel".equals(actionCommand)) {
@@ -288,18 +302,18 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 test2.setBorder(new MatteBorder("/skin1.skin"));
                                 border.add(test2);
                                 
-                                Panel menu = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                                menu.setBorder(new MatteBorder("/skin2.skin"));
-                                menu.add(new Button("menu TEST item 1"));
-                                menu.add(new Button("menu TEST item 2"));
-                                menu.add(new Button("menu TEST item 3"));
-                                menu.add(new Button("menu TEST item 4"));
-                                border.add(menu);
+                                Panel menuTest = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                                menuTest.setBorder(new MatteBorder("/skin2.skin"));
+                                menuTest.add(new Button("menu TEST item 1"));
+                                menuTest.add(new Button("menu TEST item 2"));
+                                menuTest.add(new Button("menu TEST item 3"));
+                                menuTest.add(new Button("menu TEST item 4"));
+                                border.add(menuTest);
                                 
-                                menu = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                                menu.setBorder(new MatteBorder(10,20,30,40,image));
-                                menu.add(new Button("MatteBorderTest"));
-                                border.add(menu);
+                                menuTest = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                                menuTest.setBorder(new MatteBorder(10,20,30,40,image));
+                                menuTest.add(new Button("MatteBorderTest"));
+                                border.add(menuTest);
 			}
 			
 			addToScrollPane(border, null , new CommandButton("Back","mainmenu") );

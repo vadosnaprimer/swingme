@@ -91,7 +91,7 @@ public abstract class Component {
     }
     
     public void setBounds(int posX, int posY, int width, int height) {
-    	setPosition(posX,posY);
+    	setLocation(posX,posY);
     	setSize(width,height);
     }
     
@@ -100,7 +100,7 @@ public abstract class Component {
     	this.height = height;
     }
     
-    public void setPosition(int posX, int posY){
+    public void setLocation(int posX, int posY){
     	this.posX = posX;
     	this.posY = posY;
     }
@@ -133,8 +133,16 @@ public abstract class Component {
 	}
 
 	public void pointerEvent(int type, int x, int y) {
-            if (selectable && type == DesktopPane.PRESSED) {
-                DesktopPane.getDesktopPane().setFocusedComponent(this);
+            if (selectable) {
+                if (type == DesktopPane.PRESSED) {
+                    DesktopPane.getDesktopPane().setFocusedComponent(this);
+                }
+            }
+            else if (parent!=null) {
+                parent.pointerEvent(type,x+posX,y+posY);
+            }
+            else {
+                owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
             }
         }
 	

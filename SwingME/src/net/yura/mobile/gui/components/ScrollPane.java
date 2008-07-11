@@ -99,7 +99,7 @@ public class ScrollPane extends Panel {
 		//	((Panel)a).setScrollPanel(this);
 		//}
 
-		a.setPosition(getViewPortX(), getViewPortY());
+		a.setLocation(getViewPortX(), getViewPortY());
 		
 		a.setScrollPanel(this);
 		

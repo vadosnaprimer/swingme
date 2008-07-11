@@ -20,14 +20,11 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.BorderLayout;
-import net.yura.mobile.gui.layout.GridLayout;
 
 /**
  * @author Yura Mamyrin
@@ -65,39 +62,6 @@ public class Window extends Component implements ActionListener {
                 panelCmds = new CommandButton[2];
                 setBorder(b);
 	}
-	
-        public void makeDecoration(String title,Image icon,boolean move,boolean hide,boolean close) {
-            
-                    // TODO
-                    // Font and color need to be changable
-                    // move button needs to work, also moving with pointer needs to work
-            
-                    Panel buttonPanel = new Panel( new GridLayout(1,0,2) );
-                    if (move) {
-                        buttonPanel.add(new Button("O"));
-                    }
-                    if (hide) {
-                        Button b = new Button("_");
-                        b.addActionListener(this);
-                        b.setActionCommand("hide");
-                        buttonPanel.add(b);
-
-                    }
-                    if (close) {
-                        Button b = new Button("X");
-                        b.addActionListener(this);
-                        b.setActionCommand("close");
-                        buttonPanel.add(b);
-                        
-                    }
-                    
-                    Panel decoration = new Panel( new BorderLayout() );
-                    decoration.add(new Label( title,icon ));
-                    decoration.add(buttonPanel,Graphics.RIGHT);
-                    decoration.setBackground(0x00AAAAFF);
-            
-                    contentPane.add(decoration,Graphics.TOP);
-        }
     
 	public void setupFocusedComponent() {
 
@@ -277,20 +241,26 @@ public class Window extends Component implements ActionListener {
 			
 	}
 	
-	
-    public void pointerEvent(int type, int x, int y){
+        public void pointerEvent(int type, int x, int y) {
 
-    	if (glasspanecomponent!=null) {
-    	
-    		glasspanecomponent.pointerEvent(type, x - glasspanecomponent.getX(), y - glasspanecomponent.getY());
-    	}
-    	else {
-    		
-    		contentPane.pointerEvent(type, x, y);
-    		
-    	}
-    }
+            // TODO to resize the window
+            // if we drag next to the border
+        }
+        
+        public Component getComponentAt(int x, int y) {
+            
+            
+            if (glasspanecomponent!=null) {
 
+                    return glasspanecomponent.getComponentAt( x - glasspanecomponent.getX(), y - glasspanecomponent.getY());
+            }
+            else {
+
+                    return contentPane.getComponentAt( x, y);
+
+            }
+
+        }
 
 	public void paintComponent(Graphics g) { }
 
@@ -326,25 +296,37 @@ public class Window extends Component implements ActionListener {
 		}
 		
 	}
+        
+        public void actionPerformed(String actionCommand) {
+            
+             if ("close".equals(actionCommand)) {
 
-    public void actionPerformed(String actionCommand) {
-         if ("close".equals(actionCommand)) {
-             
-             if (parent==null) {
-                DesktopPane.getDesktopPane().remove(this);
-             }
-             else {
-                 parent.remove(this);
-             }
-         }
-         if ("hide".equals(actionCommand)) {
-         
-             if (parent==null) {
-                 Vector windows = DesktopPane.getDesktopPane().getAllFrames();
-                 if (windows.size()>1) {
-                     DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
+                 if (parent==null) {
+                    DesktopPane.getDesktopPane().remove(this);
+                 }
+                 else {
+                     parent.remove(this);
                  }
              }
-         }
-    }
+             else if ("hide".equals(actionCommand)) {
+
+                 if (parent==null) {
+                     Vector windows = DesktopPane.getDesktopPane().getAllFrames();
+                     if (windows.size()>1) {
+                         DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
+                     }
+                 }
+             }
+             else if ("max".equals(actionCommand)) {
+
+                 setBounds(0,0,DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
+                 repaint();
+             }
+             else {
+                System.out.println("?? "+actionCommand);
+             }
+            
+            
+        }
+
 }

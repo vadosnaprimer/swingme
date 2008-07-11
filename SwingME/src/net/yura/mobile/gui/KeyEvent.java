@@ -127,15 +127,15 @@ public class KeyEvent {
         private static final char[] CHARS_42 = new char[] {'*'};
         private static final char[] CHARS_35 = new char[] {'#'};
         private static final char[] CHARS_48 = new char[] {' ','0'};
-        private static final char[] CHARS_49 = new char[] {'.',',','?','!','1'};
-        private static final char[] CHARS_50 = new char[] {'a','b','c'};
-        private static final char[] CHARS_51 = new char[] {'d','e','f'};
-        private static final char[] CHARS_52 = new char[] {'g','h','i'};
-        private static final char[] CHARS_53 = new char[] {'j','k','l'};
-        private static final char[] CHARS_54 = new char[] {'m','n','o'};
-        private static final char[] CHARS_55 = new char[] {'p','q','r','s'};
-        private static final char[] CHARS_56 = new char[] {'t','u','v'};
-        private static final char[] CHARS_57 = new char[] {'w','x','y','z'};
+        private static final char[] CHARS_49 = new char[] {'.',',','?','!','1','@','\'','-','_'};
+        private static final char[] CHARS_50 = new char[] {'a','b','c','2'};
+        private static final char[] CHARS_51 = new char[] {'d','e','f','3'};
+        private static final char[] CHARS_52 = new char[] {'g','h','i','4'};
+        private static final char[] CHARS_53 = new char[] {'j','k','l','5'};
+        private static final char[] CHARS_54 = new char[] {'m','n','o','6'};
+        private static final char[] CHARS_55 = new char[] {'p','q','r','s','7'};
+        private static final char[] CHARS_56 = new char[] {'t','u','v','8'};
+        private static final char[] CHARS_57 = new char[] {'w','x','y','z','9'};
         
         public static char[] getChars(int keycode,int mode) {
             

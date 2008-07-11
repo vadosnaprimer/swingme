@@ -19,6 +19,7 @@ package net.yura.mobile.gui;
 
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 
 public class Theme {
 	
@@ -37,18 +38,18 @@ public class Theme {
 	
 	public int defaultWidth;
         public int defaultSpace;
-	public int barHeight;
+        
+        public ListCellRenderer softkeyRenderer;
         
         public Theme(){
-            this(null,0,0);
+            this(null,0);
             // these will have defaults setup anyway
         }
         
-	public Theme(Font font,int barHeight,int a) {
+	public Theme(Font font,int a) {
 		
 		this.font = font;
 
-                this.barHeight = barHeight;
 		defaultWidth = a;
 		
 		background = 0x00FFFFFF;
@@ -56,7 +57,6 @@ public class Theme {
 		
 		normalBorder = new LineBorder(0x00808080);
 		activeBorder = new LineBorder(0);
-
 	}
 
 }

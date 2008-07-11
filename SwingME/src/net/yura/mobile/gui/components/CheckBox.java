@@ -47,6 +47,10 @@ public class CheckBox extends RadioButton {
                 
 	}
 	
+        public void setSelected(boolean selected) {
+		super.setSelected(selected);
+                oldState = selected;
+	}
 
 	public void paintExtra(Graphics g) {
 
