@@ -379,6 +379,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     serviceRepaints();
                 }
 		repaint();
+   
 	}
 
         /**
@@ -404,6 +405,7 @@ public class DesktopPane extends Canvas implements Runnable {
          * Repaint the softkeybar
          */
         public void softkeyRepaint(boolean all) {
+
             // TODO: is this correct, will ANY repaint do?
             // by default calling repaint() like this will do a window repaint
             if (all) {
@@ -450,9 +452,9 @@ public class DesktopPane extends Canvas implements Runnable {
 	public void setComponentCommand(int i, CommandButton softkey) {
 
             if (componentCommands[i]!=softkey) {
-                CommandButton old = componentCommands[i];
+                CommandButton old = getCurrentCommands()[i]; // get old 1
 		componentCommands[i] = softkey;
-                if (getCurrentCommands()[i]==softkey) {
+                if (getCurrentCommands()[i]==softkey) { // check if we are the new 1
                     softkeyRepaint(old==null || softkey ==null);
                 }
             }

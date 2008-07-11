@@ -274,9 +274,9 @@ public class Window extends Component implements ActionListener {
 	public void setWindowCommand(int i, CommandButton softkey) {
 
             if (panelCmds[i]!=softkey) {
-                CommandButton oldc = panelCmds[i];
+                CommandButton oldc = DesktopPane.getDesktopPane().getCurrentCommands()[i]; // get old 1
 		panelCmds[i] = softkey;
-                if (DesktopPane.getDesktopPane().getSelectedFrame()==this && DesktopPane.getDesktopPane().getCurrentCommands()[i]==softkey) {
+                if (DesktopPane.getDesktopPane().getCurrentCommands()[i]==softkey) { // check if we are the new 1
                     DesktopPane.getDesktopPane().softkeyRepaint(oldc==null || softkey == null);
                 }
             }
