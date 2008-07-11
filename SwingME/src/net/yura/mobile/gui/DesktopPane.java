@@ -66,6 +66,7 @@ public class DesktopPane extends Canvas implements Runnable {
         private int background;
 
         private boolean fullrepaint;
+        private boolean paintSoftKey;
         private boolean paintdone=false;
 	private boolean killflag;
 
@@ -253,7 +254,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			return;
 		}
 
-		if (!fullrepaint) {
+		if (!fullrepaint && !paintSoftKey) {
 			boolean ret = paintWindow(g,currentWindow);
 			if (!ret) {
 				fullrepaint=true;
@@ -266,6 +267,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 		if (fullrepaint) {
 			fullrepaint = false;
+                        paintFirst(g);
 			for (int c=0;c<windows.size();c++) {
 				paintWindow(g,(Window)windows.elementAt(c));
 			}
@@ -282,23 +284,33 @@ public class DesktopPane extends Canvas implements Runnable {
 		}
 
 		drawSoftkeys(g);
+                paintLast(g);
 
 	}
 
-        private boolean sideSoftKeys;
-        private Component getSoftkeyRenderer(int i) {
-            if (theme.softkeyRenderer==null) return null;
-            Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, false, false);
-            if (com==null) return null;
-            int h = com.getHeightWithBorder();
-            int w = com.getWidthWithBorder();
-            if (sideSoftKeys) {
-                com.setBoundsWithBorder(getWidth()-w, (i==0)?(getHeight()-h):0, w, h);
+        public void paintFirst(Graphics g) { }
+        public void paintLast(Graphics g) { }
+        
+        private void drawSoftkeys(Graphics g) {
+            
+            Component com1 = getSoftkeyRenderer(0);
+
+            if (com1!=null) {
+
+                g.translate(com1.getX(), com1.getY());
+                com1.paint(g);
+                g.translate(-com1.getX(), -com1.getY());
             }
-            else {
-                com.setBoundsWithBorder((i==1)?(getWidth()-w):0, getHeight()-h, w, h);
+
+            Component com2 = getSoftkeyRenderer(1);
+            if (com2!=null) {
+
+                g.translate(com2.getX(), com2.getY());
+                com2.paint(g);
+                g.translate(-com2.getX(), -com2.getY());
             }
-            return com;
+            paintSoftKey = false;
+
         }
 
 	private boolean paintWindow(Graphics g,Window w) {
@@ -323,32 +335,24 @@ public class DesktopPane extends Canvas implements Runnable {
 		g.translate(-wx, -wy);
 		return ret;
 	}
-
-        /**
-         * override this to draw softkeys how you want to
-         * @param g The Graphics
-         */
-        public void drawSoftkeys(Graphics g) {
-            
-            Component com1 = getSoftkeyRenderer(0);
-
-            if (com1!=null) {
-
-                g.translate(com1.getX(), com1.getY());
-                com1.paint(g);
-                g.translate(-com1.getX(), -com1.getY());
+        
+        private boolean sideSoftKeys;
+        private Component getSoftkeyRenderer(int i) {
+            // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
+            Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, false, false);
+            if (com==null) return null;
+            int h = com.getHeightWithBorder();
+            int w = com.getWidthWithBorder();
+            if (sideSoftKeys) {
+                com.setBoundsWithBorder(getWidth()-w, (i==0)?(getHeight()-h):0, w, h);
             }
-
-            Component com2 = getSoftkeyRenderer(1);
-            if (com2!=null) {
-
-                g.translate(com2.getX(), com2.getY());
-                com2.paint(g);
-                g.translate(-com2.getX(), -com2.getY());
+            else {
+                com.setBoundsWithBorder((i==1)?(getWidth()-w):0, getHeight()-h, w, h);
             }
-
+            return com;
         }
         
+
         // #####################################################################
         // Different ways of caling repaint
         
@@ -399,10 +403,17 @@ public class DesktopPane extends Canvas implements Runnable {
         /**
          * Repaint the softkeybar
          */
-        public void softkeyRepaint() {
+        public void softkeyRepaint(boolean all) {
             // TODO: is this correct, will ANY repaint do?
             // by default calling repaint() like this will do a window repaint
-            repaint();
+            if (all) {
+                // we ONLY need to repaint all if the renderer does not paint anything on a null softkey
+                fullRepaint();
+            }
+            else {
+                paintSoftKey=true;
+                repaint();
+            }
         }
 
         // #####################################################################
@@ -439,8 +450,11 @@ public class DesktopPane extends Canvas implements Runnable {
 	public void setComponentCommand(int i, CommandButton softkey) {
 
             if (componentCommands[i]!=softkey) {
+                CommandButton old = componentCommands[i];
 		componentCommands[i] = softkey;
-		softkeyRepaint();
+                if (getCurrentCommands()[i]==softkey) {
+                    softkeyRepaint(old==null || softkey ==null);
+                }
             }
 
 	}
@@ -556,7 +570,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 				((ActionListener)focusedComponent).actionPerformed( componentCommands[i].getActionCommand() );
 
-                                 if (componentCommands[i].getMenu()!=null) {
+                                 if (componentCommands[i]!=null && componentCommands[i].getMenu()!=null) {
                                         Component renderer = getSoftkeyRenderer(i);
                                         componentCommands[i].getMenu().openMenu(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
                                  }
@@ -566,7 +580,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                                 actionListener.actionPerformed( panelCmds[i].getActionCommand() );
 
-                                if (panelCmds[i].getMenu()!=null) {
+                                if (panelCmds[i]!=null && panelCmds[i].getMenu()!=null) {
                                     Component renderer = getSoftkeyRenderer(i);
                                     panelCmds[i].getMenu().openMenu(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
                                 }
