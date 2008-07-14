@@ -304,7 +304,6 @@ public class Window extends Component implements ActionListener {
 			DesktopPane.getDesktopPane().windowRepaint();
 		}
 		else {
-                    System.out.println("sdfsdfsdfsfsdf 77");
 			DesktopPane.getDesktopPane().fullRepaint();
 		}
 		

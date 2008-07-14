@@ -16,9 +16,10 @@ public class DefaultSoftkeyRenderer extends Component implements ListCellRendere
         setBackground(0x00FFFFFF);
     }
     
-    public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(List list, Object value, int index, boolean top, boolean left) {
         if (value==null) return null;
         text = value.toString();
+        //text = (top?"top":"bottom") + " " + (left?"left":"right");
         height = DesktopPane.getDefaultTheme().font.getHeight();
         width = DesktopPane.getDesktopPane().getWidth()/2 - 10;
         return this;

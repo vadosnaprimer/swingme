@@ -38,12 +38,16 @@ public class Menu extends Button {
 
             popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
             
-            int h2 = popup.getHeightWithBorder();
-            int w2 = popup.getWidthWithBorder();
-             
+            int w = popup.getWidthWithBorder();
+            int h = popup.getHeightWithBorder();
+
+            if (x+w > DesktopPane.getDesktopPane().getWidth()) {
+                x = DesktopPane.getDesktopPane().getWidth() - w;
+            }
+            
             // TODO if height is too big make it less
             
-            popup.setBoundsWithBorder(x, up?(y-h2):(y+height), w2, h2);
+            popup.setBoundsWithBorder(x, up?(y-h):(y+height), w, h);
             DesktopPane.getDesktopPane().add(popup);
         }
 

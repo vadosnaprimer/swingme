@@ -339,7 +339,7 @@ public class DesktopPane extends Canvas implements Runnable {
         private boolean sideSoftKeys;
         private Component getSoftkeyRenderer(int i) {
             // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
-            Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys, false);
+            Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
             if (com==null) return null;
             int h = com.getHeightWithBorder();
             int w = com.getWidthWithBorder();
@@ -839,7 +839,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         protected void sizeChanged(int w, int h) {
             //#debug
-            System.out.println("sizeChanged!!");
+            System.out.println("sizeChanged!! " +paintdone);
+            
+            if (!paintdone) return;
+            
             if (w>h) {
                 sideSoftKeys = true;
             }
