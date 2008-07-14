@@ -127,8 +127,8 @@ public class RadioButton extends Button {
 	}
 	
         public void fireActionPerformed() {
-            repaint();
             super.fireActionPerformed();
+            repaint();
         }
         
 	public Image getSelectedImage() {

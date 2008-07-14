@@ -1,5 +1,6 @@
 package net.yura.mobile.gui.components;
 
+import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
@@ -26,21 +27,40 @@ public class Menu extends Button {
             openMenu(getXInWindow()+owner.getX(), getYInWindow()+owner.getY(), width, height);
             
         }
+
+    public Vector getComponents() {
+        return panel.getComponents();
+    }
         
         public void openMenu(int x, int y, int width, int height) {
-            popup.setBoundsWithBorder(0, 0, 50, 50);
+            panel.doLayout(); // what out what the needed size is
+            boolean up = (y+height/2 > DesktopPane.getDesktopPane().getHeight()/2);
+
+            popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
+            
+            int h2 = popup.getHeightWithBorder();
+            int w2 = popup.getWidthWithBorder();
+             
+            // TODO if height is too big make it less
+            
+            popup.setBoundsWithBorder(x, up?(y-h2):(y+height), w2, h2);
             DesktopPane.getDesktopPane().add(popup);
         }
+
+    public void removeAll() {
+        panel.removeAll();
+    }
     
         private void makeWindow() {
             
             popup = new Window();
-            //popup.setWindowCommand(0, new CommandButton(getText(), "select"));
+            popup.setWindowCommand(0, new CommandButton(getText(), "select"));
             popup.setWindowCommand(1, new CommandButton("Cancel", "cancel"));
             popup.setActionListener(this);
             panel = popup.getContentPane();
             panel.setLayout(new BoxLayout(Graphics.VCENTER));
             popup.setContentPane(new ScrollPane(panel));
+            popup.setBorder(DesktopPane.getDefaultTheme().menuBorder);
             
         }
         
@@ -74,11 +94,12 @@ public class Menu extends Button {
             parentMenu = m;
         }
         
-        public void addMenuItem(String name,Image icon,String command) {
+        public void addMenuItem(String command,String name,Image icon) {
             
             Button b = new Button(name,icon);
             b.setActionCommand(command);
             b.addActionListener(this);
+            b.setUseSelectButton(true);
             add(b);
         }
         

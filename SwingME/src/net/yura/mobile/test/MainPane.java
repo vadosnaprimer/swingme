@@ -115,7 +115,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 				mainmenu = new Panel( new FlowLayout(Graphics.VCENTER) );
 				
-				Label helloWorld = new Label("yura.net mobile");
+				Label helloWorld = new Label("Test App Menu");
 				mainmenu.add(helloWorld);
 				
                                 addMainMenuButton("Info","info");
@@ -246,7 +246,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 Menu menu2 = new Menu("Sub");
                                 menu2.addActionListener(this);
                                 menu2.add(new Button("fred"));
-                                menu2.addMenuItem("item", null, "action");
+                                menu2.addMenuItem("action","item", null);
                                 menu.add(menu2);
                                 
 			}
@@ -377,17 +377,21 @@ public class MainPane extends DesktopPane implements ActionListener {
 	private ScrollPane scroll;
 	private void addToScrollPane(Component a,CommandButton b,CommandButton c) {
 		
-		mainWindow.getContentPane().removeAll();
+
 		
 		if (scroll==null) {
 			
 			scroll = new ScrollPane();
+                        Label label = new Label("yura.net Mobile");
+                        label.setHorizontalAlignment(Graphics.HCENTER);
+                        mainWindow.getContentPane().add(label,Graphics.TOP);
+                        mainWindow.getContentPane().add(scroll);
+                        mainWindow.getContentPane().add(new Label(""),Graphics.BOTTOM);
 		}
 		
+               	scroll.removeAll();
 		scroll.add(a);
-		
-		mainWindow.getContentPane().add(scroll);
-		
+
 		mainWindow.getContentPane().doLayout();
 		
 		mainWindow.setWindowCommand(0, b);

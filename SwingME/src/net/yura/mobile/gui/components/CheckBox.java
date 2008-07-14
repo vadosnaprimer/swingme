@@ -26,8 +26,6 @@ import javax.microedition.lcdui.Image;
  * @see javax.swing.JCheckBox
  */
 public class CheckBox extends RadioButton {
-	
-        private boolean oldState;
     
         public CheckBox(String label,Image a,Image b) {
             super(label,a,b);
@@ -37,20 +35,9 @@ public class CheckBox extends RadioButton {
             super(label);
 	}
 	
-        public void fireActionPerformed() {
-                
-                if (oldState) selected=false;
-                
-                super.fireActionPerformed();
-
-                oldState = selected;
-                
-	}
-	
-        public void setSelected(boolean selected) {
-		super.setSelected(selected);
-                oldState = selected;
-	}
+        protected void toggleSelection() {
+            selected=!selected;
+        }
 
 	public void paintExtra(Graphics g) {
 

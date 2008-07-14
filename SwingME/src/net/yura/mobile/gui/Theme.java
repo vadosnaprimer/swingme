@@ -40,6 +40,7 @@ public class Theme {
         public int defaultSpace;
         
         public ListCellRenderer softkeyRenderer;
+        public Border menuBorder;
         
         public Theme(){
             this(null,0);

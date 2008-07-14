@@ -42,6 +42,17 @@ public class Window extends Component implements ActionListener {
 		return actionListener;
 	}
 
+        /*
+        public void pack() {
+            if (glasspanecomponent!=null) {
+                glasspanecomponent.doLayout();
+            }
+            else {
+                contentPane.setBoundsWithBorder(0,0,width, height);
+                contentPane.doLayout();
+            }
+        }
+        */
 	public void setActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;
 	}
@@ -57,7 +68,7 @@ public class Window extends Component implements ActionListener {
                 
                 contentPane.setOwnerAndParent(this,null);
                 
-                setBackground(0x00FFFFFF); // set default white background
+                //setBackground(0x00FFFFFF); // set default white background
                 
                 panelCmds = new CommandButton[2];
                 setBorder(b);
@@ -88,10 +99,10 @@ public class Window extends Component implements ActionListener {
 	}
 	
 	
-    public void setSize(int width, int height){
-    	super.setSize(width, height);
-    	contentPane.setBoundsWithBorder(0,0,width, height);
-    }
+        public void setSize(int width, int height){
+            super.setSize(width, height);
+            contentPane.setBoundsWithBorder(0,0,width, height);
+        }
 
 
 
@@ -293,6 +304,7 @@ public class Window extends Component implements ActionListener {
 			DesktopPane.getDesktopPane().windowRepaint();
 		}
 		else {
+                    System.out.println("sdfsdfsdfsfsdf 77");
 			DesktopPane.getDesktopPane().fullRepaint();
 		}
 		

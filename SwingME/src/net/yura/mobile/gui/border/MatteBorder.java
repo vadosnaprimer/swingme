@@ -130,6 +130,14 @@ public class MatteBorder extends EmptyBorder {
 		}
 
 	}
+
+        /**
+         * @return the icon used for tiling the border or null if a solid color is being used
+         * @see javax.swing.border.MatteBorder#getTileIcon() MatteBorder.getTileIcon
+         */
+        public Image getTileIcon() {
+            return activeimage;
+        }
         
         
         
@@ -199,8 +207,10 @@ public class MatteBorder extends EmptyBorder {
                 }
                 
                 else if (color!=-1) {
+                    boolean fillsides = (imageHeight-imageTop-imageBottom) == 0;
+                    boolean filltop = (imageWidth-imageRight-imageLeft) == 0;
                     g.setColor(color);
-                    g.fillRect(leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff);
+                    g.fillRect(fillsides?0:leftDiff,filltop?0:topDiff,width-(fillsides?0:leftDiff+rightDiff),height-(filltop?0:topDiff+bottomDiff));
                 }
                 
             }

@@ -127,8 +127,6 @@ public class Button extends Label implements ActionListener {
 	public boolean keyEvent(KeyEvent keyEvent) {
             
             	if (keyEvent.justPressedAction(Canvas.FIRE)) {
-
-                        selected = true;
                     
 			fireActionPerformed();
 			
@@ -141,10 +139,7 @@ public class Button extends Label implements ActionListener {
         public void pointerEvent(int type, int x, int y) {
             super.pointerEvent(type, x, y);
             
-            if (type == DesktopPane.PRESSED) {
-                selected=true;
-            }
-            else if (selected && type == DesktopPane.RELEASED) {
+            if (type == DesktopPane.RELEASED) {
                 if (x>=0 && x<=width && y>=0 && y<=height) {
                     fireActionPerformed();
                 }
@@ -153,17 +148,23 @@ public class Button extends Label implements ActionListener {
         }
         
 	 public void fireActionPerformed() {
-		
-            	if (buttonGroup!=null) {
-                        // this unselects all other buttons in the same button group as this 1
-			buttonGroup.setSelected(this);
-		}
-            
-		if (al!=null) {
-			al.actionPerformed((actionCommand!=null)?actionCommand:getText());
-		}
+
+            toggleSelection();
+
+            if (buttonGroup!=null && selected) {
+                    // this unselects all other buttons in the same button group as this 1
+                    buttonGroup.setSelected(this);
+            }
+
+            if (al!=null) {
+                    al.actionPerformed((actionCommand!=null)?actionCommand:getText());
+            }
 
 	}
+         
+        protected void toggleSelection() {
+            selected=true;
+        }
         
 	public void setBorder(Border b) {
 		normalBorder = b;
