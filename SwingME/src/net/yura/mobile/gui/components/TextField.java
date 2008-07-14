@@ -209,6 +209,9 @@ public class TextField extends Component implements ActionListener, CommandListe
                         setCaretPosition(caretPosition-1);
                         return true;
                     }
+                    else {
+                        return !keyEvent.justPressedAction(Canvas.LEFT);
+                    }
                     
                 }
                 else if (keyEvent.isDownAction(Canvas.RIGHT)) {
@@ -221,6 +224,9 @@ public class TextField extends Component implements ActionListener, CommandListe
 
                         setCaretPosition(caretPosition+1);
                         return true;
+                    }
+                    else {
+                        return !keyEvent.justPressedAction(Canvas.RIGHT);
                     }
                     
                 }
