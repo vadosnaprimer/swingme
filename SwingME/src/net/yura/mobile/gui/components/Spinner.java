@@ -30,6 +30,7 @@ import net.yura.mobile.util.Option;
 
 public class Spinner extends Label {
     
+        // TODO:  may need more images
 	private Image selectedImage;
 	private Image nonSelectedImage;
         
@@ -37,14 +38,18 @@ public class Spinner extends Label {
 	
 	private Vector list;
 
-	private Border borderColor;
-	private Border activeBorderColor;
+	private Border normalBorder;
+	private Border activeBorder;
         
 	private boolean continuous = false;
         
 	private boolean leftPress = false;
 	private boolean rightPress = false;
 
+        private int normalForeground;
+        private int activeForeground;
+        private int disabledForeground;
+        
 	public Spinner() {
 		this(new Vector(), false);
 	}
@@ -54,16 +59,29 @@ public class Spinner extends Label {
 		continuous = cont;
 		setData(vec);
 		
-		setForegroundByFontColorIndex(0);
-		
-		borderColor = DesktopPane.getDefaultTheme().normalBorder;
-		activeBorderColor = DesktopPane.getDefaultTheme().activeBorder;
+		normalBorder = DesktopPane.getDefaultTheme().normalBorder;
+		activeBorder = DesktopPane.getDefaultTheme().activeBorder;
 		
 		selectable = true;
 
                 setHorizontalAlignment(Graphics.HCENTER);
+                
+                activeForeground = DesktopPane.getDefaultTheme().activeForeground;
+                disabledForeground = DesktopPane.getDefaultTheme().disabledForeground;
+                normalForeground = DesktopPane.getDefaultTheme().foreground;
+                
 	}
 	
+        public void setSelectable(boolean s) {
+		if (s) {
+                    foreground = normalForeground;
+                }
+                else {
+                    foreground = disabledForeground;
+                }
+                super.setSelectable(s);
+	}
+        
 	public void doLayout() {
             
             if (list!=null && !list.isEmpty()) {
@@ -90,8 +108,8 @@ public class Spinner extends Label {
 
                     }
 
-                    int w = maxWidth + getArrowWidth()*2 + gap*2 + borderColor.getLeft() + borderColor.getRight() + padding*2;
-                    int h = maxHeight + borderColor.getTop() + borderColor.getBottom() + padding*2;
+                    int w = maxWidth + getArrowWidth()*2 + gap*2 + normalBorder.getLeft() + normalBorder.getRight() + padding*2;
+                    int h = maxHeight + normalBorder.getTop() + normalBorder.getBottom() + padding*2;
 
                     if (w > width) width = w;
                     if (h > height) height = h;
@@ -158,11 +176,11 @@ public class Spinner extends Label {
 
             int arrowWidth = getArrowWidth();
             
-            Border b = isFocused()?activeBorderColor:borderColor;
+            Border b = isFocused()?activeBorder:normalBorder;
 
-            g.translate(arrowWidth+gap+borderColor.getLeft(), borderColor.getTop());
-            b.paintBorder(this, g, width -gap*2 - arrowWidth*2 -borderColor.getLeft() - borderColor.getRight(), height-borderColor.getTop() - borderColor.getBottom());
-            g.translate(-arrowWidth-gap-borderColor.getLeft(), -borderColor.getTop());
+            g.translate(arrowWidth+gap+normalBorder.getLeft(), normalBorder.getTop());
+            b.paintBorder(this, g, width -gap*2 - arrowWidth*2 -normalBorder.getLeft() - normalBorder.getRight(), height-normalBorder.getTop() - normalBorder.getBottom());
+            g.translate(-arrowWidth-gap-normalBorder.getLeft(), -normalBorder.getTop());
 
 
             if (nonSelectedImage != null) {
@@ -195,18 +213,18 @@ public class Spinner extends Label {
             int xoffset = 0;
 
             if (horizontalAlignment==Graphics.LEFT) {
-                xoffset = arrowWidth+gap+borderColor.getLeft();
+                xoffset = arrowWidth+gap+normalBorder.getLeft();
             }
             else if (horizontalAlignment==Graphics.RIGHT) {
-                xoffset = -arrowWidth-gap-borderColor.getRight();
+                xoffset = -arrowWidth-gap-normalBorder.getRight();
             }
             
             int yoffset=0;
             if (verticalAlignment==Graphics.TOP) {
-                yoffset = borderColor.getTop();
+                yoffset = normalBorder.getTop();
             }
             else if (verticalAlignment==Graphics.BOTTOM) {
-                yoffset = -borderColor.getBottom();
+                yoffset = -normalBorder.getBottom();
             }
             
             g.translate(xoffset, yoffset);
@@ -248,35 +266,35 @@ public class Spinner extends Label {
 	}
 
         public int getMaxTextWidth() {
-            return width - getArrowWidth()*2 - gap*2 - borderColor.getLeft() - borderColor.getRight() - padding*2;
+            return width - getArrowWidth()*2 - gap*2 - normalBorder.getLeft() - normalBorder.getRight() - padding*2;
         }
 
 	public void focusLost() {
                 super.focusLost();
-		setForegroundByFontColorIndex(0);
+		foreground = normalForeground;
 		repaint();
 	}
 
 	public void focusGained() {
                 super.focusGained();
-		setForegroundByFontColorIndex(1);
+		foreground = activeForeground;
 		repaint();
 	}
 
 	public Border getActiveBorder() {
-		return activeBorderColor;
+		return activeBorder;
 	}
 
 	public void setActiveBorder(Border activeBorderColor) {
-		this.activeBorderColor = activeBorderColor;
+		this.activeBorder = activeBorderColor;
 	}
 
 	public Border getNormalBorder() {
-		return borderColor;
+		return normalBorder;
 	}
 
 	public void setNormalBorderColor(Border borderColor) {
-		this.borderColor = borderColor;
+		this.normalBorder = borderColor;
 	}
 		
 	/**
