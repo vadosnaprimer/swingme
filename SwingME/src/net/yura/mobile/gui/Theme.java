@@ -32,6 +32,8 @@ public class Theme {
 	// Items info
 	public int background;
 	public int foreground;
+        public int activeForeground;
+        public int disabledForeground;
 	
 	public Border normalBorder;
 	public Border activeBorder;
@@ -54,10 +56,12 @@ public class Theme {
 		defaultWidth = a;
 		
 		background = 0x00FFFFFF;
-		foreground = 0;
+		foreground = 0x00000000;
+                activeForeground = 0x000000FF;
+                disabledForeground = 0x00808080;
 		
 		normalBorder = new LineBorder(0x00808080);
-		activeBorder = new LineBorder(0);
+		activeBorder = new LineBorder(0x00000000);
 	}
 
 }

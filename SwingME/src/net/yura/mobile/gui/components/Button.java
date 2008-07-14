@@ -44,6 +44,10 @@ public class Button extends Label implements ActionListener {
 	protected Border normalBorder;
 	protected Border activeBorder;
 	
+        private int normalForeground;
+        private int activeForeground;
+        private int disabledForeground;
+        
 	private ActionListener al;
 	private String actionCommand;
 	
@@ -94,10 +98,22 @@ public class Button extends Label implements ActionListener {
                 setActiveBorder(c);
 		selectable = true;
 		
-		setForegroundByFontColorIndex(0);
+		activeForeground = DesktopPane.getDefaultTheme().activeForeground;
+                disabledForeground = DesktopPane.getDefaultTheme().disabledForeground;
+                normalForeground = DesktopPane.getDefaultTheme().foreground;
 		
 	}
 
+        public void setSelectable(boolean s) {
+		if (s) {
+                    foreground = normalForeground;
+                }
+                else {
+                    foreground = disabledForeground;
+                }
+                super.setSelectable(s);
+	}
+        
         public boolean isSelected() {
 		return selected;
 	}
@@ -178,7 +194,7 @@ public class Button extends Label implements ActionListener {
 	public void focusLost() {
                 super.focusLost();
 		super.setBorder(normalBorder);
-		setForegroundByFontColorIndex(0);
+		foreground = normalForeground;
 		
 		if (useSelectButton) {
 			DesktopPane.getDesktopPane().setComponentCommand(0, null);
@@ -190,7 +206,7 @@ public class Button extends Label implements ActionListener {
 	public void focusGained() {
                 super.focusGained();
 		super.setBorder(activeBorder);
-		setForegroundByFontColorIndex(1);
+		foreground = activeForeground;
 		
 		if (useSelectButton) {
 			DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);

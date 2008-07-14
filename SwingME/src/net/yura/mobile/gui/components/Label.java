@@ -288,9 +288,7 @@ public class Label extends Component {
          */
 	public void setFont(Font font) {
 		this.font = font;
-		if (font!=null) {
-			setForegroundByFontColorIndex(0);
-		}
+
 	}
 
         /**
@@ -376,16 +374,5 @@ public class Label extends Component {
             return DesktopPane.getDefaultTheme().defaultWidth;
 
         }
-        /**
-         * @deprecated 
-         */
-	public void setForegroundByFontColorIndex(int a) {
-		
-		if (a < font.getColors().length ) {
-			
-			foreground = font.getColors()[a];
-		}
-		
-	}
 
 }
