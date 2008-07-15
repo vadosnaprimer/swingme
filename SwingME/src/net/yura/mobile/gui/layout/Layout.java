@@ -30,9 +30,15 @@ public interface Layout {
 	* @see java.awt.LayoutManager#layoutContainer(java.awt.Container) LayoutManager.layoutContainer
 	*/
 	void layoutPanel(Panel panel);
-        
+
+        /**
+         * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container) LayoutManager.preferredLayoutSize
+         */
         int getPreferredHeight(Panel panel);
-                
+
+        /**
+         * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container) LayoutManager.preferredLayoutSize
+         */    
         int getPreferredWidth(Panel panel);
 	
 }

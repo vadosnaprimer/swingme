@@ -136,8 +136,6 @@ public class BorderLayout implements Layout {
                                     break;
                                 default:
                                     if (h1<comp.getHeightWithBorder()) {
-                                        
-                                        System.out.println(comp.getHeightWithBorder()+"sdfsfd" + panel);
                                         h1 = comp.getHeightWithBorder();
                                     }
                                     break;

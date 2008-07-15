@@ -169,10 +169,15 @@ public class Panel extends Component {
 	// does nothing, but can be overridden
         public void paintComponent(Graphics g) {}
 
-    public void setPreferredSize(int w, int h) {
-        preferredWidth = w;
-        preferredHeight = h;
-    }
+        /**
+         * @param w The preferred Width (can be -1 for no preference)
+         * @param h The preferred Height (can be -1 for no preference)
+         * @see javax.swing.JComponent#setPreferredSize(java.awt.Dimension) JComponent.setPreferredSize
+         */
+        public void setPreferredSize(int w, int h) {
+            preferredWidth = w;
+            preferredHeight = h;
+        }
 
         /**
          * works out the current size of this panel

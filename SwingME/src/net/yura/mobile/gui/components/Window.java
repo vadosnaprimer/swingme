@@ -98,6 +98,9 @@ public class Window extends Component implements ActionListener {
             contentPane.revalidate();
         }
 
+        /**
+         * @see java.awt.Window#pack() Window.pack
+         */
         public void pack() {
 
                 contentPane.workoutSize();
