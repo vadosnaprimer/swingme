@@ -35,8 +35,8 @@ public class CommandButton extends Command {
 		
 	}
 
-        public CommandButton(String label,String com,Menu m) {
-            this(label,com);
+        public CommandButton(Menu m,String com) {
+            this(m.getText(),com);
             menu = m;
         }
         

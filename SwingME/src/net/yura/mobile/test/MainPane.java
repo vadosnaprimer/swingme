@@ -244,18 +244,18 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
                                 
-                                menu = new Menu("M1");
+                                menu = new Menu("Menu");
                                 menu.add(new Button("bob"));
                                 
                                 Menu menu2 = new Menu("Sub");
                                 menu2.addActionListener(this);
                                 menu2.add(new Button("fred"));
-                                menu2.addMenuItem("action","item", null);
+                                menu2.addMenuItem("action","item (will close menu)", null);
                                 menu.add(menu2);
                                 
 			}
 			
-			addToScrollPane(componentTest, new CommandButton("Menu","popmenu",menu),  new CommandButton("Back","mainmenu") );
+			addToScrollPane(componentTest, new CommandButton(menu,"popmenu"),  new CommandButton("Back","mainmenu") );
 			
 		}
 		else if ("loadpanel".equals(actionCommand)) {

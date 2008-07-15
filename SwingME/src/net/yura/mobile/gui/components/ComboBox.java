@@ -128,11 +128,11 @@ public class ComboBox extends Button implements ActionListener{
 		
 	}
 
-	public void paintComponent(Graphics g){
+	public void paintComponent(Graphics g) {
 
             if (nonSelectedImage == null){
 
-                int w = width - height + padding*2;
+                int w = width - getFont().getHeight();
                 g.setColor( getBorderColor() );
                 g.drawLine(w , 0, w , height);
 

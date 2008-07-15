@@ -1,12 +1,14 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.layout.BoxLayout;
+import net.yura.mobile.gui.KeyEvent;
 
 /**
  * @author Yura Mamyrin
@@ -29,9 +31,9 @@ public class Menu extends Button {
             
         }
 
-    public Vector getComponents() {
-        return panel.getComponents();
-    }
+	public Vector getComponents() {
+		return panel.getComponents();
+	}
         
         public void openMenu(int x, int y, int width, int height) {
             
@@ -112,5 +114,32 @@ public class Menu extends Button {
             b.setUseSelectButton(true);
             add(b);
         }
+
+	public boolean keyEvent(KeyEvent keyEvent) {
+            
+            if (keyEvent.justPressedAction(Canvas.RIGHT)) {
+                    
+			fireActionPerformed();
+			return true;
+		}
+		return super.keyEvent(keyEvent);
+    
+	}
+
+	public void workoutSize() {
+
+		super.workoutSize();
+		width = width + getFont().getHeight()/2 + padding;
+
+	}
+
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+
+		int s = getFont().getHeight();
+
+                ScrollPane.drawRightArrow(g, width-s/2-padding, (height-s)/2, s/2, s);
+
+	}
         
 }
