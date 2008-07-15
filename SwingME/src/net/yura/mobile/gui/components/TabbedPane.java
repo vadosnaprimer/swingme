@@ -93,8 +93,10 @@ public class TabbedPane extends Panel implements ChangeListener {
             }
         }
 
-        public void doLayout() {
+        public void workoutSize() {
 
+            super.workoutSize();
+            
             // we can only really do this here
             // as when we have NO tabs added
             // we dont know the thickness of the tab bar
@@ -104,9 +106,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             else {
                 scroll.setSize(tabList.getWidth(), height);
             }
-            
-            super.doLayout();
-            
+
         }
         
     public void changeEvent(int num) {
@@ -137,7 +137,7 @@ public class TabbedPane extends Panel implements ChangeListener {
         }
 
         currentTabIndex = num;
-        doLayout();
+        revalidate();
 
     }
     

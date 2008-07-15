@@ -42,17 +42,6 @@ public class Window extends Component implements ActionListener {
 		return actionListener;
 	}
 
-        /*
-        public void pack() {
-            if (glasspanecomponent!=null) {
-                glasspanecomponent.doLayout();
-            }
-            else {
-                contentPane.setBoundsWithBorder(0,0,width, height);
-                contentPane.doLayout();
-            }
-        }
-        */
 	public void setActionListener(ActionListener actionListener) {
 		this.actionListener = actionListener;
 	}
@@ -98,13 +87,23 @@ public class Window extends Component implements ActionListener {
 		
 	}
 	
-	
-        public void setSize(int width, int height){
+	/**
+         * sets the new size and revaliates the window
+         * @param width new Width
+         * @param height new Height
+         */
+        public void setSize(int width, int height) {
             super.setSize(width, height);
             contentPane.setBoundsWithBorder(0,0,width, height);
+            contentPane.revalidate();
         }
 
+        public void pack() {
 
+                contentPane.workoutSize();
+                setSize(contentPane.getWidthWithBorder(), contentPane.getHeightWithBorder());
+
+        }
 
 	private Component old;
     public void setGlassPaneComponent(Panel c) {

@@ -135,9 +135,13 @@ public class MainPane extends DesktopPane implements ActionListener {
                     Window test1 = new Window( new LineBorder() );
                     test1.getContentPane().add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
                     test1.getContentPane().add(new Label("LALAL TEST 1"));
-                    test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
-                    test1.getContentPane().doLayout();
                     test1.getContentPane().setBackground(0x00FFFFFF);
+                    
+                    test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
+                    
+                    // Test that pack method works too
+                    //test1.pack();
+                    
                     add(test1);
                     
                 }
@@ -280,9 +284,10 @@ public class MainPane extends DesktopPane implements ActionListener {
 				message = "unable to load: "+e.toString();
 				e.printStackTrace();
 			}
-			loadPanel.setSize( getWidth()-ScrollPane.getBarThickness(getWidth(), getHeight()) , loadPanel.getHeight());
+			//loadPanel.setSize( getWidth()-ScrollPane.getBarThickness(getWidth(), getHeight()) , loadPanel.getHeight());
 			loadPanel.append(message+"\n");
 			//getContentPane().doLayout();
+                        mainWindow.getContentPane().revalidate();
 			mainWindow.getContentPane().repaint();
 		}
                 else if ("borderTest".equals(actionCommand)) {
@@ -392,7 +397,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                	scroll.removeAll();
 		scroll.add(a);
 
-		mainWindow.getContentPane().doLayout();
+		mainWindow.getContentPane().revalidate();
 		
 		mainWindow.setWindowCommand(0, b);
 		mainWindow.setWindowCommand(1, c);

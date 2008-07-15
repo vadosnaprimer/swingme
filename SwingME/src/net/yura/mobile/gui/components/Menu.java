@@ -16,6 +16,7 @@ public class Menu extends Button {
         private Window popup;
         private Panel panel;
         private Menu parentMenu;
+        private Component old;
 
         public Menu(String string) {
             super(string);
@@ -33,7 +34,11 @@ public class Menu extends Button {
     }
         
         public void openMenu(int x, int y, int width, int height) {
-            panel.doLayout(); // what out what the needed size is
+            
+            old = DesktopPane.getDesktopPane().getFocusedComponent();
+            
+            panel.workoutSize(); // what out what the needed size is
+            panel.doLayout();
             boolean up = (y+height/2 > DesktopPane.getDesktopPane().getHeight()/2);
 
             popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
@@ -51,9 +56,9 @@ public class Menu extends Button {
             DesktopPane.getDesktopPane().add(popup);
         }
 
-    public void removeAll() {
-        panel.removeAll();
-    }
+        public void removeAll() {
+            panel.removeAll();
+        }
     
         private void makeWindow() {
             
@@ -71,6 +76,7 @@ public class Menu extends Button {
     	public void actionPerformed(String actionCommand) {
             
             DesktopPane.getDesktopPane().remove(popup);
+            DesktopPane.getDesktopPane().setFocusedComponent(old);
             super.fireActionPerformed();
             
             if (!"cancel".equals(actionCommand)) {

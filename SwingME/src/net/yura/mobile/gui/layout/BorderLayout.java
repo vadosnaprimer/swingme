@@ -32,19 +32,15 @@ public class BorderLayout implements Layout {
     /**
      * @see java.awt.BorderLayout#layoutContainer(java.awt.Container) BorderLayout.layoutContainer
      */
-    public void layoutPanel(Panel panel, Hashtable cons) {
+    public void layoutPanel(Panel panel) {
 
         	Vector components = panel.getComponents();
-
+                Hashtable cons = panel.getConstraints();
+                
                 int top=0;
                 int bottom=0;
                 int right=0;
                 int left=0;
-                
-                int w1=0;
-                int w2=0;
-                int h1=0;
-                int h2=0;
                 
                 for (int c=0;c<components.size();c++) {
 			
@@ -55,37 +51,17 @@ public class BorderLayout implements Layout {
                             switch (pos.intValue()) {
                                 case Graphics.TOP:
                                     top = comp.getHeightWithBorder();
-                                    if (w1<comp.getWidthWithBorder()) {
-                                        w1 = comp.getWidthWithBorder();
-                                    }
-                                    h2 = h2+ comp.getHeightWithBorder();
                                     break;
                                 case Graphics.BOTTOM:
                                     bottom = comp.getHeightWithBorder();
-                                    if (w1<comp.getWidthWithBorder()) {
-                                        w1 = comp.getWidthWithBorder();
-                                    }
-                                    h2 = h2+ comp.getHeightWithBorder();
                                     break;
                                 case Graphics.RIGHT:
                                     right = comp.getWidthWithBorder();
-                                    w2 = w2 + comp.getWidthWithBorder();
-                                    if (h1<comp.getHeightWithBorder()) {
-                                        h1 = comp.getHeightWithBorder();
-                                    }
                                     break;
                                 case Graphics.LEFT:
                                     left = comp.getWidthWithBorder();
-                                    w2 = w2 + comp.getWidthWithBorder();
-                                    if (h1<comp.getHeightWithBorder()) {
-                                        h1 = comp.getHeightWithBorder();
-                                    }
                                     break;
                                 default:
-                                    w2 = w2 + comp.getWidthWithBorder();
-                                    if (h1<comp.getHeightWithBorder()) {
-                                        h1 = comp.getHeightWithBorder();
-                                    }
                                     break;
 
                             }
@@ -93,8 +69,8 @@ public class BorderLayout implements Layout {
 
                 }
                 
-                int width=Math.max( w1,Math.max(panel.getWidth(),w2)  );
-                int height=Math.max(panel.getHeight(),h1+h2);
+                int width=panel.getWidth();
+                int height=panel.getHeight();
                 
                 for (int c=0;c<components.size();c++) {
 			
@@ -125,6 +101,95 @@ public class BorderLayout implements Layout {
                 
                 panel.setSize(width,height);
                         
+    }
+
+    public int getPreferredHeight(Panel panel) {
+        	Vector components = panel.getComponents();
+                Hashtable cons = panel.getConstraints();
+                
+
+                int h1=0;
+                int h2=0;
+                
+                for (int c=0;c<components.size();c++) {
+			
+			Component comp = (Component)components.elementAt(c);
+                        Integer pos = (Integer)cons.get(comp);
+                        int p = (pos==null)?0:pos.intValue();
+                        
+                            switch (p) {
+                                case Graphics.TOP:
+                                    h2 = h2+ comp.getHeightWithBorder();
+                                    break;
+                                case Graphics.BOTTOM:
+                                    h2 = h2+ comp.getHeightWithBorder();
+                                    break;
+                                case Graphics.RIGHT:
+                                    if (h1<comp.getHeightWithBorder()) {
+                                        h1 = comp.getHeightWithBorder();
+                                    }
+                                    break;
+                                case Graphics.LEFT:
+                                    if (h1<comp.getHeightWithBorder()) {
+                                        h1 = comp.getHeightWithBorder();
+                                    }
+                                    break;
+                                default:
+                                    if (h1<comp.getHeightWithBorder()) {
+                                        
+                                        System.out.println(comp.getHeightWithBorder()+"sdfsfd" + panel);
+                                        h1 = comp.getHeightWithBorder();
+                                    }
+                                    break;
+
+                            }
+
+
+                }
+
+                return h1+h2;
+    }
+
+    public int getPreferredWidth(Panel panel) {
+        	Vector components = panel.getComponents();
+                Hashtable cons = panel.getConstraints();
+
+                int w1=0;
+                int w2=0;
+                
+                for (int c=0;c<components.size();c++) {
+			
+			Component comp = (Component)components.elementAt(c);
+                        Integer pos = (Integer)cons.get(comp);
+                        int p = (pos==null)?0:pos.intValue();
+                        
+                            switch (p) {
+                                case Graphics.TOP:
+                                    if (w1<comp.getWidthWithBorder()) {
+                                        w1 = comp.getWidthWithBorder();
+                                    }
+                                    break;
+                                case Graphics.BOTTOM:
+                                    if (w1<comp.getWidthWithBorder()) {
+                                        w1 = comp.getWidthWithBorder();
+                                    }
+                                    break;
+                                case Graphics.RIGHT:
+                                    w2 = w2 + comp.getWidthWithBorder();
+                                    break;
+                                case Graphics.LEFT:
+                                    w2 = w2 + comp.getWidthWithBorder();
+                                    break;
+                                default:
+                                    w2 = w2 + comp.getWidthWithBorder();
+                                    break;
+
+                            }
+
+
+                }
+                
+                return Math.max( w1,w2 );
     }
 
 }

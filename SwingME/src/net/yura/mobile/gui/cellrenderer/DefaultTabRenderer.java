@@ -75,7 +75,7 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
         setBorder( cellHasFocus?focus:(isSelected?open:none) );
         
-        doLayout();
+        workoutSize();
         
         return this;
     }

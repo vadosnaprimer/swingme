@@ -52,7 +52,7 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 		mainWindow.getContentPane().setBackground( 0x00EEEEEE );
 		mainWindow.getContentPane().setLayout( new FlowLayout() );
 		mainWindow.getContentPane().add( new Label("Hello World!") );
-		mainWindow.getContentPane().doLayout();
+		mainWindow.getContentPane().revalidate();
 	}
 
 	public void actionPerformed(String actionCommand) {

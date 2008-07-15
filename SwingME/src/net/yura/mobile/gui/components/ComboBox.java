@@ -51,7 +51,7 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
 
-	public void doLayout() {
+	public void workoutSize() {
 		if (list!=null) {
                     
 			Vector items = list.getItems();
@@ -86,7 +86,7 @@ public class ComboBox extends Button implements ActionListener{
 				h = height *4;
 			}
 			scroll.setSize(width, h);
-			scroll.doLayout();
+			scroll.revalidate();
 		}
 	}
 

@@ -192,7 +192,7 @@ public class List extends Component implements ActionListener {
     //	workoutItemSize();
     //}
 	
-	public void doLayout() {
+	public void workoutSize() {
 		
 		if (items!=null) {
                     

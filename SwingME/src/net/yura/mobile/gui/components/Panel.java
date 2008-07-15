@@ -54,7 +54,7 @@ public class Panel extends Component {
 		setLayout(n);
 		
 	}
-	
+
         /**
          * @param lt the specified layout manager
          * @see java.awt.Container#setLayout(java.awt.LayoutManager) Container.setLayout
@@ -65,6 +65,9 @@ public class Panel extends Component {
 
 	}
 
+        public Hashtable getConstraints() {
+            return constraints;
+        }
 
     public void setOwnerAndParent(Window owner,Panel p){
     	super.setOwnerAndParent(owner,p);
@@ -159,26 +162,83 @@ public class Panel extends Component {
             }
 	}
 	
+        protected int preferredWidth=-1;
+        protected int preferredHeight=-1;
+
+        
 	// does nothing, but can be overridden
         public void paintComponent(Graphics g) {}
 
-	public void doLayout() {
-		
-		for(int i = 0; i < components.size(); i++) {
+    public void setPreferredSize(int w, int h) {
+        preferredWidth = w;
+        preferredHeight = h;
+    }
+
+        /**
+         * works out the current size of this panel
+         * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+         */
+        public void workoutSize() {
+            
+            	for(int i = 0; i < components.size(); i++) {
 			
 			Component component = (Component)components.elementAt(i);
-			
-			//if (component instanceof Panel) {
-				
-				component.doLayout();
-			//}
-			
+			component.workoutSize();
+
 		}
+                
+                if (preferredWidth!=-1) {
+                    width = preferredWidth;
+                }
+                else if (layout!=null) {
+			width = layout.getPreferredWidth(this);
+		}
+                
+                if (preferredHeight!=-1) {
+                    height = preferredHeight;
+                }
+                else if (layout!=null) {
+			height = layout.getPreferredHeight(this);
+		}
+
+        }
+        
+        /**
+         * redo the layout
+         * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+         */
+	public void doLayout() {
 		
 		if (layout!=null) {
-			layout.layoutPanel(this,constraints);
+			layout.layoutPanel(this);
 		}
+                
+                for(int i = 0; i < components.size(); i++) {
+			
+			Component component = (Component)components.elementAt(i);
+			if (component instanceof Panel) {
+                            ((Panel)component).doLayout();
+                        }
+
+		}
+                
 	}
+        
+        /**
+         * this means reclac the size of children
+         * and then redo the layout
+         */
+        public void revalidate() {
+            
+                for(int i = 0; i < components.size(); i++) {
+			
+			Component component = (Component)components.elementAt(i);
+			component.workoutSize();
+
+                }
+            
+                doLayout();
+        }
 
 	// BREAK OUT!!!
 	// find next component in this panel
@@ -293,19 +353,6 @@ public class Panel extends Component {
 	}
         public String getName() {
             return name;
-        }
-        
-        // if a layout manager is resizing us, we want to redo the layout of our children
-	public void setBoundsWithBorder(int x,int y,int w, int h){
-            
-            int oldw = width;
-            int oldh = height;
-            
-            super.setBoundsWithBorder(x,y,w,h);
-            
-            if (oldw!=width || oldh != height) {
-                doLayout();
-            }
         }
         
 	public String toString() {

@@ -724,8 +724,6 @@ public class DesktopPane extends Canvas implements Runnable {
 				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
 				debugwindow.getContentPane().setBackground(0x00FFFFFF);
-				//debugwindow.getContentPane().setTransparent(false);
-				//debugwindow.getContentPane().doLayout();
 				add(debugwindow);
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","hide") );
@@ -854,10 +852,12 @@ public class DesktopPane extends Canvas implements Runnable {
                 Window window = (Window)windows.elementAt(c);
                 
                 // TODO RESIZE better
-                if (window.getX()==0 && window.getY()==0) {
-                    window.setSize(w, h);
-                }
+                //if (window.getX()==0 && window.getY()==0) {
+                    window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
+                //}
             }
+            
+            fullRepaint();
             
         }
         

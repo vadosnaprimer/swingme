@@ -42,39 +42,13 @@ public class BoxLayout implements Layout {
     /**
      * @see javax.swing.BoxLayout#layoutContainer(java.awt.Container) BoxLayout.layoutContainer
      */
-    public void layoutPanel(Panel panel, Hashtable cons) {
-
-                    int width = 0;
-                    int height = 0;
+    public void layoutPanel(Panel panel) {
 
                     Vector components = panel.getComponents();
 
-                    for (int c=0;c<components.size();c++) {
+                    int height = panel.getHeight();
+                    int width = panel.getWidth();
 
-                            Component comp = (Component)components.elementAt(c);
-
-                            if (axis == Graphics.HCENTER) {
-                                width = width + comp.getWidthWithBorder();
-                                if (height < comp.getHeightWithBorder()) {
-                                    height = comp.getHeightWithBorder();
-                                }
-                            }
-                            else {
-                                height = height + comp.getHeightWithBorder();
-                                if (width < comp.getWidthWithBorder()) {
-                                    width = comp.getWidthWithBorder();
-                                }
-                            }
-
-                    }
-
-                    if (height<panel.getHeight()) {
-                        height = panel.getHeight();
-                    }
-                    if (width<panel.getWidth()) {
-                        width = panel.getWidth();
-                    }
-                    
                     int offset=0;
                     for (int c=0;c<components.size();c++) {
 
@@ -84,8 +58,46 @@ public class BoxLayout implements Layout {
                             offset = offset + ((axis==Graphics.HCENTER)?comp.getWidthWithBorder():comp.getHeightWithBorder());
                     }
 
-                    panel.setSize(width,height);
+    }
 
+    public int getPreferredHeight(Panel panel) {
+                    Vector components = panel.getComponents();
+                    int height=0;
+                    for (int c=0;c<components.size();c++) {
+
+                            Component comp = (Component)components.elementAt(c);
+
+                            if (axis == Graphics.HCENTER) {
+                                if (height < comp.getHeightWithBorder()) {
+                                    height = comp.getHeightWithBorder();
+                                }
+                            }
+                            else {
+                                height = height + comp.getHeightWithBorder();
+                            }
+
+                    }
+                    return height;
+    }
+
+    public int getPreferredWidth(Panel panel) {
+                    Vector components = panel.getComponents();
+                    int width=0;
+                    for (int c=0;c<components.size();c++) {
+
+                            Component comp = (Component)components.elementAt(c);
+
+                            if (axis == Graphics.HCENTER) {
+                                width = width + comp.getWidthWithBorder();
+                            }
+                            else {
+                                if (width < comp.getWidthWithBorder()) {
+                                    width = comp.getWidthWithBorder();
+                                }
+                            }
+
+                    }
+                    return width;
     }
 
 }

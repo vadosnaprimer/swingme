@@ -82,7 +82,7 @@ public class Spinner extends Label {
                 super.setSelectable(s);
 	}
         
-	public void doLayout() {
+	public void workoutSize() {
             
             if (list!=null && !list.isEmpty()) {
 

@@ -166,7 +166,7 @@ public abstract class Component {
                             false);
         }
         
-        public void doLayout() { }
+        public void workoutSize() { }
         
 	public void setBackground(int a) {
 	

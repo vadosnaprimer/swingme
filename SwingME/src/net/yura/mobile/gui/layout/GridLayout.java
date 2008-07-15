@@ -59,10 +59,70 @@ public class GridLayout implements Layout {
         /**
          * @see java.awt.GridLayout#layoutContainer(java.awt.Container) GridLayout.layoutContainer
          */
-	public void layoutPanel(Panel panel, Hashtable cons) {
+	public void layoutPanel(Panel panel) {
 
 		Vector components = panel.getComponents();
 		
+                int ac = getCols(components);
+                int de = getRows(components);
+                
+		int cwidth = (panel.getWidth() -(ac*padding) -padding) /ac;
+		int cheight = (panel.getHeight() -(de*padding) -padding) /de;
+
+		int a=0;
+		int d=0;
+
+		for (int i=0;i<components.size();i++) {
+			
+			Component comp = (Component)components.elementAt(i);
+			comp.setBoundsWithBorder((a*cwidth)+padding+(padding*a), (d*cheight)+padding+(padding*d), cwidth, cheight);
+			a++;
+                        
+                        // when it gets to the end of the row it adds 1
+			if (a==ac && i!=(components.size()-1)) {
+				a=0;
+				d++;
+			}
+		}
+
+	}
+
+    public int getPreferredHeight(Panel panel) {
+        
+            Vector components = panel.getComponents();
+            int cheight = 0;
+            int de = getRows(components);
+            
+            for (int i=0;i<components.size();i++) {
+			Component comp = (Component)components.elementAt(i);
+			if (comp.getHeightWithBorder() > cheight) {
+				cheight = comp.getHeightWithBorder(); 
+			}
+
+            }
+            return de * cheight + de*padding +padding;
+        
+    }
+
+    public int getPreferredWidth(Panel panel) {
+        
+            Vector components = panel.getComponents();
+        
+            int cwidth = 0;
+            int ac = getCols(components);
+            
+            for (int i=0;i<components.size();i++) {
+			Component comp = (Component)components.elementAt(i);
+			if (comp.getWidthWithBorder() > cwidth) {
+				cwidth = comp.getWidthWithBorder();
+			}
+            }
+        
+            return ac * cwidth + ac*padding +padding;
+    }
+    
+    private int getCols(Vector components) {
+
                 int ac;
                 if (across!=0) {
                     ac=across;
@@ -71,42 +131,22 @@ public class GridLayout implements Layout {
                     ac = (components.size()+(down-1)) / down;
                 }
                 
-		int cwidth = (panel.getWidth() -(ac*padding) -padding) /ac;
-		int cheight = 0;
-		
-		for (int i=0;i<components.size();i++) {
-			
-			Component comp = (Component)components.elementAt(i);
-			
-			if (comp.getHeightWithBorder() > cheight) {
-				
-				cheight = comp.getHeightWithBorder(); 
-				
-			}
-			if (comp.getWidthWithBorder() > cwidth) {
-				
-				cwidth = comp.getWidthWithBorder();
-			}
-		}
-
-		int a=0;
-		int d=0;
-                int maxa=0;
-		for (int i=0;i<components.size();i++) {
-			
-			Component comp = (Component)components.elementAt(i);
-			comp.setBoundsWithBorder((a*cwidth)+padding+(padding*a), (d*cheight)+padding+(padding*d), cwidth, cheight);
-			a++;
-                        
-                        if (a>maxa) { maxa=a;}
-                        // when it gets to the end of the row it adds 1
-			if (a==ac && i!=(components.size()-1)) {
-				a=0;
-				d++;
-			}
-		}
-                d++;
-		panel.setSize( (maxa*cwidth) +(maxa*padding) +padding, (d*cheight) +(d*padding) +padding );
-	}
+                if (components.size() < ac) { ac=components.size(); }
+                
+                return ac;
+    }
+    private int getRows(Vector components) {
+                int de;
+                if (down!=0) {
+                    de=down;
+                }
+                else {
+                    de = (components.size()+(across-1)) / across;
+                }
+                
+                if (components.size() < de) { de=components.size(); }
+                
+                return de;
+    }
 
 }

@@ -72,7 +72,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
                         setBackground(-1);
                 }
 		
-                doLayout();
+                workoutSize();
                 
 		return this;
 	}

@@ -64,34 +64,18 @@ public class FlowLayout implements Layout {
         /**
          * @see java.awt.FlowLayout#layoutContainer(java.awt.Container) FlowLayout.layoutContainer
          */
-	public void layoutPanel(Panel panel, Hashtable cons) {
+	public void layoutPanel(Panel panel) {
 
-            if (align==Graphics.HCENTER) {
+            int width = panel.getWidth();
+            int height = panel.getHeight();
+
+            Vector components = panel.getComponents();
             
-                    int width = panel.getWidth();
-                    int height = panel.getHeight();
+            if (align==Graphics.HCENTER) {
 
-                    Vector components = panel.getComponents();
-
-                    int fullwidth=(components.size()>0)?((components.size()+1)*padding):0;
-                    int fullheight=0;
-
-                    for (int c=0;c<components.size();c++) {
-
-                            Component comp = (Component)components.elementAt(c);
-
-                            fullwidth = fullwidth + comp.getWidthWithBorder();
-
-                            if (fullheight < comp.getHeightWithBorder()+padding*2) {
-
-                                    fullheight = comp.getHeightWithBorder()+padding*2;
-                            }
-
-                    }
-
-                    if (fullwidth > width) { width = fullwidth; }
-                    if (fullheight > height) { height = fullheight; }
-
+                    // need to get this to know where to centre components
+                    int fullwidth = getPreferredWidth(panel);
+                
                     int offset = (width - fullwidth)/2 + padding;
 
                     for (int c=0;c<components.size();c++) {
@@ -101,52 +85,111 @@ public class FlowLayout implements Layout {
                             comp.setBoundsWithBorder(offset , (height-comp.getHeightWithBorder())/2, comp.getWidthWithBorder(), comp.getHeightWithBorder() );
                             offset = offset + comp.getWidthWithBorder() + padding;
                     }
-                    panel.setSize(width,height);
-                    
+
             }
             else {
 
-		int fullwidth = panel.getWidth();
-		//int compwidth = (fullwidth*4)/5;
-		//int offset = (fullwidth - compwidth)/2;
-		//int height = panel.getHeight();
-		Vector components = panel.getComponents();
-		
-		for (int c=0;c<components.size();c++) {
-			
-			Component comp = (Component)components.elementAt(c);
-
-			if ( comp.getWidthWithBorder() > fullwidth) {
-			// TODO !(comp instanceof MStringItem) &&
-				
-				fullwidth = comp.getWidthWithBorder();
-			}
-		}
-		
 		int down=padding;
 		
 		for (int c=0;c<components.size();c++) {
 			
 			Component comp = (Component)components.elementAt(c);
 			
-			int height = comp.getHeightWithBorder();
-			int width = comp.getWidthWithBorder();
+			int cheight = comp.getHeightWithBorder();
+			int cwidth = comp.getWidthWithBorder();
 				
-			int offset = (fullwidth - width)/2;
+			int offset = (width - cwidth)/2;
 
-			comp.setBoundsWithBorder(offset,down, width, height );
+			comp.setBoundsWithBorder(offset,down, cwidth, cheight );
 			
-			if (height!=0) {
-				down = down + height + padding;
+			if (cheight!=0) {
+				down = down + cheight + padding;
 			}
 			
 		}
-		
-		panel.setSize( fullwidth, down);
-		
-                
+
             }
                     
 	}
+
+    public int getPreferredHeight(Panel panel) {
+        
+            Vector components = panel.getComponents();
+        
+            if (align==Graphics.HCENTER) {
+                
+                    int fullheight=0;
+
+                    for (int c=0;c<components.size();c++) {
+
+                            Component comp = (Component)components.elementAt(c);
+
+                            if (fullheight < comp.getHeightWithBorder()+padding*2) {
+
+                                    fullheight = comp.getHeightWithBorder()+padding*2;
+                            }
+
+                    }
+                    
+                    return fullheight;
+                
+            }
+            else {
+                
+                    int fullheight=(components.size()>0)?((components.size()+1)*padding):0;
+
+                    for (int c=0;c<components.size();c++) {
+
+                            Component comp = (Component)components.elementAt(c);
+
+                            fullheight = fullheight + comp.getHeightWithBorder();
+
+                    }
+
+                    return fullheight;
+                
+            }
+    }
+
+    public int getPreferredWidth(Panel panel) {
+        
+            Vector components = panel.getComponents();
+        
+            if (align==Graphics.HCENTER) {
+
+                    int fullwidth=(components.size()>0)?((components.size()+1)*padding):0;
+
+                    for (int c=0;c<components.size();c++) {
+
+                            Component comp = (Component)components.elementAt(c);
+
+                            fullwidth = fullwidth + comp.getWidthWithBorder();
+
+
+
+                    }
+
+                    return fullwidth;
+        
+            }
+            else {
+                
+                int fullwidth=0;
+		
+		for (int c=0;c<components.size();c++) {
+			
+			Component comp = (Component)components.elementAt(c);
+
+                        // we DONT use +padding*2 even though really we should
+			if ( comp.getWidthWithBorder() > fullwidth) {
+				
+				fullwidth = comp.getWidthWithBorder();
+			}
+		}
+                
+                return fullwidth;
+            }
+
+    }
 
 }

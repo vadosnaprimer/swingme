@@ -134,7 +134,8 @@ public class TextField extends Component implements ActionListener, CommandListe
 	
 	private void updateSoftKeys() {
 		
-		// put this back in to hide the clear action on phones it is not needed on
+            if (isFocused()) {
+                // put this back in to hide the clear action on phones it is not needed on
 		//if (!RootPane.hasclearkey) {
 		
 			if(caretPosition==0){
@@ -144,6 +145,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 				DesktopPane.getDesktopPane().setComponentCommand(1,SOFTKEY_CLEAR);
 			}
 		//}
+            }
 	}
 	
 	public void actionPerformed(String actionCommand) {
