@@ -14,6 +14,8 @@ import net.yura.mobile.gui.layout.GridLayout;
  */
 public class TitleBar extends Panel implements ActionListener {
 
+    private Label title;
+    
     public TitleBar(String title,Image icon,boolean resize,boolean move,boolean hide,boolean max,boolean close) {
      
         super(new BorderLayout());
@@ -52,10 +54,27 @@ public class TitleBar extends Panel implements ActionListener {
 
         }
 
-        add(new Label( title,icon ));
+        this.title = new Label( title,icon );
+        
+        add(this.title);
         add(buttonPanel,Graphics.RIGHT);
         setBackground(0x00AAAAFF);
 
+    }
+    
+    /**
+     * @param title the title to be displayed in the frame's border
+     * @see java.awt.Frame#setTitle(java.lang.String) Frame.setTitle
+     */
+    public void setTitle(String title) {
+        this.title.setText(title);
+    }
+    /**
+     * @param img the icon image to be displayed
+     * @see java.awt.Frame#setIconImage(java.awt.Image) Frame.setIconImage
+     */
+    public void setIconImage(Image img) {
+        title.setIcon(img);
     }
     
     private int oldX,oldY;

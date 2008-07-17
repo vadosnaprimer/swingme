@@ -511,7 +511,17 @@ public class ScrollPane extends Panel {
 		g.clipRect(viewX, viewY, viewWidth, viewHeight);
             
         }
-
-        
+        /**
+         * as the is ALWAYS fully covered by its component, is uses that too, to work this out
+         */
+        public boolean isOpaque() {
+            boolean mine = super.isOpaque();
+            if (!mine) {
+                return getComponent().isOpaque();
+            }
+            else { 
+                return mine;
+            }
+        }
 
 }

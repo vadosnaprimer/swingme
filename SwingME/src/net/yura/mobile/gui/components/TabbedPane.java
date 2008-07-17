@@ -41,27 +41,27 @@ public class TabbedPane extends Panel implements ChangeListener {
         private ScrollPane scroll;
         private int tabPosition;
         private int currentTabIndex;
-        
+
         public TabbedPane() {
             this(Graphics.TOP,new DefaultTabRenderer(Graphics.TOP),new MatteBorder(0, 0, 1, 0, 0x00000000));
-            
+
             //this(Graphics.LEFT,new DefaultTabRenderer(Graphics.LEFT),new MatteBorder(0, 0, 0, 1, 0x00000000));
-            
+
             //this(Graphics.RIGHT,new DefaultTabRenderer(Graphics.RIGHT),new MatteBorder(0, 1, 0, 0, 0x00000000));
-            
+
             //this(Graphics.BOTTOM,new DefaultTabRenderer(Graphics.BOTTOM),new MatteBorder(1, 0, 0, 0, 0x00000000));
 
         }
         public TabbedPane(int a,ListCellRenderer b,Border art) {
 
             setLayout(new BorderLayout());
-            
+
             tabList = new List(null,b,(a==Graphics.TOP || a==Graphics.BOTTOM));
             tabs = new Vector();
-            
+
             tabList.addChangeListener(this);
             scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
-            
+
             if (art!=null) {
                 scroll.setBorder(new CompoundBorder(
                       art,
@@ -71,32 +71,107 @@ public class TabbedPane extends Panel implements ChangeListener {
 
             tabPosition = a;
             currentTabIndex = -1;
-            
+
             tabList.background = -1;
 
         }
 
+        /**
+         * @param p the Panel to add
+         * @see javax.swing.JTabbedPane#add(java.awt.Component) JTabbedPane.add
+         */
         public void addTab(Panel p) {
             addTab(p.getName(),p);
         }
-        
+
+        /**
+         * @param title
+         * @param component
+         * @see javax.swing.JTabbedPane#addTab(java.lang.String, java.awt.Component) JTabbedPane.addTab
+         */
         public void addTab(String title, Component component) {
             addTab(title, null, component);
         }
 
+        /**
+         * @param title
+         * @param icon
+         * @param component
+         * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component) JTabbedPane.addTab
+         */
         public void addTab(String title, Image icon, Component component) {
-            tabList.addListItem(new Option(null,title,icon));
+            tabList.addElement(new Option(null,title,icon));
             tabs.addElement(component);
-            
+
             if (currentTabIndex==-1) {
                 setSelectedIndex(0);
             }
         }
 
+        /**
+         * @param a index of tab to remove
+         * @see javax.swing.JTabbedPane#removeTabAt(int) JTabbedPane.removeTabAt
+         */
+        public void removeTabAt(int a) {
+
+            if (tabs.size()==1 && a==0) {
+                removeAll();
+            }
+            else {
+
+                // setup the new tab to be selected
+                if (currentTabIndex==a) {
+                    if ((tabs.size()-1) == currentTabIndex) {
+                        setSelectedIndex(currentTabIndex-1);
+                    }
+                    else {
+                        setSelectedIndex(currentTabIndex+1);
+                        currentTabIndex--;
+                    }
+                }
+                else if (currentTabIndex > a) {
+                    currentTabIndex--;
+                }
+
+                // actually remove the tab
+                tabList.removeElementAt(a);
+                tabs.removeElementAt(a);
+
+            }
+
+        }
+        /**
+         * @param title
+         * @param icon
+         * @param component
+         * @param tip
+         * @param index
+         * @see javax.swing.JTabbedPane#insertTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String, int) JTabbedPane.insertTab
+         */
+        public void insertTab(String title, Image icon, Component component, String tip, int index) {
+
+            tabList.getItems().insertElementAt(new Option(null,title,icon), index);
+            tabs.insertElementAt(component,index);
+            if (index <= currentTabIndex) {
+                currentTabIndex++;
+            }
+            setSelectedIndex(index);
+
+        }
+
+        /**
+         * @param index
+         * @return
+         * @see javax.swing.JTabbedPane#getComponentAt(int) JTabbedPane.getComponentAt
+         */
+        public Panel getComponentAt(int index) {
+            return (Panel)tabs.elementAt(index);
+        }
+
         public void workoutSize() {
 
             super.workoutSize();
-            
+
             // we can only really do this here
             // as when we have NO tabs added
             // we dont know the thickness of the tab bar
@@ -108,30 +183,30 @@ public class TabbedPane extends Panel implements ChangeListener {
             }
 
         }
-        
+
     public void changeEvent(int num) {
 
         Component thetabtoAdd = (Component)tabs.elementAt(num);
-        
+
         if (currentTabIndex==-1) {
-        
+
                 if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
                     add(scroll,tabPosition);
                 }
-                
+
                 add(thetabtoAdd);
-                
+
                 if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
                     add(scroll,tabPosition);
                 }
 
         }
         else {
-            
+
             Component oldTab = (Component)tabs.elementAt(currentTabIndex);
-            
+
             int index = getComponents().indexOf(oldTab);
-            
+
             remove(index);
             insert(thetabtoAdd, index);
         }
@@ -140,28 +215,27 @@ public class TabbedPane extends Panel implements ChangeListener {
         revalidate();
 
     }
-    
-    public void removeAll() {
-        
-        if (currentTabIndex!=-1) {
-            
-            remove(scroll);
 
+    public void removeAll() {
+
+        if (currentTabIndex!=-1) {
+
+            remove(scroll);
             remove( getComponents().indexOf( tabs.elementAt(currentTabIndex) ) );
 
             tabs.removeAllElements();
             tabList.setListData( new Vector() );
-            
+
             currentTabIndex = -1;
         }
-        
+
     }
-    
+
     public void setSelectedIndex(int a) {
-        tabList.setFocusedItemIndex(a);
+        tabList.setSelectedIndex(a);
     }
     public int getSelectedIndex() {
-        return tabList.getFocusedItemIndex();
+        return tabList.getSelectedIndex();
     }
     public int getTabCount() {
         return tabList.getItems().size();
@@ -170,7 +244,7 @@ public class TabbedPane extends Panel implements ChangeListener {
     public void setSelectable(boolean a) {
         tabList.setSelectable(a);
     }
-    
+
     public List getList() {
         return tabList;
     }

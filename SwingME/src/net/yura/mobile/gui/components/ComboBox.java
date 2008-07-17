@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.util.Option;
 
@@ -33,17 +34,22 @@ public class ComboBox extends Button implements ActionListener{
 
 	private Image selectedImage;
 	private Image nonSelectedImage;
-	
-//	private Vector items;
+
 	private List list;
 	private ScrollPane scroll;
 	
 	private CommandButton[] pbuttons;
 	
+        /**
+         * @see javax.swing.JComboBox#JComboBox() JComboBox.JComboBox
+         */
 	public ComboBox() {
 
 	}
-	
+	/**
+         * @param vec an vector of objects to insert into the combo box
+         * @see javax.swing.JComboBox#JComboBox(java.util.Vector) JComboBox.JComboBox
+         */
 	public ComboBox(Vector vec){
 		this();
 		
@@ -77,32 +83,43 @@ public class ComboBox extends Button implements ActionListener{
 					
 				}
 
-				width = count + padding*2 + ((nonSelectedImage == null)?hi:nonSelectedImage.getWidth());
+				width = count + padding*2 + ((nonSelectedImage == null)?getFont().getHeight():nonSelectedImage.getWidth());
 				height = hi + padding*2;
 			}
 			
-			int h = height * getItems().size();
-			if(h > height * 4){
-				h = height *4;
-			}
-			scroll.setSize(width, h);
-			scroll.revalidate();
+
 		}
+                else {
+                    // in case we are empty then use the normal size
+                    super.workoutSize();
+                }
 	}
 
 	public void fireActionPerformed() {
         
                 createList();
-
+                list.workoutSize();
+                
+                int h = list.getHeightWithBorder();
+                if(h > DesktopPane.getDesktopPane().getHeight()/2){
+                        h = DesktopPane.getDesktopPane().getHeight()/2;
+                }
+                scroll.setSize(width, h);
+                scroll.revalidate();
+                
+                
+                
                 int y;
 
                 if ((getYInWindow() + height + scroll.getHeight()) > owner.getHeight()){
                         y = getYInWindow() - scroll.getHeight();
-                } else{
+                }
+                else {
                         y = getYInWindow() + height;
                 }
+                
 
-                scroll.setLocation(getXInWindow(), y);		
+                scroll.setLocation(getXInWindow(), y);
                 owner.setGlassPaneComponent(scroll);
 
                 pbuttons = new CommandButton[2];
@@ -121,9 +138,7 @@ public class ComboBox extends Button implements ActionListener{
 			list.setBackground(background);
 			list.addActionListener(this);
 			scroll = new ScrollPane(list);
-			// TODO setbackground?? scroll.setTransparent(false);
 			scroll.setBorder(activeBorder);
-			
 		}
 		
 	}
@@ -182,7 +197,7 @@ public class ComboBox extends Button implements ActionListener{
 
 	public void actionPerformed(String actionCommand) {
             
-                setValue( list.getFocusedItem() );
+                setValue( list.getSelectedValue() );
                 
 		owner.setGlassPaneComponent(null);
 		owner.setWindowCommand(0, pbuttons[0]);
@@ -196,13 +211,13 @@ public class ComboBox extends Button implements ActionListener{
 
 	public Object getSelected() {
 		createList();
-		return list.getFocusedItem();
+		return list.getSelectedValue();
 	}
 
 	public void setSelected(Object selected) {
 		createList();
-		list.setFocusedItem(selected);
-		super.setText(selected.toString());
+		list.setSelectedValue(selected);
+		super.setValue(selected);
 		
 	}
 
@@ -212,7 +227,7 @@ public class ComboBox extends Button implements ActionListener{
 	
 	
 	public int getFocusedItemIndex(){
-		return list.getFocusedItemIndex();
+		return list.getSelectedIndex();
 	}
 	
 	/**

@@ -841,6 +841,8 @@ public class DesktopPane extends Canvas implements Runnable {
             
             if (!paintdone) return;
             
+            boolean old = sideSoftKeys;
+            
             if (w>h) {
                 sideSoftKeys = true;
             }
@@ -848,16 +850,20 @@ public class DesktopPane extends Canvas implements Runnable {
                 sideSoftKeys = false;
             }
             
-            for (int c=0;c<windows.size();c++) {
-                Window window = (Window)windows.elementAt(c);
-                
-                // TODO RESIZE better
-                //if (window.getX()==0 && window.getY()==0) {
-                    window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
-                //}
+            if (old!=sideSoftKeys) {
+
+                for (int c=0;c<windows.size();c++) {
+                    Window window = (Window)windows.elementAt(c);
+
+                    // TODO RESIZE better
+                    //if (window.getX()==0 && window.getY()==0) {
+                        window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
+                    //}
+                }
+                fullRepaint();
             }
             
-            fullRepaint();
+
             
         }
         

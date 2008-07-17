@@ -257,6 +257,10 @@ public class TextField extends Component implements ActionListener, CommandListe
             
 	}
         
+        public void setTitle(String s) {
+            label = s;
+        }
+        
         public void setCaretPosition(int a) {
             
             int extraSpace=10;
