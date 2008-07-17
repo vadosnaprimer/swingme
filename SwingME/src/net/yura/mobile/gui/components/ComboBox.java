@@ -120,7 +120,7 @@ public class ComboBox extends Button implements ActionListener{
                 
 
                 scroll.setLocation(getXInWindow(), y);
-                owner.setGlassPaneComponent(scroll);
+                owner.setGlassPane(scroll);
 
                 pbuttons = new CommandButton[2];
                 pbuttons[0]=owner.getWindowCommands()[0];
@@ -199,7 +199,7 @@ public class ComboBox extends Button implements ActionListener{
             
                 setValue( list.getSelectedValue() );
                 
-		owner.setGlassPaneComponent(null);
+		owner.setGlassPane(null);
 		owner.setWindowCommand(0, pbuttons[0]);
 		owner.setWindowCommand(1, pbuttons[1]);
 		pbuttons=null;
