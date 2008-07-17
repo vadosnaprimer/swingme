@@ -179,7 +179,7 @@ public class Window extends Component implements ActionListener {
             else if (a!=null) {
     		contentPane = a;
     		contentPane.setOwnerAndParent(this, null);
-    		contentPane.setBounds(0, 0, width, height);
+    		contentPane.setBoundsWithBorder(0, 0, width, height);
     		
     		//if (glasspanecomponent!=null) {
     		//	setActiveComponent(contentPane);
@@ -269,8 +269,14 @@ public class Window extends Component implements ActionListener {
 	
 	public void paint(Graphics g) {
 		super.paint(g);
-		
-		contentPane.paint(g);		
+
+                int x=contentPane.getX();
+                int y=contentPane.getY();
+
+                g.translate(x, y);
+                contentPane.paint(g);
+                g.translate(-x, -y);
+	
 		drawGlass(g);
 		
 	}
@@ -311,7 +317,7 @@ public class Window extends Component implements ActionListener {
             }
             else {
 
-                    return contentPane.getComponentAt( x, y);
+                    return contentPane.getComponentAt( x - contentPane.getX(), y - contentPane.getY());
 
             }
 

@@ -92,9 +92,7 @@ public class Panel extends Component {
      * @see java.awt.Container#add(java.awt.Component) Container.add
      */
 	public void add(Component component){
-		components.addElement(component);
-		
-		component.setOwnerAndParent( owner,this );
+            addImpl(component);
 
 	}
 	/**
@@ -103,10 +101,18 @@ public class Panel extends Component {
          * @see java.awt.Container#add(java.awt.Component, java.lang.Object) Container.add
          */
        public void add(Component component,int constraint){
-		add(component);
-		
+		addImpl(component);
 		constraints.put(component, new Integer(constraint));
 	}
+       
+       /**
+        * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
+        */
+       private void addImpl(Component component) {
+           	components.addElement(component);
+		component.setOwnerAndParent( owner,this );
+       }
+       
         /**
          * @param component The component to remove
          * @see java.awt.Container#remove(java.awt.Component) Container.remove

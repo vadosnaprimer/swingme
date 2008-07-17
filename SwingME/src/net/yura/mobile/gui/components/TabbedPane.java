@@ -196,13 +196,13 @@ public class TabbedPane extends Panel implements ChangeListener {
         if (currentTabIndex==-1) {
 
                 if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
-                    add(scroll,tabPosition);
+                    super.add(scroll,tabPosition);
                 }
 
                 super.add(thetabtoAdd);
 
                 if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
-                    add(scroll,tabPosition);
+                    super.add(scroll,tabPosition);
                 }
 
         }
