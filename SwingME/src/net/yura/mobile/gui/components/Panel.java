@@ -35,7 +35,9 @@ public class Panel extends Component {
 	private Vector components;
 	private Hashtable constraints;
 
-	
+	/**
+         * @see javax.swing.JPanel#JPanel() JPanel.JPanel
+         */
 	public Panel() {
 		
 		components = new Vector();
@@ -44,17 +46,21 @@ public class Panel extends Component {
 		// this is true as u need to select a panel to get to 1 of its components
 	}
 	
-	public Panel(String n) {
-		this();
-		setName(n);
-	}
-	
+        /**
+         * @param n the LayoutManager to use
+         * @see javax.swing.JPanel#JPanel(java.awt.LayoutManager) JPanel.JPanel
+         */
 	public Panel(Layout n) {
 		this();
 		setLayout(n);
 		
 	}
-
+	
+	public Panel(String n) {
+		this();
+		setName(n);
+	}
+        
         /**
          * @param lt the specified layout manager
          * @see java.awt.Container#setLayout(java.awt.LayoutManager) Container.setLayout
@@ -91,13 +97,20 @@ public class Panel extends Component {
 		component.setOwnerAndParent( owner,this );
 
 	}
-	
+	/**
+         * @param component
+         * @param constraint
+         * @see java.awt.Container#add(java.awt.Component, java.lang.Object) Container.add
+         */
        public void add(Component component,int constraint){
 		add(component);
 		
 		constraints.put(component, new Integer(constraint));
 	}
-        
+        /**
+         * @param component The component to remove
+         * @see java.awt.Container#remove(java.awt.Component) Container.remove
+         */
 	public void remove(Component component) {
 		components.removeElement(component);
 		
@@ -105,34 +118,56 @@ public class Panel extends Component {
 		
 		constraints.remove(component);
 	}
-        
+        /**
+         * @param c The index of the component to remove
+         * @see java.awt.Container#remove(int) Container.remove
+         */
         public void remove(int c) {
             
                 Component component = (Component)components.elementAt(c);
                 remove(component);
 	}
 	
+        
+        /**
+         * @see java.awt.Container#add(java.awt.Component, int) Container.add
+         */
 	public void insert(Component component,int index) {
 		components.insertElementAt(component, index); 
                 component.setOwnerAndParent( owner,this );
 	}
 	
-	public void insert(Component component,int index,String constraint) {
+        /**
+         * @see java.awt.Container#add(java.awt.Component, java.lang.Object, int) Container.add
+         */
+	public void insert(Component component,int constraint,int index) {
 		insert(component, index);
 		
-		constraints.put(component, constraint);
+		constraints.put(component, new Integer(constraint) );
 	}
 
+        /**
+         * @return the number of components in this panel
+         * @see java.awt.Container#getComponentCount() Container.getComponentCount
+         */
 	public int getComponentCount() {
             return components.size();
         }
         
+        /**
+         * @param g Graphics object
+         * @see java.awt.Container#paint(java.awt.Graphics) Container.paint
+         */
 	public void paint(Graphics g) {
 		super.paint(g);
 
 		paintChildren(g);
 	}
 	
+        /**
+         * @param g Graphics object
+         * @see java.awt.Container#paintComponents(java.awt.Graphics) Container.paintComponents
+         */
 	public void paintChildren(Graphics g){
             
             int clipX = g.getClipX();
@@ -232,6 +267,7 @@ public class Panel extends Component {
         /**
          * this means reclac the size of children
          * and then redo the layout
+         * @see javax.swing.JComponent#revalidate() JComponent.revalidate
          */
         public void revalidate() {
             
@@ -335,10 +371,17 @@ public class Panel extends Component {
 		
 	}
 
+        /**
+         * @return an array of all the components in this container
+         * @see java.awt.Container#getComponents() Container.getComponents
+         */
 	public Vector getComponents() {
 		return components;
 	}
 
+        /**
+         * @see java.awt.Container#removeAll() Container.removeAll
+         */
 	public void removeAll() {
 
             for(int i = 0; i < components.size(); i++){
@@ -352,10 +395,20 @@ public class Panel extends Component {
             constraints.clear();
 	}
 	
+        /**
+         * @param n The new name for this panel
+         * @see java.awt.Component#setName(java.lang.String) Component.setName
+         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
+         */
 	public void setName(String n) {
 		
 		name  = n;
 	}
+        /**
+         * @return The name of the panel
+         * @see java.awt.Component#getName() Component.getName
+         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
+         */
         public String getName() {
             return name;
         }
@@ -372,6 +425,12 @@ public class Panel extends Component {
             }
         }
 
+        /**
+         * @param x the x coordinate
+         * @param y the y coordinate 
+         * @return the top-most child is returned
+         * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
+         */
         public Component getComponentAt(int x, int y) {
         	for(int i = 0; i < components.size(); i++){
 			Component component = (Component)components.elementAt(i);

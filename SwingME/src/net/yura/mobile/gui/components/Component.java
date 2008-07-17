@@ -168,6 +168,10 @@ public abstract class Component {
         
         public void workoutSize() { }
         
+        /**
+         * @param a The color of the background of the component (-1 for no color to be used)
+         * @see javax.swing.JComponent#setBackground(java.awt.Color) JComponent.setBackground
+         */
 	public void setBackground(int a) {
 	
 		background = a;
@@ -187,6 +191,9 @@ public abstract class Component {
             return false;
         }
         
+        /**
+         * @see java.awt.Component#repaint() Component.repaint
+         */
 	public void repaint() {
             
                 // if we are not in a window, do nothing

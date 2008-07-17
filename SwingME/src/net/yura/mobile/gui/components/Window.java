@@ -46,6 +46,9 @@ public class Window extends Component implements ActionListener {
 		this.actionListener = actionListener;
 	}
         
+        /**
+         * @see javax.swing.JFrame#JFrame() JFrame.JFrame
+         */
         public Window() {
             this(null);
         }
@@ -91,6 +94,7 @@ public class Window extends Component implements ActionListener {
          * sets the new size and revaliates the window
          * @param width new Width
          * @param height new Height
+         * @see java.awt.Component#setSize(int, int) Component.setSize
          */
         public void setSize(int width, int height) {
             super.setSize(width, height);
@@ -108,8 +112,29 @@ public class Window extends Component implements ActionListener {
 
         }
 
+        /**
+         * @param b true if the window is to be shown, flase to hide the window
+         * @see java.awt.Component#setVisible(boolean) Component.setVisible
+         */
+        public void setVisible(boolean b) {
+            
+            if (b) {
+                DesktopPane.getDesktopPane().add(this);
+            }
+            else {
+                DesktopPane.getDesktopPane().remove(this);
+            }
+        }
+        
+        
 	private Component old;
-    public void setGlassPaneComponent(Panel c) {
+        
+        
+        /**
+         * @param c The new Glass Pane
+         * @see javax.swing.JFrame#setGlassPane(java.awt.Component) JFrame.setGlassPane
+         */
+    public void setGlassPane(Panel c) {
     	
     	if (glasspanecomponent == c) {
     		
@@ -140,6 +165,10 @@ public class Window extends Component implements ActionListener {
 
     }
     
+    /**
+     * @param a The new content pane
+     * @see javax.swing.JFrame#setContentPane(java.awt.Container) JFrame.setContentPane
+     */
 	public void setContentPane(Panel a) {
 		
             if (contentPane == a) {
@@ -167,12 +196,19 @@ public class Window extends Component implements ActionListener {
 		
 	}
     
-    public Panel getGlassPaneComponent() {
-    	
-    	return glasspanecomponent;
-    }
+        /**
+         * @return The current glass pane, null if none is set
+         * @see javax.swing.JFrame#getGlassPane() JFrame.getGlassPane
+         */
+        public Panel getGlassPane() {
+
+            return glasspanecomponent;
+        }
 	
-	
+	/**
+         * @return The current content pane
+         * @see javax.swing.JFrame#getContentPane() JFrame.getContentPane
+         */
 	public Panel getContentPane() {
 		
 		return contentPane; 
@@ -183,7 +219,7 @@ public class Window extends Component implements ActionListener {
 	 * This method needs to paint a component IF repaintComponent!=null
 	 * otherwise it needs to repaint the window
          * 
-         * This method can NOT get called if repaintComponent.transparent
+         * This method can NOT get called if repaintComponent.isOpaque() == flase
          * 
 	 * @return true if it was successful and false otherwise
 	 */
@@ -260,6 +296,12 @@ public class Window extends Component implements ActionListener {
             // if we drag next to the border
         }
         
+        /**
+         * @param x the x coordinate
+         * @param y the y coordinate 
+         * @return the top-most child is returned
+         * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
+         */
         public Component getComponentAt(int x, int y) {
             
             
@@ -299,9 +341,11 @@ public class Window extends Component implements ActionListener {
 		
 		return super.toString() +" "+ contentPane +" "+glasspanecomponent;
 	}
-	
+
 	public void repaint() {
 		
+            
+            // TODO what if we have a parent here?!
 		if (this == DesktopPane.getDesktopPane().getSelectedFrame() && isOpaque()) {
 			DesktopPane.getDesktopPane().windowRepaint();
 		}

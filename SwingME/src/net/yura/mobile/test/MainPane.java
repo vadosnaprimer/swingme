@@ -358,7 +358,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
                                 TabbedPane tabbedPane = new TabbedPane();
                                 
-                                tabbedPane.addTab(tab1);
+                                tabbedPane.add(tab1);
                                 tabbedPane.addTab("TAB 2", image, tab2);
                                 tabbedPane.addTab("tab 3 a long one eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);

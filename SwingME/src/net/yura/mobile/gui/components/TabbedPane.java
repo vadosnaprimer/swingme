@@ -80,13 +80,18 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @param p the Panel to add
          * @see javax.swing.JTabbedPane#add(java.awt.Component) JTabbedPane.add
          */
-        public void addTab(Panel p) {
-            addTab(p.getName(),p);
+        public void add(Component p) {
+            if (p instanceof Panel) {
+                addTab(((Panel)p).getName(),p);
+            }
+            else {
+                addTab(p.toString(), p);
+            }
         }
 
         /**
-         * @param title
-         * @param component
+         * @param title The title for the tab
+         * @param component The component of the tab
          * @see javax.swing.JTabbedPane#addTab(java.lang.String, java.awt.Component) JTabbedPane.addTab
          */
         public void addTab(String title, Component component) {
@@ -94,9 +99,9 @@ public class TabbedPane extends Panel implements ChangeListener {
         }
 
         /**
-         * @param title
-         * @param icon
-         * @param component
+         * @param title The title for the tab
+         * @param icon The icon for the tab
+         * @param component The component of the tab
          * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component) JTabbedPane.addTab
          */
         public void addTab(String title, Image icon, Component component) {
@@ -160,8 +165,8 @@ public class TabbedPane extends Panel implements ChangeListener {
         }
 
         /**
-         * @param index
-         * @return
+         * @param index the index of the tab to get
+         * @return gets the component on the tab with index a
          * @see javax.swing.JTabbedPane#getComponentAt(int) JTabbedPane.getComponentAt
          */
         public Panel getComponentAt(int index) {
@@ -194,7 +199,7 @@ public class TabbedPane extends Panel implements ChangeListener {
                     add(scroll,tabPosition);
                 }
 
-                add(thetabtoAdd);
+                super.add(thetabtoAdd);
 
                 if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
                     add(scroll,tabPosition);
