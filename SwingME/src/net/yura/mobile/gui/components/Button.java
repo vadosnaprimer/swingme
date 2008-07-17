@@ -132,10 +132,23 @@ public class Button extends Label implements ActionListener {
 		if (al == l) { al = null; }
 	}
 	
+        /**
+         * @param ac The Action Command for this button
+         * @see javax.swing.AbstractButton#setActionCommand(java.lang.String) AbstractButton.setActionCommand
+         */
 	public void setActionCommand(String ac) {
 		
 		actionCommand=ac;
 	}
+        
+        /**
+         * @return The Action Command for this button
+         * @see javax.swing.AbstractButton#getActionCommand() AbstractButton.getActionCommand
+         */
+        public String getActionCommand() {
+            return actionCommand;
+        }
+        
         public ActionListener getActionListener() {
             return al;
         }
