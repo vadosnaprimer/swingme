@@ -32,6 +32,7 @@ public class TextArea extends Component {
         private String text;
         private Font font;
 	private int[] lines;
+        private int widthUsed;
         
        	private int align;
         private int lineSpacing;
@@ -62,8 +63,8 @@ public class TextArea extends Component {
                 this.font = font;
 		selectable = false;
 		foreground = DesktopPane.getDefaultTheme().foreground;
-                
-		setText(text);
+		this.text = text;
+                width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
 	}
 	
 	/**
@@ -148,6 +149,7 @@ public class TextArea extends Component {
 	 */
 	public void setText(String txt) {
             text = txt;
+            setupHeight(getLines(text,font,0,width),width);
 	}
 	
         /**
@@ -158,11 +160,9 @@ public class TextArea extends Component {
 	
             String newtext = text + a;
             
-            if (lines == null || lines.length<=1) {
+            if (lines==null || lines.length<=1) {
                 // we dont have enough text in the box to know where to append yet
-                text = newtext;
-                lines = getLines(text,font,0,width);
-
+                setText(newtext);
             }
             else {
 	
@@ -182,15 +182,11 @@ public class TextArea extends Component {
                 
                 // set the text and adjust the height
                 text = newtext;
-                lines = l3;
+                setupHeight(l3,width);
 
             }
             
-            // as we have added text, we may need to increase the height
-            int newheight = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
-            if (newheight > height) {
-                height = newheight;
-            }
+
 	}
         
 	public String getText() {
@@ -305,7 +301,21 @@ public class TextArea extends Component {
     public void workoutSize() {
         // TODO, add preferred width option
         width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
-        lines = getLines(text,font,0,width);
+        if (width!=widthUsed) {
+            setupHeight(getLines(text,font,0,width),width);
+        }
+    }
+    
+    public void setSize(int w,int h) {
+        super.setSize(w, h);
+        if (width!=widthUsed) {
+             setupHeight(getLines(text,font,0,width),width);
+        }
+    }
+    
+    private void setupHeight(int[] l,int w) {
+        lines = l;
+        widthUsed = w;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
     }
 	
