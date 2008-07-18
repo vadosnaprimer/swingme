@@ -110,6 +110,7 @@ public class TextField extends Component implements ActionListener, CommandListe
                 
                 offset = padding;
                 
+                workoutSize();
                 setText(initialText);
 	}
 
@@ -452,10 +453,10 @@ public class TextField extends Component implements ActionListener, CommandListe
 		return text.length();
 	}
 
-    public void workoutSize() {
-		// TODO, add preferred width option
-		width = DesktopPane.getDesktopPane().getWidth() /2;
-                height = font.getHeight() + padding*2; // put some padding in
-    }
+        public void workoutSize() {
+                    // TODO, add preferred width option
+                    width = DesktopPane.getDesktopPane().getWidth() /2;
+                    height = font.getHeight() + padding*2; // put some padding in
+        }
 
 }

@@ -38,6 +38,9 @@ public class Theme {
 	public Border normalBorder;
 	public Border activeBorder;
 	
+        public Border normalBorderRadio;
+	public Border activeBorderRadio;
+        
 	public int defaultWidthOffset;
         public int defaultSpace;
         

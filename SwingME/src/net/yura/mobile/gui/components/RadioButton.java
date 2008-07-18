@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import net.yura.mobile.gui.DesktopPane;
 
 /**
  * @author Yura Mamyrin
@@ -39,8 +40,8 @@ public class RadioButton extends Button {
 	public RadioButton(String label) {
 		super(label);
 		
-		setBorder(null);
-                setActiveBorder(null);
+		setBorder(DesktopPane.getDefaultTheme().normalBorderRadio);
+                setActiveBorder(DesktopPane.getDefaultTheme().activeBorderRadio);
 		background = -1;
 
 		
