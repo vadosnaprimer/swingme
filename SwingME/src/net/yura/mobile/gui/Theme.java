@@ -38,22 +38,14 @@ public class Theme {
 	public Border normalBorder;
 	public Border activeBorder;
 	
-	public int defaultWidth;
+	public int defaultWidthOffset;
         public int defaultSpace;
         
         public ListCellRenderer softkeyRenderer;
         public Border menuBorder;
-        
-        public Theme(){
-            this(null,0);
-            // these will have defaults setup anyway
-        }
-        
-	public Theme(Font font,int a) {
-		
-		this.font = font;
 
-		defaultWidth = a;
+        
+	public Theme() {
 		
 		background = 0x00FFFFFF;
 		foreground = 0x00000000;

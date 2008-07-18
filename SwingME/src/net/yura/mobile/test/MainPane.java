@@ -36,7 +36,7 @@ import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
-import net.yura.mobile.gui.components.MultilineLabel;
+import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.ScrollPane;
@@ -65,8 +65,8 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Menu menu;
         
         private Image image;
-        private MultilineLabel infoLabel;
-	private MultilineLabel loadPanel;
+        private TextArea infoLabel;
+	private TextArea loadPanel;
 	private Vector images;
 	private Window mainWindow;
 	
@@ -149,7 +149,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 			if (info==null) {
 			
-                                infoLabel = new MultilineLabel("...");
+                                infoLabel = new TextArea("...");
                                 infoLabel.setSize(getWidth(),infoLabel.getHeight());
                                 
 				info = new Panel( new BorderLayout() ) {
@@ -240,7 +240,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add( new TextField(javax.microedition.lcdui.TextField.ANY) );
                                 componentTest.add( new TextField(javax.microedition.lcdui.TextField.ANY | javax.microedition.lcdui.TextField.PASSWORD) );
                                 
-                                componentTest.add( new MultilineLabel("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line") );
+                                componentTest.add( new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line") );
                                 
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
                                 
@@ -262,7 +262,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 			if (loadPanel==null) {
 				
-				loadPanel = new MultilineLabel("");
+				loadPanel = new TextArea("");
 				loadPanel.setAlignment(Graphics.LEFT);
 				images = new Vector();
                                 //loadPanel.setSize(getWidth()*2, loadPanel.getHeight());
@@ -287,7 +287,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			//loadPanel.setSize( getWidth()-ScrollPane.getBarThickness(getWidth(), getHeight()) , loadPanel.getHeight());
 			loadPanel.append(message+"\n");
 			//getContentPane().doLayout();
-                        mainWindow.getContentPane().revalidate();
+                        //mainWindow.getContentPane().revalidate();
 			mainWindow.getContentPane().repaint();
 		}
                 else if ("borderTest".equals(actionCommand)) {

@@ -114,8 +114,9 @@ public class Spinner extends Label {
                     if (w > width) width = w;
                     if (h > height) height = h;
 
-                    if (width > DesktopPane.getDefaultTheme().defaultWidth) {
-                        width = DesktopPane.getDefaultTheme().defaultWidth;
+                    // dont allow the spinner to get too big
+                    if (width > DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset) {
+                        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
                     }
                     
                     setIndex(index);

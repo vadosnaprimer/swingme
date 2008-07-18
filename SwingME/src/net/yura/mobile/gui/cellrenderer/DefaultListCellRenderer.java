@@ -71,8 +71,6 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
                 else {
                         setBackground(-1);
                 }
-		
-                workoutSize();
                 
 		return this;
 	}

@@ -93,10 +93,6 @@ public class TextField extends Component implements ActionListener, CommandListe
 		mode = mod;
                 label = title;
 
-		height = font.getHeight() + padding*2; // put some padding in
-		// give it some random width
-		width = DesktopPane.getDefaultTheme().defaultWidth /2; // TODO BAD!!
-
 		setBackground(DesktopPane.getDefaultTheme().background);
 		setForeground(DesktopPane.getDefaultTheme().foreground);
 
@@ -138,7 +134,7 @@ public class TextField extends Component implements ActionListener, CommandListe
                 // put this back in to hide the clear action on phones it is not needed on
 		//if (!RootPane.hasclearkey) {
 		
-			if(caretPosition==0){
+			if(caretPosition==0 && tmpChar==0){
 				DesktopPane.getDesktopPane().setComponentCommand(1,null);
 			}
                         else{
@@ -153,6 +149,7 @@ public class TextField extends Component implements ActionListener, CommandListe
 
                     if (tmpChar!=0) {
                         tmpChar=0;
+                        updateSoftKeys();
                         repaint();
                     }
                     else if (caretPosition>0) {
@@ -194,6 +191,7 @@ public class TextField extends Component implements ActionListener, CommandListe
                     }
                     else {
                         tmpChar = thechar;
+                        updateSoftKeys();
                         repaint();
                     }
                 }
@@ -383,11 +381,10 @@ public class TextField extends Component implements ActionListener, CommandListe
 		
 		active = false;
 		showCaret = false;
-		
-		DesktopPane.getDesktopPane().setComponentCommand(1,null);
-		
+
                 autoAccept();
-                
+
+                DesktopPane.getDesktopPane().setComponentCommand(1,null);
 		repaint();
 	}
 
@@ -434,7 +431,13 @@ public class TextField extends Component implements ActionListener, CommandListe
 	}
 
 	public String getText() {
-		return text.toString();
+            String s=text.toString();
+            if (tmpChar==0) {
+		return s;
+            }
+            else {
+                return s.substring(0, caretPosition)+tmpChar+ s.substring(caretPosition, s.length() );
+            }
 	}
 
         public Font getFont() {
@@ -448,5 +451,11 @@ public class TextField extends Component implements ActionListener, CommandListe
 	public int getLength() {
 		return text.length();
 	}
+
+    public void workoutSize() {
+		// TODO, add preferred width option
+		width = DesktopPane.getDesktopPane().getWidth() /2;
+                height = font.getHeight() + padding*2; // put some padding in
+    }
 
 }

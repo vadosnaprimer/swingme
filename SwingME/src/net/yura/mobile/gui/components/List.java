@@ -202,7 +202,7 @@ public class List extends Component implements ActionListener {
         Object item = items.elementAt(i);
 
         Component c = renderer.getListCellRendererComponent(this, item, i, i == current, isFocused() && i == current);
-
+        c.workoutSize();
         c.setBoundsWithBorder(
                 ((horizontal)?offset:0),
                 ((horizontal)?0:offset),
@@ -229,6 +229,7 @@ public class List extends Component implements ActionListener {
                         for(int i = 0; i < items.size(); i++){
                                 Object item = (Object)items.elementAt(i);
                                 c = renderer.getListCellRendererComponent(this, item, i, false, i == current);
+                                c.workoutSize();
                                 if (horizontal) {
                                     if (totalHeight<c.getHeightWithBorder()) {
                                         totalHeight=c.getHeightWithBorder();
@@ -248,12 +249,7 @@ public class List extends Component implements ActionListener {
                                 }
                         }
 
-                        if (horizontal) {
-                            setSize(totalWidth,(totalHeight<height)?height:totalHeight);
-                        }
-                        else {
-                            setSize((totalWidth<width)?width:totalWidth,totalHeight);
-                        }
+                        setSize(totalWidth,totalHeight);
         }
     }
 

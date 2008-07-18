@@ -89,7 +89,7 @@ public class Label extends Component {
 		this.icon = icon;
 		selectable = false;
 		if (text!=null) { setText(text); }
-		//else { workoutSize(); }
+
 		foreground = DesktopPane.getDefaultTheme().foreground;
                 
                 verticalAlignment = Graphics.VCENTER;
@@ -371,7 +371,7 @@ public class Label extends Component {
             // if the width has not beed set yet
             // we will assume as can take the default amount
 
-            return DesktopPane.getDefaultTheme().defaultWidth;
+            return DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
 
         }
 

@@ -27,7 +27,7 @@ import net.yura.mobile.gui.DesktopPane;
  * @author Yura Mamyrin
  * @see javax.swing.JTextArea
  */
-public class MultilineLabel extends Component {
+public class TextArea extends Component {
 	
         private String text;
         private Font font;
@@ -36,9 +36,9 @@ public class MultilineLabel extends Component {
        	private int align;
         private int lineSpacing;
         
-	public MultilineLabel(String text) {
+	public TextArea(String text) {
 		
-		this(text,DesktopPane.getDefaultTheme().font,Graphics.HCENTER,DesktopPane.getDefaultTheme().defaultWidth);
+		this(text,DesktopPane.getDefaultTheme().font,Graphics.HCENTER);
 		
 	}
 	
@@ -56,13 +56,13 @@ public class MultilineLabel extends Component {
 	 * @param alignment Alignment of the text, should be one of the alignment from Font class
          * @param width The Width
 	 */
-	public MultilineLabel(String text, Font font, int alignment,int width) {
-		
-		this.width = width;
+	public TextArea(String text, Font font, int alignment) {
+
 		align = alignment;
                 this.font = font;
 		selectable = false;
 		foreground = DesktopPane.getDefaultTheme().foreground;
+                
 		setText(text);
 	}
 	
@@ -125,7 +125,7 @@ public class MultilineLabel extends Component {
                             lastIndex = (lines[i]-1);
                         }
                     }
-                    
+
                     font.drawString(g, text.substring(beginIndex, lastIndex) , x, y, alignment);
                     y += lineHeight;
                     beginIndex = lines[i];
@@ -147,7 +147,7 @@ public class MultilineLabel extends Component {
 	 * @param txt The text
 	 */
 	public void setText(String txt) {
-                setText(txt,getLines(txt,font,0,width));
+            text = txt;
 	}
 	
         /**
@@ -158,9 +158,11 @@ public class MultilineLabel extends Component {
 	
             String newtext = text + a;
             
-            if (lines.length<=1) {
+            if (lines == null || lines.length<=1) {
                 // we dont have enough text in the box to know where to append yet
-                setText(newtext);
+                text = newtext;
+                lines = getLines(text,font,0,width);
+
             }
             else {
 	
@@ -177,15 +179,19 @@ public class MultilineLabel extends Component {
                         l3[c] = l2[ c - lines.length+1 ];
                     }
                 }
-                setText(newtext,l3);
+                
+                // set the text and adjust the height
+                text = newtext;
+                lines = l3;
+
+            }
+            
+            // as we have added text, we may need to increase the height
+            int newheight = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
+            if (newheight > height) {
+                height = newheight;
             }
 	}
-	
-        protected void setText(String a,int[] b) {
-            text = a;
-            lines = b;
-            height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
-        }
         
 	public String getText() {
 		
@@ -295,5 +301,12 @@ public class MultilineLabel extends Component {
                 }
                 return array;
         }
+
+    public void workoutSize() {
+        // TODO, add preferred width option
+        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
+        lines = getLines(text,font,0,width);
+        height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
+    }
 	
 }

@@ -165,8 +165,11 @@ public abstract class Component {
                             getHeightWithBorder(),
                             false);
         }
-        
-        public void workoutSize() { }
+        /**
+         * This sets the width and height of this component
+         * to the MINIMUM that is needed for this component
+         */
+        public abstract void workoutSize();
         
         /**
          * @param a The color of the background of the component (-1 for no color to be used)

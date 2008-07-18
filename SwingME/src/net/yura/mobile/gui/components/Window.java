@@ -393,4 +393,10 @@ public class Window extends Component implements ActionListener {
             
         }
 
+    public void workoutSize() {
+        contentPane.workoutSize();
+        width = contentPane.getWidthWithBorder();
+        height = contentPane.getHeightWithBorder();
+    }
+
 }

@@ -71,5 +71,11 @@ public class ProgressBar extends Component {
 		
 		go = false;
 	}
+
+    public void workoutSize() {
+        // TODO: what to put here?
+        height = 20;
+        width = 50;
+    }
 	
 }

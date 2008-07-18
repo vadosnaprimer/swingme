@@ -27,7 +27,7 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultSoftkeyRenderer;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.MultilineLabel;
+import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.Window;
@@ -188,16 +188,18 @@ public class DesktopPane extends Canvas implements Runnable {
                 theme.font=new Font();
             }
 
-            if (theme.defaultWidth==0) {
-                theme.defaultWidth = getWidth()-ScrollPane.getBarThickness(getWidth(), getHeight());
+            if (theme.defaultWidthOffset==0) {
+                theme.defaultWidthOffset = ScrollPane.getBarThickness(getWidth(), getHeight());
             }
 
             if (theme.defaultSpace==0) {
                 
-                    if(theme.defaultWidth <= 128) {
+                int maxSize = Math.max(getWidth(),getHeight());
+                
+                    if(maxSize <= 128) {
                             theme.defaultSpace=3;
                     }
-                    else if(theme.defaultWidth <= 208) {
+                    else if(maxSize <= 208) {
                             theme.defaultSpace=5;
                     }
                     else {
@@ -341,6 +343,7 @@ public class DesktopPane extends Canvas implements Runnable {
             // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
             Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
             if (com==null) return null;
+            com.workoutSize();
             int h = com.getHeightWithBorder();
             int w = com.getWidthWithBorder();
             if (sideSoftKeys) {
@@ -709,7 +712,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // #####################################################################
 
 	private Window debugwindow;
-	private MultilineLabel text;
+	private TextArea text;
         private String mem;
         
 	public void log(String s) {
@@ -720,7 +723,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 				debugwindow = new Window( new LineBorder(0x00000000) );
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
-				text = new MultilineLabel("",new Font(),Graphics.LEFT,0);
+				text = new TextArea("",new Font(),Graphics.LEFT);
 				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
 				debugwindow.getContentPane().setBackground(0x00FFFFFF);

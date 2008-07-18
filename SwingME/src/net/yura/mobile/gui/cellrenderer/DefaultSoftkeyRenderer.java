@@ -20,8 +20,7 @@ public class DefaultSoftkeyRenderer extends Component implements ListCellRendere
         if (value==null) return null;
         text = value.toString();
         //text = (top?"top":"bottom") + " " + (left?"left":"right");
-        height = DesktopPane.getDefaultTheme().font.getHeight();
-        width = DesktopPane.getDesktopPane().getWidth()/2 - 10;
+        
         return this;
     }
 
@@ -30,6 +29,12 @@ public class DefaultSoftkeyRenderer extends Component implements ListCellRendere
         Font f = DesktopPane.getDefaultTheme().font;
         f.drawString(g, text, (width-f.getWidth(text))/2, (height-f.getHeight())/2, Graphics.TOP | Graphics.LEFT);
 
+    }
+    public void workoutSize() {
+        
+        height = DesktopPane.getDefaultTheme().font.getHeight();
+        width = DesktopPane.getDesktopPane().getWidth()/2 - 10;
+        
     }
 
 }
