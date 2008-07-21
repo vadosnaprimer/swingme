@@ -155,6 +155,13 @@ public class KeyEvent {
                 if (keycode=='*'){
                     return CHARS_PHONE;
                 }
+                
+                for (int c=0;c<CHARS_PHONE.length;c++) {
+                    if (keycode==CHARS_PHONE[c]) {
+                        return new char[] {keycode};
+                    }
+                }
+                
                 return new char[] {};
                 
             }
