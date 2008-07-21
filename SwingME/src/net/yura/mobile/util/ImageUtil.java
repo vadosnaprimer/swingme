@@ -48,7 +48,19 @@ public class ImageUtil {
         
     }
     
-    
+    public static Image makeImage(int w,int h,int color) {
+
+                int[] rgbBuff = new int[w*h];
+
+                for (int i = 0; i < rgbBuff.length; i++) {
+
+                    rgbBuff[i] = color;
+
+                }
+
+                return Image.createRGBImage(rgbBuff, w, h, true);
+
+    }
     
     public static final void imageColor(int ai[], int i) {
         int j = (i & 0xff0000) >> 16;

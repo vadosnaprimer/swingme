@@ -63,12 +63,15 @@ public class DesktopPane extends Canvas implements Runnable {
 	private Component animatedComponent;
 
         private Image splash;
+        private Image fade;
         private int background;
 
+        private boolean paintdone=false;
         private boolean fullrepaint;
         private boolean paintSoftKey;
-        private boolean paintdone=false;
 	private boolean killflag;
+        private boolean wideScreen;
+        private boolean sideSoftKeys;
 
 	private CommandButton[] componentCommands;
          // to avoid creating new array every time
@@ -249,6 +252,8 @@ public class DesktopPane extends Canvas implements Runnable {
                             g.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
                         }
 
+                        wideScreen = (getWidth()>getHeight());
+                        
 			new Thread(this).start();
 
 			paintdone = true;
@@ -272,6 +277,15 @@ public class DesktopPane extends Canvas implements Runnable {
                         paintFirst(g);
 			for (int c=0;c<windows.size();c++) {
 				paintWindow(g,(Window)windows.elementAt(c));
+                                
+                                if (c==(windows.size()-2) && fade!=null) {
+                                    for (int x = 0; x < getWidth(); x += fade.getWidth()) {
+                                        for (int y = 0; y < getHeight(); y += fade.getHeight()) {
+                                            g.drawImage(fade, x, y, Graphics.TOP | Graphics.LEFT);
+                                        }
+                                    }
+                                }
+                                
 			}
 		}
 
@@ -290,6 +304,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	}
 
+        public void setDimImage(Image a) {
+            fade = a;
+        }
+        
         public void paintFirst(Graphics g) { }
         public void paintLast(Graphics g) { }
         
@@ -338,7 +356,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		return ret;
 	}
         
-        private boolean sideSoftKeys;
+
         private Component getSoftkeyRenderer(int i) {
             // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
             Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
@@ -647,6 +665,8 @@ public class DesktopPane extends Canvas implements Runnable {
 				currentWindow = (Window)windows.lastElement();
                                 currentWindow.setupFocusedComponent();
 			}
+                        
+                        fullRepaint();
 
 		}
 
@@ -727,15 +747,14 @@ public class DesktopPane extends Canvas implements Runnable {
 				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
 				debugwindow.getContentPane().setBackground(0x00FFFFFF);
-				add(debugwindow);
                                 debugwindow.setActionListener(debugwindow);
-				debugwindow.setWindowCommand(1, new CommandButton("OK","hide") );
+				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
 
 			}
 
 			text.setSize( debugwindow.getWidth()-ScrollPane.getBarThickness(debugwindow.getWidth(), debugwindow.getHeight()) , text.getHeight() );
 			text.append(s+"\n");
-			setSelectedFrame(debugwindow);
+			debugwindow.setVisible(true);
 			
 		}
 	}
@@ -844,17 +863,14 @@ public class DesktopPane extends Canvas implements Runnable {
             
             if (!paintdone) return;
             
-            boolean old = sideSoftKeys;
+            boolean old = wideScreen;
+            wideScreen = (w>h);
             
-            if (w>h) {
-                sideSoftKeys = true;
-            }
-            else {
-                sideSoftKeys = false;
-            }
-            
-            if (old!=sideSoftKeys) {
+            // this means we NEED to flip from 1 orientation to another
+            if (old!=wideScreen) {
 
+                sideSoftKeys = wideScreen;
+                
                 for (int c=0;c<windows.size();c++) {
                     Window window = (Window)windows.elementAt(c);
 
