@@ -77,33 +77,30 @@ public class KeyEvent {
                     code = getIsDownKey();
             }
 
-            // if we are in number mode we dont want ANY of the other chars! so we either return a number or nothing
-            if (((mode & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC)) {
+
                 
-                old = false;
-                // in this mode there will never be a old char
-                
-                if (code>=48 && code<=57) {
-                    acc = true;
-                    return (char)code;
-                }
-                return 0;
-            }
-            else {
-                
-                char[] cha = getChars(code,mode);
+                char[] cha = getChars((char)code,mode);
 
                 // only accept the old key if the code is different from the current, and there is something to accept
                 old = !accepted && lastGotCode != code;
                 lastGotCode = code;
+
+                // if there is no letter to use
+                if (cha.length==0) {
+                    return 0;
+                }
                 
                 // this means we are here coz the user is holding down the button
+                // (and the last letter was NOT accepted, as pos can NOT be -1 if it was)
                 if (pos==-1) {
+                                // we would never get a case where normally hitting a key does nothing,
+                                // (or only puts 1 char on) but holding it down gives something different
+                                // as those keys will never end in pos==-1 as they would be accpeted right away
                 
                     acc = true;
                     return (char)code;
                 }
-                else {
+                //else {
 
                     // here if they are holding it down for a long time
                     // and there is more then 1 letter to choose from
@@ -112,7 +109,7 @@ public class KeyEvent {
                         return 0;
                     }
                     // else we are going to repeat a letter
-                    
+
                     // if we accepted the last letter then reset the position
                     if (accepted) {
                         pos=0;
@@ -120,9 +117,11 @@ public class KeyEvent {
                     // autoaccept if the length is 1
                     acc = cha.length==1;
                     return cha[pos%cha.length];
-                }
-            }
+                //}
+            //}
         }
+        
+        private static final char[] CHARS_PHONE = new char[] {'*','+','p','w'};
         
         private static final char[] CHARS_42 = new char[] {'*'};
         private static final char[] CHARS_35 = new char[] {'#'};
@@ -137,22 +136,43 @@ public class KeyEvent {
         private static final char[] CHARS_56 = new char[] {'t','u','v','8'};
         private static final char[] CHARS_57 = new char[] {'w','x','y','z','9'};
         
-        public static char[] getChars(int keycode,int mode) {
+        public static char[] getChars(char keycode,int mode) {
+            
+            if (((mode & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC)) {
+                
+                if (keycode>='0' && keycode<='9') {
+                    return new char[] {keycode};
+                }
+                return new char[] {};
+                
+            }
+            
+            if (((mode & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.PHONENUMBER)) {
+                
+                if ((keycode>='0' && keycode<='9') || keycode=='#') {
+                    return new char[] {keycode};
+                }
+                if (keycode=='*'){
+                    return CHARS_PHONE;
+                }
+                return new char[] {};
+                
+            }
             
             switch(keycode) {
-                case 42: return CHARS_42;
-                case 35: return CHARS_35;
-                case 48: return CHARS_48;
-                case 49: return CHARS_49;
-                case 50: return CHARS_50;
-                case 51: return CHARS_51;
-                case 52: return CHARS_52;
-                case 53: return CHARS_53;
-                case 54: return CHARS_54;
-                case 55: return CHARS_55;
-                case 56: return CHARS_56;
-                case 57: return CHARS_57;
-                default: return new char[] {(char)keycode};
+                case '*': return CHARS_42;
+                case '#': return CHARS_35;
+                case '0': return CHARS_48;
+                case '1': return CHARS_49;
+                case '2': return CHARS_50;
+                case '3': return CHARS_51;
+                case '4': return CHARS_52;
+                case '5': return CHARS_53;
+                case '6': return CHARS_54;
+                case '7': return CHARS_55;
+                case '8': return CHARS_56;
+                case '9': return CHARS_57;
+                default: return new char[] {keycode};
             }
             
         }

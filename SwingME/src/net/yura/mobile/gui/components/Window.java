@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
@@ -32,6 +33,11 @@ import net.yura.mobile.gui.layout.BorderLayout;
  */
 public class Window extends Component implements ActionListener {
 
+        private static Vector allWindows = new Vector();
+        public static Vector getAllWindows() {
+            return allWindows;
+        }
+        
 	private Panel contentPane;
 	private Panel glasspanecomponent;
         
@@ -64,6 +70,16 @@ public class Window extends Component implements ActionListener {
                 
                 panelCmds = new CommandButton[2];
                 setBorder(b);
+                
+                
+                for (int c=0;c<allWindows.size();c++) {
+                    if (((WeakReference)allWindows.elementAt(c)).get() == null) {
+                        allWindows.removeElementAt(c);
+                        c--;
+                    }
+                }
+                allWindows.addElement(new WeakReference(this));
+                
 	}
     
 	public void setupFocusedComponent() {

@@ -37,6 +37,20 @@ import net.yura.mobile.gui.border.Border;
  */
 public class TextField extends Component implements ActionListener, CommandListener {
 	
+        public static final int ANY=javax.microedition.lcdui.TextField.ANY;
+        public static final int CONSTRAINT_MASK=javax.microedition.lcdui.TextField.CONSTRAINT_MASK;
+        public static final int DECIMAL=javax.microedition.lcdui.TextField.DECIMAL;
+        public static final int EMAILADDR=javax.microedition.lcdui.TextField.EMAILADDR;
+        public static final int INITIAL_CAPS_SENTENCE=javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE;
+        public static final int INITIAL_CAPS_WORD=javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD;
+        public static final int NON_PREDICTIVE=javax.microedition.lcdui.TextField.NON_PREDICTIVE;
+        public static final int NUMERIC=javax.microedition.lcdui.TextField.NUMERIC;
+        public static final int PASSWORD=javax.microedition.lcdui.TextField.PASSWORD;
+        public static final int PHONENUMBER=javax.microedition.lcdui.TextField.PHONENUMBER;
+        public static final int SENSITIVE=javax.microedition.lcdui.TextField.SENSITIVE;
+        public static final int UNEDITABLE=javax.microedition.lcdui.TextField.UNEDITABLE;
+        public static final int URL=javax.microedition.lcdui.TextField.URL;
+    
         private static TextBox textbox;
     
 	private static CommandButton SOFTKEY_CLEAR = new CommandButton("Clear", "clear");
@@ -110,6 +124,10 @@ public class TextField extends Component implements ActionListener, CommandListe
                 
                 offset = padding;
                 
+                if ((javax.microedition.lcdui.TextField.UNEDITABLE & mode) != 0) {
+                    selectable = false;
+                }
+                
                 workoutSize();
                 setText(initialText);
 	}
@@ -167,7 +185,7 @@ public class TextField extends Component implements ActionListener, CommandListe
             
             lastKeyEvent = System.currentTimeMillis();
             
-            // 8 is the ascii for backspace, sowe dont want this key, no no
+            // 8 is the ascii for backspace, so we dont want this key, no no
             if (keyCode==8) { keyCode=KeyEvent.KEY_CLEAR; }
             
             // if it is a letter that can be typed

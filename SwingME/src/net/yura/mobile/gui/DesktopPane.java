@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui;
 
+import java.lang.ref.WeakReference;
 import java.util.Vector;
 
 import javax.microedition.io.ConnectionNotFoundException;
@@ -871,13 +872,15 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 sideSoftKeys = wideScreen;
                 
-                for (int c=0;c<windows.size();c++) {
-                    Window window = (Window)windows.elementAt(c);
+                Vector win = Window.getAllWindows();
+                
+                for (int c=0;c<win.size();c++) {
+                    Window window = (Window)((WeakReference)win.elementAt(c)).get();
 
                     // TODO RESIZE better
-                    //if (window.getX()==0 && window.getY()==0) {
+                    if (window!=null) {
                         window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
-                    //}
+                    }
                 }
                 fullRepaint();
             }
