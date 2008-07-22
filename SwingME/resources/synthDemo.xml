@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE synth SYSTEM "SynthME.dtd">
+<synth>
+
+    <style id="backingStyle">
+	<state>
+	    <font name="Dialog" size="14"/>
+	    <color value="#D8D987" type="BACKGROUND"/>
+	    <color value="#FF0000" type="FOREGROUND"/>
+	</state>
+    </style>
+    <bind style="backingStyle" key=".*"/>
+
+
+    <style id="textfield">
+	<insets top="4" left="6" bottom="4" right="6"/>
+	<state>
+	    <font name="Verdana" size="14"/>
+	    <color value="#D2DFF2" type="BACKGROUND"/>       
+	    <color value="#000000" type="FOREGROUND"/>
+	<imagePainter path="images/textfield.png" sourceInsets="4 6 4 6" paintCenter="false"/>
+	</state>
+    </style>
+    <bind style="textfield" key="TextField"/>
+
+
+    <style id="button">
+	<insets top="15" left="20" bottom="15" right="20"/>
+	<state>
+	<property key="Button.textShiftOffset" type="integer" value="1"/>
+	    <imagePainter method="buttonBackground" path="images/button.png" sourceInsets="10 10 10 10" />
+	    <font name="Dialog" size="16"/>
+	    <color type="FOREGROUND" value="#FFFFFF"/>
+	</state>
+	<state value="PRESSED"> 
+	    <imagePainter path="images/button_press.png" sourceInsets="10 10 10 10" />
+	</state>
+	<state value="FOCUSED">    
+	    <imagePainter path="images/button_over.png" sourceInsets="10 10 10 10" />
+	</state>
+    </style>
+    <bind style="button" key="Button"/>
+
+
+    <style id="checkbox">
+	<imageIcon id="check_off" path="images/checkbox_off.png"/>
+	<imageIcon id="check_on" path="images/checkbox_on.png"/>
+	<state>
+	    <property key="CheckBox.icon" value="check_off"/>
+	</state>
+	<state value="SELECTED">
+	    <property key="CheckBox.icon" value="check_on"/>
+	</state>
+    </style>
+    <bind style="checkbox" key="CheckBox"/>	 
+  
+</synth>
