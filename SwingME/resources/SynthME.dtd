@@ -74,6 +74,7 @@ size - one of SMALL, MEDIUM, or LARGE
 type can be:
 FOREGROUND
 BACKGROUNG
+BORDERFILL
 -->
     <!ELEMENT color EMPTY>
     <!ATTLIST color
@@ -159,7 +160,7 @@ stretch is not used on java
           path                 CDATA          #IMPLIED
           sourceInsets         CDATA          #IMPLIED
           destinationInsets    CDATA          #IMPLIED
-          paintCenter          CDATA          "true"
+          paintCenter          (true|false)   "true"
           stretch              (true|false)   "true"
     >
 
