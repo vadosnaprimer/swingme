@@ -213,18 +213,18 @@ public class Spinner extends Label {
 
             int xoffset = 0;
 
-            if (horizontalAlignment==Graphics.LEFT) {
+            if ((alignment&Graphics.LEFT)!=0) {
                 xoffset = arrowWidth+gap+normalBorder.getLeft();
             }
-            else if (horizontalAlignment==Graphics.RIGHT) {
+            else if ((alignment&Graphics.RIGHT)!=0) {
                 xoffset = -arrowWidth-gap-normalBorder.getRight();
             }
             
             int yoffset=0;
-            if (verticalAlignment==Graphics.TOP) {
+            if ((alignment&Graphics.TOP)!=0) {
                 yoffset = normalBorder.getTop();
             }
-            else if (verticalAlignment==Graphics.BOTTOM) {
+            else if ((alignment&Graphics.BOTTOM)!=0) {
                 yoffset = -normalBorder.getBottom();
             }
             

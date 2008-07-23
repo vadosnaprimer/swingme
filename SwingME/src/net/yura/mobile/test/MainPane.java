@@ -48,7 +48,9 @@ import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.MatteBorder;
+import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.util.Option;
 
@@ -63,6 +65,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Panel border;
         private Panel tabPanel;
         private Menu menu;
+        private Table tableTest;
         
         private Image image;
         private TextArea infoLabel;
@@ -79,6 +82,13 @@ public class MainPane extends DesktopPane implements ActionListener {
 		mainWindow = getSelectedFrame();
 		
 		setDefaultTheme( new Theme() );
+                
+                try {
+                    getDefaultTheme().load(  getClass().getResourceAsStream("/synthDemo.xml") );
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 
 		mainWindow.getContentPane().setBackground(0x00EEEEEE);
                 
@@ -369,6 +379,102 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 			addToScrollPane(tabPanel, null , new CommandButton("Back","mainmenu") );
 		}
+                else if ("tableTest".equals(actionCommand)) {
+                    
+                    if (tableTest==null) {
+                        
+                        Vector rows = new Vector();
+                            Vector row1 = new Vector();
+                            row1.addElement("YURA");
+                            row1.addElement(new Integer(24));
+                            row1.addElement("175");
+                            row1.addElement(new Option("yes","Happy"));
+                        rows.addElement(row1);
+                            
+                            Vector row2 = new Vector();
+                            row2.addElement("bob");
+                            row2.addElement(new Integer(25));
+                            row2.addElement("170");
+                            row2.addElement(new Option("yes","Happy"));
+                        rows.addElement(row2);
+                        
+                            Vector row3 = new Vector();
+                            row3.addElement("fred");
+                            row3.addElement(new Integer(30));
+                            row3.addElement("173");
+                            row3.addElement(new Option("yes","Happy"));
+                        rows.addElement(row3);
+                        
+                        class MyCheckBox extends CheckBox {
+                            
+                            private Option myOption;
+                            
+                            public MyCheckBox() {
+                                super("?");
+                            }
+                            
+                            public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
+                                
+                                myOption = (Option)value;
+                                
+                                setSelected( "yes".equalsIgnoreCase(myOption.getId()) );
+                                return this;
+                            }
+
+                            public Object getCellEditorValue() {
+                                
+                                myOption.setId( isSelected()?"yes":"no" );
+                                
+                                return myOption;
+                            }
+
+                        }
+                        
+                        
+                        class MyTextField extends TextField {
+                            
+                            public MyTextField() {
+                                super(TextField.ANY);
+                            }
+                            
+                            public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
+                                setText( value.toString() );
+                                return this;
+                            }
+
+                            public Object getCellEditorValue() {
+                                return getText();
+                            }
+
+                        }
+                        
+
+                        Vector numbers = new Vector();
+                        for (int c=0;c<100;c++) {
+                            numbers.addElement(new Integer(c));
+                        }
+                        Spinner spinner = new Spinner(numbers,false);
+                        
+                        Vector editors = new Vector();
+                        editors.addElement(new MyTextField());
+                        editors.addElement(spinner);
+                        editors.addElement(new TextField(TextField.ANY));
+                        editors.addElement(new MyCheckBox());
+                        
+                        Vector renderers = new Vector();
+                        renderers.addElement(new Label());
+                        renderers.addElement(spinner);
+                        renderers.addElement(new DefaultListCellRenderer());
+                        renderers.addElement(new DefaultTabRenderer(Graphics.TOP));
+                        
+                        tableTest = new Table(rows,null);
+                        tableTest.setDefaultEditors(editors);
+                        tableTest.setDefaultRenderer(renderers);
+		    }
+                    
+                    addToScrollPane(tableTest, null , new CommandButton("Back","mainmenu") );
+                    
+                }
 		else if ("throwerror".equals(actionCommand)) {
 			throw new RuntimeException("some bad error happened!");
 		}

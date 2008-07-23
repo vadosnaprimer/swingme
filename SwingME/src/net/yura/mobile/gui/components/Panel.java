@@ -41,7 +41,7 @@ public class Panel extends Component {
 	public Panel() {
 		
 		components = new Vector();
-		constraints = new Hashtable();
+		constraints = new Hashtable(1);
 		selectable = false;
 		// this is true as u need to select a panel to get to 1 of its components
 	}

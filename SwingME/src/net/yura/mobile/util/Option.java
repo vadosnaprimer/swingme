@@ -24,9 +24,9 @@ import javax.microedition.lcdui.Image;
  */
 public class Option {
 
-	private final String id;
-	private final String value;
-        private final Image icon;
+	private String id;
+	private String value;
+        private Image icon;
 
 	public Option(final String key, final String val) {
                 this(key,val,null);
@@ -45,6 +45,10 @@ public class Option {
 	}
         public Image getIcon() {
             return icon;
+        }
+
+        public void setId(String string) {
+            id=string;
         }
 
 	public String toString() {

@@ -39,11 +39,8 @@ public class Label extends Component {
 	protected int padding=2;	
 	protected int gap=2;
 	
-        protected int verticalAlignment;
-        protected int horizontalAlignment;
-
-        protected int verticalTextPosition;
-        protected int horizontalTextPosition;
+        protected int alignment;
+        protected int textPosition;
 	
         /**
          * @see javax.swing.JLabel#JLabel() JLabel.JLabel
@@ -92,12 +89,10 @@ public class Label extends Component {
 
 		foreground = DesktopPane.getDefaultTheme().foreground;
                 
-                verticalAlignment = Graphics.VCENTER;
-                horizontalAlignment = (font==null)?Graphics.HCENTER:Graphics.LEFT;
+                alignment = Graphics.VCENTER | ((font==null)?Graphics.HCENTER:Graphics.LEFT);
 
-                verticalTextPosition = Graphics.VCENTER;
-                horizontalTextPosition = Graphics.RIGHT;
-                
+                textPosition = Graphics.VCENTER | Graphics.RIGHT;
+
 	}
 
     public void setPadding(int padding) {
@@ -137,17 +132,17 @@ public class Label extends Component {
 		int combinedwidth = getCombinedWidth();
 		int combinedheight = getCombinedHeight();
 		
-		if (horizontalAlignment == Graphics.HCENTER) {	
+		if ((alignment & Graphics.HCENTER) != 0) {	
 			x = (width - combinedwidth)/2;
 		}
-		else if (horizontalAlignment == Graphics.RIGHT) {	
+		else if ((alignment & Graphics.RIGHT) != 0) {	
 			x = (width - combinedwidth) -padding;
 		}
 
-		if (verticalAlignment == Graphics.VCENTER) {	
+		if ((alignment & Graphics.VCENTER) != 0) {	
 			y = (height - combinedheight)/2;
 		}
-		else if (verticalAlignment == Graphics.BOTTOM) {	
+		else if ((alignment & Graphics.BOTTOM) != 0) {	
 			y = (height - combinedheight) -padding;
 		}
 		
@@ -157,23 +152,23 @@ public class Label extends Component {
 			int ix=x;
 			int iy=y;
 			
-			if (horizontalTextPosition == Graphics.HCENTER) {
+			if ((textPosition & Graphics.HCENTER) != 0) {
 				
 				ix = x + (combinedwidth - icon.getWidth())/2;
 				
 			}
-			else if (horizontalTextPosition == Graphics.LEFT && font!=null) {
+			else if ((textPosition & Graphics.LEFT) != 0 && font!=null) {
 				
 				ix = x + font.getWidth(string)+gap;
 				
 			}
 
-			if (verticalTextPosition == Graphics.VCENTER) {
+			if ((textPosition & Graphics.VCENTER) != 0) {
 				
 				iy = y + (combinedheight - icon.getHeight())/2;
 				
 			}
-			else if (verticalTextPosition == Graphics.TOP && font!=null) {
+			else if ((textPosition & Graphics.TOP) != 0 && font!=null) {
 				
 				iy = y + font.getHeight()+gap;
 				
@@ -187,23 +182,23 @@ public class Label extends Component {
 			int tx = x;
 			int ty = y;
 			
-			if (horizontalTextPosition == Graphics.HCENTER) {
+			if ((textPosition & Graphics.HCENTER) != 0) {
 				
 				tx = x + (combinedwidth - font.getWidth(string))/2;
 				
 			}
-			else if (horizontalTextPosition == Graphics.RIGHT && icon!=null) {
+			else if ((textPosition & Graphics.RIGHT) != 0 && icon!=null) {
 				
 				tx = x + icon.getWidth()+gap;
 				
 			}
 
-			if (verticalTextPosition == Graphics.VCENTER) {
+			if ((textPosition & Graphics.VCENTER) != 0) {
 				
 				ty = y + (combinedheight - font.getHeight())/2;
 				
 			}
-			else if (verticalTextPosition == Graphics.BOTTOM && icon!=null) {
+			else if ((textPosition & Graphics.BOTTOM) != 0 && icon!=null) {
 				
 				ty = y + icon.getHeight()+gap;
 				
@@ -222,7 +217,7 @@ public class Label extends Component {
         
         protected int getCombinedWidth(String string,Image icon) {
             	int fw = (font!=null&&string!=null)?font.getWidth(string):0;
-		if (horizontalTextPosition == Graphics.HCENTER) {
+		if ((textPosition & Graphics.HCENTER) != 0) {
 			if (icon == null && font == null) return 0;
 			if (icon != null) {
 				return (icon.getWidth() > fw)?icon.getWidth():fw;
@@ -241,7 +236,7 @@ public class Label extends Component {
         
 	protected int getCombinedHeight(Image icon) {
 		int fw = (font!=null)?font.getHeight():0;
-		if (verticalTextPosition == Graphics.VCENTER) {
+		if ((textPosition & Graphics.VCENTER)!= 0) {
 			if (icon == null && font == null) return 0;
 			if (icon != null) {
 				return (icon.getHeight() > fw)?icon.getHeight():fw;
@@ -312,7 +307,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setHorizontalTextPosition(int) JLabel.setHorizontalTextPosition
          */
 	public void setHorizontalTextPosition(int a) {
-		horizontalTextPosition = a;
+		textPosition = ((textPosition&Graphics.TOP)!=0?Graphics.TOP:((textPosition&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER)) | a;
 	}
 	
         /**
@@ -320,23 +315,23 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setVerticalTextPosition(int) JLabel.setVerticalTextPosition
          */
 	public void setVerticalTextPosition(int a) {
-		verticalTextPosition = a;
+		textPosition = a | ((textPosition&Graphics.LEFT)!=0?Graphics.LEFT:((textPosition&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
 	}
 	
         /**
-         * @param alignment One of the following constants defined in Graphics: LEFT (the default for text-only labels), HCENTER (the default for image-only labels), RIGHT
+         * @param a One of the following constants defined in Graphics: LEFT (the default for text-only labels), HCENTER (the default for image-only labels), RIGHT
          * @see javax.swing.JLabel#setHorizontalAlignment(int) JLabel.setHorizontalAlignment
          */
-        public void setHorizontalAlignment(int alignment) {
-            horizontalAlignment = alignment;
+        public void setHorizontalAlignment(int a) {
+            alignment = ((alignment&Graphics.TOP)!=0?Graphics.TOP:((alignment&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER)) | a;
         }
 
         /**
-         * @param alignment One of the following constants defined in Graphics: TOP, VCENTER (the default), or BOTTOM
+         * @param a One of the following constants defined in Graphics: TOP, VCENTER (the default), or BOTTOM
          * @see javax.swing.JLabel#setVerticalAlignment(int) JLabel.setVerticalAlignment
          */
-        public void setVerticalAlignment(int alignment) {
-            verticalAlignment = alignment;
+        public void setVerticalAlignment(int a) {
+            alignment = a | ((alignment&Graphics.LEFT)!=0?Graphics.LEFT:((alignment&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
         }
 
         /**

@@ -218,6 +218,9 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         currentTabIndex = num;
         revalidate();
+        if (!tabList.isSelectable() && owner!=null) {
+            owner.setupFocusedComponent();
+        }
 
     }
 
@@ -235,13 +238,32 @@ public class TabbedPane extends Panel implements ChangeListener {
         }
 
     }
-
+    /**
+     * @param a the index to be selected
+     * @see javax.swing.JTabbedPane#setSelectedIndex(int) JTabbedPane.setSelectedIndex
+     */
     public void setSelectedIndex(int a) {
         tabList.setSelectedIndex(a);
     }
+    /**
+     * @param c the Component to be selected
+     * @see javax.swing.JTabbedPane#setSelectedComponent(java.awt.Component) JTabbedPane.setSelectedComponent
+     */
+    public void setSelectedComponent(Component c) {
+        setSelectedIndex(tabs.indexOf(c));
+    }
+    /**
+     * @return the index of the selected tab
+     * @see javax.swing.JTabbedPane#getSelectedIndex() JTabbedPane.getSelectedIndex
+     */
     public int getSelectedIndex() {
         return tabList.getSelectedIndex();
     }
+    
+    /**
+     * @return an integer specifying the number of tabbed pages
+     * @see javax.swing.JTabbedPane#getTabCount() JTabbedPane.getTabCount
+     */
     public int getTabCount() {
         return tabList.getItems().size();
     }

@@ -27,13 +27,16 @@ import javax.microedition.lcdui.Image;
  */
 public class CheckBox extends RadioButton {
     
-        public CheckBox(String label,Image a,Image b) {
-            super(label,a,b);
+        public CheckBox() {
         }
     
 	public CheckBox(String label){
             super(label);
 	}
+        
+        public CheckBox(String label,Image a,Image b) {
+            super(label,a,b);
+        }
 	
         protected void toggleSelection() {
             selected=!selected;

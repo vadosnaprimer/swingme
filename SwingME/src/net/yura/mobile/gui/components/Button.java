@@ -25,6 +25,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Style;
 import net.yura.mobile.gui.border.Border;
 
 /**
@@ -79,28 +80,17 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.JButton#JButton(java.lang.String, javax.swing.Icon) JButton.JButton
          */
 	public Button(String label, Image img) {
-		
-		this(label,img,
-                        DesktopPane.getDefaultTheme().background,
-                        DesktopPane.getDefaultTheme().normalBorder,
-                        DesktopPane.getDefaultTheme().activeBorder
-                );
-
-	}
-	
-	// full constructor
-	public Button(String label, Image img,int a,Border b,Border c) {
 		super(label, img);
 		
-		background = a;
-		
-		setBorder(b);
-                setActiveBorder(c);
 		selectable = true;
 		
-		activeForeground = DesktopPane.getDefaultTheme().activeForeground;
-                disabledForeground = DesktopPane.getDefaultTheme().disabledForeground;
-                normalForeground = DesktopPane.getDefaultTheme().foreground;
+                background = DesktopPane.getDefaultTheme(this).getBackground( Style.ENABLED );
+                setBorder(DesktopPane.getDefaultTheme(this).getBorder( Style.ENABLED ));
+                setActiveBorder(DesktopPane.getDefaultTheme(this).getBorder( Style.FOCUSED ));
+                
+		activeForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
+                disabledForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.DISABLED);
+                normalForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.ENABLED);
 		
 	}
 

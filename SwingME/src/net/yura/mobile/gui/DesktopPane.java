@@ -27,6 +27,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultSoftkeyRenderer;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
@@ -47,14 +48,31 @@ public class DesktopPane extends Canvas implements Runnable {
         public static DesktopPane getDesktopPane() {
             return desktop;
         }
-        public static Theme getDefaultTheme() {
-            return getDesktopPane().theme;
+        public static Style getDefaultTheme(Component comp) {
+            
+            String name = comp.getClass().getName();
+            if (name.indexOf('.')!=-1) {
+                name = name.substring(name.lastIndexOf('.')+1);
+            }
+            
+            Style style = getDesktopPane().theme.getStyle(name);
+            if (style==null) {
+                style = new Style();
+                getDesktopPane().theme.setStyleFor(style, name);
+            }
+            return style;
         }
         
         // object variables
         
         protected Midlet midlet;
+        
         private Theme theme;
+        public int defaultSpace;
+	public int defaultWidthOffset;
+        public ListCellRenderer softkeyRenderer;
+        
+        
 
 	private Vector windows;
 	private Window currentWindow;
@@ -188,32 +206,28 @@ public class DesktopPane extends Canvas implements Runnable {
 
             theme = a;
 
-            if (theme.font==null) {
-                theme.font=new Font();
+            if (defaultWidthOffset==0) {
+                defaultWidthOffset = ScrollPane.getBarThickness(getWidth(), getHeight());
             }
 
-            if (theme.defaultWidthOffset==0) {
-                theme.defaultWidthOffset = ScrollPane.getBarThickness(getWidth(), getHeight());
-            }
-
-            if (theme.defaultSpace==0) {
+            if (defaultSpace==0) {
                 
                 int maxSize = Math.max(getWidth(),getHeight());
                 
                     if(maxSize <= 128) {
-                            theme.defaultSpace=3;
+                            defaultSpace=3;
                     }
                     else if(maxSize <= 208) {
-                            theme.defaultSpace=5;
+                            defaultSpace=5;
                     }
                     else {
-                            theme.defaultSpace=7;
+                            defaultSpace=7;
                     }
                 
             }
             
-            if (theme.softkeyRenderer==null) {
-                theme.softkeyRenderer = new DefaultSoftkeyRenderer();
+            if (softkeyRenderer==null) {
+                softkeyRenderer = new DefaultSoftkeyRenderer();
             }
             
             currentWindow.setSize(getWidth(),getHeight());
@@ -360,7 +374,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         private Component getSoftkeyRenderer(int i) {
             // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
-            Component com = theme.softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
+            Component com = softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
             if (com==null) return null;
             com.workoutSize();
             int h = com.getHeightWithBorder();

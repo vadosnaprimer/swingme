@@ -21,6 +21,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Style;
 
 /**
  * a component thats like a read-only TextArea
@@ -39,7 +40,7 @@ public class TextArea extends Component {
         
 	public TextArea(String text) {
 		
-		this(text,DesktopPane.getDefaultTheme().font,Graphics.HCENTER);
+		this(text,Graphics.HCENTER);
 		
 	}
 	
@@ -57,14 +58,14 @@ public class TextArea extends Component {
 	 * @param alignment Alignment of the text, should be one of the alignment from Font class
          * @param width The Width
 	 */
-	public TextArea(String text, Font font, int alignment) {
+	public TextArea(String text, int alignment) {
 
 		align = alignment;
-                this.font = font;
+                this.font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
 		selectable = false;
-		foreground = DesktopPane.getDefaultTheme().foreground;
+		foreground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
 		this.text = text;
-                width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
+                width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
 	}
 	
 	/**
@@ -300,7 +301,7 @@ public class TextArea extends Component {
 
     public void workoutSize() {
         // TODO, add preferred width option
-        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
+        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
         if (width!=widthUsed) {
             setupHeight(getLines(text,font,0,width),width);
         }
