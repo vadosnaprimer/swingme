@@ -5,15 +5,18 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Style;
 /**
  * @author Yura Mamyrin
  */
 public class DefaultSoftkeyRenderer extends Component implements ListCellRenderer {
 
     private String text;
+    private Font font;
     
     public DefaultSoftkeyRenderer() {
         setBackground(0x00FFFFFF);
+        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
     
     public Component getListCellRendererComponent(List list, Object value, int index, boolean top, boolean left) {
@@ -26,15 +29,18 @@ public class DefaultSoftkeyRenderer extends Component implements ListCellRendere
 
     public void paintComponent(Graphics g) {
         g.setColor(0x00000000);
-        Font f = DesktopPane.getDefaultTheme().font;
-        f.drawString(g, text, (width-f.getWidth(text))/2, (height-f.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+        font.drawString(g, text, (width-font.getWidth(text))/2, (height-font.getHeight())/2, Graphics.TOP | Graphics.LEFT);
 
     }
     public void workoutSize() {
         
-        height = DesktopPane.getDefaultTheme().font.getHeight();
+        height = font.getHeight();
         width = DesktopPane.getDesktopPane().getWidth()/2 - 10;
         
+    }
+
+    public String getName() {
+        return "SoftkeyRenderer";
     }
 
 }
