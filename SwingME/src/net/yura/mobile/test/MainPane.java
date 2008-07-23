@@ -81,14 +81,18 @@ public class MainPane extends DesktopPane implements ActionListener {
 		
 		mainWindow = getSelectedFrame();
 		
-		setDefaultTheme( new Theme() );
+                Theme th = new Theme();
                 
                 try {
-                    getDefaultTheme().load(  getClass().getResourceAsStream("/synthDemo.xml") );
+                    th.load(  getClass().getResourceAsStream("/synthDemo.xml") );
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
                 }
+                
+		setDefaultTheme( th );
+                
+
                 
 		mainWindow.getContentPane().setBackground(0x00EEEEEE);
                 

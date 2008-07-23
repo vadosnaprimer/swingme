@@ -319,5 +319,9 @@ public class TextArea extends Component {
         widthUsed = w;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
     }
+
+    public String getName() {
+        return "TextArea";
+    }
 	
 }

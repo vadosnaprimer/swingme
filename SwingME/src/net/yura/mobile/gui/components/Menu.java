@@ -9,6 +9,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Style;
 
 /**
  * @author Yura Mamyrin
@@ -169,7 +170,7 @@ public class Menu extends Button {
             panel = popup.getContentPane();
             panel.setLayout(new BoxLayout(Graphics.VCENTER));
             popup.setContentPane(new ScrollPane(panel));
-            popup.setBorder(DesktopPane.getDefaultTheme().menuBorder);
+            popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
             
         }
         
@@ -317,5 +318,5 @@ public class Menu extends Button {
                 DesktopPane.getDesktopPane().fullRepaint();
 
         }
-        
+
 }

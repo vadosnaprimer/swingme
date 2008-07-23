@@ -28,6 +28,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Style;
 
 /**
  * @author Yura Mamyrin
@@ -69,7 +70,7 @@ public class List extends Component implements ActionListener {
                 horizontal = h;
         setSelectedIndex(-1);
 
-                background = DesktopPane.getDefaultTheme().background;
+                background = DesktopPane.getDefaultTheme(this).getBackground(Style.ALL);
 
     }
 
@@ -482,4 +483,8 @@ public class List extends Component implements ActionListener {
         public String toString() {
             return super.toString() + items;
         }
+
+    public String getName() {
+        return "List";
+    }
 }

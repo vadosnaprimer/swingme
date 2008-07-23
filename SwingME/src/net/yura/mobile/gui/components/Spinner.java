@@ -25,6 +25,7 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Style;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.util.Option;
 
@@ -59,17 +60,17 @@ public class Spinner extends Label {
 		continuous = cont;
 		setData(vec);
 		
-		normalBorder = DesktopPane.getDefaultTheme().normalBorder;
-		activeBorder = DesktopPane.getDefaultTheme().activeBorder;
+		normalBorder = DesktopPane.getDefaultTheme(this).getBorder(Style.ALL);
+		activeBorder = DesktopPane.getDefaultTheme(this).getBorder(Style.FOCUSED);
 		
+                activeForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
+                disabledForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.DISABLED);
+                normalForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
+                
 		selectable = true;
 
                 setHorizontalAlignment(Graphics.HCENTER);
-                
-                activeForeground = DesktopPane.getDefaultTheme().activeForeground;
-                disabledForeground = DesktopPane.getDefaultTheme().disabledForeground;
-                normalForeground = DesktopPane.getDefaultTheme().foreground;
-                
+
 	}
 	
         public void setSelectable(boolean s) {
@@ -115,8 +116,8 @@ public class Spinner extends Label {
                     if (h > height) height = h;
 
                     // dont allow the spinner to get too big
-                    if (width > DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset) {
-                        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
+                    if (width > DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset) {
+                        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
                     }
                     
                     setIndex(index);

@@ -29,6 +29,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Style;
 import net.yura.mobile.gui.border.Border;
 
 /**
@@ -95,32 +96,24 @@ public class TextField extends Component implements ActionListener, CommandListe
         public TextField(int constraints) {
             this("Text","",100,constraints);
         }
-        
-	public TextField(String title, String text, int maxSize, int constraints) {
-		this(title,text,maxSize,constraints,DesktopPane.getDefaultTheme().font);
-	}
 
-	public TextField(String title,String initialText,int max, int mod,Font f) {
 
-		font = f;
+	public TextField(String title,String initialText,int max, int constraints) {
+
 		maxSize = max;
-		mode = mod;
+		mode = constraints;
                 label = title;
 
-		setBackground(DesktopPane.getDefaultTheme().background);
-		setForeground(DesktopPane.getDefaultTheme().foreground);
+                font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
+		setBackground(DesktopPane.getDefaultTheme(this).getBackground(Style.ALL));
+		setForeground(DesktopPane.getDefaultTheme(this).getForeground(Style.ALL));
 
-		borderColor = DesktopPane.getDefaultTheme().normalBorder;
-		activeBorderColor = DesktopPane.getDefaultTheme().activeBorder;
+		borderColor = DesktopPane.getDefaultTheme(this).getBorder(Style.ALL);
+		activeBorderColor = DesktopPane.getDefaultTheme(this).getBorder(Style.FOCUSED);
 		
 		setBorder(borderColor);
 		
-		if (font.getColors().length >1) {
-			activeTextColor = font.getColors()[1];
-		}
-		else {
-			activeTextColor = foreground;
-		}
+		activeTextColor =DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
                 
                 offset = padding;
                 
@@ -476,5 +469,9 @@ public class TextField extends Component implements ActionListener, CommandListe
                     width = DesktopPane.getDesktopPane().getWidth() /2;
                     height = font.getHeight() + padding*2; // put some padding in
         }
+
+    public String getName() {
+        return "TextField";
+    }
 
 }

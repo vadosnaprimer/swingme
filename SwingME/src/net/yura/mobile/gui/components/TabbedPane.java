@@ -55,7 +55,7 @@ public class TabbedPane extends Panel implements ChangeListener {
         public TabbedPane(int a,ListCellRenderer b,Border art) {
 
             setLayout(new BorderLayout());
-
+            setName("TabbedPane");
             tabList = new List(null,b,(a==Graphics.TOP || a==Graphics.BOTTOM));
             tabs = new Vector();
 
@@ -81,12 +81,8 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @see javax.swing.JTabbedPane#add(java.awt.Component) JTabbedPane.add
          */
         public void add(Component p) {
-            if (p instanceof Panel) {
-                addTab(((Panel)p).getName(),p);
-            }
-            else {
-                addTab(p.toString(), p);
-            }
+
+                addTab(p.getName(),p);
         }
 
         /**

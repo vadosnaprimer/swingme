@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Style;
 import net.yura.mobile.util.Option;
 
 /**
@@ -65,7 +66,7 @@ public class Label extends Component {
          */
 	public Label(Image icon) {
 		
-		this(null,null,icon);
+		this(null,icon);
 		
 	}
         
@@ -76,20 +77,14 @@ public class Label extends Component {
          */
         public Label(String text,Image icon) {
 		
-		this(text,DesktopPane.getDefaultTheme().font,icon);
-		
-	}
-        
-	public Label(String text,Font f,Image icon) {
-		
-		setFont(f);
+		setFont( DesktopPane.getDefaultTheme(this).getFont(Style.ALL) );
 		this.icon = icon;
 		selectable = false;
 		if (text!=null) { setText(text); }
 
-		foreground = DesktopPane.getDefaultTheme().foreground;
+		foreground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
                 
-                alignment = Graphics.VCENTER | ((font==null)?Graphics.HCENTER:Graphics.LEFT);
+                alignment = Graphics.VCENTER | ((text==null)?Graphics.HCENTER:Graphics.LEFT);
 
                 textPosition = Graphics.VCENTER | Graphics.RIGHT;
 
@@ -366,8 +361,12 @@ public class Label extends Component {
             // if the width has not beed set yet
             // we will assume as can take the default amount
 
-            return DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDefaultTheme().defaultWidthOffset;
+            return DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
 
         }
+
+    public String getName() {
+        return "Label";
+    }
 
 }

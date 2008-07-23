@@ -77,5 +77,9 @@ public class ProgressBar extends Component {
         height = 20;
         width = 50;
     }
+
+    public String getName() {
+        return "ProgressBar";
+    }
 	
 }

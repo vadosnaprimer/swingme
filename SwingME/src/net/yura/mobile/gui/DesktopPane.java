@@ -49,12 +49,7 @@ public class DesktopPane extends Canvas implements Runnable {
             return desktop;
         }
         public static Style getDefaultTheme(Component comp) {
-            
-            String name = comp.getClass().getName();
-            if (name.indexOf('.')!=-1) {
-                name = name.substring(name.lastIndexOf('.')+1);
-            }
-            
+            String name = comp.getName();
             Style style = getDesktopPane().theme.getStyle(name);
             if (style==null) {
                 style = new Style();
@@ -758,7 +753,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
 				debugwindow = new Window( new LineBorder(0x00000000) );
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
-				text = new TextArea("",new Font(),Graphics.LEFT);
+				text = new TextArea("",Graphics.LEFT);
+                                text.setFont(new Font());
 				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
 				debugwindow.getContentPane().setBackground(0x00FFFFFF);

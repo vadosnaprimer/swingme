@@ -415,4 +415,8 @@ public class Window extends Component implements ActionListener {
         height = contentPane.getHeightWithBorder();
     }
 
+    public String getName() {
+        return "Window";
+    }
+
 }

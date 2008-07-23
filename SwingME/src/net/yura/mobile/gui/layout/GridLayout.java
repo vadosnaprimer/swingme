@@ -17,7 +17,6 @@
 
 package net.yura.mobile.gui.layout;
 
-import java.util.Hashtable;
 import java.util.Vector;
 
 import net.yura.mobile.gui.DesktopPane;
@@ -40,7 +39,7 @@ public class GridLayout implements Layout {
          */
 	public GridLayout(int rows, int cols) {
 		
-		this(rows, cols,DesktopPane.getDefaultTheme().defaultSpace );
+		this(rows, cols,DesktopPane.getDesktopPane().defaultSpace );
 	}
 	
         /**

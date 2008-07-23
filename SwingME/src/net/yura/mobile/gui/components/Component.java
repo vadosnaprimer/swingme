@@ -171,6 +171,14 @@ public abstract class Component {
          */
         public abstract void workoutSize();
         
+        
+        /**
+         * @return this component's name
+         * @see java.awt.Component#getName() Component.getName
+         */
+        public abstract String getName();
+        
+        
         /**
          * @param a The color of the background of the component (-1 for no color to be used)
          * @see javax.swing.JComponent#setBackground(java.awt.Color) JComponent.setBackground

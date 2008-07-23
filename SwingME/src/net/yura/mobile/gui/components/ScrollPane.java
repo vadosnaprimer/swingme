@@ -20,6 +20,7 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.Graphics;
 
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Style;
 
 /**
  * @author Yura Mamyrin
@@ -56,9 +57,13 @@ public class ScrollPane extends Panel {
         public ScrollPane(int m) {
 		
 		setMode(m);
-
-		scrollTrackCol = DesktopPane.getDefaultTheme().scrollTrackCol;
-		scrollBarCol = DesktopPane.getDefaultTheme().scrollBarCol;
+                setName("ScrollPane");
+                
+                Integer a1 = (Integer) DesktopPane.getDefaultTheme(this).getProperty("scrollTrackCol", Style.ALL);
+                Integer a2 = (Integer) DesktopPane.getDefaultTheme(this).getProperty("scrollBarCol", Style.ALL);
+                
+		scrollTrackCol = (a1==null)?-1:a1.intValue();
+		scrollBarCol = (a2==null)?-1:a2.intValue();
 	}
         
 	public ScrollPane(Component view,int a) {

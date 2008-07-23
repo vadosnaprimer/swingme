@@ -151,4 +151,8 @@ public class RadioButton extends Button {
 		this.nonSelectedImage = nonSelectedImage;
 	}
 	
+    public String getName() {
+        return "RadioButton";
+    }
+        
 }
