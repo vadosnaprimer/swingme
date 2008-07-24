@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Properties;
@@ -87,49 +88,62 @@ public class MatteBorder extends EmptyBorder {
          * </ul>
          * @param name name of file to load skin from
          */
-        public MatteBorder(String name) {
-                super(0,0,0,0);
+        public static MatteBorder load(String name) throws Exception {
             
-		try {
+            int top,bottom,left,right;
+            Image activeimage;
+            int imageTop;
+            int imageBottom;
+            int imageRight;
+            int imageLeft;
+            boolean back;
+            int color;
 			
-			Properties newborder = new Properties();
-			
-			newborder.load( getClass().getResourceAsStream(name) );
-                        
-                        
-                        String imageName = newborder.getProperty("active");
-				
-			if (name.charAt(0)=='/' && imageName.charAt(0)!='/') {
-				imageName = "/"+imageName;
-			}
-				
-			activeimage = Image.createImage(imageName);
-                        imageTop=Integer.parseInt(newborder.getProperty("itop"));
-                        imageBottom=Integer.parseInt(newborder.getProperty("ibottom"));
-                        imageRight=Integer.parseInt(newborder.getProperty("iright"));
-                        imageLeft=Integer.parseInt(newborder.getProperty("ileft"));
-                        
-                        top=Integer.parseInt(newborder.getProperty("top"));
-                        bottom=Integer.parseInt(newborder.getProperty("bottom"));
-                        right=Integer.parseInt(newborder.getProperty("right"));
-                        left=Integer.parseInt(newborder.getProperty("left"));
-                        
-                        String b =newborder.getProperty("back");
-                        
-                        back = (b!=null && b.equals("Y"));
-                        
-                        String c =newborder.getProperty("color");
-                        
-                        color = (c==null)?-1:Integer.parseInt(c, 16);
-                        
-		}
-		catch (IOException ex) {
-			
-			ex.printStackTrace();
-			throw new RuntimeException("unable to load border: "+name);
-		}
+            Properties newborder = new Properties();
+
+            newborder.load( DesktopPane.getDesktopPane().getClass().getResourceAsStream(name) );
+
+            String imageName = newborder.getProperty("active");
+
+            if (name.charAt(0)=='/' && imageName.charAt(0)!='/') {
+                    imageName = "/"+imageName;
+            }
+
+            activeimage = Image.createImage(imageName);
+            imageTop=Integer.parseInt(newborder.getProperty("itop"));
+            imageBottom=Integer.parseInt(newborder.getProperty("ibottom"));
+            imageRight=Integer.parseInt(newborder.getProperty("iright"));
+            imageLeft=Integer.parseInt(newborder.getProperty("ileft"));
+
+            top=Integer.parseInt(newborder.getProperty("top"));
+            bottom=Integer.parseInt(newborder.getProperty("bottom"));
+            right=Integer.parseInt(newborder.getProperty("right"));
+            left=Integer.parseInt(newborder.getProperty("left"));
+
+            String b =newborder.getProperty("back");
+
+            back = (b!=null && b.equals("Y"));
+
+            String c =newborder.getProperty("color");
+
+            color = (c==null)?-1:Integer.parseInt(c, 16);
+
+            return new MatteBorder(activeimage,top,left,bottom,right,
+                    imageTop,imageLeft,imageBottom,imageRight,back,color);
+
 
 	}
+
+        public MatteBorder(Image i, int top, int left, int bottom, int right, int t, int l, int b, int r, boolean back, int color) {
+            super(top,left,bottom,right);
+            activeimage = i;
+            imageTop=t;
+            imageLeft=l;
+            imageBottom=b;
+            imageRight=r;
+            this.back=back;
+            this.color=color;
+        }
 
         /**
          * @return the icon used for tiling the border or null if a solid color is being used
@@ -222,6 +236,9 @@ public class MatteBorder extends EmptyBorder {
         return back || (activeimage!=null && color!=-1);
     }
         
+    public void setColor(int c) {
+        color =c;
+    }
 }
 
 

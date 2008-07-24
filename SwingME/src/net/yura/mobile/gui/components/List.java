@@ -28,7 +28,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Style;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin

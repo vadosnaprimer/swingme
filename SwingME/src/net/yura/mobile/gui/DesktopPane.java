@@ -17,6 +17,8 @@
 
 package net.yura.mobile.gui;
 
+import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.Style;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 
@@ -49,11 +51,9 @@ public class DesktopPane extends Canvas implements Runnable {
             return desktop;
         }
         public static Style getDefaultTheme(Component comp) {
-            String name = comp.getName();
-            Style style = getDesktopPane().theme.getStyle(name);
+            Style style = desktop.theme.getStyle(comp.getName());
             if (style==null) {
-                style = new Style();
-                getDesktopPane().theme.setStyleFor(style, name);
+                style = desktop.theme.getStyle("");
             }
             return style;
         }
@@ -62,7 +62,7 @@ public class DesktopPane extends Canvas implements Runnable {
         
         protected Midlet midlet;
         
-        private Theme theme;
+        private LookAndFeel theme;
         public int defaultSpace;
 	public int defaultWidthOffset;
         public ListCellRenderer softkeyRenderer;
@@ -197,7 +197,7 @@ public class DesktopPane extends Canvas implements Runnable {
          * sets the default theme, and sets up default values if there are none set
          * @param a The Theme
          */
-        public void setDefaultTheme(Theme a) {
+        public void setLookAndFeel(LookAndFeel a) {
 
             theme = a;
 

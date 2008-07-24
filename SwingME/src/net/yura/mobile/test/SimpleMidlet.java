@@ -21,10 +21,11 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Theme;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 
 /**
  * @author Yura Mamyrin
@@ -45,7 +46,7 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 		
                 mainWindow.setActionListener(this);
                 
-		rootpane.setDefaultTheme( new Theme() );
+		rootpane.setLookAndFeel( new MetalLookAndFeel() );
 		
 		mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
 		

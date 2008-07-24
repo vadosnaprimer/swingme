@@ -5,7 +5,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.Style;
+import net.yura.mobile.gui.plaf.Style;
 /**
  * @author Yura Mamyrin
  */

@@ -25,7 +25,7 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Style;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.util.Option;
 

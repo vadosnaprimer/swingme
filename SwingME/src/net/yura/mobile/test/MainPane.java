@@ -26,7 +26,7 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Theme;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
@@ -52,6 +52,8 @@ import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
+import net.yura.mobile.gui.plaf.MetalLookAndFeel;
+import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.util.Option;
 
 /**
@@ -81,17 +83,16 @@ public class MainPane extends DesktopPane implements ActionListener {
 		
 		mainWindow = getSelectedFrame();
 		
-                Theme th = new Theme();
-                
+                SynthLookAndFeel th = new SynthLookAndFeel();
                 try {
                     th.load(  getClass().getResourceAsStream("/synthDemo.xml") );
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                
-		setDefaultTheme( th );
-                
+		setLookAndFeel( th );
+
+                //setLookAndFeel( new MetalLookAndFeel() ); 
 
                 
 		mainWindow.getContentPane().setBackground(0x00EEEEEE);
@@ -318,11 +319,21 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 border.add(test1);
                                 
                                 Label test2 = new Label("ImageBorder test");
-                                test2.setBorder(new MatteBorder("/skin1.skin"));
+                                try {
+                                    test2.setBorder(MatteBorder.load("/skin1.skin"));
+                                }
+                                catch(Exception ex){
+                                    ex.printStackTrace();
+                                }
                                 border.add(test2);
                                 
                                 Panel menuTest = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                                menuTest.setBorder(new MatteBorder("/skin2.skin"));
+                                try {
+                                    menuTest.setBorder(MatteBorder.load("/skin2.skin"));
+                                }
+                                catch(Exception ex){
+                                    ex.printStackTrace();
+                                }
                                 menuTest.add(new Button("menu TEST item 1"));
                                 menuTest.add(new Button("menu TEST item 2"));
                                 menuTest.add(new Button("menu TEST item 3"));

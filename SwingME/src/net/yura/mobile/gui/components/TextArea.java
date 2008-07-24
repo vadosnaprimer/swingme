@@ -21,7 +21,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Style;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * a component thats like a read-only TextArea
@@ -54,9 +54,7 @@ public class TextArea extends Component {
 
 	/**
          * @param text the text content
-	 * @param font preffered font object
 	 * @param alignment Alignment of the text, should be one of the alignment from Font class
-         * @param width The Width
 	 */
 	public TextArea(String text, int alignment) {
 

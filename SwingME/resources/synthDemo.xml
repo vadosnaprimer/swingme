@@ -18,33 +18,34 @@
 	    <font name="Verdana" size="14"/>
 	    <color value="#D2DFF2" type="BACKGROUND"/>       
 	    <color value="#000000" type="FOREGROUND"/>
-	<imagePainter path="images/textfield.png" sourceInsets="4 6 4 6" paintCenter="false"/>
+	<imagePainter path="/textfield.png" sourceInsets="4 6 4 6" paintCenter="false"/>
 	</state>
     </style>
     <bind style="textfield" key="TextField"/>
 
 
     <style id="button">
-	<insets top="15" left="20" bottom="15" right="20"/>
+	<insets top="5" left="10" bottom="5" right="10"/>
 	<state>
 	<property key="Button.textShiftOffset" type="integer" value="1"/>
-	    <imagePainter method="buttonBackground" path="images/button.png" sourceInsets="10 10 10 10" />
+	    <imagePainter method="buttonBackground" path="/button.png" sourceInsets="15 15 15 15" />
+	    <color type="FOREGROUND" value="#0000FF"/>
 	    <font name="Dialog" size="16"/>
 	    <color type="FOREGROUND" value="#FFFFFF"/>
 	</state>
-	<state value="PRESSED"> 
-	    <imagePainter path="images/button_press.png" sourceInsets="10 10 10 10" />
+	<state value="FOCUSED">
+	    <imagePainter path="/button_over.png" sourceInsets="15 15 15 15" />
 	</state>
-	<state value="FOCUSED">    
-	    <imagePainter path="images/button_over.png" sourceInsets="10 10 10 10" />
-	</state>
+	<!--<state value="PRESSED"> 
+	    <imagePainter path="/button_press.png" sourceInsets="15 15 15 15" />
+	</state>-->
     </style>
     <bind style="button" key="Button"/>
 
 
     <style id="checkbox">
-	<imageIcon id="check_off" path="images/checkbox_off.png"/>
-	<imageIcon id="check_on" path="images/checkbox_on.png"/>
+	<imageIcon id="check_off" path="/checkbox_off.png"/>
+	<imageIcon id="check_on" path="/checkbox_on.png"/>
 	<state>
 	    <property key="CheckBox.icon" value="check_off"/>
 	</state>

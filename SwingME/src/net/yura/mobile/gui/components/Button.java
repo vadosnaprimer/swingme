@@ -25,7 +25,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Style;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
 
 /**
@@ -84,13 +84,15 @@ public class Button extends Label implements ActionListener {
 		
 		selectable = true;
 		
-                background = DesktopPane.getDefaultTheme(this).getBackground( Style.ENABLED );
-                setBorder(DesktopPane.getDefaultTheme(this).getBorder( Style.ENABLED ));
-                setActiveBorder(DesktopPane.getDefaultTheme(this).getBorder( Style.FOCUSED ));
+                Style st = DesktopPane.getDefaultTheme(this);
                 
-		activeForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
-                disabledForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.DISABLED);
-                normalForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.ENABLED);
+                background = st.getBackground( Style.ENABLED );
+                setBorder(st.getBorder( Style.ENABLED ));
+                setActiveBorder(st.getBorder( Style.FOCUSED ));
+                
+		activeForeground = st.getForeground(Style.FOCUSED);
+                disabledForeground = st.getForeground(Style.DISABLED);
+                normalForeground = st.getForeground(Style.ENABLED);
 		
 	}
 
@@ -250,5 +252,8 @@ public class Button extends Label implements ActionListener {
         }
 	public String toString() {
             return super.toString() +"("+ getText()+")";
+        }
+        public String getName() {
+            return "Button";
         }
 }

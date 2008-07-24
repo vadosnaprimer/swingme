@@ -22,7 +22,7 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Style;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
 
 /**
@@ -78,6 +78,7 @@ public class Label extends Component {
         public Label(String text,Image icon) {
 		
 		setFont( DesktopPane.getDefaultTheme(this).getFont(Style.ALL) );
+                
 		this.icon = icon;
 		selectable = false;
 		if (text!=null) { setText(text); }
