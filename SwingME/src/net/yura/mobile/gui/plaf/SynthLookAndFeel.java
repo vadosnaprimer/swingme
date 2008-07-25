@@ -112,9 +112,8 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                     
                     if ("state".equals(name)) {
-                        
-                        String value = parser.getAttributeValue(null, "value");
-                        int st = workOutState(value);
+
+                        int st = workOutState( parser.getAttributeValue(null, "value") );
                         
                         // vars local to this state
                         int borderfill=-1;
@@ -136,12 +135,26 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
                                         Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), 
                                         "true".equals(paintCenter) || "Y".equals(paintCenter)
-                                        
                                         , borderfill);
                                 newStyle.addBorder(border, st);
                             }
                             else if ("property".equals(name2)) {
-
+                                String type = parser.getAttributeValue(null, "type");
+                                String key = parser.getAttributeValue(null, "key");
+                                String value = parser.getAttributeValue(null, "value");
+                                
+                                if ("integer".equals(type)) {
+                                    int base=10;
+                                    if (value.startsWith("#")) {
+                                        base=16;
+                                        value=value.substring(1);
+                                    }
+                                    else if (value.startsWith("0x")) {
+                                        base=16;
+                                        value=value.substring(2);
+                                    }
+                                    newStyle.addProperty(Integer.valueOf(value,base), key, st);
+                                }
                                 
                             }
                             else if ("color".equals(name2)) {

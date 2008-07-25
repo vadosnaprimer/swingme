@@ -60,8 +60,8 @@ public class Spinner extends Label {
 		continuous = cont;
 		setData(vec);
 		
-		normalBorder = DesktopPane.getDefaultTheme(this).getBorder(Style.ALL);
-		activeBorder = DesktopPane.getDefaultTheme(this).getBorder(Style.FOCUSED);
+		setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
+		setActiveBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.FOCUSED));
 		
                 activeForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
                 disabledForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.DISABLED);
@@ -109,8 +109,8 @@ public class Spinner extends Label {
 
                     }
 
-                    int w = maxWidth + getArrowWidth()*2 + gap*2 + normalBorder.getLeft() + normalBorder.getRight() + padding*2;
-                    int h = maxHeight + normalBorder.getTop() + normalBorder.getBottom() + padding*2;
+                    int w = maxWidth + ((normalBorder==null)?getArrowWidth()*2:0) + gap*2 + padding*2; // normalBorder.getLeft() + normalBorder.getRight()
+                    int h = maxHeight + padding*2; // normalBorder.getTop() + normalBorder.getBottom()
 
                     if (w > width) width = w;
                     if (h > height) height = h;
@@ -175,33 +175,37 @@ public class Spinner extends Label {
 	}
 
 	public void paintComponent(Graphics g){
-
-            int arrowWidth = getArrowWidth();
+            super.paintComponent(g);
             
-            Border b = isFocused()?activeBorder:normalBorder;
+            
+            //int arrowWidth = getArrowWidth();
+            
+            //Border b = isFocused()?activeBorder:normalBorder;
 
-            g.translate(arrowWidth+gap+normalBorder.getLeft(), normalBorder.getTop());
-            b.paintBorder(this, g, width -gap*2 - arrowWidth*2 -normalBorder.getLeft() - normalBorder.getRight(), height-normalBorder.getTop() - normalBorder.getBottom());
-            g.translate(-arrowWidth-gap-normalBorder.getLeft(), -normalBorder.getTop());
+            //g.translate(arrowWidth+gap+normalBorder.getLeft(), normalBorder.getTop());
+            //b.paintBorder(this, g, width -gap*2 - arrowWidth*2 -normalBorder.getLeft() - normalBorder.getRight(), height-normalBorder.getTop() - normalBorder.getBottom());
+            //g.translate(-arrowWidth-gap-normalBorder.getLeft(), -normalBorder.getTop());
 
 
             if (nonSelectedImage != null) {
                 
                     // TODO: Finish
-                    g.drawImage(nonSelectedImage, 0, (height-nonSelectedImage.getHeight())/2 , 0 );
-                    g.drawImage(selectedImage, width-arrowWidth, (height-nonSelectedImage.getHeight())/2 , 0 );
+                    //g.drawImage(nonSelectedImage, 0, (height-nonSelectedImage.getHeight())/2 , 0 );
+                    //g.drawImage(selectedImage, width-arrowWidth, (height-nonSelectedImage.getHeight())/2 , 0 );
             }
             else {
 
                     int arrowHeight = getFont().getHeight();
-                
+                    int arrowWidth = arrowHeight/2;
+                    int offset = (getWidthWithBorder() - getWidth())/2;
+                    
                     if (leftPress){
                             g.setColor(0);
                     }
                     else{
                             g.setColor(0x00808080);
                     }
-                    ScrollPane.drawLeftArrow(g, 0, (height-arrowHeight)/2, arrowWidth, arrowHeight);
+                    ScrollPane.drawLeftArrow(g, -arrowWidth -(offset-arrowWidth)/2, (height-arrowHeight)/2, arrowWidth, arrowHeight);
 
                     if (rightPress){
                             g.setColor(0);
@@ -209,9 +213,9 @@ public class Spinner extends Label {
                     else{
                             g.setColor(0x00808080);
                     }
-                    ScrollPane.drawRightArrow(g, width-arrowWidth, (height-arrowHeight)/2, arrowWidth, arrowHeight);
+                    ScrollPane.drawRightArrow(g, width + (offset-arrowWidth)/2, (height-arrowHeight)/2, arrowWidth, arrowHeight);
             }
-
+/*
             int xoffset = 0;
 
             if ((alignment&Graphics.LEFT)!=0) {
@@ -232,6 +236,7 @@ public class Spinner extends Label {
             g.translate(xoffset, yoffset);
             super.paintComponent(g);
             g.translate(-xoffset, -yoffset);
+ */
 	}
 	
 	public Image getSelectedImage() {
@@ -267,19 +272,17 @@ public class Spinner extends Label {
 	    repaint();
 	}
 
-        public int getMaxTextWidth() {
-            return width - getArrowWidth()*2 - gap*2 - normalBorder.getLeft() - normalBorder.getRight() - padding*2;
-        }
-
 	public void focusLost() {
                 super.focusLost();
 		foreground = normalForeground;
+                super.setBorder(normalBorder);
 		repaint();
 	}
 
 	public void focusGained() {
                 super.focusGained();
 		foreground = activeForeground;
+                super.setBorder(activeBorder);
 		repaint();
 	}
 
@@ -291,12 +294,13 @@ public class Spinner extends Label {
 		this.activeBorder = activeBorderColor;
 	}
 
-	public Border getNormalBorder() {
+	public Border getBorder() {
 		return normalBorder;
 	}
 
-	public void setNormalBorderColor(Border borderColor) {
+	public void setBorder(Border borderColor) {
 		this.normalBorder = borderColor;
+                super.setBorder(borderColor);
 	}
 		
 	/**
@@ -306,4 +310,7 @@ public class Spinner extends Label {
 	public void setText(String a) {
 		throw new IllegalArgumentException();
 	}
+        public String getName() {
+            return "Spinner";
+        }
 }

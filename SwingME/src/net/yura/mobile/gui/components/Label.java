@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
 
@@ -67,7 +68,7 @@ public class Label extends Component {
 	public Label(Image icon) {
 		
 		this(null,icon);
-		
+		setHorizontalAlignment(Graphics.HCENTER);
 	}
         
         /**
@@ -85,7 +86,7 @@ public class Label extends Component {
 
 		foreground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
                 
-                alignment = Graphics.VCENTER | ((text==null)?Graphics.HCENTER:Graphics.LEFT);
+                alignment = Graphics.VCENTER | Graphics.LEFT;
 
                 textPosition = Graphics.VCENTER | Graphics.RIGHT;
 
@@ -362,7 +363,13 @@ public class Label extends Component {
             // if the width has not beed set yet
             // we will assume as can take the default amount
 
-            return DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+            int borderOffset=0;
+            Border b = getBorder();
+            if (b!=null) {
+                borderOffset = b.getLeft() + b.getRight();
+            }
+            
+            return DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset - borderOffset;
 
         }
 

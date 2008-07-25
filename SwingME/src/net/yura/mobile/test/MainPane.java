@@ -26,7 +26,6 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;

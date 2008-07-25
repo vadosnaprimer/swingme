@@ -62,8 +62,8 @@ public class TextArea extends Component {
                 this.font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
 		selectable = false;
 		foreground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
-		this.text = text;
                 width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+                setText(text);
 	}
 	
 	/**

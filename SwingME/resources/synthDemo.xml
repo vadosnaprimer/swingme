@@ -28,17 +28,20 @@
 	<insets top="5" left="10" bottom="5" right="10"/>
 	<state>
 	<property key="Button.textShiftOffset" type="integer" value="1"/>
-	    <imagePainter method="buttonBackground" path="/button.png" sourceInsets="15 15 15 15" />
-	    <color type="FOREGROUND" value="#0000FF"/>
+	    <imagePainter method="buttonBackground" path="/button.png" sourceInsets="12 15 12 15" />
+	    <color type="BORDERFILL" value="#296ED3"/>
 	    <font name="Dialog" size="16"/>
 	    <color type="FOREGROUND" value="#FFFFFF"/>
 	</state>
 	<state value="FOCUSED">
-	    <imagePainter path="/button_over.png" sourceInsets="15 15 15 15" />
+	    <imagePainter path="/button_over.png" sourceInsets="12 15 12 15" />
+	    <color type="BORDERFILL" value="#F37529"/>
 	</state>
-	<!--<state value="PRESSED"> 
-	    <imagePainter path="/button_press.png" sourceInsets="15 15 15 15" />
-	</state>-->
+	<!-- not supported yet
+        <state value="PRESSED"> 
+	    <imagePainter path="/button_press.png" sourceInsets="12 15 12 15" />
+	</state>
+        -->
     </style>
     <bind style="button" key="Button"/>
 
@@ -53,6 +56,15 @@
 	    <property key="CheckBox.icon" value="check_on"/>
 	</state>
     </style>
-    <bind style="checkbox" key="CheckBox"/>	 
+    <bind style="checkbox" key="CheckBox"/>
   
+
+    <style id="scrollpane">
+	<state>
+	    <property key="scrollBarCol" type="integer" value="0x00FF0000"/>
+	    <property key="scrollTrackCol" type="integer" value="0x00000000"/>
+	</state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
 </synth>

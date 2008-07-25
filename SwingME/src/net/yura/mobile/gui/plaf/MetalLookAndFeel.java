@@ -18,7 +18,10 @@
 package net.yura.mobile.gui.plaf;
 
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.border.CompoundBorder;
+import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.border.MatteBorder;
 
 /**
  * @author Yura Mamyrin
@@ -28,8 +31,10 @@ public class MetalLookAndFeel extends LookAndFeel {
 
     	public MetalLookAndFeel() {
 
+            Font font = new Font();
+            
             Style defaultStyle = new Style();
-            defaultStyle.addFont(new Font(), Style.ALL);
+            defaultStyle.addFont(font, Style.ALL);
             defaultStyle.addBackground(0x00FFFFFF, Style.ALL);
             defaultStyle.addForeground(0x00000000, Style.ALL);
             setStyleFor("",defaultStyle);
@@ -44,8 +49,6 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("Button",buttonStyle);
             setStyleFor("TextField",buttonStyle);
 
-            System.out.println(buttonStyle.getFont(Style.ALL));
-            
             Style radioStyle = new Style(defaultStyle);
             radioStyle.addForeground(0x00000000, Style.ALL);
             radioStyle.addForeground(0x000000FF, Style.FOCUSED);
@@ -58,6 +61,13 @@ public class MetalLookAndFeel extends LookAndFeel {
             scrollStyle.addProperty(new Integer(0x00000000),"scrollTrackCol",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
 
+            
+            EmptyBorder padding = new EmptyBorder(0, font.getHeight(), 0, font.getHeight());
+            Style spinnerStyle = new Style(defaultStyle);
+            spinnerStyle.addBorder(new CompoundBorder(padding, new LineBorder(0x00808080)),Style.ALL);
+            spinnerStyle.addBorder(new CompoundBorder(padding, new LineBorder(0x00000000)), Style.FOCUSED);
+            setStyleFor("Spinner",spinnerStyle);
+            
 	}
     
 }
