@@ -40,35 +40,37 @@ public class MetalLookAndFeel extends LookAndFeel {
             defaultStyle.addForeground(0x00000000, Style.ALL);
             setStyleFor("",defaultStyle);
             
-            Style buttonStyle = new Style(defaultStyle);
+            
+            
+            
+            
+            Style radioStyle = new Style(defaultStyle);
+            radioStyle.addForeground(0x000000FF, Style.FOCUSED);
+            radioStyle.addForeground(0x00808080, Style.DISABLED);
+            setStyleFor("RadioButton",radioStyle);
+            setStyleFor("CheckBox",radioStyle);
+            
+            Style buttonStyle = new Style(radioStyle);
             buttonStyle.addBackground(0x00FFFFFF, Style.ALL);
-            buttonStyle.addForeground(0x00000000, Style.ALL);
-            buttonStyle.addForeground(0x000000FF, Style.FOCUSED);
-            buttonStyle.addForeground(0x00808080, Style.DISABLED);
             buttonStyle.addBorder(new LineBorder(0x00808080),Style.ALL);
             buttonStyle.addBorder(new LineBorder(0x00000000), Style.FOCUSED);
             setStyleFor("Button",buttonStyle);
             setStyleFor("TextField",buttonStyle);
 
-            Style radioStyle = new Style(defaultStyle);
-            radioStyle.addForeground(0x00000000, Style.ALL);
-            radioStyle.addForeground(0x000000FF, Style.FOCUSED);
-            radioStyle.addForeground(0x00808080, Style.DISABLED);
-            setStyleFor("RadioButton",radioStyle);
-            setStyleFor("CheckBox",radioStyle);
+            EmptyBorder padding = new EmptyBorder(0, font.getHeight(), 0, font.getHeight());
+            Style spinnerStyle = new Style(radioStyle);
+            spinnerStyle.addBorder(new CompoundBorder(padding, new LineBorder(0x00808080)),Style.ALL);
+            spinnerStyle.addBorder(new CompoundBorder(padding, new LineBorder(0x00000000)), Style.FOCUSED);
+            setStyleFor("Spinner",spinnerStyle);
+            
+            
+            
             
             Style scrollStyle = new Style(defaultStyle);
             scrollStyle.addProperty(new Integer(0x00FFFFFF),"scrollBarCol",Style.ALL );
             scrollStyle.addProperty(new Integer(0x00000000),"scrollTrackCol",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
 
-            
-            EmptyBorder padding = new EmptyBorder(0, font.getHeight(), 0, font.getHeight());
-            Style spinnerStyle = new Style(defaultStyle);
-            spinnerStyle.addBorder(new CompoundBorder(padding, new LineBorder(0x00808080)),Style.ALL);
-            spinnerStyle.addBorder(new CompoundBorder(padding, new LineBorder(0x00000000)), Style.FOCUSED);
-            setStyleFor("Spinner",spinnerStyle);
-            
             Style listStyle = new Style(defaultStyle);
             listStyle.addBackground(0x00FFFFFF, Style.ALL);
             setStyleFor("List",listStyle);
@@ -108,7 +110,12 @@ public class MetalLookAndFeel extends LookAndFeel {
             listCellRenderer.addBorder(new LineBorder(0x00000000,-1,1,false,Graphics.DOTTED),Style.FOCUSED);
             listCellRenderer.addBackground(0x00FFFFFF, Style.ALL);
             listCellRenderer.addBackground(0x00AAAAFF, Style.SELECTED);
-            setStyleFor("ListCellRenderer",listCellRenderer);
+            setStyleFor("ListRenderer",listCellRenderer);
+            
+            Style windowSkin = new Style(defaultStyle);
+            windowSkin.addBorder(new LineBorder(0x00000000), Style.ALL);
+            setStyleFor("Window",windowSkin);
+
             
 	}
     

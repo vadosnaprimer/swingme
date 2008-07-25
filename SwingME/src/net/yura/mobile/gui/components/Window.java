@@ -24,7 +24,6 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.BorderLayout;
 
 /**
@@ -55,23 +54,15 @@ public class Window extends Component implements ActionListener {
         /**
          * @see javax.swing.JFrame#JFrame() JFrame.JFrame
          */
-        public Window() {
-            this(null);
-        }
-        
-	public Window(Border b) {
+	public Window() {
 
 		contentPane = new Panel();
                 contentPane.setLayout( new BorderLayout() );
                 
                 contentPane.setOwnerAndParent(this,null);
                 
-                //setBackground(0x00FFFFFF); // set default white background
-                
                 panelCmds = new CommandButton[2];
-                setBorder(b);
-                
-                
+
                 for (int c=0;c<allWindows.size();c++) {
                     if (((WeakReference)allWindows.elementAt(c)).get() == null) {
                         allWindows.removeElementAt(c);
@@ -298,6 +289,12 @@ public class Window extends Component implements ActionListener {
 		drawGlass(g);
 		
 	}
+
+        private String name;
+        public void setName(String string) {
+            name = string;
+            updateUI();
+        }
 	
 	// same translate done above
 	private void drawGlass(Graphics g) {
@@ -418,7 +415,7 @@ public class Window extends Component implements ActionListener {
     }
 
     public String getName() {
-        return "Window";
+        return name==null?"Window":name;
     }
 
 }

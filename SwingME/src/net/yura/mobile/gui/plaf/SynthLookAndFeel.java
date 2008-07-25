@@ -32,7 +32,7 @@ import org.kxml2.io.KXmlParser;
  */
 public class SynthLookAndFeel extends LookAndFeel {
 
-    
+    private Style defaultStyle;
     
     /**
      * @param input
@@ -79,6 +79,11 @@ public class SynthLookAndFeel extends LookAndFeel {
                         else {
                             theStyle = newStyle;
                         }
+
+                        if ("".equals(key)){
+                            defaultStyle = theStyle;
+                        }
+                        
                         setStyleFor(key,theStyle);
 
                     }
@@ -101,7 +106,14 @@ public class SynthLookAndFeel extends LookAndFeel {
         
         private Style readStyle(KXmlParser parser) throws Exception {
             
-            Style newStyle = new Style();
+            Style newStyle;
+            if (defaultStyle==null) {
+                newStyle = new Style();
+            }
+            else {
+                newStyle = new Style(defaultStyle);
+            }
+           
 
             // vars local to this style
             EmptyBorder insets = null;
@@ -243,6 +255,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 String right = parser.getAttributeValue(null, "right");
                                 
                                 insets = new EmptyBorder(Integer.parseInt(top), Integer.parseInt(left), Integer.parseInt(bottom), Integer.parseInt(right));
+                                newStyle.addBorder(insets, Style.ALL);
                         }
                         else if ("imageIcon".equals(name)) {
 

@@ -756,22 +756,23 @@ public class DesktopPane extends Canvas implements Runnable {
 			
 			if (debugwindow==null) {
 
-				debugwindow = new Window( new LineBorder(0x00000000) );
+				debugwindow = new Window();
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
 				text = new TextArea("",Graphics.LEFT);
-                                text.setFont(new Font());
-				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
-                                
-                                debugwindow.setBackground(0x00FFFFFF);
-				debugwindow.getContentPane().setBackground(0x00FFFFFF);
-                                
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
+                                text.setSize( debugwindow.getWidth()-ScrollPane.getBarThickness(debugwindow.getWidth(), debugwindow.getHeight()) , text.getHeight() );
+                                
+                                // This is not needed, but just in case something
+                                // has gone wrong with the theme, we set some defaults
+                                text.setFont(new Font());
+				text.setForeground(0x00000000);
+                                debugwindow.setBackground(0x00FFFFFF);
+				debugwindow.getContentPane().setBackground(0x00FFFFFF);
 
 			}
 
-			text.setSize( debugwindow.getWidth()-ScrollPane.getBarThickness(debugwindow.getWidth(), debugwindow.getHeight()) , text.getHeight() );
 			text.append(s+"\n");
                         
                         if (!getAllFrames().contains(debugwindow)) {

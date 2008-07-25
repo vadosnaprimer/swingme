@@ -62,6 +62,8 @@ public class CheckBox extends RadioButton {
 
             }
 	}
-
+        public String getName() {
+            return "CheckBox";
+        }
 	
 }

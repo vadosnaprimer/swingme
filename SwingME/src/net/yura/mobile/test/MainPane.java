@@ -148,7 +148,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 		}
                 else if ("windowTest1".equals(actionCommand)) {
 
-                    Window test1 = new Window( new LineBorder() );
+                    Window test1 = new Window();
                     test1.getContentPane().add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
                     test1.getContentPane().add(new Label("LALAL TEST 1"));
                     test1.getContentPane().setBackground(0x00FFFFFF);

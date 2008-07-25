@@ -28,8 +28,7 @@ import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 
 /**
- *
- * @author ymamyrin
+ * @author Yura Mamyrin
  */
 public class DefaultTabRenderer extends Label implements ListCellRenderer {
 

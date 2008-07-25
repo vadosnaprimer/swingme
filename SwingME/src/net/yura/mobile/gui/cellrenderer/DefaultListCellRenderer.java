@@ -71,7 +71,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
         }
         
         public String getName() {
-            return "ListCellRenderer";
+            return "ListRenderer";
         }
         
         public void updateUI() {
