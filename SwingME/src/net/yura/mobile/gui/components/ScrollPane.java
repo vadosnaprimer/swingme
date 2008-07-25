@@ -59,11 +59,6 @@ public class ScrollPane extends Panel {
 		setMode(m);
                 setName("ScrollPane");
                 
-                Integer a1 = (Integer) DesktopPane.getDefaultTheme(this).getProperty("scrollTrackCol", Style.ALL);
-                Integer a2 = (Integer) DesktopPane.getDefaultTheme(this).getProperty("scrollBarCol", Style.ALL);
-                
-		scrollTrackCol = (a1==null)?-1:a1.intValue();
-		scrollBarCol = (a2==null)?-1:a2.intValue();
 	}
         
 	public ScrollPane(Component view,int a) {
@@ -528,5 +523,16 @@ public class ScrollPane extends Panel {
                 return mine;
             }
         }
-
+        public void updateUI() {
+                super.updateUI();
+                
+                Style theme = DesktopPane.getDefaultTheme(this);
+                
+                Integer a1 = (Integer) theme.getProperty("scrollTrackCol", Style.ALL);
+                Integer a2 = (Integer) theme.getProperty("scrollBarCol", Style.ALL);
+                
+		scrollTrackCol = (a1==null)?-1:a1.intValue();
+		scrollBarCol = (a2==null)?-1:a2.intValue();
+            
+        }
 }

@@ -50,6 +50,11 @@ public class DesktopPane extends Canvas implements Runnable {
         public static DesktopPane getDesktopPane() {
             return desktop;
         }
+        
+        /**
+         * this methos should ONLY be called from the updateUI() method in components
+         * @see javax.swing.UIManager#getUI(javax.swing.JComponent) UIManager#getUI
+         */
         public static Style getDefaultTheme(Component comp) {
             Style style = desktop.theme.getStyle(comp.getName());
             if (style==null) {
@@ -120,7 +125,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		windows = new Vector();
 
                 // ceate a new window to use as the main window
-		add( new Window() );
+		//add( new Window() );
 
                 // now we set this as the main display
                 // the serviceRepaints will mean the repaint will be called
@@ -225,7 +230,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 softkeyRenderer = new DefaultSoftkeyRenderer();
             }
             
-            currentWindow.setSize(getWidth(),getHeight());
+            //currentWindow.setSize(getWidth(),getHeight());
 
         }
         
@@ -473,8 +478,8 @@ public class DesktopPane extends Canvas implements Runnable {
 	}
         
         public CommandButton[] getCurrentCommands(){
-            currentCommands[0] = componentCommands[0] == null ? currentWindow.getWindowCommands()[0] : componentCommands[0];
-            currentCommands[1] = componentCommands[1] == null ? currentWindow.getWindowCommands()[1] : componentCommands[1];
+            currentCommands[0] = componentCommands[0] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[0]) : componentCommands[0];
+            currentCommands[1] = componentCommands[1] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[1]) : componentCommands[1];
             return currentCommands;
         }
 

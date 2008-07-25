@@ -39,7 +39,6 @@ public class Panel extends Component {
          * @see javax.swing.JPanel#JPanel() JPanel.JPanel
          */
 	public Panel() {
-		
 		components = new Vector();
 		constraints = new Hashtable(1);
 		selectable = false;
@@ -407,17 +406,9 @@ public class Panel extends Component {
          * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
          */
 	public void setName(String n) {
-		
 		name  = n;
+                updateUI();
 	}
-        /**
-         * @return The name of the panel
-         * @see java.awt.Component#getName() Component.getName
-         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
-         */
-        public String getName() {
-            return name;
-        }
         
 	public String toString() {
 		
@@ -454,6 +445,15 @@ public class Panel extends Component {
 		}
                 return this;
         }
+        
+        /**
+         * @return The name of the panel
+         * @see java.awt.Component#getName() Component.getName
+         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
+         */
+    public String getName() {
+        return name==null?"Panel":name;
+    }
 	
 }
 

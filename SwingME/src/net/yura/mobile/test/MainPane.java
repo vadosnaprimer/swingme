@@ -80,19 +80,20 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 	public void initialize() {
 		
-		mainWindow = getSelectedFrame();
+
 		
-                SynthLookAndFeel th = new SynthLookAndFeel();
-                try {
-                    th.load(  getClass().getResourceAsStream("/synthDemo.xml") );
-                }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-		setLookAndFeel( th );
+//                SynthLookAndFeel th = new SynthLookAndFeel();
+//                try {
+//                    th.load(  getClass().getResourceAsStream("/synthDemo.xml") );
+//                }
+//                catch (Exception ex) {
+//                    ex.printStackTrace();
+//                }
+//		setLookAndFeel( th );
 
-                //setLookAndFeel( new MetalLookAndFeel() ); 
+                setLookAndFeel( new MetalLookAndFeel() ); 
 
+                mainWindow = new Window();
                 
 		mainWindow.getContentPane().setBackground(0x00EEEEEE);
                 
@@ -104,6 +105,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                     ex.printStackTrace();
                 }
                 
+                mainWindow.setVisible(true);
 		actionPerformed("mainmenu");
 		
 	}

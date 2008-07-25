@@ -21,7 +21,6 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
@@ -41,19 +40,19 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 	protected void initialize(DesktopPane rp) {
 
 		this.rootpane = rp;
-		
-		Window mainWindow = rootpane.getSelectedFrame();
-		
-                mainWindow.setActionListener(this);
-                
+
 		rootpane.setLookAndFeel( new MetalLookAndFeel() );
 		
+                Window mainWindow = new Window();
+                
+                mainWindow.setActionListener(this);
 		mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
 		
-		mainWindow.getContentPane().setBackground( 0x00EEEEEE );
 		mainWindow.getContentPane().setLayout( new FlowLayout() );
 		mainWindow.getContentPane().add( new Label("Hello World!") );
 		mainWindow.getContentPane().revalidate();
+                
+                mainWindow.setVisible(true);
 	}
 
 	public void actionPerformed(String actionCommand) {

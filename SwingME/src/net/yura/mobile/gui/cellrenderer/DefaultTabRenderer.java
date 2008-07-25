@@ -77,5 +77,9 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
         
         return this;
     }
+    
+    public String getName() {
+        return "TabRenderer";
+    }
 
 }

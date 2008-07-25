@@ -80,6 +80,8 @@ public class Window extends Component implements ActionListener {
                 }
                 allWindows.addElement(new WeakReference(this));
                 
+                actionPerformed("max");
+                
 	}
     
 	public void setupFocusedComponent() {

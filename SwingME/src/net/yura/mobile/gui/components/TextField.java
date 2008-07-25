@@ -104,17 +104,6 @@ public class TextField extends Component implements ActionListener, CommandListe
 		mode = constraints;
                 label = title;
 
-                font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
-		setBackground(DesktopPane.getDefaultTheme(this).getBackground(Style.ALL));
-		setForeground(DesktopPane.getDefaultTheme(this).getForeground(Style.ALL));
-
-		borderColor = DesktopPane.getDefaultTheme(this).getBorder(Style.ALL);
-		activeBorderColor = DesktopPane.getDefaultTheme(this).getBorder(Style.FOCUSED);
-		
-		setBorder(borderColor);
-		
-		activeTextColor =DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
-                
                 offset = padding;
                 
                 if ((javax.microedition.lcdui.TextField.UNEDITABLE & mode) != 0) {
@@ -472,6 +461,16 @@ public class TextField extends Component implements ActionListener, CommandListe
 
     public String getName() {
         return "TextField";
+    }
+    public void updateUI() {
+                super.updateUI();
+                Style theme = DesktopPane.getDefaultTheme(this);
+        
+                font = theme.getFont(Style.ALL);
+		borderColor = theme.getBorder(Style.ALL);
+		activeBorderColor = theme.getBorder(Style.FOCUSED);
+		activeTextColor = theme.getForeground(Style.FOCUSED);
+        
     }
 
 }

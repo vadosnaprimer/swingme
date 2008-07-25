@@ -59,14 +59,7 @@ public class Spinner extends Label {
 		super((String)null);
 		continuous = cont;
 		setData(vec);
-		
-		setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
-		setActiveBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.FOCUSED));
-		
-                activeForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.FOCUSED);
-                disabledForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.DISABLED);
-                normalForeground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
-                
+
 		selectable = true;
 
                 setHorizontalAlignment(Graphics.HCENTER);
@@ -312,5 +305,16 @@ public class Spinner extends Label {
 	}
         public String getName() {
             return "Spinner";
+        }
+        public void updateUI() {
+                super.updateUI();
+                Style theme = DesktopPane.getDefaultTheme(this);
+            	normalBorder = theme.getBorder(Style.ALL);
+		activeBorder = theme.getBorder(Style.FOCUSED);
+		
+                activeForeground = theme.getForeground(Style.FOCUSED);
+                disabledForeground = theme.getForeground(Style.DISABLED);
+                normalForeground = theme.getForeground(Style.ALL);
+            
         }
 }

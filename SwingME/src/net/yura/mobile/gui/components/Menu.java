@@ -170,7 +170,7 @@ public class Menu extends Button {
             panel = popup.getContentPane();
             panel.setLayout(new BoxLayout(Graphics.VCENTER));
             popup.setContentPane(new ScrollPane(panel));
-            popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
+            // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
             
         }
         

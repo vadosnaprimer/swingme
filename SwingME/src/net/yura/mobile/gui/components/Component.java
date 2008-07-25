@@ -23,6 +23,7 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -34,6 +35,7 @@ public abstract class Component {
 	protected boolean selectable;
 	protected Window owner;
 	protected Panel parent;
+
 	protected int background;
 	protected int foreground;
 	protected Border border;
@@ -42,9 +44,8 @@ public abstract class Component {
          * @see javax.swing.JComponent#JComponent() JComponent.JComponent
          */
 	public Component() {
-		
 		selectable = true;
-		background = -1;
+		updateUI();
 	}
 	
 	public boolean isFocused() {
@@ -446,6 +447,17 @@ public abstract class Component {
         public Panel getRootPane() {
             if (parent == null) { return (Panel)this; }
             return parent.getRootPane();
+        }
+        
+        /**
+         * @see javax.swing.JComponent#updateUI() JComponent.updateUI
+         */
+        public void updateUI() {
+            
+            Style theme = DesktopPane.getDefaultTheme(this);
+            background = theme.getBackground(Style.ALL);
+            foreground = theme.getForeground(Style.ALL);
+            border = theme.getBorder(Style.ALL);
         }
 
 }

@@ -77,14 +77,10 @@ public class Label extends Component {
          * @see javax.swing.JLabel#JLabel(java.lang.String, javax.swing.Icon, int) JLabel.JLabel
          */
         public Label(String text,Image icon) {
-		
-		setFont( DesktopPane.getDefaultTheme(this).getFont(Style.ALL) );
                 
 		this.icon = icon;
 		selectable = false;
 		if (text!=null) { setText(text); }
-
-		foreground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
                 
                 alignment = Graphics.VCENTER | Graphics.LEFT;
 
@@ -375,6 +371,10 @@ public class Label extends Component {
 
     public String getName() {
         return "Label";
+    }
+    public void updateUI() {
+        super.updateUI();
+        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
 
 }

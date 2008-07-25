@@ -23,6 +23,7 @@ import net.yura.mobile.gui.DesktopPane;
 /**
  * @author Yura Mamyrin
  * @see javax.swing.LookAndFeel
+ * @see javax.swing.UIManager
  */
 public abstract class LookAndFeel {
     

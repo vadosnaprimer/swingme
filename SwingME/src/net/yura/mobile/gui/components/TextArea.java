@@ -39,9 +39,7 @@ public class TextArea extends Component {
         private int lineSpacing;
         
 	public TextArea(String text) {
-		
 		this(text,Graphics.HCENTER);
-		
 	}
 	
 	public int getAlignment() {
@@ -59,9 +57,7 @@ public class TextArea extends Component {
 	public TextArea(String text, int alignment) {
 
 		align = alignment;
-                this.font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
 		selectable = false;
-		foreground = DesktopPane.getDefaultTheme(this).getForeground(Style.ALL);
                 width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
                 setText(text);
 	}
@@ -315,11 +311,21 @@ public class TextArea extends Component {
     private void setupHeight(int[] l,int w) {
         lines = l;
         widthUsed = w;
+        int oldh = height;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
+        if (oldh!=height && parent!=null) {
+            parent.doLayout();
+            parent.repaint();
+        }
     }
 
     public String getName() {
         return "TextArea";
+    }
+    
+    public void updateUI() {
+        super.updateUI();
+        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
 	
 }

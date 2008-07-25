@@ -17,13 +17,12 @@
 
 package net.yura.mobile.gui.cellrenderer;
 
-import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
-import net.yura.mobile.gui.border.EmptyBorder;
-import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -31,6 +30,7 @@ import net.yura.mobile.gui.components.List;
  */
 public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 
+        private int colorNo;
 	private int color;
 	private Border normal;
 	private Border selected;
@@ -39,17 +39,8 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
          * @see javax.swing.DefaultListCellRenderer#DefaultListCellRenderer() DefaultListCellRenderer.DefaultListCellRenderer
          */
         public DefaultListCellRenderer() {
-            
-            this(0x00808080,0);
         }
-        
-	public DefaultListCellRenderer(int backColor,int borderColor) {
 
-		normal = new EmptyBorder(1,1,1,1);
-		selected = new LineBorder(borderColor,-1,1,false,Graphics.DOTTED);
-		setBorder(normal);
-		this.color=backColor;
-	}
 	/**
          * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) DefaultListCellRenderer.getListCellRendererComponent
          */
@@ -69,7 +60,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
                     	setBackground(color);
                 }
                 else {
-                        setBackground(-1);
+                        setBackground(colorNo);
                 }
                 
 		return this;
@@ -77,6 +68,19 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
         // max width!
         public int getMaxTextWidth() {
             return 10000;
+        }
+        
+        public String getName() {
+            return "ListCellRenderer";
+        }
+        
+        public void updateUI() {
+                super.updateUI();
+                Style st = DesktopPane.getDefaultTheme(this);
+                normal = st.getBorder( Style.ENABLED );
+                selected = st.getBorder( Style.FOCUSED );
+                color = st.getBackground( Style.SELECTED );
+                colorNo = st.getBackground( Style.ALL );
         }
 	
 }

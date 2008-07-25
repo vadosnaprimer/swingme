@@ -17,9 +17,8 @@ public class TitleBar extends Panel implements ActionListener {
     private Label title;
     
     public TitleBar(String title,Image icon,boolean resize,boolean move,boolean hide,boolean max,boolean close) {
-     
         super(new BorderLayout());
-        
+        setName("TitleBar");
         
         Panel buttonPanel = new Panel( new GridLayout(1,0,2) );
         if (resize) {
@@ -54,11 +53,13 @@ public class TitleBar extends Panel implements ActionListener {
 
         }
 
+        // always want it to take the style of this instead
+        buttonPanel.background=-1;
+        
         this.title = new Label( title,icon );
         
         add(this.title);
         add(buttonPanel,Graphics.RIGHT);
-        setBackground(0x00AAAAFF);
 
     }
     

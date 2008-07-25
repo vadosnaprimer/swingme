@@ -83,17 +83,7 @@ public class Button extends Label implements ActionListener {
 		super(label, img);
 		
 		selectable = true;
-		
-                Style st = DesktopPane.getDefaultTheme(this);
-                
-                background = st.getBackground( Style.ENABLED );
-                setBorder(st.getBorder( Style.ENABLED ));
-                setActiveBorder(st.getBorder( Style.FOCUSED ));
-                
-		activeForeground = st.getForeground(Style.FOCUSED);
-                disabledForeground = st.getForeground(Style.DISABLED);
-                normalForeground = st.getForeground(Style.ENABLED);
-		
+
 	}
 
         public void setSelectable(boolean s) {
@@ -255,5 +245,18 @@ public class Button extends Label implements ActionListener {
         }
         public String getName() {
             return "Button";
+        }
+        public void updateUI() {
+                super.updateUI();
+                
+                Style st = DesktopPane.getDefaultTheme(this);
+
+                normalBorder = st.getBorder( Style.ENABLED );
+                activeBorder = st.getBorder( Style.FOCUSED );
+                
+		activeForeground = st.getForeground(Style.FOCUSED);
+                disabledForeground = st.getForeground(Style.DISABLED);
+                normalForeground = st.getForeground(Style.ENABLED);
+            
         }
 }

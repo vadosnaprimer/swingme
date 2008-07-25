@@ -15,8 +15,6 @@ public class DefaultSoftkeyRenderer extends Component implements ListCellRendere
     private Font font;
     
     public DefaultSoftkeyRenderer() {
-        setBackground(0x00FFFFFF);
-        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
     
     public Component getListCellRendererComponent(List list, Object value, int index, boolean top, boolean left) {
@@ -41,6 +39,10 @@ public class DefaultSoftkeyRenderer extends Component implements ListCellRendere
 
     public String getName() {
         return "SoftkeyRenderer";
+    }
+    public void updateUI() {
+        super.updateUI();
+        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
 
 }

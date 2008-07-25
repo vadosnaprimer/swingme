@@ -67,11 +67,8 @@ public class List extends Component implements ActionListener {
             items = new Vector();
         }
         setCellRenderer(b);
-                horizontal = h;
+        horizontal = h;
         setSelectedIndex(-1);
-
-                background = DesktopPane.getDefaultTheme(this).getBackground(Style.ALL);
-
     }
 
     public void addActionListener(ActionListener l) {
@@ -480,10 +477,10 @@ public class List extends Component implements ActionListener {
         this.useSelectButton = useSelectButton;
     }
 
-        public String toString() {
-            return super.toString() + items;
-        }
-
+    public String toString() {
+        return super.toString() + items;
+    }
+        
     public String getName() {
         return "List";
     }

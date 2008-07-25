@@ -26,6 +26,7 @@ import net.yura.mobile.util.SystemUtil;
 /**
  * @author Yura Mamyrin
  * @see javax.swing.plaf.synth.SynthStyle
+ * @see javax.swing.plaf.ComponentUI
  */
 public class Style {
 

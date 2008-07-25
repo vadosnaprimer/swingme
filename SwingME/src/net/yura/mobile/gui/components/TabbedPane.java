@@ -43,35 +43,25 @@ public class TabbedPane extends Panel implements ChangeListener {
         private int currentTabIndex;
 
         public TabbedPane() {
-            this(Graphics.TOP,new DefaultTabRenderer(Graphics.TOP),new MatteBorder(0, 0, 1, 0, 0x00000000));
-
-            //this(Graphics.LEFT,new DefaultTabRenderer(Graphics.LEFT),new MatteBorder(0, 0, 0, 1, 0x00000000));
-
-            //this(Graphics.RIGHT,new DefaultTabRenderer(Graphics.RIGHT),new MatteBorder(0, 1, 0, 0, 0x00000000));
-
-            //this(Graphics.BOTTOM,new DefaultTabRenderer(Graphics.BOTTOM),new MatteBorder(1, 0, 0, 0, 0x00000000));
-
+            this(Graphics.TOP,new DefaultTabRenderer(Graphics.TOP));
         }
-        public TabbedPane(int a,ListCellRenderer b,Border art) {
+        public TabbedPane(int a,ListCellRenderer b) {
 
             setLayout(new BorderLayout());
             setName("TabbedPane");
             tabList = new List(null,b,(a==Graphics.TOP || a==Graphics.BOTTOM));
+            //tabList.setName("TabList");
             tabs = new Vector();
 
             tabList.addChangeListener(this);
             scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
 
-            if (art!=null) {
-                scroll.setBorder(new CompoundBorder(
-                      art,
-                      new EmptyBorder(art)
-                ));
-            }
+            scroll.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
 
             tabPosition = a;
             currentTabIndex = -1;
 
+            // this will ALWAYS be transparent as its the scroll that does the drawing for the theme
             tabList.background = -1;
 
         }
