@@ -757,7 +757,10 @@ public class DesktopPane extends Canvas implements Runnable {
                                 text.setFont(new Font());
 				text.setForeground(0x00000000);
 				debugwindow.setContentPane( new ScrollPane(text) );
+                                
+                                debugwindow.setBackground(0x00FFFFFF);
 				debugwindow.getContentPane().setBackground(0x00FFFFFF);
+                                
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
 
@@ -765,7 +768,13 @@ public class DesktopPane extends Canvas implements Runnable {
 
 			text.setSize( debugwindow.getWidth()-ScrollPane.getBarThickness(debugwindow.getWidth(), debugwindow.getHeight()) , text.getHeight() );
 			text.append(s+"\n");
-			debugwindow.setVisible(true);
+                        
+                        if (!getAllFrames().contains(debugwindow)) {
+                            debugwindow.setVisible(true);
+                        }
+                        else {
+                            debugwindow.repaint();
+                        }
 			
 		}
 	}
