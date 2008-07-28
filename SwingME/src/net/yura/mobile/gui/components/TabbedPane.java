@@ -22,8 +22,8 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
-import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
+import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.util.Option;
 
 /**
@@ -35,33 +35,64 @@ public class TabbedPane extends Panel implements ChangeListener {
         private List tabList;
         private Vector tabs;
         private ScrollPane scroll;
+        private Panel tabContent;
         private int tabPosition;
         private int currentTabIndex;
 
         public TabbedPane() {
-            this(Graphics.TOP,new DefaultTabRenderer(Graphics.TOP));
+            this(Graphics.TOP);
         }
-        public TabbedPane(int a,ListCellRenderer b) {
+        public TabbedPane(int a) {
 
-            setLayout(new BorderLayout());
+            Layout l = new BorderLayout();
+            setLayout(l);
             setName("TabbedPane");
-            tabList = new List(null,b,(a==Graphics.TOP || a==Graphics.BOTTOM));
-            //tabList.setName("TabList");
+            tabList = new List( new DefaultTabRenderer() );
             tabs = new Vector();
 
             tabList.addChangeListener(this);
             scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
 
-            scroll.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
-
-            tabPosition = a;
+            tabContent = new Panel(l);
             currentTabIndex = -1;
 
             // this will ALWAYS be transparent as its the scroll that does the drawing for the theme
             tabList.background = -1;
+            
+            setTabPlacement(a);
 
         }
 
+        /**
+         * @param a
+         * @see javax.swing.JTabbedPane#setTabPlacement(int) JTabbedPane.setTabPlacement
+         */
+        public void setTabPlacement(int a) {
+            
+            tabPosition = a;
+            
+            tabList.setLayoutOrientation( (a==Graphics.TOP || a==Graphics.BOTTOM) );
+            
+            ((DefaultTabRenderer)tabList.getCellRenderer()).setTabPlacement(a);
+            
+            scroll.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
+
+            tabContent.setName("TabContent" + (a==Graphics.TOP?"Bottom":(a==Graphics.LEFT?"Right":(a==Graphics.RIGHT?"Left":"Top"))) );
+            
+            super.removeAll();
+            
+            if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
+                super.add(scroll,tabPosition);
+            }
+
+            super.add(tabContent);
+
+            if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
+                super.add(scroll,tabPosition);
+            }
+            
+        }
+        
         /**
          * @param p the Panel to add
          * @see javax.swing.JTabbedPane#add(java.awt.Component) JTabbedPane.add
@@ -175,28 +206,11 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         Component thetabtoAdd = (Component)tabs.elementAt(num);
 
-        if (currentTabIndex==-1) {
-
-                if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
-                    super.add(scroll,tabPosition);
-                }
-
-                super.add(thetabtoAdd);
-
-                if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
-                    super.add(scroll,tabPosition);
-                }
-
-        }
-        else {
-
-            Component oldTab = (Component)tabs.elementAt(currentTabIndex);
-
-            int index = getComponents().indexOf(oldTab);
-
-            remove(index);
-            insert(thetabtoAdd, index);
-        }
+        //Component oldTab = (Component)tabs.elementAt(currentTabIndex);
+        //int index = getComponents().indexOf(oldTab);
+        
+        tabContent.removeAll();
+        tabContent.add(thetabtoAdd);
 
         currentTabIndex = num;
         revalidate();

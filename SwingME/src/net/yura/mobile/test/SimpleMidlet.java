@@ -50,7 +50,7 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 		
 		mainWindow.getContentPane().setLayout( new FlowLayout() );
 		mainWindow.getContentPane().add( new Label("Hello World!") );
-		mainWindow.getContentPane().revalidate();
+		mainWindow.setSize(rp.getWidth(), rp.getHeight());
                 
                 mainWindow.setVisible(true);
 	}

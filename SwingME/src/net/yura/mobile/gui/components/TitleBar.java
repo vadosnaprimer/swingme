@@ -36,19 +36,19 @@ public class TitleBar extends Panel implements ActionListener {
         if (hide) {
             Button b = new Button("_");
             b.addActionListener(this);
-            b.setActionCommand("hide");
+            b.setActionCommand(Window.CMD_MIN);
             buttonPanel.add(b);
         }
         if (max) {
             Button b = new Button("[]");
             b.addActionListener(this);
-            b.setActionCommand("max");
+            b.setActionCommand(Window.CMD_MAX);
             buttonPanel.add(b);
         }
         if (close) {
             Button b = new Button("X");
             b.addActionListener(this);
-            b.setActionCommand("close");
+            b.setActionCommand(Window.CMD_CLOSE);
             buttonPanel.add(b);
 
         }

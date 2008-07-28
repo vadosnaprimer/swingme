@@ -38,6 +38,11 @@ public class RadioButton extends Button {
 		this();
                 setText(label);
 	}
+
+    public RadioButton(String string, boolean b) {
+        this(string);
+        setSelected(b);
+    }
 	
         public RadioButton(String label,Image a,Image b) {
             this(label);

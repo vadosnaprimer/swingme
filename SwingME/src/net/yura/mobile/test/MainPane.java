@@ -53,6 +53,7 @@ import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
+import net.yura.mobile.util.ButtonGroup;
 import net.yura.mobile.util.Option;
 
 /**
@@ -95,7 +96,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                 mainWindow = new Window();
                 
-		mainWindow.getContentPane().setBackground(0x00EEEEEE);
+		mainWindow.setBoundsWithBorder(0, 0, getWidth(), getHeight());
                 
 		mainWindow.setActionListener(this);
 
@@ -353,13 +354,55 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 			if (tabPanel==null) {
 				
+                                final TabbedPane tabbedPane = new TabbedPane();
+                            
 				tabPanel = new Panel( new BorderLayout() );
                                 tabPanel.add(new Label("Tab Test"),Graphics.TOP);
                                 
                                 Panel tab1 = new Panel( "Tab 1" );
-                                tab1.setLayout(new FlowLayout());
+                                tab1.setLayout(new FlowLayout(Graphics.VCENTER));
                                 tab1.setBackground(0x00FF0000);
                                 tab1.add( new Label("This is tab ONE") );
+                                
+                                final RadioButton top = new RadioButton("Top",true);
+                                final RadioButton bottom = new RadioButton("Bottom");
+                                final RadioButton right = new RadioButton("Right");
+                                final RadioButton left = new RadioButton("Left");
+                                
+                                ActionListener tabSwap = new ActionListener() {
+                                    public void actionPerformed(String actionCommand) {
+                                        if (top.getText().equals(actionCommand)) {
+                                            tabbedPane.setTabPlacement(Graphics.TOP);
+                                        }
+                                        else if (bottom.getText().equals(actionCommand)) {
+                                            tabbedPane.setTabPlacement(Graphics.BOTTOM);
+                                        }
+                                        else if (right.getText().equals(actionCommand)) {
+                                            tabbedPane.setTabPlacement(Graphics.RIGHT);
+                                        }
+                                        else if (left.getText().equals(actionCommand)) {
+                                            tabbedPane.setTabPlacement(Graphics.LEFT);
+                                        }
+                                        tabPanel.revalidate();
+                                        tabPanel.repaint();
+                                    }
+                                };
+                                
+                                ButtonGroup group = new ButtonGroup();
+                                group.add(top);
+                                group.add(bottom);
+                                group.add(right);
+                                group.add(left);
+                                
+                                top.addActionListener(tabSwap);
+                                bottom.addActionListener(tabSwap);
+                                right.addActionListener(tabSwap);
+                                left.addActionListener(tabSwap);
+                                
+                                tab1.add(top);
+                                tab1.add(bottom);
+                                tab1.add(right);
+                                tab1.add(left);
                                 
                                 Panel tab2 = new Panel( new FlowLayout() );
                                 tab2.setBackground(0x0000FF00);
@@ -381,12 +424,10 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 Panel tab4 = new Panel( new BorderLayout() );
                                 tab4.add(new Label("Tab 4 title"),Graphics.TOP);
                                 tab4.add(new ScrollPane(new List(anotherlist,new DefaultListCellRenderer(),false)));
-                                
-                                TabbedPane tabbedPane = new TabbedPane();
-                                
+
                                 tabbedPane.add(tab1);
                                 tabbedPane.addTab("TAB 2", image, tab2);
-                                tabbedPane.addTab("tab 3 a long one eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
+                                tabbedPane.addTab("tab 3", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
                                 
                                 tabPanel.add(tabbedPane);

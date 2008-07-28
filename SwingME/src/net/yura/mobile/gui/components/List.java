@@ -54,8 +54,12 @@ public class List extends Component implements ActionListener {
     private String actionCommand;
 
     private boolean loop;
-        private boolean horizontal;
+    private boolean horizontal;
 
+    public List() {
+        this(null,null,true);
+    }
+        
     public List(ListCellRenderer a) {
         this(null,a,false);
     }
@@ -71,6 +75,16 @@ public class List extends Component implements ActionListener {
         setSelectedIndex(-1);
     }
 
+
+
+    /**
+     * @param horizontal
+     * @see javax.swing.JList#setLayoutOrientation(int) JList.setLayoutOrientation
+     */
+    public void setLayoutOrientation(boolean horizontal) {
+        this.horizontal = horizontal;
+    }
+    
     public void addActionListener(ActionListener l) {
 
         al = l;
@@ -177,6 +191,14 @@ public class List extends Component implements ActionListener {
 
     public void addChangeListener(ChangeListener aThis) {
         chl = aThis;
+    }
+
+    /**
+     * @return the ListCellRenderer
+     * @see javax.swing.JList#getCellRenderer() JList.getCellRenderer
+     */
+    public ListCellRenderer getCellRenderer() {
+        return renderer;
     }
 
     private Component getComponentFor(int a) {

@@ -19,10 +19,12 @@ package net.yura.mobile.gui.plaf;
 
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.border.MatteBorder;
+import net.yura.mobile.gui.border.TabBorder;
 
 /**
  * @author Yura Mamyrin
@@ -82,12 +84,12 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("Label",labelStyle);
             
             Style tabTop = new Style(defaultStyle);
-            tabTop.addBorder(new CompoundBorder( new MatteBorder(0, 0, 1, 0, 0x00000000), new EmptyBorder(0,0,-1,0)),Style.ALL);
+            tabTop.addBorder(new CompoundBorder( new MatteBorder(0, 0, 1, 0, 0x00FFFFFF), new EmptyBorder(0,0,-1,0)),Style.ALL);
             tabTop.addBackground(-1, Style.ALL);
             setStyleFor("TabTop",tabTop);
 
             Style tabLeft = new Style(defaultStyle);
-            tabLeft.addBorder(new CompoundBorder( new MatteBorder(0, 0, 0, 1, 0x00000000), new EmptyBorder(0,0,0,-1)),Style.ALL);
+            tabLeft.addBorder(new CompoundBorder( new MatteBorder(0, 0, 0, 1, 0x00FFFFFF), new EmptyBorder(0,0,0,-1)),Style.ALL);
             tabLeft.addBackground(-1, Style.ALL);
             setStyleFor("TabLeft",tabLeft);
 
@@ -101,6 +103,79 @@ public class MetalLookAndFeel extends LookAndFeel {
             tabBottom.addBackground(-1, Style.ALL);
             setStyleFor("TabBottom",tabBottom);
 
+            
+            
+            
+            Style tabContentTop = new Style(defaultStyle);
+            tabContentTop.addBorder(new CompoundBorder( new MatteBorder(1, 1, 0, 0, 0x00FFFFFF), new MatteBorder(0, 0, 0, 1, 0x00000000)),Style.ALL);
+            setStyleFor("TabContentTop",tabContentTop);
+
+            Style tabContentLeft = new Style(defaultStyle);
+            tabContentLeft.addBorder(new CompoundBorder( new MatteBorder(1, 1, 0, 0, 0x00FFFFFF), new MatteBorder(0, 0, 1, 0, 0x00000000)),Style.ALL);
+            setStyleFor("TabContentLeft",tabContentLeft);
+
+            Style tabContentRight = new Style(defaultStyle);
+            tabContentRight.addBorder(new CompoundBorder( new MatteBorder(1, 0, 0, 0, 0x00FFFFFF), new MatteBorder(0, 0, 1, 1, 0x00000000)),Style.ALL);
+            setStyleFor("TabContentRight",tabContentRight);
+
+            Style tabContentBottom = new Style(defaultStyle);
+            tabContentBottom.addBorder(new CompoundBorder( new MatteBorder(0, 1, 0, 0, 0x00FFFFFF), new MatteBorder(0, 0, 1, 1, 0x00000000)),Style.ALL);
+            setStyleFor("TabContentBottom",tabContentBottom);
+            
+            
+            
+            
+            TabBorder toptb = new TabBorder(Graphics.TOP);
+            TabBorder bottomtb = new TabBorder(Graphics.BOTTOM);
+            TabBorder lefttb = new TabBorder(Graphics.LEFT);
+            TabBorder righttb = new TabBorder(Graphics.RIGHT);
+
+            Style tabRendererTop = new Style(defaultStyle);
+            tabRendererTop.addBorder(new CompoundBorder(
+                        new EmptyBorder(1, 0, 1, 0),
+                        new CompoundBorder(
+                            toptb,
+                            new EmptyBorder(0, 1, 0, 1))
+                    ),Style.ALL);
+            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererTop.addBorder(new CompoundBorder(toptb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
+            setStyleFor("TabRendererTop",tabRendererTop);
+
+            Style tabRendererLeft = new Style(defaultStyle);
+            tabRendererLeft.addBorder(new CompoundBorder(
+                        new EmptyBorder(0, 1, 0, 1),
+                        new CompoundBorder(
+                            lefttb,
+                            new EmptyBorder(1, 0, 1, 0))
+                    ),Style.ALL);
+            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
+            setStyleFor("TabRendererLeft",tabRendererLeft);
+
+            Style tabRendererRight = new Style(defaultStyle);
+            tabRendererRight.addBorder(new CompoundBorder(
+                        new EmptyBorder(0, 1, 0, 1),
+                        new CompoundBorder(
+                            righttb,
+                            new EmptyBorder(1, 0, 1, 0))
+                    ),Style.ALL);
+            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererRight.addBorder(new CompoundBorder(righttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
+            setStyleFor("TabRendererRight",tabRendererRight);
+
+            Style tabRendererBottom = new Style(defaultStyle);
+            tabRendererBottom.addBorder(new CompoundBorder(
+                        new EmptyBorder(1, 0, 1, 0),
+                        new CompoundBorder(
+                            bottomtb,
+                            new EmptyBorder(0, 1, 0, 1))
+                    ),Style.ALL);
+            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
+            setStyleFor("TabRendererBottom",tabRendererBottom);
+            
+            
+            
             Style titleBar = new Style(defaultStyle);
             titleBar.addBackground(0x00AAAAFF, Style.ALL);
             setStyleFor("TitleBar",titleBar);

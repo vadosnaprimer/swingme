@@ -20,6 +20,7 @@ package net.yura.mobile.gui.plaf;
 import java.io.InputStream;
 import java.util.Hashtable;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.MatteBorder;
@@ -106,6 +107,8 @@ public class SynthLookAndFeel extends LookAndFeel {
         
         private Style readStyle(KXmlParser parser) throws Exception {
             
+            Hashtable params = new Hashtable();
+            
             Style newStyle;
             if (defaultStyle==null) {
                 newStyle = new Style();
@@ -166,6 +169,10 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         value=value.substring(2);
                                     }
                                     newStyle.addProperty(Integer.valueOf(value,base), key, st);
+                                }
+                                else if (type==null || "idref".equals(type)) {
+System.out.println("getting: "+value);
+                                    newStyle.addProperty(params.get(value), key, st);
                                 }
                                 
                             }
@@ -258,7 +265,19 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 newStyle.addBorder(insets, Style.ALL);
                         }
                         else if ("imageIcon".equals(name)) {
-
+                                String path = parser.getAttributeValue(null, "path");
+                                String x = parser.getAttributeValue(null, "x");
+                                String y = parser.getAttributeValue(null, "y");
+                                String width = parser.getAttributeValue(null, "width");
+                                String height = parser.getAttributeValue(null, "height");
+                                String id = parser.getAttributeValue(null, "id");
+                                
+                                Image newImage = Image.createImage(path);
+                                if (x!=null && y!=null && width!=null && height!=null) {
+                                    newImage = Image.createImage(newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
+                                }
+System.out.println("adding: "+id);
+                                params.put(id, newImage);
                         }
                         else {
                             System.out.println("unknown found: "+name);

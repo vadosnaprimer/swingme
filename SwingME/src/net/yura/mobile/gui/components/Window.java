@@ -32,6 +32,10 @@ import net.yura.mobile.gui.layout.BorderLayout;
  */
 public class Window extends Component implements ActionListener {
 
+        public static final String CMD_MAX = "max";
+        public static final String CMD_MIN = "min";
+        public static final String CMD_CLOSE = "close";
+    
         private static Vector allWindows = new Vector();
         public static Vector getAllWindows() {
             return allWindows;
@@ -71,7 +75,7 @@ public class Window extends Component implements ActionListener {
                 }
                 allWindows.addElement(new WeakReference(this));
                 
-                actionPerformed("max");
+                //actionPerformed("max");
                 
 	}
     
@@ -378,7 +382,7 @@ public class Window extends Component implements ActionListener {
         
         public void actionPerformed(String actionCommand) {
             
-             if ("close".equals(actionCommand)) {
+             if (CMD_CLOSE.equals(actionCommand)) {
 
                  if (parent==null) {
                     DesktopPane.getDesktopPane().remove(this);
@@ -387,7 +391,7 @@ public class Window extends Component implements ActionListener {
                      parent.remove(this);
                  }
              }
-             else if ("hide".equals(actionCommand)) {
+             else if (CMD_MIN.equals(actionCommand)) {
 
                  if (parent==null) {
                      Vector windows = DesktopPane.getDesktopPane().getAllFrames();
@@ -396,7 +400,7 @@ public class Window extends Component implements ActionListener {
                      }
                  }
              }
-             else if ("max".equals(actionCommand)) {
+             else if (CMD_MAX.equals(actionCommand)) {
 
                  setBounds(0,0,DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
                  repaint();
