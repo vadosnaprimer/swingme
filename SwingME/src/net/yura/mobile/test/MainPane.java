@@ -49,6 +49,7 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
@@ -67,6 +68,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Panel border;
         private Panel tabPanel;
         private Menu menu;
+        private Menu mainMenu;
         private Table tableTest;
         
         private Image image;
@@ -75,24 +77,17 @@ public class MainPane extends DesktopPane implements ActionListener {
 	private Vector images;
 	private Window mainWindow;
 	
+        private SynthLookAndFeel synth;
+        private MetalLookAndFeel metal;
+        
 	public MainPane(MyMidlet a) {
 		super(a,0,null);
 	}
 
 	public void initialize() {
 		
-
-		
-//                SynthLookAndFeel th = new SynthLookAndFeel();
-//                try {
-//                    th.load(  getClass().getResourceAsStream("/synthDemo.xml") );
-//                }
-//                catch (Exception ex) {
-//                    ex.printStackTrace();
-//                }
-//		setLookAndFeel( th );
-
-                setLookAndFeel( new MetalLookAndFeel() ); 
+                metal = new MetalLookAndFeel();
+                setLookAndFeel( metal );
 
                 mainWindow = new Window();
                 
@@ -141,12 +136,41 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Component Test","componentTest");
                                 addMainMenuButton("Border Test","borderTest");
                                 addMainMenuButton("Tab Test","tabTest");
-                                addMainMenuButton("Window Test 1","windowTest1");
+                                addMainMenuButton("Window Test","windowTest1");
+                                addMainMenuButton("Option Pane Test","optionPaneTest");
+                                
+                                mainMenu = new Menu("Menu");
+                                mainMenu.addActionListener(this);
+                                mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
+                                mainMenu.addMenuItem("synthTheme", "Synth Theme", null);
 			}
 			
-			addToScrollPane(mainmenu, null, new CommandButton("Exit","exit") );
+			addToScrollPane(mainmenu, new CommandButton(mainMenu,"mainMenu"), new CommandButton("Exit","exit") );
 			
 		}
+                else if ("metalTheme".equals(actionCommand)) {
+                    
+                    if (metal==null) {
+                        metal = new MetalLookAndFeel();
+                    }
+                    setLookAndFeel(metal);
+                    updateComponentTreeUI(mainWindow);
+                    
+                }
+                else if ("synthTheme".equals(actionCommand)) {
+                    
+                    if (synth==null) {
+                        synth = new SynthLookAndFeel();
+                        try {
+                            synth.load(  getClass().getResourceAsStream("/synthDemo.xml") );
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                    setLookAndFeel( synth );
+                    updateComponentTreeUI(mainWindow);
+                }
                 else if ("windowTest1".equals(actionCommand)) {
 
                     Window test1 = new Window();
@@ -535,6 +559,14 @@ public class MainPane extends DesktopPane implements ActionListener {
 		else if ("throwerror".equals(actionCommand)) {
 			throw new RuntimeException("some bad error happened!");
 		}
+                else if ("optionPaneTest".equals(actionCommand)) {
+                    
+                    OptionPane.showMessageDialog(null,new Object[] {
+                        "Hello",
+                        new TextArea("bob the builder"),
+                        new TextField(TextField.ANY)
+                    },"Title",0);
+                }
 		else {
 			
 			System.out.println("Unknown Command: "+actionCommand);

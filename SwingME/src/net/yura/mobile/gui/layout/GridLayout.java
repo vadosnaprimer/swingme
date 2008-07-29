@@ -65,6 +65,8 @@ public class GridLayout implements Layout {
                 int ac = getCols(components);
                 int de = getRows(components);
                 
+                if (ac==0 || de==0) return;
+                
 		int cwidth = (panel.getWidth() -(ac*padding) -padding) /ac;
 		int cheight = (panel.getHeight() -(de*padding) -padding) /de;
 

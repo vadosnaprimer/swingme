@@ -19,7 +19,6 @@ package net.yura.mobile.gui.plaf;
 
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
@@ -38,8 +37,8 @@ public class MetalLookAndFeel extends LookAndFeel {
             
             Style defaultStyle = new Style();
             defaultStyle.addFont(font, Style.ALL);
-            defaultStyle.addBackground(0x00EEEEEE, Style.ALL);
-            defaultStyle.addForeground(0x00000000, Style.ALL);
+            defaultStyle.addBackground( getSecondary2() , Style.ALL);
+            defaultStyle.addForeground( getSecondary1() , Style.ALL);
             setStyleFor("",defaultStyle);
             
             
@@ -47,7 +46,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             
             
             Style radioStyle = new Style(defaultStyle);
-            radioStyle.addForeground(0x000000FF, Style.FOCUSED);
+            radioStyle.addForeground(getPrimary2(), Style.FOCUSED);
             radioStyle.addForeground(0x00808080, Style.DISABLED);
             setStyleFor("RadioButton",radioStyle);
             setStyleFor("CheckBox",radioStyle);
@@ -137,7 +136,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             toptb,
                             new EmptyBorder(0, 1, 0, 1))
                     ),Style.ALL);
-            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
             tabRendererTop.addBorder(new CompoundBorder(toptb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererTop",tabRendererTop);
 
@@ -148,7 +147,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             lefttb,
                             new EmptyBorder(1, 0, 1, 0))
                     ),Style.ALL);
-            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
             tabRendererLeft.addBorder(new CompoundBorder(lefttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererLeft",tabRendererLeft);
 
@@ -159,7 +158,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             righttb,
                             new EmptyBorder(1, 0, 1, 0))
                     ),Style.ALL);
-            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
             tabRendererRight.addBorder(new CompoundBorder(righttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererRight",tabRendererRight);
 
@@ -170,28 +169,41 @@ public class MetalLookAndFeel extends LookAndFeel {
                             bottomtb,
                             new EmptyBorder(0, 1, 0, 1))
                     ),Style.ALL);
-            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(0x00000000,-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
             tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererBottom",tabRendererBottom);
             
             
             
             Style titleBar = new Style(defaultStyle);
-            titleBar.addBackground(0x00AAAAFF, Style.ALL);
+            titleBar.addBackground(getPrimary3(), Style.ALL);
             setStyleFor("TitleBar",titleBar);
             
             Style listCellRenderer = new Style(defaultStyle);
             listCellRenderer.addBorder(new EmptyBorder(1,1,1,1),Style.ALL);
-            listCellRenderer.addBorder(new LineBorder(0x00000000,-1,1,false,Graphics.DOTTED),Style.FOCUSED);
-            listCellRenderer.addBackground(0x00FFFFFF, Style.ALL);
-            listCellRenderer.addBackground(0x00AAAAFF, Style.SELECTED);
+            listCellRenderer.addBorder(new LineBorder( getPrimary1() ,-1,1,false,Graphics.DOTTED),Style.FOCUSED);
+            listCellRenderer.addBackground( getSecondary3() , Style.ALL);
+            listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
             setStyleFor("ListRenderer",listCellRenderer);
             
             Style windowSkin = new Style(defaultStyle);
-            windowSkin.addBorder(new LineBorder(0x00000000), Style.ALL);
+            windowSkin.addBorder(new LineBorder( getSecondary3() ), Style.ALL);
             setStyleFor("Window",windowSkin);
-
+            setStyleFor("Dialog",windowSkin);
             
 	}
+        
+    // the color colors
+    protected int getPrimary1() { return 0x00500A16; } // the dark color
+    protected int getPrimary2() { return 0x00C10A2C; } // lighter
+    protected int getPrimary3() { return 0x00F40A42; } // very light
+        
+    // the gray colors
+    protected int getSecondary1() { return 0x00000000; } // dark
+    protected int getSecondary2() { return 0x00EEEEEE; } // lighter
+    protected int getSecondary3() { return 0x00FFFFFF; } // light
+    
+    protected int getBlack() { return 0x00000000; }
+    protected int getWhite() { return 0x00FFFFFF; }
     
 }

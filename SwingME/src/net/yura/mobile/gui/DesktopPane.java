@@ -62,6 +62,21 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             return style;
         }
+        /**
+         * @param c
+         * @see javax.swing.SwingUtilities#updateComponentTreeUI(java.awt.Component) SwingUtilities.updateComponentTreeUI
+         */
+        public static void updateComponentTreeUI(Component com) {
+
+            if (com instanceof Panel) {
+                Vector v = ((Panel)com).getComponents();
+                for (int c=0;c<v.size();c++) {
+                    updateComponentTreeUI( (Component)v.elementAt(c) );
+                }
+            }
+            com.updateUI();
+
+        }
         
         // object variables
         
@@ -561,7 +576,10 @@ public class DesktopPane extends Canvas implements Runnable {
 				}
 				else if (!consumed ) {//&& keyListener!=null) {
 
+                                    boolean c = currentWindow.keyEvent(keypad);
+                                    if (!c) {
 					keyEvent(keyevent);
+                                    }
 				}
 			}
 			else { //  if (keyListener!=null) {
@@ -577,7 +595,10 @@ public class DesktopPane extends Canvas implements Runnable {
 					currentWindow.passScrollUpDown( keyevent.getKeyAction(keyevent.getIsDownKey()) );
 				}
                                 else {
-                                    keyEvent(keyevent);
+                                    boolean c = currentWindow.keyEvent(keypad);
+                                    if (!c) {
+					keyEvent(keyevent);
+                                    }
                                 }
 			}
 
