@@ -506,4 +506,13 @@ public class List extends Component implements ActionListener {
     public String getName() {
         return "List";
     }
+    
+        public void updateUI() {
+            super.updateUI();
+            if (renderer!=null) {
+                // TODO ??? what to do here ???
+                // find out how swing does it
+            }
+        }
+    
 }

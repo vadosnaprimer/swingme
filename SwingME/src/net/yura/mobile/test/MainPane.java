@@ -563,8 +563,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("optionPaneTest".equals(actionCommand)) {
                     
                     OptionPane.showMessageDialog(null,new Object[] {
-                        "Hello",
-                        new TextArea("bob the builder"),
+                        "Hello, whats your name?",
+                        //new TextArea("bob the builder"),
                         new TextField(TextField.ANY)
                     },"Title",0);
                 }
@@ -603,7 +603,17 @@ public class MainPane extends DesktopPane implements ActionListener {
 		
 		mainWindow.repaint();
 	}
-
+/**
+ * This is VERY far from perfect
+ * but swing does it something like this
+ * but it does NOT update rendererd
+ * there is a HACK to update menus
+ * and OptionPane will surely not be updated
+ * @param theme
+ * @see Menu
+ * @see OptionPane
+ * @see List
+ */
     private void setupNewLookAndFeel(LookAndFeel theme) {
         setLookAndFeel(theme);
         

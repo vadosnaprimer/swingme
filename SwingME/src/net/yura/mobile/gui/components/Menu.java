@@ -319,5 +319,13 @@ public class Menu extends Button {
                 DesktopPane.getDesktopPane().fullRepaint();
 
         }
+        
+        public void updateUI() {
+            super.updateUI();
+            if (popup!=null) {
+                //DesktopPane.updateComponentTreeUI(popup);
+                // TODO: THIS IS NOT GOOD!!
+            }
+        }
 
 }

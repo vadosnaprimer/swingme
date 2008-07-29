@@ -6,6 +6,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
@@ -31,6 +32,7 @@ public class OptionPane extends Window {
     private Panel content;
     private Label icon;
     private CommandButton defaultCommand;
+    private ScrollPane scroll;
     
     public OptionPane() {
         
@@ -46,7 +48,8 @@ public class OptionPane extends Window {
         icon = new Label();
         
         panel.add(icon,Graphics.LEFT);
-        panel.add( new ScrollPane(content) );
+        scroll = new ScrollPane(content);
+        panel.add( scroll );
     }
     
     
@@ -138,7 +141,29 @@ public class OptionPane extends Window {
         this.icon.setIcon(icon);
     }
     
-    
+    private void open () {
+        
+        content.workoutSize(); // what out what the needed size is
+        scroll.setSize(content.getWidthWithBorder(), content.getHeightWithBorder());
+        pack();
+
+        int maxw = (DesktopPane.getDesktopPane().getWidth()*6)/8;
+        int maxh = (DesktopPane.getDesktopPane().getHeight()*6)/8;
+        
+        if (getWidth() > maxw) {
+            myself.setSize(maxw, myself.getHeight()+ScrollPane.getBarThickness(scroll.getWidth(), scroll.getHeight()));
+        }
+        if (getHeight() > maxh) {
+            myself.setSize(myself.getWidth(), maxh);
+        }
+        
+        myself.setLocation((DesktopPane.getDesktopPane().getWidth() - myself.getWidth()) /2, 
+                (DesktopPane.getDesktopPane().getHeight() - myself.getHeight()) /2
+        );
+        
+        myself.setVisible(true);
+
+    }
     
     
     private static OptionPane myself;
@@ -173,9 +198,8 @@ public class OptionPane extends Window {
         myself.setOptions(options);
         myself.setInitialValue(initialValue);
         
-        myself.setSize(100, 100);
         
-        myself.setVisible(true);
+        myself.open();
     }
 
     public static void showMessageDialog(ActionListener parent, Object message, String title, int messageType) {
