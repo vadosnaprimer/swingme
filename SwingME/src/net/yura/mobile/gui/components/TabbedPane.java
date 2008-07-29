@@ -21,6 +21,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ChangeListener;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.Layout;
@@ -37,11 +38,17 @@ public class TabbedPane extends Panel implements ChangeListener {
         private ScrollPane scroll;
         private Panel tabContent;
         private int tabPosition;
-        private int currentTabIndex;
 
+        /**
+         * @see javax.swing.JTabbedPane#JTabbedPane() JTabbedPane.JTabbedPane
+         */
         public TabbedPane() {
             this(Graphics.TOP);
         }
+        
+        /**
+         * @see javax.swing.JTabbedPane#JTabbedPane(int) JTabbedPane.JTabbedPane
+         */
         public TabbedPane(int a) {
 
             Layout l = new BorderLayout();
@@ -54,7 +61,6 @@ public class TabbedPane extends Panel implements ChangeListener {
             scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
 
             tabContent = new Panel(l);
-            currentTabIndex = -1;
 
             // this will ALWAYS be transparent as its the scroll that does the drawing for the theme
             tabList.background = -1;
@@ -64,7 +70,7 @@ public class TabbedPane extends Panel implements ChangeListener {
         }
 
         /**
-         * @param a
+         * @param a the placement for the tabs relative to the content 
          * @see javax.swing.JTabbedPane#setTabPlacement(int) JTabbedPane.setTabPlacement
          */
         public void setTabPlacement(int a) {
@@ -73,7 +79,10 @@ public class TabbedPane extends Panel implements ChangeListener {
             
             tabList.setLayoutOrientation( (a==Graphics.TOP || a==Graphics.BOTTOM) );
             
-            ((DefaultTabRenderer)tabList.getCellRenderer()).setTabPlacement(a);
+            ListCellRenderer lcr = tabList.getCellRenderer();
+            if (lcr instanceof DefaultTabRenderer) {
+                ((DefaultTabRenderer)lcr).setTabPlacement(a);
+            }
             
             scroll.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
 
@@ -92,7 +101,15 @@ public class TabbedPane extends Panel implements ChangeListener {
             }
             
         }
-        
+
+        /**
+         * @see javax.swing.JList#setCellRenderer(javax.swing.ListCellRenderer) JList.setCellRenderer
+         */
+        public void setTabRenderer(ListCellRenderer lcr) {
+            
+            tabList.setCellRenderer(lcr);
+        }
+
         /**
          * @param p the Panel to add
          * @see javax.swing.JTabbedPane#add(java.awt.Component) JTabbedPane.add
@@ -121,7 +138,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             tabList.addElement(new Option(null,title,icon));
             tabs.addElement(component);
 
-            if (currentTabIndex==-1) {
+            if (tabList.getSelectedIndex()==-1) {
                 setSelectedIndex(0);
             }
         }
@@ -138,17 +155,13 @@ public class TabbedPane extends Panel implements ChangeListener {
             else {
 
                 // setup the new tab to be selected
-                if (currentTabIndex==a) {
-                    if ((tabs.size()-1) == currentTabIndex) {
-                        setSelectedIndex(currentTabIndex-1);
+                if (tabList.getSelectedIndex()==a) {
+                    if ((tabs.size()-1) == tabList.getSelectedIndex()) {
+                        setSelectedIndex(tabList.getSelectedIndex()-1);
                     }
                     else {
-                        setSelectedIndex(currentTabIndex+1);
-                        currentTabIndex--;
+                        setSelectedIndex(tabList.getSelectedIndex()+1);
                     }
-                }
-                else if (currentTabIndex > a) {
-                    currentTabIndex--;
                 }
 
                 // actually remove the tab
@@ -162,7 +175,7 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @param title
          * @param icon
          * @param component
-         * @param tip
+         * @param tip (this is not used yet)
          * @param index
          * @see javax.swing.JTabbedPane#insertTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String, int) JTabbedPane.insertTab
          */
@@ -170,11 +183,8 @@ public class TabbedPane extends Panel implements ChangeListener {
 
             tabList.getItems().insertElementAt(new Option(null,title,icon), index);
             tabs.insertElementAt(component,index);
-            if (index <= currentTabIndex) {
-                currentTabIndex++;
-            }
-            setSelectedIndex(index);
 
+            setSelectedIndex(index);
         }
 
         /**
@@ -212,7 +222,6 @@ public class TabbedPane extends Panel implements ChangeListener {
         tabContent.removeAll();
         tabContent.add(thetabtoAdd);
 
-        currentTabIndex = num;
         revalidate();
         if (!tabList.isSelectable() && owner!=null) {
             owner.setupFocusedComponent();
@@ -222,15 +231,13 @@ public class TabbedPane extends Panel implements ChangeListener {
 
     public void removeAll() {
 
-        if (currentTabIndex!=-1) {
+        if (tabList.getSelectedIndex()!=-1) {
 
-            remove(scroll);
-            remove( getComponents().indexOf( tabs.elementAt(currentTabIndex) ) );
+            tabContent.removeAll();
 
             tabs.removeAllElements();
             tabList.setListData( new Vector() );
 
-            currentTabIndex = -1;
         }
 
     }
@@ -266,10 +273,6 @@ public class TabbedPane extends Panel implements ChangeListener {
 
     public void setSelectable(boolean a) {
         tabList.setSelectable(a);
-    }
-
-    public List getList() {
-        return tabList;
     }
 
 }

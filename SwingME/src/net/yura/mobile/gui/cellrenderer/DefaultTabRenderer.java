@@ -58,13 +58,14 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
         }
         return this;
     }
+    
     private String name;
     public void setName(String n) {
         name = n;
         updateUI();
     }
     public String getName() {
-        return name==null?"":name;
+        return name==null?"TabRenderer":name;
     }
     
     /**
@@ -91,9 +92,9 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
                 break;
                     
         }
-        
-        
+
     }
+
     public void updateUI() {
             super.updateUI();
             
@@ -103,7 +104,6 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
             none = theme.getBorder(Style.ALL);
             open = theme.getBorder(Style.SELECTED);
             selectedAndDisabled = theme.getBorder(Style.SELECTED | Style.DISABLED);
-            
-            System.out.println(open);
+
     }
 }
