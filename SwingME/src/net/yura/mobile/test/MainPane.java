@@ -54,6 +54,7 @@ import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.util.ButtonGroup;
 import net.yura.mobile.util.Option;
 
@@ -153,8 +154,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                     if (metal==null) {
                         metal = new MetalLookAndFeel();
                     }
-                    setLookAndFeel(metal);
-                    updateComponentTreeUI(mainWindow);
+                    setupNewLookAndFeel(metal);
+
                     
                 }
                 else if ("synthTheme".equals(actionCommand)) {
@@ -168,8 +169,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                             ex.printStackTrace();
                         }
                     }
-                    setLookAndFeel( synth );
-                    updateComponentTreeUI(mainWindow);
+                    setupNewLookAndFeel( synth );
+
                 }
                 else if ("windowTest1".equals(actionCommand)) {
 
@@ -602,5 +603,35 @@ public class MainPane extends DesktopPane implements ActionListener {
 		
 		mainWindow.repaint();
 	}
+
+    private void setupNewLookAndFeel(LookAndFeel theme) {
+        setLookAndFeel(theme);
+        
+        
+        if (componentTest!=null)
+            updateComponentTreeUI(componentTest);
+        if (info!=null)
+            updateComponentTreeUI(info);
+        if (border!=null)
+            updateComponentTreeUI(border);
+        if (tabPanel!=null)
+            updateComponentTreeUI(tabPanel);
+        if (menu!=null)
+            updateComponentTreeUI(menu);
+        if (mainMenu!=null)
+            updateComponentTreeUI(mainMenu);
+        if (tableTest!=null)
+            updateComponentTreeUI(tableTest);
+        if (infoLabel!=null)
+            updateComponentTreeUI(infoLabel);
+	if (loadPanel!=null)
+            updateComponentTreeUI(loadPanel);
+
+        
+        
+        updateComponentTreeUI(mainWindow);
+        mainWindow.getContentPane().revalidate();
+        mainWindow.repaint();
+    }
 
 }
