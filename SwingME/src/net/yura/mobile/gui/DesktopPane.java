@@ -68,7 +68,14 @@ public class DesktopPane extends Canvas implements Runnable {
          */
         public static void updateComponentTreeUI(Component com) {
 
-            if (com instanceof Panel) {
+            if (com instanceof Window) {
+                Window window = ((Window)com);
+                updateComponentTreeUI( window.getContentPane() );
+                if (window.getGlassPane()!=null) {
+                    updateComponentTreeUI( window.getGlassPane() );
+                }
+            }
+            else if (com instanceof Panel) {
                 Vector v = ((Panel)com).getComponents();
                 for (int c=0;c<v.size();c++) {
                     updateComponentTreeUI( (Component)v.elementAt(c) );
