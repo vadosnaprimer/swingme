@@ -314,6 +314,7 @@ public class TextArea extends Component {
         int oldh = height;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
         if (oldh!=height && parent!=null) {
+            // so the scroll parent can strech my size
             parent.doLayout();
             parent.repaint();
         }

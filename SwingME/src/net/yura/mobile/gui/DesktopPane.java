@@ -432,7 +432,7 @@ public class DesktopPane extends Canvas implements Runnable {
          * This is called when u call repaint() on a window
          */
 	public void windowRepaint() {
-		if (repaintComponent != null && paintdone) {
+		if (paintdone && (repaintComponent != null || paintSoftKey)) {
                     // the repaintComponent may be on another window
                     serviceRepaints();
                 }
@@ -785,6 +785,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			if (debugwindow==null) {
 
 				debugwindow = new Window();
+                                debugwindow.setName("Dialog");
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
 				text = new TextArea("",Graphics.LEFT);
 				debugwindow.setContentPane( new ScrollPane(text) );

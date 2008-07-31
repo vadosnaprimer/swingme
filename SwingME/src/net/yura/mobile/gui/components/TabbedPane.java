@@ -223,6 +223,9 @@ public class TabbedPane extends Panel implements ChangeListener {
         tabContent.add(thetabtoAdd);
 
         revalidate();
+        if (scroll.isOpaque()) {
+            repaint();
+        }
         if (!tabList.isSelectable() && owner!=null) {
             owner.setupFocusedComponent();
         }
