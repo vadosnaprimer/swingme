@@ -28,6 +28,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
 
 /**
@@ -57,7 +58,7 @@ public class List extends Component implements ActionListener {
     private boolean horizontal;
 
     public List() {
-        this(null,null,true);
+        this(new DefaultListCellRenderer());
     }
         
     public List(ListCellRenderer a) {
@@ -122,6 +123,10 @@ public class List extends Component implements ActionListener {
         items = a;
         if (a == null || current >= a.size()){
             setSelectedIndex(-1);
+        }
+        
+        if (isFocused() && current==-1 && a.size() > 0) {
+            setSelectedIndex(0);
         }
 
     }
