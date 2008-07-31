@@ -257,6 +257,6 @@ public class Button extends Label implements ActionListener {
 		activeForeground = st.getForeground(Style.FOCUSED);
                 disabledForeground = st.getForeground(Style.DISABLED);
                 normalForeground = st.getForeground(Style.ENABLED);
-            st.getProperty("CheckBox.icon", Style.ENABLED);
+
         }
 }
