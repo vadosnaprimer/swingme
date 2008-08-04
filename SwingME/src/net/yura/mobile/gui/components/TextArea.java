@@ -37,6 +37,10 @@ public class TextArea extends Component {
         
        	private int align;
         private int lineSpacing;
+
+        public TextArea() {
+            this("");
+        }
         
 	public TextArea(String text) {
 		this(text,Graphics.HCENTER);

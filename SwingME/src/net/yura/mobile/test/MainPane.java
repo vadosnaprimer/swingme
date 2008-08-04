@@ -92,7 +92,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                 mainWindow = new Window();
                 
-		mainWindow.setBoundsWithBorder(0, 0, getWidth(), getHeight());
+		mainWindow.setMaximum(true);
                 
 		mainWindow.setActionListener(this);
 

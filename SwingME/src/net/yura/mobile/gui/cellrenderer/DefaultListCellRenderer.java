@@ -48,20 +48,8 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 			int index, boolean isSelected, boolean cellHasFocus) {
 
                 setValue(value);
-
-		if (cellHasFocus) {
-			setBorder(selected);
-		}
-		else {
-			setBorder(normal);
-		}
-                
-                if (isSelected) {
-                    	setBackground(color);
-                }
-                else {
-                        setBackground(colorNo);
-                }
+                setBorder(cellHasFocus?selected:normal);
+                setBackground(isSelected?color:colorNo);
                 
 		return this;
 	}

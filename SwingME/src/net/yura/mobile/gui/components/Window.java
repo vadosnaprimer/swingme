@@ -135,10 +135,27 @@ public class Window extends Component implements ActionListener {
                 DesktopPane.getDesktopPane().add(this);
             }
             else {
-                DesktopPane.getDesktopPane().remove(this);
+                
+                if (parent==null) {
+                    DesktopPane.getDesktopPane().remove(this);
+                 }
+                 else {
+                     parent.remove(this);
+                 }
+
             }
         }
         
+        /**
+         * @param a true to maxemise the window
+         * @see javax.swing.JInternalFrame#setMaximum(boolean) JInternalFrame.setMaximum
+         */
+        public void setMaximum(boolean a) {
+            if (a) {
+                setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
+            }
+            // TODO else???
+        }
         
 	private Component old;
         
@@ -383,13 +400,7 @@ public class Window extends Component implements ActionListener {
         public void actionPerformed(String actionCommand) {
             
              if (CMD_CLOSE.equals(actionCommand)) {
-
-                 if (parent==null) {
-                    DesktopPane.getDesktopPane().remove(this);
-                 }
-                 else {
-                     parent.remove(this);
-                 }
+                 setVisible(false);
              }
              else if (CMD_MIN.equals(actionCommand)) {
 
@@ -399,17 +410,17 @@ public class Window extends Component implements ActionListener {
                          DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
                      }
                  }
+
              }
              else if (CMD_MAX.equals(actionCommand)) {
-
-                 setBounds(0,0,DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
+                 setMaximum(true);
                  repaint();
              }
              else {
-                System.out.println("?? "+actionCommand);
+                 //#debug
+                System.out.println("unknow Window command: "+actionCommand);
              }
-            
-            
+
         }
 
     public void workoutSize() {

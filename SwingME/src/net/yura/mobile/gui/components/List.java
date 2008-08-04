@@ -251,30 +251,30 @@ public class List extends Component implements ActionListener {
             int totalHeight = 0;
             int totalWidth = 0;
 
-                        for(int i = 0; i < items.size(); i++){
-                                Object item = (Object)items.elementAt(i);
-                                c = renderer.getListCellRendererComponent(this, item, i, false, i == current);
-                                c.workoutSize();
-                                if (horizontal) {
-                                    if (totalHeight<c.getHeightWithBorder()) {
-                                        totalHeight=c.getHeightWithBorder();
-                                    }
-                                }
-                                else {
-                                    totalHeight = totalHeight + c.getHeightWithBorder();
-                                }
-
-                                if (horizontal) {
-                                    totalWidth = totalWidth + c.getWidthWithBorder();
-                                }
-                                else {
-                                    if (totalWidth<c.getWidthWithBorder()) {
-                                        totalWidth=c.getWidthWithBorder();
-                                    }
-                                }
+            for(int i = 0; i < items.size(); i++){
+                    Object item = (Object)items.elementAt(i);
+                    c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
+                    c.workoutSize();
+                    if (horizontal) {
+                        if (totalHeight<c.getHeightWithBorder()) {
+                            totalHeight=c.getHeightWithBorder();
                         }
+                    }
+                    else {
+                        totalHeight = totalHeight + c.getHeightWithBorder();
+                    }
 
-                        setSize(totalWidth,totalHeight);
+                    if (horizontal) {
+                        totalWidth = totalWidth + c.getWidthWithBorder();
+                    }
+                    else {
+                        if (totalWidth<c.getWidthWithBorder()) {
+                            totalWidth=c.getWidthWithBorder();
+                        }
+                    }
+            }
+
+            setSize(totalWidth,totalHeight);
         }
     }
 
