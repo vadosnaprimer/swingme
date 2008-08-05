@@ -43,7 +43,7 @@ public class TextArea extends Component {
         }
         
 	public TextArea(String text) {
-		this(text,Graphics.HCENTER);
+		this(text,Graphics.LEFT);
 	}
 	
 	public int getAlignment() {
@@ -317,7 +317,13 @@ public class TextArea extends Component {
         widthUsed = w;
         int oldh = height;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
-        if (oldh!=height && parent!=null) {
+        
+        // this is kind of a hack
+        // it asks the parent to relayout if my height has changed
+        // but what if its not in a state to be ready to relayout?
+        // what if its not visible?
+        // what if it is streached/shrunk and ITS parent needs to be relayed out too?
+        if (oldh!=height && parent!=null && owner!=null) {
             // so the scroll parent can strech my size
             parent.doLayout();
             parent.repaint();

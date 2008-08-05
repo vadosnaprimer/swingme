@@ -30,6 +30,7 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultSoftkeyRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
@@ -589,7 +590,9 @@ public class DesktopPane extends Canvas implements Runnable {
                                     }
 				}
 			}
-			else { //  if (keyListener!=null) {
+                        // sometimes keyevents come in on S40 b4 anything has been setup,
+                        // such as the fire key being released after you start the app
+			else if (currentWindow!=null) { //  if (keyListener!=null) {
 
 				if (
 
@@ -635,21 +638,27 @@ public class DesktopPane extends Canvas implements Runnable {
                                         focusedComponent instanceof ActionListener
 				) {
 
-				((ActionListener)focusedComponent).actionPerformed( componentCommands[i].getActionCommand() );
-
-                                 if (componentCommands[i]!=null && componentCommands[i].getMenu()!=null) {
+                                 if (componentCommands[i]!=null && componentCommands[i].getButton()!=null) {
                                         Component renderer = getSoftkeyRenderer(i);
-                                        componentCommands[i].getMenu().openMenu(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
+                                        Button b = componentCommands[i].getButton();
+                                        b.setBoundsWithBorder(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
+                                        b.fireActionPerformed();
+                                 }
+                                 else {
+                                     ((ActionListener)focusedComponent).actionPerformed( componentCommands[i].getActionCommand() );
                                  }
                                 
 			}
 			else if (actionListener!=null && panelCmds[i]!=null) {
 
-                                actionListener.actionPerformed( panelCmds[i].getActionCommand() );
-
-                                if (panelCmds[i]!=null && panelCmds[i].getMenu()!=null) {
+                                if (panelCmds[i]!=null && panelCmds[i].getButton()!=null) {
                                     Component renderer = getSoftkeyRenderer(i);
-                                    panelCmds[i].getMenu().openMenu(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
+                                    Button b = panelCmds[i].getButton();
+                                    b.setBoundsWithBorder(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
+                                    b.fireActionPerformed();
+                                }
+                                else {
+                                    actionListener.actionPerformed( panelCmds[i].getActionCommand() );
                                 }
 
 			}
@@ -787,7 +796,7 @@ public class DesktopPane extends Canvas implements Runnable {
 				debugwindow = new Window();
                                 debugwindow.setName("Dialog");
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
-				text = new TextArea("",Graphics.LEFT);
+				text = new TextArea();
 				debugwindow.setContentPane( new ScrollPane(text) );
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );

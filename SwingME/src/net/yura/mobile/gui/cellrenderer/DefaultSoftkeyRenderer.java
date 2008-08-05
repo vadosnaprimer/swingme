@@ -48,10 +48,10 @@ public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
         this.left = left;
         
         setText(value.toString());
-        menu = ((CommandButton)value).getMenu()!=null;
+        menu = ((CommandButton)value).getButton()!=null;
         // TODO, not JUST menu should allow for a icon
         if (menu) {
-            setIcon( ((CommandButton)value).getMenu().getIcon() );
+            setIcon( ((CommandButton)value).getButton().getIcon() );
         }
         setHorizontalAlignment(left?Graphics.LEFT:Graphics.RIGHT);
         //text = (top?"top":"bottom") + " " + (left?"left":"right");

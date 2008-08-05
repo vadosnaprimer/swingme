@@ -140,13 +140,13 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Window Test","windowTest1");
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 
-                                mainMenu = new Menu("Menu");
+                                mainMenu = new Menu("Menu","mainMenu");
                                 mainMenu.addActionListener(this);
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
                                 mainMenu.addMenuItem("synthTheme", "Synth Theme", null);
 			}
 			
-			addToScrollPane(mainmenu, new CommandButton(mainMenu,"mainMenu"), new CommandButton("Exit","exit") );
+			addToScrollPane(mainmenu, new CommandButton(mainMenu), new CommandButton("Exit","exit") );
 			
 		}
                 else if ("metalTheme".equals(actionCommand)) {
@@ -191,7 +191,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 			if (info==null) {
 			
-                                infoLabel = new TextArea("...");
+                                infoLabel = new TextArea("...",Graphics.HCENTER);
                                 infoLabel.setSize(getWidth(),infoLabel.getHeight());
                                 
 				info = new Panel( new BorderLayout() ) {
@@ -286,10 +286,11 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
                                 
-                                menu = new Menu("Menu");
+                                menu = new Menu("Menu","popmenu");
+                                // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                                 menu.add(new Button("bob"));
                                 
-                                Menu menu2 = new Menu("Sub");
+                                Menu menu2 = new Menu("Sub","sub");
                                 menu2.addActionListener(this);
                                 menu2.add(new Button("fred"));
                                 menu2.addMenuItem("action","item (will close menu)", null);
@@ -297,21 +298,19 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
 			}
 			
-			addToScrollPane(componentTest, new CommandButton(menu,"popmenu"),  new CommandButton("Back","mainmenu") );
+			addToScrollPane(componentTest, new CommandButton(menu),  new CommandButton("Back","mainmenu") );
 			
 		}
 		else if ("loadpanel".equals(actionCommand)) {
 			
 			if (loadPanel==null) {
 				
-				loadPanel = new TextArea("");
-				loadPanel.setAlignment(Graphics.LEFT);
+				loadPanel = new TextArea();
 				images = new Vector();
-                                //loadPanel.setSize(getWidth()*2, loadPanel.getHeight());
+
 			}
 			
 			addToScrollPane(loadPanel, new CommandButton("Load","load") , new CommandButton("Back","mainmenu") );
-			//setActiveComponent(loadPanel);
 		}
                 else if ("load".equals(actionCommand)) {
 			
@@ -326,11 +325,9 @@ public class MainPane extends DesktopPane implements ActionListener {
 				message = "unable to load: "+e.toString();
 				e.printStackTrace();
 			}
-			//loadPanel.setSize( getWidth()-ScrollPane.getBarThickness(getWidth(), getHeight()) , loadPanel.getHeight());
 			loadPanel.append(message+"\n");
-			//getContentPane().doLayout();
-                        //mainWindow.getContentPane().revalidate();
-			mainWindow.getContentPane().repaint();
+
+                        mainWindow.getContentPane().repaint();
 		}
                 else if ("borderTest".equals(actionCommand)) {
 			

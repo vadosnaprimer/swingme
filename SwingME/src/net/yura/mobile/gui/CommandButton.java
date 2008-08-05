@@ -18,7 +18,7 @@
 package net.yura.mobile.gui;
 
 import javax.microedition.lcdui.Command;
-import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.Button;
 
 /**
  * @author Yura Mamyrin
@@ -26,7 +26,7 @@ import net.yura.mobile.gui.components.Menu;
 public class CommandButton extends Command {
 	
 	private String actionCommand;
-	private Menu menu;
+	private Button menu;
         
 	public CommandButton(String label,String com) {
 		super(label, Command.OK, 1);
@@ -35,8 +35,8 @@ public class CommandButton extends Command {
 		
 	}
 
-        public CommandButton(Menu m,String com) {
-            this(m.getText(),com);
+        public CommandButton(Button m) {
+            this(m.getText(),m.getActionCommand());
             menu = m;
         }
         
@@ -61,7 +61,7 @@ public class CommandButton extends Command {
 		return (a instanceof CommandButton && ((CommandButton) a).getActionCommand().equals(actionCommand));
 	}
         
-        public Menu getMenu() {
+        public Button getButton() {
             return menu;
         }
         public String toString() {

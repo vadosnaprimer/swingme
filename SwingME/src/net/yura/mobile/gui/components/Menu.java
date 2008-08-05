@@ -29,25 +29,36 @@ public class Menu extends Button {
         private int destY;
         
         /**
+         * The menu will fire this command to the same listoner that
+         * it will fire all the commands from the buttons being pressed
+         * so you HAVE to set the action that u will be getting from the menu
+         * as you almost always need to have a action listoner for the Menu
          * @param string the text for the menu label
          * @see javax.swing.JMenu#JMenu(java.lang.String) JMenu.JMenu
          */
-        public Menu(String string) {
+        public Menu(String string,String action) {
             super(string);
+            setActionCommand(action);
             makeWindow();
         }
 
         public void fireActionPerformed() {
             
-            openMenu(getXInWindow()+owner.getX(), getYInWindow()+owner.getY(), width, height);
+            super.fireActionPerformed();
             
+            if (owner!=null) {
+                openMenu(getXInWindow()+owner.getX() -(border!=null?border.getLeft():0), getYInWindow()+owner.getY()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder());
+            }
+            else if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) {
+                openMenu(getXWithBorder(),getYWithBorder(),getWidthWithBorder(),getHeightWithBorder());
+            }
         }
 
 	public Vector getComponents() {
 		return panel.getComponents();
 	}
         
-        public void openMenu(int x, int y, int width, int height) {
+        private void openMenu(int x, int y, int width, int height) {
 
             panel.workoutSize(); // what out what the needed size is
             popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
@@ -98,7 +109,7 @@ public class Menu extends Button {
             
         }
         
-        public void openMenu() {
+        public void openMenuInCentre() {
 
             panel.workoutSize(); // what out what the needed size is
             popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
@@ -119,7 +130,7 @@ public class Menu extends Button {
         }
         
         
-        public void openMenuAtLocation(int x, int y, int w, int h) {
+        private void openMenuAtLocation(int x, int y, int w, int h) {
             
             old = DesktopPane.getDesktopPane().getFocusedComponent();
             
@@ -179,7 +190,6 @@ public class Menu extends Button {
             
             DesktopPane.getDesktopPane().remove(popup);
             DesktopPane.getDesktopPane().setFocusedComponent(old);
-            super.fireActionPerformed();
             
             if (!"cancel".equals(actionCommand)) {
                 ActionListener al = getActionListener();
@@ -229,10 +239,10 @@ public class Menu extends Button {
             
             if (keyEvent.justPressedAction(Canvas.RIGHT)) {
                     
-			fireActionPerformed();
-			return true;
-		}
-		return super.keyEvent(keyEvent);
+                    fireActionPerformed();
+                    return true;
+            }
+            return super.keyEvent(keyEvent);
     
 	}
 
