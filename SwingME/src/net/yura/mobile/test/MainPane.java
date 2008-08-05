@@ -456,7 +456,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
 			}
 			
-			addToScrollPane(tabPanel, null , new CommandButton("Back","mainmenu") );
+			addToScrollPane(tabPanel, new CommandButton(new CheckBox("yay")) , new CommandButton("Back","mainmenu") );
 		}
                 else if ("tableTest".equals(actionCommand)) {
                     

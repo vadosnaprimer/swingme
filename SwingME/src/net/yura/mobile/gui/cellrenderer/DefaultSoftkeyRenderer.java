@@ -23,11 +23,14 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.List;
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
-import net.yura.mobile.gui.components.ScrollPane;
+import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.plaf.Style;
 
 /**
+ * This method can render a normal commandButton
+ * and also wraps any Menu it may have
  * @author Yura Mamyrin
  */
 public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
@@ -36,24 +39,26 @@ public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
     private Image bottomRight;
     private Image bottomLeft;
     
-    private boolean top,left,menu;
+    private boolean top,left;
+    private Button component;
     
     public DefaultSoftkeyRenderer() {
     }
-    
+    /**
+     * if its just a normal commandButton we will draw it,
+     * otehrwise we will use the Button to draw
+     */
     public Component getListCellRendererComponent(List list, Object value, int index, boolean top, boolean left) {
         if (value==null) return null;
 
         this.top = top;
         this.left = left;
-        
-        setText(value.toString());
-        menu = ((CommandButton)value).getButton()!=null;
-        // TODO, not JUST menu should allow for a icon
-        if (menu) {
-            setIcon( ((CommandButton)value).getButton().getIcon() );
-        }
-        setHorizontalAlignment(left?Graphics.LEFT:Graphics.RIGHT);
+        component = ((CommandButton)value).getButton();
+
+            // This is only used when component is NULL
+            setText(value.toString());
+            setHorizontalAlignment(left?Graphics.LEFT:Graphics.RIGHT);
+
         //text = (top?"top":"bottom") + " " + (left?"left":"right");
         return this;
     }
@@ -65,21 +70,23 @@ public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
             g.drawImage(b, 0, 0, Graphics.TOP | Graphics.LEFT);
         }
         
-        super.paintComponent(g);
-        
-        // draw a arrow as this is a menu
-        if (menu) {
-            int w = getFont().getHeight();
-            int x = getCombinedWidth(getText(), getIcon()) + padding*2;
-            int y = (height-(w/2))/2;
+        if (component==null) {
+            super.paintComponent(g);
+        }
+        else {
+            // HACK
+            if (component instanceof Menu) {
+                ((Menu)component).setArrowDirection( (top?Graphics.BOTTOM:Graphics.TOP) | (left?Graphics.RIGHT:Graphics.LEFT) );
+            }
             
-            if (!left) { x = width-x-w; }
-            if (top) {
-                ScrollPane.drawDownArrow(g, x, y, w, w/2);
-            }
-            else {
-                ScrollPane.drawUpArrow(g, x, y, w, w/2);
-            }
+            component.workoutSize();
+            
+            int x = left?0:width-component.getWidth();
+            int y = (height - component.getHeight()) / 2;
+
+            g.translate(x, y);
+            component.paintComponent(g);
+            g.translate(-x, -y);
         }
 
     }

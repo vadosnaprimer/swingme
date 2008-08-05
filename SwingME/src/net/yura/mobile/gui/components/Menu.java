@@ -17,6 +17,8 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class Menu extends Button {
 
+        private int arrowDirection;
+    
         private Window popup;
         private Panel panel;
         private Menu parentMenu;
@@ -40,6 +42,7 @@ public class Menu extends Button {
             super(string);
             setActionCommand(action);
             makeWindow();
+            arrowDirection = Graphics.RIGHT;
         }
 
         public void fireActionPerformed() {
@@ -249,16 +252,30 @@ public class Menu extends Button {
 	public void workoutSize() {
 
 		super.workoutSize();
-		width = width + getFont().getHeight()/2 + padding;
+		width = width + getFont().getHeight()/( ((arrowDirection & Graphics.TOP ) !=0 || (arrowDirection & Graphics.BOTTOM ) !=0) ?1:2) + padding;
 
 	}
 
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
-		int s = getFont().getHeight();
+                int s = getFont().getHeight();
+		int s2 = s/2;
 
-                ScrollPane.drawRightArrow(g, width-s/2-padding, (height-s)/2, s/2, s);
+                if ((arrowDirection & Graphics.RIGHT ) !=0) {
+                    
+                    if ((arrowDirection & Graphics.TOP ) !=0) {
+                        ScrollPane.drawUpArrow(g, width-s-padding, (height-s2)/2, s, s2);
+                    }
+                    else if ((arrowDirection & Graphics.BOTTOM ) !=0) {
+                        ScrollPane.drawDownArrow(g, width-s-padding, (height-s2)/2, s, s2);
+                    }
+                    else {
+                        ScrollPane.drawRightArrow(g, width-s2-padding, (height-s)/2, s2, s);
+                    }
+                    
+                }
+                // TODO support left side arrows
 
 	}
         
@@ -336,6 +353,10 @@ public class Menu extends Button {
                 //DesktopPane.updateComponentTreeUI(popup);
                 // TODO: THIS IS NOT GOOD!!
             }
+        }
+        
+        public void setArrowDirection(int a) {
+            arrowDirection = a;
         }
 
 }
