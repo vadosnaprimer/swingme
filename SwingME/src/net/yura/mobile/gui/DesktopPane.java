@@ -64,7 +64,7 @@ public class DesktopPane extends Canvas implements Runnable {
             return style;
         }
         /**
-         * @param c
+         * @param com
          * @see javax.swing.SwingUtilities#updateComponentTreeUI(java.awt.Component) SwingUtilities.updateComponentTreeUI
          */
         public static void updateComponentTreeUI(Component com) {
@@ -797,6 +797,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 debugwindow.setName("Dialog");
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
 				text = new TextArea();
+                                text.setSelectable(false);
 				debugwindow.setContentPane( new ScrollPane(text) );
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );

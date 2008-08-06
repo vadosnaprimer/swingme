@@ -89,6 +89,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                     }
                     else {
+                        //#debug
                         System.out.println("unknown found: "+name);
                     }
                     
@@ -116,7 +117,6 @@ public class SynthLookAndFeel extends LookAndFeel {
             else {
                 newStyle = new Style(defaultStyle);
             }
-           
 
             // vars local to this style
             EmptyBorder insets = null;
@@ -125,7 +125,6 @@ public class SynthLookAndFeel extends LookAndFeel {
             while (parser.nextTag() != KXmlParser.END_TAG) {
                     String name = parser.getName();
 
-                    
                     if ("state".equals(name)) {
 
                         int st = workOutState( parser.getAttributeValue(null, "value") );
@@ -139,122 +138,94 @@ public class SynthLookAndFeel extends LookAndFeel {
                         while (parser.nextTag() != KXmlParser.END_TAG) {
                             String name2 = parser.getName();
                             
-                            if ("imagePainter".equals(name2)) {
-                                String path = parser.getAttributeValue(null, "path");
-                                String sourceInsets = parser.getAttributeValue(null, "sourceInsets");
-                                String paintCenter = parser.getAttributeValue(null, "paintCenter");
-                                        
-                                Image activeimage = Image.createImage(path);
-                                String[] split = StringUtil.split(sourceInsets, ' ');
-                                border = new MatteBorder(activeimage,
-                                        insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
-                                        Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), 
-                                        "true".equals(paintCenter) || "Y".equals(paintCenter)
-                                        , borderfill);
-                                newStyle.addBorder(border, st);
-                            }
-                            else if ("property".equals(name2)) {
-                                String type = parser.getAttributeValue(null, "type");
-                                String key = parser.getAttributeValue(null, "key");
-                                String value = parser.getAttributeValue(null, "value");
-                                
-                                if ("integer".equals(type)) {
-                                    int base=10;
-                                    if (value.startsWith("#")) {
-                                        base=16;
-                                        value=value.substring(1);
-                                    }
-                                    else if (value.startsWith("0x")) {
-                                        base=16;
-                                        value=value.substring(2);
-                                    }
-                                    newStyle.addProperty(Integer.valueOf(value,base), key, st);
-                                }
-                                else if (type==null || "idref".equals(type)) {
-System.out.println("getting: "+value);
-                                    newStyle.addProperty(params.get(value), key, st);
-                                }
-                                
-                            }
-                            else if ("color".equals(name2)) {
-                                String cvalue = parser.getAttributeValue(null, "value");
-                                String type = parser.getAttributeValue(null, "type");
-                                int color = -1;
-                                if (cvalue!=null) {
-                                    if (cvalue.charAt(0)=='#') {
-                                        cvalue = cvalue.substring(1);
-                                    }
-                                    color = Integer.parseInt(cvalue, 16);
-                                }
-                                if (type!=null) {
-                                    if ("BACKGROUND".equals(type)) {
-                                        newStyle.addBackground(color, st);
-                                    }
-                                    else if ("FOREGROUND".equals(type)) {
-                                        newStyle.addForeground(color, st);
-                                    }
-                                    else if ("BORDERFILL".equals(type)) {
-                                        if (border!=null) {
-                                            border.setColor(color);
-                                        }
-                                        else {
-                                            borderfill = color;
-                                        }
-                                    }
-                                }
-                            }
-                            else if ("font".equals(name2)) {
-                                String fontName = parser.getAttributeValue(null, "name");
-                                String fontSize = parser.getAttributeValue(null, "size");
-                                String fontStyle = parser.getAttributeValue(null, "style");
-                                int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
-                                int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
-                                int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
-                                
-                                if ("PROPORTIONAL".equals(fontName)) {
-                                    fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
-                                }
-                                else if ("MONOSPACE".equals(fontName)) {
-                                    fname=javax.microedition.lcdui.Font.FACE_MONOSPACE;
-                                }
-                                else if ("SYSTEM".equals(fontName)) {
-                                    fname=javax.microedition.lcdui.Font.FACE_SYSTEM;
-                                }
-                                
-                                if (fontStyle!=null) {
-                                    if (fontStyle.indexOf("BOLD")!=1) {
-                                        fstyle |= javax.microedition.lcdui.Font.STYLE_BOLD;
-                                    }
-                                    if (fontStyle.indexOf("ITALIC")!=1) {
-                                        fstyle |= javax.microedition.lcdui.Font.STYLE_ITALIC;
-                                    }
-                                    if (fontStyle.indexOf("UNDERLINED")!=1) {
-                                        fstyle |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
-                                    }
-                                }
-                                
-                                if ("SMALL".equals(fontSize)) {
-                                    fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
-                                }
-                                else if ("MEDIUM".equals(fontSize)) {
-                                    fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
-                                }
-                                else if ("LARGE".equals(fontSize)) {
-                                    fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
-                                }
-                                // TODO: support bitmap fonts
-                                newStyle.addFont(new Font(javax.microedition.lcdui.Font.getFont(fname, fstyle, fsize)), st);
+                            if ("font".equals(name2)) {
+                                newStyle.addFont(loadFont(parser,params),st);
                             }
                             else {
-                                System.out.println("unknown found: "+name2);
+                                if ("imagePainter".equals(name2)) {
+                                    String path = parser.getAttributeValue(null, "path");
+                                    String sourceInsets = parser.getAttributeValue(null, "sourceInsets");
+                                    String paintCenter = parser.getAttributeValue(null, "paintCenter");
+
+                                    Image activeimage = Image.createImage(path);
+                                    String[] split = StringUtil.split(sourceInsets, ' ');
+                                    border = new MatteBorder(activeimage,
+                                            insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
+                                            Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), 
+                                            "true".equals(paintCenter) || "Y".equals(paintCenter)
+                                            , borderfill);
+                                    newStyle.addBorder(border, st);
+                                }
+                                else if ("property".equals(name2)) {
+                                    String type = parser.getAttributeValue(null, "type");
+                                    String key = parser.getAttributeValue(null, "key");
+                                    String value = parser.getAttributeValue(null, "value");
+
+                                    if ("integer".equals(type)) {
+                                        int base=10;
+                                        if (value.startsWith("#")) {
+                                            base=16;
+                                            value=value.substring(1);
+                                        }
+                                        else if (value.startsWith("0x")) {
+                                            base=16;
+                                            value=value.substring(2);
+                                        }
+                                        newStyle.addProperty(Integer.valueOf(value,base), key, st);
+                                    }
+                                    else if (type==null || "idref".equals(type)) {
+                                        newStyle.addProperty(params.get(value), key, st);
+                                    }
+
+                                }
+                                else if ("color".equals(name2)) {
+                                    String cvalue = parser.getAttributeValue(null, "value");
+                                    String type = parser.getAttributeValue(null, "type");
+                                    String id = parser.getAttributeValue(null, "id");
+                                    int color = -1;
+                                    if (cvalue!=null) {
+                                        if (cvalue.charAt(0)=='#') {
+                                            cvalue = cvalue.substring(1);
+                                        }
+                                        color = Integer.parseInt(cvalue, 16);
+                                    }
+                                    if (type!=null) {
+                                        if ("BACKGROUND".equals(type)) {
+                                            newStyle.addBackground(color, st);
+                                        }
+                                        else if ("FOREGROUND".equals(type)) {
+                                            newStyle.addForeground(color, st);
+                                        }
+                                        else if ("BORDERFILL".equals(type)) {
+                                            if (border!=null) {
+                                                border.setColor(color);
+                                            }
+                                            else {
+                                                borderfill = color;
+                                            }
+                                        }
+                                    }
+                                    if (id!=null) {
+                                        params.put(id, new Integer(color));
+                                    }
+                                }
+                                else {
+                                    //#debug
+                                    System.out.println("unknown found: "+name2);
+                                }
+
+                                // read end tag
+                                parser.skipSubTree();
                             }
-                            
-                            // read end tag
-                            parser.skipSubTree();
                         }
                         
                     }
+                    else if ("font".equals(name)) {
+                            
+                           loadFont(parser,params); 
+                    }
                     else {
+                        
                         if ("insets".equals(name)) {
                                 String top = parser.getAttributeValue(null, "top");
                                 String left = parser.getAttributeValue(null, "left");
@@ -276,10 +247,11 @@ System.out.println("getting: "+value);
                                 if (x!=null && y!=null && width!=null && height!=null) {
                                     newImage = Image.createImage(newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
                                 }
-System.out.println("adding: "+id);
+
                                 params.put(id, newImage);
                         }
                         else {
+                            //#debug
                             System.out.println("unknown found: "+name);
                         }
                         
@@ -319,5 +291,69 @@ System.out.println("adding: "+id);
 
         }
 
+        // TODO: support bitmap fonts
+        private Font loadFont(KXmlParser parser,Hashtable params) throws Exception {
+
+                String fontName = parser.getAttributeValue(null, "name");
+                String fontSize = parser.getAttributeValue(null, "size");
+                String fontStyle = parser.getAttributeValue(null, "style");
+                String fontId = parser.getAttributeValue(null, "id");
+                int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
+                int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
+                int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
+
+                if ("PROPORTIONAL".equals(fontName)) {
+                    fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
+                }
+                else if ("MONOSPACE".equals(fontName)) {
+                    fname=javax.microedition.lcdui.Font.FACE_MONOSPACE;
+                }
+                else if ("SYSTEM".equals(fontName)) {
+                    fname=javax.microedition.lcdui.Font.FACE_SYSTEM;
+                }
+
+                if (fontStyle!=null) {
+                    if (fontStyle.indexOf("BOLD")!=1) {
+                        fstyle |= javax.microedition.lcdui.Font.STYLE_BOLD;
+                    }
+                    if (fontStyle.indexOf("ITALIC")!=1) {
+                        fstyle |= javax.microedition.lcdui.Font.STYLE_ITALIC;
+                    }
+                    if (fontStyle.indexOf("UNDERLINED")!=1) {
+                        fstyle |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
+                    }
+                }
+
+                if ("SMALL".equals(fontSize)) {
+                    fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
+                }
+                else if ("MEDIUM".equals(fontSize)) {
+                    fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
+                }
+                else if ("LARGE".equals(fontSize)) {
+                    fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
+                }
+
+                Font font = new Font(javax.microedition.lcdui.Font.getFont(fname, fstyle, fsize));
+
+                if (fontId!=null) {
+                    params.put(fontId, font);
+                }
+
+                while (parser.nextTag() != KXmlParser.END_TAG) {
+                    String name = parser.getName();
+                    // TODO, load bitmap font settings here
+                    
+                    //#debug
+                    System.out.println("oooo: "+name);
+                    
+                    parser.skipSubTree();
+                }
+
+                return font;
+
+
+        }
+        
     
 }

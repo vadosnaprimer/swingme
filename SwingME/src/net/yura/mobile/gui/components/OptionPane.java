@@ -35,6 +35,7 @@ public class OptionPane extends Window {
     private ScrollPane scroll;
     
     public OptionPane() {
+        setName("Dialog");
         
         super.setActionListener(this);
         title = new TitleBar("", null, false, false, false, false, false);
@@ -66,11 +67,6 @@ public class OptionPane extends Window {
         if (actionListener!=null) {
             actionListener.actionPerformed(actionCommand);
         }
-    }
-    
-    
-    public String getName() {
-        return "Dialog";
     }
     
     public boolean keyEvent(KeyEvent keypad) {
@@ -141,7 +137,7 @@ public class OptionPane extends Window {
         this.icon.setIcon(icon);
     }
     
-    private void open () {
+    private void open() {
         
         content.workoutSize(); // what out what the needed size is
         scroll.setSize(content.getWidthWithBorder(), content.getHeightWithBorder());

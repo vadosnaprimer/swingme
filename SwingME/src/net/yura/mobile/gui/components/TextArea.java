@@ -21,17 +21,14 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.plaf.Style;
 
 /**
  * a component thats like a read-only TextArea
  * @author Yura Mamyrin
  * @see javax.swing.JTextArea
  */
-public class TextArea extends Component {
+public class TextArea extends TextComponent {
 	
-        private String text;
-        private Font font;
 	private int[] lines;
         private int widthUsed;
         
@@ -43,15 +40,7 @@ public class TextArea extends Component {
         }
         
 	public TextArea(String text) {
-		this(text,Graphics.LEFT);
-	}
-	
-	public int getAlignment() {
-		return align;
-	}
-
-	public void setAlignment(int alignment) {
-		align = alignment;
+            this(text,Graphics.LEFT);
 	}
 
 	/**
@@ -59,18 +48,31 @@ public class TextArea extends Component {
 	 * @param alignment Alignment of the text, should be one of the alignment from Font class
 	 */
 	public TextArea(String text, int alignment) {
-
+            
+                setConstraints(TextComponent.ANY);
+                
 		align = alignment;
-		selectable = false;
                 width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
                 setText(text);
 	}
 	
+        
+        public int getAlignment() {
+		return align;
+	}
+
+	public void setAlignment(int alignment) {
+		align = alignment;
+	}
+        
+        
 	/**
 	 * @param g The Graphics object
 	 */
 	public void paintComponent(Graphics g) {
 
+                String text = getDisplayString();
+            
 		int y = 0;
 		int x = 0;
 		
@@ -94,7 +96,7 @@ public class TextArea extends Component {
 			y -= height;
 		}
 
-                g.setColor( foreground );
+                g.setColor( isFocused()?activeTextColor:foreground );
                 
                 int i, startLine, endLine, lineHeight;
                 
@@ -147,8 +149,8 @@ public class TextArea extends Component {
 	 * @param txt The text
 	 */
 	public void setText(String txt) {
-            text = txt;
-            setupHeight(getLines(text,font,0,width),width);
+            super.setText(txt);
+            setupHeight(getLines(txt,font,0,width),width);
 	}
 	
         /**
@@ -157,7 +159,7 @@ public class TextArea extends Component {
          */
 	public void append(String a) {
 	
-            String newtext = text + a;
+            String newtext = getText() + a;
             
             if (lines==null || lines.length<=1) {
                 // we dont have enough text in the box to know where to append yet
@@ -180,35 +182,17 @@ public class TextArea extends Component {
                 }
                 
                 // set the text and adjust the height
-                text = newtext;
+                super.setText(newtext);
                 setupHeight(l3,width);
 
             }
             
 
 	}
-        
-	public String getText() {
-		
-            return text;
-	}
+
+
 	
-        /**
-         * @param font The font to use
-         * @see javax.swing.JComponent#setFont(java.awt.Font) JComponent.setFont
-         */
-	public void setFont(Font font){
-		this.font = font;
-	}
-	
-        /**
-         * @return the font
-         * @see java.awt.Component#getFont() Component.getFont
-         */
-	public Font getFont(){
-		return font;
-	}
-        
+
         public static int[] getLines(String str,Font f,int startPos,int w) {
 
 		final Vector parts = new Vector();
@@ -301,14 +285,14 @@ public class TextArea extends Component {
         // TODO, add preferred width option
         width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
         if (width!=widthUsed) {
-            setupHeight(getLines(text,font,0,width),width);
+            setupHeight(getLines(getText(),font,0,width),width);
         }
     }
     
     public void setSize(int w,int h) {
         super.setSize(w, h);
         if (width!=widthUsed) {
-             setupHeight(getLines(text,font,0,width),width);
+             setupHeight(getLines(getText(),font,0,width),width);
         }
     }
     
@@ -332,11 +316,6 @@ public class TextArea extends Component {
 
     public String getName() {
         return "TextArea";
-    }
-    
-    public void updateUI() {
-        super.updateUI();
-        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
 	
 }

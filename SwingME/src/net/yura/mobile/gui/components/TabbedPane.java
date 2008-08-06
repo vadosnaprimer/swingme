@@ -35,7 +35,7 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         private List tabList;
         private Vector tabs;
-        private ScrollPane scroll;
+        private Panel tabBar;
         private Panel tabContent;
         private int tabPosition;
 
@@ -58,12 +58,14 @@ public class TabbedPane extends Panel implements ChangeListener {
             tabs = new Vector();
 
             tabList.addChangeListener(this);
-            scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
+            ScrollPane scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
 
             tabContent = new Panel(l);
-
+            tabBar = new Panel(l);
+            tabBar.add(scroll);
             // this will ALWAYS be transparent as its the scroll that does the drawing for the theme
             tabList.background = -1;
+            scroll.background = -1;
             
             setTabPlacement(a);
 
@@ -84,20 +86,20 @@ public class TabbedPane extends Panel implements ChangeListener {
                 ((DefaultTabRenderer)lcr).setTabPlacement(a);
             }
             
-            scroll.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
+            tabBar.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
 
             tabContent.setName("TabContent" + (a==Graphics.TOP?"Bottom":(a==Graphics.LEFT?"Right":(a==Graphics.RIGHT?"Left":"Top"))) );
             
             super.removeAll();
             
             if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
-                super.add(scroll,tabPosition);
+                super.add(tabBar,tabPosition);
             }
 
             super.add(tabContent);
 
             if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
-                super.add(scroll,tabPosition);
+                super.add(tabBar,tabPosition);
             }
             
         }
@@ -204,10 +206,10 @@ public class TabbedPane extends Panel implements ChangeListener {
             // as when we have NO tabs added
             // we dont know the thickness of the tab bar
             if (tabPosition==Graphics.TOP || tabPosition==Graphics.BOTTOM) {
-                scroll.setSize(width, tabList.getHeight());
+                tabBar.setSize(width, tabList.getHeight());
             }
             else {
-                scroll.setSize(tabList.getWidth(), height);
+                tabBar.setSize(tabList.getWidth(), height);
             }
 
         }
@@ -223,9 +225,8 @@ public class TabbedPane extends Panel implements ChangeListener {
         tabContent.add(thetabtoAdd);
 
         revalidate();
-        if (scroll.isOpaque()) {
-            repaint();
-        }
+        repaint();
+
         if (!tabList.isSelectable() && owner!=null) {
             owner.setupFocusedComponent();
         }

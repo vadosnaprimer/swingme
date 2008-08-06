@@ -57,9 +57,13 @@ public class ScrollPane extends Panel {
         public ScrollPane(int m) {
 		
 		setMode(m);
-                setName("ScrollPane");
+                super.setName("ScrollPane");
                 
 	}
+        
+        public void setName(String n) {
+            throw new IllegalArgumentException();
+        }
         
 	public ScrollPane(Component view,int a) {
 		this(a);

@@ -192,7 +192,8 @@ public class MainPane extends DesktopPane implements ActionListener {
 			if (info==null) {
 			
                                 infoLabel = new TextArea("...",Graphics.HCENTER);
-                                infoLabel.setSize(getWidth(),infoLabel.getHeight());
+                                //infoLabel.setSize(getWidth(),infoLabel.getHeight());
+                                infoLabel.setSelectable(false);
                                 
 				info = new Panel( new BorderLayout() ) {
                                         { selectable=true; }
@@ -282,7 +283,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add( new TextField(javax.microedition.lcdui.TextField.ANY) );
                                 componentTest.add( new TextField(javax.microedition.lcdui.TextField.ANY | javax.microedition.lcdui.TextField.PASSWORD) );
                                 
-                                componentTest.add( new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line") );
+                                TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line");
+                                longText.setSelectable(false);
+                                componentTest.add( longText );
                                 
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
                                 
@@ -306,6 +309,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			if (loadPanel==null) {
 				
 				loadPanel = new TextArea();
+                                loadPanel.setSelectable(false);
 				images = new Vector();
 
 			}
@@ -449,7 +453,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                                 tabbedPane.add(tab1);
                                 tabbedPane.addTab("TAB 2", image, tab2);
-                                tabbedPane.addTab("tab 3", new ScrollPane(tab3));
+                                tabbedPane.addTab("tab 3 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
                                 
                                 tabPanel.add(tabbedPane);

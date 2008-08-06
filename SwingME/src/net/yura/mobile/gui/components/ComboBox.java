@@ -139,6 +139,8 @@ public class ComboBox extends Button implements ActionListener{
 			list.addActionListener(this);
 			scroll = new ScrollPane(list);
 			scroll.setBorder(activeBorder);
+                        // TODO use a window, and set the windows name to "Menu"
+                        // do this when doing tooltips
 		}
 		
 	}
@@ -225,8 +227,11 @@ public class ComboBox extends Button implements ActionListener{
 		setSelected( list.getItems().elementAt(i) );
 	}
 	
-	
-	public int getFocusedItemIndex(){
+	/**
+         * @return an integer specifying the currently selected list item
+         * @see javax.swing.JComboBox#getSelectedIndex() JComboBox#getSelectedIndex
+         */
+	public int getSelectedIndex() {
 		return list.getSelectedIndex();
 	}
 	

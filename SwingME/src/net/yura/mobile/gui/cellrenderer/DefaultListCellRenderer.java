@@ -30,10 +30,8 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 
-        private int colorNo;
-	private int color;
-	private Border normal;
-	private Border selected;
+        private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
+	protected Border normal,selected,focusedAndSelected;
 	
         /**
          * @see javax.swing.DefaultListCellRenderer#DefaultListCellRenderer() DefaultListCellRenderer.DefaultListCellRenderer
@@ -48,8 +46,9 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 			int index, boolean isSelected, boolean cellHasFocus) {
 
                 setValue(value);
-                setBorder(cellHasFocus?selected:normal);
-                setBackground(isSelected?color:colorNo);
+                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
+                setBackground(isSelected?colorSelected:colorNormal);
+                setForeground(isSelected?foregroundSelected:foregroundNormal);
                 
 		return this;
 	}
@@ -66,9 +65,14 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
                 super.updateUI();
                 Style st = DesktopPane.getDefaultTheme(this);
                 normal = st.getBorder( Style.ENABLED );
-                selected = st.getBorder( Style.FOCUSED );
-                color = st.getBackground( Style.SELECTED );
-                colorNo = st.getBackground( Style.ALL );
+                focusedAndSelected = st.getBorder( Style.FOCUSED | Style.SELECTED);
+                selected = st.getBorder( Style.SELECTED );
+                
+                colorNormal = st.getBackground( Style.ALL );
+                colorSelected = st.getBackground( Style.SELECTED );
+                
+                foregroundNormal = st.getForeground( Style.ALL );
+                foregroundSelected = st.getForeground( Style.SELECTED );
         }
 	
 }
