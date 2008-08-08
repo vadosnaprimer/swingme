@@ -108,6 +108,9 @@ public class OptionPane extends Window {
         if (object instanceof Component) {
             return (Component)object;
         }
+        if (object instanceof Image) {
+            return new Label((Image)object);
+        }
         Label tmp = new Label();
         tmp.setValue(object);
         return tmp;
@@ -143,21 +146,21 @@ public class OptionPane extends Window {
         scroll.setSize(content.getWidthWithBorder(), content.getHeightWithBorder());
         pack();
 
-        int maxw = (DesktopPane.getDesktopPane().getWidth()*6)/8;
-        int maxh = (DesktopPane.getDesktopPane().getHeight()*6)/8;
+        int maxw = DesktopPane.getDesktopPane().getWidth();
+        int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
         
-        if (getWidth() > maxw) {
-            myself.setSize(maxw, myself.getHeight()+ScrollPane.getBarThickness(scroll.getWidth(), scroll.getHeight()));
+        if (getWidthWithBorder() > maxw) {
+            setBoundsWithBorder(0,0,maxw, getHeightWithBorder());
         }
-        if (getHeight() > maxh) {
-            myself.setSize(myself.getWidth(), maxh);
+        if (getHeightWithBorder() > maxh) {
+            setBoundsWithBorder(0,0,getWidthWithBorder(), maxh);
         }
         
-        myself.setLocation((DesktopPane.getDesktopPane().getWidth() - myself.getWidth()) /2, 
-                (DesktopPane.getDesktopPane().getHeight() - myself.getHeight()) /2
+        setLocation((DesktopPane.getDesktopPane().getWidth() - getWidth()) /2, 
+                (DesktopPane.getDesktopPane().getHeight() - getHeight()) /2
         );
         
-        myself.setVisible(true);
+        setVisible(true);
 
     }
     

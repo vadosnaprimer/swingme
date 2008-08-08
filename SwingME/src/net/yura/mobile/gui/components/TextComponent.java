@@ -93,11 +93,6 @@ public abstract class TextComponent extends Component implements ActionListener,
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
          */
-        public TextComponent() {
-            this("Text","",100,ANY);
-        }
-
-
 	public TextComponent(String title,String initialText,int max, int constraints) {
 
 		maxSize = max;

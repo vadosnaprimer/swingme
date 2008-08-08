@@ -48,12 +48,10 @@ public class TextArea extends TextComponent {
 	 * @param alignment Alignment of the text, should be one of the alignment from Font class
 	 */
 	public TextArea(String text, int alignment) {
-            
-                setConstraints(TextComponent.ANY);
-                
-		align = alignment;
-                width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
-                setText(text);
+            super("TextArea",text, 1000, TextComponent.ANY);
+
+            align = alignment;
+            width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
 	}
 	
         
@@ -150,7 +148,7 @@ public class TextArea extends TextComponent {
 	 */
 	public void setText(String txt) {
             super.setText(txt);
-            setupHeight(getLines(txt,font,0,width),width);
+            setupHeight(getLines(txt,font,0,width),width,true);
 	}
 	
         /**
@@ -183,7 +181,7 @@ public class TextArea extends TextComponent {
                 
                 // set the text and adjust the height
                 super.setText(newtext);
-                setupHeight(l3,width);
+                setupHeight(l3,width,true);
 
             }
             
@@ -282,35 +280,42 @@ public class TextArea extends TextComponent {
         }
 
     public void workoutSize() {
-        // TODO, add preferred width option
-        width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+
         if (width!=widthUsed) {
-            setupHeight(getLines(getText(),font,0,width),width);
+            setupHeight(getLines(getText(),font,0,width),width,false);
         }
+
     }
     
     public void setSize(int w,int h) {
         super.setSize(w, h);
+        
         if (width!=widthUsed) {
-             setupHeight(getLines(getText(),font,0,width),width);
+             setupHeight(getLines(getText(),font,0,width),width,true);
         }
     }
     
-    private void setupHeight(int[] l,int w) {
+    private void setupHeight(int[] l,int w,boolean relayout) {
         lines = l;
         widthUsed = w;
         int oldh = height;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
         
         // this is kind of a hack
-        // it asks the parent to relayout if my height has changed
-        // but what if its not in a state to be ready to relayout?
-        // what if its not visible?
-        // what if it is streached/shrunk and ITS parent needs to be relayed out too?
-        if (oldh!=height && parent!=null && owner!=null) {
+        if (relayout && oldh!=height && parent!=null && owner!=null) {
             // so the scroll parent can strech my size
-            parent.doLayout();
-            parent.repaint();
+            Panel p = parent;
+            while (!(p instanceof ScrollPane)) {
+                Panel pp = p.parent;
+                if (pp==null) {
+                    break;
+                }
+                else {
+                    p=pp;
+                }
+            }
+            p.revalidate();
+            p.repaint();
         }
     }
 

@@ -75,37 +75,51 @@ public class Menu extends Button {
             if (w > DesktopPane.getDesktopPane().getWidth()) {
                 w = DesktopPane.getDesktopPane().getWidth();
             }
-            if (h > DesktopPane.getDesktopPane().getHeight()) {
-                h = DesktopPane.getDesktopPane().getHeight();
+            
+            int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
+            
+            if (h > maxh) {
+                h = maxh;
             }
             
-            
-            
-            int right = DesktopPane.getDesktopPane().getWidth() - x - width;
-            //int bottom = DesktopPane.getDesktopPane().getHeight() - y - height;
-            boolean up = (y+height/2 > DesktopPane.getDesktopPane().getHeight()/2);
-            
-            if (up) {
-                y = y-h;
+            if (parentMenu == null) {
+                // the right x position of whatever opended me!
+                int right = DesktopPane.getDesktopPane().getWidth() - x - width;
+                //int bottom = DesktopPane.getDesktopPane().getHeight() - y - height;
+                boolean up = (y+height/2 > DesktopPane.getDesktopPane().getHeight()/2);
+
+                if (up) {
+                    y = y-h;
+                }
+                else {
+                    y = y+height;
+                }
+
+                if (right==0) {
+                    x = DesktopPane.getDesktopPane().getWidth() - w;
+                }
+                //else {
+                //    x = x;
+                //}
             }
             else {
-                y = y+height;
+             
+                x = x+width;
+                
             }
-            
-            if (right==0) {
-                x = DesktopPane.getDesktopPane().getWidth() - w;
-            }
-            //else {
-            //    x = x;
-            //}
-
 
             // check we r not going off the screen if we are then move us
             if (x+w > DesktopPane.getDesktopPane().getWidth()) {
                 x = DesktopPane.getDesktopPane().getWidth() - w;
             }
-            if (y+h > DesktopPane.getDesktopPane().getHeight()) {
-                y = DesktopPane.getDesktopPane().getHeight() - h;
+            
+            int softkeyHeight = (DesktopPane.getDesktopPane().getHeight() - maxh)/2;
+            
+            if (y<softkeyHeight) {
+                y=softkeyHeight;
+            }
+            if (y+h > maxh + softkeyHeight) {
+                y = DesktopPane.getDesktopPane().getHeight() - h - softkeyHeight;
             }
             
             openMenuAtLocation(x, y, w, h);

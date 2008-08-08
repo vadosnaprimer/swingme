@@ -264,10 +264,6 @@ public class ScrollPane extends Panel {
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
 		
-                if (getComponent().getHeight() <viewHeight) {
-                    getComponent().setSize(getComponent().getWidth(), viewHeight);
-                }
-
 		// this is a hack to make it easer to code panels and not have a tiny amount of side scrolling
 		// as even though this is technically correct, it is very annoying to use this panel
 		// now panels that are the width of the scrollpane or less are set to the width of the viewPort
@@ -280,6 +276,10 @@ public class ScrollPane extends Panel {
 			getComponent().setSize(viewWidth, getComponent().getHeight());
 			
 		}
+
+                if (getComponent().getHeight() <viewHeight) {
+                    getComponent().setSize(getComponent().getWidth(), viewHeight);
+                }
 
                 super.doLayout();
 

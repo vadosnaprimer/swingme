@@ -411,6 +411,11 @@ public class DesktopPane extends Canvas implements Runnable {
             return com;
         }
         
+        public int getSoftkeyHeight() {
+            Component c = softkeyRenderer.getListCellRendererComponent(null, new CommandButton("a", "a"), 0, false, false);
+            c.workoutSize();
+            return c.getHeight();
+        }
 
         // #####################################################################
         // Different ways of caling repaint

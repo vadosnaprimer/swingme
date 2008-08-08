@@ -32,8 +32,7 @@ public class TextField extends TextComponent {
         }
         
         public TextField(int a) {
-            
-            setConstraints(a);
+            super("TextField", "", 100, a);
             
             offset = padding;
             
