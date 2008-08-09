@@ -420,12 +420,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 		return text.length();
 	}
 
-        public void workoutSize() {
-                    // TODO, add preferred width option
-                    width = DesktopPane.getDesktopPane().getWidth() /2;
-                    height = font.getHeight() + padding*2; // put some padding in
-        }
-
         public void updateUI() {
                 super.updateUI();
                 Style theme = DesktopPane.getDefaultTheme(this);

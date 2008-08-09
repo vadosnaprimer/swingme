@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.DesktopPane;
 
 /**
  * @author Yura Mamyrin
@@ -80,7 +81,13 @@ public class TextField extends TextComponent {
 
             repaint();
         }
-        
+
+        public void workoutSize() {
+                    // TODO, add preferred width option
+                    width = DesktopPane.getDesktopPane().getWidth() /2;
+                    height = font.getHeight() + padding*2; // put some padding in
+        }
+
     public String getName() {
         return "TextField";
     }
