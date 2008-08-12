@@ -45,6 +45,7 @@ public class TextArea extends TextComponent {
 	}
 
 	/**
+	 * If text is set in the Constructor and the width is unknown, its ok as wrap is off be default!
          * @param text the text content
 	 * @param alignment Alignment of the text, should be one of the alignment from Font class
 	 */

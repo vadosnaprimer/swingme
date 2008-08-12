@@ -18,6 +18,7 @@
 package net.yura.mobile.test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
@@ -73,8 +74,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Table tableTest;
         
         private Image image;
-        private TextArea infoLabel;
-	private TextArea loadPanel;
+        private TextArea infoLabel,viewText,loadPanel;
 	private Vector images;
 	private Window mainWindow;
 	
@@ -133,6 +133,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 				
                                 addMainMenuButton("Info","info");
 				addMainMenuButton("Load","loadpanel");
+				addMainMenuButton("View Text","viewText");
 				addMainMenuButton("Error","throwerror");
                                 addMainMenuButton("Component Test","componentTest");
                                 addMainMenuButton("Border Test","borderTest");
@@ -317,6 +318,41 @@ public class MainPane extends DesktopPane implements ActionListener {
 			}
 			
 			addToScrollPane(loadPanel, new CommandButton("Load","load") , new CommandButton("Back","mainmenu") );
+		}
+		else if ("viewText".equals(actionCommand)) {
+			
+			if (viewText==null) {
+				
+
+StringBuffer buf = new StringBuffer();
+InputStream inputStreamTxt=null;
+
+try {
+	inputStreamTxt = this.getClass().getResourceAsStream("/SynthME.dtd");
+	int c ;
+	while ((c = inputStreamTxt.read()) != -1)
+	{buf.append((char)c);}
+}
+catch(Exception ex) {
+	ex.printStackTrace();
+	buf.append(ex.toString());
+}
+finally {
+    if (inputStreamTxt!=null) {
+	try {
+		inputStreamTxt.close();
+	}
+	catch(Exception ex) { }
+    }
+}
+				viewText = new TextArea();
+                                viewText.setSelectable(false);
+				viewText.setLineWrap(true);
+				viewText.setText(buf.toString());
+
+			}
+			
+			addToScrollPane(viewText, null , new CommandButton("Back","mainmenu") );
 		}
                 else if ("load".equals(actionCommand)) {
 			
