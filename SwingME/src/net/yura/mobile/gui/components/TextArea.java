@@ -293,8 +293,10 @@ public class TextArea extends TextComponent {
 	 * If w == Integer.MAX_VALUE, then it wont wrap on words
 	 */
         public static int[] getLines(String str,Font f,int startPos,int w) {
-
-System.out.println("getLines "+startPos);
+            
+//#debug
+System.out.println("getLines start="+startPos +" w="+w);
+// this is here as this is quite a CPU intensive method
 
 		final Vector parts = new Vector();
 

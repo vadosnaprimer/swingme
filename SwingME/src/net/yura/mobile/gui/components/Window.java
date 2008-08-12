@@ -147,6 +147,17 @@ public class Window extends Component implements ActionListener {
         }
         
         /**
+         * @see java.awt.Component#isVisible() Component.isVisible
+         */
+        public boolean isVisible() {
+            Vector win = DesktopPane.getDesktopPane().getAllFrames();
+            for (int c=0;c<win.size();c++) {
+                if (win.elementAt(c) == this) return true;
+            }
+            return false;
+        }
+        
+        /**
          * @param a true to maxemise the window
          * @see javax.swing.JInternalFrame#setMaximum(boolean) JInternalFrame.setMaximum
          */

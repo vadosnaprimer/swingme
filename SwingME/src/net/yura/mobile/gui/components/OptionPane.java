@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
@@ -101,6 +102,7 @@ public class OptionPane extends Window {
     public void setMessage(Object newMessage) {
         
         content.removeAll();
+        content.setLocation(0, 0);
         
         if (newMessage instanceof Object[]) {
             Object[] objects = (Object[])newMessage;
@@ -156,7 +158,7 @@ public class OptionPane extends Window {
     public void setIcon(Image icon) {
         this.icon.setIcon(icon);
     }
-    
+
     private void open() {
         
         content.workoutSize(); // what out what the needed size is
@@ -181,13 +183,23 @@ public class OptionPane extends Window {
 
     }
     
-    
-    private static OptionPane myself;
-    
+    private boolean factory;
     public static void showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Image icon, CommandButton[] options, CommandButton initialValue) {
+
+        Vector myselfs = getAllWindows();
+        OptionPane myself=null;
+        
+        for (int c=0;c<myselfs.size();c++) {
+            Window op = (Window)((WeakReference)myselfs.elementAt(c)).get();
+            if (op instanceof OptionPane && ((OptionPane)op).factory && !op.isVisible()) {
+                myself = (OptionPane)op;
+                break;
+            }
+        }
         
         if (myself==null) {
             myself = new OptionPane();
+            myself.factory = true;
         }
         myself.setMessage(message);
         myself.setTitle(title);
