@@ -160,7 +160,7 @@ public class OptionPane extends Window {
     private void open() {
         
         content.workoutSize(); // what out what the needed size is
-        scroll.setSize(content.getWidthWithBorder(), content.getHeightWithBorder());
+        scroll.setPreferredSize(content.getWidthWithBorder(), content.getHeightWithBorder());
         pack();
 
         int maxw = DesktopPane.getDesktopPane().getWidth();

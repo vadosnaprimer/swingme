@@ -148,7 +148,7 @@ public class TextArea extends TextComponent {
 	 */
 	public void setText(String txt) {
             super.setText(txt);
-            setupHeight(getLines(txt,font,0,width),width,true);
+            setupHeight(getLines(txt,font,0,width),width);
 	}
 	
         /**
@@ -170,28 +170,91 @@ public class TextArea extends TextComponent {
                 // just copy the 1st array and the 2nd array into the new array
                 // 1 value will be lost from the end of the old array
                 int[] l3 = new int[ lines.length -1 + l2.length];
-                for (int c=0;c<l3.length;c++) {
-                    if (c<lines.length-1) {
-                        l3[c] = lines[c];
-                    }
-                    else {
-                        l3[c] = l2[ c - lines.length+1 ];
-                    }
-                }
-                
+
+		System.arraycopy(lines, 0, l3, 0, lines.length-1);
+		System.arraycopy(l2, 0, l3, lines.length-1, l2.length);
+
                 // set the text and adjust the height
                 super.setText(newtext);
-                setupHeight(l3,width,true);
+                setupHeight(l3,width);
 
             }
-            
+
 
 	}
 
+    private void setupHeight(int[] l,int w) {
+        lines = l;
+        widthUsed = w;
+        int oldh = height;
+        height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
 
-	
+	// we have just changed out height
+	// if we are in a scrollPane we shoudl tell it, so it can adjust
+	if (oldh!=height && parent instanceof ScrollPane) {
+
+            parent.doLayout();
+            parent.repaint();
+
+	}
+
+/*
+        // this is kind of a hack
+        if (relayout && oldh!=height && parent!=null && owner!=null) {
+            // so the scroll parent can strech my size
+            Panel p = parent;
+            while (!(p instanceof ScrollPane)) {
+                Panel pp = p.parent;
+                if (pp==null) {
+                    break;
+                }
+                else {
+                    p=pp;
+                }
+            }
+            p.revalidate();
+            p.repaint();
+        }
+*/
+    }
+
+
+    public void workoutSize() {
+
+	// scrollpane will handel out size
+	// we assume that the scrollPane size is already setup and correct
+	if (parent instanceof ScrollPane) {
+		width = ((ScrollPane)parent).getViewPortWidth();
+	}
+	else {
+		width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+	}
+
+	// ALWAYS setup the height in this method!
+        setupHeight((width!=widthUsed)?getLines(getText(),font,0,width):lines,width);
+
+    }
+    
+    public void setSize(int w,int h) {
+        super.setSize(w, h);
+
+        if (width!=widthUsed) {
+        	setupHeight(getLines(getText(),font,0,width),width);
+	}
+    }
+
+    public String getName() {
+        return "TextArea";
+    }
+
+
+
+
+
 
         public static int[] getLines(String str,Font f,int startPos,int w) {
+
+System.out.println("getLines "+startPos);
 
 		final Vector parts = new Vector();
 
@@ -279,48 +342,5 @@ public class TextArea extends TextComponent {
                 return array;
         }
 
-    public void workoutSize() {
 
-        if (width!=widthUsed) {
-            setupHeight(getLines(getText(),font,0,width),width,false);
-        }
-
-    }
-    
-    public void setSize(int w,int h) {
-        super.setSize(w, h);
-        
-        if (width!=widthUsed) {
-             setupHeight(getLines(getText(),font,0,width),width,true);
-        }
-    }
-    
-    private void setupHeight(int[] l,int w,boolean relayout) {
-        lines = l;
-        widthUsed = w;
-        int oldh = height;
-        height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
-        
-        // this is kind of a hack
-        if (relayout && oldh!=height && parent!=null && owner!=null) {
-            // so the scroll parent can strech my size
-            Panel p = parent;
-            while (!(p instanceof ScrollPane)) {
-                Panel pp = p.parent;
-                if (pp==null) {
-                    break;
-                }
-                else {
-                    p=pp;
-                }
-            }
-            p.revalidate();
-            p.repaint();
-        }
-    }
-
-    public String getName() {
-        return "TextArea";
-    }
-	
 }

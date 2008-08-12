@@ -18,7 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
-
+import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.plaf.Style;
 
@@ -55,12 +55,18 @@ public class ScrollPane extends Panel {
         }
         
         public ScrollPane(int m) {
-		
+		super(null);
 		setMode(m);
                 super.setName("ScrollPane");
                 
 	}
-        
+
+	public void setLayout(Layout lt) {
+
+		if (lt!=null) throw new IllegalArgumentException();
+
+	}
+
         public void setName(String n) {
             throw new IllegalArgumentException();
         }
@@ -218,7 +224,7 @@ public class ScrollPane extends Panel {
 	}
 	
 	
-	protected int getViewPortHeight() {
+	public int getViewPortHeight() {
 		switch (mode) {
 			case MODE_SCROLLBARS: return height-getViewPortY()-((getComponent().getWidth()> (width-getViewPortX()) )?barThickness:0);
 			case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?height-(barThickness*2):height;
@@ -227,7 +233,11 @@ public class ScrollPane extends Panel {
 			default: throw new RuntimeException();
 		}
 	}
-	protected int getViewPortWidth(int vph) {
+	public int getViewPortWidth() {
+		return getViewPortWidth(getViewPortHeight());
+	}
+
+	private int getViewPortWidth(int vph) {
 		switch (mode) {
 			case MODE_SCROLLBARS: return width-getViewPortX()-((getComponent().getHeight()>vph)?barThickness:0);
 			case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?width-(barThickness*2):width;
@@ -236,7 +246,7 @@ public class ScrollPane extends Panel {
 			default: throw new RuntimeException();
 		}
 	}
-	protected int getViewPortX() {
+	public int getViewPortX() {
 		switch (mode) {
 			case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?barThickness:0;
 			case MODE_SCROLLBARS:
@@ -245,7 +255,7 @@ public class ScrollPane extends Panel {
 			default: throw new RuntimeException();
 		}
 	}
-	protected int getViewPortY() {
+	public int getViewPortY() {
 		switch (mode) {
 			case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?barThickness:0;
 			case MODE_SCROLLBARS:
@@ -254,13 +264,34 @@ public class ScrollPane extends Panel {
 			default: throw new RuntimeException();
 		}
 	}
-        
+
+        public void workoutSize() {
+
+                if (preferredWidth!=-1) {
+                    width = preferredWidth;
+                }
+                else {
+			width = 0;
+		}
+
+                if (preferredHeight!=-1) {
+                    height = preferredHeight;
+                }
+                else {
+			height = 0;
+		}
+
+        }
+
+
         /**
          * we have to do this here, as only here do we already know what OUR size is
          * so we can resize the content how we want
          */
 	public void doLayout() {
-                
+
+		getComponent().workoutSize();
+
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
 		

@@ -200,17 +200,33 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         public void workoutSize() {
 
-            super.workoutSize();
+            tabList.workoutSize();
 
             // we can only really do this here
             // as when we have NO tabs added
             // we dont know the thickness of the tab bar
             if (tabPosition==Graphics.TOP || tabPosition==Graphics.BOTTOM) {
-                tabBar.setSize(width, tabList.getHeight());
+                tabBar.setPreferredSize(-1, tabList.getHeight());
             }
             else {
-                tabBar.setSize(tabList.getWidth(), height);
+                tabBar.setPreferredSize(tabList.getWidth(), -1);
             }
+
+	    tabContent.setPreferredSize(-1,-1);
+
+	    for(int i = 0; i < tabs.size(); i++) {
+			
+		Component component = (Component)tabs.elementAt(i);
+		component.workoutSize();
+		if (component.getWidthWithBorder() > tabContent.getPreferredWidth()) {
+			tabContent.setPreferredSize(component.getWidthWithBorder(),tabContent.getPreferredHeight());
+		}
+		if (component.getHeightWithBorder() > tabContent.getPreferredHeight()) {
+			tabContent.setPreferredSize(tabContent.getPreferredWidth(),component.getHeightWithBorder());
+		}
+	    }
+
+	    super.workoutSize();
 
         }
 

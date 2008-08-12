@@ -250,6 +250,14 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                                 params.put(id, newImage);
                         }
+                        else if ("opaque".equals(name)) {
+
+                                String value = parser.getAttributeValue(null, "value");
+				if ("false".equals(value)) {
+					newStyle.addBackground(-1, Style.ALL);
+				}
+
+			}
                         else {
                             //#debug
                             System.out.println("unknown found: "+name);
@@ -334,12 +342,6 @@ public class SynthLookAndFeel extends LookAndFeel {
                     fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
                 }
 
-                Font font = new Font(javax.microedition.lcdui.Font.getFont(fname, fstyle, fsize));
-
-                if (fontId!=null) {
-                    params.put(fontId, font);
-                }
-
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     String name = parser.getName();
                     // TODO, load bitmap font settings here
@@ -349,6 +351,16 @@ public class SynthLookAndFeel extends LookAndFeel {
                     
                     parser.skipSubTree();
                 }
+
+
+
+                Font font = new Font(javax.microedition.lcdui.Font.getFont(fname, fstyle, fsize));
+
+                if (fontId!=null) {
+                    params.put(fontId, font);
+                }
+
+
 
                 return font;
 

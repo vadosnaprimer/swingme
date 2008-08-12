@@ -28,9 +28,9 @@ removed:  font | color | imagePainter | imageIcon | inputMap
     >
 
 <!--
-removed:  property | defaultsProperty | font | graphicsUtils | painter | imagePainter | opaque | inputMap
+removed:  property | defaultsProperty | graphicsUtils | painter | imagePainter | inputMap
 -->
-    <!ELEMENT style ( state | insets | imageIcon)*>
+    <!ELEMENT style (state | insets | imageIcon | font | opaque)*>
     <!ATTLIST style
           id                   ID             #IMPLIED
           clone                IDREF          #IMPLIED
@@ -178,7 +178,13 @@ SwingME extra x,y,width,height
     >
 
 
-
+<!--
+used for no border fill
+-->
+    <!ELEMENT opaque EMPTY>
+    <!ATTLIST opaque
+          value                (true|false)   "true"
+    >
 
 
 
@@ -203,12 +209,6 @@ NOT USED:
           idref                IDREF          #IMPLIED
           method               CDATA          #IMPLIED
           direction            (north|south|east|west|horizontal|vertical|horizontal_split|vertical_split)          #IMPLIED
-    >
-
-
-    <!ELEMENT opaque EMPTY>
-    <!ATTLIST opaque
-          value                (true|false)   "true"
     >
 
     <!ELEMENT inputMap (bindKey)*>

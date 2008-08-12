@@ -57,11 +57,6 @@ public class Panel extends Component {
 		setLayout(n);
 		
 	}
-	
-	public Panel(String n) {
-		this();
-		setName(n);
-	}
         
         /**
          * @param lt the specified layout manager
@@ -218,6 +213,12 @@ public class Panel extends Component {
             preferredWidth = w;
             preferredHeight = h;
         }
+	public int getPreferredWidth() {
+		return preferredWidth;
+	}
+	public int getPreferredHeight() {
+		return preferredHeight;
+	}
 
         /**
          * works out the current size of this panel
@@ -238,13 +239,15 @@ public class Panel extends Component {
                 else if (layout!=null) {
 			width = layout.getPreferredWidth(this);
 		}
-                
+                // TODO else??? use 0???
+
                 if (preferredHeight!=-1) {
                     height = preferredHeight;
                 }
                 else if (layout!=null) {
 			height = layout.getPreferredHeight(this);
 		}
+                // TODO else??? use 0???
 
         }
         

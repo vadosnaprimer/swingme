@@ -381,12 +381,9 @@ public class MainPane extends DesktopPane implements ActionListener {
 			if (tabPanel==null) {
 				
                                 final TabbedPane tabbedPane = new TabbedPane();
-                            
-				tabPanel = new Panel( new BorderLayout() );
-                                tabPanel.add(new Label("Tab Test"),Graphics.TOP);
                                 
-                                Panel tab1 = new Panel( "Tab 1" );
-                                tab1.setLayout(new FlowLayout(Graphics.VCENTER));
+                                Panel tab1 = new Panel( new FlowLayout(Graphics.VCENTER) );
+                                tab1.setName("Tab 1");
                                 tab1.setBackground(0x00FF0000);
                                 tab1.add( new Label("This is tab ONE") );
                                 
@@ -409,8 +406,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                                         else if (left.getText().equals(actionCommand)) {
                                             tabbedPane.setTabPlacement(Graphics.LEFT);
                                         }
-                                        tabPanel.revalidate();
-                                        tabPanel.repaint();
+                                        tabPanel.getParent().revalidate();
+                                        tabPanel.getParent().repaint();
                                     }
                                 };
                                 
@@ -456,7 +453,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 tabbedPane.addTab("tab 3 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
                                 
-                                tabPanel.add(tabbedPane);
+                                tabPanel = tabbedPane;
                                 
 			}
 			

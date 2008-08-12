@@ -26,6 +26,7 @@
 
     <style id="button">
 	<insets top="5" left="10" bottom="5" right="10"/>
+	<opaque value="false"/>
 	<state>
 	<property key="Button.textShiftOffset" type="integer" value="1"/>
 	    <imagePainter method="buttonBackground" path="/button.png" sourceInsets="12 15 12 15" />
