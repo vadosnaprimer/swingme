@@ -34,6 +34,7 @@ public class TextArea extends TextComponent {
         
        	private int align;
         private int lineSpacing;
+	private boolean wrap;
 
         public TextArea() {
             this("");
@@ -62,7 +63,15 @@ public class TextArea extends TextComponent {
 	public void setAlignment(int alignment) {
 		align = alignment;
 	}
-        
+
+	/**
+	 * @see javax.swing.JTextArea#setLineWrap(boolean) JTextArea.setLineWrap
+	 */
+        public void setLineWrap(boolean w) {
+
+		wrap = w;
+
+	}
         
 	/**
 	 * @param g The Graphics object
@@ -148,7 +157,10 @@ public class TextArea extends TextComponent {
 	 */
 	public void setText(String txt) {
             super.setText(txt);
-            setupHeight(getLines(txt,font,0,width),width,true);
+
+	    int w = wrap?width:Integer.MAX_VALUE;
+
+            setupHeight(getLines(txt,font,0,w),w,true);
 	}
 	
         /**
@@ -164,8 +176,10 @@ public class TextArea extends TextComponent {
                 setText(newtext);
             }
             else {
-	
-                int[] l2 = getLines(newtext,font,lines[lines.length-2],width);
+
+		int w = wrap?width:Integer.MAX_VALUE;
+
+                int[] l2 = getLines(newtext,font,lines[lines.length-2],w);
 
                 // just copy the 1st array and the 2nd array into the new array
                 // 1 value will be lost from the end of the old array
@@ -176,7 +190,7 @@ public class TextArea extends TextComponent {
 
                 // set the text and adjust the height
                 super.setText(newtext);
-                setupHeight(l3,width,true);
+                setupHeight(l3,w,true);
 
             }
 
@@ -223,26 +237,59 @@ public class TextArea extends TextComponent {
 
     public void workoutSize() {
 
-	// scrollpane will handel out size
-	// we assume that the scrollPane size is already setup and correct
-	// this saves lots of un-needed calls to getLines
-	if (parent instanceof ScrollPane) {
-		width = ((ScrollPane)parent).getViewPortWidth();
+	if (wrap) {
+
+		// scrollpane will handel out size
+		// we assume that the scrollPane size is already setup and correct
+		// this saves lots of un-needed calls to getLines
+		if (parent instanceof ScrollPane) {
+			width = ((ScrollPane)parent).getViewPortWidth();
+		}
+		else {
+			width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+		}
 	}
 	else {
-		width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+
+		width=0;
 	}
 
 	// ALWAYS setup the height in this method!
-        setupHeight((width!=widthUsed)?getLines(getText(),font,0,width):lines,width,false);
+	int w = wrap?width:Integer.MAX_VALUE;
+        setupHeight((w!=widthUsed)?getLines(getText(),font,0,w):lines,w,false);
+
+	if (!wrap) {
+
+		String text = getDisplayString();
+
+		int beginIndex = 0;
+		for(int i = 0; i < lines.length; i++) {
+
+                    int lastIndex = lines[i];
+                    if (i!=(lines.length-1)) {
+                        lastIndex = lastIndex-1;
+                    }
+
+                    w = font.getWidth( text.substring(beginIndex, lastIndex) );
+
+		    if (width<w) {
+			width = w;
+		    }
+
+                    beginIndex = lines[i];
+		}
+
+
+	}
 
     }
     
     public void setSize(int w,int h) {
         super.setSize(w, h);
 
-        if (width!=widthUsed) {
-        	setupHeight(getLines(getText(),font,0,width),width,false);
+	w = wrap?width:Integer.MAX_VALUE;
+        if (w!=widthUsed) {
+        	setupHeight(getLines(getText(),font,0,w),w,false);
 	}
     }
 
@@ -268,7 +315,7 @@ System.out.println("getLines "+startPos);
                 // go though word by word
 		while (true) {
                     
-                        wordEnd = str.indexOf(' ',wordStart);
+                        wordEnd = (w==Integer.MAX_VALUE)?-1:str.indexOf(' ',wordStart);
                         lineEnd = str.indexOf('\n',wordStart);
                         
                         // work out the end position

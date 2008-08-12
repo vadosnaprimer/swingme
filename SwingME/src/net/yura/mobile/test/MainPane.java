@@ -285,6 +285,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
                                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line");
                                 longText.setSelectable(false);
+				longText.setLineWrap(true);
                                 componentTest.add( longText );
                                 
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
@@ -310,6 +311,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 				
 				loadPanel = new TextArea();
                                 loadPanel.setSelectable(false);
+				loadPanel.setLineWrap(true);
 				images = new Vector();
 
 			}

@@ -803,10 +803,10 @@ public class DesktopPane extends Canvas implements Runnable {
 				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
 				text = new TextArea();
                                 text.setSelectable(false);
+                                text.setLineWrap(true);
 				debugwindow.setContentPane( new ScrollPane(text) );
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
-                                text.setSize( debugwindow.getWidth()-ScrollPane.getBarThickness(debugwindow.getWidth(), debugwindow.getHeight()) , text.getHeight() );
                                 
                                 // This is not needed, but just in case something
                                 // has gone wrong with the theme, we set some defaults
