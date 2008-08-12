@@ -224,5 +224,10 @@ public class OptionPane extends Window {
         
     }
 
+    public static void showConfirmDialog(ActionListener parent, Object message, String title, int optionType) {
+        
+        showOptionDialog(parent, message, title, optionType, QUESTION_MESSAGE, null, null, null);
+        
+    }
     
 }

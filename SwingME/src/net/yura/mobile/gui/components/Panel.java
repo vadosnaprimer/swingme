@@ -35,6 +35,9 @@ public class Panel extends Component {
 	private Vector components;
 	private Hashtable constraints;
 
+        protected int preferredWidth=-1;
+        protected int preferredHeight=-1;
+        
 	/**
          * @see javax.swing.JPanel#JPanel() JPanel.JPanel
          */
@@ -201,9 +204,6 @@ public class Panel extends Component {
 
             }
 	}
-	
-        protected int preferredWidth=-1;
-        protected int preferredHeight=-1;
 
         
 	// does nothing, but can be overridden
