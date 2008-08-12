@@ -165,14 +165,14 @@ public class OptionPane extends Window {
 
         int maxw = DesktopPane.getDesktopPane().getWidth();
         int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
-        
-        if (getWidthWithBorder() > maxw) {
-            setBoundsWithBorder(0,0,maxw, getHeightWithBorder());
-        }
+
         if (getHeightWithBorder() > maxh) {
-            setBoundsWithBorder(0,0,getWidthWithBorder(), maxh);
+            setBoundsWithBorder(0,0,getWidthWithBorder() + ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight()), maxh);
         }
-        
+        if (getWidthWithBorder() > maxw) {
+            setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight())) );
+        }
+
         setLocation((DesktopPane.getDesktopPane().getWidth() - getWidth()) /2, 
                 (DesktopPane.getDesktopPane().getHeight() - getHeight()) /2
         );

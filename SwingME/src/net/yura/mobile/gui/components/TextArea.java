@@ -249,10 +249,6 @@ public class TextArea extends TextComponent {
 			width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
 		}
 	}
-	else {
-
-		width=0;
-	}
 
 	// ALWAYS setup the height in this method!
 	int w = wrap?width:Integer.MAX_VALUE;
@@ -260,6 +256,7 @@ public class TextArea extends TextComponent {
 
 	if (!wrap) {
 
+		width=0;
 		String text = getDisplayString();
 
 		int beginIndex = 0;
@@ -283,15 +280,7 @@ public class TextArea extends TextComponent {
 	}
 
     }
-    
-    public void setSize(int w,int h) {
-        super.setSize(w, h);
 
-	w = wrap?width:Integer.MAX_VALUE;
-        if (w!=widthUsed) {
-        	setupHeight(getLines(getText(),font,0,w),w,false);
-	}
-    }
 
     public String getName() {
         return "TextArea";
@@ -300,8 +289,9 @@ public class TextArea extends TextComponent {
 
 
 
-
-
+	/**
+	 * If w == Integer.MAX_VALUE, then it wont wrap on words
+	 */
         public static int[] getLines(String str,Font f,int startPos,int w) {
 
 System.out.println("getLines "+startPos);
@@ -336,7 +326,7 @@ System.out.println("getLines "+startPos);
                             end = lineEnd;
                         }
 
-                        int currentLineLength = f.getWidth(str.substring(lineStart, end));
+                        int currentLineLength = (w==Integer.MAX_VALUE)?-1:f.getWidth(str.substring(lineStart, end));
                         
                         if (currentLineLength > w && lineStart==wordStart) {
                                // start to remove 1 char at a time,
