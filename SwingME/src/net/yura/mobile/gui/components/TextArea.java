@@ -23,7 +23,17 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
 
 /**
- * a component thats like a read-only TextArea
+ * what happens with sizes:
+ * <ul>
+ * <li>set some text</li>
+ * <li>size is calculated right away (if the text is wraped then a defualt width is used)</li>
+ * <li>if wrap is turned on later, the size is recalculated</li>
+ * <li>when revalidate is called somewhere</li>
+ * <li>(if its inside a Panel, then the default size is used, just like swing, this can sometimes look strange)</li>
+ * <li>if its inside a ScrollPane, then workoutSize() is called from ScrollPane.doLayout() (the ScrollPane knows its correct size at this time)</li>
+ * <li>if wrap is TRUE the width is set to the ViewPort width of the ScrollPane (taking into account that it already has the rightish size, so can find out if scrollbars are needed on the ScrollPane)</li>
+ * <li>if the width or height is less then the ViewPort, the ScrollPane will streach the size</li>
+ * </ul>
  * @author Yura Mamyrin
  * @see javax.swing.JTextArea
  */
@@ -71,6 +81,11 @@ public class TextArea extends TextComponent {
         public void setLineWrap(boolean w) {
 
 		wrap = w;
+
+		// this component always needs it size to be correct
+		// so that if its in a scrollPane it knows if it should have the scrollbars
+		// and so then so we know the correct width to wrap text at
+		workoutSize();
 
 	}
         
@@ -296,7 +311,7 @@ public class TextArea extends TextComponent {
         public static int[] getLines(String str,Font f,int startPos,int w) {
             
 //#debug
-System.out.println("getLines start="+startPos +" w="+w);
+System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.length());
 // this is here as this is quite a CPU intensive method
 
 		final Vector parts = new Vector();

@@ -48,6 +48,7 @@ import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.MatteBorder;
+import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
@@ -325,8 +326,10 @@ public class MainPane extends DesktopPane implements ActionListener {
 				
 
 StringBuffer buf = new StringBuffer();
-InputStream inputStreamTxt=null;
 
+
+
+InputStream inputStreamTxt=null;
 try {
 	inputStreamTxt = this.getClass().getResourceAsStream("/SynthME.dtd");
 	int c ;
@@ -345,14 +348,35 @@ finally {
 	catch(Exception ex) { }
     }
 }
+/* wrap testing
+for (int c=0;c<5;c++) {
+	buf.append("sdfdsfsdf sdfjk hdsfjk s diw k s d f j k s dfjksdh skjdf sdjkf sdhfjkskd fskjdf hsdjkf hsdjkf sdjkf hskjd fhsdf\n");
+}
+*/
 				viewText = new TextArea();
                                 viewText.setSelectable(false);
 				viewText.setLineWrap(true);
-				viewText.setText(buf.toString());
+				viewText.setText(buf.toString()); // this is the same as passing it into the constructor if wrap is false
 
+				//viewText.setLineWrap(true); // this is the BAD order to do this
+							    // as it needs to work out the size twice
 			}
-			
-			addToScrollPane(viewText, null , new CommandButton("Back","mainmenu") );
+
+/* THIS wont work, but it wont work in Swing either!!
+
+			viewText.setBorder( new EmptyBorder(10,10,10,10) );
+			Panel p = new Panel( new BorderLayout() );
+			p.add(viewText);
+			p.add(new Label("Label"),Graphics.TOP);
+*/
+
+			ScrollPane tmp = new ScrollPane( viewText );
+			tmp.setBorder( new EmptyBorder(10,10,10,10) );
+			Panel p = new Panel( new BorderLayout() );
+			p.add(tmp);
+
+			addToScrollPane(p, null , new CommandButton("Back","mainmenu") );
+
 		}
                 else if ("load".equals(actionCommand)) {
 			
