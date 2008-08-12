@@ -148,7 +148,7 @@ public class TextArea extends TextComponent {
 	 */
 	public void setText(String txt) {
             super.setText(txt);
-            setupHeight(getLines(txt,font,0,width),width);
+            setupHeight(getLines(txt,font,0,width),width,true);
 	}
 	
         /**
@@ -176,29 +176,30 @@ public class TextArea extends TextComponent {
 
                 // set the text and adjust the height
                 super.setText(newtext);
-                setupHeight(l3,width);
+                setupHeight(l3,width,true);
 
             }
 
 
 	}
 
-    private void setupHeight(int[] l,int w) {
+    private void setupHeight(int[] l,int w,boolean relayout) {
         lines = l;
         widthUsed = w;
         int oldh = height;
         height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
 
+
 	// we have just changed out height
-	// if we are in a scrollPane we shoudl tell it, so it can adjust
-	if (oldh!=height && parent instanceof ScrollPane) {
+	// if we are in a scrollPane we should tell it, so it can adjust
+	if (relayout && oldh!=height && parent!=null) {
 
             parent.doLayout();
             parent.repaint();
 
 	}
 
-/*
+/* overkill
         // this is kind of a hack
         if (relayout && oldh!=height && parent!=null && owner!=null) {
             // so the scroll parent can strech my size
@@ -212,10 +213,11 @@ public class TextArea extends TextComponent {
                     p=pp;
                 }
             }
-            p.revalidate();
+            p.doLayout();
             p.repaint();
         }
 */
+
     }
 
 
@@ -223,6 +225,7 @@ public class TextArea extends TextComponent {
 
 	// scrollpane will handel out size
 	// we assume that the scrollPane size is already setup and correct
+	// this saves lots of un-needed calls to getLines
 	if (parent instanceof ScrollPane) {
 		width = ((ScrollPane)parent).getViewPortWidth();
 	}
@@ -231,7 +234,7 @@ public class TextArea extends TextComponent {
 	}
 
 	// ALWAYS setup the height in this method!
-        setupHeight((width!=widthUsed)?getLines(getText(),font,0,width):lines,width);
+        setupHeight((width!=widthUsed)?getLines(getText(),font,0,width):lines,width,false);
 
     }
     
@@ -239,7 +242,7 @@ public class TextArea extends TextComponent {
         super.setSize(w, h);
 
         if (width!=widthUsed) {
-        	setupHeight(getLines(getText(),font,0,width),width);
+        	setupHeight(getLines(getText(),font,0,width),width,false);
 	}
     }
 

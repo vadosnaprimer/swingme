@@ -918,7 +918,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             catch(Throwable th) {
                     th.printStackTrace();
-                    log( "Exception in pointerEvent" + th.toString() );
+                    log( "Exception in pointerEvent: " + th.toString() );
             }
 
         }
