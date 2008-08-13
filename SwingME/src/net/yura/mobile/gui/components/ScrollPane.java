@@ -290,6 +290,8 @@ public class ScrollPane extends Panel {
          */
 	public void doLayout() {
 
+	    if (getComponents().size() == 1) {
+	    
 		getComponent().workoutSize();
 
 		int viewHeight=getViewPortHeight();
@@ -313,6 +315,7 @@ public class ScrollPane extends Panel {
                 }
 
                 super.doLayout();
+	    }
 
 	}
 
