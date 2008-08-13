@@ -150,9 +150,7 @@ public class OptionPane extends Window {
 
     public void setOptions(CommandButton[] options) {
        setWindowCommand(0, options[0]);
-       if (options.length > 1) {
-           setWindowCommand(1, options[1]);
-       }
+       setWindowCommand(1, (options.length > 1)?options[1]:null);
     }
 
     public void setIcon(Image icon) {

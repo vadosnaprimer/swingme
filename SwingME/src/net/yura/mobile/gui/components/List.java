@@ -57,14 +57,25 @@ public class List extends Component implements ActionListener {
     private boolean loop;
     private boolean horizontal;
 
+    /**
+     * @see javax.swing.JList#JList() JList.JList
+     */
     public List() {
-        this(new DefaultListCellRenderer());
+        this((Vector)null);
     }
-        
+
+    /**
+     * @param a
+     * @see javax.swing.JList#JList(java.util.Vector) JList.JList
+     */
+    public List(Vector a) {
+        this(a,new DefaultListCellRenderer(),false);
+    }
+   
     public List(ListCellRenderer a) {
         this(null,a,false);
     }
-
+    
     // real constructor!
     public List(Vector a,ListCellRenderer b,boolean h) {
         items = a;

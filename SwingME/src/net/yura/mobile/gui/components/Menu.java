@@ -35,18 +35,18 @@ import net.yura.mobile.gui.plaf.Style;
 public class Menu extends Button {
 
         private int arrowDirection;
-    
+
         private Window popup;
         private Panel panel;
         private Menu parentMenu;
         private Component old;
-        
+
         private boolean useAnimation=true;
         private boolean open;
         private int slide = Graphics.BOTTOM;
         private int destX;
         private int destY;
-        
+
         /**
          * The menu will fire this command to the same listoner that
          * it will fire all the commands from the buttons being pressed
@@ -63,9 +63,9 @@ public class Menu extends Button {
         }
 
         public void fireActionPerformed() {
-            
+
             super.fireActionPerformed();
-            
+
             if (owner!=null) {
                 openMenu(getXInWindow()+owner.getX() -(border!=null?border.getLeft():0), getYInWindow()+owner.getY()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder());
             }
@@ -77,14 +77,14 @@ public class Menu extends Button {
 	public Vector getComponents() {
 		return panel.getComponents();
 	}
-        
+
         private void openMenu(int x, int y, int width, int height) {
 
             panel.workoutSize(); // what out what the needed size is
             popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
 
-            
-            
+
+
             int w = popup.getWidthWithBorder();
             int h = popup.getHeightWithBorder();
 
@@ -92,13 +92,13 @@ public class Menu extends Button {
             if (w > DesktopPane.getDesktopPane().getWidth()) {
                 w = DesktopPane.getDesktopPane().getWidth();
             }
-            
+
             int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
-            
+
             if (h > maxh) {
                 h = maxh;
             }
-            
+
             if (parentMenu == null) {
                 // the right x position of whatever opended me!
                 int right = DesktopPane.getDesktopPane().getWidth() - x - width;
@@ -120,37 +120,37 @@ public class Menu extends Button {
                 //}
             }
             else {
-             
+
                 x = x+width;
-                
+
             }
 
             // check we r not going off the screen if we are then move us
             if (x+w > DesktopPane.getDesktopPane().getWidth()) {
                 x = DesktopPane.getDesktopPane().getWidth() - w;
             }
-            
+
             int softkeyHeight = (DesktopPane.getDesktopPane().getHeight() - maxh)/2;
-            
+
             if (y<softkeyHeight) {
                 y=softkeyHeight;
             }
             if (y+h > maxh + softkeyHeight) {
                 y = DesktopPane.getDesktopPane().getHeight() - h - softkeyHeight;
             }
-            
+
             openMenuAtLocation(x, y, w, h);
-            
+
         }
-        
+
         public void openMenuInCentre() {
 
             panel.workoutSize(); // what out what the needed size is
             popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
-            
+
             int w = popup.getWidthWithBorder();
             int h = popup.getHeightWithBorder();
-            
+
             // resize the popup if its bigger then the screen! if it is then shrink it
             if (w > DesktopPane.getDesktopPane().getWidth()) {
                 w = DesktopPane.getDesktopPane().getWidth();
@@ -158,16 +158,16 @@ public class Menu extends Button {
             if (h > DesktopPane.getDesktopPane().getHeight()) {
                 h = DesktopPane.getDesktopPane().getHeight();
             }
-            
+
             openMenuAtLocation((DesktopPane.getDesktopPane().getWidth()-w)/2,(DesktopPane.getDesktopPane().getHeight()-h)/2,w,h);
 
         }
-        
-        
+
+
         private void openMenuAtLocation(int x, int y, int w, int h) {
-            
+
             old = DesktopPane.getDesktopPane().getFocusedComponent();
-            
+
             if (useAnimation) {
 
                 if (slide==Graphics.BOTTOM) {
@@ -182,15 +182,15 @@ public class Menu extends Button {
                 if (slide==Graphics.LEFT) {
                     popup.setBoundsWithBorder(-popup.getWidthWithBorder(), y, w, h);
                 }
-                
+
                 int offsetX = popup.getX() - popup.getXWithBorder();
                 int offsetY = popup.getY() - popup.getYWithBorder();
 
                 destX = x + offsetX;
                 destY = y + offsetY;
-                
+
                 open = false;
-                
+
                 DesktopPane.getDesktopPane().animateComponent(this);
             }
             else {
@@ -205,9 +205,9 @@ public class Menu extends Button {
         public void removeAll() {
             panel.removeAll();
         }
-    
+
         private void makeWindow() {
-            
+
             popup = new Window();
             popup.setWindowCommand(0, new CommandButton(getText(), "select"));
             popup.setWindowCommand(1, new CommandButton("Cancel", "cancel"));
@@ -217,67 +217,69 @@ public class Menu extends Button {
             popup.setContentPane(new ScrollPane(panel));
             popup.setName("Menu");
             // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
-            
+
         }
-        
+
     	public void actionPerformed(String actionCommand) {
-            
+
             DesktopPane.getDesktopPane().remove(popup);
             DesktopPane.getDesktopPane().setFocusedComponent(old);
-            
+
             if (!"cancel".equals(actionCommand)) {
                 ActionListener al = getActionListener();
                 if (al!=null) {
                     al.actionPerformed(actionCommand);
                 }
             }
-            
+
             // cancel the parent menu
             if (parentMenu!=null) { parentMenu.actionPerformed("cancel"); }
 
         }
-    
+
         /**
          * @param c The component to append to the menu
          * @see javax.swing.JMenu#add(java.awt.Component) JMenu.add
          */
         public void add(Component c) {
             panel.add(c);
-            
+
             if (c instanceof Menu) {
                 ((Menu)c).setParentMenu(this);
             }
-            
+
         }
-        
+
         private void setParentMenu(Menu m) {
             parentMenu = m;
         }
-        
+
         /**
          * @param command
          * @param name
          * @param icon
          * @see javax.swing.JMenu#add(java.lang.String) JMenu.add
          */
-        public void addMenuItem(String command,String name,Image icon) {
-            
+        public Button addMenuItem(String command,String name,Image icon) {
+
             Button b = new Button(name,icon);
             b.setActionCommand(command);
             b.addActionListener(this);
             b.setUseSelectButton(true);
             add(b);
+
+            return b;
         }
 
 	public boolean keyEvent(KeyEvent keyEvent) {
-            
+
             if (keyEvent.justPressedAction(Canvas.RIGHT)) {
-                    
+
                     fireActionPerformed();
                     return true;
             }
             return super.keyEvent(keyEvent);
-    
+
 	}
 
 	public void workoutSize() {
@@ -294,7 +296,7 @@ public class Menu extends Button {
 		int s2 = s/2;
 
                 if ((arrowDirection & Graphics.RIGHT ) !=0) {
-                    
+
                     if ((arrowDirection & Graphics.TOP ) !=0) {
                         ScrollPane.drawUpArrow(g, width-s-padding, (height-s2)/2, s, s2);
                     }
@@ -304,45 +306,45 @@ public class Menu extends Button {
                     else {
                         ScrollPane.drawRightArrow(g, width-s2-padding, (height-s)/2, s2, s);
                     }
-                    
+
                 }
                 // TODO support left side arrows
 
 	}
-        
+
         public void animate() {
 
                 int travelDistance = 0;
                 if (slide==Graphics.BOTTOM) {
-                    travelDistance = popup.getY() - destY; 
+                    travelDistance = popup.getY() - destY;
                 }
                 else if (slide==Graphics.TOP) {
                     travelDistance = destY - popup.getY();
                 }
                 else if (slide==Graphics.RIGHT) {
-                    travelDistance = popup.getX() - destX; 
+                    travelDistance = popup.getX() - destX;
                 }
                 else if (slide==Graphics.LEFT) {
                     travelDistance = destX - popup.getX();
                 }
-            
+
             	int menuMoveSpeed = travelDistance/4 + 1;
 		int step = menuMoveSpeed/10 + 1;
 
                 while (true) {
-			
+
 			menuMoveSpeed = menuMoveSpeed-step;
-			
+
 			if(menuMoveSpeed < step) {
 
 				menuMoveSpeed = step;
 			}
-					
+
 			if(open) {
 				// TODO close the menu and fire the action
 			}
 			else {
-				
+
 				int pX = popup.getX(),pY = popup.getY();
                                 if (slide==Graphics.BOTTOM) {
                                     pY = pY - menuMoveSpeed;
@@ -363,11 +365,11 @@ public class Menu extends Button {
                                 popup.setLocation(pX, pY);
 
 				if(pY==destY && pX == destX) {
-					
+
 					open=true;
 					break;
 				}
-				
+
 				popup.repaint();
 			}
 
@@ -377,7 +379,7 @@ public class Menu extends Button {
                 DesktopPane.getDesktopPane().fullRepaint();
 
         }
-        
+
         public void updateUI() {
             super.updateUI();
             if (popup!=null) {
@@ -385,7 +387,7 @@ public class Menu extends Button {
                 // TODO: THIS IS NOT GOOD!!
             }
         }
-        
+
         public void setArrowDirection(int a) {
             arrowDirection = a;
         }
