@@ -7,6 +7,7 @@ package net.yura.mobile.util;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * @author Yura Mamyrin
@@ -24,5 +25,18 @@ public class SystemUtil {
                 Object key = en.nextElement();
                 dest.put(key, src.get(key));
             }
+    }
+    
+    /**
+     * @param a array
+     * @return a Vector
+     * @see java.util.Arrays#asList(java.lang.Object[]) Arrays.asList
+     */
+    public static Vector asList(Object[] a) {
+        Vector vec = new Vector (a.length);
+        for (int c=0;c<a.length;c++) {
+            vec.addElement(a[c]);
+        }
+        return vec;
     }
 }

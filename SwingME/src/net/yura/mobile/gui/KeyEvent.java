@@ -209,12 +209,22 @@ public class KeyEvent {
            return 0;
     }
     
-
+    // on nokia emulators can throw when the key does not exist on the phone
     public String getKeyText(int keyCode) {
-        return canvas.getKeyName(keyCode);
+        try {
+            return canvas.getKeyName(keyCode);
+        }
+        catch(Throwable ex) {
+            return ex.toString();
+        }
     }
     public int getKeyAction(int code) {
-        return canvas.getGameAction(code);
+        try {
+            return canvas.getGameAction(code);
+        }
+        catch(Throwable ex) {
+            return 0;
+        }
     }
 
         public boolean isDownAction(int action) {
@@ -227,11 +237,11 @@ public class KeyEvent {
         }
 
         public boolean justPressedAction(int action) {
-            return justPressedKey!=0 && canvas.getGameAction(justPressedKey) == action;
+            return justPressedKey!=0 && getKeyAction(justPressedKey) == action;
         }
 
         public boolean justReleasedAction(int action) {
-            return justReleasedKey!=0 && canvas.getGameAction(justReleasedKey) == action;
+            return justReleasedKey!=0 && getKeyAction(justReleasedKey) == action;
         }
 
         

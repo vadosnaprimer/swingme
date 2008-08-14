@@ -64,6 +64,11 @@ public class CommandButton extends Command {
         public Button getButton() {
             return menu;
         }
+
+        public void setButton(Button bt) {
+            menu = bt;
+        }
+        
         public String toString() {
             return getLabel();
         }
