@@ -35,13 +35,14 @@ public class ProgressBar extends Component {
 	
 	// goes from 0 to loaded (inclusive)
 	public ProgressBar() {
-		
-		
+
 		wait = 50;
+                loaded = 100;
 	}
 	
 	public void paintComponent(Graphics g) {
-
+            
+                g.setColor(foreground);
 		g.drawRect(0, 0, (width*loading)/loaded, height);
 
 	}

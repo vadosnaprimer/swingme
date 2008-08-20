@@ -39,4 +39,17 @@ public class SystemUtil {
         }
         return vec;
     }
+    
+    /**
+     * @param des
+     * @param src
+     * @see java.util.Vector#addAll(java.util.Collection) Vector.addAll
+     */
+    public static void addAll(Vector des,Vector src) {
+
+        for (int c=0;c<src.size();c++) {
+            des.addElement(src.elementAt(c));
+        }
+        
+    }
 }

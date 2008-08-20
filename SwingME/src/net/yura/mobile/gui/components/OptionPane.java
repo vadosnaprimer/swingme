@@ -173,12 +173,17 @@ public class OptionPane extends Window {
             setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight())) );
         }
 
-        setLocation((DesktopPane.getDesktopPane().getWidth() - getWidth()) /2, 
-                (DesktopPane.getDesktopPane().getHeight() - getHeight()) /2
-        );
+        centre(this);
         
         setVisible(true);
 
+    }
+    
+    public static void centre(Window w) {
+        
+        w.setLocation((DesktopPane.getDesktopPane().getWidth() - w.getWidth()) /2, 
+                (DesktopPane.getDesktopPane().getHeight() - w.getHeight()) /2
+        );
     }
     
     private boolean factory;

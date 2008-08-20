@@ -493,6 +493,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	public void setFocusedComponent(Component ac) {
 
+            //#mdebug
+            if (ac!=null && ac.getOwner() != currentWindow) {
+                    throw new RuntimeException("setFocusedComponent on component thats not in the current window");
+            }
+            //#enddebug
+            
 	       if(focusedComponent != null) {
 	    	   focusedComponent.focusLost();
 	       }
