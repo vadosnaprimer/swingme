@@ -493,6 +493,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	public void setFocusedComponent(Component ac) {
 
+		// TODO maybe have an option so the window will become active if any component on it is activated
+
             //#mdebug
             if (ac!=null && ac.getOwner() != currentWindow) {
                     throw new RuntimeException("setFocusedComponent on component thats not in the current window");
@@ -692,7 +694,13 @@ public class DesktopPane extends Canvas implements Runnable {
          * @see java.awt.Container#add(java.awt.Component) Container.add
          */
 	public void add(Window w) {
-                
+
+            //#mdebug
+            if (windows.contains(w)) {
+                    throw new RuntimeException("trying to set a window visible when it already is visible");
+            }
+            //#enddebug
+
 		windows.addElement(w);
 		setSelectedFrame(w);
 	}
