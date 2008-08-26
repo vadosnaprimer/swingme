@@ -54,7 +54,11 @@ public class Table extends Panel {
      */
     protected int editingColumn;
     
-    private TableCellEditor currentEditor;
+
+    /**
+     * @see javax.swing.JTable#cellEditor JTable.cellEditor
+     */
+    protected TableCellEditor cellEditor;
     
     public Table() {
 
@@ -85,7 +89,7 @@ public class Table extends Panel {
         removeAll();
         DesktopPane.getDesktopPane().setFocusedComponent(this);
 
-        setValueAt(currentEditor.getCellEditorValue(),editingRow, editingColumn);
+        setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
         
         moveSelection(direction);
         
@@ -94,12 +98,16 @@ public class Table extends Panel {
     }
     
     private void moveSelection(int d) {
-        
-        
-        
+
+
+
+
     }
     
     public void focusLost() {
+        repaint();
+    }
+    public void focusGained() {
         repaint();
     }
      
@@ -143,8 +151,7 @@ public class Table extends Panel {
 
             if (isCellEditable(editingRow, editingColumn)) {
                 
-                currentEditor = ((TableCellEditor)editors.get( getColumnClass(editingColumn) ));
-                if (currentEditor==null) currentEditor = (TableCellEditor)editors.get( Object.class );
+                cellEditor = getCellEditor(editingRow, editingColumn);
                 
                 int x=0,y=0;
                 int currentRowHeight=0,currentColWidth=0;
@@ -157,7 +164,7 @@ public class Table extends Panel {
                     currentColWidth = getColumnWidth(a);
                 }
 
-                Component component = currentEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
+                Component component = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
                 
                 component.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
                 add(component);
@@ -172,14 +179,14 @@ public class Table extends Panel {
         repaint();
         return true;
     }
-    
+
     public void paintComponent(Graphics g) {
         int x=0,y=0;
         
         int cols = getColumnCount();
         int rowc = getRowCount();
         
-        boolean focused = getComponents().size()==1;
+        boolean editOpen = getComponents().size()==1;
         
         for (int c=0;c<rowc;c++) {
             
@@ -188,14 +195,13 @@ public class Table extends Panel {
             for (int a=0;a<cols;a++) {
                 
                   int currentColWidth = getColumnWidth(a);
-                
-                  Object object = getValueAt(c, a);
-                  Class objClass = getColumnClass(a);
-                
-                  ListCellRenderer renderer = (ListCellRenderer)renderers.get(objClass);
-                  if (renderer==null) renderer = (ListCellRenderer)renderers.get(Object.class);
 
-                  if (!focused || editingRow!=c || editingColumn!=a) {
+                  if (!editOpen || editingRow!=c || editingColumn!=a) {
+
+                  	Object object = getValueAt(c, a);
+                
+                  	ListCellRenderer renderer = getCellRenderer(c,a);
+
                         boolean sel = editingRow==c && editingColumn==a;
                         Component comp = renderer.getListCellRendererComponent(null, object, c, sel ,sel && isFocused() );
                         comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
@@ -234,7 +240,48 @@ public class Table extends Panel {
     public void doLayout() {
         
     }
-    
+
+    /**
+     * @see javax.swing.JTable#setDefaultEditor(java.lang.Class, javax.swing.table.TableCellEditor) JTable.setDefaultEditor
+     */
+    public void setDefaultEditor(Class columnClass, TableCellEditor editor) {
+        editors.put(columnClass, editor);
+    }
+
+    /**
+     * @see javax.swing.JTable#setDefaultRenderer(java.lang.Class, javax.swing.table.TableCellRenderer) JTable.setDefaultRenderer
+     */
+    public void setDefaultRenderer(Class columnClass, ListCellRenderer renderer) {
+        renderers.put(columnClass, renderer);
+    }
+
+    /**
+     * @see javax.swing.JTable#getCellEditor(int, int) JTable.getCellEditor
+     */
+    public TableCellEditor getCellEditor(int row, int column) {
+
+                TableCellEditor currentEditor = ((TableCellEditor)editors.get( getColumnClass(column) ));
+                if (currentEditor==null) currentEditor = (TableCellEditor)editors.get( Object.class );
+		return currentEditor;
+
+    }
+
+    /**
+     * @see javax.swing.JTable#getCellRenderer(int, int) JTable.getCellRenderer
+     */
+    public ListCellRenderer getCellRenderer(int row, int column) {
+
+                ListCellRenderer renderer = (ListCellRenderer)renderers.get( getColumnClass(column) );
+                if (renderer==null) renderer = (ListCellRenderer)renderers.get(Object.class);
+		return renderer;
+
+    }
+
+
+    // #########################################################################
+    // ############################# Size stuff ################################
+    // #########################################################################
+
     /**
      * Sets the height for row to rowHeight, revalidates, and repaints.
      * @param rowHeight
@@ -278,18 +325,9 @@ public class Table extends Panel {
     public int getRowHeight(int row) {
         return rowHeight;
     }
-          
-    
-    public void setDefaultEditor(Class columnClass, TableCellEditor editor) {
-        editors.put(columnClass, editor);
-    }
 
-    public void setDefaultRenderer(Class columnClass, ListCellRenderer renderer) {
-        renderers.put(columnClass, renderer);
-    }
 
-    
-    
+
     // #########################################################################
     // ############################# TableModel ################################
     // #########################################################################
