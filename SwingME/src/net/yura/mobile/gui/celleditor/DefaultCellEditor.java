@@ -63,4 +63,20 @@ public class DefaultCellEditor implements TableCellEditor {
         return component;
     }
     
+    public Object getCellEditorValue() {
+        if (component instanceof CheckBox) {
+            return new Boolean( ((CheckBox)component).isSelected() );
+        }
+        else if (component instanceof Spinner) {
+            return ((Spinner)component).getValue();
+        }
+        else if (component instanceof ComboBox) {
+             return ((ComboBox)component).getSelectedItem();
+        }
+        else if (component instanceof TextField) {
+            return ((TextField)component).getText();
+        }
+        return null;
+    }
+    
 }

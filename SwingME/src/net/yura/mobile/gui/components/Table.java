@@ -54,6 +54,8 @@ public class Table extends Panel {
      */
     protected int editingColumn;
     
+    private TableCellEditor currentEditor;
+    
     public Table() {
 
         colWidths = new Vector();
@@ -82,7 +84,11 @@ public class Table extends Panel {
 
         removeAll();
         DesktopPane.getDesktopPane().setFocusedComponent(this);
+
+        setValueAt(currentEditor.getCellEditorValue(),editingRow, editingColumn);
+        
         moveSelection(direction);
+        
         selectable = true;
         
     }
@@ -137,8 +143,8 @@ public class Table extends Panel {
 
             if (isCellEditable(editingRow, editingColumn)) {
                 
-                TableCellEditor editor = ((TableCellEditor)editors.get( getColumnClass(editingColumn) ));
-                if (editor==null) editor = (TableCellEditor)editors.get( Object.class );
+                currentEditor = ((TableCellEditor)editors.get( getColumnClass(editingColumn) ));
+                if (currentEditor==null) currentEditor = (TableCellEditor)editors.get( Object.class );
                 
                 int x=0,y=0;
                 int currentRowHeight=0,currentColWidth=0;
@@ -151,7 +157,7 @@ public class Table extends Panel {
                     currentColWidth = getColumnWidth(a);
                 }
 
-                Component component = editor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
+                Component component = currentEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
                 
                 component.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
                 add(component);

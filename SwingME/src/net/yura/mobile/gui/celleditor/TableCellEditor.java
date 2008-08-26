@@ -28,4 +28,6 @@ public interface TableCellEditor {
 
     Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column);
     
+    Object getCellEditorValue();
+    
 }

@@ -254,6 +254,14 @@ public class Spinner extends Label {
 		index=0;
 	}
 	
+        /**
+         * @return the current value
+         * @see javax.swing.JSpinner#getValue() JSpinner.getValue
+         */
+        public Object getValue() {
+            return list.elementAt(index);
+        }
+        
 	public void setIndex(int i) {
             
             index = i;
