@@ -259,12 +259,20 @@ public class Spinner extends Label {
             index = i;
             
             if (list!=null && !list.isEmpty()) {
-                setValue( list.elementAt(index) );
+                super.setValue( list.elementAt(index) );
             }
 
 	    repaint();
 	}
 
+        /**
+         * @param value
+         * @see javax.swing.JSpinner#setValue(java.lang.Object) JSpinner.setValue
+         */
+        public void setValue(Object value) {
+            setIndex( list.indexOf(value) );
+        }
+        
 	public void focusLost() {
                 super.focusLost();
 		foreground = normalForeground;

@@ -211,20 +211,32 @@ public class ComboBox extends Button implements ActionListener{
 		repaint();
 	}
 
-	public Object getSelected() {
+        /**
+         * @return the current selected item
+         * @see javax.swing.JComboBox#getSelectedItem() JComboBox.getSelectedItem
+         */
+	public Object getSelectedItem() {
 		createList();
 		return list.getSelectedValue();
 	}
 
-	public void setSelected(Object selected) {
+        /**
+         * @param selected
+         * @see javax.swing.JComboBox#setSelectedItem(java.lang.Object) JComboBox.setSelectedItem
+         */
+	public void setSelectedItem(Object selected) {
 		createList();
 		list.setSelectedValue(selected);
 		super.setValue(selected);
 		
 	}
 
+        /**
+         * @param i
+         * @see javax.swing.JComboBox#setSelectedIndex(int) JComboBox.setSelectedIndex
+         */
 	public void setSelectedIndex(int i) {
-		setSelected( list.getItems().elementAt(i) );
+		setSelectedItem( list.getItems().elementAt(i) );
 	}
 	
 	/**

@@ -49,6 +49,7 @@ import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
+import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
@@ -141,6 +142,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Tab Test","tabTest");
                                 addMainMenuButton("Window Test","windowTest1");
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
+                                addMainMenuButton("Table Test","tableTest");
                                 
                                 mainMenu = new Menu("Menu","mainMenu");
                                 mainMenu.addActionListener(this);
@@ -525,27 +527,39 @@ for (int c=0;c<5;c++) {
                     
                     if (tableTest==null) {
                         
+                        Vector options = new Vector();
+                        options.addElement(new Option("yes","Happy"));
+                        options.addElement(new Option("no","Sad"));
+                        options.addElement(new Option("ok","OK"));
+                        
                         Vector rows = new Vector();
                             Vector row1 = new Vector();
                             row1.addElement("YURA");
                             row1.addElement(new Integer(24));
-                            row1.addElement("175");
-                            row1.addElement(new Option("yes","Happy"));
+                            row1.addElement(new Boolean(false));
+                            row1.addElement(options.elementAt(0));
                         rows.addElement(row1);
                             
                             Vector row2 = new Vector();
                             row2.addElement("bob");
                             row2.addElement(new Integer(25));
-                            row2.addElement("170");
-                            row2.addElement(new Option("yes","Happy"));
+                            row2.addElement(new Boolean(true));
+                            row2.addElement(options.elementAt(1));
                         rows.addElement(row2);
                         
                             Vector row3 = new Vector();
                             row3.addElement("fred");
                             row3.addElement(new Integer(30));
-                            row3.addElement("173");
-                            row3.addElement(new Option("yes","Happy"));
+                            row3.addElement(new Boolean(false));
+                            row3.addElement(options.elementAt(2));
                         rows.addElement(row3);
+                        
+                            Vector row4 = new Vector();
+                            row4.addElement( "thingy");
+                            row4.addElement(new Integer(30));
+                            row4.addElement(new Boolean(true));
+                            row4.addElement(new Option("ok","OK"));
+                        rows.addElement(row4);
                         
                         class MyCheckBox extends CheckBox {
                             
@@ -610,8 +624,12 @@ for (int c=0;c<5;c++) {
                         renderers.addElement(new DefaultTabRenderer(Graphics.TOP));
                         
                         tableTest = new Table(rows,null);
-                        tableTest.setDefaultEditors(editors);
-                        tableTest.setDefaultRenderer(renderers);
+                        
+                        tableTest.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
+                        
+                        tableTest.setDefaultEditor(Integer.class, new DefaultCellEditor(spinner) );
+                        tableTest.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
+                        tableTest.setDefaultEditor(Option.class, new DefaultCellEditor(new ComboBox(options)) );
 		    }
                     
                     addToScrollPane(tableTest, null , new CommandButton("Back","mainmenu") );
