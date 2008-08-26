@@ -47,10 +47,13 @@ import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
+import net.yura.mobile.gui.celleditor.TableCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
@@ -58,6 +61,7 @@ import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.ButtonGroup;
 import net.yura.mobile.util.Option;
 
@@ -73,7 +77,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Panel tabPanel;
         private Menu menu;
         private Menu mainMenu;
-        private Table tableTest;
+        private Panel tableTest;
         
         private Image image;
         private TextArea infoLabel,viewText,loadPanel;
@@ -561,75 +565,66 @@ for (int c=0;c<5;c++) {
                             row4.addElement(new Option("ok","OK"));
                         rows.addElement(row4);
                         
-                        class MyCheckBox extends CheckBox {
+                        // copy pasty from DefaultListCellRenderer
+                        class MyCheckBox extends CheckBox implements ListCellRenderer {
                             
-                            private Option myOption;
+                            private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
+                            protected Border normal,selected,focusedAndSelected;
                             
-                            public MyCheckBox() {
-                                super("?");
-                            }
-                            
-                            public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
+                            public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                                 
-                                myOption = (Option)value;
+                                setSelected( value instanceof Boolean?((Boolean)value).booleanValue() : false );
                                 
-                                setSelected( "yes".equalsIgnoreCase(myOption.getId()) );
+                                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
+                                setBackground(isSelected?colorSelected:colorNormal);
+                                setForeground(isSelected?foregroundSelected:foregroundNormal);
+                                
                                 return this;
                             }
+                            
+                            public String getName() {
+                                return "ListRenderer";
+                            }
+                            
+                            public void updateUI() {
+                                    super.updateUI();
+                                    Style st = DesktopPane.getDefaultTheme(this);
+                                    normal = st.getBorder( Style.ENABLED );
+                                    focusedAndSelected = st.getBorder( Style.FOCUSED | Style.SELECTED);
+                                    selected = st.getBorder( Style.SELECTED );
 
-                            public Object getCellEditorValue() {
-                                
-                                myOption.setId( isSelected()?"yes":"no" );
-                                
-                                return myOption;
+                                    colorNormal = st.getBackground( Style.ALL );
+                                    colorSelected = st.getBackground( Style.SELECTED );
+
+                                    foregroundNormal = st.getForeground( Style.ALL );
+                                    foregroundSelected = st.getForeground( Style.SELECTED );
                             }
 
                         }
-                        
-                        
-                        class MyTextField extends TextField {
-                            
-                            public MyTextField() {
-                                super(TextField.ANY);
-                            }
-                            
-                            public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
-                                setText( value.toString() );
-                                return this;
-                            }
-
-                            public Object getCellEditorValue() {
-                                return getText();
-                            }
-
-                        }
-                        
 
                         Vector numbers = new Vector();
                         for (int c=0;c<100;c++) {
                             numbers.addElement(new Integer(c));
                         }
-                        Spinner spinner = new Spinner(numbers,false);
+
                         
-                        Vector editors = new Vector();
-                        editors.addElement(new MyTextField());
-                        editors.addElement(spinner);
-                        editors.addElement(new TextField(TextField.ANY));
-                        editors.addElement(new MyCheckBox());
+                        Table table = new Table(rows,null);
                         
-                        Vector renderers = new Vector();
-                        renderers.addElement(new Label());
-                        renderers.addElement(spinner);
-                        renderers.addElement(new DefaultListCellRenderer());
-                        renderers.addElement(new DefaultTabRenderer(Graphics.TOP));
+                        table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
+                        table.setDefaultRenderer(Boolean.class, new MyCheckBox() );
                         
-                        tableTest = new Table(rows,null);
+                        table.setDefaultEditor(Integer.class, new DefaultCellEditor( new Spinner(numbers,false) ) );
+                        table.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
+                        table.setDefaultEditor(Option.class, new DefaultCellEditor(new ComboBox(options)) );
                         
-                        tableTest.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
+                        tableTest = new Panel( new BorderLayout() );
                         
-                        tableTest.setDefaultEditor(Integer.class, new DefaultCellEditor(spinner) );
-                        tableTest.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
-                        tableTest.setDefaultEditor(Option.class, new DefaultCellEditor(new ComboBox(options)) );
+                        Panel top = new Panel(new FlowLayout());
+                        top.add(new Label("Table!"));
+                        top.add(new Button("button"));
+                        
+                        tableTest.add(top,Graphics.TOP);
+                        tableTest.add(new ScrollPane(table));
 		    }
                     
                     addToScrollPane(tableTest, null , new CommandButton("Back","mainmenu") );

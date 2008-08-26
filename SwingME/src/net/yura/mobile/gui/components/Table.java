@@ -99,8 +99,8 @@ public class Table extends Panel {
         
     }
     
-    public void focusGained() {
-        System.out.println("table focusGained");
+    public void focusLost() {
+        repaint();
     }
      
     public boolean keyEvent(KeyEvent event) {
