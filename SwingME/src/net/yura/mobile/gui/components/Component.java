@@ -445,6 +445,7 @@ public abstract class Component {
         
         
         public Panel getRootPane() {
+	    if (owner == null) { return null; }
             if (parent == null) { return (Panel)this; }
             return parent.getRootPane();
         }

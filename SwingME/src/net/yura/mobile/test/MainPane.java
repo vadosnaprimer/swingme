@@ -608,7 +608,11 @@ for (int c=0;c<5;c++) {
                         }
 
                         
-                        Table table = new Table(rows,null);
+                        Table table = new Table(rows,null) {
+                            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                                return (rowIndex!=3);
+                            }
+                        };
                         
                         table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
                         table.setDefaultRenderer(Boolean.class, new MyCheckBox() );

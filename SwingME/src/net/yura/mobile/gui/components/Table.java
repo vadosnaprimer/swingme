@@ -60,6 +60,11 @@ public class Table extends Panel {
      */
     protected TableCellEditor cellEditor;
     
+    /**
+     * @see javax.swing.JTable#editorComp JTable.editorComp
+     */
+    protected Component editorComp;
+    
     public Table() {
 
         colWidths = new Vector();
@@ -67,7 +72,8 @@ public class Table extends Panel {
         
         renderers = new Hashtable();
         editors = new Hashtable();
-                
+        
+        // should ALWAYS be selectable to that pointer event can give it focus
         selectable = true;
     }
     
@@ -83,103 +89,199 @@ public class Table extends Panel {
 
     }
     
-    
+    // the current editor has finished editing
     public void breakOutAction(final Component component, final int direction, final boolean scrolltothere) {
-
-        removeAll();
-        DesktopPane.getDesktopPane().setFocusedComponent(this);
-
-        setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
         
-        moveSelection(direction);
+        boolean done = (component==editorComp)?moveSelection(direction): false;
         
-        selectable = true;
+        if (!done) {
+            super.breakOutAction(component, direction, scrolltothere);
+        }
         
     }
     
-    private void moveSelection(int d) {
+    private boolean moveSelection(int d) {
 
+        if (d == Canvas.DOWN) {
+            if (editingRow < (getRowCount()-1)) {
+                setSelectedCell(editingRow+1,editingColumn);
+                return true;
+            }
+        }
+        else if (d == Canvas.UP) {
+            if (editingRow > 0) {
+                setSelectedCell(editingRow-1,editingColumn);
+                return true;
+            }
+        }
+        else if (d == Canvas.RIGHT) {
+            if (editingColumn < (getColumnCount()-1)) {
+                setSelectedCell(editingRow,editingColumn+1);
+                return true;
+            }
+        }
+        else if (d == Canvas.LEFT) {
+            if (editingColumn >0) {
+                setSelectedCell(editingRow,editingColumn-1);
+                return true;
+            }
+        }
 
+        return false;
 
-
+    }
+    
+    public void pointerEvent(int type, int x, int y) {
+        super.pointerEvent(type, x, y);
+        
+        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
+            
+                int x1 = 0,y1 = 0;
+                int currentRow = -1,currentCol = -1;
+                for (int c=0;c<getRowCount();c++) {
+                    y1 = y1 + getRowHeight(c);
+                    if (y1 > y) {
+                        currentRow = c;
+                        break;
+                    }
+                }
+                for (int a=0;a<getColumnCount();a++) {
+                    x1 = x1 + getColumnWidth(a);
+                    if (x1 > x) {
+                        currentCol = a;
+                        break;
+                    }
+                }
+                
+                if (currentCol==-1 || currentRow==-1) { return; }
+                
+                //if (editingColumn == currentCol && editingRow == currentRow)
+                if (type == DesktopPane.PRESSED) {
+                    editCellAt(currentRow,currentCol);
+                    
+                    // dont pass clicks onto textComponents
+                    if (editorComp!=null && !(editorComp instanceof TextComponent)) {
+                        // now pass on the event onto the component
+                        DesktopPane.getDesktopPane().pointerPressed(x+getXInWindow()+owner.getX(), y+getYInWindow()+owner.getY());
+                    }
+                    //editorComp.pointerEvent(type, x, y);
+                }
+                else {
+                    setSelectedCell(currentRow,currentCol);
+                }
+            
+        }
+        
+    }
+    
+    public void setSelectedCell(int pRow, int pCol) {
+        removeEditor();
+        editingRow = pRow;
+        editingColumn = pCol;
+        
+        // TODO scroll to there
+        //scrollRectToVisible( ,  ,  ,  , false);
+        repaint();
     }
     
     public void focusLost() {
         repaint();
     }
     public void focusGained() {
+        if (editorComp!=null) {
+            DesktopPane.getDesktopPane().setFocusedComponent(editorComp);
+        }
+        
         repaint();
     }
      
     public boolean keyEvent(KeyEvent event) {
         
-        //int key = event.getIsDownKey();
+        int key = event.getIsDownKey();
+        int action = event.getKeyAction(key);
         
-        if (event.isDownAction(Canvas.DOWN)) {
-            if (editingRow < (getRowCount()-1)) {
-                editingRow++;
-            }
-            else {
-                return false;
-            }
+        if (    action==Canvas.UP ||
+                action==Canvas.DOWN ||
+                action==Canvas.LEFT ||
+                action==Canvas.RIGHT
+                ) {
+            return moveSelection(action);
         }
-        else if (event.isDownAction(Canvas.UP)) {
-            if (editingRow > 0) {
-                editingRow--;
-            }
-            else {
-                return false;
-            }
-        }
-        else if (event.isDownAction(Canvas.RIGHT)) {
-            if (editingColumn < (getColumnCount()-1)) {
-                editingColumn++;
-            }
-            else {
-                return false;
-            }
-        }
-        else if (event.isDownAction(Canvas.LEFT)) {
-            if (editingColumn >0) {
-                editingColumn--;
-            }
-            else {
-                return false;
-            }
-        }
-        else if (event.getIsDownKey()!=0) { // if (event.isDownAction(Canvas.FIRE))
-
-            if (isCellEditable(editingRow, editingColumn)) {
-                
-                cellEditor = getCellEditor(editingRow, editingColumn);
-                
-                int x=0,y=0;
-                int currentRowHeight=0,currentColWidth=0;
-                for (int c=0;c<=editingRow;c++) {
-                    y = y + currentRowHeight;
-                    currentRowHeight = getRowHeight(c);
-                }
-                for (int a=0;a<=editingColumn;a++) {
-                    x = x + currentColWidth;
-                    currentColWidth = getColumnWidth(a);
-                }
-
-                Component component = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
-                
-                component.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
-                add(component);
-                DesktopPane.getDesktopPane().setFocusedComponent(component);
-                selectable = false;
-            }
+        else if (key!=0) { // if (event.isDownAction(Canvas.FIRE))
+            editCellAt(editingRow, editingColumn);
             
+            // dont pass on fire to text components as that will open the native editor
+            if (editorComp!=null && !(editorComp instanceof TextComponent && action == Canvas.FIRE)) {
+                // now pass the current event onto that component
+                editorComp.keyEvent(event);
+            }
         }
-        
-        // TODO scroll to there
-        //scrollRectToVisible( ,  ,  ,  , false);
-        repaint();
+
         return true;
     }
 
+    /**
+     * @see javax.swing.JTable#editCellAt(int, int) JTable.editCellAt
+     */
+    public void editCellAt(int row, int column) {
+        
+        removeEditor();
+        
+        editingRow = row;
+        editingColumn = column;
+        
+        if (isCellEditable(editingRow, editingColumn)) {
+        
+            cellEditor = getCellEditor(editingRow, editingColumn);
+
+            int x=0,y=0;
+            int currentRowHeight=0,currentColWidth=0;
+            for (int c=0;c<=editingRow;c++) {
+                y = y + currentRowHeight;
+                currentRowHeight = getRowHeight(c);
+            }
+            for (int a=0;a<=editingColumn;a++) {
+                x = x + currentColWidth;
+                currentColWidth = getColumnWidth(a);
+            }
+
+            editorComp = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
+
+            editorComp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
+            add(editorComp);
+            
+            if (DesktopPane.getDesktopPane().getFocusedComponent() == this) {
+                DesktopPane.getDesktopPane().setFocusedComponent(editorComp);
+            }
+            //selectable = false;
+            repaint();
+        }
+        
+    }
+    /**
+     * @see javax.swing.JTable#removeEditor() JTable.removeEditor
+     */
+    public void removeEditor() {
+        
+        if (cellEditor!=null) {
+            removeAll();
+            setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
+            
+            if (DesktopPane.getDesktopPane().getFocusedComponent() == editorComp) {
+                editorComp = null;
+                DesktopPane.getDesktopPane().setFocusedComponent(this);
+            }
+            else {
+                editorComp = null;
+            }
+            //selectable = true;
+
+            cellEditor = null;
+
+        }
+        
+    }
+    
     public void paintComponent(Graphics g) {
         int x=0,y=0;
         

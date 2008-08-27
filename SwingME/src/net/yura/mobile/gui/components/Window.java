@@ -274,6 +274,9 @@ public class Window extends Component implements ActionListener {
 
                 Panel root = repaintComponent.getRootPane();
 
+		// the component is not visible
+		if (root==null) { return true; }
+
                 // this component is NOT in this window
                 if (root!=contentPane && root!=glasspanecomponent) {
                     return false;
