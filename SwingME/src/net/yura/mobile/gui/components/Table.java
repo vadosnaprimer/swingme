@@ -179,8 +179,12 @@ public class Table extends Panel {
         editingRow = pRow;
         editingColumn = pCol;
         
-        // TODO scroll to there
-        //scrollRectToVisible( ,  ,  ,  , false);
+        int x=getCellX(editingColumn);
+        int y=getCellY(editingRow);
+        int currentRowHeight=getRowHeight(editingRow);
+        int currentColWidth=getColumnWidth(editingColumn);
+
+        scrollRectToVisible( x, y , currentColWidth , currentRowHeight , false);
         repaint();
     }
     
@@ -220,6 +224,21 @@ public class Table extends Panel {
         return true;
     }
 
+    public int getCellX(int col) {
+        int x=0;
+        for (int a=0;a<col;a++) {
+            x = x + getColumnWidth(a);
+        }
+        return x;
+    }
+    public int getCellY(int row) {
+        int y=0;
+        for (int c=0;c<row;c++) {
+            y = y + getRowHeight(c);
+        }
+        return y;
+    }
+    
     /**
      * @see javax.swing.JTable#editCellAt(int, int) JTable.editCellAt
      */
@@ -234,16 +253,10 @@ public class Table extends Panel {
         
             cellEditor = getCellEditor(editingRow, editingColumn);
 
-            int x=0,y=0;
-            int currentRowHeight=0,currentColWidth=0;
-            for (int c=0;c<=editingRow;c++) {
-                y = y + currentRowHeight;
-                currentRowHeight = getRowHeight(c);
-            }
-            for (int a=0;a<=editingColumn;a++) {
-                x = x + currentColWidth;
-                currentColWidth = getColumnWidth(a);
-            }
+            int x=getCellX(editingColumn);
+            int y=getCellY(editingRow);
+            int currentRowHeight=getRowHeight(editingRow);
+            int currentColWidth=getColumnWidth(editingColumn);
 
             editorComp = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
 
@@ -306,12 +319,15 @@ public class Table extends Panel {
 
                         boolean sel = editingRow==c && editingColumn==a;
                         Component comp = renderer.getListCellRendererComponent(null, object, c, sel ,sel && isFocused() );
-                        comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
-                        int xoff=comp.getX();
-                        int yoff=comp.getY();
-                        g.translate(xoff, yoff);
-                        comp.paint(g);
-                        g.translate(-xoff, -yoff);
+                        if (comp!=null) {
+                        
+                            comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
+                            int xoff=comp.getX();
+                            int yoff=comp.getY();
+                            g.translate(xoff, yoff);
+                            comp.paint(g);
+                            g.translate(-xoff, -yoff);
+                        }
                   }
                   
                   x = x + currentColWidth;
@@ -334,8 +350,13 @@ public class Table extends Panel {
             w = w + getColumnWidth(a);
         }
         
+        int r = getRowCount();
+        for (int a=0;a<r;a++) {
+            h = h + getRowHeight(a);
+        }
+        
         width = w;
-        height = h * getRowCount();
+        height = h;
         
     }
     

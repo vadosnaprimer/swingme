@@ -177,11 +177,10 @@ public class Button extends Label implements ActionListener {
             selected=true;
         }
         
-	public void setBorder(Border b) {
-		normalBorder = b;
-                super.setBorder(b);
-	}
- 
+        public void setNormalBorder(Border b) {
+            normalBorder = b;
+        }
+        
 	public void setActiveBorder(Border b) {
 		activeBorder = b;
 	}
