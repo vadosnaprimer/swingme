@@ -226,6 +226,11 @@ public class Table extends Panel {
         return true;
     }
 
+    /**
+     * @param col the Column
+     * @return the x position of a cell in the column
+     * @see javax.swing.JTable#getCellRect(int, int, boolean) JTable.getCellRect
+     */
     public int getCellX(int col) {
         int x=0;
         for (int a=0;a<col;a++) {
@@ -233,6 +238,12 @@ public class Table extends Panel {
         }
         return x;
     }
+    
+    /**
+     * @param row the Row
+     * @return the y position of a cell in the row
+     * @see javax.swing.JTable#getCellRect(int, int, boolean) JTable.getCellRect
+     */
     public int getCellY(int row) {
         int y=0;
         for (int c=0;c<row;c++) {
@@ -507,6 +518,7 @@ public class Table extends Panel {
     }
 
     /**
+     * @return the number of columns
      * @see javax.swing.table.TableModel#getColumnCount() TableModel.getColumnCount
      */
     public int getColumnCount() {
@@ -527,7 +539,7 @@ public class Table extends Panel {
     }
     
     /**
-     * @return
+     * @return the number of rows
      * @see javax.swing.table.TableModel#getRowCount() TableModel.getRowCount
      */
     public int getRowCount() {

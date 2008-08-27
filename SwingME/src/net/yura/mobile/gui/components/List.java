@@ -296,7 +296,42 @@ public class List extends Component implements ActionListener {
             }
 
         }
+    public void pointerEvent(int type, int x, int y) {
+        super.pointerEvent(type, x, y);
+        
+        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
+            
+            int offset=0;
+            for(int i = 0; i < getSize(); i++){
+                Component c = getComponentFor(i,offset);
 
+                int cw=c.getWidthWithBorder();
+                int ch=c.getHeightWithBorder();
+                
+                offset = offset + ((horizontal)?cw:ch);
+
+                int cx = c.getXWithBorder();
+                int cy = c.getYWithBorder();
+
+                if (
+                        x>=cx && x <=(cw+cx) &&
+                        y>=cy && y <=(ch+cy)
+                ) {
+                    setSelectedIndex(i);
+                    return;
+                }
+            }
+
+            
+        }
+        else if (type == DesktopPane.RELEASED) {
+
+            fireActionPerformed();
+
+        }
+        
+        
+    }
 
     public boolean keyEvent(KeyEvent keypad) {
 
