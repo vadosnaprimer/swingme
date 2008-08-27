@@ -146,8 +146,8 @@ public class TextArea extends TextComponent {
                         // dont paint the last char if its a space or (not the last line && hard return)
                         // the last line cant physically have a hard return on it!
                         char lastChar = text.charAt(lines[i]-1);
-                        if (lastChar==' ' || ((i!=(lines.length-1)) && lastChar=='\n')) {
-                            lastIndex = (lines[i]-1);
+                        if ( ((i!=(lines.length-1)) && lastChar=='\n')) {
+                            lastIndex = (lines[i]-1); // lastChar==' ' ||
                         }
                     }
 

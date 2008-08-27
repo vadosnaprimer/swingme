@@ -67,6 +67,8 @@ public class Table extends Panel {
     
     public Table() {
 
+        setName("Table");
+        
         colWidths = new Vector();
         rowHeight = 20; // default value
         

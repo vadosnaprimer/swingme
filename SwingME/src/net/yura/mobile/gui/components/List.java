@@ -46,12 +46,11 @@ public class List extends Component implements ActionListener {
     }
     private boolean useSelectButton;
 
-    private Vector items;
     private ListCellRenderer renderer;
     private int current;
 
     private ActionListener al;
-        private ChangeListener chl;
+    private ChangeListener chl;
     private String actionCommand;
 
     private boolean loop;
@@ -87,7 +86,77 @@ public class List extends Component implements ActionListener {
         setSelectedIndex(-1);
     }
 
+    /**
+     * @param a
+     * @see javax.swing.JList#setListData(java.util.Vector) JList.setListData
+     */
+    public void setListData(Vector a) {
 
+        items = a;
+        if (a == null || current >= a.size()){
+            setSelectedIndex(-1);
+        }
+        
+        if (isFocused() && current==-1 && a.size() > 0) {
+            setSelectedIndex(0);
+        }
+
+    }
+    
+    /**
+     * @param a the object to select
+     * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
+     */
+    public void setSelectedValue(Object a) {
+
+        setSelectedIndex( items.indexOf(a) );
+    }
+    
+    public Vector getItems() {
+        return items;
+    }
+    
+    public String toString() {
+        return super.toString() + items;
+    }
+    
+    
+    public void workoutSize() {
+
+        //if (items!=null) {
+
+            Component c=null;
+            int totalHeight = 0;
+            int totalWidth = 0;
+
+            for(int i = 0; i < getSize(); i++){
+                    Object item = getElementAt(i);
+                    c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
+                    c.workoutSize();
+                    if (horizontal) {
+                        if (totalHeight<c.getHeightWithBorder()) {
+                            totalHeight=c.getHeightWithBorder();
+                        }
+                    }
+                    else {
+                        totalHeight = totalHeight + c.getHeightWithBorder();
+                    }
+
+                    if (horizontal) {
+                        totalWidth = totalWidth + c.getWidthWithBorder();
+                    }
+                    else {
+                        if (totalWidth<c.getWidthWithBorder()) {
+                            totalWidth=c.getWidthWithBorder();
+                        }
+                    }
+            }
+
+            setSize(totalWidth,totalHeight);
+        //}
+    }
+    
+    
 
     /**
      * @param horizontal
@@ -112,68 +181,25 @@ public class List extends Component implements ActionListener {
         actionCommand=ac;
     }
 
-        public void setLoop(boolean l) {
-            loop = l;
-        }
+    public void setLoop(boolean l) {
+        loop = l;
+    }
 
-        /**
-         * @param cellRenderer
-         * @see javax.swing.JList#setCellRenderer(javax.swing.ListCellRenderer) JList.setCellRenderer
-         */
+    /**
+     * @param cellRenderer
+     * @see javax.swing.JList#setCellRenderer(javax.swing.ListCellRenderer) JList.setCellRenderer
+     */
     public void setCellRenderer(ListCellRenderer cellRenderer) {
 
         renderer = cellRenderer;
         //workoutItemSize();
     }
-    /**
-         * @param a
-         * @see javax.swing.JList#setListData(java.util.Vector) JList.setListData
-         */
-    public void setListData(Vector a) {
-
-        items = a;
-        if (a == null || current >= a.size()){
-            setSelectedIndex(-1);
-        }
-        
-        if (isFocused() && current==-1 && a.size() > 0) {
-            setSelectedIndex(0);
-        }
-
-    }
-
-    /**
-     * @param a
-     * @see javax.swing.DefaultListModel#addElement(java.lang.Object) DefaultListModel.addElement
-     */
-    public void addElement(Object a) {
-
-        items.addElement(a);
-
-    }
-
-    /**
-     * @param i
-     * @see javax.swing.DefaultListModel#removeElementAt(int) DefaultListModel#removeElementAt
-     */
-    public void removeElementAt(int i) {
-
-        items.removeElementAt(i);
-        if (current == i) {
-            current = -1;
-        }
-        else if (current > i) {
-            current--;
-        }
-
-    }
-
 
     public void paintComponent(Graphics g) {
 
         int offset=0;
         boolean good=false;
-        for(int i = 0; i < items.size(); i++){
+        for(int i = 0; i < getSize(); i++){
             Component c = getComponentFor(i,offset);
 
                 offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
@@ -235,7 +261,7 @@ public class List extends Component implements ActionListener {
 
     private Component getComponentFor(int i,int offset) {
 
-        Object item = items.elementAt(i);
+        Object item = getElementAt(i);
 
         Component c = renderer.getListCellRendererComponent(this, item, i, i == current, isFocused() && i == current);
         c.workoutSize();
@@ -249,46 +275,6 @@ public class List extends Component implements ActionListener {
 
     }
 
-    //public void setSize(int width, int height){
-    //	super.setSize(width, height);
-    //	workoutItemSize();
-    //}
-
-    public void workoutSize() {
-
-        if (items!=null) {
-
-            Component c=null;
-            int totalHeight = 0;
-            int totalWidth = 0;
-
-            for(int i = 0; i < items.size(); i++){
-                    Object item = (Object)items.elementAt(i);
-                    c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
-                    c.workoutSize();
-                    if (horizontal) {
-                        if (totalHeight<c.getHeightWithBorder()) {
-                            totalHeight=c.getHeightWithBorder();
-                        }
-                    }
-                    else {
-                        totalHeight = totalHeight + c.getHeightWithBorder();
-                    }
-
-                    if (horizontal) {
-                        totalWidth = totalWidth + c.getWidthWithBorder();
-                    }
-                    else {
-                        if (totalWidth<c.getWidthWithBorder()) {
-                            totalWidth=c.getWidthWithBorder();
-                        }
-                    }
-            }
-
-            setSize(totalWidth,totalHeight);
-        }
-    }
-
     public void focusLost() {
         super.focusLost();
         if (useSelectButton) {
@@ -300,7 +286,7 @@ public class List extends Component implements ActionListener {
 
         public void focusGained() {
             super.focusGained();
-            if (items.size() != 0 ) {
+            if (getSize() != 0 ) {
                 if (current==-1) { current=0; }
                 setSelectedIndex(current);
             }
@@ -314,17 +300,19 @@ public class List extends Component implements ActionListener {
 
     public boolean keyEvent(KeyEvent keypad) {
 
-                if (current==-1) { return false; }
+        if (current==-1) { return false; }
 
         int next = current+1;
         int prev = current-1;
 
+        int size = getSize();
+        
         if (loop) {
-            if (next>=items.size()) { next = (items.size()==0)?-1:0; }
-            if (prev<0) { prev = items.size()-1; }
+            if (next>=size) { next = (size==0)?-1:0; }
+            if (prev<0) { prev = size-1; }
         }
         else {
-            if (next>=items.size()) { next=-1; }
+            if (next>=size) { next=-1; }
         }
 
                 if (keypad.isDownAction(Canvas.DOWN)) {
@@ -438,7 +426,7 @@ public class List extends Component implements ActionListener {
     public Object getSelectedValue() {
 
             if (current==-1) return null;
-            return items.elementAt(current);
+            return getElementAt(current);
     }
 
         /**
@@ -449,14 +437,7 @@ public class List extends Component implements ActionListener {
         return current;
     }
 
-        /**
-         * @param a the object to select
-         * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
-         */
-    public void setSelectedValue(Object a) {
 
-        setSelectedIndex( items.indexOf(a) );
-    }
 
         /**
          * @param a the index of the one cell to select
@@ -493,11 +474,6 @@ public class List extends Component implements ActionListener {
         }
     }
 
-
-    public Vector getItems() {
-        return items;
-    }
-
     public void actionPerformed(String actionCommand) {
 
         if(selectButton.getActionCommand().equals(actionCommand)) {
@@ -514,21 +490,67 @@ public class List extends Component implements ActionListener {
     public void setUseSelectButton(boolean useSelectButton) {
         this.useSelectButton = useSelectButton;
     }
-
-    public String toString() {
-        return super.toString() + items;
-    }
         
     public String getName() {
         return "List";
     }
     
-        public void updateUI() {
-            super.updateUI();
-            if (renderer!=null) {
-                // TODO ??? what to do here ???
-                // find out how swing does it
-            }
+
+    public void updateUI() {
+        super.updateUI();
+        if (renderer!=null) {
+            // TODO ??? what to do here ???
+            // find out how swing does it
         }
+    }
     
+    // #########################################################################
+    // ########################## DefaultListModel #############################
+    // #########################################################################
+
+    private Vector items;
+    
+    /**
+     * @param index
+     * @return the element
+     * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
+     */
+    public Object getElementAt(int index) {
+        return items.elementAt(index);
+    }
+    
+    /**
+     * @return the size of the list
+     * @see javax.swing.ListModel#getSize() ListModel.getSize
+     */
+    public int getSize() {
+        return items.size();
+    }
+    
+    /**
+     * @param a
+     * @see javax.swing.DefaultListModel#addElement(java.lang.Object) DefaultListModel.addElement
+     */
+    public void addElement(Object a) {
+
+        items.addElement(a);
+
+    }
+
+    /**
+     * @param i
+     * @see javax.swing.DefaultListModel#removeElementAt(int) DefaultListModel#removeElementAt
+     */
+    public void removeElementAt(int i) {
+
+        items.removeElementAt(i);
+        if (current == i) {
+            current = -1;
+        }
+        else if (current > i) {
+            current--;
+        }
+
+    }
+        
 }
