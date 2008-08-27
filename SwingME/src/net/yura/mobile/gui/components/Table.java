@@ -80,8 +80,8 @@ public class Table extends Panel {
     public Table(Vector data, Vector names) {
         this();
         
-        rows=data;
-        columnNames=names;
+        dataVector=data;
+        columnIdentifiers=names;
         
         // default renderer
         setDefaultRenderer(Object.class, new DefaultListCellRenderer());
@@ -434,39 +434,81 @@ public class Table extends Panel {
     // ############################# TableModel ################################
     // #########################################################################
     
-    private Vector rows;
-    private Vector columnNames;
+    /**
+     * @see javax.swing.table.DefaultTableModel#dataVector DefaultTableModel.dataVector
+     */
+    protected Vector dataVector;
     
+    /**
+     * @see javax.swing.table.DefaultTableModel#columnIdentifiers DefaultTableModel.columnIdentifiers
+     */
+    protected Vector columnIdentifiers;
+    
+    /**
+     * @param columnIndex
+     * @return the class of the column
+     * @see javax.swing.table.TableModel#getColumnClass(int) TableModel.getColumnClass
+     */
     public Class getColumnClass(int columnIndex) {
         return getValueAt(0,columnIndex).getClass();
     }
     
+    /**
+     * @param rowIndex
+     * @param columnIndex
+     * @return the value
+     * @see javax.swing.table.TableModel#getValueAt(int, int) TableModel.getValueAt
+     */
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return ((Vector)rows.elementAt(rowIndex)).elementAt(columnIndex);
+        return ((Vector)dataVector.elementAt(rowIndex)).elementAt(columnIndex);
     }
 
+    /**
+     * @param rowIndex
+     * @param columnIndex
+     * @return true if the cell is editable
+     * @see javax.swing.table.TableModel#isCellEditable(int,int) TableModel.isCellEditable
+     */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true; // true by default
     }
 
+    /**
+     * @param aValue
+     * @param rowIndex
+     * @param columnIndex
+     * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int) TableModel.setValueAt
+     */
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        ((Vector)rows.elementAt(rowIndex)).setElementAt(aValue, columnIndex);
+        ((Vector)dataVector.elementAt(rowIndex)).setElementAt(aValue, columnIndex);
     }
 
+    /**
+     * @see javax.swing.table.TableModel#getColumnCount() TableModel.getColumnCount
+     */
     public int getColumnCount() {
-        if (columnNames==null) {
-            if (rows.size()==0) return 0;
-            return ((Vector)rows.elementAt(0)).size();
+        if (columnIdentifiers==null) {
+            if (dataVector.size()==0) return 0;
+            return ((Vector)dataVector.elementAt(0)).size();
         }
-        return columnNames.size();
+        return columnIdentifiers.size();
     }
 
+    /**
+     * @param columnIndex
+     * @return The name
+     * @see javax.swing.table.TableModel#getColumnName(int) TableModel.getColumnName
+     */
     public String getColumnName(int columnIndex) {
-        return (String)columnNames.elementAt(columnIndex);
+        return (String)columnIdentifiers.elementAt(columnIndex);
     }
-
+    
+    /**
+     * @return
+     * @see javax.swing.table.TableModel#getRowCount() TableModel.getRowCount
+     */
     public int getRowCount() {
-        return rows.size();
+        return dataVector.size();
     }
 
 
