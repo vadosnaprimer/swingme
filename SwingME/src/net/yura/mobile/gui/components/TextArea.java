@@ -129,7 +129,7 @@ public class TextArea extends TextComponent {
 		// Calculate which lines are vertically within the current clipping rectangle.
 		lineHeight = font.getHeight() + lineSpacing;
 		startLine = Math.max(0, (g.getClipY() - y) / lineHeight);
-		endLine = Math.min(lines.length, startLine + (g.getClipHeight() / lineHeight) + 1);
+		endLine = Math.min(lines.length+1, startLine + (g.getClipHeight() / lineHeight) + 1);
 
 		// Offset the starting position to skip the lines before startLine
 		y += lineHeight * startLine;
@@ -140,20 +140,40 @@ public class TextArea extends TextComponent {
 		for(i = startLine; i < endLine; i++) {
 
 
-                    int lastIndex = lines[i];
+                    int lastIndex = (i==lines.length)?text.length():lines[i];
                     // as long as we r not right at the start of the string
                     if (lastIndex > 0) {
                         // dont paint the last char if its a space or (not the last line && hard return)
                         // the last line cant physically have a hard return on it!
-                        char lastChar = text.charAt(lines[i]-1);
-                        if ( ((i!=(lines.length-1)) && lastChar=='\n')) {
-                            lastIndex = (lines[i]-1); // lastChar==' ' ||
+                        //char lastChar = text.charAt(lastIndex-1);
+                        if ( (i!=lines.length) ) { // && (lastChar=='\n' || lastChar==' ')
+                            lastIndex--;
+                            // we NEED to show the last line ' '
                         }
                     }
 
-                    font.drawString(g, text.substring(beginIndex, lastIndex) , x, y, alignment);
-                    y += lineHeight;
-                    beginIndex = lines[i];
+                    String line = text.substring(beginIndex, lastIndex);
+                    font.drawString(g, line , x, y, alignment);
+
+                    if (showCaret && caretPosition >= beginIndex && caretPosition <= lastIndex) {
+
+                        int w = font.getWidth( text.substring(beginIndex, caretPosition) );
+                        
+                        if((align & Graphics.HCENTER) != 0) {
+                                w = (width - font.getWidth(line))/2 + w;
+                        }
+                        else if((align & Graphics.RIGHT) != 0) {
+                                w = width - (font.getWidth(line)-w); // not best efficency
+                        }
+                        
+                        g.drawLine(w, y, w, y+lineHeight);
+                    }
+
+                    // save this info and go round the loop again
+                    if (i!=(endLine-1)) {
+                        y += lineHeight;
+                        beginIndex = lines[i];
+                    }
 		}
                 
 		
@@ -187,7 +207,7 @@ public class TextArea extends TextComponent {
 	
             String newtext = getText() + a;
             
-            if (lines==null || lines.length<=1) {
+            if (lines==null || lines.length==0) {
                 // we dont have enough text in the box to know where to append yet
                 setText(newtext);
             }
@@ -195,14 +215,14 @@ public class TextArea extends TextComponent {
 
 		int w = wrap?width:Integer.MAX_VALUE;
 
-                int[] l2 = getLines(newtext,font,lines[lines.length-2],w);
+                int[] l2 = getLines(newtext,font,lines[lines.length-1],w);
 
                 // just copy the 1st array and the 2nd array into the new array
                 // 1 value will be lost from the end of the old array
-                int[] l3 = new int[ lines.length -1 + l2.length];
+                int[] l3 = new int[ lines.length + l2.length];
 
-		System.arraycopy(lines, 0, l3, 0, lines.length-1);
-		System.arraycopy(l2, 0, l3, lines.length-1, l2.length);
+		System.arraycopy(lines, 0, l3, 0, lines.length);
+		System.arraycopy(l2, 0, l3, lines.length, l2.length);
 
                 // set the text and adjust the height
                 super.setText(newtext);
@@ -217,7 +237,7 @@ public class TextArea extends TextComponent {
         lines = l;
         widthUsed = w;
         int oldh = height;
-        height = (lines.length * font.getHeight()) + ((lines.length - 1) * lineSpacing);
+        height = ((lines.length+1) * font.getHeight()) + (lines.length * lineSpacing);
 
 
 	// we have just changed out height
@@ -276,20 +296,17 @@ public class TextArea extends TextComponent {
 		String text = getDisplayString();
 
 		int beginIndex = 0;
-		for(int i = 0; i < lines.length; i++) {
+		for(int i = 0; i <= lines.length; i++) {
 
-                    int lastIndex = lines[i];
-                    if (i!=(lines.length-1)) {
-                        lastIndex = lastIndex-1;
-                    }
+                    int lastIndex = (i==lines.length)?text.length():lines[i];
 
-                    w = font.getWidth( text.substring(beginIndex, lastIndex) );
+                    w = font.getWidth( text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) );
 
 		    if (width<w) {
 			width = w;
 		    }
 
-                    beginIndex = lines[i];
+                    beginIndex = lastIndex;
 		}
 
 
@@ -379,7 +396,7 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
 
                         }
                         else if (wordEnd==-1 && lineEnd==-1) { // (end == str.length()) if we are at the end
-                            parts.addElement(new Integer(end));
+                            //parts.addElement(new Integer(end));
                             break;
                         }
                         else if (end == lineEnd) { // if we find a end of line

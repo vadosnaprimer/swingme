@@ -334,7 +334,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 StringBuffer buf = new StringBuffer();
 
 
-
+/*
 InputStream inputStreamTxt=null;
 try {
 	inputStreamTxt = this.getClass().getResourceAsStream("/SynthME.dtd");
@@ -354,13 +354,14 @@ finally {
 	catch(Exception ex) { }
     }
 }
-/* wrap testing
+*/
+//* wrap testing
 for (int c=0;c<5;c++) {
 	buf.append("sdfdsfsdf sdfjk hdsfjk s diw k s d f j k s dfjksdh skjdf sdjkf sdhfjkskd fskjdf hsdjkf hsdjkf sdjkf hskjd fhsdf\n");
 }
-*/
+//*/
 				viewText = new TextArea();
-                                viewText.setSelectable(false);
+                                //viewText.setSelectable(false);
 				viewText.setLineWrap(true);
 				viewText.setText(buf.toString()); // this is the same as passing it into the constructor if wrap is false
 
@@ -381,7 +382,7 @@ for (int c=0;c<5;c++) {
 			Panel p = new Panel( new BorderLayout() );
 			p.add(tmp);
 
-			addToScrollPane(p, null , new CommandButton("Back","mainmenu") );
+			addToScrollPane(p, new CommandButton("Back","mainmenu") , null );
 
 		}
                 else if ("load".equals(actionCommand)) {
