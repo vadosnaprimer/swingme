@@ -155,10 +155,11 @@ public abstract class TextComponent extends Component implements ActionListener,
                         repaint();
                     }
                     else if (caretPosition>0) {
-
-                        setCaretPosition(caretPosition-1);
-                        text.deleteCharAt(caretPosition);
+                        
+                        text.deleteCharAt(caretPosition-1);
                         changedUpdate(caretPosition,1);
+                        setCaretPosition(caretPosition-1);
+
                         
                     }
                     
@@ -267,12 +268,20 @@ public abstract class TextComponent extends Component implements ActionListener,
             label = s;
         }
         
+        /**
+         * @param a position in the text
+         * @see javax.swing.text.JTextComponent#setCaretPosition(int) JTextComponent.setCaretPosition
+         */
         public void setCaretPosition(int a) {
             caretPosition = a;
             repaint();
             updateSoftKeys();
         }
         
+        /**
+         * @return the Caret position
+         * @see javax.swing.text.JTextComponent#getCaretPosition() JTextComponent.getCaretPosition
+         */
         public int getCaretPosition() {
             return caretPosition;
         }
@@ -326,13 +335,26 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         protected String getDisplayString() {
             
-            // TODO if password or entering text, add that info
-
-            boolean password = ((javax.microedition.lcdui.TextField.PASSWORD & mode) != 0);
             String s=text.toString();
             
-            String st1 = s.substring(0, caretPosition);
-            String st2 = s.substring(caretPosition, s.length() );
+            // there is a VERY small chance that this method is called
+            // when the caret is outside the text
+            // this is because it is called during a paint method, and 
+            // they can happen when ever
+            //
+            // the reason a caret can be outside the text is because
+            // when we remove a char, we need to first del it from the string
+            // then inform the companent that a change has happened
+            // and only after that move the carret back
+            // so when the carret is moving, is has information such as
+            // what is in the string and how many lines it takes up available
+            int caret = caretPosition>s.length()?s.length():caretPosition;
+            
+            // TODO if password or entering text, add that info
+            boolean password = ((javax.microedition.lcdui.TextField.PASSWORD & mode) != 0);
+            
+            String st1 = s.substring(0, caret);
+            String st2 = s.substring(caret, s.length() );
             
             if (password) {
                 StringBuffer buffer = new StringBuffer();

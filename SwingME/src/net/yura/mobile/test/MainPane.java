@@ -362,7 +362,7 @@ for (int c=0;c<4;c++) {
 //*/
 				viewText = new TextArea();
                                 viewText.setSelectable(false);
-				//viewText.setLineWrap(true);
+				viewText.setLineWrap(true);
 				viewText.setText(buf.toString()); // this is the same as passing it into the constructor if wrap is false
 
 				//viewText.setLineWrap(true); // this is the BAD order to do this

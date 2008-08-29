@@ -18,9 +18,11 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.KeyEvent;
 
 /**
  * what happens with sizes:
@@ -46,8 +48,9 @@ public class TextArea extends TextComponent {
         private int lineSpacing;
 	private boolean wrap;
         
-        //private int caretPixelOffset;
-
+        private int caretPixelOffset;
+        private boolean doNotUpdateCaretPixelOffset;
+        
         public TextArea() {
             this("");
         }
@@ -268,16 +271,104 @@ public class TextArea extends TextComponent {
 
         }
         
-        public void setCaretPosition(int a) {
-            super.setCaretPosition(a);
+        public boolean keyEvent(KeyEvent keyEvent) {
+            boolean result = super.keyEvent(keyEvent);
+            
+            if (!result) {
+                if (keyEvent.isDownAction(Canvas.UP)) {
 
+                    int line = getLineOfOffset(caretPosition);
+                    if (line!=0) {
+                        doNotUpdateCaretPixelOffset = true;
+                        gotoLine(line-1,caretPixelOffset);
+                        return true;
+                    }
+                    
+                }
+                else if (keyEvent.isDownAction(Canvas.DOWN)) {
+                    
+                    int line = getLineOfOffset(caretPosition);
+                    if (line!=lines.length) {
+                        doNotUpdateCaretPixelOffset = true;
+                        gotoLine(line+1,caretPixelOffset);
+                        return true;
+                    }
+                
+                }
+            }
+            
+            return result;
+        }
+        
+        // Crazy binary search!
+        private void gotoLine(int line,int xPixelOffset) {
+            
+            int startOfLineOffset = line==0?0:lines[line-1];
+            
+            String text = getText();
+            text = text.substring(startOfLineOffset, line==lines.length?text.length():lines[line]);
+
+            int first = 0;
+            int upto  = text.length();
+            int mid=0;
+            while (first < upto) {
+                mid = (first + upto) / 2;
+
+                // TODO take into account centre and right aligh
+                int charPos1 = font.getWidth(text.substring(0,mid));
+                int charPos2 = charPos1 + font.getWidth(text.substring(mid,mid+1));
+                
+                if (xPixelOffset<charPos1) {
+                    upto = mid;
+                }
+                else if (xPixelOffset>charPos2) {
+                    first = mid + 1;
+                }
+                else {
+                    break;
+                }
+            }
+
+            setCaretPosition(startOfLineOffset+mid);
+
+        }
+
+        
+        public void pointerEvent(int type, int x, int y) {
+            super.pointerEvent(type, x, y);
+
+            if (type==DesktopPane.PRESSED) {
+            
+                int lineHeight = font.getHeight() + lineSpacing;
+
+                int line = y / lineHeight;
+                if (line > lines.length) { line = lines.length; }
+                
+                gotoLine(line,x);
+                
+            }
+        }
+        
+        /**
+         * @see javax.swing.JTextArea#getLineOfOffset(int) JTextArea.getLineOfOffset
+         */
+        public int getLineOfOffset(int offset) {
+            
             int line=0;
             for (int c=0;c<lines.length;c++) {
-                if (caretPosition < lines[c]) {
+                if (offset < lines[c]) {
                     break;
                 }
                 line = c+1;
             }
+            return line;
+            
+        }
+        
+        public void setCaretPosition(int a) {
+            super.setCaretPosition(a);
+
+            int line = getLineOfOffset(caretPosition);
 
             int lineHeight = font.getHeight() + lineSpacing;
             int pos = caretPosition - ( line==0?0:lines[line-1] );
@@ -287,8 +378,16 @@ public class TextArea extends TextComponent {
             int offset = line==0?0:lines[line-1];
             text = text.substring(offset, offset+pos); // line End = line==lines.length?text.length():lines[line]
 
+            // TODO what about centre or right aligned?! will need the length of this line then!
             
-            scrollRectToVisible(font.getWidth(text), line * lineHeight, lineHeight, lineHeight, false);
+            int xoffset = font.getWidth(text);
+            if (!doNotUpdateCaretPixelOffset) {
+                caretPixelOffset = xoffset;
+            }
+            else {
+                doNotUpdateCaretPixelOffset = false;
+            }
+            scrollRectToVisible(xoffset, line * lineHeight, lineHeight, lineHeight, false);
 
         }
 
