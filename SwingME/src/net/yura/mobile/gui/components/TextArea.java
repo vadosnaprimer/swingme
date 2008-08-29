@@ -279,6 +279,7 @@ public class TextArea extends TextComponent {
 
                     int line = getLineOfOffset(caretPosition);
                     if (line!=0) {
+                        autoAccept();
                         doNotUpdateCaretPixelOffset = true;
                         gotoLine(line-1,caretPixelOffset);
                         return true;
@@ -289,6 +290,7 @@ public class TextArea extends TextComponent {
                     
                     int line = getLineOfOffset(caretPosition);
                     if (line!=lines.length) {
+                        autoAccept();
                         doNotUpdateCaretPixelOffset = true;
                         gotoLine(line+1,caretPixelOffset);
                         return true;

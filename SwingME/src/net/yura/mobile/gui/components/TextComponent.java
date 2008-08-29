@@ -118,7 +118,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             
         }
         
-        private void autoAccept() {
+        protected void autoAccept() {
             
             if (tmpChar!=0) {
                 char tmp = tmpChar;
