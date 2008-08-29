@@ -45,6 +45,8 @@ public class TextArea extends TextComponent {
        	private int align;
         private int lineSpacing;
 	private boolean wrap;
+        
+        //private int caretPixelOffset;
 
         public TextArea() {
             this("");
@@ -192,12 +194,12 @@ public class TextArea extends TextComponent {
 	 * @param txt The text
 	 */
 	public void setText(String txt) {
-            super.setText(txt);
 
 	    int w = wrap?width:Integer.MAX_VALUE;
-
             // todo? mayeb use display text
             setupHeight(getLines(txt,font,0,w),w,true);
+            
+            super.setText(txt);
 	}
 	
         /**
@@ -252,23 +254,43 @@ public class TextArea extends TextComponent {
             }
             // if startPos is 0 or more, then this means we can use
             // the existing array, upto and including startPos
-
-System.out.println("startPos="+startPos+" offset="+offset);
             
-            	int w = wrap?width:Integer.MAX_VALUE;
+            int w = wrap?width:Integer.MAX_VALUE;
 
-                int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos],w);
+            int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos],w);
 
-                int[] l3 = new int[ startPos+1 + l2.length];
+            int[] l3 = new int[ startPos+1 + l2.length];
 
-		System.arraycopy(lines, 0, l3, 0, startPos+1);
-		System.arraycopy(l2, 0, l3, startPos+1, l2.length);
+            System.arraycopy(lines, 0, l3, 0, startPos+1);
+            System.arraycopy(l2, 0, l3, startPos+1, l2.length);
 
-                setupHeight(l3,w,true);
+            setupHeight(l3,w,true);
 
         }
         
-        
+        public void setCaretPosition(int a) {
+            super.setCaretPosition(a);
+
+            int line=0;
+            for (int c=0;c<lines.length;c++) {
+                if (caretPosition < lines[c]) {
+                    break;
+                }
+                line = c+1;
+            }
+
+            int lineHeight = font.getHeight() + lineSpacing;
+            int pos = caretPosition - ( line==0?0:lines[line-1] );
+
+            // todo, getDisplayString
+            String text = getText();
+            int offset = line==0?0:lines[line-1];
+            text = text.substring(offset, offset+pos); // line End = line==lines.length?text.length():lines[line]
+
+            
+            scrollRectToVisible(font.getWidth(text), line * lineHeight, lineHeight, lineHeight, false);
+
+        }
 
     private void setupHeight(int[] l,int w,boolean relayout) {
         lines = l;
@@ -337,7 +359,9 @@ System.out.println("startPos="+startPos+" offset="+offset);
 
                     int lastIndex = (i==lines.length)?text.length():lines[i];
 
-                    w = font.getWidth( text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) );
+                    w = font.getWidth( text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) )
+                            +1; // this adds 1 extra pixel, so the carret can be
+                                // displayed at the end of the line
 
 		    if (width<w) {
 			width = w;

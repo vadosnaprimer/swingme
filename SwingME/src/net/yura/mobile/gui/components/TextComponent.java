@@ -108,9 +108,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
         private void insertNewCharacter(char ch) {
-            
                 text.insert(caretPosition, ch);
-                setCaretPosition(caretPosition+1);
         }
 
         /**
@@ -126,6 +124,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 char tmp = tmpChar;
                 tmpChar=0;
                 insertNewCharacter(tmp);
+                setCaretPosition(caretPosition+1);
             }
             
         }
@@ -190,19 +189,16 @@ public abstract class TextComponent extends Component implements ActionListener,
                     }
                     else {
                         tmpChar = 0;
-                        changedUpdate(caretPosition,1);
                     }
                     
                     if (keyEvent.acceptNew()) {
                          insertNewCharacter(thechar);
-                         
-                         changedUpdate(caretPosition-1,1);
+                         changedUpdate(caretPosition,1);
+                         setCaretPosition(caretPosition+1);
                     }
                     else {
                         tmpChar = thechar;
-                        
                         changedUpdate(caretPosition,1);
-                        
                         updateSoftKeys();
                         repaint();
                     }
@@ -273,9 +269,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         
         public void setCaretPosition(int a) {
             caretPosition = a;
-            if (isFocused()) {
-                showCaret = true;
-            }
+            repaint();
             updateSoftKeys();
         }
         
@@ -298,6 +292,8 @@ public abstract class TextComponent extends Component implements ActionListener,
                 int newWait = cursorBlinkWait;
             
 		while (isFocused()) {
+
+                    int oldCaret = caretPosition;
                     
 			wait(newWait);
 
@@ -315,7 +311,12 @@ public abstract class TextComponent extends Component implements ActionListener,
                             newWait = cursorBlinkWait;
                         }
 
-			showCaret = !showCaret;
+                        if (oldCaret==caretPosition) {
+                            showCaret = !showCaret;
+                        }
+                        else {
+                            showCaret = true;
+                        }
 			
 			repaint();
 		}

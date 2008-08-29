@@ -356,13 +356,13 @@ finally {
 }
 */
 //* wrap testing
-for (int c=0;c<5;c++) {
+for (int c=0;c<4;c++) {
 	buf.append("sdfdsfsdf sdfjk hdsfjk s diw k s d f j k s dfjksdh skjdf sdjkf sdhfjkskd fskjdf hsdjkf hsdjkf sdjkf hskjd fhsdf\n");
 }
 //*/
 				viewText = new TextArea();
-                                //viewText.setSelectable(false);
-				viewText.setLineWrap(true);
+                                viewText.setSelectable(false);
+				//viewText.setLineWrap(true);
 				viewText.setText(buf.toString()); // this is the same as passing it into the constructor if wrap is false
 
 				//viewText.setLineWrap(true); // this is the BAD order to do this
@@ -381,10 +381,22 @@ for (int c=0;c<5;c++) {
 			tmp.setBorder( new EmptyBorder(10,10,10,10) );
 			Panel p = new Panel( new BorderLayout() );
 			p.add(tmp);
+                        
+                        CheckBox edit = new CheckBox("Edit");
+                        edit.setActionCommand("open_text_edit");
+                        edit.addActionListener(this);
+                        edit.setSelected( viewText.isSelectable() );
 
-			addToScrollPane(p, new CommandButton("Back","mainmenu") , null );
+			addToScrollPane(p, new CommandButton("Back","mainmenu") , new CommandButton(edit) );
 
 		}
+                else if ("open_text_edit".equals(actionCommand)) {
+                    
+                    viewText.setSelectable( !viewText.isSelectable() );
+                    mainWindow.getContentPane().repaint();
+                    mainWindow.setupFocusedComponent();
+                    
+                }
                 else if ("load".equals(actionCommand)) {
 			
 			Image testImage;
@@ -526,7 +538,7 @@ for (int c=0;c<5;c++) {
                                 
 			}
 			
-			addToScrollPane(tabPanel, new CommandButton(new CheckBox("yay")) , new CommandButton("Back","mainmenu") );
+			addToScrollPane(tabPanel, null , new CommandButton("Back","mainmenu") );
 		}
                 else if ("tableTest".equals(actionCommand)) {
                     
