@@ -196,6 +196,7 @@ public class TextArea extends TextComponent {
 
 	    int w = wrap?width:Integer.MAX_VALUE;
 
+            // todo? mayeb use display text
             setupHeight(getLines(txt,font,0,w),w,true);
 	}
 	
@@ -215,6 +216,7 @@ public class TextArea extends TextComponent {
 
 		int w = wrap?width:Integer.MAX_VALUE;
 
+                // todo? mayeb use display text
                 int[] l2 = getLines(newtext,font,lines[lines.length-1],w);
 
                 // just copy the 1st array and the 2nd array into the new array
@@ -232,6 +234,41 @@ public class TextArea extends TextComponent {
 
 
 	}
+        
+        
+        protected void changedUpdate(int offset,int length) {
+            
+            // todo? mayeb use display text
+            String text = getText();
+            
+            int startPos=-1;
+            for (int c=0;c<(lines.length-1);c++) {
+                if (lines[c+1] >= offset
+                        // todo of last break is \n then its ok to use it
+                        ) {
+                    break;
+                }
+                startPos = c;
+            }
+            // if startPos is 0 or more, then this means we can use
+            // the existing array, upto and including startPos
+
+System.out.println("startPos="+startPos+" offset="+offset);
+            
+            	int w = wrap?width:Integer.MAX_VALUE;
+
+                int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos],w);
+
+                int[] l3 = new int[ startPos+1 + l2.length];
+
+		System.arraycopy(lines, 0, l3, 0, startPos+1);
+		System.arraycopy(l2, 0, l3, startPos+1, l2.length);
+
+                setupHeight(l3,w,true);
+
+        }
+        
+        
 
     private void setupHeight(int[] l,int w,boolean relayout) {
         lines = l;

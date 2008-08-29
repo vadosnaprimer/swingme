@@ -113,6 +113,13 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setCaretPosition(caretPosition+1);
         }
 
+        /**
+         * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent) DocumentListener.changedUpdate
+         */
+        protected void changedUpdate(int offset,int length) {
+            
+        }
+        
         private void autoAccept() {
             
             if (tmpChar!=0) {
@@ -144,12 +151,16 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                     if (tmpChar!=0) {
                         tmpChar=0;
+                        changedUpdate(caretPosition,1);
                         updateSoftKeys();
                         repaint();
                     }
                     else if (caretPosition>0) {
-                        text.deleteCharAt(caretPosition-1);
+
                         setCaretPosition(caretPosition-1);
+                        text.deleteCharAt(caretPosition);
+                        changedUpdate(caretPosition,1);
+                        
                     }
                     
 		}
@@ -179,13 +190,19 @@ public abstract class TextComponent extends Component implements ActionListener,
                     }
                     else {
                         tmpChar = 0;
+                        changedUpdate(caretPosition,1);
                     }
                     
                     if (keyEvent.acceptNew()) {
                          insertNewCharacter(thechar);
+                         
+                         changedUpdate(caretPosition-1,1);
                     }
                     else {
                         tmpChar = thechar;
+                        
+                        changedUpdate(caretPosition,1);
+                        
                         updateSoftKeys();
                         repaint();
                     }
@@ -256,6 +273,9 @@ public abstract class TextComponent extends Component implements ActionListener,
         
         public void setCaretPosition(int a) {
             caretPosition = a;
+            if (isFocused()) {
+                showCaret = true;
+            }
             updateSoftKeys();
         }
         
@@ -358,7 +378,9 @@ public abstract class TextComponent extends Component implements ActionListener,
                 
                 // this means that anything stored in
                 // the keyEvent Object will be ignored
-                tmpChar = 0;
+                
+                // not needed i think
+                //tmpChar = 0;
                 
 		repaint();
 
@@ -417,7 +439,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
 	public int getLength() {
-		return text.length();
+		return text.length() + ((tmpChar==0)?0:1);
 	}
 
         public void updateUI() {
