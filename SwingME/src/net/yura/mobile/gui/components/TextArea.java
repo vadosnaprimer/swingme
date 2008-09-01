@@ -197,12 +197,26 @@ public class TextArea extends TextComponent {
 	 * @param txt The text
 	 */
 	public void setText(String txt) {
-
-	    int w = wrap?width:Integer.MAX_VALUE;
-            // todo? mayeb use display text
-            setupHeight(getLines(txt,font,0,w),w,true);
+            
+            int w = wrap?width:Integer.MAX_VALUE;
+            
+            // we want to clear the lines data, in case a paint happens now
+            // and there are more lines then the length of the text
+            lines = new int[0];
             
             super.setText(txt);
+            
+            // todo? mayeb use display text
+            setupHeight(getLines(txt,font,0,w),w,true);
+            // when this is called it may trigger a revalidage of this
+            // if it gets shrunk too small, its parent may want to expand it again
+
+            // we NEED to set the text on super,
+            // as setupHeight should only be called
+            // when the text is set,
+            // as it needs to get the text, if it needs to redo the size
+            // so the text has to be set
+            
 	}
 	
         /**
@@ -232,6 +246,7 @@ public class TextArea extends TextComponent {
 		System.arraycopy(l2, 0, l3, lines.length, l2.length);
 
                 // set the text and adjust the height
+                lines = new int[0];
                 super.setText(newtext);
                 setupHeight(l3,w,true);
 
@@ -488,7 +503,7 @@ public class TextArea extends TextComponent {
 	 * If w == Integer.MAX_VALUE, then it wont wrap on words
 	 */
         public static int[] getLines(String str,Font f,int startPos,int w) {
-            
+
 //#debug
 System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.length());
 // this is here as this is quite a CPU intensive method

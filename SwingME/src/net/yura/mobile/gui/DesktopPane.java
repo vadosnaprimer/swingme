@@ -833,7 +833,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 			text.append(s+"\n");
                         
-                        if (!getAllFrames().contains(debugwindow)) {
+                        if (!debugwindow.isVisible()) {
                             debugwindow.setVisible(true);
                         }
                         else {
