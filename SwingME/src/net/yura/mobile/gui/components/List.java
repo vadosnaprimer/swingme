@@ -579,7 +579,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
      */
     public Object getElementAt(int index) {
-        return items.elementAt(index);
+        return items != null ? items.elementAt(index) : null;
     }
     
     /**

@@ -282,13 +282,13 @@ public class KeyEvent {
 	}
 
         private int check(int keyCode) {
-            if (keyCode == 8) {
-                keyCode = KEY_CLEAR;
+            
+            switch (keyCode) {
+                case 8: return KEY_CLEAR;
+                case 13: return '\n'; // 10
+                default: return keyCode;
             }
-            else if (keyCode == 10) {
-                keyCode = '\n';
-            }
-            return keyCode;
+
         }
         
 	public void keyRepeated(int keyCode) {
