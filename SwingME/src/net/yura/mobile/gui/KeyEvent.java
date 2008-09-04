@@ -25,25 +25,11 @@ import javax.microedition.lcdui.Canvas;
  */
 public class KeyEvent {
 
-    	//#ifdef polish.key.LeftSoftKey:defined
-	//#= public static final int KEY_SOFTKEY1 = ${polish.key.LeftSoftKey};
-	//#else
-		public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value
-	//#endif
-
-	//#ifdef polish.key.RightSoftKey:defined
-	//#= public static final int KEY_SOFTKEY2 = ${polish.key.RightSoftKey};
-	//#else
-		public static final int KEY_SOFTKEY2 = -7;	//Default Softkey right value
-	//#endif
-
-	//#ifdef polish.key.ClearKey:defined
-	//#= public static final int KEY_CLEAR = ${polish.key.ClearKey};
-//# 	public static final boolean hasclearkey=true;
-	//#else
-                public static final int KEY_CLEAR = -8;     //Default Clear value
-	//#= public static final boolean hasclearkey=false;
-	//#endif
+     // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
+    
+	public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value
+	public static final int KEY_SOFTKEY2 = -7;	//Default Softkey right value
+        public static final int KEY_CLEAR = -8;         //Default Clear value, this NEEDS to be negative
 
         public static final int KEY_CALL = -10;
         public static final int KEY_END  = -11;
@@ -265,6 +251,8 @@ public class KeyEvent {
         }
         
 	public void keyPressed(int keyCode) {
+
+            keyCode = check(keyCode);
             
                 // count up if the same key is being pressed
                 if (justReleasedKey==keyCode) {
@@ -281,6 +269,8 @@ public class KeyEvent {
 
 	public void keyReleased(int keyCode) {
             
+            keyCode = check(keyCode);
+            
                 // reset to 0 if we were holding the key down
                 if (pos<0) {
                     pos=0;
@@ -291,6 +281,16 @@ public class KeyEvent {
                 removeKeyDown(keyCode);
 	}
 
+        private int check(int keyCode) {
+            if (keyCode == 8) {
+                keyCode = KEY_CLEAR;
+            }
+            else if (keyCode == 10) {
+                keyCode = '\n';
+            }
+            return keyCode;
+        }
+        
 	public void keyRepeated(int keyCode) {
 
                 // if its held down for a long time to to -2

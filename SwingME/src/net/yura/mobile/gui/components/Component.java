@@ -33,12 +33,14 @@ public abstract class Component {
 	
 	protected int posX,posY,width,height;
 	protected boolean selectable;
-	//protected Window owner;
+
 	protected Panel parent;
 
 	protected int background;
 	protected int foreground;
 	protected Border border;
+        
+        private String tooltip;
         
         /**
          * @see javax.swing.JComponent#JComponent() JComponent.JComponent
@@ -461,17 +463,30 @@ public abstract class Component {
             border = theme.getBorder(Style.ALL);
         }
 
-        private String tooltip;
+        /**
+         * @see javax.swing.JComponent#getToolTipText() JComponent.getToolTipText
+         * @see javax.swing.JComponent#getToolTipText(java.awt.event.MouseEvent) JComponent.getToolTipText
+         */
         public String getToolTipText() {
             return tooltip;
         }
+        
+        /**
+         * @param text The Text to use as the tooltip
+         * @see javax.swing.JComponent#setToolTipText(java.lang.String) JComponent.setToolTipText
+         */
         public void setToolTipText(String text) {
             tooltip = text;
         }
-                
+        /**
+         * @see javax.swing.JComponent#getToolTipLocation(java.awt.event.MouseEvent) JComponent.getToolTipLocation
+         */
         public int getToolTipLocationX() {
             return 5;
         }
+        /**
+         * @see javax.swing.JComponent#getToolTipLocation(java.awt.event.MouseEvent) JComponent.getToolTipLocation
+         */
         public int getToolTipLocationY() {
             return 5;
         }

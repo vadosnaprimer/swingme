@@ -144,23 +144,28 @@ public class TextArea extends TextComponent {
                 int beginIndex = (startLine==0)?0:lines[startLine-1];
 		for(i = startLine; i < endLine; i++) {
 
+                    int lastCaretIndex = (i==lines.length)?text.length():lines[i];
+                    int lastDrawIndex = lastCaretIndex;
 
-                    int lastIndex = (i==lines.length)?text.length():lines[i];
                     // as long as we r not right at the start of the string
-                    if (lastIndex > 0) {
-                        // dont paint the last char if its a space or (not the last line && hard return)
-                        // the last line cant physically have a hard return on it!
-                        //char lastChar = text.charAt(lastIndex-1);
-                        if ( (i!=lines.length) ) { // && (lastChar=='\n' || lastChar==' ')
-                            lastIndex--;
-                            // we NEED to show the last line ' '
+                    if (lastCaretIndex > 0) {
+                        if ( i!=lines.length ) {
+                            lastCaretIndex--;
+
+                            // we need to check for '\n' as it COULD be a normal letter
+                            // in the case of a really long word that goes onto 2 lines
+                            // the last line cant physically have a hard return on it!
+                            if ( text.charAt(lastDrawIndex-1) =='\n') {
+                                lastDrawIndex--;
+                            }
+                            
                         }
                     }
 
-                    String line = text.substring(beginIndex, lastIndex);
+                    String line = text.substring(beginIndex, lastDrawIndex);
                     font.drawString(g, line , x, y, alignment);
 
-                    if (showCaret && caretPosition >= beginIndex && caretPosition <= lastIndex) {
+                    if (showCaret && caretPosition >= beginIndex && caretPosition <= lastCaretIndex) {
 
                         int w = font.getWidth( text.substring(beginIndex, caretPosition) );
                         

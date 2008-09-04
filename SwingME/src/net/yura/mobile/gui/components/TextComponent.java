@@ -173,7 +173,8 @@ public abstract class TextComponent extends Component implements ActionListener,
             lastKeyEvent = System.currentTimeMillis();
             
             // 8 is the ascii for backspace, so we dont want this key, no no
-            if (keyCode==8) { keyCode=KeyEvent.KEY_CLEAR; }
+            // this is done in the key event
+            //if (keyCode==8) { keyCode=KeyEvent.KEY_CLEAR; }
             
             // if it is a letter that can be typed
             if (keyCode > Character.MIN_VALUE && keyCode <= Character.MAX_VALUE ) {
