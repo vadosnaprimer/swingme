@@ -137,14 +137,25 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component) JTabbedPane.addTab
          */
         public void addTab(String title, Image icon, Component component) {
-            tabList.addElement(new Option(null,title,icon));
+            addTab(title, icon, component, null);
+        }
+
+        /**
+         * @param title
+         * @param icon
+         * @param component
+         * @param tip
+         * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String) JTabbedPane.addTab
+         */
+        public void addTab(String title, Image icon, Component component, String tip) {
+            tabList.addElement(new Option(null,title,icon,tip));
             tabs.addElement(component);
 
             if (tabList.getSelectedIndex()==-1) {
                 setSelectedIndex(0);
             }
         }
-
+        
         /**
          * @param a index of tab to remove
          * @see javax.swing.JTabbedPane#removeTabAt(int) JTabbedPane.removeTabAt
@@ -177,13 +188,13 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @param title
          * @param icon
          * @param component
-         * @param tip (this is not used yet)
+         * @param tip
          * @param index
          * @see javax.swing.JTabbedPane#insertTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String, int) JTabbedPane.insertTab
          */
         public void insertTab(String title, Image icon, Component component, String tip, int index) {
 
-            tabList.getItems().insertElementAt(new Option(null,title,icon), index);
+            tabList.getItems().insertElementAt(new Option(null,title,icon,tip), index);
             tabs.insertElementAt(component,index);
 
             setSelectedIndex(index);
@@ -243,8 +254,8 @@ public class TabbedPane extends Panel implements ChangeListener {
         revalidate();
         repaint();
 
-        if (!tabList.isSelectable() && owner!=null) {
-            owner.setupFocusedComponent();
+        if (!tabList.isSelectable() && getWindow()!=null) {
+            getWindow().setupFocusedComponent();
         }
 
     }

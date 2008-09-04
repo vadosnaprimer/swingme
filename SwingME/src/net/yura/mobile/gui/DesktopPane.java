@@ -35,6 +35,7 @@ import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
+import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 
 /**
@@ -69,14 +70,14 @@ public class DesktopPane extends Canvas implements Runnable {
          */
         public static void updateComponentTreeUI(Component com) {
 
-            if (com instanceof Window) {
-                Window window = ((Window)com);
-                updateComponentTreeUI( window.getContentPane() );
-                if (window.getGlassPane()!=null) {
-                    updateComponentTreeUI( window.getGlassPane() );
-                }
-            }
-            else if (com instanceof Panel) {
+//            if (com instanceof Window) {
+//                Window window = ((Window)com);
+//                updateComponentTreeUI( window.getContentPane() );
+//                if (window.getGlassPane()!=null) {
+//                    updateComponentTreeUI( window.getGlassPane() );
+//                }
+//            }
+            if (com instanceof Panel) {
                 Vector v = ((Panel)com).getComponents();
                 for (int c=0;c<v.size();c++) {
                     updateComponentTreeUI( (Component)v.elementAt(c) );
@@ -94,14 +95,15 @@ public class DesktopPane extends Canvas implements Runnable {
         public int defaultSpace;
 	public int defaultWidthOffset;
         public ListCellRenderer softkeyRenderer;
-        
-        
 
 	private Vector windows;
 	private Window currentWindow;
+        private ToolTip tooltip;
 
 	private Component focusedComponent;
-	private Component repaintComponent;
+	private Vector repaintComponent = new Vector();
+        
+        private Thread animationThread;
 	private Component animatedComponent;
 
         private Image splash;
@@ -110,7 +112,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
         private boolean paintdone=false;
         private boolean fullrepaint;
-        private boolean paintSoftKey;
 	private boolean killflag;
         private boolean wideScreen;
         private boolean sideSoftKeys;
@@ -157,6 +158,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		Display.getDisplay(m).setCurrent(this);
 		repaint();
 		serviceRepaints();
+
 	}
 
 	public final void run() {
@@ -175,26 +177,30 @@ public class DesktopPane extends Canvas implements Runnable {
 
 			synchronized (this) {
 				if (animatedComponent==null) {
-
 					try {
 						wait();
 					}
 					catch (InterruptedException e) {
                                             //#debug
-                                            System.out.println("Exception "+e.toString() );
+                                            System.out.println("InterruptedException" );
                                         }
-
 					if (killflag) { return; }
 				}
 			}
 
 			try {
 
-                            Component ac = animatedComponent;
-                            animatedComponent = null;
-                            ac.animate();
+                            synchronized (this) {
+                                Component ac = animatedComponent;
+                                animatedComponent = null;
+                                ac.animate();
+                            }
 
 			}
+                        catch (InterruptedException e) {
+                                //#debug
+                                System.out.println("InterruptedException during animation" );
+                        }
 			catch(Throwable th) {
 				th.printStackTrace();
 				log( "Error in animation: " + th.toString() );
@@ -208,18 +214,18 @@ public class DesktopPane extends Canvas implements Runnable {
          * @param com The Component to call animte() on
          */
         public void animateComponent(Component com) {
-
+            synchronized (this) {
 		animatedComponent = com;
-		synchronized (this) {
-			notify();
-		}
+                animationThread.interrupt();
+
+            }
 	}
         // called by destroyApp
 	void kill() {
-		killflag=true;
-		synchronized (this) {
-			notify();
-		}
+            synchronized (this) {
+                killflag=true;
+                animationThread.interrupt();
+            }
 	}
         /**
          * sets the default theme, and sets up default values if there are none set
@@ -252,6 +258,7 @@ public class DesktopPane extends Canvas implements Runnable {
             if (softkeyRenderer==null) {
                 softkeyRenderer = new DefaultSoftkeyRenderer();
             }
+            tooltip = new ToolTip();
             
             //currentWindow.setSize(getWidth(),getHeight());
 
@@ -273,7 +280,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	 */
 	public void paint(Graphics g) {
 
-                //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
+//System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
 		if (!paintdone) {
 
@@ -292,29 +299,36 @@ public class DesktopPane extends Canvas implements Runnable {
 
                         wideScreen = (getWidth()>getHeight());
                         
-			new Thread(this).start();
+			animationThread = new Thread(this);
+                        animationThread.start();
 
 			paintdone = true;
 
 			return;
 		}
 
-		if (!fullrepaint && !paintSoftKey) {
-			boolean ret = paintWindow(g,currentWindow);
-			if (!ret) {
-				fullrepaint=true;
-				//#debug
-				System.out.println("NORMAL REPAINT FAILED! having to repaint EVERYTHING");
+
+                if (!fullrepaint && !repaintComponent.isEmpty()) {
+                    for (int c=0;c<repaintComponent.size();c++) {
+                            if ( ((Component)repaintComponent.elementAt(c)).getWindow() !=currentWindow ) {
+                                fullrepaint = true;
+                                break;
+                            }
+                    }
+                    if (!fullrepaint) {
+			for (int c=0;c<repaintComponent.size();c++) {
+				paintComponent(g,(Component)repaintComponent.elementAt(c));                               
 			}
-		}
+                    }
+                }
 
-		repaintComponent = null;
-
+                repaintComponent.removeAllElements();
+                
 		if (fullrepaint) {
 			fullrepaint = false;
                         paintFirst(g);
 			for (int c=0;c<windows.size();c++) {
-				paintWindow(g,(Window)windows.elementAt(c));
+				paintComponent(g,(Window)windows.elementAt(c));
                                 
                                 if (c==(windows.size()-2) && fade!=null) {
                                     for (int x = 0; x < getWidth(); x += fade.getWidth()) {
@@ -352,48 +366,65 @@ public class DesktopPane extends Canvas implements Runnable {
         private void drawSoftkeys(Graphics g) {
             
             Component com1 = getSoftkeyRenderer(0);
-
             if (com1!=null) {
-
-                g.translate(com1.getX(), com1.getY());
-                com1.paint(g);
-                g.translate(-com1.getX(), -com1.getY());
+                paintComponent(g,com1);
             }
 
             Component com2 = getSoftkeyRenderer(1);
             if (com2!=null) {
-
-                g.translate(com2.getX(), com2.getY());
-                com2.paint(g);
-                g.translate(-com2.getX(), -com2.getY());
+                paintComponent(g,com2);
             }
-            paintSoftKey = false;
+            //paintSoftKey = false;
+
+            if (tooltip.showToolTip()) {
+                paintComponent(g,tooltip);
+            }
 
         }
 
-	private boolean paintWindow(Graphics g,Window w) {
-
-                //System.out.println("paintWindow window:"+ w+" component:"+repaintComponent );
+        private void paintComponent(Graphics g,Component com) {
             
-		boolean ret=false;
+            int a=g.getClipX();
+            int b=g.getClipY();
+            int c=g.getClipWidth();
+            int d=g.getClipHeight();
+            if (com.getParent()!=null) {
+                com.getParent().clip(g);
+            }
 
-		int wx=w.getX();
-		int wy=w.getY();
+            int x = com.getXOnScreen();
+            int y = com.getYOnScreen();
 
-		g.translate(wx,wy);
-
-		try {
-			ret = w.paintWindow(g,repaintComponent);
-		}
-		catch(Throwable th) {
-			th.printStackTrace();
-			log( "Error in paintWindow: " + th.toString() );
-		}
-
-		g.translate(-wx, -wy);
-		return ret;
-	}
-        
+            g.translate(x, y);
+            com.paint(g);
+            g.translate(-x, -y);
+            
+            g.setClip(a,b,c,d);
+        }
+//        
+//	private boolean paintWindow(Graphics g,Window w) {
+//
+//                //System.out.println("paintWindow window:"+ w+" component:"+repaintComponent );
+//            
+//		boolean ret=false;
+//
+//		int wx=w.getX();
+//		int wy=w.getY();
+//
+//		g.translate(wx,wy);
+//
+//		try {
+//			ret = w.paintWindow(g,repaintComponent);
+//		}
+//		catch(Throwable th) {
+//			th.printStackTrace();
+//			log( "Error in paintWindow: " + th.toString() );
+//		}
+//
+//		g.translate(-wx, -wy);
+//		return ret;
+//	}
+//        
 
         private Component getSoftkeyRenderer(int i) {
             // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
@@ -430,20 +461,10 @@ public class DesktopPane extends Canvas implements Runnable {
 		// this is here coz this method should NOT be used
                 //#debug
 		System.out.println("FULL REPAINT!!! this method should NOT normally be called");
+                
 		fullrepaint=true;
-		repaintComponent = null;
+
 		repaint();
-	}
-        /**
-         * This is called when u call repaint() on a window
-         */
-	public void windowRepaint() {
-		if (paintdone && (repaintComponent != null || paintSoftKey)) {
-                    // the repaintComponent may be on another window
-                    serviceRepaints();
-                }
-		repaint();
-   
 	}
 
         /**
@@ -451,16 +472,10 @@ public class DesktopPane extends Canvas implements Runnable {
          * @param rc The Component to repaint
          */
         public void repaintComponent(Component rc) {
-
                 //System.out.println("someone asking for repaint "+rc);
-
-		if (repaintComponent!=rc && paintdone) {
-			// we want to do this no matter what
-			// kind of repaint is waiting for
-			serviceRepaints();
+		if (!repaintComponent.contains(rc)) {
+			repaintComponent.addElement(rc);
 		}
-
-		repaintComponent = rc;
 
 		repaint();
 	}
@@ -468,19 +483,8 @@ public class DesktopPane extends Canvas implements Runnable {
         /**
          * Repaint the softkeybar
          */
-        public void softkeyRepaint(boolean all) {
-
-            // TODO: is this correct, will ANY repaint do?
-            // by default calling repaint() like this will do a window repaint
-            if (all) {
-                // we ONLY need to repaint all if the renderer does not paint anything on a null softkey
-                fullRepaint();
-            }
-            else {
-                serviceRepaints();
-                paintSoftKey=true;
+        public void softkeyRepaint() {
                 repaint();
-            }
         }
 
         // #####################################################################
@@ -496,7 +500,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		// TODO maybe have an option so the window will become active if any component on it is activated
 
             //#mdebug
-            if (ac!=null && ac.getOwner() != currentWindow) {
+            if (ac!=null && ac.getWindow() != currentWindow) {
                     throw new RuntimeException("setFocusedComponent on component thats not in the current window: "+ac);
             }
             //#enddebug
@@ -528,12 +532,17 @@ public class DesktopPane extends Canvas implements Runnable {
                 CommandButton old = getCurrentCommands()[i]; // get old 1
 		componentCommands[i] = softkey;
                 if (getCurrentCommands()[i]==softkey) { // check if we are the new 1
-                    softkeyRepaint(old==null || softkey ==null);
+                    if (old==null || softkey == null) {
+                        fullRepaint();
+                    }
+                    else {
+                        softkeyRepaint();
+                    }
                 }
             }
 
 	}
-
+        
 	private void passKeyEvent(KeyEvent keyevent) {
 
 		try {
@@ -565,7 +574,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             
                         }
 			else if (focusedComponent!=null) {
-
+                          
 				boolean consumed = focusedComponent.keyEvent(keyevent);
 
 				//System.out.println("rootpane KEY PRESSED on "+activeComponent+" and consumed after is: "+consumed);
@@ -577,12 +586,10 @@ public class DesktopPane extends Canvas implements Runnable {
                                 // if another key was pressed first!
                                 
 				if (!consumed && (
-
 					keyevent.isDownAction(Canvas.RIGHT)||
 					keyevent.isDownAction(Canvas.DOWN) ||
 					keyevent.isDownAction(Canvas.LEFT)||
 					keyevent.isDownAction(Canvas.UP)
-
 				)) {
 
 					Panel parent = focusedComponent.getParent();
@@ -602,6 +609,7 @@ public class DesktopPane extends Canvas implements Runnable {
 					keyEvent(keyevent);
                                     }
 				}
+                                
 			}
                         // sometimes keyevents come in on S40 b4 anything has been setup,
                         // such as the fire key being released after you start the app
@@ -632,6 +640,39 @@ public class DesktopPane extends Canvas implements Runnable {
 			th.printStackTrace();
 			log( "Error in KeyEvent: " + th.toString() );
 		}
+                
+
+
+                    
+                    // if a tooltip should be setup
+                    if (focusedComponent!=null && focusedComponent.getToolTipText()!=null && (
+                            keyevent.justReleasedAction(Canvas.RIGHT)||
+                            keyevent.justReleasedAction(Canvas.DOWN) ||
+                            keyevent.justReleasedAction(Canvas.LEFT)||
+                            keyevent.justReleasedAction(Canvas.UP)
+                    )) {
+                        tooltip.setText( focusedComponent.getToolTipText() );
+                        tooltip.workoutSize();
+                        tooltip.setLocation(
+                            focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen(),
+                            focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen()
+                        );
+                        // TODO make sure its not going off the screen!
+                    }
+                    else if (tooltip!=null) {
+                        // this will never be null unless this method is called
+                        // before the midlet is initialised, and this can happen
+                        
+                        // if there is a tooltip up or ready to go up,
+                        // then kill it!
+                        synchronized (this) {
+                            if (tooltip.getText()!=null) {
+                                animationThread.interrupt();
+                            }
+                        }
+                    }
+
+                
 	}
 
         
@@ -711,6 +752,9 @@ public class DesktopPane extends Canvas implements Runnable {
          */
 	public void setSelectedFrame(Window w) {
 		if (windows.contains(w)) {
+                    
+                        if (currentWindow == w) return;
+                        
                         setFocusedComponent(null);
 			currentWindow = w;
 			windows.removeElement(w);
@@ -718,6 +762,11 @@ public class DesktopPane extends Canvas implements Runnable {
 			currentWindow.setupFocusedComponent();
 			currentWindow.repaint();
 		}
+                //#mdebug
+                else {
+                    throw new RuntimeException("cant setSelected, this window is not visible");
+                }
+                //#enddebug
 	}
 
         /**
@@ -740,6 +789,11 @@ public class DesktopPane extends Canvas implements Runnable {
                         fullRepaint();
 
 		}
+                //#mdebug
+                else {
+                    throw new RuntimeException("cant remove, this window is not visible");
+                }
+                //#enddebug
 
 	}
         
@@ -757,7 +811,7 @@ public class DesktopPane extends Canvas implements Runnable {
          * @return the internal frame that's currently selected
          * @see javax.swing.JDesktopPane#getSelectedFrame() JDesktopPane.getSelectedFrame
          */
-	public Window getSelectedFrame() {
+	public Window getSelectedFrame() {;
 
 		return currentWindow;
 	}
@@ -814,20 +868,20 @@ public class DesktopPane extends Canvas implements Runnable {
 
 				debugwindow = new Window();
                                 debugwindow.setName("Dialog");
-				debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
 				text = new TextArea();
                                 text.setSelectable(false);
                                 text.setLineWrap(true);
-				debugwindow.setContentPane( new ScrollPane(text) );
+				debugwindow.add( new ScrollPane(text) );
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
+                                debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
                                 
                                 // This is not needed, but just in case something
                                 // has gone wrong with the theme, we set some defaults
                                 text.setFont(new Font());
 				text.setForeground(0x00000000);
+                                text.setBackground(0x00FFFFFF);
                                 debugwindow.setBackground(0x00FFFFFF);
-				debugwindow.getContentPane().setBackground(0x00FFFFFF);
 
 			}
 
@@ -925,9 +979,9 @@ public class DesktopPane extends Canvas implements Runnable {
                     
                     pointerComponent = currentWindow.getComponentAt( x - currentWindow.getX(), y - currentWindow.getY());
                 }
-                
+
                 if (pointerComponent!=null) {
-                    pointerComponent.pointerEvent(type, x - currentWindow.getX()-pointerComponent.getXInWindow(), y - currentWindow.getY()-pointerComponent.getYInWindow());
+                    pointerComponent.pointerEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen());
                 }
             }
             catch(Throwable th) {

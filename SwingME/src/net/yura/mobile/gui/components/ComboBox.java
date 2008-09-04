@@ -21,7 +21,6 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.util.Option;
@@ -35,10 +34,11 @@ public class ComboBox extends Button implements ActionListener{
 	private Image selectedImage;
 	private Image nonSelectedImage;
 
+        private Window dropDown;
 	private List list;
 	private ScrollPane scroll;
 	
-	private CommandButton[] pbuttons;
+	//private CommandButton[] pbuttons;
 	
         /**
          * @see javax.swing.JComboBox#JComboBox() JComboBox.JComboBox
@@ -97,6 +97,8 @@ public class ComboBox extends Button implements ActionListener{
 
 	public void fireActionPerformed() {
         
+
+            
                 createList();
                 list.workoutSize();
                 
@@ -104,31 +106,38 @@ public class ComboBox extends Button implements ActionListener{
                 if(h > DesktopPane.getDesktopPane().getHeight()/2){
                         h = DesktopPane.getDesktopPane().getHeight()/2;
                 }
-                scroll.setSize(width, h);
-                scroll.revalidate();
                 
-                
+                scroll.setPreferredSize(width, h);
                 
                 int y;
 
-                if ((getYInWindow() + height + scroll.getHeight()) > owner.getHeight()){
-                        y = getYInWindow() - scroll.getHeight();
+                if ((getYOnScreen() + height + scroll.getHeight()) > (DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()) ){
+                        y = getYOnScreen() - scroll.getHeight();
                 }
                 else {
-                        y = getYInWindow() + height;
+                        y = getYOnScreen() + height;
                 }
                 
+                if (dropDown==null) {
+                    dropDown = new Window();
+                    dropDown.setName("Menu");
+                    dropDown.add(scroll);
+                }
+                dropDown.pack();
+                dropDown.setLocation(getXOnScreen(), y);
+                dropDown.setVisible(true);
+                
 
-                scroll.setLocation(getXInWindow(), y);
-                owner.setGlassPane(scroll);
 
-                pbuttons = new CommandButton[2];
-                pbuttons[0]=owner.getWindowCommands()[0];
-                pbuttons[1]=owner.getWindowCommands()[1];
-                owner.setWindowCommand(0, null);
-                owner.setWindowCommand(1, null);
+                // TODO owner.setGlassPane(scroll);
 
-                owner.repaint();
+//                pbuttons = new CommandButton[2];
+//                pbuttons[0]=owner.getWindowCommands()[0];
+//                pbuttons[1]=owner.getWindowCommands()[1];
+//                owner.setWindowCommand(0, null);
+//                owner.setWindowCommand(1, null);
+//
+//                owner.repaint();
         
         }
 	
@@ -138,7 +147,7 @@ public class ComboBox extends Button implements ActionListener{
 			list.setBackground(background);
 			list.addActionListener(this);
 			scroll = new ScrollPane(list);
-			scroll.setBorder(activeBorder);
+			//scroll.setBorder(activeBorder);
                         // TODO use a window, and set the windows name to "Menu"
                         // do this when doing tooltips
 		}
@@ -201,10 +210,8 @@ public class ComboBox extends Button implements ActionListener{
             
                 setValue( list.getSelectedValue() );
                 
-		owner.setGlassPane(null);
-		owner.setWindowCommand(0, pbuttons[0]);
-		owner.setWindowCommand(1, pbuttons[1]);
-		pbuttons=null;
+		dropDown.setVisible(false);
+                DesktopPane.getDesktopPane().setFocusedComponent(this);
 		
 		super.fireActionPerformed();
 		

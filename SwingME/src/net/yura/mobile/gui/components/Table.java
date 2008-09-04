@@ -164,7 +164,7 @@ public class Table extends Panel {
                     // dont pass clicks onto textComponents
                     if (editorComp!=null && !(editorComp instanceof TextComponent)) {
                         // now pass on the event onto the component
-                        DesktopPane.getDesktopPane().pointerPressed(x+getXInWindow()+owner.getX(), y+getYInWindow()+owner.getY());
+                        DesktopPane.getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
                     }
                     //editorComp.pointerEvent(type, x, y);
                 }
@@ -266,15 +266,11 @@ public class Table extends Panel {
         
             cellEditor = getCellEditor(editingRow, editingColumn);
 
-            int x=getCellX(editingColumn);
-            int y=getCellY(editingRow);
-            int currentRowHeight=getRowHeight(editingRow);
-            int currentColWidth=getColumnWidth(editingColumn);
-
             editorComp = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
 
-            editorComp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
             add(editorComp);
+            
+            doLayout();
             
             if (DesktopPane.getDesktopPane().getFocusedComponent() == this) {
                 DesktopPane.getDesktopPane().setFocusedComponent(editorComp);
@@ -326,15 +322,11 @@ public class Table extends Panel {
 
                   if (!editOpen || editingRow!=c || editingColumn!=a) {
 
-                  	Object object = getValueAt(c, a);
-                
-                  	ListCellRenderer renderer = getCellRenderer(c,a);
-
-                        boolean sel = editingRow==c && editingColumn==a;
-                        Component comp = renderer.getListCellRendererComponent(null, object, c, sel ,sel && isFocused() );
+                        Component comp = getComponentFor(c,a);
                         if (comp!=null) {
-                        
+
                             comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
+                            
                             int xoff=comp.getX();
                             int yoff=comp.getY();
                             g.translate(xoff, yoff);
@@ -352,6 +344,19 @@ public class Table extends Panel {
                     
             
         }
+    }
+    
+    private Component getComponentFor(int r,int c) {
+        
+        Object object = getValueAt(r, c);
+
+        ListCellRenderer renderer = getCellRenderer(r,c);
+
+        boolean sel = editingRow==r && editingColumn==c;
+        Component comp = renderer.getListCellRendererComponent(null, object, r, sel ,sel && isFocused()    );
+
+        return comp;
+        
     }
 
     public void workoutSize() {
@@ -375,6 +380,13 @@ public class Table extends Panel {
     
     public void doLayout() {
         
+        if (editorComp!=null) {
+            int x=getCellX(editingColumn);
+            int y=getCellY(editingRow);
+            int currentRowHeight=getRowHeight(editingRow);
+            int currentColWidth=getColumnWidth(editingColumn);
+            editorComp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
+        }
     }
 
     /**
@@ -413,6 +425,32 @@ public class Table extends Panel {
 
     }
 
+    public String getToolTipText() {
+        if (editingRow!=-1 && editingColumn!=-1) {
+            Component c = getComponentFor(editingRow,editingColumn);
+            return (c==null)?null:c.getToolTipText();
+        }
+        return super.getToolTipText();
+    }
+    
+    public int getToolTipLocationX() {
+        
+        if (editingRow!=-1 && editingColumn!=-1) {
+            Component c = getComponentFor(editingRow,editingColumn);
+            return getCellX(editingColumn) + c.getToolTipLocationX();
+        }
+        
+        return super.getToolTipLocationX();
+    }
+    public int getToolTipLocationY() {
+        
+        if (editingRow!=-1 && editingColumn!=-1) {
+            Component c = getComponentFor(editingRow,editingColumn);
+            return getCellY(editingRow) + c.getToolTipLocationY();
+        }
+        
+        return super.getToolTipLocationY();
+    }
 
     // #########################################################################
     // ############################# Size stuff ################################

@@ -72,17 +72,6 @@ public class Panel extends Component {
             return constraints;
         }
 
-    public void setOwnerAndParent(Window owner,Panel p){
-    	super.setOwnerAndParent(owner,p);
-    	
-		for(int i = 0; i < components.size(); i++) {
-			
-			Component component = (Component)components.elementAt(i);
-			
-			component.setOwnerAndParent(owner,this);
-		}
-    	
-    }
 
     /**
      * @param component the component to be added 
@@ -107,7 +96,7 @@ public class Panel extends Component {
         */
        private void addImpl(Component component) {
            	components.addElement(component);
-		component.setOwnerAndParent( owner,this );
+		component.setParent( this );
        }
        
         /**
@@ -117,7 +106,7 @@ public class Panel extends Component {
 	public void remove(Component component) {
 		components.removeElement(component);
 		
-		component.setOwnerAndParent(null,null);
+		component.setParent(null);
 		
 		constraints.remove(component);
 	}
@@ -137,7 +126,7 @@ public class Panel extends Component {
          */
 	public void insert(Component component,int index) {
 		components.insertElementAt(component, index); 
-                component.setOwnerAndParent( owner,this );
+                component.setParent( this );
 	}
 	
         /**
@@ -278,14 +267,9 @@ public class Panel extends Component {
          * @see javax.swing.JComponent#revalidate() JComponent.revalidate
          */
         public void revalidate() {
-            
-                for(int i = 0; i < components.size(); i++) {
-			
-			Component component = (Component)components.elementAt(i);
-			component.workoutSize();
-
+                for(int i = 0; i < components.size(); i++) {	
+			((Component)components.elementAt(i)).workoutSize();
                 }
-            
                 doLayout();
         }
 
@@ -394,10 +378,7 @@ public class Panel extends Component {
 
             for(int i = 0; i < components.size(); i++){
                 Component component = (Component)components.elementAt(i);
-
-                if (component.getOwner() == owner) {
-                    component.setOwnerAndParent(null,null);
-                }
+                component.setParent(null);
             }
             components.removeAllElements();
             constraints.clear();

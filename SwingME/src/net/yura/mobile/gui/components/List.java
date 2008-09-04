@@ -30,6 +30,7 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.util.Option;
 
 /**
  * @author Yura Mamyrin
@@ -359,9 +360,9 @@ public class List extends Component implements ActionListener {
                     //else {
                         if (horizontal && current!=-1) {
                             Component c = getComponentFor(current);
-                            int y = getYInWindow();
+                            int y = getYOnScreen();
                             scrollRectToVisible(c.getXWithBorder(),c.getHeightWithBorder()-1,c.getWidthWithBorder(),1,true);
-                            if (y!=getYInWindow()) {
+                            if (y!=getYOnScreen()) {
                                 return true;
                             }
                         }
@@ -379,9 +380,9 @@ public class List extends Component implements ActionListener {
                     //else {
                         if (horizontal && current!=-1) {
                             Component c = getComponentFor(current);
-                            int y = getYInWindow();
+                            int y = getYOnScreen();
                             scrollRectToVisible(c.getXWithBorder(),0,c.getWidthWithBorder(),1,true);
-                            if (y!=getYInWindow()) {
+                            if (y!=getYOnScreen()) {
                                 return true;
                             }
                         }
@@ -400,9 +401,9 @@ public class List extends Component implements ActionListener {
                         // so you can scroll right even in horizontal mode
                         if (!horizontal && current!=-1) {
                             Component c = getComponentFor(current);
-                            int x = getXInWindow();
+                            int x = getXOnScreen();
                             scrollRectToVisible(c.getWidthWithBorder()-1,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
-                            if (x!=getXInWindow()) {
+                            if (x!=getXOnScreen()) {
                                 return true;
                             }
                         }
@@ -420,9 +421,9 @@ public class List extends Component implements ActionListener {
                     //else {
                         if (!horizontal && current!=-1) {
                             Component c = getComponentFor(current);
-                            int x = getXInWindow();
+                            int x = getXOnScreen();
                             scrollRectToVisible(0,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
-                            if (x!=getXInWindow()) {
+                            if (x!=getXOnScreen()) {
                                 return true;
                             }
                         }
@@ -537,6 +538,33 @@ public class List extends Component implements ActionListener {
             // TODO ??? what to do here ???
             // find out how swing does it
         }
+    }
+    
+    public String getToolTipText() {
+        if (current!=-1) {
+            Component c = getComponentFor(current);
+            return c.getToolTipText();
+        }
+        return super.getToolTipText();
+    }
+    
+    public int getToolTipLocationX() {
+        
+        if (current!=-1) {
+            Component c = getComponentFor(current);
+            return c.getX() + c.getToolTipLocationX();
+        }
+        
+        return super.getToolTipLocationX();
+    }
+    public int getToolTipLocationY() {
+        
+        if (current!=-1) {
+            Component c = getComponentFor(current);
+            return c.getY() + c.getToolTipLocationY();
+        }
+        
+        return super.getToolTipLocationY();
     }
     
     // #########################################################################

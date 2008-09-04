@@ -338,8 +338,19 @@ public class Label extends Component {
 
         public void setValue(Object obj) {
             
-            String drawString = String.valueOf(obj);
-            Image image = (obj instanceof Option)?((Option)obj).getIcon():null;
+            String drawString=null;
+            Image image=null;
+            String tip=null;
+            
+            if (obj instanceof Option) {
+                Option option = ((Option)obj);
+                drawString = option.getValue();
+                image = option.getIcon();
+                tip = option.getToolTip();
+            }
+            else {
+                drawString = String.valueOf(obj);
+            }
             
             if (drawString!=null) {
                 int a = getCombinedWidth(drawString, image);
@@ -353,6 +364,7 @@ public class Label extends Component {
 
             string = drawString; // dont want to recalc everything twice
             setIcon(image);
+            setToolTipText(tip);
         }
         public int getMaxTextWidth() {
             

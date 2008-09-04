@@ -20,7 +20,6 @@ package net.yura.mobile.gui.components;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
@@ -30,7 +29,7 @@ import net.yura.mobile.gui.layout.BorderLayout;
  * @author Yura Mamyrin
  * @see javax.swing.JFrame
  */
-public class Window extends Component implements ActionListener {
+public class Window extends Panel implements ActionListener {
 
         public static final String CMD_MAX = "max";
         public static final String CMD_MIN = "min";
@@ -41,10 +40,7 @@ public class Window extends Component implements ActionListener {
             return allWindows;
         }
         
-	private Panel contentPane;
-	private Panel glasspanecomponent;
-        
-        private CommandButton[] panelCmds;
+        private CommandButton[] windowCommands;
         private ActionListener actionListener;
         
         public ActionListener getActionListener() {
@@ -60,12 +56,14 @@ public class Window extends Component implements ActionListener {
          */
 	public Window() {
 
-		contentPane = new Panel();
-                contentPane.setLayout( new BorderLayout() );
+            setName("Window");
+            
+		//contentPane = new Panel();
+                setLayout( new BorderLayout() );
                 
-                contentPane.setOwnerAndParent(this,null);
+                //contentPane.setOwnerAndParent(this,null);
                 
-                panelCmds = new CommandButton[2];
+                windowCommands = new CommandButton[2];
 
                 for (int c=0;c<allWindows.size();c++) {
                     if (((WeakReference)allWindows.elementAt(c)).get() == null) {
@@ -75,32 +73,19 @@ public class Window extends Component implements ActionListener {
                 }
                 allWindows.addElement(new WeakReference(this));
                 
-                //actionPerformed("max");
-                
 	}
     
 	public void setupFocusedComponent() {
 
             DesktopPane.getDesktopPane().setFocusedComponent(null);
-            
-            if (glasspanecomponent!=null) {
-                    glasspanecomponent.breakOutAction(null,Canvas.DOWN,false);
-            }
-            else {
-                    contentPane.breakOutAction(null,Canvas.DOWN,false);
-            }
-		
+            breakOutAction(null,Canvas.DOWN,false);
+
 	}
 	
 	public void passScrollUpDown(int right) {
 		
-            if (glasspanecomponent!=null) {
-                    glasspanecomponent.breakOutAction(null,right,true);
-            }
-            else {
-                    contentPane.breakOutAction(null,right,true);
-            }
-		
+            breakOutAction(null,right,true);
+
 	}
 	
 	/**
@@ -111,18 +96,15 @@ public class Window extends Component implements ActionListener {
          */
         public void setSize(int width, int height) {
             super.setSize(width, height);
-            contentPane.setBoundsWithBorder(0,0,width, height);
-            contentPane.revalidate();
+            revalidate();
         }
 
         /**
          * @see java.awt.Window#pack() Window.pack
          */
         public void pack() {
-
-                contentPane.workoutSize();
-                setSize(contentPane.getWidthWithBorder(), contentPane.getHeightWithBorder());
-
+            workoutSize();
+            doLayout();
         }
 
         /**
@@ -130,18 +112,18 @@ public class Window extends Component implements ActionListener {
          * @see java.awt.Component#setVisible(boolean) Component.setVisible
          */
         public void setVisible(boolean b) {
-            
+
             if (b) {
                 DesktopPane.getDesktopPane().add(this);
             }
             else {
-                
-                if (parent==null) {
+//                // TODO ??
+//                if (parent==null) {
                     DesktopPane.getDesktopPane().remove(this);
-                 }
-                 else {
-                     parent.remove(this);
-                 }
+//                 }
+//                 else {
+//                     parent.remove(this);
+//                 }
 
             }
         }
@@ -163,216 +145,15 @@ public class Window extends Component implements ActionListener {
             }
             // TODO else???
         }
-        
-	private Component old;
-        
-        
-        /**
-         * @param c The new Glass Pane
-         * @see javax.swing.JFrame#setGlassPane(java.awt.Component) JFrame.setGlassPane
-         */
-    public void setGlassPane(Panel c) {
-    	
-    	if (glasspanecomponent == c) {
-    		
-    		return;
-    		
-    	}
-    	else if (c!=null) {
-    		glasspanecomponent = c;
-    		glasspanecomponent.setOwnerAndParent(this, null);
-    		old = DesktopPane.getDesktopPane().getFocusedComponent();
-    		//if (glasspanecomponent instanceof Panel) { ((Panel)glasspanecomponent).doLayout(); }
-    		//glasspanecomponent.doLayout(); // TODO wrong place, will not always work
-    		//owner.setActiveComponent(glasspanecomponent);
-    		setupFocusedComponent();
-    	}
-    	else if (glasspanecomponent!=null) {
-    		glasspanecomponent.setOwnerAndParent(null, null);
-    		glasspanecomponent = null;
-    		
-    		if (old!=null && old.getOwner()!=null) {
-    			DesktopPane.getDesktopPane().setFocusedComponent(old);
-    		}
-    		else {
-    			setupFocusedComponent();
-    		}
-    		repaint();
-    	}
 
-    }
-    
-    /**
-     * @param a The new content pane
-     * @see javax.swing.JFrame#setContentPane(java.awt.Container) JFrame.setContentPane
-     */
-	public void setContentPane(Panel a) {
-		
-            if (contentPane == a) {
-
-                    return;
-
-            }
-            else if (a!=null) {
-    		contentPane = a;
-    		contentPane.setOwnerAndParent(this, null);
-    		contentPane.setBoundsWithBorder(0, 0, width, height);
-    		
-    		//if (glasspanecomponent!=null) {
-    		//	setActiveComponent(contentPane);
-    		//}
-    		//else {
-    		//	
-    		//	setActiveComponent(contentPane);
-    		//}
-   
-            }
-            else {
-                    throw new RuntimeException();
-            }
-		
-	}
-    
-        /**
-         * @return The current glass pane, null if none is set
-         * @see javax.swing.JFrame#getGlassPane() JFrame.getGlassPane
-         */
-        public Panel getGlassPane() {
-
-            return glasspanecomponent;
-        }
-	
-	/**
-         * @return The current content pane
-         * @see javax.swing.JFrame#getContentPane() JFrame.getContentPane
-         */
-	public Panel getContentPane() {
-		
-		return contentPane; 
-		
-	}
-
-	/**
-	 * This method needs to paint a component IF repaintComponent!=null
-	 * otherwise it needs to repaint the window
-         * 
-         * This method can NOT get called if repaintComponent.isOpaque() == flase
-         * 
-	 * @return true if it was successful and false otherwise
-	 */
-	public boolean paintWindow(Graphics g,Component repaintComponent) {
-
-            	// redraw everything
-		if (repaintComponent==null)  {
-			paint(g);
-			return true;
-		}
-
-                Panel root = repaintComponent.getRootPane();
-
-		// the component is not visible
-		if (root==null) { return true; }
-
-                // this component is NOT in this window
-                if (root!=contentPane && root!=glasspanecomponent) {
-                    return false;
-                }
-                // if the glass is transparent then we need to repaint everything
-                // as it MAY overlap something in the window
-                if (glasspanecomponent!=null && root!=glasspanecomponent && !glasspanecomponent.isOpaque()) {
-                    repaintComponent = contentPane;
-                }
-                
-                int a=g.getClipX();
-                int b=g.getClipY();
-                int c=g.getClipWidth();
-                int d=g.getClipHeight();
-                if (repaintComponent.parent!=null) {
-                    repaintComponent.parent.clip(g);
-                }
-
-                int x = repaintComponent.getXInWindow();
-                int y = repaintComponent.getYInWindow();
-                g.translate(x, y);
-                repaintComponent.paint(g);
-                g.translate(-x, -y);
-
-                g.setClip(a,b,c,d);
-                
-                if (glasspanecomponent!=null && root!=glasspanecomponent) {
-                    drawGlass(g);
-                }
-                
-                return true;
-                
-	}
-	
-	public void paint(Graphics g) {
-		super.paint(g);
-
-                int x=contentPane.getX();
-                int y=contentPane.getY();
-
-                g.translate(x, y);
-                contentPane.paint(g);
-                g.translate(-x, -y);
-	
-		drawGlass(g);
-		
-	}
-
-        private String name;
-        public void setName(String string) {
-            name = string;
-            updateUI();
-        }
-	
-	// same translate done above
-	private void drawGlass(Graphics g) {
-
-		if (glasspanecomponent!=null) {
-			
-			int gx=glasspanecomponent.getX();
-                        int gy=glasspanecomponent.getY();
-			
-			g.translate(gx, gy);
-			glasspanecomponent.paint(g);
-			g.translate(-gx, -gy);
-		}
-			
-	}
-	
         public void pointerEvent(int type, int x, int y) {
 
             // TODO to resize the window
             // if we drag next to the border
         }
-        
-        /**
-         * @param x the x coordinate
-         * @param y the y coordinate 
-         * @return the top-most child is returned
-         * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
-         */
-        public Component getComponentAt(int x, int y) {
-            
-            
-            if (glasspanecomponent!=null) {
-
-                    return glasspanecomponent.getComponentAt( x - glasspanecomponent.getX(), y - glasspanecomponent.getY());
-            }
-            else {
-
-                    return contentPane.getComponentAt( x - contentPane.getX(), y - contentPane.getY());
-
-            }
-
-        }
-
-	public void paintComponent(Graphics g) { }
 
         public CommandButton[] getWindowCommands() {
-            return panelCmds;
+            return windowCommands;
         }
 
         /**
@@ -380,33 +161,20 @@ public class Window extends Component implements ActionListener {
          */
 	public void setWindowCommand(int i, CommandButton softkey) {
 
-            if (panelCmds[i]!=softkey) {
+            if (windowCommands[i]!=softkey) {
                 CommandButton oldc = DesktopPane.getDesktopPane().getCurrentCommands()[i]; // get old 1
-		panelCmds[i] = softkey;
+		windowCommands[i] = softkey;
                 if (DesktopPane.getDesktopPane().getCurrentCommands()[i]==softkey) { // check if we are the new 1
-                    DesktopPane.getDesktopPane().softkeyRepaint(oldc==null || softkey == null);
+                    if (oldc==null || softkey == null) {
+                        DesktopPane.getDesktopPane().fullRepaint();
+                    }
+                    else {
+                        DesktopPane.getDesktopPane().softkeyRepaint();
+                    }
                 }
             }
 	}
-	
-	public String toString() {
-		
-		return super.toString() +" "+ contentPane +" "+glasspanecomponent;
-	}
 
-	public void repaint() {
-		
-            
-            // TODO what if we have a parent here?!
-		if (this == DesktopPane.getDesktopPane().getSelectedFrame() && isOpaque()) {
-			DesktopPane.getDesktopPane().windowRepaint();
-		}
-		else {
-			DesktopPane.getDesktopPane().fullRepaint();
-		}
-		
-	}
-        
         public void actionPerformed(String actionCommand) {
             
              if (CMD_CLOSE.equals(actionCommand)) {
@@ -432,15 +200,4 @@ public class Window extends Component implements ActionListener {
              }
 
         }
-
-    public void workoutSize() {
-        contentPane.workoutSize();
-        width = contentPane.getWidthWithBorder();
-        height = contentPane.getHeightWithBorder();
-    }
-
-    public String getName() {
-        return name==null?"Window":name;
-    }
-
 }

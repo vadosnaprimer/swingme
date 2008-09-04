@@ -541,8 +541,8 @@ public class ScrollPane extends Panel {
         
         public void clip(Graphics g) {
             
-            	int viewX=getXInWindow()+getViewPortX();
-		int viewY=getYInWindow()+getViewPortY();
+            	int viewX=getXOnScreen()+getViewPortX();
+		int viewY=getYOnScreen()+getViewPortY();
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
 		

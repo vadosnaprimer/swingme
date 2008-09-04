@@ -33,7 +33,7 @@ public abstract class Component {
 	
 	protected int posX,posY,width,height;
 	protected boolean selectable;
-	protected Window owner;
+	//protected Window owner;
 	protected Panel parent;
 
 	protected int background;
@@ -142,12 +142,12 @@ public abstract class Component {
             else if (parent!=null) {
                 parent.pointerEvent(type,x+posX,y+posY);
             }
-            else {
-                owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
-            }
+            //else {
+            //    owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
+            //}
         }
 	
-	public void animate() { }
+	public void animate() throws InterruptedException { }
 	
 	public void focusLost() { }
 
@@ -209,7 +209,7 @@ public abstract class Component {
 	public void repaint() {
             
                 // if we are not in a window, do nothing
-		if (owner==null) return;
+		if (getWindow()==null || !getWindow().isVisible()) return;
 		
 		if (!isOpaque()) {
 			
@@ -225,9 +225,9 @@ public abstract class Component {
 				}
 				
 			}
-			// if we have reached the window
+			// if we have reached the nothingness
 			if (p == null) {
-				owner.repaint();
+				DesktopPane.getDesktopPane().fullRepaint();
 			}
 			else {
 				DesktopPane.getDesktopPane().repaintComponent(p);
@@ -238,14 +238,14 @@ public abstract class Component {
 		}
 	}
 
-	public void setOwnerAndParent(Window ow,Panel p) {
+	public void setParent(Panel p) {
 		parent = p;
-		owner = ow;
+		//owner = ow;
 	}
 
-	public Window getOwner() {
-		return owner;
-	}
+//	public Window getOwner() {
+//		return owner;
+//	}
 	
 	public Panel getParent() {
 		
@@ -331,7 +331,10 @@ public abstract class Component {
 		setBounds(x,y,w,h);
 	}
 	
-	public int getXInWindow() {
+        /**
+         * @see java.awt.Component#getLocationOnScreen() Component.getLocationOnScreen
+         */
+	public int getXOnScreen() {
 		
 		int x = posX;
 		
@@ -347,7 +350,10 @@ public abstract class Component {
 		
 	}
 	
-	public int getYInWindow() {
+        /**
+         * @see java.awt.Component#getLocationOnScreen() Component.getLocationOnScreen
+         */
+	public int getYOnScreen() {
 		
 		int y = posY;
 		
@@ -362,18 +368,12 @@ public abstract class Component {
 		return y;
 	}
 	
-	public void wait(int a) {
+	public void wait(int a) throws InterruptedException {
 
-		try {
-			//if (owner!=null) {
-				synchronized (DesktopPane.getDesktopPane()) {
-					DesktopPane.getDesktopPane().wait(a);
-				}
-			//}
+                synchronized (DesktopPane.getDesktopPane()) {
+                        DesktopPane.getDesktopPane().wait(a);
+                }
 
-		} catch (InterruptedException e) {
-		}
-		
 	}
 
 	public int getForeground() {
@@ -444,10 +444,10 @@ public abstract class Component {
 	}
         
         
-        public Panel getRootPane() {
-	    if (owner == null) { return null; }
-            if (parent == null) { return (Panel)this; }
-            return parent.getRootPane();
+        public Window getWindow() {
+
+            if (parent == null) { return (this instanceof Window)?(Window)this : null; }
+            return parent.getWindow();
         }
         
         /**
@@ -461,4 +461,19 @@ public abstract class Component {
             border = theme.getBorder(Style.ALL);
         }
 
+        private String tooltip;
+        public String getToolTipText() {
+            return tooltip;
+        }
+        public void setToolTipText(String text) {
+            tooltip = text;
+        }
+                
+        public int getToolTipLocationX() {
+            return 5;
+        }
+        public int getToolTipLocationY() {
+            return 5;
+        }
+        
 }

@@ -51,7 +51,6 @@ import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
-import net.yura.mobile.gui.celleditor.TableCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Menu;
@@ -183,9 +182,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("windowTest1".equals(actionCommand)) {
 
                     Window test1 = new Window();
-                    test1.getContentPane().add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
-                    test1.getContentPane().add(new Label("LALAL TEST 1"));
-                    test1.getContentPane().setBackground(0x00FFFFFF);
+                    test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
+                    test1.add(new Label("LALAL TEST 1"));
+                    test1.setBackground(0x00FFFFFF);
                     
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     
@@ -393,7 +392,7 @@ for (int c=0;c<4;c++) {
                 else if ("open_text_edit".equals(actionCommand)) {
                     
                     viewText.setSelectable( !viewText.isSelectable() );
-                    mainWindow.getContentPane().repaint();
+                    mainWindow.repaint();
                     mainWindow.setupFocusedComponent();
                     
                 }
@@ -412,7 +411,7 @@ for (int c=0;c<4;c++) {
 			}
 			loadPanel.append(message+"\n");
 
-                        mainWindow.getContentPane().repaint();
+                        mainWindow.repaint();
 		}
                 else if ("borderTest".equals(actionCommand)) {
 			
@@ -530,7 +529,7 @@ for (int c=0;c<4;c++) {
                                 tab4.add(new ScrollPane(new List(anotherlist,new DefaultListCellRenderer(),false)));
 
                                 tabbedPane.add(tab1);
-                                tabbedPane.addTab("TAB 2", image, tab2);
+                                tabbedPane.addTab("TAB 2", image, tab2,"i am a tooltip");
                                 tabbedPane.addTab("tab 3 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
                                 
@@ -545,7 +544,7 @@ for (int c=0;c<4;c++) {
                     if (tableTest==null) {
                         
                         Vector options = new Vector();
-                        options.addElement(new Option("yes","Happy"));
+                        options.addElement(new Option("yes","Happy",null,":-)"));
                         options.addElement(new Option("no","Sad"));
                         options.addElement(new Option("ok","OK"));
                         
@@ -625,6 +624,12 @@ for (int c=0;c<4;c++) {
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
                                 return (rowIndex!=3);
                             }
+                            
+                            public String getToolTipText(int x,int y) {
+                                return "tooltip bob";
+                            }
+
+                            
                         };
                         
                         table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
@@ -675,15 +680,15 @@ for (int c=0;c<4;c++) {
 			scroll = new ScrollPane();
                         Label label = new Label("yura.net Mobile");
                         label.setHorizontalAlignment(Graphics.HCENTER);
-                        mainWindow.getContentPane().add(label,Graphics.TOP);
-                        mainWindow.getContentPane().add(scroll);
-                        mainWindow.getContentPane().add(new Label(""),Graphics.BOTTOM);
+                        mainWindow.add(label,Graphics.TOP);
+                        mainWindow.add(scroll);
+                        mainWindow.add(new Label(""),Graphics.BOTTOM);
 		}
 		
                	scroll.removeAll();
 		scroll.add(a);
 
-		mainWindow.getContentPane().revalidate();
+		mainWindow.revalidate();
 		
 		mainWindow.setWindowCommand(0, b);
 		mainWindow.setWindowCommand(1, c);
@@ -730,7 +735,7 @@ for (int c=0;c<4;c++) {
         
         
         updateComponentTreeUI(mainWindow);
-        mainWindow.getContentPane().revalidate();
+        mainWindow.revalidate();
         mainWindow.repaint();
     }
 

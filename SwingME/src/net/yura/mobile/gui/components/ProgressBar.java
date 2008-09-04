@@ -47,7 +47,7 @@ public class ProgressBar extends Component {
 
 	}
 
-	public void animate() {
+	public void animate() throws InterruptedException {
 		
 		loading = 0;
 		

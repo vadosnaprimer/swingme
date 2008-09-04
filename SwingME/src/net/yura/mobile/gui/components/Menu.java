@@ -66,8 +66,8 @@ public class Menu extends Button {
 
             super.fireActionPerformed();
 
-            if (owner!=null) {
-                openMenu(getXInWindow()+owner.getX() -(border!=null?border.getLeft():0), getYInWindow()+owner.getY()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder());
+            if (getWindow()!=null) {
+                openMenu(getXOnScreen() -(border!=null?border.getLeft():0), getYOnScreen()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder());
             }
             else if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) {
                 openMenu(getXWithBorder(),getYWithBorder(),getWidthWithBorder(),getHeightWithBorder());
@@ -212,9 +212,8 @@ public class Menu extends Button {
             popup.setWindowCommand(0, new CommandButton(getText(), "select"));
             popup.setWindowCommand(1, new CommandButton("Cancel", "cancel"));
             popup.setActionListener(this);
-            panel = popup.getContentPane();
-            panel.setLayout(new BoxLayout(Graphics.VCENTER));
-            popup.setContentPane(new ScrollPane(panel));
+            panel = new Panel(new BoxLayout(Graphics.VCENTER));
+            popup.add(new ScrollPane(panel));
             popup.setName("Menu");
             // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
 
@@ -222,7 +221,7 @@ public class Menu extends Button {
 
     	public void actionPerformed(String actionCommand) {
 
-            DesktopPane.getDesktopPane().remove(popup);
+            popup.setVisible(false);
             DesktopPane.getDesktopPane().setFocusedComponent(old);
 
             if (!"cancel".equals(actionCommand)) {
@@ -312,8 +311,10 @@ public class Menu extends Button {
 
 	}
 
-        public void animate() {
+        public void animate() throws InterruptedException {
 
+            try {
+            
                 int travelDistance = 0;
                 if (slide==Graphics.BOTTOM) {
                     travelDistance = popup.getY() - destY;
@@ -365,18 +366,28 @@ public class Menu extends Button {
                                 popup.setLocation(pX, pY);
 
 				if(pY==destY && pX == destX) {
-
-					open=true;
-					break;
+                                    break;
 				}
 
 				popup.repaint();
+
 			}
 
 			wait(50);
+
 		}
 
-                DesktopPane.getDesktopPane().fullRepaint();
+            }
+            finally {
+                if(open) {
+                    // TODO
+                }
+                else {
+                    open=true;
+                    popup.setLocation(destX, destY);
+                    DesktopPane.getDesktopPane().fullRepaint();
+                }
+            }
 
         }
 

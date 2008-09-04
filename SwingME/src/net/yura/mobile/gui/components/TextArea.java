@@ -420,7 +420,7 @@ public class TextArea extends TextComponent {
 	if (relayout && oldh!=height && parent!=null) {
 
             parent.doLayout();
-            parent.repaint();
+            //parent.repaint();
 
 	}
 

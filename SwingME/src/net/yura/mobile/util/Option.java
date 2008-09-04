@@ -26,6 +26,7 @@ public class Option {
 
 	private String id;
 	private String value;
+        private String tip;
         private Image icon;
 
 	public Option(final String key, final String val) {
@@ -36,7 +37,17 @@ public class Option {
 		value = val;
                 icon = img;
         }
-            
+        public Option(String id, String title, Image icon, String tip) {
+            	this.id = id;
+		value = title;
+                this.icon = icon;
+                this.tip = tip;
+        }
+        
+        public String getToolTip() {
+            return tip;
+        }
+        
 	public String getId() {
 		return id;
 	}

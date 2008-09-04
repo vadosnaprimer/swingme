@@ -61,8 +61,8 @@ public class OptionPane extends Window {
         
         Panel panel = new Panel(new BorderLayout());
         
-        getContentPane().add(title,Graphics.TOP);
-        getContentPane().add(panel);
+        add(title,Graphics.TOP);
+        add(panel);
         
         icon = new Label();
         

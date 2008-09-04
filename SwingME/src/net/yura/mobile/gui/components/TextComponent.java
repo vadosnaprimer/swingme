@@ -296,8 +296,9 @@ public abstract class TextComponent extends Component implements ActionListener,
             rp.setFullScreenMode(true);
         }
         
-	public void animate() {
+	public void animate() throws InterruptedException {
 
+            try {
                 int newWait = cursorBlinkWait;
             
 		while (isFocused()) {
@@ -329,8 +330,11 @@ public abstract class TextComponent extends Component implements ActionListener,
 			
 			repaint();
 		}
+            }
+            finally {
 		showCaret = false;
 		repaint();
+            }
 	}
 
         protected String getDisplayString() {

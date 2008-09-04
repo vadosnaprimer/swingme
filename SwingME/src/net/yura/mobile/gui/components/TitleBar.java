@@ -108,6 +108,8 @@ public class TitleBar extends Panel implements ActionListener {
         }
         else if (type == DesktopPane.DRAGGED) {
 
+            Window owner = getWindow();
+            
             owner.setLocation(owner.getX()+(x-oldX),owner.getY()+(y-oldY));
             DesktopPane.getDesktopPane().fullRepaint();
 
@@ -117,6 +119,8 @@ public class TitleBar extends Panel implements ActionListener {
 
     public boolean keyEvent(KeyEvent keypad) {
 
+            Window owner = getWindow();
+        
             if (keypad.isDownAction(Canvas.LEFT)) {
                 
                 if (move) { owner.setLocation(owner.getX()-2,owner.getY()); }
@@ -177,7 +181,7 @@ public class TitleBar extends Panel implements ActionListener {
 
         }
         else {
-            owner.actionPerformed(actionCommand);
+            getWindow().actionPerformed(actionCommand);
         }
     }
 

@@ -99,7 +99,7 @@ public class BorderLayout implements Layout {
 
                 }
                 
-                panel.setSize(width,height);
+                //panel.setSize(width,height);
                         
     }
 

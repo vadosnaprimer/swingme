@@ -23,7 +23,6 @@ import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Window;
-import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 
 /**
@@ -47,11 +46,9 @@ public class SimpleMidlet extends Midlet implements ActionListener {
                 
                 mainWindow.setActionListener(this);
 		mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
-		
-		mainWindow.getContentPane().setLayout( new FlowLayout() );
-		mainWindow.getContentPane().add( new Label("Hello World!") );
-		mainWindow.setSize(rp.getWidth(), rp.getHeight());
                 
+		mainWindow.add( new Label("Hello World!") );
+		mainWindow.setMaximum(true);
                 mainWindow.setVisible(true);
 	}
 
