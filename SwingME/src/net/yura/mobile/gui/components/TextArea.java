@@ -135,13 +135,12 @@ public class TextArea extends TextComponent {
 		lineHeight = font.getHeight() + lineSpacing;
 		startLine = Math.max(0, (g.getClipY() - y) / lineHeight);
 		endLine = Math.min(lines.length+1, startLine + (g.getClipHeight() / lineHeight) + 1);
-
+        
 		// Offset the starting position to skip the lines before startLine
 		y += lineHeight * startLine;
 
 		// Go through each line and render according to alignment and lineSpacing
-               
-                int beginIndex = (startLine==0)?0:lines[startLine-1];
+        int beginIndex = (startLine>=endLine)?0: ( (startLine==0)?0:lines[startLine-1] );
 		for(i = startLine; i < endLine; i++) {
 
                     int lastCaretIndex = (i==lines.length)?text.length():lines[i];
