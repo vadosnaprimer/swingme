@@ -802,17 +802,14 @@ public class DesktopPane extends Canvas implements Runnable {
          * @see javax.swing.JDesktopPane#getAllFrames() JDesktopPane.getAllFrames
          */
         public Vector getAllFrames() {
-            
             return windows;
-
         }
 
         /**
          * @return the internal frame that's currently selected
          * @see javax.swing.JDesktopPane#getSelectedFrame() JDesktopPane.getSelectedFrame
          */
-	public Window getSelectedFrame() {;
-
+	public Window getSelectedFrame() {
 		return currentWindow;
 	}
 

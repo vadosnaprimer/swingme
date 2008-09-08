@@ -34,9 +34,11 @@ public class ToolTip extends Label {
             wait(2000);
         }
         finally {
-            isShowing = false;
             super.setText(null);
-            DesktopPane.getDesktopPane().fullRepaint();
+            if (isShowing) {
+                isShowing = false;
+                DesktopPane.getDesktopPane().fullRepaint();
+            }
         }
     }
     
