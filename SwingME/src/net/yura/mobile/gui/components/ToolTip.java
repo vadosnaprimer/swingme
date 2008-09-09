@@ -24,21 +24,23 @@ import net.yura.mobile.gui.DesktopPane;
  */
 public class ToolTip extends Label {
 
-    private boolean isShowing;
+    private boolean waiting;
+    private boolean showing;
     
     public void animate() throws InterruptedException {
         try {
+	    waiting = true;
             wait(1000);
-            isShowing = true;
+	    showing = true;
             DesktopPane.getDesktopPane().softkeyRepaint();
             wait(2000);
         }
         finally {
-            super.setText(null);
-            if (isShowing) {
-                isShowing = false;
+            if (showing) {
+                showing = false;
                 DesktopPane.getDesktopPane().fullRepaint();
             }
+	    waiting = false;
         }
     }
     
@@ -51,8 +53,11 @@ public class ToolTip extends Label {
         return "ToolTip";
     }
 
-    public boolean showToolTip() {
-        return isShowing;
+    public boolean isWaiting() {
+	return waiting;
+    }
+    public boolean isShowing() {
+	return showing;
     }
     
 }

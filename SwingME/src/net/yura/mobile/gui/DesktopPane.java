@@ -369,7 +369,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //paintSoftKey = false;
 
-            if (tooltip.showToolTip()) {
+            if (tooltip.isShowing()) {
                 paintComponent(g,tooltip);
             }
 
@@ -636,14 +636,21 @@ public class DesktopPane extends Canvas implements Runnable {
                 
 
 
-                    
-                    // if a tooltip should be setup
-                    if (focusedComponent!=null && focusedComponent.getToolTipText()!=null && (
+                showHideToolTip(
                             keyevent.justReleasedAction(Canvas.RIGHT)||
                             keyevent.justReleasedAction(Canvas.DOWN) ||
                             keyevent.justReleasedAction(Canvas.LEFT)||
                             keyevent.justReleasedAction(Canvas.UP)
-                    )) {
+                    );
+
+                
+	}
+
+	private void showHideToolTip(boolean show) {
+
+                    // if a tooltip should be setup
+                    if (show && focusedComponent!=null && focusedComponent.getToolTipText()!=null) {
+
                         tooltip.setText( focusedComponent.getToolTipText() );
                         tooltip.workoutSize();
                         tooltip.setLocation(
@@ -659,21 +666,15 @@ public class DesktopPane extends Canvas implements Runnable {
                         // if there is a tooltip up or ready to go up,
                         // then kill it!
                         synchronized (this) {
-                            if (tooltip.getText()!=null) {
+                            if (tooltip.isWaiting()) {
                                 animationThread.interrupt();
                             }
                         }
                     }
 
-                
+
 	}
 
-        
-        
-        
-        
-        
-        
     public void softKeyActivated(int i) {
 
         		CommandButton[] panelCmds = currentWindow.getWindowCommands();
@@ -978,6 +979,8 @@ public class DesktopPane extends Canvas implements Runnable {
                     th.printStackTrace();
                     log( "Exception in pointerEvent: " + th.toString() );
             }
+
+	    showHideToolTip(type == PRESSED);
 
         }
         

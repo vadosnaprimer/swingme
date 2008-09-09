@@ -96,27 +96,27 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
 	public void fireActionPerformed() {
-        
 
-            
                 createList();
                 list.workoutSize();
-                
+
+                int y;
+
                 int h = list.getHeightWithBorder();
                 if(h > DesktopPane.getDesktopPane().getHeight()/2){
                         h = DesktopPane.getDesktopPane().getHeight()/2;
                 }
-                
-                scroll.setPreferredSize(width, h);
-                
-                int y;
 
-                if ((getYOnScreen() + height + scroll.getHeight()) > (DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()) ){
-                        y = getYOnScreen() - scroll.getHeight();
+                if ((getYOnScreen() + height + h) > (DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()) ){
+                        y = getYOnScreen() - h;
                 }
                 else {
                         y = getYOnScreen() + height;
                 }
+
+                scroll.setPreferredSize(width, h);
+                
+
                 
                 if (dropDown==null) {
                     dropDown = new Window();
