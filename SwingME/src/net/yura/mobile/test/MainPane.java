@@ -273,7 +273,9 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 				componentTest.add( new Label("a Label") );
                                 if (image!=null) { componentTest.add( new Label( image ) ); }
-				componentTest.add( new Button("a Button") );
+                                Button b = new Button("a Button");
+                                b.setToolTipText("A ToolTip for a button");
+				componentTest.add( b );
                                 componentTest.add( new CheckBox("a CheckBox") );
                                 componentTest.add( new RadioButton("a RadioButton") );
                                 
@@ -281,7 +283,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 items.addElement("One");
                                 items.addElement(new Option("2","Two",image));
                                 items.addElement(new Option("3","Three option"));
-                                items.addElement(new Option("4",null,image));
+                                items.addElement(new Option("4",null,image,"(no text)"));
                                 
                                 componentTest.add( new ComboBox(items) );
                                 componentTest.add( new Spinner(items, false));
@@ -624,12 +626,6 @@ for (int c=0;c<4;c++) {
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
                                 return (rowIndex!=3);
                             }
-                            
-                            public String getToolTipText(int x,int y) {
-                                return "tooltip bob";
-                            }
-
-                            
                         };
                         
                         table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
@@ -638,6 +634,13 @@ for (int c=0;c<4;c++) {
                         table.setDefaultEditor(Integer.class, new DefaultCellEditor( new Spinner(numbers,false) ) );
                         table.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
                         table.setDefaultEditor(Option.class, new DefaultCellEditor(new ComboBox(options)) );
+                        
+                        // testing clip
+//                        table.setColumnWidth(0, 100);
+//                        table.setColumnWidth(1, 100);
+//                        table.setColumnWidth(2, 100);
+//                        table.setColumnWidth(3, 100);
+//                        table.setRowHeight(100);
                         
                         tableTest = new Panel( new BorderLayout() );
                         
@@ -672,8 +675,6 @@ for (int c=0;c<4;c++) {
 	
 	private ScrollPane scroll;
 	private void addToScrollPane(Component a,CommandButton b,CommandButton c) {
-		
-
 		
 		if (scroll==null) {
 			

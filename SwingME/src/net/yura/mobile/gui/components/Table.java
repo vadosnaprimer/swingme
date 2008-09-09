@@ -306,43 +306,60 @@ public class Table extends Panel {
     
     public void paintComponent(Graphics g) {
         int x=0,y=0;
-        
+
         int cols = getColumnCount();
         int rowc = getRowCount();
         
         boolean editOpen = getComponents().size()==1;
         
-        for (int c=0;c<rowc;c++) {
+        boolean good1=false;
+        for (int r=0;r<rowc;r++) {
             
-            int currentRowHeight = getRowHeight(c);
-            
-            for (int a=0;a<cols;a++) {
-                
-                  int currentColWidth = getColumnWidth(a);
+            int currentRowHeight = getRowHeight(r);
 
-                  if (!editOpen || editingRow!=c || editingColumn!=a) {
+            if (y < g.getClipY()+g.getClipHeight() &&
+                y + currentRowHeight > g.getClipY()
+            ) {
+                good1 = true;
+                boolean good2=false;
+                for (int c=0;c<cols;c++) {
 
-                        Component comp = getComponentFor(c,a);
-                        if (comp!=null) {
+                      int currentColWidth = getColumnWidth(c);
 
-                            comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
-                            
-                            int xoff=comp.getX();
-                            int yoff=comp.getY();
-                            g.translate(xoff, yoff);
-                            comp.paint(g);
-                            g.translate(-xoff, -yoff);
-                        }
-                  }
-                  
-                  x = x + currentColWidth;
-                  
+                      if (x < g.getClipX()+g.getClipWidth() &&
+                            x + currentColWidth > g.getClipX()
+                      ) {
+                          good2 = true;
+
+                          if (!editOpen || editingRow!=r || editingColumn!=c) {
+
+                                Component comp = getComponentFor(r,c);
+                                if (comp!=null) {
+
+                                    comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
+
+                                    int xoff=comp.getX();
+                                    int yoff=comp.getY();
+                                    g.translate(xoff, yoff);
+                                    comp.paint(g);
+                                    g.translate(-xoff, -yoff);
+                                }
+                          }
+                      }
+                      else if (good2) {
+                          break;
+                      }
+
+                      x = x + currentColWidth;
+
+                }
+            }
+            else if (good1) {
+                break;
             }
             
             y = y + currentRowHeight;
             x=0;
-                    
-            
         }
     }
     
