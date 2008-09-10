@@ -20,7 +20,6 @@ public class Font {
 	private int	characterSpacing;
 
 	private javax.microedition.lcdui.Font systemFont=null;
-	private int	fontColor=0;
 
 	private Hashtable imageTable;
 	private int[] colors;
@@ -156,9 +155,7 @@ public class Font {
 	
 
 	private void setColor(int a) {
-		
-		fontColor = a;
-		
+
 		if (imageTable!=null) {
 		
 			Image b = (Image) imageTable.get(new Integer(a));
@@ -169,24 +166,17 @@ public class Font {
 			}
 			else {
 				
-				if (DesktopPane.debugMode) {
-					System.out.println("trying to set a font color to a unknown color: "+a);
-				}
+                            //#debug
+				System.out.println("trying to set a font color to a unknown color: "+a);
+
 				setColor( colors[0] );
 
 			}
 		}
 	}
-	
-	public int[] getColors() {
-		
-		return colors;
-		
-	}
-	
-	
+
 	/**
-	 * Set's the system font.
+	 * Sets the system font.
 	 * @param systemFont - javax.microedition.lcdui.Font object
 	 */
 	public void setSystemFont(javax.microedition.lcdui.Font systemFont)
@@ -215,7 +205,10 @@ public class Font {
 	*/
 	public int getWidth(char c) {
 		
-		if (numbermode) {
+            	if(systemFont != null) {
+			return systemFont.charWidth(c);
+		}
+                else if (numbermode) {
 			
 			if (c == '-') {
 				
@@ -237,9 +230,6 @@ public class Font {
 
 			}
 
-		}
-		else if(systemFont != null) {
-			return systemFont.charWidth(c);
 		}
 		else {
 		
@@ -282,8 +272,7 @@ public class Font {
 	}
 	
 	public int getHeight() {
-		if(systemFont != null)
-		{
+		if(systemFont != null) {
 			return systemFont.getHeight();
 		}
 
@@ -292,7 +281,12 @@ public class Font {
 
 	public int getWidth(String s) {
 
-		if (numbermode) {
+            	if(systemFont != null) {
+			
+			return systemFont.stringWidth(s);
+				
+		}
+                else if (numbermode) {
 		
 			// gives width with space either side
 			
@@ -312,11 +306,6 @@ public class Font {
 				
 			}
 			return width;
-		}
-		else if(systemFont != null) {
-			
-				return systemFont.stringWidth(s);
-				
 		}
 		else {
 	
@@ -366,8 +355,21 @@ public class Font {
 	* @param	alignment The alignment to use. 
         */
 	public int drawString(Graphics g, String s, int x, int y, int alignment) {
-		
-            setColor( g.getColor() );
+
+            if(systemFont != null) {
+
+                    javax.microedition.lcdui.Font f = g.getFont();
+
+                    g.setFont(systemFont);
+                    g.drawString(s, x, y, alignment);			
+
+                    g.setFont(f);
+
+                    return getWidth(s);
+            }
+            else {
+            
+                setColor( g.getColor() );
             
 		if (numbermode) {
 			
@@ -416,18 +418,6 @@ public class Font {
 			
 			return x2 - x;
 			
-		}
-		else if(systemFont != null) {
-			
-			javax.microedition.lcdui.Font f = g.getFont();
-			
-			g.setColor(fontColor);
-			g.setFont(systemFont);
-			g.drawString(s, x, y, alignment);			
-			
-			g.setFont(f);
-
-			return getWidth(s);
 		}
 		else {
 		
@@ -491,6 +481,7 @@ public class Font {
 			g.setClip(oldClipX, oldClipY, oldClipW, oldClipH);
 			return width;
 		}
+            }
 	}
 	
 	
