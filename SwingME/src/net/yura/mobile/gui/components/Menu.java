@@ -224,15 +224,15 @@ public class Menu extends Button {
             popup.setVisible(false);
             DesktopPane.getDesktopPane().setFocusedComponent(old);
 
+            // cancel the parent menu
+            if (parentMenu!=null) { parentMenu.actionPerformed("cancel"); }
+            
             if (!"cancel".equals(actionCommand)) {
                 ActionListener al = getActionListener();
                 if (al!=null) {
                     al.actionPerformed(actionCommand);
                 }
             }
-
-            // cancel the parent menu
-            if (parentMenu!=null) { parentMenu.actionPerformed("cancel"); }
 
         }
 

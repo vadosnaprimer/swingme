@@ -17,17 +17,15 @@
 
 package net.yura.mobile.gui;
 
-import net.yura.mobile.gui.plaf.LookAndFeel;
-import net.yura.mobile.gui.plaf.Style;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
-
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.DefaultSoftkeyRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Button;
@@ -45,9 +43,7 @@ import net.yura.mobile.gui.components.Window;
 public class DesktopPane extends Canvas implements Runnable {
 
         // static methods
-    
         private static DesktopPane desktop;
-	public static boolean debugMode=true;
         
         public static DesktopPane getDesktopPane() {
             return desktop;
@@ -133,11 +129,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
 		midlet = m;
 
-		// check if we want to be in debug mode
-		String s;
-		if ((s = midlet.getAppProperty("Debug-Mode")) != null && ( s.toUpperCase().equals("OFF") || s.toUpperCase().equals("NO") || s.toUpperCase().equals("FALSE") || s.toUpperCase().equals("F") ) ) {
-			DesktopPane.debugMode = false;
-		}
+//		// check if we want to be in debug mode
+//		String s;
+//		if ((s = midlet.getAppProperty("Debug-Mode")) != null && ( s.toUpperCase().equals("OFF") || s.toUpperCase().equals("NO") || s.toUpperCase().equals("FALSE") || s.toUpperCase().equals("F") ) ) {
+//			DesktopPane.debugMode = false;
+//		}
 
 		windows = new Vector();
 
@@ -160,6 +156,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			midlet.initialize(this);
 		}
 		catch(Throwable th) {
+                    //#debug
 			th.printStackTrace();
 			log( "Error in initialize: " + th.toString() );
 		}
@@ -195,6 +192,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 System.out.println("InterruptedException during animation" );
                         }
 			catch(Throwable th) {
+                            //#debug
 				th.printStackTrace();
 				log( "Error in animation: " + th.toString() );
 			}
@@ -275,8 +273,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
-		if (!paintdone) {
-
+            if (!paintdone) {
 
                         g.setColor(background);
                         g.fillRect(0, 0, getWidth(), getHeight());
@@ -298,8 +295,9 @@ public class DesktopPane extends Canvas implements Runnable {
 			paintdone = true;
 
 			return;
-		}
-
+            }
+                
+            try {
 
                 if (!fullrepaint && !repaintComponent.isEmpty()) {
                     for (int c=0;c<repaintComponent.size();c++) {
@@ -334,7 +332,8 @@ public class DesktopPane extends Canvas implements Runnable {
 			}
 		}
 
-		if (DesktopPane.debugMode && mem!=null) {
+                //#mdebug
+		if (mem!=null) {
 
 			javax.microedition.lcdui.Font font = g.getFont();
 
@@ -343,9 +342,16 @@ public class DesktopPane extends Canvas implements Runnable {
 			g.setColor(0x00000000);
 			g.drawString(mem, (getWidth() -(font.stringWidth(mem)+10))/2 +5,5, Graphics.TOP | Graphics.LEFT );
 		}
+                //#enddebug
 
 		drawSoftkeys(g);
                 paintLast(g);
+            }
+            catch(Throwable th) {
+                //#debug
+                    th.printStackTrace();
+                    log( "Error in paint: " + th.toString() );
+            }
 
 	}
 
@@ -367,7 +373,6 @@ public class DesktopPane extends Canvas implements Runnable {
             if (com2!=null) {
                 paintComponent(g,com2);
             }
-            //paintSoftKey = false;
 
             if (tooltip.isShowing()) {
                 paintComponent(g,tooltip);
@@ -394,30 +399,6 @@ public class DesktopPane extends Canvas implements Runnable {
             
             g.setClip(a,b,c,d);
         }
-//        
-//	private boolean paintWindow(Graphics g,Window w) {
-//
-//                //System.out.println("paintWindow window:"+ w+" component:"+repaintComponent );
-//            
-//		boolean ret=false;
-//
-//		int wx=w.getX();
-//		int wy=w.getY();
-//
-//		g.translate(wx,wy);
-//
-//		try {
-//			ret = w.paintWindow(g,repaintComponent);
-//		}
-//		catch(Throwable th) {
-//			th.printStackTrace();
-//			log( "Error in paintWindow: " + th.toString() );
-//		}
-//
-//		g.translate(-wx, -wy);
-//		return ret;
-//	}
-//        
 
         private Component getSoftkeyRenderer(int i) {
             // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
@@ -540,6 +521,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
 		try {
 
+                        //#mdebug
 			if(keyevent.isDownKey(Canvas.KEY_STAR)){
 				mem = (Runtime.getRuntime().freeMemory() >> 10) +"K/" +(Runtime.getRuntime().totalMemory() >> 10)+"K";
 				fullRepaint();
@@ -547,6 +529,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			else {
 				mem = null;
 			}
+                        //#enddebug
 
                         CommandButton[] cmds = getCurrentCommands();
 
@@ -630,11 +613,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
 		}
 		catch(Throwable th) {
+                    //#debug
 			th.printStackTrace();
 			log( "Error in KeyEvent: " + th.toString() );
 		}
-                
-
 
                 showHideToolTip(
                             keyevent.justReleasedAction(Canvas.RIGHT)||
@@ -819,6 +801,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		}
 		catch (ConnectionNotFoundException e) {
                         log("can not call "+e.toString());
+                        //#debug
 			e.printStackTrace();
 		}
 
@@ -830,6 +813,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		}
                 catch(Exception e){
                     log("can not vibration "+e.toString());
+                    //#debug
                     e.printStackTrace();
                 }
 	}
@@ -847,13 +831,15 @@ public class DesktopPane extends Canvas implements Runnable {
         // debug dialog
         // #####################################################################
 
+        //#mdebug
 	private Window debugwindow;
 	private TextArea text;
         private String mem;
+        //#enddebug
         
 	public void log(String s) {
 
-		if (debugMode) {
+		//#mdebug
 			
 			if (debugwindow==null) {
 
@@ -885,7 +871,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             debugwindow.repaint();
                         }
 			
-		}
+		//#enddebug
 	}
 
         // #####################################################################
@@ -976,6 +962,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
             }
             catch(Throwable th) {
+                //#debug
                     th.printStackTrace();
                     log( "Exception in pointerEvent: " + th.toString() );
             }

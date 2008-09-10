@@ -26,53 +26,105 @@ import net.yura.mobile.gui.DesktopPane;
  */
 public class ProgressBar extends Component {
 
-	protected boolean go;
-	protected int wait;
-	
-	protected int loaded;
-	protected int loading;
-	
-	
-	// goes from 0 to loaded (inclusive)
-	public ProgressBar() {
+    protected boolean go;
+    protected int wait;
 
-		wait = 50;
-                loaded = 100;
-	}
-	
-	public void paintComponent(Graphics g) {
+    protected int loaded;
+    protected int loading;
+
+    /**
+     * Creates a horizontal progress bar that displays a border but no progress string.
+     * The initial and minimum values are 0, and the maximum is 100.
+     * @see javax.swing.JProgressBar#JProgressBar() JProgressBar.JProgressBar
+     * goes from 0 to loaded (inclusive)
+     */
+    public ProgressBar() {
+
+            wait = 50;
+            loaded = 100;
+    }
+
+    public void paintComponent(Graphics g) {
+
+            g.setColor(foreground);
             
-                g.setColor(foreground);
-		g.drawRect(0, 0, (width*loading)/loaded, height);
+            if (go) {
+                int thickness = 20;
+                
+                // pos goes from 0 to loaded/2
+                int pos = (loading > loaded/2)? loaded-loading : loading;
 
-	}
+                g.fillRect( ( (width-thickness) * pos)/ (loaded/2) , 0, thickness, height);
+            }
+            else {
+                g.fillRect(0, 0, (width*loading)/loaded, height);
+            }
 
-	public void animate() throws InterruptedException {
-		
-		loading = 0;
-		
-		while (go) {
-			
-			repaint();
-			wait(wait);
-			
-			if (loading == loaded) { loading=0; }
-			else { loading ++; }
-		}
-		
-	}
+    }
 
-	public void start() {
-		
+    /**
+     *  goes from 0 to maximum, then goes back to 0 and start again
+     */
+    public void animate() throws InterruptedException {
+
+            loading = 0;
+
+            while (go) {
+
+                    repaint();
+                    wait(wait);
+
+                    if (loading == loaded) { loading=0; }
+                    else { loading ++; }
+            }
+
+    }
+
+    /**
+     * @param v TRUE to start the animation, FLASE to end the animation
+     * @see javax.swing.JProgressBar#setIndeterminate(boolean) JProgressBar.setIndeterminate
+     */
+    public void setIndeterminate(boolean v) {
+
+        if (v) {
 		go = true;
 		DesktopPane.getDesktopPane().animateComponent(this);
-	}
-
-	public void stop() {
-		
-		go = false;
-	}
-
+        }
+        else {
+                go = false;
+        }
+        
+    }
+        
+    /**
+     * @see javax.swing.JProgressBar#getMaximum() JProgressBar.getMaximum
+     */
+    public int getMaximum() {
+        return loaded;
+    }
+    
+    /**
+     * @see javax.swing.JProgressBar#setMaximum(int) JProgressBar.setMaximum
+     */
+    public void setMaximum(int max) {
+        loaded = max;
+    }
+    
+    /**
+     * @see javax.swing.JProgressBar#getValue() JProgressBar.getValue
+     */
+    public int getValue() {
+        return loading;
+    }
+    
+    /**
+     * @param v The new value
+     * @see javax.swing.JProgressBar#setValue(int) JProgressBar.setValue
+     */
+    public void setValue(int v) {
+        loading = v;
+    }
+    
     public void workoutSize() {
         // TODO: what to put here?
         height = 20;
