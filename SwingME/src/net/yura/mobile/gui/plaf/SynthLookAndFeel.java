@@ -147,14 +147,22 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String sourceInsets = parser.getAttributeValue(null, "sourceInsets");
                                     String paintCenter = parser.getAttributeValue(null, "paintCenter");
 
-                                    Image activeimage = Image.createImage(path);
-                                    String[] split = StringUtil.split(sourceInsets, ' ');
-                                    border = new MatteBorder(activeimage,
-                                            insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
-                                            Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), 
-                                            "true".equals(paintCenter) || "Y".equals(paintCenter)
-                                            , borderfill);
-                                    newStyle.addBorder(border, st);
+                                    try {
+                                        Image activeimage = Image.createImage(path);
+                                        String[] split = StringUtil.split(sourceInsets, ' ');
+                                        border = new MatteBorder(activeimage,
+                                                insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
+                                                Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), 
+                                                "true".equals(paintCenter) || "Y".equals(paintCenter)
+                                                , borderfill);
+                                        newStyle.addBorder(border, st);
+                                    }
+                                    catch(Exception ex) {
+                                        //#mdebug
+                                        ex.printStackTrace();
+                                        System.out.println("can not load imagePainter: "+path);
+                                        //#enddebug
+                                    }
                                 }
                                 else if ("property".equals(name2)) {
                                     String type = parser.getAttributeValue(null, "type");
@@ -174,7 +182,15 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         newStyle.addProperty(Integer.valueOf(value,base), key, st);
                                     }
                                     else if (type==null || "idref".equals(type)) {
-                                        newStyle.addProperty(params.get(value), key, st);
+                                        try {
+                                            newStyle.addProperty(params.get(value), key, st);
+                                        }
+                                        catch(Exception ex) {
+                                            //#mdebug
+                                            ex.printStackTrace();
+                                            System.out.println("property null: "+key);
+                                            //#enddebug
+                                        }
                                     }
 
                                 }
@@ -242,13 +258,22 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 String width = parser.getAttributeValue(null, "width");
                                 String height = parser.getAttributeValue(null, "height");
                                 String id = parser.getAttributeValue(null, "id");
-                                
-                                Image newImage = Image.createImage(path);
-                                if (x!=null && y!=null && width!=null && height!=null) {
-                                    newImage = Image.createImage(newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
+
+                                try {
+                                    Image newImage = Image.createImage(path);
+                                    if (x!=null && y!=null && width!=null && height!=null) {
+                                        newImage = Image.createImage(newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
+                                    }
+                                    params.put(id, newImage);
+                                }
+                                catch(Exception ex) {
+                                    //#mdebug
+                                    ex.printStackTrace();
+                                    System.out.println("can not load imageIcon: "+path);
+                                    //#enddebug
                                 }
 
-                                params.put(id, newImage);
+
                         }
                         else if ("opaque".equals(name)) {
 

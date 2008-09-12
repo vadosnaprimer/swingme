@@ -12,6 +12,33 @@
     <bind style="backingStyle" key=".*"/>
 
 
+    <style id="scrollpane">
+
+      <imageIcon id="thumb_top" path="/thumb.png" x="0" y="0" width="14" height="14"/>
+      <imageIcon id="thumb_fill" path="/thumb.png" x="0" y="14" width="14" height="14"/>
+      <imageIcon id="thump_bottom" path="/thumb.png" x="0" y="28" width="14" height="14"/>
+
+      <imageIcon id="track_top" path="/track.png" x="0" y="0" width="14" height="22"/>
+      <imageIcon id="track_fill" path="/track.png" x="0" y="22" width="14" height="12"/>
+      <imageIcon id="track_bottom" path="/track.png" x="0" y="34" width="14" height="22"/>
+
+      <state>
+<!--
+	<color id="track_fill" value="#FFFFFF"/>
+	<color id="thumb_fill" value="#000000"/>
+-->
+        <property key="thumbTop" value="thumb_top"/>
+        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbFill" value="thumb_fill"/>
+        <property key="trackTop" value="track_top"/>
+        <property key="trackBottom" value="track_bottom"/>
+        <property key="trackFill" value="track_fill"/>
+
+      </state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
+
     <style id="textfield">
 	<insets top="4" left="6" bottom="4" right="6"/>
 	<state>
@@ -58,14 +85,5 @@
 	</state>
     </style>
     <bind style="checkbox" key="CheckBox"/>
-  
-
-    <style id="scrollpane">
-	<state>
-	    <property key="scrollBarCol" type="integer" value="0x00FF0000"/>
-	    <property key="scrollTrackCol" type="integer" value="0x00000000"/>
-	</state>
-    </style>
-    <bind style="scrollpane" key="ScrollPane"/>
 
 </synth>

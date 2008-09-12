@@ -68,8 +68,8 @@ public class MetalLookAndFeel extends LookAndFeel {
             
             
             Style scrollStyle = new Style(defaultStyle);
-            scrollStyle.addProperty(new Integer(0x00FFFFFF),"scrollBarCol",Style.ALL );
-            scrollStyle.addProperty(new Integer(0x00000000),"scrollTrackCol",Style.ALL );
+            scrollStyle.addProperty(new Integer(0x00000000),"thumbFill",Style.ALL );
+            scrollStyle.addProperty(new Integer(0x00FFFFFF),"trackFill",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
 
             Style listStyle = new Style(defaultStyle);

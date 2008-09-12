@@ -27,7 +27,7 @@ import javax.microedition.lcdui.game.Sprite;
 public class ImageUtil {
 
 
-    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
+    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
         
         if (src_w==0 || src_h==0 || dest_w==0 || dest_h==0) return;
         
@@ -38,13 +38,22 @@ public class ImageUtil {
         
         g.clipRect(dest_x,dest_y,dest_w,dest_h);
         
-        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
-            for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
-                g.drawRegion(img, src_x,  src_y, src_w, src_h, Sprite.TRANS_NONE, pos_x, pos_y,Graphics.TOP|Graphics.LEFT);
+        boolean normal = (t==Sprite.TRANS_NONE || t==Sprite.TRANS_MIRROR || t==Sprite.TRANS_ROT180 || t==Sprite.TRANS_MIRROR_ROT180);
+        int a = normal?src_w:src_h;
+        int b = normal?src_h:src_w;
+        
+        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
+            for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
+                g.drawRegion(img, src_x,  src_y, src_w, src_h, t, pos_x, pos_y,Graphics.TOP|Graphics.LEFT);
             }
         }
         
         g.setClip(cx,cy,cw,ch);
+    }
+    
+    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
+        
+        fillArea(g, img, src_x, src_y, src_w, src_h, dest_x, dest_y, dest_w, dest_h, Sprite.TRANS_NONE );
         
     }
     

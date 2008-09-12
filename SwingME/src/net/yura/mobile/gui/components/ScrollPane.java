@@ -18,9 +18,12 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.util.ImageUtil;
 
 /**
  * @author Yura Mamyrin
@@ -36,6 +39,18 @@ public class ScrollPane extends Panel {
 	private int mode;
 	private int barThickness;
 	
+        private Image thumbTop;
+        private Image thumbBottom;
+        private Image thumbFill;
+        private Image trackTop;
+        private Image trackBottom;
+        private Image trackFill;
+        
+        private Image rightArrow;
+        private Image leftArrow;
+        private Image upArrow;
+        private Image downArrow;
+        
 	private int scrollTrackCol;
 	private int scrollBarCol;
 	
@@ -83,7 +98,15 @@ public class ScrollPane extends Panel {
 	
 	public void setSize(int w, int h){
 		super.setSize(w,h);
-		barThickness = getBarThickness(w,h);
+
+                switch (mode) {
+                    case MODE_SCROLLBARS: barThickness = (trackTop!=null)?trackTop.getWidth():getBarThickness(w,h); break;
+			case MODE_SCROLLARROWS: // fall though
+                        case MODE_INDICATOR: barThickness = (rightArrow!=null)?rightArrow.getWidth():getBarThickness(w,h); break;
+			case MODE_NONE: barThickness = 0; break;
+			default: throw new RuntimeException();
+		}
+
 	}
 	
 	public static int getBarThickness(int w,int h) {
@@ -359,67 +382,245 @@ public class ScrollPane extends Panel {
 	
 	private void drawScrollBars(final Graphics g) {
 	
+                int viewX = getViewPortX();
+                int viewY = getViewPortY();
 		int viewHeight=getViewPortHeight();
-		int viewWidth=getViewPortWidth(viewHeight);
-		
-		int bararroww = barThickness - 4;
-		int bararrowh = (barThickness - 4) / 2;
-		
-		int offset = (barThickness - bararroww)/2 +1;
-
-		int viewX=getViewPortX();
-		int viewY=getViewPortY();
+                int viewWidth=getViewPortWidth(viewHeight);
+                int componentWidth = getComponent().getWidth();
+                int componentHeight = getComponent().getHeight();
 		
 		// NEEDS to be same check as in getViewPortHeight
-		if ( getComponent().getWidth() > (width-getViewPortX()) ) {
+		if ( componentWidth > (width-viewX) ) {
 
-			g.setColor(scrollBarCol);
-			g.fillRect(viewX, height - barThickness, viewWidth, barThickness);
-			g.setColor(scrollTrackCol);
-			g.drawRect(viewX, height - barThickness, viewWidth - 1, barThickness - 1);
-			
-			g.drawLine(viewX+barThickness - 1, viewY+viewHeight, viewX+barThickness - 1, height-1);
-			g.drawLine(viewX+viewWidth - barThickness, viewY+viewHeight, viewX+viewWidth - barThickness, height-1);
-			
-			drawLeftArrow(g, viewX+offset, viewY+viewHeight + 2, bararrowh, bararroww);
-			drawRightArrow(g, viewX+viewWidth - barThickness + offset, viewY+viewHeight + 2, bararrowh, bararroww);
-
-			int space = viewWidth - barThickness * 2 - 2;
-			
-			g.fillRect(
-					viewX+barThickness+1+ ((viewX-getComponent().getX())*space)/getComponent().getWidth(),
-					viewY+viewHeight + 2,
-					(viewWidth*space)/getComponent().getWidth(),
-					barThickness - 4
-			);
+                    drawScrollBar(g,true,
+                            viewX,
+                            viewY + viewHeight,
+                            viewWidth,
+                            height - viewY - viewHeight,
+                            getComponent().getX(),
+                            viewWidth,
+                            componentWidth
+                            );
 		}
 		
 		// NEEDS to be same check as in getViewPortWidth
-		if ( getComponent().getHeight() > viewHeight ) {
+		if ( componentHeight > viewHeight ) {
 
-			g.setColor(scrollBarCol);
-			g.fillRect(width-barThickness, viewY, barThickness, viewHeight);
-			g.setColor(scrollTrackCol);
-			g.drawRect(width-barThickness, viewY, barThickness - 1, viewHeight - 1);
-			
-			g.drawLine(viewX+viewWidth, viewY+barThickness - 1, width-1, viewY+barThickness - 1);
-			g.drawLine(viewX+viewWidth, viewY+viewHeight - barThickness, width-1, viewY+viewHeight - barThickness);
-			
-			
-			drawUpArrow(g, viewX+viewWidth + 2, viewY+offset, bararroww, bararrowh);
-			drawDownArrow(g, viewX+viewWidth + 2, viewY+viewHeight -barThickness +offset, bararroww, bararrowh);
-			
-			int space = viewHeight - barThickness * 2 - 2;
-			
-			g.fillRect(
-					viewX+viewWidth + 2,
-					viewY+barThickness+1+ ((viewY-getComponent().getY())*space)/getComponent().getHeight(),
-					barThickness - 4,
-					(viewHeight*space)/getComponent().getHeight()
-			);
+                    drawScrollBar(g,false,
+                            viewX + viewWidth,
+                            viewY,
+                            width - viewX - viewWidth,
+                            viewHeight,
+                            getComponent().getY(),
+                            viewHeight,
+                            componentHeight
+                            );
 		}
 
 	}
+
+        /**
+         * @see javax.swing.JScrollBar#JScrollBar(int, int, int, int, int) JScrollBar.JScrollBar
+         */
+    public void drawScrollBar(Graphics g, boolean horizontal,int x,int y,int w,int h,int value,int extent, int max) {
+
+        if (horizontal) {
+
+                int startx;
+                int extentw;
+                int box;
+            
+                // DRAW ARROWS
+                // #############################################################
+                
+                if (trackTop!=null) {
+
+                    int y1 = y + (h-trackTop.getWidth())/2;
+                    g.drawRegion(trackTop, 0, 0, trackTop.getWidth(), trackTop.getHeight(), Sprite.TRANS_MIRROR_ROT270 , x, y1, Graphics.TOP | Graphics.LEFT);
+                    g.drawRegion(trackBottom, 0, 0, trackBottom.getWidth(), trackBottom.getHeight(), Sprite.TRANS_MIRROR_ROT270, x + w - trackBottom.getHeight(), y1, Graphics.TOP | Graphics.LEFT);
+
+                    startx = trackTop.getHeight();
+                    extentw = w - startx - trackBottom.getHeight();
+                    box = (trackTop.getHeight() >h)?h:trackTop.getHeight();
+
+                }
+                else {
+
+                    g.setColor(scrollTrackCol);
+                    g.fillRect(x, y, h, h);
+                    g.fillRect(x+w-h, y, h, h);
+                    
+                    g.setColor(scrollBarCol);
+                    g.drawRect(x, y, h - 1, h - 1);
+                    g.drawRect(x+w-h, y, h - 1, h - 1);
+
+                    int bararroww = h - 4;
+                    int bararrowh = (h - 4) / 2;
+                    int offset = (h - bararroww)/2 +1;
+
+                    drawLeftArrow(g, x+offset, y + 2, bararrowh, bararroww);
+                    drawRightArrow(g, x+w - h + offset, y + 2, bararrowh, bararroww);
+
+                    startx = h;
+                    extentw = w - startx - h;
+                    box = h;
+                    
+                }
+                
+                
+                // draw the track fill color
+                // #############################################################
+                
+                if (trackFill!=null) {
+
+                    ImageUtil.fillArea(g, trackFill, 0, 0, trackFill.getWidth(), trackFill.getHeight(),
+                            startx , y + (h-trackFill.getWidth())/2, extentw , trackFill.getWidth(),
+                            Sprite.TRANS_MIRROR_ROT270);
+                    
+                }
+                else {
+                    g.setColor(scrollTrackCol);
+                    g.fillRect(startx, y, extentw, h);
+
+                    // draw the lines either side
+                    g.setColor(scrollBarCol);
+                    g.drawLine(startx, y, startx + extentw -1, y);
+                    g.drawLine(startx, y+h-1, startx + extentw -1, y+h-1);
+
+                }
+                
+                
+                
+                // draw the thumb!
+                // #############################################################
+                
+                int space = w - box * 2 - 1;
+                startx = x+box+1+ ((x-value)*space)/max;
+                extentw = (extent*space)/max;
+                
+                if (thumbTop!=null) {
+                    int y1 = y + (h-thumbTop.getWidth())/2;
+                    g.drawRegion(thumbTop, 0, 0, thumbTop.getWidth(), thumbTop.getHeight(), Sprite.TRANS_MIRROR_ROT270 , startx, y1, Graphics.TOP | Graphics.LEFT);
+                    g.drawRegion(thumbBottom, 0, 0, thumbBottom.getWidth(), thumbBottom.getHeight(), Sprite.TRANS_MIRROR_ROT270, startx + extentw - thumbBottom.getHeight(), y1, Graphics.TOP | Graphics.LEFT);
+                    startx = startx + thumbTop.getWidth();
+                    extentw = extentw - thumbTop.getWidth() - thumbBottom.getWidth();
+                }
+                
+                
+                if (thumbFill!=null) {
+
+                    ImageUtil.fillArea(g, thumbFill, 0, 0, thumbFill.getWidth(), thumbFill.getHeight(),
+                            startx , y + (h-thumbFill.getWidth())/2, extentw , thumbFill.getWidth(),
+                            Sprite.TRANS_MIRROR_ROT270);
+                }
+                else {
+                    g.setColor(scrollBarCol);
+                    g.fillRect(
+                            startx,
+                            y + 2,
+                            extentw,
+                            h - 4
+                    );
+                }
+        }
+        else {
+          
+                int starty;
+                int extenth;
+                int box;
+            
+                // DRAW ARROWS
+                // #############################################################
+                
+                if (trackTop!=null) {
+
+                    int x1 = x + (w-trackTop.getWidth())/2;
+                    g.drawImage(trackTop, x1, y, Graphics.TOP|Graphics.LEFT);
+                    g.drawImage(trackBottom, x1, y+h-trackBottom.getHeight(), Graphics.TOP|Graphics.LEFT);
+
+                    starty = trackTop.getHeight();
+                    extenth = h - starty - trackBottom.getHeight();
+                    box = (trackTop.getHeight() >w)?w:trackTop.getHeight();
+
+                }
+                else {
+
+                    g.setColor(scrollTrackCol);
+                    g.fillRect(x, y, w, w);
+                    g.fillRect(x, y+h-w, w, w);
+                    
+                    g.setColor(scrollBarCol);
+                    g.drawRect(x, y, w - 1, w - 1);
+                    g.drawRect(x, y+h-w, w - 1, w - 1);
+                    
+                    int bararroww = w - 4;
+                    int bararrowh = (w - 4) / 2;
+                    int offset = (w - bararroww)/2 +1;
+
+                    drawUpArrow(g, x + 2, y+offset, bararroww, bararrowh);
+                    drawDownArrow(g, x + 2, y+h -w +offset, bararroww, bararrowh);
+
+                    starty = w;
+                    extenth = h - starty - w;
+                    box = w;
+                    
+                }
+
+                // draw the track fill color
+                // #############################################################
+                
+                if (trackFill!=null) {
+
+                    ImageUtil.fillArea(g, trackFill, 0, 0, trackFill.getWidth(), trackFill.getHeight(),
+                            x + (w-trackFill.getWidth())/2 , starty, trackFill.getWidth(), extenth);
+                    
+                }
+                else {
+                    g.setColor(scrollTrackCol);
+                    g.fillRect(x, starty, w, extenth);
+
+                    // draw the lines either side
+                    g.setColor(scrollBarCol);
+                    g.drawLine(x, starty, x, starty + extenth - 1);
+                    g.drawLine(x+w-1, starty, x+w-1, starty + extenth -1);
+
+                }
+
+                // draw the thumb!
+                // #############################################################
+                
+                int space = h - box * 2 - 1;
+                starty = y+box+1+ ((y-value)*space)/max;
+                extenth = (extent*space)/max;
+                
+                if (thumbTop!=null) {
+                    int x1 = x + (w-thumbTop.getWidth())/2;
+                    g.drawImage(thumbTop, x1, starty, Graphics.TOP|Graphics.LEFT);
+                    g.drawImage(thumbBottom, x1, starty+extenth-thumbBottom.getHeight(), Graphics.TOP|Graphics.LEFT);
+                    starty = starty + thumbTop.getHeight();
+                    extenth = extenth - thumbTop.getHeight() - thumbBottom.getHeight();
+                }
+                
+                if (thumbFill!=null) {
+                    
+                    ImageUtil.fillArea(g, thumbFill, 0, 0, thumbFill.getWidth(), thumbFill.getHeight(),
+                            x + (w-thumbFill.getWidth())/2 , starty, thumbFill.getWidth(), extenth);
+                    
+                }
+                else {
+                    g.setColor(scrollBarCol);
+                    g.fillRect(
+                        x + 2,
+                        starty,
+                        w - 4,
+                        extenth
+                    );
+                }
+                
+                
+        }
+    }
+
 
 	private void drawScrollArrows(final Graphics g,boolean indicator) {
 
@@ -442,10 +643,10 @@ public class ScrollPane extends Panel {
 			}
 			
 			if (indicator) {
-				drawLeftArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d);
+				drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,Graphics.LEFT);
 			}
 			else {
-						drawLeftArrow(g, 0, (height-d)/2, barThickness, d);
+						drawArrow(g, 0, (height-d)/2, barThickness, d,Graphics.LEFT);
 			}
 			
 			if ( (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth ) {
@@ -456,10 +657,10 @@ public class ScrollPane extends Panel {
 			}
 			
 			if (indicator) {
-				drawRightArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d);
+				drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,Graphics.RIGHT);
 			}
 			else {
-						drawRightArrow(g, width - barThickness , (height-d)/2, barThickness, d);
+						drawArrow(g, width - barThickness , (height-d)/2, barThickness, d,Graphics.RIGHT);
 			}
 
 		}
@@ -474,10 +675,10 @@ public class ScrollPane extends Panel {
 			}
 			
 			if (indicator) {
-				drawUpArrow(g, (width-d)/2, height+gap, d, barThickness);
+				drawArrow(g, (width-d)/2, height+gap, d, barThickness,Graphics.TOP);
 			}
 			else {
-						drawUpArrow(g, (width-d)/2, 0, d, barThickness);
+						drawArrow(g, (width-d)/2, 0, d, barThickness,Graphics.TOP);
 			}
 			
 			if ( (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight ) {
@@ -488,15 +689,60 @@ public class ScrollPane extends Panel {
 			}
 			
 			if (indicator) {
-				drawDownArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness);
+				drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,Graphics.BOTTOM);
 			}
 			else {
-						drawDownArrow(g, (width-d)/2,height-barThickness, d, barThickness);
+						drawArrow(g, (width-d)/2,height-barThickness, d, barThickness,Graphics.BOTTOM);
 			}
 			
 		}
 	}
-	
+
+    public void drawArrow(Graphics g, int x, int y, int w, int h,int direction) {
+        
+        switch (direction) {
+            case Graphics.LEFT: {
+                if (leftArrow!=null) {
+                    g.drawImage(leftArrow, x+(w-leftArrow.getWidth())/2, y+(h-leftArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                }
+                else {
+                    drawLeftArrow(g, x, y, w, h);
+                }
+                break;
+            }
+            case Graphics.RIGHT: {
+                if (rightArrow!=null) {
+                    g.drawImage(rightArrow, x+(w-rightArrow.getWidth())/2, y+(h-rightArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                }
+                else {
+                    drawRightArrow(g, x, y, w, h);
+                }
+                break;
+            }
+            case Graphics.TOP: {
+                if (upArrow!=null) {
+                    g.drawImage(upArrow, x+(w-upArrow.getWidth())/2, y+(h-upArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                }
+                else {
+                    drawUpArrow(g, x, y, w, h);
+                }
+                break;
+            }
+            case Graphics.BOTTOM: {
+                if (downArrow!=null) {
+                    g.drawImage(downArrow, x+(w-downArrow.getWidth())/2, y+(h-downArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                }
+                else {
+                    drawDownArrow(g, x, y, w, h);
+                }
+                break;
+            }
+        }
+      
+        
+    }
+        
+        
     public static void drawDownArrow(Graphics g, int x, int y, int w, int h) {
         for (int i=0; i<h; i++) {
             g.fillRect(x+i, y+i, w-2*i, 1);
@@ -565,12 +811,35 @@ public class ScrollPane extends Panel {
                 super.updateUI();
                 
                 Style theme = DesktopPane.getDefaultTheme(this);
+
+                thumbTop = (Image)theme.getProperty("thumbTop", Style.ALL);
+                thumbBottom = (Image) theme.getProperty("thumpBottom", Style.ALL);
+                Object thumbFill = theme.getProperty("thumbFill", Style.ALL);
+                trackTop = (Image) theme.getProperty("trackTop", Style.ALL);
+                trackBottom = (Image) theme.getProperty("trackBottom", Style.ALL);
+                Object trackFill = theme.getProperty("trackFill", Style.ALL);
                 
-                Integer a1 = (Integer) theme.getProperty("scrollTrackCol", Style.ALL);
-                Integer a2 = (Integer) theme.getProperty("scrollBarCol", Style.ALL);
+                if (thumbFill instanceof Image) {
+                    this.thumbFill = (Image)thumbFill;
+                    scrollBarCol=-1;
+                }
+                else if (thumbFill instanceof Integer) {
+                    scrollBarCol = ((Integer)thumbFill).intValue();
+                    this.thumbFill = null;
+                }
                 
-		scrollTrackCol = (a1==null)?-1:a1.intValue();
-		scrollBarCol = (a2==null)?-1:a2.intValue();
-            
+                if (trackFill instanceof Image) {
+                    this.trackFill = (Image)trackFill;
+                    scrollTrackCol=-1;
+                }
+                else if (trackFill instanceof Integer) {
+                    scrollTrackCol = ((Integer)trackFill).intValue();
+                    this.trackFill=null;
+                }
+                
+                rightArrow = (Image)theme.getProperty("rightArrow", Style.ALL);
+                leftArrow = (Image)theme.getProperty("leftArrow", Style.ALL);
+                upArrow = (Image)theme.getProperty("upArrow", Style.ALL);
+                downArrow = (Image)theme.getProperty("downArrow", Style.ALL);
         }
 }
