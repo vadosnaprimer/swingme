@@ -632,78 +632,66 @@ public class ScrollPane extends Panel {
 		
 		int d = barThickness*2;
 		int gap=2;
+		boolean canScroll;
 		
 		if (getComponent().getWidth() > width) {
-			
-			if ( getComponent().getX() < viewX ) {
-				g.setColor(scrollTrackCol);
-			}
-			else {
-				g.setColor(scrollBarCol);
-			}
+
+			canScroll = getComponent().getX() < viewX;
 			
 			if (indicator) {
-				drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,Graphics.LEFT);
+				drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.LEFT);
 			}
 			else {
-						drawArrow(g, 0, (height-d)/2, barThickness, d,Graphics.LEFT);
+						drawArrow(g, 0, (height-d)/2, barThickness, d,canScroll,Graphics.LEFT);
 			}
 			
-			if ( (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth ) {
-				g.setColor(scrollTrackCol);
-			}
-			else {
-				g.setColor(scrollBarCol);
-			}
+			canScroll = (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth;
 			
 			if (indicator) {
-				drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,Graphics.RIGHT);
+				drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.RIGHT);
 			}
 			else {
-						drawArrow(g, width - barThickness , (height-d)/2, barThickness, d,Graphics.RIGHT);
+						drawArrow(g, width - barThickness , (height-d)/2, barThickness, d,canScroll,Graphics.RIGHT);
 			}
 
 		}
 		
 		if (getComponent().getHeight() > height) {
 			
-			if (getComponent().getY() < viewY) {
-				g.setColor(scrollTrackCol);
-			}
-			else {
-				g.setColor(scrollBarCol);
-			}
+			canScroll = getComponent().getY() < viewY;
 			
 			if (indicator) {
-				drawArrow(g, (width-d)/2, height+gap, d, barThickness,Graphics.TOP);
+				drawArrow(g, (width-d)/2, height+gap, d, barThickness,canScroll,Graphics.TOP);
 			}
 			else {
-						drawArrow(g, (width-d)/2, 0, d, barThickness,Graphics.TOP);
+						drawArrow(g, (width-d)/2, 0, d, barThickness,canScroll,Graphics.TOP);
 			}
 			
-			if ( (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight ) {
-				g.setColor(scrollTrackCol);
-			}
-			else {
-				g.setColor(scrollBarCol);
-			}
+			canScroll = (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight;
 			
 			if (indicator) {
-				drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,Graphics.BOTTOM);
+				drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,canScroll,Graphics.BOTTOM);
 			}
 			else {
-						drawArrow(g, (width-d)/2,height-barThickness, d, barThickness,Graphics.BOTTOM);
+						drawArrow(g, (width-d)/2,height-barThickness, d, barThickness,canScroll,Graphics.BOTTOM);
 			}
 			
 		}
 	}
 
-    public void drawArrow(Graphics g, int x, int y, int w, int h,int direction) {
-        
+    public void drawArrow(Graphics g, int x, int y, int w, int h,boolean canScroll,int direction) {
+
+	if (canScroll) {
+		g.setColor(scrollBarCol);
+	}
+	else {
+		g.setColor(scrollTrackCol);
+	}
+
         switch (direction) {
             case Graphics.LEFT: {
                 if (leftArrow!=null) {
-                    g.drawImage(leftArrow, x+(w-leftArrow.getWidth())/2, y+(h-leftArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                    if (canScroll) g.drawImage(leftArrow, x+(w-leftArrow.getWidth())/2, y+(h-leftArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
                 }
                 else {
                     drawLeftArrow(g, x, y, w, h);
@@ -712,7 +700,7 @@ public class ScrollPane extends Panel {
             }
             case Graphics.RIGHT: {
                 if (rightArrow!=null) {
-                    g.drawImage(rightArrow, x+(w-rightArrow.getWidth())/2, y+(h-rightArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                    if (canScroll) g.drawImage(rightArrow, x+(w-rightArrow.getWidth())/2, y+(h-rightArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
                 }
                 else {
                     drawRightArrow(g, x, y, w, h);
@@ -721,7 +709,7 @@ public class ScrollPane extends Panel {
             }
             case Graphics.TOP: {
                 if (upArrow!=null) {
-                    g.drawImage(upArrow, x+(w-upArrow.getWidth())/2, y+(h-upArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                    if (canScroll) g.drawImage(upArrow, x+(w-upArrow.getWidth())/2, y+(h-upArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
                 }
                 else {
                     drawUpArrow(g, x, y, w, h);
@@ -730,7 +718,7 @@ public class ScrollPane extends Panel {
             }
             case Graphics.BOTTOM: {
                 if (downArrow!=null) {
-                    g.drawImage(downArrow, x+(w-downArrow.getWidth())/2, y+(h-downArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                    if (canScroll) g.drawImage(downArrow, x+(w-downArrow.getWidth())/2, y+(h-downArrow.getHeight())/2, Graphics.TOP | Graphics.LEFT);
                 }
                 else {
                     drawDownArrow(g, x, y, w, h);
