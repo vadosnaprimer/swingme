@@ -29,7 +29,8 @@ import net.yura.mobile.gui.plaf.Style;
 public class RadioButton extends Button {
 
 	protected Image selectedImage;
-	protected Image nonSelectedImage;
+        protected Image disabledImage;
+        protected Image disabledSelectedImage;
 	
         public RadioButton() {
         }
@@ -39,120 +40,128 @@ public class RadioButton extends Button {
                 setText(label);
 	}
 
-    public RadioButton(String string, boolean b) {
-        this(string);
-        setSelected(b);
-    }
-	
-        public RadioButton(String label,Image a,Image b) {
-            this(label);
-            selectedImage=a;
-            nonSelectedImage=b;
-        }
-        
-	protected int getCombinedWidth() {
-            
-            int w = super.getCombinedWidth();
-            if (w!=0) { w=w+gap; }
-            
-            if (nonSelectedImage!=null) {
-                w = w + nonSelectedImage.getWidth();
-            }
-            else {
-                w = w + getFont().getHeight();
-            }
-	    return w;
-	}
-        
-        protected int getCombinedHeight() {
-              
-             int h = super.getCombinedHeight();
-             if (nonSelectedImage!=null && nonSelectedImage.getHeight() > h) {
-                 h = nonSelectedImage.getHeight();
-             }
-             return h;
+        public RadioButton(String string, boolean b) {
+            this(string);
+            setSelected(b);
         }
 
-        public void paintComponent(Graphics g){
-
-		g.setColor( getBorderColor() );
-
-		if (isSelected()){
-			if (selectedImage == null ){
-
-                                paintExtra(g);
-				
-			}
-			else{
-				g.drawImage(selectedImage, padding, (height-selectedImage.getHeight())/2 , 0 );
-			}
-		}
-		else{
-			if (nonSelectedImage == null){
-
-                                paintExtra(g);
-
-			}
-			else{
-				g.drawImage(nonSelectedImage, padding, (height-nonSelectedImage.getHeight())/2 , 0 );
-			}
-		}
-		
-                int offset = gap;
-            
-                if (nonSelectedImage!=null) {
-                    offset = offset + nonSelectedImage.getWidth();
-                }
-                else {
-                    offset = offset + getFont().getHeight();
-                }
-                
-		g.translate(+ offset, 0);
-		super.paintComponent(g);
-		g.translate(- offset, 0);
-
-        }
-        
-	public void paintExtra(Graphics g){
-
-                int size = getFont().getHeight()-1;
-                // the -1 is ONLY there so it looks better on the emulator
-                
-                int x = padding;
-                int y = (height-size)/2;
-                
-                g.drawArc(x, y, size-1, size-1, 0, 360);
-
-		if (isSelected()){
-
-                    int size2 = size/4;      
-	            g.fillArc(x+size2, y+size2, size-(size2*2), size-(size2*2), 0, 360);
-                }
-	}
-	
         public void fireActionPerformed() {
             super.fireActionPerformed();
             repaint();
         }
         
-	public Image getSelectedImage() {
+        /**
+         * @see javax.swing.AbstractButton#getSelectedIcon() AbstractButton.getSelectedIcon
+         */
+	public Image getSelectedIcon() {
 		return selectedImage;
 	}
 
-	public void setSelectedImage(Image selectedImage) {
+        /**
+         * @see javax.swing.AbstractButton#setSelectedIcon(javax.swing.Icon) AbstractButton.setSelectedIcon
+         */
+	public void setSelectedIcon(Image selectedImage) {
 		this.selectedImage = selectedImage;
 	}
 
-	public Image getNonSelectedImage() {
-		return nonSelectedImage;
-	}
+        /**
+         * @see javax.swing.AbstractButton#setDisabledIcon(javax.swing.Icon) AbstractButton.setDisabledIcon
+         */
+        public void setDisabledIcon(Image disabledIcon) {
+            disabledImage = disabledIcon;
+        }
+        
+        /**
+         * @see javax.swing.AbstractButton#getDisabledIcon() AbstractButton.getDisabledIcon
+         */
+        public Image getDisabledIcon() {
+            return disabledImage;
+        }
+        
+        /**
+         * @see javax.swing.AbstractButton#setDisabledSelectedIcon(javax.swing.Icon) AbstractButton.setDisabledSelectedIcon
+         */
+        public void setDisabledSelectedIcon(Image disabledSelectedIcon) {
+            disabledSelectedImage = disabledSelectedIcon;
+        }
+        
+        /**
+         * @see javax.swing.AbstractButton#getDisabledSelectedIcon() AbstractButton.getDisabledSelectedIcon
+         */
+        public Image getDisabledSelectedIcon() {
+            return disabledSelectedImage;
+        }
+        
+        public String getName() {
+            return "RadioButton";
+        }
+        
+        public void updateUI() {
+                super.updateUI();
+                
+                Style st = DesktopPane.getDefaultTheme(this);
 
-	public void setNonSelectedImage(Image nonSelectedImage) {
-		this.nonSelectedImage = nonSelectedImage;
-	}
-	
-    public String getName() {
-        return "RadioButton";
+                icon = (Image)st.getProperty("icon", Style.ALL);
+                selectedImage = (Image)st.getProperty("icon", Style.SELECTED);
+                disabledImage = (Image)st.getProperty("icon", Style.DISABLED);
+                disabledSelectedImage = (Image)st.getProperty("icon", Style.DISABLED | Style.SELECTED);
+
+        }
+        
+
+    protected int getIconWidth() {
+        
+        if (icon==null) {
+            return getFont().getHeight()-1;
+            // the -1 is ONLY there so it looks better on the emulator
+        }
+        else {
+            return super.getIconWidth();
+        }
+    }
+
+    protected int getIconHeight() {
+        if (icon==null) {
+            return getFont().getHeight()-1;
+            // the -1 is ONLY there so it looks better on the emulator
+        }
+        else {
+            return super.getIconHeight();
+        }
+    }
+
+    protected void paintIcon(Graphics g, int x, int y) {
+
+        if (icon==null) {
+
+                int w = getIconWidth();
+                int h = getIconHeight();
+                
+                g.drawArc(x, y, w-1, h-1, 0, 360);
+
+		if (isSelected()){
+
+                    int w2 = w/4;
+                    int h2 = h/4;
+	            g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
+                }
+            
+        }
+        else {
+            if (isSelected() && !selectable && disabledSelectedImage!=null) {
+                g.drawImage(disabledSelectedImage, x, y, Graphics.TOP | Graphics.LEFT);
+            }
+            else if (isSelected() && selectedImage!=null) {
+                g.drawImage(selectedImage, x, y, Graphics.TOP | Graphics.LEFT);
+            }
+            else if (!selectable && disabledImage!=null) {
+                g.drawImage(disabledImage, x, y, Graphics.TOP | Graphics.LEFT);
+            }
+            else {
+                super.paintIcon(g, x, y);
+            }
+        }
+
     }
         
 }

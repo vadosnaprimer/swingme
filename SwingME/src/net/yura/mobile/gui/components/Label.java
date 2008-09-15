@@ -34,10 +34,10 @@ public class Label extends Component {
     
 	private static String extension = "...";
     
-	private Font font;
+	protected Font font;
 	
-	private String string;
-	private Image icon;
+	protected String string;
+	protected Image icon;
 	protected int padding=2;	
 	protected int gap=2;
 	
@@ -140,14 +140,14 @@ public class Label extends Component {
 		}
 		
 		
-		if (icon!=null) {
+		if (getIconWidth()>0) {
 
 			int ix=x;
 			int iy=y;
 			
 			if ((textPosition & Graphics.HCENTER) != 0) {
 				
-				ix = x + (combinedwidth - icon.getWidth())/2;
+				ix = x + (combinedwidth - getIconWidth())/2;
 				
 			}
 			else if ((textPosition & Graphics.LEFT) != 0 && font!=null) {
@@ -158,7 +158,7 @@ public class Label extends Component {
 
 			if ((textPosition & Graphics.VCENTER) != 0) {
 				
-				iy = y + (combinedheight - icon.getHeight())/2;
+				iy = y + (combinedheight - getIconHeight())/2;
 				
 			}
 			else if ((textPosition & Graphics.TOP) != 0 && font!=null) {
@@ -167,7 +167,7 @@ public class Label extends Component {
 				
 			}
 			
-			g.drawImage(icon, ix, iy , Graphics.TOP | Graphics.LEFT );
+			paintIcon( g, ix, iy  );
 		}
 		
 		if (font!=null && string!=null) {
@@ -180,9 +180,9 @@ public class Label extends Component {
 				tx = x + (combinedwidth - font.getWidth(string))/2;
 				
 			}
-			else if ((textPosition & Graphics.RIGHT) != 0 && icon!=null) {
+			else if ((textPosition & Graphics.RIGHT) != 0 && getIconWidth()>0) {
 				
-				tx = x + icon.getWidth()+gap;
+				tx = x + getIconWidth()+gap;
 				
 			}
 
@@ -191,9 +191,9 @@ public class Label extends Component {
 				ty = y + (combinedheight - font.getHeight())/2;
 				
 			}
-			else if ((textPosition & Graphics.BOTTOM) != 0 && icon!=null) {
+			else if ((textPosition & Graphics.BOTTOM) != 0 && getIconWidth()>0) {
 				
-				ty = y + icon.getHeight()+gap;
+				ty = y + getIconHeight()+gap;
 				
 			}
 			
@@ -205,39 +205,39 @@ public class Label extends Component {
 	}
 
 	protected int getCombinedWidth() {
-            return getCombinedWidth(string,icon);
+            return getCombinedWidth(string,getIconWidth());
 	}
         
-        protected int getCombinedWidth(String string,Image icon) {
+        protected int getCombinedWidth(String string,int iconWidth) {
             	int fw = (font!=null&&string!=null)?font.getWidth(string):0;
 		if ((textPosition & Graphics.HCENTER) != 0) {
-			if (icon == null && font == null) return 0;
-			if (icon != null) {
-				return (icon.getWidth() > fw)?icon.getWidth():fw;
+			if (iconWidth<=0 && font == null) return 0;
+			if (iconWidth>0) {
+				return (iconWidth > fw)?iconWidth:fw;
 			}
 			return fw;
 		}
 		else {
-			if (icon != null) { fw=    ((fw==0)?0:gap)     +fw+icon.getWidth(); }
+			if (iconWidth>0) { fw=    ((fw==0)?0:gap)     +fw+iconWidth; }
 			return fw;
 		}
         }
 	
         protected int getCombinedHeight() {
-            return getCombinedHeight(icon);
+            return getCombinedHeight(getIconHeight());
         }
         
-	protected int getCombinedHeight(Image icon) {
+	protected int getCombinedHeight(int iconHeight) {
 		int fw = (font!=null)?font.getHeight():0;
 		if ((textPosition & Graphics.VCENTER)!= 0) {
-			if (icon == null && font == null) return 0;
-			if (icon != null) {
-				return (icon.getHeight() > fw)?icon.getHeight():fw;
+			if (iconHeight<=0 && font == null) return 0;
+			if (iconHeight>0) {
+				return (iconHeight > fw)?iconHeight:fw;
 			}
 			return fw;
 		}
 		else {
-			if (icon != null) { fw=    ((fw==0)?0:gap)     +fw+icon.getHeight(); }
+			if (iconHeight>0) { fw=    ((fw==0)?0:gap)     +fw+iconHeight; }
 			return fw;
 		}
 	}
@@ -353,7 +353,7 @@ public class Label extends Component {
             }
             
             if (drawString!=null) {
-                int a = getCombinedWidth(drawString, image);
+                int a = getCombinedWidth(drawString, image.getWidth());
                 int w = getMaxTextWidth();
 
                 if (a > w) {
@@ -389,4 +389,24 @@ public class Label extends Component {
         font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
 
+    
+    /**
+     * @see javax.swing.Icon#getIconWidth() Icon.getIconWidth
+     */
+    protected int getIconWidth() {
+        return icon!=null?icon.getWidth():0;
+    }
+    
+    /**
+     * @see javax.swing.Icon#getIconHeight() Icon.getIconHeight
+     */
+    protected int getIconHeight() {
+        return icon!=null?icon.getHeight():0;
+    }
+    /**
+     * @see javax swing Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int) Icon.paintIcon
+     */
+    protected void paintIcon(Graphics g, int x, int y) {
+        g.drawImage(icon, x, y, Graphics.TOP | Graphics.LEFT);
+    }
 }

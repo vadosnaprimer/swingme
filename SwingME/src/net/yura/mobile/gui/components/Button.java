@@ -233,12 +233,6 @@ public class Button extends Label implements ActionListener {
 		this.useSelectButton = useSelectButton;
 	}
 
-        protected int getBorderColor() {
-            if (border instanceof LineBorder) {
-                return ((LineBorder)border).getLineColor();
-            }
-            return 0;
-        }
 	public String toString() {
             return super.toString() +"("+ getText()+")";
         }

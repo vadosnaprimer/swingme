@@ -397,7 +397,7 @@ public class ScrollPane extends Panel {
                             viewY + viewHeight,
                             viewWidth,
                             height - viewY - viewHeight,
-                            getComponent().getX(),
+                            -getComponent().getX(),
                             viewWidth,
                             componentWidth
                             );
@@ -411,7 +411,7 @@ public class ScrollPane extends Panel {
                             viewY,
                             width - viewX - viewWidth,
                             viewHeight,
-                            getComponent().getY(),
+                            -getComponent().getY(),
                             viewHeight,
                             componentHeight
                             );
@@ -495,7 +495,7 @@ public class ScrollPane extends Panel {
                 // #############################################################
                 
                 int space = w - box * 2 - 1;
-                startx = x+box+1+ ((x-value)*space)/max;
+                startx = x+box+1+ (space*value)/max;
                 extentw = (extent*space)/max;
                 
                 if (thumbTop!=null) {
@@ -590,7 +590,7 @@ public class ScrollPane extends Panel {
                 // #############################################################
                 
                 int space = h - box * 2 - 1;
-                starty = y+box+1+ ((y-value)*space)/max;
+                starty = y+box+1+ (space*value)/max;
                 extenth = (extent*space)/max;
                 
                 if (thumbTop!=null) {

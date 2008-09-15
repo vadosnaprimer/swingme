@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.util.Option;
 
@@ -173,6 +174,13 @@ public class ComboBox extends Button implements ActionListener{
             super.paintComponent(g);
 	}
 	
+        protected int getBorderColor() {
+            if (border instanceof LineBorder) {
+                return ((LineBorder)border).getLineColor();
+            }
+            return 0;
+        }
+        
 	public Image getSelectedImage() {
 		return selectedImage;
 	}

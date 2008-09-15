@@ -19,49 +19,58 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 
-import javax.microedition.lcdui.Image;
-
 /**
  * @author Yura Mamyrin
  * @see javax.swing.JCheckBox
  */
 public class CheckBox extends RadioButton {
     
+    /**
+     * @see javax.swing.JCheckBox#JCheckBox() JCheckBox.JCheckBox
+     */
         public CheckBox() {
         }
-    
+
+    /**
+     * @param label
+     * @see javax.swing.JCheckBox#JCheckBox(java.lang.String) JCheckBox.JCheckBox
+     */
 	public CheckBox(String label){
             super(label);
 	}
-        
-        public CheckBox(String label,Image a,Image b) {
-            super(label,a,b);
-        }
 	
         protected void toggleSelection() {
             selected=!selected;
         }
 
-	public void paintExtra(Graphics g) {
+    protected void paintIcon(Graphics g, int x, int y) {
 
-            int size = getFont().getHeight();
-            
-            int x=padding;
-            int y = (height-size)/2;
+        if (icon==null) {
 
-            g.drawRect(x, y, size-1, size-1);
+            int w = getIconWidth();
+            int h = getIconHeight();
+
+            g.drawRect(x, y, w-1, h-1);
 
             if (isSelected()) {
 
                 //g.fillRect(x+3, y+3, size-6, size-6);
                 
                 for (int pad=3;pad<6;pad++) {
-                    g.drawLine(x+pad, y+size/2, x+size/3, y+size-pad);
-                    g.drawLine(x+size/3, y+size-pad,x+size-pad,y+pad);
+                    g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
+                    g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
                 }
 
             }
-	}
+            
+        }
+        else {
+            super.paintIcon(g, x, y);
+        }
+
+    }
+        
+
         public String getName() {
             return "CheckBox";
         }
