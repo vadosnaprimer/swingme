@@ -116,7 +116,7 @@ public class RadioButton extends Button {
                 selectedImage = (Image)st.getProperty("icon", Style.SELECTED);
                 disabledImage = (Image)st.getProperty("icon", Style.DISABLED);
                 disabledSelectedImage = (Image)st.getProperty("icon", Style.DISABLED | Style.SELECTED);
-System.out.println(this+" icon="+icon);
+
         }
 
     protected int getIconWidth() {

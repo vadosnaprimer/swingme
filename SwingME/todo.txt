@@ -3,9 +3,7 @@ TODO:
 fix menu getting stuck in loop when u open and close it really quickly
 fix when pointerSelectedComponent is removed it still gets pointer events
 finish window decoration options, make sure works with ImageBorder
-make sure everything about the theme is stored in the Theme Object and can be loaded from a text file
- * add ScrollBar Skinning
- * add Checkbox skinning
+make a good theme for the demo app
 make sure all components support touch screen
  * Spinner
  * ScrollPane
