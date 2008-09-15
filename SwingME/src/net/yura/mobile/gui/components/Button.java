@@ -70,7 +70,9 @@ public class Button extends Label implements ActionListener {
          */
 	public Button(String label) {
 		
-		this(label,null);
+		super(label);
+                
+                selectable = true;
 
 	}
 	
@@ -80,10 +82,9 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.JButton#JButton(java.lang.String, javax.swing.Icon) JButton.JButton
          */
 	public Button(String label, Image img) {
-		super(label, img);
-		
-		selectable = true;
-
+		this(label);
+                
+                setIcon(img);
 	}
 
         public void setSelectable(boolean s) {

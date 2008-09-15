@@ -78,10 +78,10 @@
 	<imageIcon id="check_off" path="/checkbox_off.png"/>
 	<imageIcon id="check_on" path="/checkbox_on.png"/>
 	<state>
-	    <property key="CheckBox.icon" value="check_off"/>
+	    <property key="icon" value="check_off"/>
 	</state>
 	<state value="SELECTED">
-	    <property key="CheckBox.icon" value="check_on"/>
+	    <property key="icon" value="check_on"/>
 	</state>
     </style>
     <bind style="checkbox" key="CheckBox"/>

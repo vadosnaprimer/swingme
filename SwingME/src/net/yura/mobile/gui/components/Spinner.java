@@ -87,13 +87,15 @@ public class Spinner extends Label {
 
                         Object obj = list.elementAt(i);
 
-                        int len = getCombinedWidth(String.valueOf(obj),(obj instanceof Option)?((Option)obj).getIcon():null);
+                        Image img = (obj instanceof Option)?((Option)obj).getIcon():null;
+                        
+                        int len = getCombinedWidth(String.valueOf(obj),img!=null?img.getWidth():0);
 
                         if (maxWidth < len){
                             maxWidth = len;
                         }
                         
-                        int hi = getCombinedHeight( (obj instanceof Option)?((Option)obj).getIcon():null );
+                        int hi = getCombinedHeight( img!=null?img.getHeight():0 );
                                 
                         if (maxHeight < hi){
                             maxHeight = hi;

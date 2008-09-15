@@ -32,16 +32,27 @@ public class RadioButton extends Button {
         protected Image disabledImage;
         protected Image disabledSelectedImage;
 	
+        /**
+         * @see javax.swing.JRadioButton#JRadioButton() JRadioButton.JRadioButton
+         */
         public RadioButton() {
         }
-            
+
+        /**
+         * @param label
+         * @see javax.swing.JRadioButton#JRadioButton(java.lang.String) JRadioButton.JRadioButton
+         */
 	public RadioButton(String label) {
-		this();
-                setText(label);
+                super(label);
 	}
 
+        /**
+         * @param string
+         * @param b
+         * @see javax.swing.JRadioButton#JRadioButton(java.lang.String, boolean) JRadioButton.JRadioButton
+         */
         public RadioButton(String string, boolean b) {
-            this(string);
+            super(string);
             setSelected(b);
         }
 
@@ -105,9 +116,8 @@ public class RadioButton extends Button {
                 selectedImage = (Image)st.getProperty("icon", Style.SELECTED);
                 disabledImage = (Image)st.getProperty("icon", Style.DISABLED);
                 disabledSelectedImage = (Image)st.getProperty("icon", Style.DISABLED | Style.SELECTED);
-
+System.out.println(this+" icon="+icon);
         }
-        
 
     protected int getIconWidth() {
         
@@ -134,17 +144,19 @@ public class RadioButton extends Button {
 
         if (icon==null) {
 
-                int w = getIconWidth();
-                int h = getIconHeight();
-                
-                g.drawArc(x, y, w-1, h-1, 0, 360);
+            g.setColor(foreground);
+            
+            int w = getIconWidth();
+            int h = getIconHeight();
 
-		if (isSelected()){
+            g.drawArc(x, y, w-1, h-1, 0, 360);
 
-                    int w2 = w/4;
-                    int h2 = h/4;
-	            g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
-                }
+            if (isSelected()){
+
+                int w2 = w/4;
+                int h2 = h/4;
+                g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
+            }
             
         }
         else {

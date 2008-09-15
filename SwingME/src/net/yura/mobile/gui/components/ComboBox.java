@@ -71,8 +71,9 @@ public class ComboBox extends Button implements ActionListener{
 					
                                     Object obj = items.elementAt(i);
 
-                                    int lenW = getCombinedWidth(String.valueOf(obj),(obj instanceof Option)?((Option)obj).getIcon():null);
-                                    int lenH = getCombinedHeight((obj instanceof Option)?((Option)obj).getIcon():null);
+                                    Image img = (obj instanceof Option)?((Option)obj).getIcon():null;
+                                    int lenW = getCombinedWidth(String.valueOf(obj),img!=null?img.getWidth():0);
+                                    int lenH = getCombinedHeight(img!=null?img.getHeight():0);
 
                                     
 				    if (count < lenW){

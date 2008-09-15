@@ -39,6 +39,16 @@ public class CheckBox extends RadioButton {
             super(label);
 	}
 	
+        /**
+         * @param text
+         * @param selected
+         * @see javax.swing.JCheckBox#JCheckBox(java.lang.String, boolean) JCheckBox.JCheckBox
+         */
+        public CheckBox(String text, boolean selected) {
+             super(text);
+             setSelected(selected);
+        }
+        
         protected void toggleSelection() {
             selected=!selected;
         }
@@ -47,6 +57,8 @@ public class CheckBox extends RadioButton {
 
         if (icon==null) {
 
+            g.setColor(foreground);
+            
             int w = getIconWidth();
             int h = getIconHeight();
 

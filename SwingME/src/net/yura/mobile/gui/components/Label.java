@@ -56,8 +56,13 @@ public class Label extends Component {
          * @see javax.swing.JLabel#JLabel(java.lang.String) JLabel.JLabel
          */
 	public Label(String text) {
-		
-		this(text,null);
+
+		selectable = false;
+		if (text!=null) { setText(text); }
+                
+                alignment = Graphics.VCENTER | Graphics.LEFT;
+
+                textPosition = Graphics.VCENTER | Graphics.RIGHT;
 		
 	}
 	
@@ -66,8 +71,8 @@ public class Label extends Component {
          * @see javax.swing.JLabel#JLabel(javax.swing.Icon) JLabel.JLabel
          */
 	public Label(Image icon) {
-		
-		this(null,icon);
+		this();
+                setIcon(icon);
 		setHorizontalAlignment(Graphics.HCENTER);
 	}
         
@@ -77,16 +82,9 @@ public class Label extends Component {
          * @see javax.swing.JLabel#JLabel(java.lang.String, javax.swing.Icon, int) JLabel.JLabel
          */
         public Label(String text,Image icon) {
-                
-		this.icon = icon;
-		selectable = false;
-		if (text!=null) { setText(text); }
-                
-                alignment = Graphics.VCENTER | Graphics.LEFT;
-
-                textPosition = Graphics.VCENTER | Graphics.RIGHT;
-
-	}
+                this(text);
+                setIcon(icon);
+        }
 
     public void setPadding(int padding) {
         this.padding = padding;
@@ -353,7 +351,7 @@ public class Label extends Component {
             }
             
             if (drawString!=null) {
-                int a = getCombinedWidth(drawString, image.getWidth());
+                int a = getCombinedWidth(drawString, image!=null?image.getWidth():0);
                 int w = getMaxTextWidth();
 
                 if (a > w) {
