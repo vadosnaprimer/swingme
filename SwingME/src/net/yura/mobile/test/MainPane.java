@@ -319,26 +319,26 @@ public class MainPane extends DesktopPane implements ActionListener {
 			if (componentTest2==null) {
                             componentTest2 = new Panel( new BoxLayout(Graphics.HCENTER) );
                             
-                            Panel component1 = new Panel(new GridLayout(0, 1));
-                            Panel component2 = new Panel(new GridLayout(0, 1));
+                            Panel component1 = new Panel(new GridLayout(0,1,0));
+                            Panel component2 = new Panel(new GridLayout(0,1));
                             
-                            component1.add( new Label("ANY") );
+                            component1.add( new Label("any") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.ANY) );
-                            component1.add( new Label("EMAILADDR") );
+                            component1.add( new Label("email") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.EMAILADDR) );
-                            component1.add( new Label("NUMERIC") );
+                            component1.add( new Label("numeric") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.NUMERIC) );
-                            component1.add( new Label("PHONENUMBER") );
+                            component1.add( new Label("phonenum") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.PHONENUMBER) );
-                            component1.add( new Label("URL") );
+                            component1.add( new Label("url") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.URL) );
-                            component1.add( new Label("DECIMAL") );
+                            component1.add( new Label("decimal") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.DECIMAL) );
-                            component1.add( new Label("PASSWORD") );
+                            component1.add( new Label("password") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.PASSWORD) );
-                            component1.add( new Label("CAPS_WORD") );
+                            component1.add( new Label("caps word") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD) );
-                            component1.add( new Label("CAPS_SENTENCE") );
+                            component1.add( new Label("caps_sentence") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE) );
 
                             componentTest2.add(component1);
@@ -745,28 +745,21 @@ for (int c=0;c<4;c++) {
  */
     private void setupNewLookAndFeel(LookAndFeel theme) {
         setLookAndFeel(theme);
-        
-        
-        if (componentTest!=null)
-            updateComponentTreeUI(componentTest);
-        if (info!=null)
-            updateComponentTreeUI(info);
-        if (border!=null)
-            updateComponentTreeUI(border);
-        if (tabPanel!=null)
-            updateComponentTreeUI(tabPanel);
-        if (menu!=null)
-            updateComponentTreeUI(menu);
-        if (mainMenu!=null)
-            updateComponentTreeUI(mainMenu);
-        if (tableTest!=null)
-            updateComponentTreeUI(tableTest);
-        if (infoLabel!=null)
-            updateComponentTreeUI(infoLabel);
-	if (loadPanel!=null)
-            updateComponentTreeUI(loadPanel);
 
+        componentTest=null;
+        componentTest2=null;
+        info=null;
+        border=null;
+        tabPanel=null;
+        menu=null;
+        tableTest=null;
+        infoLabel=null;
+        viewText=null;
+        loadPanel=null;
         
+        // not these as we have these open now
+        //mainMenu=null;
+        //mainmenu=null;
         
         updateComponentTreeUI(mainWindow);
         mainWindow.revalidate();

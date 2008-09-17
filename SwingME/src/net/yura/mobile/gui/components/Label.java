@@ -402,7 +402,7 @@ public class Label extends Component {
         return icon!=null?icon.getHeight():0;
     }
     /**
-     * @see javax swing Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int) Icon.paintIcon
+     * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int) Icon.paintIcon
      */
     protected void paintIcon(Graphics g, int x, int y) {
         g.drawImage(icon, x, y, Graphics.TOP | Graphics.LEFT);

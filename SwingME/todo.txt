@@ -18,12 +18,10 @@ make strange sofkeys like the blackberry work, where softKeys are not really sof
 make TextField different models have different mapping for 0 *
 make TextField catch 2 letter button codes, and allow a choice of 2 letters (blackberry SureType)
 make TextField * button give option of symbols
-make TextField # switch mode between numbers and text and predictive text
 
 make TextField pencil key bring up option for different modes
 make TextField pencil key holding down allow the selection of text and copy and paste softkeys
 make TextField have an predictive text option
-make TextField have an indicator of what mode it is in
 make TextField support more then just english language for number keypads
 make TextField support right to left languages
 
