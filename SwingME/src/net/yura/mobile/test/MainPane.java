@@ -57,6 +57,8 @@ import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
+import net.yura.mobile.gui.layout.BoxLayout;
+import net.yura.mobile.gui.layout.GridLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
@@ -71,6 +73,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 	private Panel mainmenu;
         private Panel componentTest;
+        private Panel componentTest2;
         private Panel info;
         private Panel border;
         private Panel tabPanel;
@@ -141,6 +144,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 				addMainMenuButton("View Text","viewText");
 				addMainMenuButton("Error","throwerror");
                                 addMainMenuButton("Component Test","componentTest");
+                                addMainMenuButton("TextField Test","componentTest2");
                                 addMainMenuButton("Border Test","borderTest");
                                 addMainMenuButton("Tab Test","tabTest");
                                 addMainMenuButton("Window Test","windowTest1");
@@ -225,7 +229,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                                 if (code>0) {
                                                     infoLabel.append("\nchar: "+(char)code);
                                                     
-                                                    char inputChar = keypad.getKeyChar(0, false);
+                                                    char inputChar = keypad.getKeyChar(code,KeyEvent.getChars( (char)code, TextField.ANY ), false);
                                                     if (inputChar!=0) {
                                                         infoLabel.append("\ninput char: "+ inputChar );
                                                     }
@@ -288,10 +292,6 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add( new ComboBox(items) );
                                 componentTest.add( new Spinner(items, false));
                                 
-                                componentTest.add( new TextField(javax.microedition.lcdui.TextField.NUMERIC) );
-                                componentTest.add( new TextField(javax.microedition.lcdui.TextField.ANY) );
-                                componentTest.add( new TextField(javax.microedition.lcdui.TextField.ANY | javax.microedition.lcdui.TextField.PASSWORD) );
-                                
                                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line");
                                 longText.setSelectable(false);
 				longText.setLineWrap(true);
@@ -314,6 +314,39 @@ public class MainPane extends DesktopPane implements ActionListener {
 			addToScrollPane(componentTest, new CommandButton(menu),  new CommandButton("Back","mainmenu") );
 			
 		}
+                else if ("componentTest2".equals(actionCommand)) {
+			
+			if (componentTest2==null) {
+                            componentTest2 = new Panel( new BoxLayout(Graphics.HCENTER) );
+                            
+                            Panel component1 = new Panel(new GridLayout(0, 1));
+                            Panel component2 = new Panel(new GridLayout(0, 1));
+                            
+                            component1.add( new Label("ANY") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.ANY) );
+                            component1.add( new Label("EMAILADDR") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.EMAILADDR) );
+                            component1.add( new Label("NUMERIC") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.NUMERIC) );
+                            component1.add( new Label("PHONENUMBER") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.PHONENUMBER) );
+                            component1.add( new Label("URL") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.URL) );
+                            component1.add( new Label("DECIMAL") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.DECIMAL) );
+                            component1.add( new Label("PASSWORD") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.PASSWORD) );
+                            component1.add( new Label("CAPS_WORD") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD) );
+                            component1.add( new Label("CAPS_SENTENCE") );
+                            component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE) );
+
+                            componentTest2.add(component1);
+                            componentTest2.add(component2);
+                            
+                        }
+                        addToScrollPane(componentTest2, new CommandButton("Back","mainmenu"), null );
+                }
 		else if ("loadpanel".equals(actionCommand)) {
 			
 			if (loadPanel==null) {

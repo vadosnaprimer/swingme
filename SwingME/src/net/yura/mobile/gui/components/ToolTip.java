@@ -44,11 +44,6 @@ public class ToolTip extends Label {
         }
     }
     
-    public void setText(String text) {
-        super.setText(text);
-        DesktopPane.getDesktopPane().animateComponent(this);
-    }
-    
     public String getName() {
         return "ToolTip";
     }

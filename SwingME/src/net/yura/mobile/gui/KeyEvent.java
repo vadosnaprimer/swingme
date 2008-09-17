@@ -54,25 +54,25 @@ public class KeyEvent {
         public boolean acceptOld() {
             return old;
         }
-        public char getKeyChar(int mode,boolean accepted) {
-            
-            // we give priority to whats JUST been pressed
-            int code = getJustPressedKey();
-            // try and get the just pressed code, as if thats valid, we should use it
-            if (code <= Character.MIN_VALUE || code > Character.MAX_VALUE ) {
-                    code = getIsDownKey();
-            }
-
-
-                
-                char[] cha = getChars((char)code,mode);
+        public char getKeyChar(int code,String cha, boolean accepted) {
+//            
+//            // we give priority to whats JUST been pressed
+//            int code = getJustPressedKey();
+//            // try and get the just pressed code, as if thats valid, we should use it
+//            if (code <= Character.MIN_VALUE || code > Character.MAX_VALUE ) {
+//                    code = getIsDownKey();
+//            }
+//
+//
+//                
+//                char[] cha = getChars((char)code,constraints);
 
                 // only accept the old key if the code is different from the current, and there is something to accept
                 old = !accepted && lastGotCode != code;
                 lastGotCode = code;
 
                 // if there is no letter to use
-                if (cha.length==0) {
+                if (cha == null) {
                     return 0;
                 }
                 
@@ -91,7 +91,7 @@ public class KeyEvent {
                     // here if they are holding it down for a long time
                     // and there is more then 1 letter to choose from
                     // this means we wanted the number and now dont want anything
-                    if (pos==-2 && cha.length!=1) {
+                    if (pos==-2 && cha.length()!=1) {
                         return 0;
                     }
                     // else we are going to repeat a letter
@@ -101,60 +101,66 @@ public class KeyEvent {
                         pos=0;
                     }
                     // autoaccept if the length is 1
-                    acc = cha.length==1;
-                    return cha[pos%cha.length];
+                    acc = cha.length()==1;
+                    return cha.charAt(pos%cha.length());
                 //}
             //}
         }
         
-        private static final char[] CHARS_PHONE = new char[] {'*','+','p','w'};
-        
-        private static final char[] CHARS_42 = new char[] {'*'};
-        private static final char[] CHARS_35 = new char[] {'#'};
-        private static final char[] CHARS_48 = new char[] {' ','0'};
-        private static final char[] CHARS_49 = new char[] {'.',',','?','!','1','@','\'','-','_'};
-        private static final char[] CHARS_50 = new char[] {'a','b','c','2'};
-        private static final char[] CHARS_51 = new char[] {'d','e','f','3'};
-        private static final char[] CHARS_52 = new char[] {'g','h','i','4'};
-        private static final char[] CHARS_53 = new char[] {'j','k','l','5'};
-        private static final char[] CHARS_54 = new char[] {'m','n','o','6'};
-        private static final char[] CHARS_55 = new char[] {'p','q','r','s','7'};
-        private static final char[] CHARS_56 = new char[] {'t','u','v','8'};
-        private static final char[] CHARS_57 = new char[] {'w','x','y','z','9'};
-        
-        public static char[] getChars(char keycode,int mode) {
+        private static final String CHARS_PHONE = "*+pw";
+        private static final String CHARS_DECIMAL = ".-";
+        private static final String CHARS_42 = "*#";
+        private static final String CHARS_48 = " 0";
+        private static final String CHARS_49 = ".,?!1@'-_():;&/%";
+        private static final String CHARS_50 = "abc2";
+        private static final String CHARS_51 = "def3";
+        private static final String CHARS_52 = "ghi4";
+        private static final String CHARS_53 = "jkl5";
+        private static final String CHARS_54 = "mno6";
+        private static final String CHARS_55 = "pqrs7";
+        private static final String CHARS_56 = "tuv8";
+        private static final String CHARS_57 = "wxyz9";
+
+        public static String getChars(char keycode,int constraints) {
             
-            if (((mode & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC)) {
-                
+            if ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC) {
+
                 if (keycode>='0' && keycode<='9') {
-                    return new char[] {keycode};
+                    return String.valueOf(keycode);
                 }
-                return new char[] {};
-                
+                return null;
             }
             
-            if (((mode & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.PHONENUMBER)) {
+            if ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.DECIMAL) {
                 
+                if (keycode>='0' && keycode<='9' || CHARS_DECIMAL.indexOf(keycode)!=-1) {
+                    return String.valueOf(keycode);
+                }
+                if (keycode=='*'){
+                    return String.valueOf(CHARS_DECIMAL.charAt(0));
+                }
+                if (keycode=='#'){
+                    return String.valueOf(CHARS_DECIMAL.charAt(1));
+                }
+                return null;
+            }
+            
+            if ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.PHONENUMBER) {
+
                 if ((keycode>='0' && keycode<='9') || keycode=='#') {
-                    return new char[] {keycode};
+                    return String.valueOf(keycode);
                 }
                 if (keycode=='*'){
                     return CHARS_PHONE;
                 }
-                
-                for (int c=0;c<CHARS_PHONE.length;c++) {
-                    if (keycode==CHARS_PHONE[c]) {
-                        return new char[] {keycode};
-                    }
+                if (CHARS_PHONE.indexOf(keycode)!=-1) {
+                    return String.valueOf(keycode);
                 }
-                
-                return new char[] {};
-                
+                return null;
             }
-            
+
             switch(keycode) {
                 case '*': return CHARS_42;
-                case '#': return CHARS_35;
                 case '0': return CHARS_48;
                 case '1': return CHARS_49;
                 case '2': return CHARS_50;
@@ -165,9 +171,9 @@ public class KeyEvent {
                 case '7': return CHARS_55;
                 case '8': return CHARS_56;
                 case '9': return CHARS_57;
-                default: return new char[] {keycode};
+                default: return String.valueOf(keycode);
             }
-            
+
         }
         
 	public KeyEvent(Canvas c) {

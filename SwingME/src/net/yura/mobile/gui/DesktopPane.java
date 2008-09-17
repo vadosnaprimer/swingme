@@ -88,6 +88,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	private Vector windows;
 	private Window currentWindow;
         private ToolTip tooltip;
+        private ToolTip indicator;
 
 	private Component focusedComponent;
 	private Vector repaintComponent = new Vector();
@@ -250,7 +251,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 softkeyRenderer = new DefaultSoftkeyRenderer();
             }
             tooltip = new ToolTip();
-            
+            indicator = new ToolTip();
             //currentWindow.setSize(getWidth(),getHeight());
 
         }
@@ -377,7 +378,9 @@ public class DesktopPane extends Canvas implements Runnable {
             if (tooltip.isShowing()) {
                 paintComponent(g,tooltip);
             }
-
+            if (indicator.getText()!=null) {
+                paintComponent(g,indicator);
+            }
         }
 
         private void paintComponent(Graphics g,Component com) {
@@ -419,7 +422,7 @@ public class DesktopPane extends Canvas implements Runnable {
         public int getSoftkeyHeight() {
             Component c = softkeyRenderer.getListCellRendererComponent(null, new CommandButton("a", "a"), 0, false, false);
             c.workoutSize();
-            return c.getHeight();
+            return c.getHeightWithBorder();
         }
 
         // #####################################################################
@@ -639,6 +642,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen(),
                             focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen()
                         );
+                        animateComponent(tooltip);
                         // TODO make sure its not going off the screen!
                     }
                     else if (tooltip!=null) {
@@ -657,6 +661,23 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	}
 
+        public void setIndicatorText(String txt) {
+            indicator.setText(txt);
+            indicator.workoutSize();
+            int w = indicator.getWidthWithBorder();
+            int h = indicator.getHeightWithBorder();
+            if (sideSoftKeys) {
+                indicator.setBoundsWithBorder(0, getHeight()-h,w,h);
+            }
+            else {
+                indicator.setBoundsWithBorder(getWidth()-w, 0,w,h);
+            }
+
+            // as we dont know what size it was
+            fullRepaint();
+
+        }
+        
     public void softKeyActivated(int i) {
 
         		CommandButton[] panelCmds = currentWindow.getWindowCommands();

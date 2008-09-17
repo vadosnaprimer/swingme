@@ -70,10 +70,16 @@ public abstract class TextComponent extends Component implements ActionListener,
         
         private static final int cursorBlinkWait = 500;
         private static int autoAcceptTimeout = 1000; // MUST be more then blink time
-        protected static final int padding = 2;
+        protected int padding = 2;
+        
+        private static final int MODE_abc = 0;
+        private static final int MODE_Abc = 1;
+        private static final int MODE_ABC = 2;
+        private static final int MODE_123 = 3;
         
         private String label;
-	private int mode;
+	private int constraints;
+        private int mode;
 
 	private Border borderColor;
 	private Border activeBorderColor;
@@ -96,19 +102,34 @@ public abstract class TextComponent extends Component implements ActionListener,
 	public TextComponent(String title,String initialText,int max, int constraints) {
 
 		maxSize = max;
-		mode = constraints;
+		this.constraints = constraints;
                 label = title;
 
-                if ((javax.microedition.lcdui.TextField.UNEDITABLE & mode) != 0) {
+                if ((javax.microedition.lcdui.TextField.UNEDITABLE & this.constraints) != 0) {
                     selectable = false;
                 }
 
                 setText(initialText);
+                
+                if ( allowOnlyNumberConstraint() ) {
+                    setMode(MODE_123);
+                }
+                else if ( initialCapsConstraint() ) {
+                    setMode(MODE_Abc);
+                }
+                else {
+                    setMode(MODE_abc);
+                }
 
 	}
 
         private void insertNewCharacter(char ch) {
                 text.insert(caretPosition, ch);
+                
+                if (mode==MODE_Abc && !initialCapsConstraint()) {
+                    setMode(MODE_abc);
+                }
+                
         }
 
         /**
@@ -170,6 +191,11 @@ public abstract class TextComponent extends Component implements ActionListener,
 		
             int keyCode = keyEvent.getIsDownKey();
             
+            int justPressed = keyEvent.getJustPressedKey();
+            if (justPressed!=0) {
+                keyCode = justPressed;
+            }
+            
             lastKeyEvent = System.currentTimeMillis();
             
             // 8 is the ascii for backspace, so we dont want this key, no no
@@ -177,10 +203,29 @@ public abstract class TextComponent extends Component implements ActionListener,
             //if (keyCode==8) { keyCode=KeyEvent.KEY_CLEAR; }
             
             // if it is a letter that can be typed
-            if (keyCode > Character.MIN_VALUE && keyCode <= Character.MAX_VALUE ) {
+            // we dont want to allow Character.MAX_VALUE as its not a real input char
+            if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!='#' || allowOnlyNumberConstraint())) {
                 
-                keyCode = keyEvent.getKeyChar(mode,tmpChar==0);
-                
+                String chars;
+
+                if (mode==MODE_123 && !allowOnlyNumberConstraint()) {
+                    chars = String.valueOf( (char)keyCode );
+                }
+                else {
+                    chars = KeyEvent.getChars( (char)keyCode,constraints );
+                }
+
+                // this gets up the acceptOld and acceptNew
+                keyCode = keyEvent.getKeyChar(keyCode,chars,tmpChar==0);
+
+                if (((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.DECIMAL)) {
+                    if (keyCode=='.' && text.toString().indexOf('.')!=-1) {
+                        keyCode=0;
+                    }
+                    else if (keyCode=='-' && (caretPosition!=0 || text.length()==0 || text.charAt(0)=='-' )) {
+                        keyCode=0;
+                    }
+                }
                 
                 if (text.length() < maxSize && keyCode!=0) {
                     
@@ -191,6 +236,10 @@ public abstract class TextComponent extends Component implements ActionListener,
                     }
                     else {
                         tmpChar = 0;
+                    }
+                    
+                    if (mode==MODE_ABC || (mode==MODE_Abc && shouldUseUppercase() )) {
+                        thechar = Character.toUpperCase(thechar);
                     }
                     
                     if (keyEvent.acceptNew()) {
@@ -208,7 +257,17 @@ public abstract class TextComponent extends Component implements ActionListener,
                 return true;
             }
             else {
-                if (keyEvent.isDownKey(KeyEvent.KEY_CLEAR) || keyCode==KeyEvent.KEY_CLEAR) {
+                if (keyCode=='#') {
+                    autoAccept();
+                    if (mode!=3) {
+                        setMode(mode+1);
+                    }
+                    else {
+                        setMode(0);
+                    }
+                    return true;
+                }
+                else if (keyCode==KeyEvent.KEY_CLEAR) {
 			actionPerformed(SOFTKEY_CLEAR.getActionCommand());
 			return true;
 		}
@@ -243,12 +302,12 @@ public abstract class TextComponent extends Component implements ActionListener,
                 else if (keyEvent.justPressedAction(Canvas.FIRE)) {
                        
                     if (textbox==null) {
-                        textbox = new TextBox(label, getText(), maxSize, mode);
+                        textbox = new TextBox(label, getText(), maxSize, constraints);
                         textbox.addCommand(ok);
                         textbox.addCommand(cancel); 
                     }
                     else {
-                       textbox.setConstraints(mode);
+                       textbox.setConstraints(constraints);
                        textbox.setTitle(label);
                        textbox.setString(getText());
                        textbox.setMaxSize(maxSize);
@@ -264,6 +323,29 @@ public abstract class TextComponent extends Component implements ActionListener,
             
             
 	}
+        
+        private boolean shouldUseUppercase() {
+            
+            if (initialCapsConstraint()) {
+
+                for (int c=0;c<caretPosition;c++) {
+                    char ch = text.charAt(caretPosition-c-1);
+                    if (ch==' ') {
+                        if ((javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD & constraints) != 0) {
+                            return true;
+                        }
+                        continue;
+                    }
+                    if (ch=='\n' || ch=='.' || ch=='!' || ch=='?') return true;
+                    
+                    // return false if we hit a letter!
+                    return false;
+                }
+
+            }
+            
+            return true;
+        }
         
         public void setTitle(String s) {
             label = s;
@@ -356,7 +438,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             int caret = caretPosition>s.length()?s.length():caretPosition;
             
             // TODO if password or entering text, add that info
-            boolean password = ((javax.microedition.lcdui.TextField.PASSWORD & mode) != 0);
+            boolean password = ((javax.microedition.lcdui.TextField.PASSWORD & constraints) != 0);
             
             String st1 = s.substring(0, caret);
             String st2 = s.substring(caret, s.length() );
@@ -380,7 +462,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
            
         }
-        
+
 	public void focusLost() {
 		super.focusLost();
 		setBorder(borderColor);
@@ -390,6 +472,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 autoAccept();
 
                 DesktopPane.getDesktopPane().setComponentCommand(1,null);
+                DesktopPane.getDesktopPane().setIndicatorText(null);
 		repaint();
 	}
 
@@ -401,6 +484,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 		showCaret = true;
 
 		DesktopPane.getDesktopPane().animateComponent(this);
+                setMode(mode);
 		
                 updateSoftKeys();
                 
@@ -414,6 +498,43 @@ public abstract class TextComponent extends Component implements ActionListener,
 
 	}
 	
+        public void setMode(int m) {
+            
+            if (m!=MODE_123 && allowOnlyNumberConstraint() ) {
+                
+                // cant change mode under these constraints
+                return;
+                
+            }
+
+            String i;
+            switch(m) {
+                case MODE_abc: i="abc"; break;
+                case MODE_Abc: i="Abc"; break;
+                case MODE_ABC: i="ABC"; break;
+                case MODE_123: i="123"; break;
+                default: throw new IllegalArgumentException();
+            }
+                        
+            mode = m;
+            
+            if (isFocused()) {
+
+                DesktopPane.getDesktopPane().setIndicatorText(i);
+                
+            }
+        }
+        
+        private boolean allowOnlyNumberConstraint() {
+            return  ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.PHONENUMBER) ||
+                    ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC) ||
+                    ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.DECIMAL);
+        }
+        
+        private boolean initialCapsConstraint() {
+            return  ((javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD & constraints) != 0) ||
+                    ((javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE & constraints) != 0);
+        }
         
 	public int getActiveTextColor() {
 		return activeTextColor;
@@ -423,8 +544,8 @@ public abstract class TextComponent extends Component implements ActionListener,
 		activeTextColor = color;
 	}
 
-	public int getMode() {
-		return mode;
+	public int getConstraints() {
+		return constraints;
 	}
 
 	public void setText(String str) {
@@ -463,7 +584,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
         
 	public void setConstraints(int m) {
-		mode = m;
+		constraints = m;
 	}
 
 	public int getLength() {
