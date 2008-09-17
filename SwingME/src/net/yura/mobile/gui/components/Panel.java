@@ -309,9 +309,12 @@ public class Panel extends Component {
 			}
 			else if (newone instanceof Panel) {
 
-				((Panel)newone).breakOutAction(null,direction,scrolltothere && DesktopPane.getDesktopPane().getFocusedComponent()==null);
+				((Panel)newone).breakOutAction(null,direction,scrolltothere);
+                                // && DesktopPane.getDesktopPane().getFocusedComponent()==null
+                                // ^ this hack was here, but it broke things like TextField test scrolling
+                                
                                 // here we do NOT pass scrolltothere onto the child panel
-                                // unless we have NOTHING active, then pss it on to children
+                                // unless we have NOTHING active, then pass it on to children
                                 // dont scroll if we go to a child, only scroll if we hit a parent
 			}
 			else if (newone!=component) {// this is just a check so it cant go into a infinite loop

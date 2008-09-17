@@ -425,23 +425,17 @@ public abstract class Component {
 	
 	public void scrollUpDown(int d) {
             
-		if (d==Canvas.RIGHT) {
-					
-			scroller.makeVisible(width-1,-posY,1,1,true);
-			
+		if (d==Canvas.RIGHT) {	
+			scroller.makeVisible(width-1,-posY+scroller.getViewPortY(),1,1,true);
 		}
                 else if (d==Canvas.LEFT) {
-                    
-                        scroller.makeVisible(0,-posY,1,1,true);
-                        
+                        scroller.makeVisible(0,-posY+scroller.getViewPortY(),1,1,true);
                 }
                 else if (d==Canvas.UP) {
-                        scroller.makeVisible(-posX,0,1,1,true);
+                        scroller.makeVisible(-posX+scroller.getViewPortX(),0,1,1,true);
                 }  
 		else { // DOWN
-			
-			scroller.makeVisible(-posX,height-1,1,1,true);
-
+			scroller.makeVisible(-posX+scroller.getViewPortX(),height-1,1,1,true);
 		}
 	}
         
