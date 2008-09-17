@@ -102,25 +102,13 @@ public abstract class TextComponent extends Component implements ActionListener,
 	public TextComponent(String title,String initialText,int max, int constraints) {
 
 		maxSize = max;
-		this.constraints = constraints;
                 label = title;
 
                 if ((javax.microedition.lcdui.TextField.UNEDITABLE & this.constraints) != 0) {
                     selectable = false;
                 }
-
+                setConstraints(constraints);
                 setText(initialText);
-                
-                if ( allowOnlyNumberConstraint() ) {
-                    setMode(MODE_123);
-                }
-                else if ( initialCapsConstraint() ) {
-                    setMode(MODE_Abc);
-                }
-                else {
-                    setMode(MODE_abc);
-                }
-
 	}
 
         private void insertNewCharacter(char ch) {
@@ -544,6 +532,21 @@ public abstract class TextComponent extends Component implements ActionListener,
 		activeTextColor = color;
 	}
 
+        public void setConstraints(int m) {
+		constraints = m;
+                
+                if ( allowOnlyNumberConstraint() ) {
+                    setMode(MODE_123);
+                }
+                else if ( initialCapsConstraint() ) {
+                    setMode(MODE_Abc);
+                }
+                else {
+                    setMode(MODE_abc);
+                }
+
+	}
+        
 	public int getConstraints() {
 		return constraints;
 	}
@@ -581,10 +584,6 @@ public abstract class TextComponent extends Component implements ActionListener,
          */
 	public void setFont(Font font){
 		this.font = font;
-	}
-        
-	public void setConstraints(int m) {
-		constraints = m;
 	}
 
 	public int getLength() {
