@@ -104,9 +104,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 		maxSize = max;
                 label = title;
 
-                if ((javax.microedition.lcdui.TextField.UNEDITABLE & this.constraints) != 0) {
-                    selectable = false;
-                }
                 setConstraints(constraints);
                 setText(initialText);
 	}
@@ -534,6 +531,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void setConstraints(int m) {
 		constraints = m;
+                
+                if ((javax.microedition.lcdui.TextField.UNEDITABLE & constraints) != 0) {
+                    selectable = false;
+                }
                 
                 if ( allowOnlyNumberConstraint() ) {
                     setMode(MODE_123);
