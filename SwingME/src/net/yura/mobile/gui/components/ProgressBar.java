@@ -81,7 +81,7 @@ public class ProgressBar extends Component {
     }
 
     /**
-     * @param v TRUE to start the animation, FLASE to end the animation
+     * @param v TRUE to start the animation, FALSE to end the animation
      * @see javax.swing.JProgressBar#setIndeterminate(boolean) JProgressBar.setIndeterminate
      */
     public void setIndeterminate(boolean v) {

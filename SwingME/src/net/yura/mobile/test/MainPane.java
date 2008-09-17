@@ -328,7 +328,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                             component2.add( new TextField(javax.microedition.lcdui.TextField.EMAILADDR) );
                             component1.add( new Label("numeric") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.NUMERIC) );
-                            component1.add( new Label("phonenum") );
+                            component1.add( new Label("phone") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.PHONENUMBER) );
                             component1.add( new Label("url") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.URL) );
@@ -336,9 +336,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                             component2.add( new TextField(javax.microedition.lcdui.TextField.DECIMAL) );
                             component1.add( new Label("password") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.PASSWORD) );
-                            component1.add( new Label("caps word") );
+                            component1.add( new Label("Word") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD) );
-                            component1.add( new Label("caps_sentence") );
+                            component1.add( new Label("Sentence") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE) );
 
                             componentTest2.add(component1);

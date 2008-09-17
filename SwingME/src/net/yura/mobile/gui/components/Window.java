@@ -108,7 +108,7 @@ public class Window extends Panel implements ActionListener {
         }
 
         /**
-         * @param b true if the window is to be shown, flase to hide the window
+         * @param b true if the window is to be shown, false to hide the window
          * @see java.awt.Component#setVisible(boolean) Component.setVisible
          */
         public void setVisible(boolean b) {
