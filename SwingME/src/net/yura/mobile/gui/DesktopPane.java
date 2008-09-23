@@ -24,6 +24,7 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.DefaultSoftkeyRenderer;
@@ -638,12 +639,31 @@ public class DesktopPane extends Canvas implements Runnable {
 
                         tooltip.setText( focusedComponent.getToolTipText() );
                         tooltip.workoutSize();
-                        tooltip.setLocation(
-                            focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen(),
-                            focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen()
-                        );
+                        int x = focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen();
+                        int y = focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen();
+                        int w = tooltip.getWidthWithBorder();
+                        int h = tooltip.getHeightWithBorder();
+                        Border offset = tooltip.getBorder();
+                        int top = offset==null?0:offset.getTop();
+                        int left = offset==null?0:offset.getLeft();
+                        
+                        if (x-left < 0) {
+                            x=left;
+                        }
+                        else if (x-left+w > getWidth()) {
+                            x = getWidth()-w+left;
+                        }
+                        
+                        if (y-top <0) {
+                            y=top;
+                        }
+                        else if (y-top+h > getHeight()) {
+                            y = getHeight()-h+top;
+                        }
+                        
+                        tooltip.setLocation( x,y );
                         animateComponent(tooltip);
-                        // TODO make sure its not going off the screen!
+
                     }
                     else if (tooltip!=null) {
                         // this will never be null unless this method is called

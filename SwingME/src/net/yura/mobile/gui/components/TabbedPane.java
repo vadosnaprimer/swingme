@@ -21,6 +21,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ChangeListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
@@ -45,7 +46,7 @@ public class TabbedPane extends Panel implements ChangeListener {
         public TabbedPane() {
             this(Graphics.TOP);
         }
-        
+
         /**
          * @see javax.swing.JTabbedPane#JTabbedPane(int) JTabbedPane.JTabbedPane
          */
@@ -66,32 +67,32 @@ public class TabbedPane extends Panel implements ChangeListener {
             // this will ALWAYS be transparent as its the scroll that does the drawing for the theme
             tabList.background = -1;
             scroll.background = -1;
-            
+
             setTabPlacement(a);
 
         }
 
         /**
-         * @param a the placement for the tabs relative to the content 
+         * @param a the placement for the tabs relative to the content
          * @see javax.swing.JTabbedPane#setTabPlacement(int) JTabbedPane.setTabPlacement
          */
         public void setTabPlacement(int a) {
-            
+
             tabPosition = a;
-            
+
             tabList.setLayoutOrientation( (a==Graphics.TOP || a==Graphics.BOTTOM) );
-            
+
             ListCellRenderer lcr = tabList.getCellRenderer();
             if (lcr instanceof DefaultTabRenderer) {
                 ((DefaultTabRenderer)lcr).setTabPlacement(a);
             }
-            
+
             tabBar.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
 
             tabContent.setName("TabContent" + (a==Graphics.TOP?"Bottom":(a==Graphics.LEFT?"Right":(a==Graphics.RIGHT?"Left":"Top"))) );
-            
+
             super.removeAll();
-            
+
             if (tabPosition==Graphics.TOP || tabPosition==Graphics.LEFT) {
                 super.add(tabBar,tabPosition);
             }
@@ -101,14 +102,14 @@ public class TabbedPane extends Panel implements ChangeListener {
             if (tabPosition==Graphics.BOTTOM || tabPosition==Graphics.RIGHT) {
                 super.add(tabBar,tabPosition);
             }
-            
+
         }
 
         /**
          * @see javax.swing.JList#setCellRenderer(javax.swing.ListCellRenderer) JList.setCellRenderer
          */
         public void setTabRenderer(ListCellRenderer lcr) {
-            
+
             tabList.setCellRenderer(lcr);
         }
 
@@ -155,7 +156,7 @@ public class TabbedPane extends Panel implements ChangeListener {
                 setSelectedIndex(0);
             }
         }
-        
+
         /**
          * @param a index of tab to remove
          * @see javax.swing.JTabbedPane#removeTabAt(int) JTabbedPane.removeTabAt
@@ -205,8 +206,8 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @return gets the component on the tab with index a
          * @see javax.swing.JTabbedPane#getComponentAt(int) JTabbedPane.getComponentAt
          */
-        public Panel getComponentAt(int index) {
-            return (Panel)tabs.elementAt(index);
+        public Component getComponentAt(int index) {
+            return (Component)tabs.elementAt(index);
         }
 
         public void workoutSize() {
@@ -226,7 +227,7 @@ public class TabbedPane extends Panel implements ChangeListener {
 	    tabContent.setPreferredSize(-1,-1);
 
 	    for(int i = 0; i < tabs.size(); i++) {
-			
+
 		Component component = (Component)tabs.elementAt(i);
 		component.workoutSize();
 		if (component.getWidthWithBorder() > tabContent.getPreferredWidth()) {
@@ -247,14 +248,14 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         //Component oldTab = (Component)tabs.elementAt(currentTabIndex);
         //int index = getComponents().indexOf(oldTab);
-        
+
         tabContent.removeAll();
         tabContent.add(thetabtoAdd);
 
         revalidate();
         repaint();
 
-        if (!tabList.isSelectable() && getWindow()!=null) {
+        if (!tabList.isSelectable() && getWindow()==DesktopPane.getDesktopPane().getSelectedFrame()) {
             getWindow().setupFocusedComponent();
         }
 
@@ -293,7 +294,7 @@ public class TabbedPane extends Panel implements ChangeListener {
     public int getSelectedIndex() {
         return tabList.getSelectedIndex();
     }
-    
+
     /**
      * @return an integer specifying the number of tabbed pages
      * @see javax.swing.JTabbedPane#getTabCount() JTabbedPane.getTabCount
@@ -302,6 +303,13 @@ public class TabbedPane extends Panel implements ChangeListener {
         return tabList.getItems().size();
     }
 
+    /**
+     * @see javax.swing.JTabbedPane#getSelectedComponent() JTabbedPane.getSelectedComponent
+     */
+    public Component getSelectedComponent() {
+    	return getComponentAt(getSelectedIndex());
+    }
+    
     public void setSelectable(boolean a) {
         tabList.setSelectable(a);
     }
