@@ -50,7 +50,7 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
         setValue(value);
 
-        if (list!=null && !list.isSelectable() && isSelected) {
+        if (list!=null && !list.isFocusable() && isSelected) {
             setBorder(selectedAndDisabled);
         }
         else {

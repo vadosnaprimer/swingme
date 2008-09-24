@@ -39,7 +39,6 @@ public class Menu extends Button {
         private Window popup;
         private Panel panel;
         private Menu parentMenu;
-        private Component old;
 
         private boolean useAnimation=true;
         private boolean open;
@@ -166,8 +165,6 @@ public class Menu extends Button {
 
         private void openMenuAtLocation(int x, int y, int w, int h) {
 
-            old = DesktopPane.getDesktopPane().getFocusedComponent();
-
             if (useAnimation) {
 
                 if (slide==Graphics.BOTTOM) {
@@ -222,7 +219,6 @@ public class Menu extends Button {
     	public void actionPerformed(String actionCommand) {
 
             popup.setVisible(false);
-            DesktopPane.getDesktopPane().setFocusedComponent(old);
 
             // cancel the parent menu
             if (parentMenu!=null) { parentMenu.actionPerformed("cancel"); }

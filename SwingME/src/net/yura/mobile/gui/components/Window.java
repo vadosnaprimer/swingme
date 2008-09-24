@@ -43,6 +43,49 @@ public class Window extends Panel implements ActionListener {
         private CommandButton[] windowCommands;
         private ActionListener actionListener;
         
+        private Component focusedComponent;
+        /**
+         * @see java.awt.Window#isFocused() Window.isFocused
+         */
+        public boolean isFocused() {
+            return DesktopPane.getDesktopPane().getSelectedFrame() == this;
+        }
+        /**
+         * @see java.awt.Window#getFocusOwner() Window.getFocusOwner
+         */
+        public Component getFocusOwner() {
+            if (!isFocused()) return null;
+            return focusedComponent;
+	}
+        
+        /**
+         * @see java.awt.Window#getMostRecentFocusOwner() Window.getMostRecentFocusOwner
+         */
+        public Component getMostRecentFocusOwner() {
+            if (focusedComponent==null) {
+                breakOutAction(null,Canvas.DOWN,false);
+            }
+            return focusedComponent;
+        }
+        
+	protected void setFocusedComponent(Component ac) {
+
+            if (isFocused() && focusedComponent != null) {
+                   focusedComponent.focusLost();
+            }
+
+	    focusedComponent = ac;
+
+            if (isFocused() && focusedComponent != null) {
+                    focusedComponent.focusGained();
+            }
+
+	}
+        
+        
+        
+        
+        
         public ActionListener getActionListener() {
 		return actionListener;
 	}
@@ -73,13 +116,6 @@ public class Window extends Panel implements ActionListener {
                 }
                 allWindows.addElement(new WeakReference(this));
                 
-	}
-    
-	public void setupFocusedComponent() {
-
-            DesktopPane.getDesktopPane().setFocusedComponent(null);
-            breakOutAction(null,Canvas.DOWN,false);
-
 	}
 	
 	public void passScrollUpDown(int right) {

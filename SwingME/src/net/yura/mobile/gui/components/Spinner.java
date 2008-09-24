@@ -60,20 +60,20 @@ public class Spinner extends Label {
 		continuous = cont;
 		setData(vec);
 
-		selectable = true;
+		focusable = true;
 
                 setHorizontalAlignment(Graphics.HCENTER);
 
 	}
 	
-        public void setSelectable(boolean s) {
+        public void setFocusable(boolean s) {
 		if (s) {
                     foreground = normalForeground;
                 }
                 else {
                     foreground = disabledForeground;
                 }
-                super.setSelectable(s);
+                super.setFocusable(s);
 	}
         
 	public void workoutSize() {

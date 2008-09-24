@@ -137,7 +137,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	
 	private void updateSoftKeys() {
 		
-            if (isFocused()) {
+            if (isFocusOwner()) {
                 // put this back in to hide the clear action on phones it is not needed on
 		//if (!RootPane.hasclearkey) {
 		
@@ -369,7 +369,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             try {
                 int newWait = cursorBlinkWait;
             
-		while (isFocused()) {
+		while (isFocusOwner()) {
 
                     int oldCaret = caretPosition;
                     
@@ -503,7 +503,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                         
             mode = m;
             
-            if (isFocused()) {
+            if (isFocusOwner()) {
 
                 DesktopPane.getDesktopPane().setIndicatorText(i);
                 
@@ -533,7 +533,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 		constraints = m;
                 
                 if ((javax.microedition.lcdui.TextField.UNEDITABLE & constraints) != 0) {
-                    selectable = false;
+                    focusable = false;
                 }
                 
                 if ( allowOnlyNumberConstraint() ) {

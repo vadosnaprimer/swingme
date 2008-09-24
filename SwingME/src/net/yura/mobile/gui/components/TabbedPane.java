@@ -255,9 +255,10 @@ public class TabbedPane extends Panel implements ChangeListener {
         revalidate();
         repaint();
 
-        if (!tabList.isSelectable() && getWindow()==DesktopPane.getDesktopPane().getSelectedFrame()) {
-            getWindow().setupFocusedComponent();
-        }
+        // TODO HACK
+//        if (!tabList.isSelectable() && getWindow()==DesktopPane.getDesktopPane().getSelectedFrame()) {
+//            getWindow().setupFocusedComponent();
+//        }
 
     }
 
@@ -311,7 +312,7 @@ public class TabbedPane extends Panel implements ChangeListener {
     }
     
     public void setSelectable(boolean a) {
-        tabList.setSelectable(a);
+        tabList.setFocusable(a);
     }
 
 }

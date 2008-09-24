@@ -72,7 +72,7 @@ public class Button extends Label implements ActionListener {
 		
 		super(label);
                 
-                selectable = true;
+                focusable = true;
 
 	}
 	
@@ -94,7 +94,7 @@ public class Button extends Label implements ActionListener {
                 else {
                     foreground = disabledForeground;
                 }
-                super.setSelectable(s);
+                super.setFocusable(s);
 	}
         
         public boolean isSelected() {

@@ -98,7 +98,7 @@ public class List extends Component implements ActionListener {
             setSelectedIndex(-1);
         }
         
-        if (isFocused() && current==-1 && a.size() > 0) {
+        if (isFocusOwner() && current==-1 && a.size() > 0) {
             setSelectedIndex(0);
         }
 
@@ -264,7 +264,7 @@ public class List extends Component implements ActionListener {
 
         Object item = getElementAt(i);
 
-        Component c = renderer.getListCellRendererComponent(this, item, i, i == current, isFocused() && i == current);
+        Component c = renderer.getListCellRendererComponent(this, item, i, i == current, isFocusOwner() && i == current);
         c.workoutSize();
         c.setBoundsWithBorder(
                 ((horizontal)?offset:0),

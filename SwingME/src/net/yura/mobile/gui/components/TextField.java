@@ -50,7 +50,7 @@ public class TextField extends TextComponent {
 		int oldClipH = g.getClipHeight();
 		g.clipRect(0, 0, width, height);
                 
-                g.setColor(isFocused()?activeTextColor:foreground);
+                g.setColor(isFocusOwner()?activeTextColor:foreground);
 		font.drawString(g, textString, offset, (height-font.getHeight())/2, Graphics.TOP | Graphics.LEFT);
 
                 if (showCaret) {

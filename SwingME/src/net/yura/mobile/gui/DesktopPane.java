@@ -91,7 +91,6 @@ public class DesktopPane extends Canvas implements Runnable {
         private ToolTip tooltip;
         private ToolTip indicator;
 
-	private Component focusedComponent;
 	private Vector repaintComponent = new Vector();
         
         private Thread animationThread;
@@ -468,33 +467,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // #####################################################################
         // action handeling
         // #####################################################################
-        
-        public Component getFocusedComponent() {
-		return focusedComponent;
-	}
 
-	public void setFocusedComponent(Component ac) {
-
-		// TODO maybe have an option so the window will become active if any component on it is activated
-
-            //#mdebug
-            if (ac!=null && ac.getWindow() != currentWindow) {
-                    throw new RuntimeException("setFocusedComponent on component thats not in the current window: "+ac);
-            }
-            //#enddebug
-            
-	       if(focusedComponent != null) {
-	    	   focusedComponent.focusLost();
-	       }
-
-	       focusedComponent = ac;
-
-                if (focusedComponent != null) {
-                    focusedComponent.focusGained();
-                }
-
-	}
-        
         public CommandButton[] getCurrentCommands(){
             currentCommands[0] = componentCommands[0] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[0]) : componentCommands[0];
             currentCommands[1] = componentCommands[1] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[1]) : componentCommands[1];
@@ -536,6 +509,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         //#enddebug
 
                         CommandButton[] cmds = getCurrentCommands();
+                        Component focusedComponent = (currentWindow==null)?null:currentWindow.getFocusOwner();
 
                         if (
                                 ( cmds[0]!=null && (keyevent.isDownKey(KeyEvent.KEY_SOFTKEY1) || keyevent.justReleasedKey(KeyEvent.KEY_SOFTKEY1)) ) ||
@@ -634,6 +608,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	private void showHideToolTip(boolean show) {
 
+                    Component focusedComponent = currentWindow.getFocusOwner();
+            
                     // if a tooltip should be setup
                     if (show && focusedComponent!=null && focusedComponent.getToolTipText()!=null) {
 
@@ -700,6 +676,8 @@ public class DesktopPane extends Canvas implements Runnable {
         
     public void softKeyActivated(int i) {
 
+                        Component focusedComponent = currentWindow.getFocusOwner();
+        
         		CommandButton[] panelCmds = currentWindow.getWindowCommands();
                         ActionListener actionListener = currentWindow.getActionListener();
 
@@ -772,11 +750,22 @@ public class DesktopPane extends Canvas implements Runnable {
                     
                         if (currentWindow == w) return;
                         
-                        setFocusedComponent(null);
+                        if (currentWindow!=null) {
+                            Component focusedComponent = currentWindow.getFocusOwner();
+                            if (focusedComponent!=null) {
+                                focusedComponent.focusLost();
+                            }
+                        }
+                        Component focusedComponent = w.getMostRecentFocusOwner();
+                        
 			currentWindow = w;
 			windows.removeElement(w);
 			windows.addElement(w);
-			currentWindow.setupFocusedComponent();
+
+                        if (focusedComponent!=null) {
+                            focusedComponent.focusGained();
+                        }
+                        
 			currentWindow.repaint();
 		}
                 //#mdebug
@@ -797,10 +786,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			windows.removeElement(w);
 
 			if (w==currentWindow) {
-
-                                setFocusedComponent(null);
-				currentWindow = (Window)windows.lastElement();
-                                currentWindow.setupFocusedComponent();
+                                setSelectedFrame( (Window)windows.lastElement() );
 			}
                         
                         fullRepaint();
@@ -887,7 +873,7 @@ public class DesktopPane extends Canvas implements Runnable {
 				debugwindow = new Window();
                                 debugwindow.setName("Dialog");
 				text = new TextArea();
-                                text.setSelectable(false);
+                                text.setFocusable(false);
                                 text.setLineWrap(true);
 				debugwindow.add( new ScrollPane(text) );
                                 debugwindow.setActionListener(debugwindow);

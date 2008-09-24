@@ -44,7 +44,7 @@ public class Panel extends Component {
 	public Panel() {
 		components = new Vector();
 		constraints = new Hashtable(1);
-		selectable = false;
+		focusable = false;
 		// this is true as u need to select a panel to get to 1 of its components
 	}
 	
@@ -271,6 +271,17 @@ public class Panel extends Component {
 			((Component)components.elementAt(i)).workoutSize();
                 }
                 doLayout();
+
+            Window w1 = getWindow();
+
+            if (w1!=null) {
+                Component c = w1.getMostRecentFocusOwner();
+                if (c!=null && c.getWindow()==null) {
+                    w1.setFocusedComponent(null);
+                }
+                w1.getMostRecentFocusOwner();
+            }
+                
         }
 
 	// BREAK OUT!!!
@@ -300,10 +311,10 @@ public class Panel extends Component {
 		if (newone!=null) {
 			
 
-			if (newone.isSelectable()) {
+			if (newone.isFocusable()) {
 			
 				if ( scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , true) ) {
-					DesktopPane.getDesktopPane().setFocusedComponent(newone);
+					newone.requestFocusInWindow();
 				}
 				
 			}
@@ -344,7 +355,7 @@ public class Panel extends Component {
                     // this will only be comming from a child
                     // only scroll in the direction if the child is NONE-selectable
                     // as if it IS selectable, it should handel its own moving around and scrolling
-			if (scrolltothere && this instanceof ScrollPane && !component.isSelectable()) {
+			if (scrolltothere && this instanceof ScrollPane && !component.isFocusable()) {
 
 				((ScrollPane)this).getComponent().scrollUpDown(direction);
 	
@@ -354,7 +365,7 @@ public class Panel extends Component {
 			
 				parent.breakOutAction(this, direction ,scrolltothere);
 			}
-                        else if (DesktopPane.getDesktopPane().getFocusedComponent()!=null) {
+                        else if (getWindow().getFocusOwner()!=null) {
                             // TODO
                             // we need to find out if we smart scrolled anywhere,
                             // or scrolled at all

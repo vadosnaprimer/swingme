@@ -204,11 +204,12 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
                                 infoLabel = new TextArea("...",Graphics.HCENTER);
                                 //infoLabel.setSize(getWidth(),infoLabel.getHeight());
-                                infoLabel.setSelectable(false);
+                                infoLabel.setFocusable(false);
                                 
 				info = new Panel( new BorderLayout() ) {
-                                        { selectable=true; }
+                                        { focusable=true; }
                                   	public void pointerEvent(int type, int x, int y) {
+                                            super.pointerEvent(type, x, y);
                                             infoLabel.setText("pointerEvent: "+x+","+y+"\n");
                                             switch(type) {
                                                 case DesktopPane.DRAGGED: infoLabel.append("DRAGGED"); break;
@@ -293,7 +294,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add( new Spinner(items, false));
                                 
                                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line");
-                                longText.setSelectable(false);
+                                longText.setFocusable(false);
 				longText.setLineWrap(true);
                                 componentTest.add( longText );
                                 
@@ -352,7 +353,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			if (loadPanel==null) {
 				
 				loadPanel = new TextArea();
-                                loadPanel.setSelectable(false);
+                                loadPanel.setFocusable(false);
 				loadPanel.setLineWrap(true);
 				images = new Vector();
 
@@ -395,7 +396,7 @@ for (int c=0;c<4;c++) {
 }
 //*/
 				viewText = new TextArea();
-                                viewText.setSelectable(false);
+                                viewText.setFocusable(false);
 				viewText.setLineWrap(true);
 				viewText.setText(buf.toString()); // this is the same as passing it into the constructor if wrap is false
 
@@ -419,16 +420,16 @@ for (int c=0;c<4;c++) {
                         CheckBox edit = new CheckBox("Edit");
                         edit.setActionCommand("open_text_edit");
                         edit.addActionListener(this);
-                        edit.setSelected( viewText.isSelectable() );
+                        edit.setSelected( viewText.isFocusable() );
 
 			addToScrollPane(p, new CommandButton("Back","mainmenu") , new CommandButton(edit) );
 
 		}
                 else if ("open_text_edit".equals(actionCommand)) {
                     
-                    viewText.setSelectable( !viewText.isSelectable() );
+                    viewText.setFocusable( !viewText.isFocusable() );
                     mainWindow.repaint();
-                    mainWindow.setupFocusedComponent();
+                    // TODO mainWindow.setupFocusedComponent();
                     
                 }
                 else if ("load".equals(actionCommand)) {
@@ -728,7 +729,7 @@ for (int c=0;c<4;c++) {
 		mainWindow.setWindowCommand(1, c);
 		
 		//setActiveComponent(getContentPane());
-		mainWindow.setupFocusedComponent();
+		// TODO mainWindow.setupFocusedComponent();
 		
 		mainWindow.repaint();
 	}

@@ -124,7 +124,7 @@ public class TextArea extends TextComponent {
 			y -= height;
 		}
 
-                g.setColor( isFocused()?activeTextColor:foreground );
+                g.setColor( isFocusOwner()?activeTextColor:foreground );
                 
                 int i, startLine, endLine, lineHeight;
                 

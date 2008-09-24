@@ -153,7 +153,7 @@ public class TitleBar extends Panel implements ActionListener {
                 
                 move = false;
                 resize = false;
-                DesktopPane.getDesktopPane().setFocusedComponent(old);
+                old.requestFocusInWindow();
                 return true;
             }
             return false;
@@ -168,15 +168,15 @@ public class TitleBar extends Panel implements ActionListener {
         }
         else if ("move".equals(actionCommand)) {
  
-                old = DesktopPane.getDesktopPane().getFocusedComponent();
-                DesktopPane.getDesktopPane().setFocusedComponent(this);
+                old = getWindow().getFocusOwner();
+                requestFocusInWindow();
                 move = true;
 
         }
         else if ("resize".equals(actionCommand)) {
  
-                old = DesktopPane.getDesktopPane().getFocusedComponent();
-                DesktopPane.getDesktopPane().setFocusedComponent(this);
+                old = getWindow().getFocusOwner();
+                requestFocusInWindow();
                 resize = true;
 
         }

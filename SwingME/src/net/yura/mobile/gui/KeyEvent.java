@@ -207,7 +207,7 @@ public class KeyEvent {
             return canvas.getKeyName(keyCode);
         }
         catch(Throwable ex) {
-            return ex.toString();
+            return ex.getMessage();
         }
     }
     public int getKeyAction(int code) {

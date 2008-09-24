@@ -76,7 +76,7 @@ public class Table extends Panel {
         editors = new Hashtable();
         
         // should ALWAYS be selectable to that pointer event can give it focus
-        selectable = true;
+        focusable = true;
     }
     
     public Table(Vector data, Vector names) {
@@ -195,7 +195,7 @@ public class Table extends Panel {
     }
     public void focusGained() {
         if (editorComp!=null) {
-            DesktopPane.getDesktopPane().setFocusedComponent(editorComp);
+            editorComp.requestFocusInWindow();
         }
         
         repaint();
@@ -272,8 +272,8 @@ public class Table extends Panel {
             
             doLayout();
             
-            if (DesktopPane.getDesktopPane().getFocusedComponent() == this) {
-                DesktopPane.getDesktopPane().setFocusedComponent(editorComp);
+            if (getWindow().getFocusOwner() == this) {
+                editorComp.requestFocusInWindow();
             }
             //selectable = false;
             repaint();
@@ -289,9 +289,9 @@ public class Table extends Panel {
             removeAll();
             setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
             
-            if (DesktopPane.getDesktopPane().getFocusedComponent() == editorComp) {
+            if (getWindow().getFocusOwner() == editorComp) {
                 editorComp = null;
-                DesktopPane.getDesktopPane().setFocusedComponent(this);
+                requestFocusInWindow();
             }
             else {
                 editorComp = null;
@@ -370,7 +370,7 @@ public class Table extends Panel {
         ListCellRenderer renderer = getCellRenderer(r,c);
 
         boolean sel = editingRow==r && editingColumn==c;
-        Component comp = renderer.getListCellRendererComponent(null, object, r, sel ,sel && isFocused()    );
+        Component comp = renderer.getListCellRendererComponent(null, object, r, sel ,sel && isFocusOwner() );
 
         return comp;
         

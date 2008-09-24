@@ -169,7 +169,7 @@ public class ComboBox extends Button implements ActionListener{
             }
             else {
 
-                g.drawImage((isFocused())?selectedImage:nonSelectedImage, width-nonSelectedImage.getWidth(), (height-nonSelectedImage.getHeight())/2 , 0 );
+                g.drawImage((isFocusOwner())?selectedImage:nonSelectedImage, width-nonSelectedImage.getWidth(), (height-nonSelectedImage.getHeight())/2 , 0 );
             }
 
             super.paintComponent(g);
@@ -220,7 +220,6 @@ public class ComboBox extends Button implements ActionListener{
                 setValue( list.getSelectedValue() );
                 
 		dropDown.setVisible(false);
-                DesktopPane.getDesktopPane().setFocusedComponent(this);
 		
 		super.fireActionPerformed();
 		

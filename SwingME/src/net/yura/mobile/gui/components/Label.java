@@ -57,7 +57,7 @@ public class Label extends Component {
          */
 	public Label(String text) {
 
-		selectable = false;
+		focusable = false;
 		if (text!=null) { setText(text); }
                 
                 alignment = Graphics.VCENTER | Graphics.LEFT;

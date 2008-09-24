@@ -160,13 +160,13 @@ public class RadioButton extends Button {
             
         }
         else {
-            if (isSelected() && !selectable && disabledSelectedImage!=null) {
+            if (isSelected() && !focusable && disabledSelectedImage!=null) {
                 g.drawImage(disabledSelectedImage, x, y, Graphics.TOP | Graphics.LEFT);
             }
             else if (isSelected() && selectedImage!=null) {
                 g.drawImage(selectedImage, x, y, Graphics.TOP | Graphics.LEFT);
             }
-            else if (!selectable && disabledImage!=null) {
+            else if (!focusable && disabledImage!=null) {
                 g.drawImage(disabledImage, x, y, Graphics.TOP | Graphics.LEFT);
             }
             else {

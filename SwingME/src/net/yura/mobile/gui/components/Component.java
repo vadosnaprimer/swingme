@@ -32,7 +32,7 @@ import net.yura.mobile.gui.plaf.Style;
 public abstract class Component {
 	
 	protected int posX,posY,width,height;
-	protected boolean selectable;
+	protected boolean focusable;
 
 	protected Panel parent;
 
@@ -46,22 +46,65 @@ public abstract class Component {
          * @see javax.swing.JComponent#JComponent() JComponent.JComponent
          */
 	public Component() {
-		selectable = true;
+		focusable = true;
 		updateUI();
 	}
 	
-	public boolean isFocused() {
-		return DesktopPane.getDesktopPane().getFocusedComponent() == this;
+        /**
+         * @see java.awt.Component#isFocusOwner() Component.isFocusOwner
+         */
+	public boolean isFocusOwner() {
+		return DesktopPane.getDesktopPane().getSelectedFrame().getFocusOwner() == this;
 	}
 
+        /**
+         * @see java.awt.Component#requestFocusInWindow()
+         */
+        public void requestFocusInWindow() {
+            Window w = getWindow();
+            if (w!=null) {
+                w.setFocusedComponent(this);
+            }
+        }
 
-	public boolean isSelectable() {
-		return selectable;
+        /**
+         * @see java.awt.Component#isFocusable() Component.isFocusable
+         */
+	public boolean isFocusable() {
+		return focusable;
 	}
 
-	public void setSelectable(boolean selectable) {
-		this.selectable = selectable;
+        /**
+         * @see java.awt.Component#setFocusable(boolean) Component.setFocusable
+         */
+	public void setFocusable(boolean selectable) {
+		this.focusable = selectable;
+                
+                Window w = getWindow();
+                if (w!=null) {
+                    Component c = w.getMostRecentFocusOwner();
+                    if (!focusable && c==this) {
+                        w.setFocusedComponent(null);
+                        w.getMostRecentFocusOwner();
+                    }
+                }
+
 	}
+        
+        
+	protected void setParent(Panel p) {
+            parent = p;
+	}
+	
+	public Panel getParent() {
+		return parent;
+	}
+        
+        public Window getWindow() {
+
+            if (parent == null) { return (this instanceof Window)?(Window)this : null; }
+            return parent.getWindow();
+        }
 
     /**
      * @return the current x coordinate of the component's origin
@@ -93,22 +136,33 @@ public abstract class Component {
         return height;
     }
     
+    /**
+     * @see java.awt.Component#setBounds(int, int, int, int) Component.setBounds
+     */
     public void setBounds(int posX, int posY, int width, int height) {
     	setLocation(posX,posY);
     	setSize(width,height);
     }
     
+    /**
+     * @see java.awt.Component#setSize(int, int) Component.setSize
+     */
     public void setSize(int width, int height){
     	this.width = width;
     	this.height = height;
     }
     
+    /**
+     * @see java.awt.Component#setLocation(int, int) Component.setLocation
+     */
     public void setLocation(int posX, int posY){
     	this.posX = posX;
     	this.posY = posY;
     }
-	
-    // override and call super when things HAVE to be painted
+	/**
+         * override and call super when things HAVE to be painted
+         * @see java.awt.Component#paint(java.awt.Graphics) Component.paint
+         */
 	public void paint(Graphics g) {
 		//System.out.println("paint "+this);
 		if (border != null) {
@@ -136,9 +190,9 @@ public abstract class Component {
 	}
 
 	public void pointerEvent(int type, int x, int y) {
-            if (selectable) {
+            if (focusable) {
                 if (type == DesktopPane.PRESSED) {
-                    DesktopPane.getDesktopPane().setFocusedComponent(this);
+                    if(!isFocusOwner()) { requestFocusInWindow(); }
                 }
             }
             else if (parent!=null) {
@@ -240,24 +294,8 @@ public abstract class Component {
 		}
 	}
 
-	public void setParent(Panel p) {
-		parent = p;
-		//owner = ow;
-	}
-
-//	public Window getOwner() {
-//		return owner;
-//	}
-	
-	public Panel getParent() {
-		
-		return parent;
-	}
-	
 	public String toString() {
-		
 		return this.getClass().getName();
-		
 	}
 
         /**
@@ -438,14 +476,7 @@ public abstract class Component {
 			scroller.makeVisible(-posX+scroller.getViewPortX(),height-1,1,1,true);
 		}
 	}
-        
-        
-        public Window getWindow() {
 
-            if (parent == null) { return (this instanceof Window)?(Window)this : null; }
-            return parent.getWindow();
-        }
-        
         /**
          * @see javax.swing.JComponent#updateUI() JComponent.updateUI
          */
