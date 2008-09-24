@@ -532,10 +532,8 @@ public abstract class TextComponent extends Component implements ActionListener,
         public void setConstraints(int m) {
 		constraints = m;
                 
-                if ((javax.microedition.lcdui.TextField.UNEDITABLE & constraints) != 0) {
-                    focusable = false;
-                }
-                
+                focusable = (javax.microedition.lcdui.TextField.UNEDITABLE & constraints) == 0;
+
                 if ( allowOnlyNumberConstraint() ) {
                     setMode(MODE_123);
                 }

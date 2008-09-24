@@ -265,7 +265,8 @@ public abstract class Component {
 	public void repaint() {
             
                 // if we are not in a window, do nothing
-		if (getWindow()==null || !getWindow().isVisible()) return;
+                Window w = getWindow();
+		if (w==null || !w.isVisible()) return;
 		
 		if (!isOpaque()) {
 			

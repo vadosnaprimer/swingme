@@ -141,8 +141,17 @@ public class Window extends Panel implements ActionListener {
         public void pack() {
             workoutSize();
             doLayout();
+            setupFocusedComponent();
         }
 
+        protected void setupFocusedComponent() {
+                Component c = getMostRecentFocusOwner();
+                if (c!=null && c.getWindow()==null) {
+                    setFocusedComponent(null);
+                }
+                getMostRecentFocusOwner();
+        }
+        
         /**
          * @param b true if the window is to be shown, false to hide the window
          * @see java.awt.Component#setVisible(boolean) Component.setVisible

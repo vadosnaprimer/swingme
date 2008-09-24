@@ -275,11 +275,7 @@ public class Panel extends Component {
             Window w1 = getWindow();
 
             if (w1!=null) {
-                Component c = w1.getMostRecentFocusOwner();
-                if (c!=null && c.getWindow()==null) {
-                    w1.setFocusedComponent(null);
-                }
-                w1.getMostRecentFocusOwner();
+                w1.setupFocusedComponent();
             }
                 
         }

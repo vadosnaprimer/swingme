@@ -87,7 +87,7 @@ public class Button extends Label implements ActionListener {
                 setIcon(img);
 	}
 
-        public void setSelectable(boolean s) {
+        public void setFocusable(boolean s) {
 		if (s) {
                     foreground = normalForeground;
                 }
