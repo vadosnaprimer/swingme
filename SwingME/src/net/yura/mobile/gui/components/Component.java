@@ -91,15 +91,21 @@ public abstract class Component {
 
 	}
         
-        
+        /**
+         * used by Panel when something is added or removed
+         * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+         */
 	protected void setParent(Panel p) {
             parent = p;
 	}
-	
+
+        /**
+         * @see java.awt.Component#getParent() Component.getParent
+         */
 	public Panel getParent() {
 		return parent;
 	}
-        
+
         public Window getWindow() {
 
             if (parent == null) { return (this instanceof Window)?(Window)this : null; }

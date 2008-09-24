@@ -246,19 +246,11 @@ public class TabbedPane extends Panel implements ChangeListener {
 
         Component thetabtoAdd = (Component)tabs.elementAt(num);
 
-        //Component oldTab = (Component)tabs.elementAt(currentTabIndex);
-        //int index = getComponents().indexOf(oldTab);
-
         tabContent.removeAll();
         tabContent.add(thetabtoAdd);
 
         revalidate();
         repaint();
-
-        // TODO HACK
-//        if (!tabList.isSelectable() && getWindow()==DesktopPane.getDesktopPane().getSelectedFrame()) {
-//            getWindow().setupFocusedComponent();
-//        }
 
     }
 

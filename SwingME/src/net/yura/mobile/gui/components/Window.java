@@ -68,6 +68,11 @@ public class Window extends Panel implements ActionListener {
             return focusedComponent;
         }
         
+        /**
+         * Only used by requestFocusInWindow() in Component
+         * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+         * @see Component#requestFocusInWindow()
+         */
 	protected void setFocusedComponent(Component ac) {
 
             if (isFocused() && focusedComponent != null) {
@@ -82,9 +87,17 @@ public class Window extends Panel implements ActionListener {
 
 	}
         
-        
-        
-        
+        /**
+         * called by pack and revalidate
+         * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+         */
+        protected void setupFocusedComponent() {
+                Component c = getMostRecentFocusOwner();
+                if (c!=null && c.getWindow()!=this) {
+                    setFocusedComponent(null);
+                    getMostRecentFocusOwner();
+                }
+        }
         
         public ActionListener getActionListener() {
 		return actionListener;
@@ -144,14 +157,6 @@ public class Window extends Panel implements ActionListener {
             setupFocusedComponent();
         }
 
-        protected void setupFocusedComponent() {
-                Component c = getMostRecentFocusOwner();
-                if (c!=null && c.getWindow()==null) {
-                    setFocusedComponent(null);
-                }
-                getMostRecentFocusOwner();
-        }
-        
         /**
          * @param b true if the window is to be shown, false to hide the window
          * @see java.awt.Component#setVisible(boolean) Component.setVisible
