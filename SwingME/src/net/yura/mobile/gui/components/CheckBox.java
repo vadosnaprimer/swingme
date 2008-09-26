@@ -50,7 +50,7 @@ public class CheckBox extends RadioButton {
         }
         
         protected void toggleSelection() {
-            selected=!selected;
+            setSelected(!isSelected());
         }
 
     protected void paintIcon(Graphics g, int x, int y) {

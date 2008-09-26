@@ -52,7 +52,7 @@ public class Button extends Label implements ActionListener {
 	private ActionListener al;
 	private String actionCommand;
 	
-	protected boolean selected;
+	private boolean selected;
 	protected ButtonGroup buttonGroup;
 	
 	private boolean useSelectButton;
@@ -97,19 +97,41 @@ public class Button extends Label implements ActionListener {
                 super.setFocusable(s);
 	}
         
+        /**
+         * @see javax.swing.AbstractButton#isSelected() AbstractButton.isSelected
+         */
         public boolean isSelected() {
 		return selected;
 	}
 
+        /**
+         * @see javax.swing.AbstractButton#setSelected(boolean) AbstractButton.setSelected
+         */
 	public void setSelected(boolean selected) {
+                boolean old = this.selected;
 		this.selected = selected;
+                if (buttonGroup!=null && selected) {
+                    // this unselects all other buttons in the same button group as this 1
+                    buttonGroup.setSelected(this);
+                }
+                if (old!=selected) {
+                    repaint();
+                }
+                
 	}
         
+        /**
+         * @see javax.swing.AbstractButton#addActionListener(java.awt.event.ActionListener) AbstractButton.addActionListener
+         */
 	public void addActionListener(ActionListener l) {
 		
 		al = l;
 		
 	}
+        
+        /**
+         * @see javax.swing.AbstractButton#removeActionListener(java.awt.event.ActionListener) AbstractButton.removeActionListener
+         */
 	public void removeActionListener(ActionListener l) {
 		
 		if (al == l) { al = null; }
@@ -132,6 +154,9 @@ public class Button extends Label implements ActionListener {
             return actionCommand;
         }
         
+        /**
+         * @see javax.swing.AbstractButton#getActionListeners() AbstractButton.getActionListeners
+         */
         public ActionListener getActionListener() {
             return al;
         }
@@ -159,14 +184,12 @@ public class Button extends Label implements ActionListener {
 
         }
         
-	 public void fireActionPerformed() {
+        /**
+         * @see javax.swing.AbstractButton#fireActionPerformed(java.awt.event.ActionEvent) AbstractButton.fireActionPerformed
+         */
+	public void fireActionPerformed() {
 
             toggleSelection();
-
-            if (buttonGroup!=null && selected) {
-                    // this unselects all other buttons in the same button group as this 1
-                    buttonGroup.setSelected(this);
-            }
 
             if (al!=null) {
                     al.actionPerformed((actionCommand!=null)?actionCommand:getText());
@@ -175,7 +198,7 @@ public class Button extends Label implements ActionListener {
 	}
          
         protected void toggleSelection() {
-            selected=true;
+            setSelected(true);
         }
         
         public void setNormalBorder(Border b) {
