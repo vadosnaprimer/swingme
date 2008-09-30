@@ -31,12 +31,12 @@ import net.yura.mobile.gui.plaf.Style;
 public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
     private int tabPlacement;
-    
-    private Border focus;
-    private Border none;
-    private Border open;
+
+    private Border normal;
+    private Border selected;
+    private Border selectedAndFocus;
     private Border selectedAndDisabled;
-    
+
     public DefaultTabRenderer() {
         setPadding(1);
     }
@@ -54,7 +54,7 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
             setBorder(selectedAndDisabled);
         }
         else {
-            setBorder( cellHasFocus?focus:(isSelected?open:none) );
+            setBorder( cellHasFocus?selectedAndFocus:(isSelected?selected:normal) );
         }
         return this;
     }
@@ -97,13 +97,12 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
     public void updateUI() {
             super.updateUI();
-            
-            Style theme = DesktopPane.getDefaultTheme(this);
-            
-            focus = theme.getBorder(Style.FOCUSED);
-            none = theme.getBorder(Style.ALL);
-            open = theme.getBorder(Style.SELECTED);
-            selectedAndDisabled = theme.getBorder(Style.SELECTED | Style.DISABLED);
 
+            Style theme = DesktopPane.getDefaultTheme(this);
+
+            normal = theme.getBorder(Style.ALL);
+            selected = theme.getBorder(Style.SELECTED);
+            selectedAndFocus = theme.getBorder(Style.SELECTED | Style.FOCUSED);
+            selectedAndDisabled = theme.getBorder(Style.SELECTED | Style.DISABLED);
     }
 }

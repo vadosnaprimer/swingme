@@ -21,7 +21,6 @@ import net.yura.mobile.gui.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import net.yura.mobile.gui.border.Border;
-import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.util.SystemUtil;
 
 /**

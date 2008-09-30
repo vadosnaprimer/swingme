@@ -23,7 +23,6 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.util.ButtonGroup;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;

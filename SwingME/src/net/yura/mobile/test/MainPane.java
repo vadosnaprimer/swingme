@@ -18,7 +18,6 @@
 package net.yura.mobile.test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
