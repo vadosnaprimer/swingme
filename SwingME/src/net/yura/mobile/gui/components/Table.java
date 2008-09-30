@@ -469,6 +469,22 @@ public class Table extends Panel {
         return super.getToolTipLocationY();
     }
 
+    /**
+     * @see javax.swing.JTable#getSelectedRow() JTable.getSelectedRow
+     * @see javax.swing.JTable#getEditingRow() JTable.getEditingRow
+     */
+    public int getSelectedRow() {
+        return editingRow;
+    }
+    
+    /**
+     * @see javax.swing.JTable#getSelectedColumns() JTable.getSelectedColumns
+     * @see javax.swing.JTable#getEditingColumn() JTable.getEditingColumn
+     */
+    public int getSelectedColumn() {
+        return editingColumn;
+    }
+    
     // #########################################################################
     // ############################# Size stuff ################################
     // #########################################################################

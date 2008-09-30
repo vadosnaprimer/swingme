@@ -45,9 +45,9 @@ public class Button extends Label implements ActionListener {
 	protected Border normalBorder;
 	protected Border activeBorder;
 	
-        private int normalForeground;
-        private int activeForeground;
-        private int disabledForeground;
+        protected int normalForeground;
+        protected int activeForeground;
+        protected int disabledForeground;
         
 	private ActionListener al;
 	private String actionCommand;
