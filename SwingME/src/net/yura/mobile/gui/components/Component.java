@@ -468,7 +468,10 @@ public abstract class Component {
 		return true;
 	}
 	
-	public void scrollUpDown(int d) {
+	public boolean scrollUpDown(int d) {
+            
+            int oldx = posX;
+            int oldy = posY;
             
 		if (d==Canvas.RIGHT) {	
 			scroller.makeVisible(width-1,-posY+scroller.getViewPortY(),1,1,true);
@@ -482,6 +485,7 @@ public abstract class Component {
 		else { // DOWN
 			scroller.makeVisible(-posX+scroller.getViewPortX(),height-1,1,1,true);
 		}
+            return oldx!=posX || oldy!=posY;
 	}
 
         /**

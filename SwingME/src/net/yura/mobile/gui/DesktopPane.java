@@ -549,7 +549,7 @@ public class DesktopPane extends Canvas implements Runnable {
 					Panel parent = focusedComponent.getParent();
 
 					//if (parent!=null) {
-						parent.breakOutAction(focusedComponent, keyevent.getKeyAction(keyevent.getIsDownKey()), true);
+						parent.breakOutAction(focusedComponent, keyevent.getKeyAction(keyevent.getIsDownKey()), true,false);
 					//}
 					//else {
 						// as we have no active component just send a up/down event to the panel

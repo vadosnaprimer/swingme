@@ -63,7 +63,7 @@ public class Window extends Panel implements ActionListener {
          */
         public Component getMostRecentFocusOwner() {
             if (focusedComponent==null) {
-                breakOutAction(null,Canvas.DOWN,false);
+                breakOutAction(null,Canvas.DOWN,false,false);
             }
             return focusedComponent;
         }
@@ -133,7 +133,7 @@ public class Window extends Panel implements ActionListener {
 	
 	public void passScrollUpDown(int right) {
 		
-            breakOutAction(null,right,true);
+            breakOutAction(null,right,true,false);
 
 	}
 	

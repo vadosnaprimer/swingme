@@ -282,7 +282,7 @@ public class Panel extends Component {
 	// BREAK OUT!!!
 	// find next component in this panel
 	
-	public void breakOutAction(final Component component, final int direction, final boolean scrolltothere) {
+	protected void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
 		
                 boolean right = (direction == Canvas.RIGHT) || (direction == Canvas.DOWN);
 	
@@ -308,14 +308,14 @@ public class Panel extends Component {
 
 			if (newone.isFocusable()) {
 			
-				if ( scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , true) ) {
+				if ( scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus) ) {
 					newone.requestFocusInWindow();
 				}
 				
 			}
 			else if (newone instanceof Panel) {
 
-				((Panel)newone).breakOutAction(null,direction,scrolltothere);
+				((Panel)newone).breakOutAction(null,direction,scrolltothere,forceFocus);
                                 // && DesktopPane.getDesktopPane().getFocusedComponent()==null
                                 // ^ this hack was here, but it broke things like TextField test scrolling
                                 
@@ -325,7 +325,7 @@ public class Panel extends Component {
 			}
 			else if (newone!=component) {// this is just a check so it cant go into a infinite loop
 				
-				breakOutAction(newone,direction,scrolltothere);
+				breakOutAction(newone,direction,scrolltothere,forceFocus);
 				
 				// this is not a very good place to do this
 				// DO NOT REMOVE THESE COMMENTS
@@ -344,28 +344,26 @@ public class Panel extends Component {
 			
 		}
 		else {
-
-			// scroll at least in that direction
-                    
-                    // this will only be comming from a child
-                    // only scroll in the direction if the child is NONE-selectable
-                    // as if it IS selectable, it should handel its own moving around and scrolling
+                        boolean scrolled=false;
+                        // scroll at least in that direction
+                        // this will only be comming from a child
+                        // only scroll in the direction if the child is NONE-selectable
+                        // as if it IS selectable, it should handel its own moving around and scrolling
 			if (scrolltothere && this instanceof ScrollPane && !component.isFocusable()) {
 
-				((ScrollPane)this).getComponent().scrollUpDown(direction);
+				scrolled = ((ScrollPane)this).getComponent().scrollUpDown(direction);
 	
 			}
 
                     	if (parent!=null) {
-			
-				parent.breakOutAction(this, direction ,scrolltothere);
+                                if (!scrolled) {
+                                    parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
+                                }
 			}
                         else if (getWindow().getFocusOwner()!=null) {
-                            // TODO
-                            // we need to find out if we smart scrolled anywhere,
-                            // or scrolled at all
-                            // if not then go back to top component from the bottom one
-                            System.out.println("TODO: if scroll did not happen, go to top component");
+
+                            breakOutAction(null, direction, scrolltothere,true);
+
                         }
 
 		}

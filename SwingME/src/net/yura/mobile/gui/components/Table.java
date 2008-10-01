@@ -92,12 +92,12 @@ public class Table extends Panel {
     }
     
     // the current editor has finished editing
-    public void breakOutAction(final Component component, final int direction, final boolean scrolltothere) {
+    public void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
         
         boolean done = (component==editorComp)?moveSelection(direction): false;
         
         if (!done) {
-            super.breakOutAction(component, direction, scrolltothere);
+            super.breakOutAction(component, direction, scrolltothere,forceFocus);
         }
         
     }
