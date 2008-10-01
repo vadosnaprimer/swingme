@@ -83,7 +83,7 @@ public class DesktopPane extends Canvas implements Runnable {
         
         private LookAndFeel theme;
         public int defaultSpace;
-	public int defaultWidthOffset;
+	//public int defaultWidthOffset;
         public ListCellRenderer softkeyRenderer;
 
 	private Vector windows;
@@ -227,9 +227,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
             theme = a;
 
-            if (defaultWidthOffset==0) {
-                defaultWidthOffset = ScrollPane.getBarThickness(getWidth(), getHeight());
-            }
+//            if (defaultWidthOffset==0) {
+//                defaultWidthOffset = ScrollPane.getBarThickness(getWidth(), getHeight());
+//            }
 
             if (defaultSpace==0) {
                 
@@ -546,15 +546,8 @@ public class DesktopPane extends Canvas implements Runnable {
 					keyevent.isDownAction(Canvas.UP)
 				)) {
 
-					Panel parent = focusedComponent.getParent();
+                                    focusedComponent.transferFocus( keyevent.getKeyAction(keyevent.getIsDownKey()) );
 
-					//if (parent!=null) {
-						parent.breakOutAction(focusedComponent, keyevent.getKeyAction(keyevent.getIsDownKey()), true,false);
-					//}
-					//else {
-						// as we have no active component just send a up/down event to the panel
-						//currentWindow.breakOutAction( keypad.justPressed(Keypad.RIGHT) || keypad.justPressed(Keypad.DOWN) );
-					//}
 				}
 				else if (!consumed ) {//&& keyListener!=null) {
 

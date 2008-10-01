@@ -68,7 +68,10 @@ public class TextArea extends TextComponent {
             super("TextArea",text, 1000, TextComponent.ANY);
 
             align = alignment;
-            width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+            
+            preferredWidth = 0.9;
+            
+            width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
 	}
 	
         
@@ -461,7 +464,7 @@ public class TextArea extends TextComponent {
 			width = ((ScrollPane)parent).getViewPortWidth();
 		}
 		else {
-			width = DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset;
+			width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
 		}
 	}
 

@@ -136,7 +136,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             toptb,
                             new EmptyBorder(0, 1, 0, 1))
                     ),Style.ALL);
-            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererTop.addBorder(new CompoundBorder(toptb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererTop",tabRendererTop);
 
@@ -147,7 +147,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             lefttb,
                             new EmptyBorder(1, 0, 1, 0))
                     ),Style.ALL);
-            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererLeft.addBorder(new CompoundBorder(lefttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererLeft",tabRendererLeft);
 
@@ -158,7 +158,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             righttb,
                             new EmptyBorder(1, 0, 1, 0))
                     ),Style.ALL);
-            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererRight.addBorder(new CompoundBorder(righttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererRight",tabRendererRight);
 
@@ -169,7 +169,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             bottomtb,
                             new EmptyBorder(0, 1, 0, 1))
                     ),Style.ALL);
-            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.FOCUSED);
+            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererBottom",tabRendererBottom);
             

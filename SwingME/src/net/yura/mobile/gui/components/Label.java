@@ -375,7 +375,7 @@ public class Label extends Component {
                 borderOffset = b.getLeft() + b.getRight();
             }
             
-            return DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset - borderOffset;
+            return DesktopPane.getDesktopPane().getWidth() - borderOffset;
 
         }
 

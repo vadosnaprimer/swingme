@@ -90,6 +90,16 @@ public abstract class Component {
                 }
 
 	}
+
+        /**
+         * @see java.awt.Component#transferFocus() Component.transferFocus
+         * @see java.awt.Component#transferFocusBackward() Component.transferFocusBackward
+         * @param direction can be up down right or left
+         * This method WILL use small scroll, so if the component is too far then it wont gain focus
+         */
+        public void transferFocus(int direction) {
+            parent.breakOutAction(this, direction, true,false);
+        }
         
         /**
          * used by Panel when something is added or removed

@@ -95,6 +95,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	
         private char tmpChar;
         private long lastKeyEvent;
+        protected double preferredWidth;
         
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
@@ -108,6 +109,10 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setText(initialText);
 	}
 
+        public void setPreferredWidth(double d) {
+            preferredWidth = d;
+        }
+        
         private void insertNewCharacter(char ch) {
                 text.insert(caretPosition, ch);
                 

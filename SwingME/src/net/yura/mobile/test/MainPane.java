@@ -56,7 +56,6 @@ import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TitleBar;
-import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.GridLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
@@ -297,6 +296,17 @@ public class MainPane extends DesktopPane implements ActionListener {
 				longText.setLineWrap(true);
                                 componentTest.add( longText );
                                 
+                                Panel email = new Panel( new FlowLayout() );
+                                TextField t1 = new TextField();
+                                TextField t2 = new TextField();
+                                t1.setPreferredWidth(0.35);
+                                t2.setPreferredWidth(0.35);
+                                
+                                email.add(t1);
+                                email.add(new Label("@"));
+                                email.add(t2);
+                                
+                                componentTest.add(email);
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
                                 
                                 menu = new Menu("Menu","popmenu");
@@ -317,7 +327,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("componentTest2".equals(actionCommand)) {
 			
 			if (componentTest2==null) {
-                            componentTest2 = new Panel( new BoxLayout(Graphics.HCENTER) );
+                            componentTest2 = new Panel( new BorderLayout() );
                             
                             Panel component1 = new Panel(new GridLayout(0,1,0));
                             Panel component2 = new Panel(new GridLayout(0,1));
@@ -341,7 +351,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                             component1.add( new Label("Sentence") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE) );
 
-                            componentTest2.add(component1);
+                            componentTest2.add(component1,Graphics.LEFT);
                             componentTest2.add(component2);
                             
                         }

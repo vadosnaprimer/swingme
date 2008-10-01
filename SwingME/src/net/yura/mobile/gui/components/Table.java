@@ -525,8 +525,15 @@ public class Table extends Panel {
              }
              
          }
+         
          // return a default vlaue
-         return (DesktopPane.getDesktopPane().getWidth() - DesktopPane.getDesktopPane().defaultWidthOffset )/getColumnCount();
+        if (parent instanceof ScrollPane) {
+                return ((ScrollPane)parent).getViewPortWidth() / getColumnCount();
+        }
+        else {
+                return DesktopPane.getDesktopPane().getWidth() /getColumnCount();
+        }
+
     }
     
     public int getRowHeight(int row) {
