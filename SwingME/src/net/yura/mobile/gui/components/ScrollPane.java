@@ -31,6 +31,8 @@ import net.yura.mobile.util.ImageUtil;
  */
 public class ScrollPane extends Panel {
 	
+        public static final int MINIMUM_THUMB_SIZE=3;
+
 	public static final int MODE_NONE=-1;
 	public static final int MODE_SCROLLBARS=0;
 	public static final int MODE_SCROLLARROWS=1;
@@ -495,15 +497,21 @@ public class ScrollPane extends Panel {
                 // #############################################################
                 
                 int space = w - box * 2 - 1;
-                startx = x+box+1+ (space*value)/max;
                 extentw = (extent*space)/max;
+                int min = (thumbTop==null)?MINIMUM_THUMB_SIZE:thumbTop.getHeight()+thumbBottom.getHeight();
+                if (extentw < min) {
+                    extentw = min;
+                    space = space-extentw;
+                    max = max-extent;
+                }
+                startx = x+box+1+ (space*value)/max;
                 
                 if (thumbTop!=null) {
                     int y1 = y + (h-thumbTop.getWidth())/2;
                     g.drawRegion(thumbTop, 0, 0, thumbTop.getWidth(), thumbTop.getHeight(), Sprite.TRANS_MIRROR_ROT270 , startx, y1, Graphics.TOP | Graphics.LEFT);
                     g.drawRegion(thumbBottom, 0, 0, thumbBottom.getWidth(), thumbBottom.getHeight(), Sprite.TRANS_MIRROR_ROT270, startx + extentw - thumbBottom.getHeight(), y1, Graphics.TOP | Graphics.LEFT);
                     startx = startx + thumbTop.getWidth();
-                    extentw = extentw - thumbTop.getWidth() - thumbBottom.getWidth();
+                    extentw = extentw - min;
                 }
                 
                 
@@ -590,15 +598,21 @@ public class ScrollPane extends Panel {
                 // #############################################################
                 
                 int space = h - box * 2 - 1;
-                starty = y+box+1+ (space*value)/max;
                 extenth = (extent*space)/max;
+                int min = (thumbTop==null)?MINIMUM_THUMB_SIZE:thumbTop.getHeight()+thumbBottom.getHeight();
+                if (extenth < min) {
+                    extenth = min;
+                    space = space-extenth;
+                    max = max-extent;
+                }
+                starty = y+box+1+ (space*value)/max;
                 
                 if (thumbTop!=null) {
                     int x1 = x + (w-thumbTop.getWidth())/2;
                     g.drawImage(thumbTop, x1, starty, Graphics.TOP|Graphics.LEFT);
                     g.drawImage(thumbBottom, x1, starty+extenth-thumbBottom.getHeight(), Graphics.TOP|Graphics.LEFT);
                     starty = starty + thumbTop.getHeight();
-                    extenth = extenth - thumbTop.getHeight() - thumbBottom.getHeight();
+                    extenth = extenth - min;
                 }
                 
                 if (thumbFill!=null) {
