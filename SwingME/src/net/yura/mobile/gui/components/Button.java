@@ -175,8 +175,13 @@ public class Button extends Label implements ActionListener {
         public void pointerEvent(int type, int x, int y) {
             super.pointerEvent(type, x, y);
             
+            int cw = getWidthWithBorder();
+            int ch = getHeightWithBorder();
+            int cx = (border!=null)?-border.getLeft():0; // cant use getXWithBorder();
+            int cy = (border!=null)?-border.getTop():0; // cant use getYWithBorder();
+            
             if (type == DesktopPane.RELEASED) {
-                if (x>=0 && x<=width && y>=0 && y<=height) {
+                if (x>=cx && x<=(cx+cw) && y>=cy && y<=(cy+ch)) {
                     fireActionPerformed();
                 }
             }

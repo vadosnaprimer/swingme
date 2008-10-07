@@ -7,7 +7,6 @@ make a good theme for the demo app
 make sure all components support touch screen
  * Spinner
  * ScrollPane
- * Buttons with big borders
  * TextField caret position
 make hitting down at the bottom of the panel, take you back to the first component
 make buttons support beveled borders to look like they are being clicked
