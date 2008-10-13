@@ -324,7 +324,6 @@ public class TextArea extends TextComponent {
             return result;
         }
         
-        // Crazy binary search!
         private void gotoLine(int line,int xPixelOffset) {
             
             int startOfLineOffset = line==0?0:lines[line-1];
@@ -332,26 +331,8 @@ public class TextArea extends TextComponent {
             String text = getText();
             text = text.substring(startOfLineOffset, line==lines.length?text.length():lines[line]);
 
-            int first = 0;
-            int upto  = text.length();
-            int mid=0;
-            while (first < upto) {
-                mid = (first + upto) / 2;
-
-                // TODO take into account centre and right aligh
-                int charPos1 = font.getWidth(text.substring(0,mid));
-                int charPos2 = charPos1 + font.getWidth(text.substring(mid,mid+1));
-                
-                if (xPixelOffset<charPos1) {
-                    upto = mid;
-                }
-                else if (xPixelOffset>charPos2) {
-                    first = mid + 1;
-                }
-                else {
-                    break;
-                }
-            }
+            // TODO take into account centre and right aligh
+            int mid = getStringCharOffset(text,font,xPixelOffset);
 
             setCaretPosition(startOfLineOffset+mid);
 
@@ -504,7 +485,31 @@ public class TextArea extends TextComponent {
     }
 
 
+        // Crazy binary search!
+        public static int getStringCharOffset(String text, Font font,int xPixelOffset) {
 
+                int first = 0;
+                int upto  = text.length();
+                int mid=0;
+                while (first < upto) {
+                    mid = (first + upto) / 2;
+
+                    int charPos1 = font.getWidth(text.substring(0,mid));
+                    int charPos2 = charPos1 + font.getWidth(text.substring(mid,mid+1));
+
+                    if (xPixelOffset<charPos1) {
+                        upto = mid;
+                    }
+                    else if (xPixelOffset>charPos2) {
+                        first = mid + 1;
+                    }
+                    else {
+                        break;
+                    }
+                }
+                return mid;
+
+        }
 
 	/**
 	 * If w == Integer.MAX_VALUE, then it wont wrap on words

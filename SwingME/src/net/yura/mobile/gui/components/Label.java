@@ -119,8 +119,18 @@ public class Label extends Component {
 
 		int x=padding;
 		int y=padding;
+                int iconWidth = getIconWidth();
 		
+                String drawString = this.string;
 		int combinedwidth = getCombinedWidth();
+
+                if (combinedwidth > width-(padding*2)) {
+                    combinedwidth = width-(padding*2);
+                    int w = ((((textPosition & Graphics.HCENTER) == 0) && iconWidth>0)?(combinedwidth-iconWidth-gap):combinedwidth) - font.getWidth(extension);
+                    int a = TextArea.getStringCharOffset(drawString, font, w);
+                    drawString = drawString.substring(0, a)+extension;
+                }
+                
 		int combinedheight = getCombinedHeight();
 		
 		if ((alignment & Graphics.HCENTER) != 0) {	
@@ -138,19 +148,19 @@ public class Label extends Component {
 		}
 		
 		
-		if (getIconWidth()>0) {
+		if (iconWidth>0) {
 
 			int ix=x;
 			int iy=y;
 			
 			if ((textPosition & Graphics.HCENTER) != 0) {
 				
-				ix = x + (combinedwidth - getIconWidth())/2;
+				ix = x + (combinedwidth - iconWidth)/2;
 				
 			}
 			else if ((textPosition & Graphics.LEFT) != 0 && font!=null) {
 				
-				ix = x + font.getWidth(string)+gap;
+				ix = x + font.getWidth(drawString)+gap;
 				
 			}
 
@@ -168,19 +178,19 @@ public class Label extends Component {
 			paintIcon( g, ix, iy  );
 		}
 		
-		if (font!=null && string!=null) {
+		if (font!=null && drawString!=null) {
 			
 			int tx = x;
 			int ty = y;
 			
 			if ((textPosition & Graphics.HCENTER) != 0) {
 				
-				tx = x + (combinedwidth - font.getWidth(string))/2;
+				tx = x + (combinedwidth - font.getWidth(drawString))/2;
 				
 			}
-			else if ((textPosition & Graphics.RIGHT) != 0 && getIconWidth()>0) {
+			else if ((textPosition & Graphics.RIGHT) != 0 && iconWidth>0) {
 				
-				tx = x + getIconWidth()+gap;
+				tx = x + iconWidth+gap;
 				
 			}
 
@@ -189,7 +199,7 @@ public class Label extends Component {
 				ty = y + (combinedheight - font.getHeight())/2;
 				
 			}
-			else if ((textPosition & Graphics.BOTTOM) != 0 && getIconWidth()>0) {
+			else if ((textPosition & Graphics.BOTTOM) != 0 && iconWidth>0) {
 				
 				ty = y + getIconHeight()+gap;
 				
@@ -197,7 +207,7 @@ public class Label extends Component {
 			
 			
 			g.setColor(foreground);
-			font.drawString(g, string, tx,ty, Graphics.TOP | Graphics.LEFT );
+			font.drawString(g, drawString, tx,ty, Graphics.TOP | Graphics.LEFT  );
 		}
 
 	}
@@ -350,15 +360,15 @@ public class Label extends Component {
                 drawString = String.valueOf(obj);
             }
             
-            if (drawString!=null) {
-                int a = getCombinedWidth(drawString, image!=null?image.getWidth():0);
-                int w = getMaxTextWidth();
-
-                if (a > w) {
-                    int maxCharacters = Math.min((w/getFont().getWidth('0')),drawString.length());
-                    drawString = drawString.substring(0, maxCharacters) + extension;
-                }
-            }
+//            if (drawString!=null) {
+//                int a = getCombinedWidth(drawString, image!=null?image.getWidth():0);
+//                int w = getMaxTextWidth();
+//
+//                if (a > w) {
+//                    int maxCharacters = Math.min((w/getFont().getWidth('0')),drawString.length());
+//                    drawString = drawString.substring(0, maxCharacters) + extension;
+//                }
+//            }
 
             string = drawString; // dont want to recalc everything twice
             setIcon(image);
