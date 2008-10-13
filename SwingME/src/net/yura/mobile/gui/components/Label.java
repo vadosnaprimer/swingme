@@ -108,9 +108,13 @@ public class Label extends Component {
 			height=0;
 		}
 		else {
-			
-			width = w + (padding*2);
-			height = h + (padding*2);
+                    width = w + (padding*2);
+                    height = h + (padding*2);
+
+                    int max = getMaxTextWidth();
+                    if (width > max) {
+                        width = max;
+                    }
 		}
 
 	}
