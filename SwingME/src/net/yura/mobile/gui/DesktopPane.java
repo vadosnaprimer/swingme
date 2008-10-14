@@ -164,39 +164,39 @@ public class DesktopPane extends Canvas implements Runnable {
 
 		while (true) {
 
-			if (killflag) { return; }
+                    if (killflag) { return; }
 
-			synchronized (this) {
-				if (animatedComponent==null) {
-					try {
-						wait();
-					}
-					catch (InterruptedException e) {
-                                            //#debug
-                                            System.out.println("InterruptedException" );
-                                        }
-					if (killflag) { return; }
-				}
-			}
+                    synchronized (this) {
 
-			try {
+                        while (animatedComponent==null) {
+                                try {
+                                        wait();
+                                }
+                                catch (InterruptedException e) {
+                                    //#debug
+                                    System.out.println("InterruptedException" );
+                                }
+                                if (killflag) { return; }
+                        }
 
-                            synchronized (this) {
-                                Component ac = animatedComponent;
-                                animatedComponent = null;
-                                ac.animate();
-                            }
+                        try {
 
-			}
+
+                            Component ac = animatedComponent;
+                            animatedComponent = null;
+                            ac.animate();
+
+                        }
                         catch (InterruptedException e) {
                                 //#debug
                                 System.out.println("InterruptedException during animation" );
                         }
-			catch(Throwable th) {
+                        catch(Throwable th) {
                             //#debug
-				th.printStackTrace();
-				log( "Error in animation: " + th.toString() );
-			}
+                                th.printStackTrace();
+                                log( "Error in animation: " + th.toString() );
+                        }
+                    }
 		}
 
 	}
@@ -205,19 +205,14 @@ public class DesktopPane extends Canvas implements Runnable {
          * This will call the animate() method on a component from the animation thread
          * @param com The Component to call animte() on
          */
-        public void animateComponent(Component com) {
-            synchronized (this) {
-		animatedComponent = com;
-                animationThread.interrupt();
-
-            }
+        public synchronized void animateComponent(Component com) {
+            animatedComponent = com;
+            animationThread.interrupt();
 	}
         // called by destroyApp
-	void kill() {
-            synchronized (this) {
-                killflag=true;
-                animationThread.interrupt();
-            }
+	synchronized void kill() {
+            killflag=true;
+            animationThread.interrupt();
 	}
         /**
          * sets the default theme, and sets up default values if there are none set
