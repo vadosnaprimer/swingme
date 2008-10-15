@@ -477,7 +477,11 @@ public abstract class Component {
 		
 		return true;
 	}
-        
+
+        /**
+         * @see javax.swing.JComponent#computeVisibleRect(java.awt.Rectangle) JComponent.computeVisibleRect
+         * @see javax.swing.JComponent#getVisibleRect() JComponent.getVisibleRect
+         */
         public boolean isRectVisible(int x,int y,int w,int h) {
 		
 		if (scroller!=null) {

@@ -167,12 +167,15 @@ public class OptionPane extends Window {
         int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
 
         if (getHeightWithBorder() > maxh) {
+            setFocusedComponent(null);
             setBoundsWithBorder(0,0,getWidthWithBorder() + ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight()), maxh);
         }
         if (getWidthWithBorder() > maxw) {
+            setFocusedComponent(null);
             setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight())) );
         }
-
+        getMostRecentFocusOwner();
+        
         centre(this);
         
         setVisible(true);
