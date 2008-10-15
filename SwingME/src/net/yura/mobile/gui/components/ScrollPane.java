@@ -247,8 +247,24 @@ public class ScrollPane extends Panel {
 		return goodscroll;
 		
 	}
-	
-	
+
+        /**
+         * check if something is currently visible or as visible as it can be
+         * i.e. scrolling wont make it more visible, even if its not all currently visible
+         */
+        public boolean isRectVisible(int x,int y,int w,int h) {
+
+                Component component = getComponent();
+            	int viewX=-component.getX() + getViewPortX();
+		int viewY=-component.getY() + getViewPortY();
+		int viewHeight = getViewPortHeight();
+		int viewWidth = getViewPortWidth(viewHeight);
+                
+                return ( ((x>=viewX && x+w<=viewX+viewWidth)||(x<=viewX && x+w>=viewX+viewWidth)) &&
+                         ((y>=viewY && y+h<=viewY+viewHeight)||(y<=viewY && y+h>=viewY+viewHeight))
+                        );
+        }
+
 	public int getViewPortHeight() {
 		switch (mode) {
 			case MODE_SCROLLBARS: return height-getViewPortY()-((getComponent().getWidth()> (width-getViewPortX()) )?barThickness:0);
@@ -797,6 +813,7 @@ public class ScrollPane extends Panel {
 		g.clipRect(viewX, viewY, viewWidth, viewHeight);
             
         }
+
         /**
          * as the is ALWAYS fully covered by its component, is uses that too, to work this out
          */

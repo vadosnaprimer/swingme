@@ -308,7 +308,9 @@ public class Panel extends Component {
 
 			if (newone.isFocusable()) {
 			
-				if ( scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus) ) {
+				if ( (scrolltothere && scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus)) || 
+                                        (isRectVisible(newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder()))
+                                        ) {
 					newone.requestFocusInWindow();
 				}
 				

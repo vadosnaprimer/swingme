@@ -464,15 +464,29 @@ public abstract class Component {
          * @return if smart was on, returns true if the scroll did reach its destination
          * @see javax.swing.JComponent#scrollRectToVisible(java.awt.Rectangle) JComponent.scrollRectToVisible
          */
-	public boolean scrollRectToVisible(int a,int b,int c,int d,boolean smart) {
+	public boolean scrollRectToVisible(int x,int y,int w,int h,boolean smart) {
 		
 		if (scroller!=null) {
-			return scroller.makeVisible(a,b,c,d,smart);
+			return scroller.makeVisible(x,y,w,h,smart);
 		}
 		
 		if (parent!=null) {
 			
-			return parent.scrollRectToVisible(getX()+a,getY()+b,c,d,smart);
+			return parent.scrollRectToVisible(getX()+x,getY()+y,w,h,smart);
+		}
+		
+		return true;
+	}
+        
+        public boolean isRectVisible(int x,int y,int w,int h) {
+		
+		if (scroller!=null) {
+			return scroller.isRectVisible(x,y,w,h);
+		}
+		
+		if (parent!=null) {
+			
+			return parent.isRectVisible(getX()+x,getY()+y,w,h);
 		}
 		
 		return true;
