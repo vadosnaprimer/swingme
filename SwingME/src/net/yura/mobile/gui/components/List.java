@@ -70,11 +70,11 @@ public class List extends Component implements ActionListener {
     public List(Vector a) {
         this(a,new DefaultListCellRenderer(),false);
     }
-   
+
     public List(ListCellRenderer a) {
         this(null,a,false);
     }
-    
+
     // real constructor!
     public List(Vector a,ListCellRenderer b,boolean h) {
         items = a;
@@ -96,13 +96,13 @@ public class List extends Component implements ActionListener {
         if (a == null || current >= a.size()){
             setSelectedIndex(-1);
         }
-        
+
         if (isFocusOwner() && current==-1 && a.size() > 0) {
             setSelectedIndex(0);
         }
 
     }
-    
+
     /**
      * @param a the object to select
      * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
@@ -111,27 +111,28 @@ public class List extends Component implements ActionListener {
 
         setSelectedIndex( items.indexOf(a) );
     }
-    
+
     public Vector getItems() {
         return items;
     }
-    
+
     public String toString() {
         return super.toString() + items;
     }
-    
-    
+
+
     public void workoutSize() {
 
         //if (items!=null) {
 
-            Component c=null;
             int totalHeight = 0;
             int totalWidth = 0;
 
             for(int i = 0; i < getSize(); i++){
-                    Object item = getElementAt(i);
-                    c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
+                Object item = getElementAt(i);
+                synchronized (renderer)
+                {
+                    Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
                     c.workoutSize();
                     if (horizontal) {
                         if (totalHeight<c.getHeightWithBorder()) {
@@ -150,13 +151,14 @@ public class List extends Component implements ActionListener {
                             totalWidth=c.getWidthWithBorder();
                         }
                     }
+                }
             }
 
             setSize(totalWidth,totalHeight);
         //}
     }
-    
-    
+
+
 
     /**
      * @param horizontal
@@ -165,7 +167,7 @@ public class List extends Component implements ActionListener {
     public void setLayoutOrientation(boolean horizontal) {
         this.horizontal = horizontal;
     }
-    
+
     public void addActionListener(ActionListener l) {
 
         al = l;
@@ -200,11 +202,13 @@ public class List extends Component implements ActionListener {
         int offset=0;
         boolean good=false;
         for(int i = 0; i < getSize(); i++){
-            Component c = getComponentFor(i,offset);
+            synchronized (renderer)
+            {
+                Component c = getComponentFor(i,offset);
 
                 offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
-            //g.setColor(0x0000FF00);
-            //g.drawRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
+                //g.setColor(0x0000FF00);
+                //g.drawRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
 
                 int x = c.getXWithBorder();
                 int y = c.getYWithBorder();
@@ -226,6 +230,7 @@ public class List extends Component implements ActionListener {
                     // if we have done out painting but now things are out of the clip area
                     break;
                 }
+            }
         }
 
 
@@ -298,39 +303,40 @@ public class List extends Component implements ActionListener {
         }
     public void pointerEvent(int type, int x, int y) {
         super.pointerEvent(type, x, y);
-        
+
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
-            
+
             int offset=0;
-            for(int i = 0; i < getSize(); i++){
-                Component c = getComponentFor(i,offset);
+            synchronized (renderer)
+            {
+                for(int i = 0; i < getSize(); i++){
+                    Component c = getComponentFor(i,offset);
 
-                int cw=c.getWidthWithBorder();
-                int ch=c.getHeightWithBorder();
-                
-                offset = offset + ((horizontal)?cw:ch);
+                    int cw=c.getWidthWithBorder();
+                    int ch=c.getHeightWithBorder();
 
-                int cx = c.getXWithBorder();
-                int cy = c.getYWithBorder();
+                    offset = offset + ((horizontal)?cw:ch);
 
-                if (
-                        x>=cx && x <=(cw+cx) &&
-                        y>=cy && y <=(ch+cy)
-                ) {
-                    setSelectedIndex(i);
-                    return;
+                    int cx = c.getXWithBorder();
+                    int cy = c.getYWithBorder();
+
+                    if (
+                            x>=cx && x <=(cw+cx) &&
+                            y>=cy && y <=(ch+cy)
+                    ) {
+                        setSelectedIndex(i);
+                        return;
+                    }
                 }
             }
-
-            
         }
         else if (type == DesktopPane.RELEASED) {
 
             fireActionPerformed();
 
         }
-        
-        
+
+
     }
 
     public boolean keyEvent(KeyEvent keypad) {
@@ -341,7 +347,7 @@ public class List extends Component implements ActionListener {
         int prev = current-1;
 
         int size = getSize();
-        
+
         if (loop) {
             if (next>=size) { next = (size==0)?-1:0; }
             if (prev<0) { prev = size-1; }
@@ -350,6 +356,8 @@ public class List extends Component implements ActionListener {
             if (next>=size) { next=-1; }
         }
 
+            synchronized (renderer)
+            {
                 if (keypad.isDownAction(Canvas.DOWN)) {
 
                     if (!horizontal && next!=-1) {
@@ -440,7 +448,7 @@ public class List extends Component implements ActionListener {
                     //if we did not consume the event
                     return false;
                 }
-
+            }
 
     }
 
@@ -482,7 +490,8 @@ public class List extends Component implements ActionListener {
 
         current = a;
         if (current!=-1) {
-
+            synchronized (renderer)
+            {
                     Component c = getComponentFor(a);
                     // good, but too simple
                     // what if we are scrolled right already?
@@ -498,7 +507,7 @@ public class List extends Component implements ActionListener {
                         scrollRectToVisible( -posX, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
                     }
 
-
+            }
                     if (chl!=null) {
                         chl.changeEvent(a);
                     }
@@ -525,11 +534,11 @@ public class List extends Component implements ActionListener {
     public void setUseSelectButton(boolean useSelectButton) {
         this.useSelectButton = useSelectButton;
     }
-        
+
     public String getName() {
         return "List";
     }
-    
+
 
     public void updateUI() {
         super.updateUI();
@@ -538,40 +547,49 @@ public class List extends Component implements ActionListener {
             // find out how swing does it
         }
     }
-    
+
     public String getToolTipText() {
         if (current!=-1) {
-            Component c = getComponentFor(current);
-            return c.getToolTipText();
+            synchronized (renderer)
+            {
+                Component c = getComponentFor(current);
+                return c.getToolTipText();
+            }
         }
         return super.getToolTipText();
     }
-    
+
     public int getToolTipLocationX() {
-        
+
         if (current!=-1) {
-            Component c = getComponentFor(current);
-            return c.getX() + c.getToolTipLocationX();
+            synchronized (renderer)
+            {
+                Component c = getComponentFor(current);
+                return c.getX() + c.getToolTipLocationX();
+            }
         }
-        
+
         return super.getToolTipLocationX();
     }
     public int getToolTipLocationY() {
-        
+
         if (current!=-1) {
-            Component c = getComponentFor(current);
-            return c.getY() + c.getToolTipLocationY();
+            synchronized (renderer)
+            {
+                Component c = getComponentFor(current);
+                return c.getY() + c.getToolTipLocationY();
+            }
         }
-        
+
         return super.getToolTipLocationY();
     }
-    
+
     // #########################################################################
     // ########################## DefaultListModel #############################
     // #########################################################################
 
     private Vector items;
-    
+
     /**
      * @param index
      * @return the element
@@ -580,7 +598,7 @@ public class List extends Component implements ActionListener {
     public Object getElementAt(int index) {
         return items != null ? items.elementAt(index) : null;
     }
-    
+
     /**
      * @return the size of the list
      * @see javax.swing.ListModel#getSize() ListModel.getSize
@@ -588,7 +606,7 @@ public class List extends Component implements ActionListener {
     public int getSize() {
         return items.size();
     }
-    
+
     /**
      * @param a
      * @see javax.swing.DefaultListModel#addElement(java.lang.Object) DefaultListModel.addElement
@@ -614,5 +632,5 @@ public class List extends Component implements ActionListener {
         }
 
     }
-        
+
 }

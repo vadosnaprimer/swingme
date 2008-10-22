@@ -45,11 +45,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // static methods
         private static DesktopPane desktop;
-        
+
         public static DesktopPane getDesktopPane() {
             return desktop;
         }
-        
+
         /**
          * this methos should ONLY be called from the updateUI() method in components
          * @see javax.swing.UIManager#getUI(javax.swing.JComponent) UIManager#getUI
@@ -76,11 +76,11 @@ public class DesktopPane extends Canvas implements Runnable {
             com.updateUI();
 
         }
-        
+
         // object variables
-        
+
         protected Midlet midlet;
-        
+
         private LookAndFeel theme;
         public int defaultSpace;
 	//public int defaultWidthOffset;
@@ -92,7 +92,7 @@ public class DesktopPane extends Canvas implements Runnable {
         private ToolTip indicator;
 
 	private Vector repaintComponent = new Vector();
-        
+
         private Thread animationThread;
 	private Component animatedComponent;
 
@@ -119,7 +119,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	 */
 	public DesktopPane(Midlet m,int back,Image sph) {
                 desktop=this;
-                
+
                 background = back;
                 splash = sph;
 
@@ -227,9 +227,9 @@ public class DesktopPane extends Canvas implements Runnable {
 //            }
 
             if (defaultSpace==0) {
-                
+
                 int maxSize = Math.max(getWidth(),getHeight());
-                
+
                     if(maxSize <= 128) {
                             defaultSpace=3;
                     }
@@ -239,9 +239,9 @@ public class DesktopPane extends Canvas implements Runnable {
                     else {
                             defaultSpace=7;
                     }
-                
+
             }
-            
+
             if (softkeyRenderer==null) {
                 softkeyRenderer = new DefaultSoftkeyRenderer();
             }
@@ -250,18 +250,18 @@ public class DesktopPane extends Canvas implements Runnable {
             //currentWindow.setSize(getWidth(),getHeight());
 
         }
-        
+
         // #####################################################################
         // painting
         // #####################################################################
-        
+
         //public void repaint() {
 		// cant do this
 	//}
 	//public void serviceRepaints() {
 		// cant do this
 	//}
-        
+
 	/**
 	 * @param g The Graphics object
 	 */
@@ -284,7 +284,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
 
                         wideScreen = (getWidth()>getHeight());
-                        
+
 			animationThread = new Thread(this);
                         animationThread.start();
 
@@ -304,19 +304,19 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                     if (!fullrepaint) {
 			for (int c=0;c<repaintComponent.size();c++) {
-				paintComponent(g,(Component)repaintComponent.elementAt(c));                               
+				paintComponent(g,(Component)repaintComponent.elementAt(c));
 			}
                     }
                 }
 
                 repaintComponent.removeAllElements();
-                
+
 		if (fullrepaint) {
 			fullrepaint = false;
                         paintFirst(g);
 			for (int c=0;c<windows.size();c++) {
 				paintComponent(g,(Window)windows.elementAt(c));
-                                
+
                                 if (c==(windows.size()-2) && fade!=null) {
                                     for (int x = 0; x < getWidth(); x += fade.getWidth()) {
                                         for (int y = 0; y < getHeight(); y += fade.getHeight()) {
@@ -324,7 +324,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                         }
                                     }
                                 }
-                                
+
 			}
 		}
 
@@ -354,12 +354,12 @@ public class DesktopPane extends Canvas implements Runnable {
         public void setDimImage(Image a) {
             fade = a;
         }
-        
+
         public void paintFirst(Graphics g) { }
         public void paintLast(Graphics g) { }
-        
+
         private void drawSoftkeys(Graphics g) {
-            
+
             Component com1 = getSoftkeyRenderer(0);
             if (com1!=null) {
                 paintComponent(g,com1);
@@ -379,7 +379,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         private void paintComponent(Graphics g,Component com) {
-            
+
             int a=g.getClipX();
             int b=g.getClipY();
             int c=g.getClipWidth();
@@ -394,7 +394,7 @@ public class DesktopPane extends Canvas implements Runnable {
             g.translate(x, y);
             com.paint(g);
             g.translate(-x, -y);
-            
+
             g.setClip(a,b,c,d);
         }
 
@@ -413,7 +413,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             return com;
         }
-        
+
         public int getSoftkeyHeight() {
             Component c = softkeyRenderer.getListCellRendererComponent(null, new CommandButton("a", "a"), 0, false, false);
             c.workoutSize();
@@ -422,7 +422,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // #####################################################################
         // Different ways of caling repaint
-        
+
         /**
          * this method should NOT normally be called
          * is it called when repaint() is called on a window,
@@ -433,25 +433,61 @@ public class DesktopPane extends Canvas implements Runnable {
 		// this is here coz this method should NOT be used
                 //#debug
 		System.out.println("FULL REPAINT!!! this method should NOT normally be called");
-                
+
 		fullrepaint=true;
 
 		repaint();
 	}
 
-        /**
-         * this is called when you call repaint() on a component
-         * @param rc The Component to repaint
-         */
-        public void repaintComponent(Component rc) {
-                //System.out.println("someone asking for repaint "+rc);
-		if (!repaintComponent.contains(rc)) {
-			repaintComponent.addElement(rc);
-		}
+    /**
+     * this is called when you call repaint() on a component
+     * @param rc The Component to repaint
+     */
+    public void repaintComponent(Component rc) {
+        // System.out.println("someone asking for repaint "+rc);
 
-		repaint();
+        boolean found = false;
+
+        Component c1 = rc;
+        while (c1 != null)
+        {
+            if (repaintComponent.contains(c1))
+            {
+                found = true;
+                break;
+            }
+
+            c1 = c1.getParent(); // recurse
+        }
+
+        // If component or its father, not found, add it
+        if (!found)
+        {
+            repaintComponent.addElement(rc);
+
+            // Search the list for children, otherwise will be repainted again
+            for (int i = 0; i < repaintComponent.size(); i++)
+            {
+                Component c2 = (Component) repaintComponent.elementAt(i);
+
+                // A component is children of rc, if one of its ancestors is rc
+                while (c2 != null)
+                {
+                    c2 = c2.getParent(); // recurse
+                    if (c2 == rc)
+                    {
+                        // Found a children, remove it
+                        repaintComponent.removeElementAt(i);
+                        i--;
+                        break;
+                    }
+                }
+            }
+        }
+
+        repaint();
 	}
-        
+
         /**
          * Repaint the softkeybar
          */
@@ -488,7 +524,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
 
 	}
-        
+
 	private void passKeyEvent(KeyEvent keyevent) {
 
 		try {
@@ -510,7 +546,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 ( cmds[0]!=null && (keyevent.isDownKey(KeyEvent.KEY_SOFTKEY1) || keyevent.justReleasedKey(KeyEvent.KEY_SOFTKEY1)) ) ||
                                 ( cmds[1]!=null && (keyevent.isDownKey(KeyEvent.KEY_SOFTKEY2) || keyevent.justReleasedKey(KeyEvent.KEY_SOFTKEY2)) )
                         ) {
-                            
+
                             // ############# we use justReleasedKey for firing actions, this means the action is ONLY
                             // ############# fired off when the key is released!!!
 
@@ -520,10 +556,10 @@ public class DesktopPane extends Canvas implements Runnable {
                             else if (keyevent.justPressedKey(KeyEvent.KEY_SOFTKEY2)) {
                                 softKeyActivated(1);
                             }
-                            
+
                         }
 			else if (focusedComponent!=null) {
-                          
+
 				boolean consumed = focusedComponent.keyEvent(keyevent);
 
 				//System.out.println("rootpane KEY PRESSED on "+activeComponent+" and consumed after is: "+consumed);
@@ -533,7 +569,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 // getting the gameAction may not work
                                 // keyevent.getKeyAction(keyevent.getIsDownKey())
                                 // if another key was pressed first!
-                                
+
 				if (!consumed && (
 					keyevent.isDownAction(Canvas.RIGHT)||
 					keyevent.isDownAction(Canvas.DOWN) ||
@@ -551,7 +587,7 @@ public class DesktopPane extends Canvas implements Runnable {
 					keyEvent(keyevent);
                                     }
 				}
-                                
+
 			}
                         // sometimes keyevents come in on S40 b4 anything has been setup,
                         // such as the fire key being released after you start the app
@@ -591,13 +627,13 @@ public class DesktopPane extends Canvas implements Runnable {
                             keyevent.justReleasedAction(Canvas.UP)
                     );
 
-                
+
 	}
 
 	private void showHideToolTip(boolean show) {
 
                     Component focusedComponent = currentWindow.getFocusOwner();
-            
+
                     // if a tooltip should be setup
                     if (show && focusedComponent!=null && focusedComponent.getToolTipText()!=null) {
 
@@ -610,21 +646,21 @@ public class DesktopPane extends Canvas implements Runnable {
                         Border offset = tooltip.getBorder();
                         int top = offset==null?0:offset.getTop();
                         int left = offset==null?0:offset.getLeft();
-                        
+
                         if (x-left < 0) {
                             x=left;
                         }
                         else if (x-left+w > getWidth()) {
                             x = getWidth()-w+left;
                         }
-                        
+
                         if (y-top <0) {
                             y=top;
                         }
                         else if (y-top+h > getHeight()) {
                             y = getHeight()-h+top;
                         }
-                        
+
                         tooltip.setLocation( x,y );
                         animateComponent(tooltip);
 
@@ -632,7 +668,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     else if (tooltip!=null) {
                         // this will never be null unless this method is called
                         // before the midlet is initialised, and this can happen
-                        
+
                         // if there is a tooltip up or ready to go up,
                         // then kill it!
                         synchronized (this) {
@@ -661,11 +697,11 @@ public class DesktopPane extends Canvas implements Runnable {
             fullRepaint();
 
         }
-        
+
     public void softKeyActivated(int i) {
 
                         Component focusedComponent = currentWindow.getFocusOwner();
-        
+
         		CommandButton[] panelCmds = currentWindow.getWindowCommands();
                         ActionListener actionListener = currentWindow.getActionListener();
 
@@ -684,7 +720,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                  else {
                                      ((ActionListener)focusedComponent).actionPerformed( componentCommands[i].getActionCommand() );
                                  }
-                                
+
 			}
 			else if (actionListener!=null && panelCmds[i]!=null) {
 
@@ -699,20 +735,20 @@ public class DesktopPane extends Canvas implements Runnable {
                                 }
 
 			}
-        
+
     }
 
-        
-        
-        
+
+
+
 	// if no command listener is used key events fall though to this method
         // used for adding global shortcut keys
 	public void keyEvent(KeyEvent kypd) { }
-        
+
         // #####################################################################
         // normal desktop calls
         // #####################################################################
-        
+
         /**
          * @param w The window to add
          * @see java.awt.Container#add(java.awt.Component) Container.add
@@ -735,9 +771,9 @@ public class DesktopPane extends Canvas implements Runnable {
          */
 	public void setSelectedFrame(Window w) {
 		if (windows.contains(w)) {
-                    
+
                         if (currentWindow == w) return;
-                        
+
                         if (currentWindow!=null) {
                             Component focusedComponent = currentWindow.getFocusOwner();
                             if (focusedComponent!=null) {
@@ -745,7 +781,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             }
                         }
                         Component focusedComponent = w.getMostRecentFocusOwner();
-                        
+
 			currentWindow = w;
 			windows.removeElement(w);
 			windows.addElement(w);
@@ -753,7 +789,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         if (focusedComponent!=null) {
                             focusedComponent.focusGained();
                         }
-                        
+
 			currentWindow.repaint();
 		}
                 //#mdebug
@@ -776,7 +812,7 @@ public class DesktopPane extends Canvas implements Runnable {
 			if (w==currentWindow) {
                                 setSelectedFrame( (Window)windows.lastElement() );
 			}
-                        
+
                         fullRepaint();
 
 		}
@@ -787,7 +823,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 //#enddebug
 
 	}
-        
+
         /**
          * @return an Vector of InternalFrame objects
          * @see javax.swing.JDesktopPane#getAllFrames() JDesktopPane.getAllFrames
@@ -807,7 +843,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // #####################################################################
         // platform Requests
         // #####################################################################
-        
+
 	public void call(String number) {
 
 		try {
@@ -836,12 +872,12 @@ public class DesktopPane extends Canvas implements Runnable {
         public Midlet getMidlet() {
             return midlet;
         }
-        
+
         public void exit() {
 		midlet.destroyApp(true);
 	}
-        
-        
+
+
         // #####################################################################
         // debug dialog
         // #####################################################################
@@ -851,11 +887,11 @@ public class DesktopPane extends Canvas implements Runnable {
 	private TextArea text;
         private String mem;
         //#enddebug
-        
+
 	public void log(String s) {
 
 		//#mdebug
-			
+
 			if (debugwindow==null) {
 
 				debugwindow = new Window();
@@ -867,7 +903,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 debugwindow.setActionListener(debugwindow);
 				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
                                 debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
-                                
+
                                 // This is not needed, but just in case something
                                 // has gone wrong with the theme, we set some defaults
                                 text.setFont(new Font());
@@ -878,14 +914,14 @@ public class DesktopPane extends Canvas implements Runnable {
 			}
 
 			text.append(s+"\n");
-                        
+
                         if (!debugwindow.isVisible()) {
                             debugwindow.setVisible(true);
                         }
                         else {
                             debugwindow.repaint();
                         }
-			
+
 		//#enddebug
 	}
 
@@ -935,7 +971,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	public static final int PRESSED = 1;
 	public static final int RELEASED = 2;
         private Component pointerComponent;
-        
+
         public void pointerDragged(int x, int y) {
             pointerEvent(DRAGGED,x,y);
         }
@@ -954,7 +990,7 @@ public class DesktopPane extends Canvas implements Runnable {
             try {
 
                 if (type == PRESSED) {
-                    
+
                     // check if pressing on a softkey
                     for (int c=0;c<componentCommands.length;c++) {
                         Component comp = getSoftkeyRenderer(c);
@@ -968,7 +1004,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
 
-                    
+
                     pointerComponent = currentWindow.getComponentAt( x - currentWindow.getX(), y - currentWindow.getY());
                 }
 
@@ -985,7 +1021,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	    showHideToolTip(type == PRESSED);
 
         }
-        
+
 	// #####################################################################
         // other events from the canvas
         // #####################################################################
@@ -993,19 +1029,19 @@ public class DesktopPane extends Canvas implements Runnable {
         protected void sizeChanged(int w, int h) {
             //#debug
             System.out.println("sizeChanged!! " +paintdone);
-            
+
             if (!paintdone) return;
-            
+
             boolean old = wideScreen;
             wideScreen = (w>h);
-            
+
             // this means we NEED to flip from 1 orientation to another
             if (old!=wideScreen) {
 
                 sideSoftKeys = wideScreen;
-                
+
                 Vector win = Window.getAllWindows();
-                
+
                 for (int c=0;c<win.size();c++) {
                     Window window = (Window)((WeakReference)win.elementAt(c)).get();
 
@@ -1016,11 +1052,11 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
                 fullRepaint();
             }
-            
 
-            
+
+
         }
-        
+
         // this is to fix buttons not being released properly on some phones
 	protected void showNotify() {
 

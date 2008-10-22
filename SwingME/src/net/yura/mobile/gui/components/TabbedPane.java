@@ -248,8 +248,8 @@ public class TabbedPane extends Panel implements ChangeListener {
         tabContent.removeAll();
         tabContent.add(thetabtoAdd);
 
-        revalidate();
-        repaint();
+        tabContent.revalidate();
+        tabContent.repaint();
 
     }
 

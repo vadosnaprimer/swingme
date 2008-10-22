@@ -238,6 +238,18 @@ public abstract class Component {
                             getHeightWithBorder(),
                             false);
         }
+
+        /**
+         * This method checks if a component can be seen in the scrollpane
+         */
+        public boolean isComponentVisible() {
+                        return isRectVisible(
+                            (border!=null)?-border.getLeft():0, 
+                            (border!=null)?-border.getTop():0,
+                            getWidthWithBorder(),
+                            getHeightWithBorder());
+        }
+
         /**
          * This sets the width and height of this component
          * to the MINIMUM that is needed for this component
@@ -472,7 +484,7 @@ public abstract class Component {
 		
 		if (parent!=null) {
 			
-			return parent.scrollRectToVisible(getX()+x,getY()+y,w,h,smart);
+			return parent.scrollRectToVisible(posX+x,posY+y,w,h,smart);
 		}
 		
 		return true;
@@ -490,7 +502,7 @@ public abstract class Component {
 		
 		if (parent!=null) {
 			
-			return parent.isRectVisible(getX()+x,getY()+y,w,h);
+			return parent.isRectVisible(posX+x,posY+y,w,h);
 		}
 		
 		return true;

@@ -30,32 +30,32 @@ import net.yura.mobile.util.ImageUtil;
  * @see javax.swing.JScrollPane
  */
 public class ScrollPane extends Panel {
-	
+
         public static final int MINIMUM_THUMB_SIZE=3;
 
 	public static final int MODE_NONE=-1;
 	public static final int MODE_SCROLLBARS=0;
 	public static final int MODE_SCROLLARROWS=1;
 	public static final int MODE_INDICATOR=2;
-	
+
 	private int mode;
 	private int barThickness;
-	
+
         private Image thumbTop;
         private Image thumbBottom;
         private Image thumbFill;
         private Image trackTop;
         private Image trackBottom;
         private Image trackFill;
-        
+
         private Image rightArrow;
         private Image leftArrow;
         private Image upArrow;
         private Image downArrow;
-        
+
 	private int scrollTrackCol;
 	private int scrollBarCol;
-	
+
         /**
          * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
          */
@@ -70,12 +70,12 @@ public class ScrollPane extends Panel {
         public ScrollPane(Component view) {
             this(view,MODE_SCROLLBARS);
         }
-        
+
         public ScrollPane(int m) {
 		super(null);
 		setMode(m);
                 super.setName("ScrollPane");
-                
+
 	}
 
 	public void setLayout(Layout lt) {
@@ -87,46 +87,53 @@ public class ScrollPane extends Panel {
         public void setName(String n) {
             throw new IllegalArgumentException();
         }
-        
+
 	public ScrollPane(Component view,int a) {
 		this(a);
 		add(view);
 	}
 
 	public void setMode(int m) {
-		
+
 		mode = m;
 	}
-	
-	public void setSize(int w, int h){
-		super.setSize(w,h);
 
-                switch (mode) {
-                    case MODE_SCROLLBARS: barThickness = (trackTop!=null)?trackTop.getWidth():getBarThickness(w,h); break;
-			case MODE_SCROLLARROWS: // fall though
-                        case MODE_INDICATOR: barThickness = (rightArrow!=null)?rightArrow.getWidth():getBarThickness(w,h); break;
-			case MODE_NONE: barThickness = 0; break;
-			default: throw new RuntimeException();
-		}
+    public void setSize(int w, int h) {
 
-	}
-	
+	//boolean resetChild = w!=width || h!=height;
+
+        super.setSize(w, h);
+
+        switch (mode) {
+            case MODE_SCROLLBARS: barThickness = (trackTop != null) ? trackTop.getWidth() : getBarThickness(w, h); break;
+            case MODE_SCROLLARROWS: // fall though
+            case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getWidth() : getBarThickness(w, h); break;
+            case MODE_NONE: barThickness = 0; break;
+            default: throw new RuntimeException();
+        }
+
+	//if (resetChild) {
+	        // Size of the scroll changed, we need to reset the component location
+        	getComponent().setLocation(getViewPortX(), getViewPortY());
+	//}
+    }
+
 	public static int getBarThickness(int w,int h) {
-		
+
 		return Math.max(6, Math.min(w / 20, h / 20));
-		
+
 	}
-	
+
 	public Component getComponent() {
-		
+
 		return ((Component)getComponents().elementAt(0));
-		
+
 	}
-	
+
 	public void add(Component a) {
-		
+
 		removeAll();
-		
+
 		super.add(a);
 		//component = a;
 		//a.setOwner(owner);
@@ -135,28 +142,28 @@ public class ScrollPane extends Panel {
 		//}
 
 		a.setLocation(getViewPortX(), getViewPortY());
-		
+
 		a.setScrollPanel(this);
-		
+
 		// TODO does it take into account the border?
 	}
 
 	public void add(Component component,String constraint){
 		throw new RuntimeException("must use add");
 	}
-	
+
 	public void remove(Component a){
 		super.remove(a);
-		
+
 		//if (a instanceof Panel) {
 		//	((Panel)a).setScrollPanel(null);
 		//}
-		
+
 		a.setScrollPanel(null);
 	}
-	
+
 	public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
-            
+
 		Component component = getComponent();
                 int oldX = component.getX();
 		int oldY = component.getY();
@@ -164,15 +171,15 @@ public class ScrollPane extends Panel {
 		//System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
 		//System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
 		//if(true)throw new RuntimeException();
-		
+
 		int right = x+w;
 		int bottom = y+h;
-		
-		
-		
+
+
+
 		int componentX = -component.getX();
 		int componentY = -component.getY();
-		
+
 		int viewX=getViewPortX();
 		int viewY=getViewPortY();
 		int viewHeight = getViewPortHeight();
@@ -189,7 +196,7 @@ public class ScrollPane extends Panel {
                             componentX = x-viewX;
                     }
                 }
-                
+
                 if (!(y<=componentY+viewY && bottom>=componentY+viewY+viewHeight)) {
                     if (bottom > (viewY + componentY + viewHeight)){
                             componentY = bottom - viewHeight;
@@ -200,52 +207,52 @@ public class ScrollPane extends Panel {
                     }
                 }
 
-		
 
-		
+
+
 		// check we r not scrolling off the content panel
 		if ((viewX+componentX+viewWidth)>component.getWidth()) { componentX=component.getWidth()-viewWidth-viewX; }
 		if ((viewY+componentY+viewHeight)>component.getHeight()) { componentY=component.getHeight()-viewHeight-viewY; }
 		if (componentX<-viewX) { componentX=-viewX; }
 		if (componentY<-viewY) { componentY=-viewY; }
-		
+
 		int xdiff=-componentX -component.getX();
 		int ydiff=-componentY -component.getY();
-		
+
 		boolean goodscroll=true;
-		
+
 		if (smartscroll) {
-		
+
 			if (Math.abs(xdiff) > viewWidth) {
-				
+
 				xdiff = (xdiff>0)?viewWidth*2/3:-viewWidth*2/3;
-				
+
 				goodscroll = false;
-			
+
 			}
-			
+
 			if (Math.abs(ydiff) > viewHeight) {
-				
+
 				ydiff = (ydiff>0)?viewHeight*2/3:-viewHeight*2/3;
-				
+
 				goodscroll = false;
-	
+
 			}
 		}
-		
+
 		component.setBounds( component.getX()+xdiff , component.getY()+ydiff , component.getWidth(), component.getHeight());
-		
+
 		//component.setBounds(15, 15, component.getWidth(), component.getHeight());
-		
+
 		//System.out.println("new pos: x="+component.getX()+" y="+component.getY() );
-		
+
                 // only repint if we have moved
 		if (oldX!=component.getX() || oldY!=component.getY()) {
                     repaint();
                 }
-		
+
 		return goodscroll;
-		
+
 	}
 
         /**
@@ -254,12 +261,12 @@ public class ScrollPane extends Panel {
          */
         public boolean isRectVisible(int x,int y,int w,int h) {
 
-                Component component = getComponent();
-            	int viewX=-component.getX() + getViewPortX();
-		int viewY=-component.getY() + getViewPortY();
+            Component component = getComponent();
+            int viewX= -component.getX() + getViewPortX();
+            int viewY= -component.getY() + getViewPortY();
 		int viewHeight = getViewPortHeight();
 		int viewWidth = getViewPortWidth(viewHeight);
-                
+
                 return ( ((x>=viewX && x+w<=viewX+viewWidth)||(x<=viewX && x+w>=viewX+viewWidth)) &&
                          ((y>=viewY && y+h<=viewY+viewHeight)||(y<=viewY && y+h>=viewY+viewHeight))
                         );
@@ -332,23 +339,23 @@ public class ScrollPane extends Panel {
 	public void doLayout() {
 
 	    if (getComponents().size() == 1) {
-	    
+
 		getComponent().workoutSize();
 
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
-		
+
 		// this is a hack to make it easer to code panels and not have a tiny amount of side scrolling
 		// as even though this is technically correct, it is very annoying to use this panel
 		// now panels that are the width of the scrollpane or less are set to the width of the viewPort
-		
+
 		// TODO this hack is only for MODE_SCROLLBARS
-		
+
 		// if we have no lower scroll bar AND the width of the component is less then or equal to the width of the scrollpane
 		if ( getComponent().getWidth() <= (width-getViewPortX())) {
-			
+
 			getComponent().setSize(viewWidth, getComponent().getHeight());
-			
+
 		}
 
                 if (getComponent().getHeight() <viewHeight) {
@@ -361,33 +368,33 @@ public class ScrollPane extends Panel {
 	}
 
 	public void paintChildren(Graphics g) {
-		
+
 		int a=g.getClipX();
 		int b=g.getClipY();
 		int c=g.getClipWidth();
 		int d=g.getClipHeight();
-		
+
 		int viewX=getViewPortX();
 		int viewY=getViewPortY();
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
-		
+
 		// dont care about clipping for the
 		// scrollbars as they r painted over the top
 		g.clipRect(viewX, viewY, viewWidth, viewHeight);
-	
+
 	    super.paintChildren(g);
-		
+
 	    g.setClip(a,b,c,d);
-	    
+
 	    //g.setColor(0x00FF0000);
 	    //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
 
 	    paintDecoration(g);
 	}
-	
+
 	protected void paintDecoration(final Graphics g) {
-		
+
 		switch (mode) {
 			case MODE_NONE: return;
 			case MODE_SCROLLBARS: drawScrollBars(g); return;
@@ -395,18 +402,18 @@ public class ScrollPane extends Panel {
 			case MODE_INDICATOR: drawScrollArrows(g,true); return;
 			default: throw new RuntimeException();
 		}
-		
+
 	}
-	
+
 	private void drawScrollBars(final Graphics g) {
-	
+
                 int viewX = getViewPortX();
                 int viewY = getViewPortY();
 		int viewHeight=getViewPortHeight();
                 int viewWidth=getViewPortWidth(viewHeight);
                 int componentWidth = getComponent().getWidth();
                 int componentHeight = getComponent().getHeight();
-		
+
 		// NEEDS to be same check as in getViewPortHeight
 		if ( componentWidth > (width-viewX) ) {
 
@@ -420,7 +427,7 @@ public class ScrollPane extends Panel {
                             componentWidth
                             );
 		}
-		
+
 		// NEEDS to be same check as in getViewPortWidth
 		if ( componentHeight > viewHeight ) {
 
@@ -447,10 +454,10 @@ public class ScrollPane extends Panel {
                 int startx;
                 int extentw;
                 int box;
-            
+
                 // DRAW ARROWS
                 // #############################################################
-                
+
                 if (trackTop!=null) {
 
                     int y1 = y + (h-trackTop.getWidth())/2;
@@ -467,7 +474,7 @@ public class ScrollPane extends Panel {
                     g.setColor(scrollTrackCol);
                     g.fillRect(x, y, h, h);
                     g.fillRect(x+w-h, y, h, h);
-                    
+
                     g.setColor(scrollBarCol);
                     g.drawRect(x, y, h - 1, h - 1);
                     g.drawRect(x+w-h, y, h - 1, h - 1);
@@ -482,19 +489,19 @@ public class ScrollPane extends Panel {
                     startx = h;
                     extentw = w - startx - h;
                     box = h;
-                    
+
                 }
-                
-                
+
+
                 // draw the track fill color
                 // #############################################################
-                
+
                 if (trackFill!=null) {
 
                     ImageUtil.fillArea(g, trackFill, 0, 0, trackFill.getWidth(), trackFill.getHeight(),
                             startx , y + (h-trackFill.getWidth())/2, extentw , trackFill.getWidth(),
                             Sprite.TRANS_MIRROR_ROT270);
-                    
+
                 }
                 else {
                     g.setColor(scrollTrackCol);
@@ -506,12 +513,12 @@ public class ScrollPane extends Panel {
                     g.drawLine(startx, y+h-1, startx + extentw -1, y+h-1);
 
                 }
-                
-                
-                
+
+
+
                 // draw the thumb!
                 // #############################################################
-                
+
                 int space = w - box * 2 - 1;
                 extentw = (extent*space)/max;
                 int min = (thumbTop==null)?MINIMUM_THUMB_SIZE:thumbTop.getHeight()+thumbBottom.getHeight();
@@ -521,7 +528,7 @@ public class ScrollPane extends Panel {
                     max = max-extent;
                 }
                 startx = x+box+1+ (space*value)/max;
-                
+
                 if (thumbTop!=null) {
                     int y1 = y + (h-thumbTop.getWidth())/2;
                     g.drawRegion(thumbTop, 0, 0, thumbTop.getWidth(), thumbTop.getHeight(), Sprite.TRANS_MIRROR_ROT270 , startx, y1, Graphics.TOP | Graphics.LEFT);
@@ -529,8 +536,8 @@ public class ScrollPane extends Panel {
                     startx = startx + thumbTop.getWidth();
                     extentw = extentw - min;
                 }
-                
-                
+
+
                 if (thumbFill!=null) {
 
                     ImageUtil.fillArea(g, thumbFill, 0, 0, thumbFill.getWidth(), thumbFill.getHeight(),
@@ -548,14 +555,14 @@ public class ScrollPane extends Panel {
                 }
         }
         else {
-          
+
                 int starty;
                 int extenth;
                 int box;
-            
+
                 // DRAW ARROWS
                 // #############################################################
-                
+
                 if (trackTop!=null) {
 
                     int x1 = x + (w-trackTop.getWidth())/2;
@@ -572,11 +579,11 @@ public class ScrollPane extends Panel {
                     g.setColor(scrollTrackCol);
                     g.fillRect(x, y, w, w);
                     g.fillRect(x, y+h-w, w, w);
-                    
+
                     g.setColor(scrollBarCol);
                     g.drawRect(x, y, w - 1, w - 1);
                     g.drawRect(x, y+h-w, w - 1, w - 1);
-                    
+
                     int bararroww = w - 4;
                     int bararrowh = (w - 4) / 2;
                     int offset = (w - bararroww)/2 +1;
@@ -587,17 +594,17 @@ public class ScrollPane extends Panel {
                     starty = w;
                     extenth = h - starty - w;
                     box = w;
-                    
+
                 }
 
                 // draw the track fill color
                 // #############################################################
-                
+
                 if (trackFill!=null) {
 
                     ImageUtil.fillArea(g, trackFill, 0, 0, trackFill.getWidth(), trackFill.getHeight(),
                             x + (w-trackFill.getWidth())/2 , starty, trackFill.getWidth(), extenth);
-                    
+
                 }
                 else {
                     g.setColor(scrollTrackCol);
@@ -612,7 +619,7 @@ public class ScrollPane extends Panel {
 
                 // draw the thumb!
                 // #############################################################
-                
+
                 int space = h - box * 2 - 1;
                 extenth = (extent*space)/max;
                 int min = (thumbTop==null)?MINIMUM_THUMB_SIZE:thumbTop.getHeight()+thumbBottom.getHeight();
@@ -622,7 +629,7 @@ public class ScrollPane extends Panel {
                     max = max-extent;
                 }
                 starty = y+box+1+ (space*value)/max;
-                
+
                 if (thumbTop!=null) {
                     int x1 = x + (w-thumbTop.getWidth())/2;
                     g.drawImage(thumbTop, x1, starty, Graphics.TOP|Graphics.LEFT);
@@ -630,12 +637,12 @@ public class ScrollPane extends Panel {
                     starty = starty + thumbTop.getHeight();
                     extenth = extenth - min;
                 }
-                
+
                 if (thumbFill!=null) {
-                    
+
                     ImageUtil.fillArea(g, thumbFill, 0, 0, thumbFill.getWidth(), thumbFill.getHeight(),
                             x + (w-thumbFill.getWidth())/2 , starty, thumbFill.getWidth(), extenth);
-                    
+
                 }
                 else {
                     g.setColor(scrollBarCol);
@@ -646,8 +653,8 @@ public class ScrollPane extends Panel {
                         extenth
                     );
                 }
-                
-                
+
+
         }
     }
 
@@ -656,27 +663,27 @@ public class ScrollPane extends Panel {
 
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
-		
+
 		int viewX=getViewPortX();
 		int viewY=getViewPortY();
-		
+
 		int d = barThickness*2;
 		int gap=2;
 		boolean canScroll;
-		
+
 		if (getComponent().getWidth() > width) {
 
 			canScroll = getComponent().getX() < viewX;
-			
+
 			if (indicator) {
 				drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.LEFT);
 			}
 			else {
 						drawArrow(g, 0, (height-d)/2, barThickness, d,canScroll,Graphics.LEFT);
 			}
-			
+
 			canScroll = (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth;
-			
+
 			if (indicator) {
 				drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.RIGHT);
 			}
@@ -685,27 +692,27 @@ public class ScrollPane extends Panel {
 			}
 
 		}
-		
+
 		if (getComponent().getHeight() > height) {
-			
+
 			canScroll = getComponent().getY() < viewY;
-			
+
 			if (indicator) {
 				drawArrow(g, (width-d)/2, height+gap, d, barThickness,canScroll,Graphics.TOP);
 			}
 			else {
 						drawArrow(g, (width-d)/2, 0, d, barThickness,canScroll,Graphics.TOP);
 			}
-			
+
 			canScroll = (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight;
-			
+
 			if (indicator) {
 				drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,canScroll,Graphics.BOTTOM);
 			}
 			else {
 						drawArrow(g, (width-d)/2,height-barThickness, d, barThickness,canScroll,Graphics.BOTTOM);
 			}
-			
+
 		}
 	}
 
@@ -756,23 +763,23 @@ public class ScrollPane extends Panel {
                 break;
             }
         }
-      
-        
+
+
     }
-        
-        
+
+
     public static void drawDownArrow(Graphics g, int x, int y, int w, int h) {
         for (int i=0; i<h; i++) {
             g.fillRect(x+i, y+i, w-2*i, 1);
         }
     }
-    
+
     public static void drawUpArrow(Graphics g, int x, int y, int w, int h) {
         for (int i=0; i<h; i++) {
             g.fillRect(x+i, y+h-i-1, w-2*i, 1);
         }
     }
-    
+
     public static void drawLeftArrow(Graphics g, int x, int y, int w, int h) {
         for (int i=0; i<h/2; i++) {
             g.fillRect(x+w-i-1, y+i, i+1, 1);
@@ -781,10 +788,10 @@ public class ScrollPane extends Panel {
             g.fillRect(x+i-h/2, y+i, w-i+h/2, 1);
         }
     }
-    
+
     public static void drawRightArrow(Graphics g, int x, int y, int w, int h) {
         for (int i=0; i<h/2; i++) {
-            g.fillRect(x, y+i, i+1, 1); 
+            g.fillRect(x, y+i, i+1, 1);
         }
         for (int i=h/2; i<h; i++) {
             g.fillRect(x, y+i, w-i+h/2, 1);
@@ -802,16 +809,16 @@ public class ScrollPane extends Panel {
 	public void setScrollBarCol(int scrollBarCol) {
 		this.scrollBarCol = scrollBarCol;
 	}
-        
+
         public void clip(Graphics g) {
-            
+
             	int viewX=getXOnScreen()+getViewPortX();
 		int viewY=getYOnScreen()+getViewPortY();
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);
-		
+
 		g.clipRect(viewX, viewY, viewWidth, viewHeight);
-            
+
         }
 
         /**
@@ -822,13 +829,13 @@ public class ScrollPane extends Panel {
             if (!mine) {
                 return getComponent().isOpaque();
             }
-            else { 
+            else {
                 return mine;
             }
         }
         public void updateUI() {
                 super.updateUI();
-                
+
                 Style theme = DesktopPane.getDefaultTheme(this);
 
                 thumbTop = (Image)theme.getProperty("thumbTop", Style.ALL);
@@ -837,7 +844,7 @@ public class ScrollPane extends Panel {
                 trackTop = (Image) theme.getProperty("trackTop", Style.ALL);
                 trackBottom = (Image) theme.getProperty("trackBottom", Style.ALL);
                 Object trackFill = theme.getProperty("trackFill", Style.ALL);
-                
+
                 if (thumbFill instanceof Image) {
                     this.thumbFill = (Image)thumbFill;
                     scrollBarCol=-1;
@@ -846,7 +853,7 @@ public class ScrollPane extends Panel {
                     scrollBarCol = ((Integer)thumbFill).intValue();
                     this.thumbFill = null;
                 }
-                
+
                 if (trackFill instanceof Image) {
                     this.trackFill = (Image)trackFill;
                     scrollTrackCol=-1;
@@ -855,7 +862,7 @@ public class ScrollPane extends Panel {
                     scrollTrackCol = ((Integer)trackFill).intValue();
                     this.trackFill=null;
                 }
-                
+
                 rightArrow = (Image)theme.getProperty("rightArrow", Style.ALL);
                 leftArrow = (Image)theme.getProperty("leftArrow", Style.ALL);
                 upArrow = (Image)theme.getProperty("upArrow", Style.ALL);
