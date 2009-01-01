@@ -162,7 +162,7 @@ public class Button extends Label implements ActionListener {
 
 	public boolean keyEvent(KeyEvent keyEvent) {
             
-            	if (keyEvent.justPressedAction(Canvas.FIRE)) {
+            	if (keyEvent.justPressedAction(Canvas.FIRE) || keyEvent.justPressedKey('\n')) {
                     
 			fireActionPerformed();
 			

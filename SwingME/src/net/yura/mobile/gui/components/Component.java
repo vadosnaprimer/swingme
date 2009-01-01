@@ -54,7 +54,7 @@ public abstract class Component {
          * @see java.awt.Component#isFocusOwner() Component.isFocusOwner
          */
 	public boolean isFocusOwner() {
-		return DesktopPane.getDesktopPane().getSelectedFrame().getFocusOwner() == this;
+		return DesktopPane.getDesktopPane().getSelectedFrame()!=null && DesktopPane.getDesktopPane().getSelectedFrame().getFocusOwner() == this;
 	}
 
         /**

@@ -556,8 +556,15 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
 	public void setText(String str) {
+
+		String old = text==null?"":text.toString();
+
 		text = new StringBuffer(str);
 		setCaretPosition(text.length());
+
+		if (!str.equals(old)) {
+			changedUpdate(0,text.length());
+		}
 	}
 
 	public void setMaxSize(int size) {

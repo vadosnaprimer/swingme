@@ -305,6 +305,7 @@ public class Label extends Component {
          */
 	public void setIcon(Image icon) {
 		this.icon = icon;
+                repaint();
 	}
 
 	/**

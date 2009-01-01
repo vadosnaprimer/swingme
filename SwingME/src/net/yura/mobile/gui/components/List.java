@@ -55,6 +55,7 @@ public class List extends Component implements ActionListener {
 
     private boolean loop;
     private boolean horizontal;
+    private boolean doubleClick;
 
     /**
      * @see javax.swing.JList#JList() JList.JList
@@ -186,6 +187,9 @@ public class List extends Component implements ActionListener {
     public void setLoop(boolean l) {
         loop = l;
     }
+    public void setDoubleClick(boolean b){
+        doubleClick = b;
+    }
 
     /**
      * @param cellRenderer
@@ -301,6 +305,10 @@ public class List extends Component implements ActionListener {
             }
 
         }
+
+	private long doubleClickTime;
+	private int doubleClickX,doubleClickY;
+
     public void pointerEvent(int type, int x, int y) {
         super.pointerEvent(type, x, y);
 
@@ -332,8 +340,21 @@ public class List extends Component implements ActionListener {
         }
         else if (type == DesktopPane.RELEASED) {
 
-            fireActionPerformed();
+            if (doubleClick) {
+		long time = System.currentTimeMillis();
 
+		if (time < doubleClickTime + 300 && x>(doubleClickX-5) && x<(doubleClickX+5) && y>(doubleClickY-5) && y<(doubleClickY+5) ) {
+
+			fireActionPerformed();
+		}
+
+		doubleClickTime = time;
+		doubleClickX = x;
+		doubleClickY = y;
+            }
+            else {
+                fireActionPerformed();
+            }
         }
 
 
@@ -356,9 +377,31 @@ public class List extends Component implements ActionListener {
             if (next>=size) { next=-1; }
         }
 
-            synchronized (renderer)
-            {
-                if (keypad.isDownAction(Canvas.DOWN)) {
+            synchronized (renderer) {
+
+
+		int keyCode = keypad.getIsDownKey();
+
+		if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE) {
+
+			keyCode = keypad.getKeyChar(keyCode, keypad.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
+
+			for(int i = 0; i < getSize(); i++) {
+
+				String item = String.valueOf( getElementAt(i) ).toLowerCase();
+
+				if (!"".equals(item) && item.charAt(0) == keyCode) {
+
+					setSelectedIndex(i);
+					return true;
+
+				}
+			}
+
+			return false;
+
+		}
+                else if (keypad.isDownAction(Canvas.DOWN)) {
 
                     if (!horizontal && next!=-1) {
                         setSelectedIndex(next);
@@ -439,7 +482,7 @@ public class List extends Component implements ActionListener {
                     //}
 
                 }
-                else if (keypad.justPressedAction(Canvas.FIRE)) {
+                else if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey('\n')) {
 
                     return fireActionPerformed();
 
@@ -596,7 +639,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
      */
     public Object getElementAt(int index) {
-        return items != null ? items.elementAt(index) : null;
+        return (items != null && items.size()>index) ? items.elementAt(index) : null;
     }
 
     /**

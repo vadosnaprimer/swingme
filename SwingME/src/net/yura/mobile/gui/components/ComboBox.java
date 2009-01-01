@@ -57,6 +57,10 @@ public class ComboBox extends Button implements ActionListener{
 		setItems(vec);
 	}
 
+        public void setLoop(boolean b) {
+            list.setLoop(b);
+        }
+
 
 	public void workoutSize() {
 		if (list!=null) {
@@ -153,7 +157,7 @@ public class ComboBox extends Button implements ActionListener{
                         // TODO use a window, and set the windows name to "Menu"
                         // do this when doing tooltips
 		}
-		
+
 	}
 
 	public void paintComponent(Graphics g) {

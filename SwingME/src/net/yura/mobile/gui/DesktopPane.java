@@ -207,6 +207,10 @@ public class DesktopPane extends Canvas implements Runnable {
          */
         public synchronized void animateComponent(Component com) {
             animatedComponent = com;
+
+	    // in case this is called from initialize
+	    // like when a textfield is added to the main window at starttime
+	    if (Thread.currentThread() == animationThread) return;
             animationThread.interrupt();
 	}
         // called by destroyApp
