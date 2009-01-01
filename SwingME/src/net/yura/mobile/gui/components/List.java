@@ -388,7 +388,9 @@ public class List extends Component implements ActionListener {
 
 			for(int i = 0; i < getSize(); i++) {
 
-				String item = String.valueOf( getElementAt(i) ).toLowerCase();
+				String item = String.valueOf( getElementAt(i) );
+
+				item = (item==null)?"null":item.toLowerCase();
 
 				if (!"".equals(item) && item.charAt(0) == keyCode) {
 
