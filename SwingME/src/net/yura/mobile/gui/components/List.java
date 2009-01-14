@@ -641,7 +641,8 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
      */
     public Object getElementAt(int index) {
-        return (items != null && items.size()>index) ? items.elementAt(index) : null;
+        return (items != null) ? items.elementAt(index) : null;
+	// && items.size()>index // this method SHOULD throw array index out of bounds if it is
     }
 
     /**

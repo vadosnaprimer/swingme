@@ -855,7 +855,20 @@ public class DesktopPane extends Canvas implements Runnable {
 			midlet.platformRequest( "tel:" + number );
 		}
 		catch (ConnectionNotFoundException e) {
-                        log("can not call "+e.toString());
+                        log("can not call: "+number+" "+e.toString());
+                        //#debug
+			e.printStackTrace();
+		}
+
+	}
+
+	public void openURL(String url) {
+
+		try {
+			midlet.platformRequest( url );
+		}
+		catch (ConnectionNotFoundException e) {
+                        log("can not open url: "+url+" "+e.toString());
                         //#debug
 			e.printStackTrace();
 		}
@@ -1063,6 +1076,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // this is to fix buttons not being released properly on some phones
 	protected void showNotify() {
+
+		desktop = this;
 
 		//System.out.println("showNotify");
 		keypad.clear();

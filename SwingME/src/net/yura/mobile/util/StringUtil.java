@@ -24,6 +24,9 @@ import java.util.Vector;
  */
 public class StringUtil {
 
+    /**
+     * @see java.lang.String#split(java.lang.String) String.split
+     */
 	public static String[] split(String value, String separator) {
 		int len = value.length();
 		if (len == 0)
@@ -42,7 +45,10 @@ public class StringUtil {
               parts.copyInto(array);
               return array;
 	}
-        
+
+    /**
+     * @see java.lang.String#split(java.lang.String) String.split
+     */
            public static String[] split(String value, char delimiter) {
                
 		int len = value.length();
@@ -61,6 +67,22 @@ public class StringUtil {
               String[] array = new String[parts.size()];
               parts.copyInto(array);
               return array;
+
+        }
+
+    /**
+     * @see java.io.String#replaceAll(java.lang.String, java.lang.String) String.replaceAll
+     */
+        public static String replaceAll(String text, String searchString, String replacementString) {
+
+            StringBuffer sBuffer = new StringBuffer();
+            int pos = 0;
+            while((pos = text.indexOf(searchString)) != -1){
+                sBuffer.append(text.substring(0, pos) + replacementString);
+                text = text.substring(pos + searchString.length());
+            }
+            sBuffer.append(text);
+            return sBuffer.toString();
 
         }
 
