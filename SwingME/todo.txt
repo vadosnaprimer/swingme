@@ -1,8 +1,6 @@
 TODO:
 
-!!!! fix repaint not working on the last row of table
-!!!! fix when pointerSelectedComponent is removed it still gets pointer events
-
+fix when pointerSelectedComponent is removed it still gets pointer events
 fix menu getting stuck in loop when u open and close it really quickly
 fix TextArea and TextField caret position for very last line and last char not working
 fix when switching orientation the textbox tooltip does not update
@@ -12,7 +10,6 @@ make a good theme for the demo app
 make sure all components support touch screen
  * Spinner
  * ScrollPane
-
 
 make bitmap Font support Unicode text
 make sure softkey mapping for strange devices works

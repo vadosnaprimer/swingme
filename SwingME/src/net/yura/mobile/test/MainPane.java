@@ -631,21 +631,41 @@ for (int c=0;c<4;c++) {
                         
                         // copy pasty from DefaultListCellRenderer
                         class MyCheckBox extends CheckBox implements ListCellRenderer {
-                            
+
+                            private boolean sel,foc;
                             private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
-                            protected Border normal,selected,focusedAndSelected;
+                            //protected Border normal,selected,focusedAndSelected;
                             
                             public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                                 
                                 setSelected( value instanceof Boolean?((Boolean)value).booleanValue() : false );
-                                
-                                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
+
+                                // a checkbox can be TICKED, but this is NOT the same as the cell being selected
+                                // so this isSelected is in ref to the cell in the table and not if the box is ticked or not
+                                sel = isSelected;
+                                foc = cellHasFocus;
+
+                                //setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
                                 setBackground(isSelected?colorSelected:colorNormal);
                                 setForeground(isSelected?foregroundSelected:foregroundNormal);
                                 
                                 return this;
                             }
-                            
+
+                            protected void paintBorder(Graphics g) {
+
+                                if (foc && activeBorder!=null) {
+                                    activeBorder.paintBorder(this, g, width, height);
+                                }
+                                else if (sel && selectedBorder!=null) {
+                                    selectedBorder.paintBorder(this, g, width, height);
+                                }
+                                else if (border!=null) {
+                                    border.paintBorder(this, g, width, height);
+                                }
+
+                            }
+
                             public String getName() {
                                 return "ListRenderer";
                             }
@@ -653,9 +673,10 @@ for (int c=0;c<4;c++) {
                             public void updateUI() {
                                     super.updateUI();
                                     Style st = DesktopPane.getDefaultTheme(this);
-                                    normal = st.getBorder( Style.ENABLED );
-                                    focusedAndSelected = st.getBorder( Style.FOCUSED | Style.SELECTED);
-                                    selected = st.getBorder( Style.SELECTED );
+
+                                    border = st.getBorder( Style.ENABLED );
+                                    activeBorder = st.getBorder( Style.FOCUSED | Style.SELECTED);
+                                    selectedBorder = st.getBorder( Style.SELECTED );
 
                                     colorNormal = st.getBackground( Style.ALL );
                                     colorSelected = st.getBackground( Style.SELECTED );

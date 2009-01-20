@@ -165,7 +165,7 @@ public class ComboBox extends Button implements ActionListener{
             if (nonSelectedImage == null){
 
                 int w = width - getFont().getHeight();
-                g.setColor( getBorderColor() );
+                g.setColor( foreground );
                 g.drawLine(w , 0, w , height);
 
                 int gp = 2; // gap between arrow and sides
@@ -178,14 +178,14 @@ public class ComboBox extends Button implements ActionListener{
 
             super.paintComponent(g);
 	}
-	
+	/*
         protected int getBorderColor() {
             if (border instanceof LineBorder) {
                 return ((LineBorder)border).getLineColor();
             }
             return 0;
         }
-        
+        */
 	public Image getSelectedImage() {
 		return selectedImage;
 	}

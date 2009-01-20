@@ -136,7 +136,7 @@ public class Table extends Panel {
     public void pointerEvent(int type, int x, int y) {
         super.pointerEvent(type, x, y);
         
-        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
+        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED || type == DesktopPane.RELEASED ) {
             
                 int x1 = 0,y1 = 0;
                 int currentRow = -1,currentCol = -1;
