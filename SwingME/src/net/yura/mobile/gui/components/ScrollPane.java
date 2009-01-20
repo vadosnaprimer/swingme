@@ -112,6 +112,8 @@ public class ScrollPane extends Panel {
             default: throw new RuntimeException();
         }
 
+        // TODO WHY IS THIS HERE????
+
 	//if (resetChild) {
 	        // Size of the scroll changed, we need to reset the component location
         	getComponent().setLocation(getViewPortX(), getViewPortY());
@@ -170,12 +172,9 @@ public class ScrollPane extends Panel {
 
 		//System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
 		//System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
-		//if(true)throw new RuntimeException();
 
 		int right = x+w;
 		int bottom = y+h;
-
-
 
 		int componentX = -component.getX();
 		int componentY = -component.getY();

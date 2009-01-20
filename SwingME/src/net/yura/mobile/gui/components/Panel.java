@@ -304,7 +304,6 @@ public class Panel extends Component {
 		}
 
 		if (newone!=null) {
-			
 
 			if (newone.isFocusable()) {
 			

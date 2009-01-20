@@ -181,11 +181,7 @@ public abstract class Component {
          */
 	public void paint(Graphics g) {
 		//System.out.println("paint "+this);
-		if (border != null) {
-			
-			border.paintBorder(this, g,width,height);
-			
-		}
+                paintBorder(g);
 		
 		if (background!=-1) {
 			
@@ -197,6 +193,19 @@ public abstract class Component {
 		paintComponent(g);
 		
 	}
+
+        /**
+         * @see javax.swing.JComponent#paintBorder(java.awt.Graphics) JComponent.paintBorder
+         */
+        protected void paintBorder(Graphics g) {
+
+            	if (border != null) {
+
+			border.paintBorder(this, g,width,height);
+
+		}
+
+        }
     
 	public abstract void paintComponent(Graphics g);
     
@@ -468,10 +477,10 @@ public abstract class Component {
 	}
 	
 	/**
-         * @param a X position inside CURRENT component
-         * @param b Y position inside CURRENT component
-         * @param c Width of area inside CURRENT component
-         * @param d Height of area inside CURRENT component
+         * @param x X position inside CURRENT component
+         * @param y Y position inside CURRENT component
+         * @param w Width of area inside CURRENT component
+         * @param h Height of area inside CURRENT component
          * @param smart use smart scroll, if true and the component is too far it will only scroll a bit and not all the way
          * @return if smart was on, returns true if the scroll did reach its destination
          * @see javax.swing.JComponent#scrollRectToVisible(java.awt.Rectangle) JComponent.scrollRectToVisible

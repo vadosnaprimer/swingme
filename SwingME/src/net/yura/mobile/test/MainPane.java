@@ -46,6 +46,7 @@ import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.BevelBorder;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
@@ -279,6 +280,11 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 Button b = new Button("a Button");
                                 b.setToolTipText("A ToolTip for a button");
 				componentTest.add( b );
+
+                                Button b2 = new Button("disabled");
+                                b2.setFocusable(false);
+				componentTest.add( b2 );
+
                                 componentTest.add( new CheckBox("a CheckBox") );
                                 componentTest.add( new RadioButton("a RadioButton") );
                                 
@@ -465,12 +471,13 @@ for (int c=0;c<4;c++) {
 				border = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 Label test1 = new Label("CompoundBorder test");
                                 test1.setBorder( new CompoundBorder(
-                                        new LineBorder(0x00FF0000, 3),
+                                        new BevelBorder(4,0x00FF0000,0x0000FFFF),
                                         new CompoundBorder(
                                             new LineBorder( 0x0000FF00, 0x00FFFFFF,4,true), 
                                             new LineBorder(0x000000FF, 3))) );
                                 border.add(test1);
-                                
+
+
                                 Label test2 = new Label("ImageBorder test");
                                 try {
                                     test2.setBorder(MatteBorder.load("/skin1.skin"));

@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.util.ButtonGroup;
@@ -41,8 +42,9 @@ public class Button extends Label implements ActionListener {
 		
 	}
 	
-	protected Border normalBorder;
 	protected Border activeBorder;
+        protected Border disabledBorder;
+        protected Border selectedBorder;
 	
         protected int normalForeground;
         protected int activeForeground;
@@ -85,6 +87,25 @@ public class Button extends Label implements ActionListener {
                 
                 setIcon(img);
 	}
+
+
+        protected void paintBorder(Graphics g) {
+
+            if (!focusable && disabledBorder!=null) {
+                disabledBorder.paintBorder(this, g, width, height);
+            }
+            else if (isSelected() && selectedBorder!=null) {
+                selectedBorder.paintBorder(this, g, width, height);
+            }
+            else if (isFocusOwner() && activeBorder!=null) {
+                activeBorder.paintBorder(this, g, width, height);
+            }
+            else {
+                super.paintBorder(g);
+            }
+
+        }
+
 
         public void setFocusable(boolean s) {
 		if (s) {
@@ -172,6 +193,7 @@ public class Button extends Label implements ActionListener {
     
         }
 
+        private boolean oldState;
         public void pointerEvent(int type, int x, int y) {
             super.pointerEvent(type, x, y);
             
@@ -179,11 +201,28 @@ public class Button extends Label implements ActionListener {
             int ch = getHeightWithBorder();
             int cx = (border!=null)?-border.getLeft():0; // cant use getXWithBorder();
             int cy = (border!=null)?-border.getTop():0; // cant use getYWithBorder();
-            
-            if (type == DesktopPane.RELEASED) {
-                if (x>=cx && x<=(cx+cw) && y>=cy && y<=(cy+ch)) {
-                    fireActionPerformed();
+
+            if (type == DesktopPane.PRESSED) {
+                oldState = selected;
+                selected = true;
+                repaint();
+            }
+            else if (x>=cx && x<=(cx+cw) && y>=cy && y<=(cy+ch)) {
+
+                if (type == DesktopPane.DRAGGED && !selected) {
+                    selected = true;
+                    repaint();
                 }
+                else if (type == DesktopPane.RELEASED) {
+                    selected = oldState;
+                    fireActionPerformed();
+                    repaint();
+                }
+
+            }
+            else if (type == DesktopPane.DRAGGED && selected) {
+                selected = oldState;
+                repaint();
             }
 
         }
@@ -193,29 +232,39 @@ public class Button extends Label implements ActionListener {
          */
 	public void fireActionPerformed() {
 
-            toggleSelection();
+            if (buttonGroup!=null) {
+                if (!selected) {
+                    setSelected(true);
+                }
+            }
+            else {
+                toggleSelection();
+            }
 
             if (al!=null) {
                     al.actionPerformed((actionCommand!=null)?actionCommand:getText());
             }
 
 	}
-         
+
+        /**
+         * This method is ONLY used when we do NOT have a button group
+         */
         protected void toggleSelection() {
-            setSelected(true);
+            setSelected(false);
         }
         
-        public void setNormalBorder(Border b) {
-            normalBorder = b;
-        }
-        
-	public void setActiveBorder(Border b) {
-		activeBorder = b;
-	}
+//        public void setNormalBorder(Border b) {
+//            normalBorder = b;
+//        }
+//
+//	public void setActiveBorder(Border b) {
+//		activeBorder = b;
+//	}
 
 	public void focusLost() {
                 super.focusLost();
-		super.setBorder(normalBorder);
+		//super.setBorder(normalBorder);
 		foreground = normalForeground;
 		
 		if (useSelectButton) {
@@ -227,7 +276,7 @@ public class Button extends Label implements ActionListener {
 
 	public void focusGained() {
                 super.focusGained();
-		super.setBorder(activeBorder);
+		//super.setBorder(activeBorder);
 		foreground = activeForeground;
 		
 		if (useSelectButton) {
@@ -272,8 +321,9 @@ public class Button extends Label implements ActionListener {
                 
                 Style st = DesktopPane.getDefaultTheme(this);
 
-                normalBorder = st.getBorder( Style.ENABLED );
+                selectedBorder = st.getBorder( Style.SELECTED );
                 activeBorder = st.getBorder( Style.FOCUSED );
+                disabledBorder = st.getBorder( Style.DISABLED );
                 
 		activeForeground = st.getForeground(Style.FOCUSED);
                 disabledForeground = st.getForeground(Style.DISABLED);

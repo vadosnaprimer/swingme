@@ -533,6 +533,8 @@ public class List extends Component implements ActionListener {
          */
     public void setSelectedIndex(int a) {
 
+        int old = current;
+
         current = a;
         if (current!=-1) {
             synchronized (renderer)
@@ -553,7 +555,7 @@ public class List extends Component implements ActionListener {
                     }
 
             }
-                    if (chl!=null) {
+                    if (chl!=null && old!=current) {
                         chl.changeEvent(a);
                     }
                     // TODO as scroll to always does a repaint

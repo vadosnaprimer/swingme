@@ -48,7 +48,7 @@ public class CheckBox extends RadioButton {
              super(text);
              setSelected(selected);
         }
-        
+
         protected void toggleSelection() {
             setSelected(!isSelected());
         }

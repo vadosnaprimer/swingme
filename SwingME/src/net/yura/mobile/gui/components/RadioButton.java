@@ -56,11 +56,11 @@ public class RadioButton extends Button {
             setSelected(b);
         }
 
-        public void fireActionPerformed() {
-            super.fireActionPerformed();
-            repaint();
+
+        protected void toggleSelection() {
+            setSelected(true);
         }
-        
+
         /**
          * @see javax.swing.AbstractButton#getSelectedIcon() AbstractButton.getSelectedIcon
          */

@@ -133,7 +133,7 @@ public class ComboBox extends Button implements ActionListener{
                 dropDown.setLocation(getXOnScreen(), y);
                 dropDown.setVisible(true);
                 
-
+                setSelected(true);
 
                 // TODO owner.setGlassPane(scroll);
 
@@ -150,7 +150,7 @@ public class ComboBox extends Button implements ActionListener{
 	private void createList() {
 		if (list==null) {
 			list = new List( new DefaultListCellRenderer());
-			list.setBackground(background);
+			//list.setBackground(background);
 			list.addActionListener(this);
 			scroll = new ScrollPane(list);
 			//scroll.setBorder(activeBorder);
@@ -222,8 +222,8 @@ public class ComboBox extends Button implements ActionListener{
 	public void actionPerformed(String actionCommand) {
             
                 setValue( list.getSelectedValue() );
-                
-		dropDown.setVisible(false);
+
+                dropDown.setVisible(false);
 		
 		super.fireActionPerformed();
 		

@@ -342,7 +342,7 @@ public class TextArea extends TextComponent {
         public void pointerEvent(int type, int x, int y) {
             super.pointerEvent(type, x, y);
 
-            if (type==DesktopPane.PRESSED) {
+            if (type==DesktopPane.RELEASED) {
             
                 int lineHeight = font.getHeight() + lineSpacing;
 
@@ -484,32 +484,6 @@ public class TextArea extends TextComponent {
         return "TextArea";
     }
 
-
-        // Crazy binary search!
-        public static int getStringCharOffset(String text, Font font,int xPixelOffset) {
-
-                int first = 0;
-                int upto  = text.length();
-                int mid=0;
-                while (first < upto) {
-                    mid = (first + upto) / 2;
-
-                    int charPos1 = font.getWidth(text.substring(0,mid));
-                    int charPos2 = charPos1 + font.getWidth(text.substring(mid,mid+1));
-
-                    if (xPixelOffset<charPos1) {
-                        upto = mid;
-                    }
-                    else if (xPixelOffset>charPos2) {
-                        first = mid + 1;
-                    }
-                    else {
-                        break;
-                    }
-                }
-                return mid;
-
-        }
 
 	/**
 	 * If w == Integer.MAX_VALUE, then it wont wrap on words

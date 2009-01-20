@@ -26,16 +26,18 @@ import net.yura.mobile.gui.components.Component;
 public class TabBorder implements Border {
 
     private int orient;
-    private int color1;
-    private int color2;
-    private int color3;
-    private int color4;
+    private int color1; // white
+    private int color2; // dark gray
+    private int color3; // very dark gray
+    private int color4; // light gray
     
-    public TabBorder(int a) {
-        color1 = 0x00FFFFFF;
-        color2 = 0x00AAAAAA;
-        color3 = 0x00000000;
-        color4 = 0x00EEEEEE;
+    public TabBorder(int a, int white,int darker1,int darker2,int darker3) {
+        
+        color3 = darker3;
+        color2 = darker2;
+        color4 = darker1;
+        color1 = white;
+
         orient = a;
     }
     

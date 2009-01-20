@@ -60,7 +60,21 @@ public class TextField extends TextComponent {
                 }
 		g.setClip(oldClipX, oldClipY, oldClipW, oldClipH);
 	}
-    
+
+        public void pointerEvent(int type, int x, int y) {
+            super.pointerEvent(type, x, y);
+
+            if (type==DesktopPane.RELEASED) {
+
+                String text = getText();
+
+                // TODO take into account centre and right aligh
+                int mid = getStringCharOffset(text,font,x -offset);
+
+                setCaretPosition(mid);
+            }
+        }
+
         public void setCaretPosition(int a) {
             
             super.setCaretPosition(a);
