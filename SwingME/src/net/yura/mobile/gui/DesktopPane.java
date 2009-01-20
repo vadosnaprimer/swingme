@@ -1007,7 +1007,6 @@ public class DesktopPane extends Canvas implements Runnable {
             try {
 
                 if (type == PRESSED) {
-
                     // check if pressing on a softkey
                     for (int c=0;c<componentCommands.length;c++) {
                         Component comp = getSoftkeyRenderer(c);
@@ -1021,13 +1020,17 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
 
-
                     pointerComponent = currentWindow.getComponentAt( x - currentWindow.getX(), y - currentWindow.getY());
                 }
 
                 if (pointerComponent!=null) {
                     pointerComponent.pointerEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen());
                 }
+
+                if (type == RELEASED) {
+                    pointerComponent = null;
+                }
+
             }
             catch(Throwable th) {
                 //#debug

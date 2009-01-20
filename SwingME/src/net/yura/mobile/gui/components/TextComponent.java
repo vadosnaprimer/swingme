@@ -170,8 +170,6 @@ public abstract class TextComponent extends Component implements ActionListener,
                         text.deleteCharAt(caretPosition-1);
                         changedUpdate(caretPosition,1);
                         setCaretPosition(caretPosition-1);
-
-                        
                     }
                     
 		}
@@ -346,6 +344,7 @@ public abstract class TextComponent extends Component implements ActionListener,
          * @see javax.swing.text.JTextComponent#setCaretPosition(int) JTextComponent.setCaretPosition
          */
         public void setCaretPosition(int a) {
+
             caretPosition = a;
             repaint();
             updateSoftKeys();

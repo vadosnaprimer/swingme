@@ -136,7 +136,7 @@ public class Table extends Panel {
     public void pointerEvent(int type, int x, int y) {
         super.pointerEvent(type, x, y);
         
-        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED || type == DesktopPane.RELEASED ) {
+        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED ) {
             
                 int x1 = 0,y1 = 0;
                 int currentRow = -1,currentCol = -1;
@@ -162,7 +162,7 @@ public class Table extends Panel {
                     editCellAt(currentRow,currentCol);
                     
                     // dont pass clicks onto textComponents
-                    if (editorComp!=null && !(editorComp instanceof TextComponent)) {
+                    if (editorComp!=null) { //  && !(editorComp instanceof TextComponent)
                         // now pass on the event onto the component
                         DesktopPane.getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
                     }
@@ -276,9 +276,8 @@ public class Table extends Panel {
                 editorComp.requestFocusInWindow();
             }
             //selectable = false;
-            repaint();
         }
-        
+        repaint();
     }
     /**
      * @see javax.swing.JTable#removeEditor() JTable.removeEditor
