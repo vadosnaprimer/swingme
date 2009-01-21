@@ -29,7 +29,7 @@ import net.yura.mobile.util.ImageUtil;
  * @author Yura Mamyrin
  * @see javax.swing.JScrollPane
  */
-public class ScrollPane extends Panel {
+public class ScrollPane extends Panel implements Runnable {
 
         public static final int MINIMUM_THUMB_SIZE=3;
 
@@ -867,4 +867,175 @@ public class ScrollPane extends Panel {
                 upArrow = (Image)theme.getProperty("upArrow", Style.ALL);
                 downArrow = (Image)theme.getProperty("downArrow", Style.ALL);
         }
+
+
+        /**
+         * @param x the x coordinate
+         * @param y the y coordinate 
+         * @return the top-most child is returned
+         * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
+         */
+        public Component getComponentAt(int x, int y) {
+
+            	int viewX=getViewPortX();
+		int viewY=getViewPortY();
+		int viewHeight=getViewPortHeight();
+		int viewWidth=getViewPortWidth(viewHeight);
+
+		if ( isPointInsideRect(x,y,viewX,viewY,viewWidth,viewHeight) ) {
+
+			return super.getComponentAt(x,y);
+
+		}
+
+		return this;
+	}
+
+	private boolean isPointInsideRect(int x,int y,int viewX,int viewY,int viewWidth,int viewHeight) {
+
+		return x>=viewX && x<(viewX+viewWidth) && y>=viewY && y<(viewY+viewHeight);
+
+	}
+
+        public void pointerEvent(int type, int pointX, int pointY) {
+
+		if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
+
+
+		    int viewX = getViewPortX();
+		    int viewY = getViewPortY();
+		    int viewHeight=getViewPortHeight();
+		    int viewWidth=getViewPortWidth(viewHeight);
+
+
+		    if (mode == MODE_SCROLLBARS) {
+
+			int x1 = viewX + viewWidth;
+			int y1 = viewY;
+			int w1 = width - viewX - viewWidth;
+			int h1 = viewHeight;
+
+			int x2 = viewX;
+			int y2 = viewY + viewHeight;
+			int w2 = viewWidth;
+			int h2 = height - viewY - viewHeight;
+
+			int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
+			int buttonWidth = (trackTop == null || trackTop.getHeight() >h2)?h2:trackTop.getHeight();
+
+                	if ( isPointInsideRect(pointX, pointY,   x1, y1, w1, buttonHeight ) ) {
+
+				go = true;
+				direction = Graphics.TOP;
+
+			}
+                	else if ( isPointInsideRect(pointX, pointY,   x1, y1+h1-buttonHeight, w1, buttonHeight) ) {
+
+				go = true;
+				direction = Graphics.BOTTOM;
+
+			}
+                	else if ( isPointInsideRect(pointX, pointY,   x2, y2, buttonWidth, h2 ) ) {
+
+				go = true;
+				direction = Graphics.LEFT;
+
+			}
+                	else if ( isPointInsideRect(pointX, pointY,   x2+w2-buttonWidth, y2, buttonWidth, h2 ) ) {
+
+				go = true;
+				direction = Graphics.RIGHT;
+
+			}
+
+
+		    }
+		    else if (mode == MODE_SCROLLARROWS) {
+
+			if (getComponent().getWidth() > width) {
+
+				if ( isPointInsideRect(pointX, pointY,   0, 0, barThickness, height )) {
+
+					go = true;
+					direction = Graphics.LEFT;
+
+				}
+				else if ( isPointInsideRect(pointX, pointY,   width - barThickness , 0, barThickness, height )) {
+
+					go = true;
+					direction = Graphics.RIGHT;
+
+				}
+
+			}
+
+			if (getComponent().getHeight() > height) {
+
+				if ( isPointInsideRect(pointX, pointY,   0, 0, width, barThickness)) {
+
+					go = true;
+					direction = Graphics.TOP;
+
+				}
+				else if ( isPointInsideRect(pointX, pointY,   0,height-barThickness, width, barThickness)) {
+
+					go = true;
+					direction = Graphics.BOTTOM;
+
+				}
+
+			}
+
+		    }
+
+		    if (go) {
+
+			new Thread(this).start();
+
+		    }
+
+		}
+		else if (type == DesktopPane.RELEASED) {
+
+			go = false;
+
+
+		}
+
+	}
+
+	private int direction;
+	private boolean go;
+	private int jump = 10;
+
+	public void run() {
+
+		while (go) {
+
+			int cX = getViewPortX()-getComponent().getX();
+			int cY = getViewPortY()-getComponent().getY();
+			int viewHeight=getViewPortHeight();
+			int viewWidth=getViewPortWidth(viewHeight);
+
+			switch(direction) {
+
+				case Graphics.TOP: cY=cY-jump; break;
+				case Graphics.BOTTOM: cY=cY+jump; break;
+				case Graphics.LEFT: cX=cX-jump; break;
+				case Graphics.RIGHT: cX=cX+jump; break;
+
+			}
+
+			makeVisible(cX,cY,viewWidth,viewHeight,false);
+
+                	synchronized (this) {
+				try {
+	                        	wait(100);
+				}
+				catch(InterruptedException e) {}
+                	}
+
+		}
+	}
+
 }
