@@ -71,7 +71,7 @@ public class StringUtil {
         }
 
     /**
-     * @see java.io.String#replaceAll(java.lang.String, java.lang.String) String.replaceAll
+     * @see java.lang.String#replaceAll(java.lang.String, java.lang.String) String.replaceAll
      */
         public static String replaceAll(String text, String searchString, String replacementString) {
 
