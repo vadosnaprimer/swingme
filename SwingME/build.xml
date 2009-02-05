@@ -5,23 +5,6 @@
 <project name="SwingME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
-
-
-
-	<target name="demo" description="demo compile">
-		<delete dir="build" includeemptydirs="true"/>
-		<delete dir="dist" includeemptydirs="true"/>
-
-		<mkdir dir="build"/>
-		<mkdir dir="dist"/>
-
-		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="lib/me4se.jar:lib/kxml2.jar"/>
-		<copy todir="build">
-			<fileset dir="resources" includes="**/*.*"/>
-		</copy>
-		<jar destfile="dist/SwingME.jar" basedir="build"/>
-	</target>
-
     <!--
 
             There exist several targets which are by default empty and which can be

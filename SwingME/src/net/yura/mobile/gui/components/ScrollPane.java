@@ -899,8 +899,6 @@ public class ScrollPane extends Panel implements Runnable {
 
         public void pointerEvent(int type, int pointX, int pointY) {
 
-		if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
-
 
 		    int viewX = getViewPortX();
 		    int viewY = getViewPortY();
@@ -908,20 +906,44 @@ public class ScrollPane extends Panel implements Runnable {
 		    int viewWidth=getViewPortWidth(viewHeight);
 
 
-		    if (mode == MODE_SCROLLBARS) {
+
+                        // vertical
 
 			int x1 = viewX + viewWidth;
 			int y1 = viewY;
 			int w1 = width - viewX - viewWidth;
 			int h1 = viewHeight;
 
+                        int value1 = -getComponent().getY();
+                        int extent1 = viewHeight;
+                        int max1 = getComponent().getHeight();
+
+			int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
+			int space1 = h1 - (buttonHeight*2);
+
+                        // horizontal
+
 			int x2 = viewX;
 			int y2 = viewY + viewHeight;
 			int w2 = viewWidth;
 			int h2 = height - viewY - viewHeight;
 
-			int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
+                        int value2 = -getComponent().getX();
+                        int extent2 = viewWidth;
+                        int max2 = getComponent().getWidth();
+
 			int buttonWidth = (trackTop == null || trackTop.getHeight() >h2)?h2:trackTop.getHeight();
+                        int space2 = w2 - (buttonWidth*2);
+
+
+
+
+		if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
+
+
+
+
+		    if (mode == MODE_SCROLLBARS) {
 
                 	if ( isPointInsideRect(pointX, pointY,   x1, y1, w1, buttonHeight ) ) {
 
@@ -947,7 +969,20 @@ public class ScrollPane extends Panel implements Runnable {
 				direction = Graphics.RIGHT;
 
 			}
+			else if ( isPointInsideRect(pointX, pointY,x1, buttonHeight + (space1*value1)/max1 ,w1,(extent1*space1)/max1 ) ) { // thumb on the right
 
+				direction = Graphics.RIGHT;
+				scrollDrag = getViewPortY()-getComponent().getY();
+				scrollStart = pointY;
+
+			}
+			else if ( isPointInsideRect(pointX, pointY, buttonWidth + (space2*value2)/max2 ,y2,(extent2*space2)/max2,h2 ) ) { // thumb at the bottom
+
+				direction = Graphics.BOTTOM;
+				scrollDrag = getViewPortX()-getComponent().getX();
+				scrollStart = pointX;
+
+			}
 
 		    }
 		    else if (mode == MODE_SCROLLARROWS) {
@@ -995,19 +1030,46 @@ public class ScrollPane extends Panel implements Runnable {
 		    }
 
 		}
+		else if (type == DesktopPane.DRAGGED) {
+
+			if (mode == MODE_SCROLLBARS && !go) {
+
+				if (direction==Graphics.RIGHT) {
+
+					int cX = getViewPortX()-getComponent().getX();
+					int cY = scrollDrag + (max1*(pointY-scrollStart))/space1;
+
+					makeVisible(cX,cY,viewWidth,viewHeight,false);
+
+				}
+				else if (direction==Graphics.BOTTOM) {
+
+					int cX = scrollDrag + (max2*(pointX-scrollStart))/space2;
+					int cY = getViewPortY()-getComponent().getY();
+
+					makeVisible(cX,cY,viewWidth,viewHeight,false);
+				}
+			}
+
+		}
 		else if (type == DesktopPane.RELEASED) {
 
 			go = false;
-
+			direction = 0;
 
 		}
 
 	}
 
+	private int scrollDrag;
+	private int scrollStart;
+
 	private int direction;
 	private boolean go;
 	private int jump = 10;
 
+	// this can also be done by kidnapping the animation thread
+	// and then giving it back when it is not needed any more
 	public void run() {
 
 		while (go) {
