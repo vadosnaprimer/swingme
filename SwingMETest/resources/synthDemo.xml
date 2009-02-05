@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE synth SYSTEM "SynthME.dtd">
+<synth>
+
+    <style id="backingStyle">
+	<state>
+	    <font name="Dialog" size="14"/>
+	    <color value="#D8D987" type="BACKGROUND"/>
+	    <color value="#FF0000" type="FOREGROUND"/>
+	</state>
+    </style>
+    <bind style="backingStyle" key=".*"/>
+
+
+    <style id="scrollpane">
+
+      <imageIcon id="thumb_top" path="/thumb.png" x="0" y="0" width="14" height="14"/>
+      <imageIcon id="thumb_fill" path="/thumb.png" x="0" y="14" width="14" height="14"/>
+      <imageIcon id="thump_bottom" path="/thumb.png" x="0" y="28" width="14" height="14"/>
+
+      <imageIcon id="track_top" path="/track.png" x="0" y="0" width="14" height="22"/>
+      <imageIcon id="track_fill" path="/track.png" x="0" y="22" width="14" height="12"/>
+      <imageIcon id="track_bottom" path="/track.png" x="0" y="34" width="14" height="22"/>
+
+      <state>
+<!--
+	<color id="track_fill" value="#FFFFFF"/>
+	<color id="thumb_fill" value="#000000"/>
+-->
+        <property key="thumbTop" value="thumb_top"/>
+        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbFill" value="thumb_fill"/>
+        <property key="trackTop" value="track_top"/>
+        <property key="trackBottom" value="track_bottom"/>
+        <property key="trackFill" value="track_fill"/>
+
+      </state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
+
+    <style id="textfield">
+	<insets top="4" left="6" bottom="4" right="6"/>
+	<state>
+	    <font name="Verdana" size="14"/>
+	    <color value="#D2DFF2" type="BACKGROUND"/>       
+	    <color value="#000000" type="FOREGROUND"/>
+	<imagePainter path="/textfield.png" sourceInsets="4 6 4 6" paintCenter="false"/>
+	</state>
+    </style>
+    <bind style="textfield" key="TextField"/>
+
+
+    <style id="button">
+	<insets top="5" left="10" bottom="5" right="10"/>
+	<opaque value="false"/>
+	<state>
+	<property key="Button.textShiftOffset" type="integer" value="1"/>
+	    <imagePainter method="buttonBackground" path="/button.png" sourceInsets="12 15 12 15" />
+	    <color type="BORDERFILL" value="#296ED3"/>
+	    <font name="Dialog" size="16"/>
+	    <color type="FOREGROUND" value="#FFFFFF"/>
+	</state>
+	<state value="FOCUSED">
+	    <imagePainter path="/button_over.png" sourceInsets="12 15 12 15" />
+	    <color type="BORDERFILL" value="#F37529"/>
+	</state>
+	<!-- not supported yet
+        <state value="PRESSED"> 
+	    <imagePainter path="/button_press.png" sourceInsets="12 15 12 15" />
+	</state>
+        -->
+    </style>
+    <bind style="button" key="Button"/>
+
+
+    <style id="checkbox">
+	<imageIcon id="check_off" path="/checkbox_off.png"/>
+	<imageIcon id="check_on" path="/checkbox_on.png"/>
+	<state>
+	    <property key="icon" value="check_off"/>
+	</state>
+	<state value="SELECTED">
+	    <property key="icon" value="check_on"/>
+	</state>
+    </style>
+    <bind style="checkbox" key="CheckBox"/>
+
+</synth>

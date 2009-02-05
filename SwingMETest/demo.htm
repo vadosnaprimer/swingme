@@ -1,0 +1,29 @@
+<html>
+<head>
+<title>yura.net Swing ME Demo</title>
+</head>
+<body bgcolor="#F9F9F9">
+
+<h1>yura.net Swing ME Demo</h1>
+
+<applet id="midlet" code="org.me4se.MIDletRunner" archive="lib/SwingME.jar,lib/me4se.jar,dist/SwingMETest.jar" WIDTH="176" HEIGHT="243">
+	<param name="MIDlet" value="net.yura.mobile.test.MyMidlet">
+</applet>
+
+<p>Use F1 and F2 keys for the soft keys</p>
+
+<script type="text/javascript">
+
+function swap() {
+	height=document.getElementById('midlet').height
+	width=document.getElementById('midlet').width
+	document.getElementById('midlet').height=width
+	document.getElementById('midlet').width=height
+}
+
+</script> 
+
+<a href="javascript:swap()">TEST TEST</a>
+
+</body>
+</html>
