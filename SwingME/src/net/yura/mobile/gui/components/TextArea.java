@@ -348,6 +348,7 @@ public class TextArea extends TextComponent {
 
                 int line = y / lineHeight;
                 if (line > lines.length) { line = lines.length; }
+                else if (line < 0) { line = 0; }
                 
                 gotoLine(line,x);
                 

@@ -24,6 +24,7 @@ import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.ImageUtil;
+import net.yura.mobile.util.Graphics2D;
 
 /**
  * @author Yura Mamyrin
@@ -413,147 +414,42 @@ public class ScrollPane extends Panel implements Runnable {
                 int componentWidth = getComponent().getWidth();
                 int componentHeight = getComponent().getHeight();
 
-		// NEEDS to be same check as in getViewPortHeight
-		if ( componentWidth > (width-viewX) ) {
 
-                    drawScrollBar(g,true,
-                            viewX,
+		// NEEDS to be same check as in getViewPortWidth
+		if ( componentHeight > viewHeight ) { // vertical
+
+                    drawScrollBar(new Graphics2D(g,Sprite.TRANS_NONE),
+                            viewX + viewWidth,
+                            viewY,
+                            width - viewX - viewWidth,
+                            viewHeight,
+                            viewY-getComponent().getY(),
+                            viewHeight,
+                            componentHeight
+                            );
+		}
+
+		// NEEDS to be same check as in getViewPortHeight
+		if ( componentWidth > (width-viewX) ) { // horizontal
+
+                    drawScrollBar(new Graphics2D(g,Sprite.TRANS_MIRROR_ROT270),
                             viewY + viewHeight,
-                            viewWidth,
+                            viewX,
                             height - viewY - viewHeight,
-                            -getComponent().getX(),
+                            viewWidth,
+                            viewX-getComponent().getX(),
                             viewWidth,
                             componentWidth
                             );
 		}
 
-		// NEEDS to be same check as in getViewPortWidth
-		if ( componentHeight > viewHeight ) {
-
-                    drawScrollBar(g,false,
-                            viewX + viewWidth,
-                            viewY,
-                            width - viewX - viewWidth,
-                            viewHeight,
-                            -getComponent().getY(),
-                            viewHeight,
-                            componentHeight
-                            );
-		}
 
 	}
 
         /**
          * @see javax.swing.JScrollBar#JScrollBar(int, int, int, int, int) JScrollBar.JScrollBar
          */
-    public void drawScrollBar(Graphics g, boolean horizontal,int x,int y,int w,int h,int value,int extent, int max) {
-
-        if (horizontal) {
-
-                int startx;
-                int extentw;
-                int box;
-
-                // DRAW ARROWS
-                // #############################################################
-
-                if (trackTop!=null) {
-
-                    int y1 = y + (h-trackTop.getWidth())/2;
-                    g.drawRegion(trackTop, 0, 0, trackTop.getWidth(), trackTop.getHeight(), Sprite.TRANS_MIRROR_ROT270 , x, y1, Graphics.TOP | Graphics.LEFT);
-                    g.drawRegion(trackBottom, 0, 0, trackBottom.getWidth(), trackBottom.getHeight(), Sprite.TRANS_MIRROR_ROT270, x + w - trackBottom.getHeight(), y1, Graphics.TOP | Graphics.LEFT);
-
-                    startx = trackTop.getHeight();
-                    extentw = w - startx - trackBottom.getHeight();
-                    box = (trackTop.getHeight() >h)?h:trackTop.getHeight();
-
-                }
-                else {
-
-                    g.setColor(scrollTrackCol);
-                    g.fillRect(x, y, h, h);
-                    g.fillRect(x+w-h, y, h, h);
-
-                    g.setColor(scrollBarCol);
-                    g.drawRect(x, y, h - 1, h - 1);
-                    g.drawRect(x+w-h, y, h - 1, h - 1);
-
-                    int bararroww = h - 4;
-                    int bararrowh = (h - 4) / 2;
-                    int offset = (h - bararroww)/2 +1;
-
-                    drawLeftArrow(g, x+offset, y + 2, bararrowh, bararroww);
-                    drawRightArrow(g, x+w - h + offset, y + 2, bararrowh, bararroww);
-
-                    startx = h;
-                    extentw = w - startx - h;
-                    box = h;
-
-                }
-
-
-                // draw the track fill color
-                // #############################################################
-
-                if (trackFill!=null) {
-
-                    ImageUtil.fillArea(g, trackFill, 0, 0, trackFill.getWidth(), trackFill.getHeight(),
-                            startx , y + (h-trackFill.getWidth())/2, extentw , trackFill.getWidth(),
-                            Sprite.TRANS_MIRROR_ROT270);
-
-                }
-                else {
-                    g.setColor(scrollTrackCol);
-                    g.fillRect(startx, y, extentw, h);
-
-                    // draw the lines either side
-                    g.setColor(scrollBarCol);
-                    g.drawLine(startx, y, startx + extentw -1, y);
-                    g.drawLine(startx, y+h-1, startx + extentw -1, y+h-1);
-
-                }
-
-
-
-                // draw the thumb!
-                // #############################################################
-
-                int space = w - box * 2 - 1;
-                extentw = (extent*space)/max;
-                int min = (thumbTop==null)?MINIMUM_THUMB_SIZE:thumbTop.getHeight()+thumbBottom.getHeight();
-                if (extentw < min) {
-                    extentw = min;
-                    space = space-extentw;
-                    max = max-extent;
-                }
-                startx = x+box+1+ (space*value)/max;
-
-                if (thumbTop!=null) {
-                    int y1 = y + (h-thumbTop.getWidth())/2;
-                    g.drawRegion(thumbTop, 0, 0, thumbTop.getWidth(), thumbTop.getHeight(), Sprite.TRANS_MIRROR_ROT270 , startx, y1, Graphics.TOP | Graphics.LEFT);
-                    g.drawRegion(thumbBottom, 0, 0, thumbBottom.getWidth(), thumbBottom.getHeight(), Sprite.TRANS_MIRROR_ROT270, startx + extentw - thumbBottom.getHeight(), y1, Graphics.TOP | Graphics.LEFT);
-                    startx = startx + thumbTop.getWidth();
-                    extentw = extentw - min;
-                }
-
-
-                if (thumbFill!=null) {
-
-                    ImageUtil.fillArea(g, thumbFill, 0, 0, thumbFill.getWidth(), thumbFill.getHeight(),
-                            startx , y + (h-thumbFill.getWidth())/2, extentw , thumbFill.getWidth(),
-                            Sprite.TRANS_MIRROR_ROT270);
-                }
-                else {
-                    g.setColor(scrollBarCol);
-                    g.fillRect(
-                            startx,
-                            y + 2,
-                            extentw,
-                            h - 4
-                    );
-                }
-        }
-        else {
+    public void drawScrollBar(Graphics2D g, int x,int y,int w,int h,int value,int extent, int max) {
 
                 int starty;
                 int extenth;
@@ -587,8 +483,20 @@ public class ScrollPane extends Panel implements Runnable {
                     int bararrowh = (w - 4) / 2;
                     int offset = (w - bararroww)/2 +1;
 
-                    drawUpArrow(g, x + 2, y+offset, bararroww, bararrowh);
-                    drawDownArrow(g, x + 2, y+h -w +offset, bararroww, bararrowh);
+		    g.fillTriangle(	x + 2+(bararroww/2), y+offset,
+					x + 2, y+offset+bararrowh,
+					x + 2+bararroww, y+offset+bararrowh);
+
+
+		    g.fillTriangle(	x + 2+(bararroww/2), y+h -w +offset+bararrowh,
+					x + 2, y+h -w +offset,
+					x + 2+bararroww, y+h -w +offset);
+
+
+
+		    // old way of doing this
+                    //drawUpArrow(g, x + 2, y+offset, bararroww, bararrowh);
+                    //drawDownArrow(g, x + 2, y+h -w +offset, bararroww, bararrowh);
 
                     starty = w;
                     extenth = h - starty - w;
@@ -602,7 +510,7 @@ public class ScrollPane extends Panel implements Runnable {
                 if (trackFill!=null) {
 
                     ImageUtil.fillArea(g, trackFill, 0, 0, trackFill.getWidth(), trackFill.getHeight(),
-                            x + (w-trackFill.getWidth())/2 , starty, trackFill.getWidth(), extenth);
+                            x + (w-trackFill.getWidth())/2 , starty, trackFill.getWidth(), extenth,Sprite.TRANS_NONE);
 
                 }
                 else {
@@ -640,7 +548,7 @@ public class ScrollPane extends Panel implements Runnable {
                 if (thumbFill!=null) {
 
                     ImageUtil.fillArea(g, thumbFill, 0, 0, thumbFill.getWidth(), thumbFill.getHeight(),
-                            x + (w-thumbFill.getWidth())/2 , starty, thumbFill.getWidth(), extenth);
+                            x + (w-thumbFill.getWidth())/2 , starty, thumbFill.getWidth(), extenth,Sprite.TRANS_NONE);
 
                 }
                 else {
@@ -653,8 +561,6 @@ public class ScrollPane extends Panel implements Runnable {
                     );
                 }
 
-
-        }
     }
 
 
@@ -897,6 +803,61 @@ public class ScrollPane extends Panel implements Runnable {
 
 	}
 
+	public void doClickInScrollbar(int x1,int y1,int w1,int h1,int value1,int extent1, int max1,
+				int pointX,int pointY,
+				int d1,int d2,int d3
+				) {
+
+
+			int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
+			int space1 = h1 - (buttonHeight*2);
+
+
+                	if ( isPointInsideRect(     pointX, pointY, x1, y1, w1, buttonHeight ) ) {
+
+				go = true;
+				direction = d1;
+				jump = 10;
+
+			}
+			else if ( isPointInsideRect(pointX, pointY, x1, y1+buttonHeight ,w1, (space1*value1)/max1 ) ) {
+
+				go = true;
+				direction = d1;
+				jump = space1;
+
+			}
+			else if ( isPointInsideRect(pointX, pointY, x1, y1+buttonHeight + (space1*value1)/max1 ,w1,(extent1*space1)/max1 ) ) { // thumb on the right
+
+				direction = d3;
+				scrollDrag = value1;
+				scrollStart = pointY;
+
+			}
+			else if ( isPointInsideRect(pointX, pointY, x1, y1+buttonHeight + (space1*(value1+extent1))/max1  ,w1, h1-( buttonHeight*2 + (space1*(value1+extent1))/max1 ) ) ) {
+
+				go = true;
+				direction = d2;
+				jump = space1;
+
+			}
+                	else if ( isPointInsideRect(pointX, pointY, x1, y1+h1-buttonHeight, w1, buttonHeight) ) {
+
+				go = true;
+				direction = d2;
+				jump = 10;
+
+			}
+
+
+			if (go) {
+
+				new Thread(this).start();
+
+			}
+
+	}
+
         public void pointerEvent(int type, int pointX, int pointY) {
 
 
@@ -906,86 +867,44 @@ public class ScrollPane extends Panel implements Runnable {
 		    int viewWidth=getViewPortWidth(viewHeight);
 
 
-
-                        // vertical
-
-			int x1 = viewX + viewWidth;
-			int y1 = viewY;
-			int w1 = width - viewX - viewWidth;
-			int h1 = viewHeight;
-
-                        int value1 = -getComponent().getY();
-                        int extent1 = viewHeight;
-                        int max1 = getComponent().getHeight();
-
-			int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
-			int space1 = h1 - (buttonHeight*2);
-
-                        // horizontal
-
-			int x2 = viewX;
-			int y2 = viewY + viewHeight;
-			int w2 = viewWidth;
-			int h2 = height - viewY - viewHeight;
-
-                        int value2 = -getComponent().getX();
-                        int extent2 = viewWidth;
-                        int max2 = getComponent().getWidth();
-
-			int buttonWidth = (trackTop == null || trackTop.getHeight() >h2)?h2:trackTop.getHeight();
-                        int space2 = w2 - (buttonWidth*2);
-
-
-
-
 		if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
-
-
 
 
 		    if (mode == MODE_SCROLLBARS) {
 
-                	if ( isPointInsideRect(pointX, pointY,   x1, y1, w1, buttonHeight ) ) {
+			doClickInScrollbar(
+                            viewX + viewWidth,
+                            viewY,
+                            width - viewX - viewWidth,
+                            viewHeight,
+                            viewY-getComponent().getY(),
+                            viewHeight,
+                            getComponent().getHeight(),
 
-				go = true;
-				direction = Graphics.TOP;
+			    pointX,pointY,
 
-			}
-                	else if ( isPointInsideRect(pointX, pointY,   x1, y1+h1-buttonHeight, w1, buttonHeight) ) {
+			    Graphics.TOP,Graphics.BOTTOM,Graphics.RIGHT
+			);
 
-				go = true;
-				direction = Graphics.BOTTOM;
+			doClickInScrollbar(
+                            viewY + viewHeight,
+                            viewX,
+                            height - viewY - viewHeight,
+                            viewWidth,
+                            viewX-getComponent().getX(),
+                            viewWidth,
+                            getComponent().getWidth(),
 
-			}
-                	else if ( isPointInsideRect(pointX, pointY,   x2, y2, buttonWidth, h2 ) ) {
+			    pointY,pointX,
 
-				go = true;
-				direction = Graphics.LEFT;
+			    Graphics.LEFT,Graphics.RIGHT,Graphics.BOTTOM
+			);
 
-			}
-                	else if ( isPointInsideRect(pointX, pointY,   x2+w2-buttonWidth, y2, buttonWidth, h2 ) ) {
-
-				go = true;
-				direction = Graphics.RIGHT;
-
-			}
-			else if ( isPointInsideRect(pointX, pointY,x1, buttonHeight + (space1*value1)/max1 ,w1,(extent1*space1)/max1 ) ) { // thumb on the right
-
-				direction = Graphics.RIGHT;
-				scrollDrag = getViewPortY()-getComponent().getY();
-				scrollStart = pointY;
-
-			}
-			else if ( isPointInsideRect(pointX, pointY, buttonWidth + (space2*value2)/max2 ,y2,(extent2*space2)/max2,h2 ) ) { // thumb at the bottom
-
-				direction = Graphics.BOTTOM;
-				scrollDrag = getViewPortX()-getComponent().getX();
-				scrollStart = pointX;
-
-			}
 
 		    }
 		    else if (mode == MODE_SCROLLARROWS) {
+
+			jump = 20;
 
 			if (getComponent().getWidth() > width) {
 
@@ -1021,18 +940,47 @@ public class ScrollPane extends Panel implements Runnable {
 
 			}
 
+			if (go) {
+
+				new Thread(this).start();
+
+			}
+
 		    }
 
-		    if (go) {
 
-			new Thread(this).start();
-
-		    }
 
 		}
 		else if (type == DesktopPane.DRAGGED) {
 
 			if (mode == MODE_SCROLLBARS && !go) {
+
+				// vertical
+
+				int x1 = viewX + viewWidth;
+				int y1 = viewY;
+				int w1 = width - viewX - viewWidth;
+				int h1 = viewHeight;
+                        	int value1 = viewY-getComponent().getY();
+                        	int extent1 = viewHeight;
+                        	int max1 = getComponent().getHeight();
+
+				int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
+				int space1 = h1 - (buttonHeight*2);
+
+                        	// horizontal
+
+				int x2 = viewX;
+				int y2 = viewY + viewHeight;
+				int w2 = viewWidth;
+				int h2 = height - viewY - viewHeight;
+                        	int value2 = viewX-getComponent().getX();
+                        	int extent2 = viewWidth;
+                        	int max2 = getComponent().getWidth();
+
+				int buttonWidth = (trackTop == null || trackTop.getHeight() >h2)?h2:trackTop.getHeight();
+                        	int space2 = w2 - (buttonWidth*2);
+
 
 				if (direction==Graphics.RIGHT) {
 
@@ -1066,7 +1014,7 @@ public class ScrollPane extends Panel implements Runnable {
 
 	private int direction;
 	private boolean go;
-	private int jump = 10;
+	private int jump;
 
 	// this can also be done by kidnapping the animation thread
 	// and then giving it back when it is not needed any more

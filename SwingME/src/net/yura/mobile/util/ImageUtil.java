@@ -27,7 +27,7 @@ import javax.microedition.lcdui.game.Sprite;
 public class ImageUtil {
 
 
-    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
+    public static void fillArea(Graphics2D g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
         
         if (src_w==0 || src_h==0 || dest_w==0 || dest_h==0) return;
         
@@ -47,13 +47,13 @@ public class ImageUtil {
                 g.drawRegion(img, src_x,  src_y, src_w, src_h, t, pos_x, pos_y,Graphics.TOP|Graphics.LEFT);
             }
         }
-        
+
         g.setClip(cx,cy,cw,ch);
     }
     
     public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
         
-        fillArea(g, img, src_x, src_y, src_w, src_h, dest_x, dest_y, dest_w, dest_h, Sprite.TRANS_NONE );
+        fillArea(new Graphics2D(g,Sprite.TRANS_NONE), img, src_x, src_y, src_w, src_h, dest_x, dest_y, dest_w, dest_h, Sprite.TRANS_NONE );
         
     }
     
