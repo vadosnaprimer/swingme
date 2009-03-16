@@ -272,7 +272,7 @@ public class List extends Component implements ActionListener {
 
         Object item = getElementAt(i);
 
-        Component c = renderer.getListCellRendererComponent(this, item, i, i == current, isFocusOwner() && i == current);
+        Component c = renderer.getListCellRendererComponent(this, item, i, isSelectedIndex(i), isFocusOwner() && i == current);
         c.workoutSize();
         c.setBoundsWithBorder(
                 ((horizontal)?offset:0),
@@ -679,6 +679,17 @@ public class List extends Component implements ActionListener {
             current--;
         }
 
+    }
+
+    // ##################################################
+    // ListSelectionModel
+    // ##################################################
+
+    /**
+     * @see javax.swing.ListSelectionModel#isSelectedIndex(int) ListSelectionModel.isSelectedIndex
+     */
+    public boolean isSelectedIndex(int index) {
+        return current == index;
     }
 
 }

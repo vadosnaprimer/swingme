@@ -111,7 +111,7 @@ public class Label extends Component {
                     width = w + (padding*2);
                     height = h + (padding*2);
 
-                    int max = getMaxTextWidth();
+                    int max = getMaxWidth();
                     if (width > max) {
                         width = max;
                     }
@@ -128,7 +128,7 @@ public class Label extends Component {
                 String drawString = this.string;
 		int combinedwidth = getCombinedWidth();
 
-                if (combinedwidth > width-(padding*2)) {
+                if (font!=null && drawString!=null && combinedwidth > width-(padding*2)) {
                     combinedwidth = width-(padding*2);
                     int w = ((((textPosition & Graphics.HCENTER) == 0) && iconWidth>0)?(combinedwidth-iconWidth-gap):combinedwidth) - font.getWidth(extension);
                     int a = TextArea.getStringCharOffset(drawString, font, w);
@@ -162,7 +162,7 @@ public class Label extends Component {
 				ix = x + (combinedwidth - iconWidth)/2;
 				
 			}
-			else if ((textPosition & Graphics.LEFT) != 0 && font!=null) {
+			else if ((textPosition & Graphics.LEFT) != 0 && font!=null && drawString!=null) {
 				
 				ix = x + font.getWidth(drawString)+gap;
 				
@@ -173,7 +173,7 @@ public class Label extends Component {
 				iy = y + (combinedheight - getIconHeight())/2;
 				
 			}
-			else if ((textPosition & Graphics.TOP) != 0 && font!=null) {
+			else if ((textPosition & Graphics.TOP) != 0 && font!=null && drawString!=null) {
 				
 				iy = y + font.getHeight()+gap;
 				
@@ -379,7 +379,8 @@ public class Label extends Component {
             setIcon(image);
             setToolTipText(tip);
         }
-        public int getMaxTextWidth() {
+        
+        public int getMaxWidth() {
             
             // if the width has not beed set yet
             // we will assume as can take the default amount
@@ -389,8 +390,11 @@ public class Label extends Component {
             if (b!=null) {
                 borderOffset = b.getLeft() + b.getRight();
             }
-            
-            return DesktopPane.getDesktopPane().getWidth() - borderOffset;
+
+            int resonableTextLength = DesktopPane.getDesktopPane().getWidth() - borderOffset;
+            int minimumIconWidth = getIconWidth() + padding *2;
+
+            return Math.max(resonableTextLength,minimumIconWidth);
 
         }
 

@@ -376,21 +376,25 @@ public class Table extends Panel {
     }
 
     public void workoutSize() {
+        super.workoutSize();
 
-        int w = 0,h = 0;
+        //int w = 0;
+        int h = 0;
         
-        int c = getColumnCount();
-        for (int a=0;a<c;a++) {
-            w = w + getColumnWidth(a);
-        }
+        //int c = getColumnCount();
+        //for (int a=0;a<c;a++) {
+        //    w = w + getColumnWidth(a);
+        //}
         
         int r = getRowCount();
         for (int a=0;a<r;a++) {
             h = h + getRowHeight(a);
         }
         
-        width = w;
-        height = h;
+        //width = w;
+        if (height==0) { // no prefured height
+            height = h;
+        }
         
     }
     
@@ -524,14 +528,16 @@ public class Table extends Panel {
              }
              
          }
-         
+
+         return width / getColumnCount();
+
          // return a default vlaue
-        if (parent instanceof ScrollPane) {
-                return ((ScrollPane)parent).getViewPortWidth() / getColumnCount();
-        }
-        else {
-                return DesktopPane.getDesktopPane().getWidth() /getColumnCount();
-        }
+//        if (parent instanceof ScrollPane) {
+//                return ((ScrollPane)parent).getViewPortWidth() / getColumnCount();
+//        }
+//        else {
+//                return DesktopPane.getDesktopPane().getWidth() /getColumnCount();
+//        }
 
     }
     

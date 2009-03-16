@@ -85,7 +85,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	private Border activeBorderColor;
         protected int activeTextColor;
 
-        private StringBuffer text;
+        protected StringBuffer text;
         protected Font font;
 
 	private int maxSize;
@@ -302,7 +302,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                     }
 
                     textbox.setCommandListener(this);
-                    Display.getDisplay(DesktopPane.getDesktopPane().getMidlet()).setCurrent(textbox);
+                    Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
                        
                     return true;
 		}
@@ -364,7 +364,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
             // go back to normal
             DesktopPane rp = DesktopPane.getDesktopPane();
-            Display.getDisplay(rp.getMidlet()).setCurrent(rp);
+            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(rp);
             rp.setFullScreenMode(true);
         }
         
@@ -559,11 +559,12 @@ public abstract class TextComponent extends Component implements ActionListener,
 		String old = text==null?"":text.toString();
 
 		text = new StringBuffer(str);
-		setCaretPosition(text.length());
 
 		if (!str.equals(old)) {
 			changedUpdate(0,text.length());
 		}
+
+                setCaretPosition(text.length());
 	}
 
 	public void setMaxSize(int size) {

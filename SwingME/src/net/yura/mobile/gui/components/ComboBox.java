@@ -58,6 +58,7 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
         public void setLoop(boolean b) {
+            createList();
             list.setLoop(b);
         }
 

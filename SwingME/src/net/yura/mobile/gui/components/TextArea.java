@@ -143,7 +143,7 @@ public class TextArea extends TextComponent {
 		y += lineHeight * startLine;
 
 		// Go through each line and render according to alignment and lineSpacing
-        int beginIndex = (startLine>=endLine)?0: ( (startLine==0)?0:lines[startLine-1] );
+                int beginIndex = (startLine>=endLine)?0: ( (startLine==0)?0:lines[startLine-1] );
 		for(i = startLine; i < endLine; i++) {
 
                     int lastCaretIndex = (i==lines.length)?text.length():lines[i];
@@ -178,7 +178,7 @@ public class TextArea extends TextComponent {
                                 w = width - (font.getWidth(line)-w); // not best efficency
                         }
                         
-                        g.drawLine(w, y, w, y+lineHeight);
+                        g.drawLine(w, y, w, y+lineHeight-1);
                     }
 
                     // save this info and go round the loop again
@@ -202,7 +202,7 @@ public class TextArea extends TextComponent {
 	/**
 	 * Set's the text
 	 * @param txt The text
-	 */
+
 	public void setText(String txt) {
             
             int w = wrap?width:Integer.MAX_VALUE;
@@ -225,7 +225,8 @@ public class TextArea extends TextComponent {
             // so the text has to be set
             
 	}
-	
+	 */
+
         /**
          * @param a The text to append
          * @see javax.swing.JTextArea#append(java.lang.String) JTextArea.append
@@ -240,23 +241,28 @@ public class TextArea extends TextComponent {
             }
             else {
 
-		int w = wrap?width:Integer.MAX_VALUE;
-
-                // todo? mayeb use display text
-                int[] l2 = getLines(newtext,font,lines[lines.length-1],w);
-
-                // just copy the 1st array and the 2nd array into the new array
-                // 1 value will be lost from the end of the old array
-                int[] l3 = new int[ lines.length + l2.length];
-
-		System.arraycopy(lines, 0, l3, 0, lines.length);
-		System.arraycopy(l2, 0, l3, lines.length, l2.length);
-
-                // set the text and adjust the height
-                lines = new int[0];
-                super.setText(newtext);
-                setupHeight(l3,w,true);
-
+//		int w = wrap?width:Integer.MAX_VALUE;
+//
+//                // todo? mayeb use display text
+//                int[] l2 = getLines(newtext,font,lines[lines.length-1],w);
+//
+//                // just copy the 1st array and the 2nd array into the new array
+//                // 1 value will be lost from the end of the old array
+//                int[] l3 = new int[ lines.length + l2.length];
+//
+//		System.arraycopy(lines, 0, l3, 0, lines.length);
+//		System.arraycopy(l2, 0, l3, lines.length, l2.length);
+//
+//                // set the text and adjust the height
+//                lines = new int[0];
+//                super.setText(newtext);
+//                setupHeight(l3,w,true);
+                if (a.length()>0) {
+                    int length = text.length();
+                    text.append(a);
+                    changedUpdate(length,a.length());
+                    setCaretPosition(text.length()); // not sure if this should be always done
+                }
             }
 
 
@@ -264,7 +270,9 @@ public class TextArea extends TextComponent {
         
         
         protected void changedUpdate(int offset,int length) {
-            
+
+            if (lines==null) return;
+
             // todo? mayeb use display text
             String text = getText();
             
@@ -374,6 +382,8 @@ public class TextArea extends TextComponent {
         public void setCaretPosition(int a) {
             super.setCaretPosition(a);
 
+            if (lines==null) return;
+
             int line = getLineOfOffset(caretPosition);
 
             int lineHeight = font.getHeight() + lineSpacing;
@@ -385,7 +395,7 @@ public class TextArea extends TextComponent {
             text = text.substring(offset, offset+pos); // line End = line==lines.length?text.length():lines[line]
 
             // TODO what about centre or right aligned?! will need the length of this line then!
-            
+
             int xoffset = font.getWidth(text);
             if (!doNotUpdateCaretPixelOffset) {
                 caretPixelOffset = xoffset;
@@ -408,15 +418,9 @@ public class TextArea extends TextComponent {
 	// if we are in a scrollPane we should tell it, so it can adjust
 	if (relayout && oldh!=height && parent!=null) {
 
-            parent.doLayout();
+            //parent.doLayout();
             //parent.repaint();
 
-	}
-
-/* overkill
-        // this is kind of a hack
-        if (relayout && oldh!=height && parent!=null && owner!=null) {
-            // so the scroll parent can strech my size
             Panel p = parent;
             while (!(p instanceof ScrollPane)) {
                 Panel pp = p.parent;
@@ -427,13 +431,12 @@ public class TextArea extends TextComponent {
                     p=pp;
                 }
             }
-            p.doLayout();
+            p.revalidate();
             p.repaint();
-        }
-*/
+
+	}
 
     }
-
 
     public void workoutSize() {
 
@@ -480,6 +483,18 @@ public class TextArea extends TextComponent {
 
     }
 
+    public void setSize(int wi,int h) {
+        int oldw = width;
+        super.setSize(wi, h);
+
+        if (wrap && oldw!=width) {
+            int w = wrap?width:Integer.MAX_VALUE;
+            setupHeight((w!=widthUsed)?getLines(getText(),font,0,w):lines,w,false);
+            // here we can NOT redolayout, as if we do that it will call workoutsize again
+            // reset it to a small size, then call setSize again with a big size and that will
+            // see the size as changed and it will get stuck in a loop
+        }
+    }
 
     public String getName() {
         return "TextArea";

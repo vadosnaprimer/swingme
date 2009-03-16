@@ -957,12 +957,8 @@ public class ScrollPane extends Panel implements Runnable {
 
 				// vertical
 
-				int x1 = viewX + viewWidth;
-				int y1 = viewY;
 				int w1 = width - viewX - viewWidth;
 				int h1 = viewHeight;
-                        	int value1 = viewY-getComponent().getY();
-                        	int extent1 = viewHeight;
                         	int max1 = getComponent().getHeight();
 
 				int buttonHeight = (trackTop==null || trackTop.getHeight() >w1)?w1:trackTop.getHeight();
@@ -970,12 +966,8 @@ public class ScrollPane extends Panel implements Runnable {
 
                         	// horizontal
 
-				int x2 = viewX;
-				int y2 = viewY + viewHeight;
 				int w2 = viewWidth;
 				int h2 = height - viewY - viewHeight;
-                        	int value2 = viewX-getComponent().getX();
-                        	int extent2 = viewWidth;
                         	int max2 = getComponent().getWidth();
 
 				int buttonWidth = (trackTop == null || trackTop.getHeight() >h2)?h2:trackTop.getHeight();

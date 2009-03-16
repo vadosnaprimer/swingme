@@ -275,14 +275,16 @@ public class DesktopPane extends Canvas implements Runnable {
 
             if (!paintdone) {
 
-                        g.setColor(background);
-                        g.fillRect(0, 0, getWidth(), getHeight());
+                        if (background!=-1) {
+                            g.setColor(background);
+                            g.fillRect(0, 0, getWidth(), getHeight());
+                        }
 
                         if (splash!=null) {
                             g.drawImage(splash, (getWidth()-splash.getWidth())/2, (getHeight()-splash.getHeight())/2, Graphics.TOP | Graphics.LEFT);
                             splash = null;
                         }
-                        else {
+                        else if (background!=-1) {
                             g.setColor(0x00FF0000);
                             g.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
                         }
@@ -774,7 +776,7 @@ public class DesktopPane extends Canvas implements Runnable {
          * @see javax.swing.JDesktopPane#setSelectedFrame(javax.swing.JInternalFrame) JDesktopPane.setSelectedFrame
          */
 	public void setSelectedFrame(Window w) {
-		if (windows.contains(w)) {
+		if (windows.contains(w) || w==null) {
 
                         if (currentWindow == w) return;
 
@@ -784,21 +786,29 @@ public class DesktopPane extends Canvas implements Runnable {
                                 focusedComponent.focusLost();
                             }
                         }
-                        Component focusedComponent = w.getMostRecentFocusOwner();
 
-			currentWindow = w;
-			windows.removeElement(w);
-			windows.addElement(w);
+                        currentWindow = w;
 
-                        if (focusedComponent!=null) {
-                            focusedComponent.focusGained();
+                        if (currentWindow!=null) {
+
+                            Component focusedComponent = w.getMostRecentFocusOwner();
+
+                            windows.removeElement(w);
+                            windows.addElement(w);
+
+                            if (focusedComponent!=null) {
+                                focusedComponent.focusGained();
+                            }
                         }
 
-			currentWindow.repaint();
+                        // we cant use repaint as soft keys may have changed and the
+                        // new window may not be full screen
+			//currentWindow.repaint();
+                        fullRepaint();
 		}
                 //#mdebug
                 else {
-                    throw new RuntimeException("cant setSelected, this window is not visible");
+                    throw new RuntimeException("cant setSelected, this window is not visible: "+w);
                 }
                 //#enddebug
 	}
@@ -814,7 +824,9 @@ public class DesktopPane extends Canvas implements Runnable {
 			windows.removeElement(w);
 
 			if (w==currentWindow) {
-                                setSelectedFrame( (Window)windows.lastElement() );
+
+                                setSelectedFrame( windows.isEmpty()?null:(Window)windows.lastElement() );
+
 			}
 
                         fullRepaint();
@@ -848,11 +860,11 @@ public class DesktopPane extends Canvas implements Runnable {
         // platform Requests
         // #####################################################################
 
-	public void call(String number) {
+	public static void call(String number) {
 
 		try {
                         // TODO remove spaces from number
-			midlet.platformRequest( "tel:" + number );
+			desktop.midlet.platformRequest( "tel:" + number );
 		}
 		catch (ConnectionNotFoundException e) {
                         log("can not call: "+number+" "+e.toString());
@@ -862,10 +874,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	}
 
-	public void openURL(String url) {
+	public static void openURL(String url) {
 
 		try {
-			midlet.platformRequest( url );
+			desktop.midlet.platformRequest( url );
 		}
 		catch (ConnectionNotFoundException e) {
                         log("can not open url: "+url+" "+e.toString());
@@ -875,9 +887,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	}
 
-	public void vibration(int duration){
+	public static void vibration(int duration){
 		try {
-			Display.getDisplay(midlet).vibrate(duration);
+			Display.getDisplay(desktop.midlet).vibrate(duration);
 		}
                 catch(Exception e){
                     log("can not vibration "+e.toString());
@@ -886,12 +898,18 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 	}
 
-        public Midlet getMidlet() {
-            return midlet;
+        public static Midlet getMidlet() {
+            return desktop.midlet;
         }
 
-        public void exit() {
-		midlet.destroyApp(true);
+        public static void exit() {
+            try {
+		desktop.midlet.destroyApp(true);
+            }
+            catch(Exception ex) {
+                // as you called this yourself, you should not be throwing here
+                throw new RuntimeException();
+            }
 	}
 
 
@@ -905,38 +923,38 @@ public class DesktopPane extends Canvas implements Runnable {
         private String mem;
         //#enddebug
 
-	public void log(String s) {
+	public static void log(String s) {
 
 		//#mdebug
 
-			if (debugwindow==null) {
+			if (desktop.debugwindow==null) {
 
-				debugwindow = new Window();
-                                debugwindow.setName("Dialog");
-				text = new TextArea();
-                                text.setFocusable(false);
-                                text.setLineWrap(true);
-				debugwindow.add( new ScrollPane(text) );
-                                debugwindow.setActionListener(debugwindow);
-				debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
-                                debugwindow.setBounds(10, 10, getWidth()-20, getHeight()/2);
+				desktop.debugwindow = new Window();
+                                desktop.debugwindow.setName("Dialog");
+				desktop.text = new TextArea();
+                                desktop.text.setFocusable(false);
+                                desktop.text.setLineWrap(true);
+				desktop.debugwindow.add( new ScrollPane(desktop.text) );
+                                desktop.debugwindow.setActionListener(desktop.debugwindow);
+				desktop.debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
+                                desktop.debugwindow.setBounds(10, 10, desktop.getWidth()-20, desktop.getHeight()/2);
 
                                 // This is not needed, but just in case something
                                 // has gone wrong with the theme, we set some defaults
-                                text.setFont(new Font());
-				text.setForeground(0x00000000);
-                                text.setBackground(0x00FFFFFF);
-                                debugwindow.setBackground(0x00FFFFFF);
+                                desktop.text.setFont(new Font());
+				desktop.text.setForeground(0x00000000);
+                                desktop.text.setBackground(0x00FFFFFF);
+                                desktop.debugwindow.setBackground(0x00FFFFFF);
 
 			}
 
-			text.append(s+"\n");
+			desktop.text.append(s+"\n");
 
-                        if (!debugwindow.isVisible()) {
-                            debugwindow.setVisible(true);
+                        if (!desktop.debugwindow.isVisible()) {
+                            desktop.debugwindow.setVisible(true);
                         }
                         else {
-                            debugwindow.repaint();
+                            desktop.debugwindow.repaint();
                         }
 
 		//#enddebug

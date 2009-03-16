@@ -53,7 +53,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 		return this;
 	}
         // max width!
-        public int getMaxTextWidth() {
+        public int getMaxWidth() {
             return 10000;
         }
         

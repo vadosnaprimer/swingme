@@ -223,7 +223,7 @@ public class MatteBorder extends EmptyBorder {
                     boolean fillsides = (imageHeight-imageTop-imageBottom) == 0;
                     boolean filltop = (imageWidth-imageRight-imageLeft) == 0;
                     g.setColor(color);
-                    g.fillRect(fillsides?0:leftDiff,filltop?0:topDiff,width-(fillsides?0:leftDiff+rightDiff),height-(filltop?0:topDiff+bottomDiff));
+                    g.fillRect(fillsides?-left:leftDiff,filltop?-top:topDiff,width-(fillsides?-(left+right):leftDiff+rightDiff),height-(filltop?-(top+bottom):topDiff+bottomDiff));
                 }
                 
             }

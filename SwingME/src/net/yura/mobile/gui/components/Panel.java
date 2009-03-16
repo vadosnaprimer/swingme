@@ -227,7 +227,9 @@ public class Panel extends Component {
                 else if (layout!=null) {
 			width = layout.getPreferredWidth(this);
 		}
-                // TODO else??? use 0???
+                else {
+                    width =0;
+                }
 
                 if (preferredHeight!=-1) {
                     height = preferredHeight;
@@ -235,7 +237,9 @@ public class Panel extends Component {
                 else if (layout!=null) {
 			height = layout.getPreferredHeight(this);
 		}
-                // TODO else??? use 0???
+                else {
+                    height=0;
+                }
 
         }
         

@@ -20,6 +20,7 @@ package net.yura.mobile.gui;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
+import javax.microedition.midlet.MIDletStateChangeException;
 
 /**
  * @author Yura Mamyrin
@@ -45,7 +46,7 @@ public abstract class Midlet extends MIDlet {
 	 */
 	protected abstract void initialize(DesktopPane rootpane);
 	
-	protected void destroyApp(boolean arg0) {
+	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 
 		rootpane.kill();
 		
