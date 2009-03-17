@@ -66,7 +66,7 @@ public class TextField extends TextComponent {
 
             if (type==DesktopPane.RELEASED) {
 
-                String text = getText();
+                String text = getText()+" ";
 
                 // TODO take into account centre and right aligh
                 int mid = getStringCharOffset(text,font,x -offset);

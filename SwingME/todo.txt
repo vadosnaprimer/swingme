@@ -8,7 +8,6 @@ fix java.lang.NullPointerException something to do with softkeyrenderer
 
 fix text entry is too sensitive
 fix menu getting stuck in loop when u open and close it really quickly
-fix TextArea and TextField caret position for very last line and last char not working
 fix when scrolling with the scrollbars, when the curser is dragged from the track or arrows, it should stop scrolling
 fix when switching orientation the textbox tooltip does not update
 

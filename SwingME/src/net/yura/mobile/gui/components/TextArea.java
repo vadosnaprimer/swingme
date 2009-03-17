@@ -336,7 +336,7 @@ public class TextArea extends TextComponent {
             
             int startOfLineOffset = line==0?0:lines[line-1];
             
-            String text = getText();
+            String text = getText()+" ";
             text = text.substring(startOfLineOffset, line==lines.length?text.length():lines[line]);
 
             // TODO take into account centre and right aligh
