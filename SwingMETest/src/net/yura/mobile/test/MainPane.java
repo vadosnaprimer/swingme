@@ -153,7 +153,10 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 mainMenu = new Menu("Menu","mainMenu");
                                 mainMenu.addActionListener(this);
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
-                                mainMenu.addMenuItem("synthTheme", "Synth Theme", null);
+                                mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
+                                mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
+                                mainMenu.addMenuItem("synthTheme3", "Synth Theme 3", null);
+                                mainMenu.addMenuItem("synthTheme4", "Synth Theme 4", null);
 			}
 			
 			addToScrollPane(mainmenu, new CommandButton(mainMenu), new CommandButton("Exit","exit") );
@@ -168,19 +171,17 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                     
                 }
-                else if ("synthTheme".equals(actionCommand)) {
-                    
-                    if (synth==null) {
-                        synth = new SynthLookAndFeel();
-                        try {
-                            synth.load(  getClass().getResourceAsStream("/synthDemo.xml") );
-                        }
-                        catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                    setupNewLookAndFeel( synth );
-
+                else if ("synthTheme1".equals(actionCommand)) {
+                    loadSynthSkin("/synthdemo/synthDemo.xml");
+                }
+                else if ("synthTheme2".equals(actionCommand)) {
+                    loadSynthSkin("/iphone/synth.xml");
+                }
+                else if ("synthTheme3".equals(actionCommand)) {
+                    loadSynthSkin("/visto/synthVisto.xml");
+                }
+                else if ("synthTheme4".equals(actionCommand)) {
+                    loadSynthSkin("/telus/synthVisto.xml");
                 }
                 else if ("windowTest1".equals(actionCommand)) {
 
@@ -770,6 +771,21 @@ for (int c=0;c<4;c++) {
 		
 		mainWindow.repaint();
 	}
+
+    private void loadSynthSkin(String string) {
+
+                    synth = new SynthLookAndFeel();
+
+                    try {
+                        synth.load(  getClass().getResourceAsStream(string) );
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    setupNewLookAndFeel( synth );
+
+    }
 /**
  * This is VERY far from perfect
  * but swing does it something like this

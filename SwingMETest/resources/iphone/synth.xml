@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE synth SYSTEM "SynthME.dtd">
+
+<synth>
+
+    <style id="global">
+      <state>
+        <font name="PROPORTIONAL" size="MEDIUM"/>
+        <color type="FOREGROUND" value="#52425c"/>
+      </state>
+    </style>
+    <bind style="global" key=".*"/>
+
+    <style id="tooltip">
+      <state>
+        <color type="BACKGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="tooltip" key="ToolTip"/>
+
+
+    <style id="button">
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <state>
+        <imagePainter path="/iphone/button.png" sourceInsets="12 10 11 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="#d6d6d6"/>
+      </state>
+      <state value="FOCUSED">				<!-- top, left, bottom, right -->
+        <imagePainter path="/iphone/highlight.png" sourceInsets="12 10 11 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="#8f9dac"/>
+      </state>
+    </style>
+    <bind style="button" key="Button"/>
+
+
+    <style id="text">
+      <insets top="3" left="6" bottom="3" right="6"/>
+      <state>
+        <imagePainter path="/iphone/textbox2.png" sourceInsets="13 15 13 15" paintCenter="false"/>
+        <color type="BORDERFILL" value="#d3dae4"/>
+      </state>
+      <state value="FOCUSED">				<!-- top, left, bottom, right -->
+        <imagePainter path="/iphone/textbox.png" sourceInsets="13 15 13 15" paintCenter="false"/>
+        <color type="BORDERFILL" value="#ffffff"/>
+      </state>
+    </style>
+    <bind style="text" key="TextField"/>
+    <bind style="text" key="TextArea"/>
+
+
+<!--
+    <style id="tabtop">
+      <state>
+        <imagePainter path="/iphone/tab_top.png" sourceInsets="0 20 5 20" paintCenter="false"/>
+      </state>
+    </style>
+    <bind style="tabtop" key="TabTop"/>
+
+
+    <style id="tabRendererTop">
+      <insets top="4" left="3" bottom="4" right="3"/>
+      <state>
+        <imagePainter path="/iphone/Tab.png" sourceInsets="16 3 16 3" paintCenter="false"/>
+        <color type="BORDERFILL" value="#4602bb"/>
+      </state>
+      <state value="SELECTED">
+        <imagePainter path="/iphone/Focus.png" sourceInsets="16 3 16 3" paintCenter="false"/>
+        <color type="BORDERFILL" value="#6c18f4"/>
+      </state>
+    </style>
+    <bind style="tabRendererTop" key="TabRendererTop"/>
+
+
+    <style id="tabContentBottom">
+      <insets top="0" left="2" bottom="5" right="4"/>
+      <state>
+        <imagePainter path="/iphone/tab_bottom.png" sourceInsets="20 20 20 20" paintCenter="false"/>
+        <color type="BORDERFILL" value="FFFFFF"/>
+      </state>
+    </style>
+    <bind style="tabContentBottom" key="TabContentBottom"/>
+
+    <style id="menu">
+      <insets top="5" left="5" bottom="5" right="5"/>
+      <state>
+        <imagePainter path="/iphone/menu.png" sourceInsets="20 20 20 20" paintCenter="false"/>
+        <color type="BORDERFILL" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="menu" key="Menu"/>
+-->
+
+    <style id="window">
+      <insets top="0" left="0" bottom="0" right="0"/>
+      <state>
+        <imagePainter path="/iphone/mainWindow.png" sourceInsets="44 0 44 0" paintCenter="true"/>
+      </state>
+    </style>
+    <bind style="window" key="Window"/>
+
+
+    <style id="dialog">
+      <insets top="30" left="30" bottom="30" right="30"/>
+      <state>
+        <imagePainter path="/iphone/dialog.png" sourceInsets="30 30 30 30" paintCenter="true"/>
+      </state>
+    </style>
+    <bind style="dialog" key="Dialog"/>
+
+
+    <style id="softkeys">
+      <insets top="5" left="5" bottom="5" right="5"/>
+      <imageIcon id="button_normal" path="/iphone/mainWindow.png" x="0" y="0" width="84" height="44"/>
+      <imageIcon id="bottom_right" path="/iphone/mainWindow.png" x="0" y="75" width="84" height="44"/>
+      <imageIcon id="bottom_left" path="/iphone/mainWindow.png" x="0" y="75" width="84" height="44"/>
+      <state>
+        <property key="button" value="button_normal"/>
+        <property key="bottomRight" value="bottom_right"/>
+        <property key="bottomLeft" value="bottom_left"/>
+      </state>
+    </style>
+    <bind style="softkeys" key="SoftkeyRenderer"/>
+
+
+    <style id="checkbox">
+      <imageIcon id="check_on" path="/iphone/iconGrid.png" x="0" y="0" width="16" height="16"/>
+      <imageIcon id="check_on_disabled" path="/iphone/iconGrid.png" x="0" y="16" width="16" height="16"/>
+      <imageIcon id="check_off" path="/iphone/iconGrid.png" x="0" y="32" width="16" height="16"/>
+      <imageIcon id="check_off_disabled" path="/iphone/iconGrid.png" x="0" y="48" width="16" height="16"/>
+      <state>
+        <property key="icon" value="check_off"/>
+      </state>
+      <state value="SELECTED">
+        <property key="icon" value="check_on"/>
+      </state>
+      <state value="DISABLED">
+        <property key="icon" value="check_off_disabled"/>
+      </state>
+      <state value="DISABLED AND SELECTED">
+        <property key="icon" value="check_on_disabled"/>
+      </state>
+    </style>
+    <bind style="checkbox" key="CheckBox"/>
+
+
+    <style id="radioButton">
+      <imageIcon id="radio_on" path="/iphone/iconGrid.png" x="0" y="64" width="16" height="16"/>
+      <imageIcon id="radio_on_disabled" path="/iphone/iconGrid.png" x="0" y="80" width="16" height="16"/>
+      <imageIcon id="radio_off" path="/iphone/iconGrid.png" x="0" y="96" width="16" height="16"/>
+      <imageIcon id="radio_off_disabled" path="/iphone/iconGrid.png" x="0" y="112" width="16" height="16"/>
+      <state>
+        <property key="icon" value="radio_off"/>
+      </state>
+      <state value="SELECTED">
+        <property key="icon" value="radio_on"/>
+      </state>
+      <state value="DISABLED">
+        <property key="icon" value="radio_off_disabled"/>
+      </state>
+      <state value="DISABLED AND SELECTED">
+        <property key="icon" value="radio_on_disabled"/>
+      </state>
+    </style>
+    <bind style="radioButton" key="RadioButton"/>
+
+
+
+    <style id="scrollpane">
+
+      <imageIcon id="thumb_top" path="/iphone/thumb.png" x="0" y="0" width="14" height="14"/>
+      <imageIcon id="thumb_fill" path="/iphone/thumb.png" x="0" y="14" width="14" height="14"/>
+      <imageIcon id="thump_bottom" path="/iphone/thumb.png" x="0" y="28" width="14" height="14"/>
+
+      <imageIcon id="track_top" path="/iphone/track.png" x="0" y="0" width="14" height="22"/>
+      <imageIcon id="track_fill" path="/iphone/track.png" x="0" y="22" width="14" height="12"/>
+      <imageIcon id="track_bottom" path="/iphone/track.png" x="0" y="34" width="14" height="22"/>
+<!--
+      <imageIcon id="left_arrow" path="/iphone/scrollArrows.png" x="0" y="0" width="15" height="30"/>
+      <imageIcon id="right_arrow" path="/iphone/scrollArrows.png" x="0" y="30" width="15" height="30"/>
+-->
+      <state>
+        <property key="thumbTop" value="thumb_top"/>
+        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbFill" value="thumb_fill"/>
+        <property key="trackTop" value="track_top"/>
+        <property key="trackBottom" value="track_bottom"/>
+        <property key="trackFill" value="track_fill"/>
+<!--
+        <property key="rightArrow" value="right_arrow"/>
+        <property key="leftArrow" value="left_arrow"/>
+-->
+      </state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
+    <style id="listRenderer">
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <state>
+        <imagePainter path="/iphone/select_row.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        <color type="BORDERFILL" value="#FFFFFF"/>
+      </state>
+      <state value="SELECTED">
+        <imagePainter path="/iphone/select_row.png" sourceInsets="43 0 1 0" paintCenter="false"/>
+        <color type="BORDERFILL" value="#3b78e6"/>
+      </state>
+    </style>
+    <bind style="listRenderer" key="ListRenderer"/>
+
+
+    <style id="section">
+      <insets top="5" left="5" bottom="5" right="5"/>
+      <state>
+        <imagePainter path="/iphone/section.png" sourceInsets="12 12 12 12" paintCenter="false"/>
+        <color type="BORDERFILL" value="#ffffff"/>
+      </state>
+    </style>
+    <bind style="section" key="Section"/>
+
+</synth>

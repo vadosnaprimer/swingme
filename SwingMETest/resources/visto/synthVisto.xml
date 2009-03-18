@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE synth SYSTEM "SynthME.dtd">
+
+<synth>
+
+    <style id="global">
+      <state>
+        <font name="PROPORTIONAL" size="MEDIUM"/>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="global" key=".*"/>
+
+    <style id="tooltip">
+      <state>
+        <color type="BACKGROUND" value="#FF00FF"/>
+      </state>
+    </style>
+    <bind style="tooltip" key="ToolTip"/>
+
+    <style id="photoButton">
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <state value="FOCUSED">
+        <imagePainter path="/visto/ContactPictureHighlight.png" sourceInsets="20 20 20 20" paintCenter="false"/>
+      </state>
+    </style>
+    <bind style="photoButton" key="PhotoButton"/>
+
+    <style id="button">
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <state value="FOCUSED">				<!-- top, left, bottom, right -->
+        <imagePainter path="/visto/highlight.png" sourceInsets="8 8 8 8" paintCenter="false"/>
+        <color type="BORDERFILL" value="#FFFFFF"/>
+        <color type="FOREGROUND" value="#0000FF"/>
+      </state>
+      <state value="DISABLED">
+        <color type="FOREGROUND" value="#AAAAAA"/>
+      </state>
+    </style>
+    <bind style="button" key="Button"/>
+    <bind style="button" key="CheckBox"/>
+    <bind style="button" key="RadioButton"/>
+    <bind style="button" key="TextField"/>
+    <bind style="button" key="TextArea"/>
+
+    <style id="tabtop">
+      <state>
+        <imagePainter path="/visto/tab_top.png" sourceInsets="0 20 4 20" paintCenter="false"/>
+      </state>
+    </style>
+    <bind style="tabtop" key="TabTop"/>
+
+
+    <style id="tabRendererTop">
+      <insets top="5" left="5" bottom="5" right="5"/>
+      <state value="SELECTED">
+        <imagePainter path="/visto/Tab.png" sourceInsets="10 10 10 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="73a6f6"/>
+      </state>
+<!--
+      <state value="SELECTED AND DISABLED">
+        <imagePainter path="/visto/Tab.png" sourceInsets="10 10 10 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="73a6f6"/>
+      </state>
+      <state value="FOCUSED">
+        <imagePainter path="/visto/Focus.png" sourceInsets="10 10 10 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="73a6f6"/>
+      </state>
+      <state value="SELECTED">
+        <imagePainter path="/visto/Focus.png" sourceInsets="10 10 10 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="73a6f6"/>
+      </state>
+-->
+    </style>
+    <bind style="tabRendererTop" key="TabRendererTop"/>
+
+
+    <style id="tabContentBottom">
+      <insets top="2" left="5" bottom="5" right="5"/>
+      <state>
+        <imagePainter path="/visto/tab_bottom.png" sourceInsets="20 20 20 20" paintCenter="false"/>
+        <color type="BORDERFILL" value="73a6f6"/>
+      </state>
+    </style>
+    <bind style="tabContentBottom" key="TabContentBottom"/>
+
+
+    <style id="window">
+      <insets top="0" left="0" bottom="0" right="0"/>
+      <state>
+        <imagePainter path="/visto/mainWindow.png" sourceInsets="24 115 24 115" paintCenter="false"/>
+        <color type="BORDERFILL" value="#ceffff"/>
+      </state>
+    </style>
+    <bind style="window" key="Window"/>
+
+
+    <style id="textWindow">
+      <insets top="0" left="0" bottom="0" right="0"/>
+      <state>
+        <imagePainter path="/visto/mainWindow.png" sourceInsets="24 115 24 115" paintCenter="false"/>
+        <color type="BORDERFILL" value="#73a6f6"/>
+      </state>
+    </style>
+    <bind style="textWindow" key="TextWindow"/>
+
+
+    <style id="menu">
+      <insets top="5" left="5" bottom="5" right="5"/>
+      <state>
+        <imagePainter path="/visto/menu.png" sourceInsets="20 20 20 20" paintCenter="false"/>
+        <color type="BORDERFILL" value="#73a6f6"/>
+      </state>
+    </style>
+    <bind style="menu" key="Menu"/>
+    <bind style="menu" key="Dialog"/>
+
+
+    <style id="softkeys">
+      <imageIcon id="button_normal" path="/visto/mainWindow.png" x="120" y="0" width="120" height="24"/>
+      <imageIcon id="bottom_right" path="/visto/mainWindow.png" x="120" y="24" width="120" height="24"/>
+      <imageIcon id="bottom_left" path="/visto/mainWindow.png" x="0" y="24" width="120" height="24"/>
+      <state>
+        <property key="button" value="button_normal"/>
+        <property key="bottomRight" value="bottom_right"/>
+        <property key="bottomLeft" value="bottom_left"/>
+      </state>
+    </style>
+    <bind style="softkeys" key="SoftkeyRenderer"/>
+
+
+    <style id="checkbox">
+      <imageIcon id="check_on" path="/visto/iconGrid.png" x="0" y="0" width="20" height="20"/>
+      <imageIcon id="check_on_disabled" path="/visto/iconGrid.png" x="0" y="20" width="20" height="20"/>
+      <imageIcon id="check_off" path="/visto/iconGrid.png" x="0" y="40" width="20" height="20"/>
+      <imageIcon id="check_off_disabled" path="/visto/iconGrid.png" x="0" y="60" width="20" height="20"/>
+      <state>
+        <property key="icon" value="check_off"/>
+      </state>
+      <state value="SELECTED">
+        <property key="icon" value="check_on"/>
+      </state>
+      <state value="DISABLED">
+        <property key="icon" value="check_off_disabled"/>
+      </state>
+      <state value="DISABLED AND SELECTED">
+        <property key="icon" value="check_on_disabled"/>
+      </state>
+    </style>
+    <bind style="checkbox" key="CheckBox"/>
+
+
+    <style id="radioButton">
+      <imageIcon id="radio_on" path="/visto/iconGrid.png" x="0" y="80" width="20" height="20"/>
+      <imageIcon id="radio_on_disabled" path="/visto/iconGrid.png" x="0" y="100" width="20" height="20"/>
+      <imageIcon id="radio_off" path="/visto/iconGrid.png" x="0" y="120" width="20" height="20"/>
+      <imageIcon id="radio_off_disabled" path="/visto/iconGrid.png" x="0" y="140" width="20" height="20"/>
+      <state>
+        <property key="icon" value="radio_off"/>
+      </state>
+      <state value="SELECTED">
+        <property key="icon" value="radio_on"/>
+      </state>
+      <state value="DISABLED">
+        <property key="icon" value="radio_off_disabled"/>
+      </state>
+      <state value="DISABLED AND SELECTED">
+        <property key="icon" value="radio_on_disabled"/>
+      </state>
+    </style>
+    <bind style="radioButton" key="RadioButton"/>
+
+
+
+    <style id="scrollpane">
+      <imageIcon id="thumb_top" path="/visto/ScrollbarThumb.png" x="0" y="0" width="8" height="8"/>
+      <imageIcon id="thumb_fill" path="/visto/ScrollbarThumb.png" x="0" y="8" width="8" height="10"/>
+      <imageIcon id="thump_bottom" path="/visto/ScrollbarThumb.png" x="0" y="18" width="8" height="8"/>
+      <imageIcon id="track_top" path="/visto/ScrollbarPole.png" x="0" y="0" width="12" height="7"/>
+      <imageIcon id="track_fill" path="/visto/ScrollbarPole.png" x="0" y="7" width="12" height="20"/>
+      <imageIcon id="track_bottom" path="/visto/ScrollbarPole.png" x="0" y="27" width="12" height="7"/>
+      <imageIcon id="left_arrow" path="/visto/scrollArrows.png" x="0" y="0" width="15" height="30"/>
+      <imageIcon id="right_arrow" path="/visto/scrollArrows.png" x="0" y="30" width="15" height="30"/>
+      <state>
+        <property key="thumbTop" value="thumb_top"/>
+        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbFill" value="thumb_fill"/>
+        <property key="trackTop" value="track_top"/>
+        <property key="trackBottom" value="track_bottom"/>
+        <property key="trackFill" value="track_fill"/>
+        <property key="rightArrow" value="right_arrow"/>
+        <property key="leftArrow" value="left_arrow"/>
+      </state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
+
+
+
+
+    <style id="listRenderer">
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <font id="font2" name="PROPORTIONAL" size="LARGE"/>
+      <font id="font3" name="PROPORTIONAL" size="SMALL"/>
+      <state>
+        <property key="font2" value="font2"/>
+        <property key="font3" value="font3"/>
+      </state>
+      <state value="SELECTED">
+        <imagePainter path="/visto/highlight.png" sourceInsets="8 8 8 8" paintCenter="false"/>
+        <color type="BORDERFILL" value="#FFFFFF"/>
+        <color type="FOREGROUND" value="#0000FF"/>
+      </state>
+    </style>
+    <bind style="listRenderer" key="ListRenderer"/>
+
+
+    <!-- This is a theme for a custome component -->
+    <style id="contacts">
+      <font id="focused_name" name="PROPORTIONAL" size="LARGE"/>
+      <font id="focused_status" name="PROPORTIONAL" size="SMALL"/>
+      <font id="normal_name" name="PROPORTIONAL" size="LARGE"/>
+      <font id="normal_status" name="PROPORTIONAL" size="SMALL"/>
+      <state>
+        <imagePainter path="/visto/rowBackground.png" sourceInsets="15 0 15 0" paintCenter="true"/>
+	<color id="color_focused_name" value="#FFFFFF"/>
+	<color id="color_focused_status" value="#000000"/>
+	<color id="color_normal_name" value="#FFFFFF"/>
+	<color id="color_normal_status" value="#000000"/>
+        <property key="fontName" value="normal_name"/>
+        <property key="fontStatus" value="normal_status"/>
+        <property key="colorName" value="color_focused_name"/>
+        <property key="colorStatus" value="color_focused_status"/>
+        <property key="height" type="integer" value="42"/>
+      </state>
+      <state value="FOCUSED">
+        <imagePainter path="/visto/highlightRowBackground.png" sourceInsets="25 0 25 0" paintCenter="true"/>
+        <property key="fontName" value="focused_name"/>
+        <property key="fontStatus" value="focused_status"/>
+        <property key="colorName" value="color_normal_name"/>
+        <property key="colorStatus" value="color_normal_status"/>
+        <property key="height" type="integer" value="62"/>
+      </state>
+    </style>
+    <bind style="contacts" key="ContactsRenderer"/>
+</synth>
