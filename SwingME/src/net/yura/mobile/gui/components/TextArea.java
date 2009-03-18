@@ -71,7 +71,7 @@ public class TextArea extends TextComponent {
             
             preferredWidth = 0.9;
             
-            width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
+            //width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
 	}
 	
         
@@ -93,7 +93,10 @@ public class TextArea extends TextComponent {
 		// this component always needs it size to be correct
 		// so that if its in a scrollPane it knows if it should have the scrollbars
 		// and so then so we know the correct width to wrap text at
-		workoutSize();
+
+
+		//workoutSize();
+                // removed, used should call revalidate!
 
 	}
         
@@ -431,6 +434,7 @@ public class TextArea extends TextComponent {
                     p=pp;
                 }
             }
+
             p.revalidate();
             p.repaint();
 
@@ -449,7 +453,18 @@ public class TextArea extends TextComponent {
 			width = ((ScrollPane)parent).getViewPortWidth();
 		}
 		else {
-			width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
+
+                    if (preferredWidth!=-1) {
+                        width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
+                    }
+                    else if (width==0) {
+                        // make a guess at the width
+                        // to work out the height
+                        // width will be reset back to 0
+                        width = (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
+                        // this guess here is the root of all problems
+                        // as we need to make a guess, even though we have no idea
+                    }
 		}
 	}
 
@@ -480,7 +495,13 @@ public class TextArea extends TextComponent {
 
 
 	}
-
+        else {
+            // if we have no preferredWidth
+            // reset back to 0, just in case the layout DOES not resize it
+            if (preferredWidth==-1) {
+                width = 0;
+            }
+        }
     }
 
     public void setSize(int wi,int h) {

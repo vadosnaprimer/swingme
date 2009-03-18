@@ -98,9 +98,15 @@ public class TextField extends TextComponent {
         }
 
         public void workoutSize() {
-                    // TODO, add preferred width option
-                    width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
-                    height = font.getHeight() + padding*2; // put some padding in
+
+            if (preferredWidth!=-1) {
+                width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
+            }
+            else {
+                width = 0;
+            }
+            
+            height = font.getHeight() + padding*2; // put some padding in
         }
 
     public String getName() {

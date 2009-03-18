@@ -526,10 +526,20 @@ public class Table extends Panel {
              if (i!=null) {
                 return i.intValue();
              }
-             
+         }
+         int others=0;
+         int numset=0;
+         for (c=0;c<colWidths.size();c++) {
+             Integer i = ((Integer)colWidths.elementAt(c));
+             if (i!=null) {
+                others = others + i.intValue();
+                numset++;
+             }
          }
 
-         return width / getColumnCount();
+         int count = getColumnCount();
+
+         return (width-others) / (count-numset);
 
          // return a default vlaue
 //        if (parent instanceof ScrollPane) {

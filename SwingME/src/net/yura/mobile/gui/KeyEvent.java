@@ -25,6 +25,8 @@ import javax.microedition.lcdui.Canvas;
  */
 public class KeyEvent {
 
+    public static final boolean useSoftKeyClear = false;
+
      // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
 
 	public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value

@@ -72,10 +72,10 @@ public abstract class TextComponent extends Component implements ActionListener,
         private static int autoAcceptTimeout = 1000; // MUST be more then blink time
         protected int padding = 2;
         
-        private static final int MODE_abc = 0;
-        private static final int MODE_Abc = 1;
-        private static final int MODE_ABC = 2;
-        private static final int MODE_123 = 3;
+        public static final int MODE_abc = 0;
+        public static final int MODE_Abc = 1;
+        public static final int MODE_ABC = 2;
+        public static final int MODE_123 = 3;
         
         private String label;
 	private int constraints;
@@ -95,7 +95,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	
         private char tmpChar;
         private long lastKeyEvent;
-        protected double preferredWidth;
+        protected double preferredWidth=-1;
         
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
@@ -109,6 +109,9 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setText(initialText);
 	}
 
+        /**
+         * @param d the Preferred Width, can be -1 for no Preferred Width
+         */
         public void setPreferredWidth(double d) {
             preferredWidth = d;
         }
@@ -144,7 +147,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 		
             if (isFocusOwner()) {
                 // put this back in to hide the clear action on phones it is not needed on
-		//if (!RootPane.hasclearkey) {
+		if (KeyEvent.useSoftKeyClear) {
 		
 			if(caretPosition==0 && tmpChar==0){
 				DesktopPane.getDesktopPane().setComponentCommand(1,null);
@@ -152,7 +155,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                         else{
 				DesktopPane.getDesktopPane().setComponentCommand(1,SOFTKEY_CLEAR);
 			}
-		//}
+		}
             }
 	}
 	
@@ -460,7 +463,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 autoAccept();
 
-                DesktopPane.getDesktopPane().setComponentCommand(1,null);
+                if (KeyEvent.useSoftKeyClear) {
+                    DesktopPane.getDesktopPane().setComponentCommand(1,null);
+                }
+                
                 DesktopPane.getDesktopPane().setIndicatorText(null);
 		repaint();
 	}

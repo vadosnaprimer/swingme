@@ -226,8 +226,14 @@ public class Window extends Panel implements ActionListener {
 	}
 
         public void actionPerformed(String actionCommand) {
-            
+
              if (CMD_CLOSE.equals(actionCommand)) {
+
+                if (windowListener!=null) {
+                    windowListener.actionPerformed(actionCommand);
+                    return;
+                }
+
                  setVisible(false);
              }
              else if (CMD_MIN.equals(actionCommand)) {
@@ -249,5 +255,10 @@ public class Window extends Panel implements ActionListener {
                 System.out.println("unknow Window command: "+actionCommand);
              }
 
+        }
+
+        private ActionListener windowListener;
+        public void addWindowListener(ActionListener al) {
+            windowListener = al;
         }
 }
