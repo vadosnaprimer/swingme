@@ -76,6 +76,17 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int MODE_Abc = 1;
         public static final int MODE_ABC = 2;
         public static final int MODE_123 = 3;
+
+        private static final int MODE_init;
+        static {
+            int init = MODE_abc;
+            try {
+                Class.forName("org.me4se.MIDletRunner");
+                init = MODE_123;
+            }
+            catch(ClassNotFoundException ex) { }
+            MODE_init = init;
+        }
         
         private String label;
 	private int constraints;
@@ -107,7 +118,9 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 setConstraints(constraints);
                 setText(initialText);
-	}
+
+                mode = MODE_init;
+        }
 
         /**
          * @param d the Preferred Width, can be -1 for no Preferred Width

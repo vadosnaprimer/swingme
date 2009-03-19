@@ -269,7 +269,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	/**
 	 * @param g The Graphics object
 	 */
-	public void paint(Graphics g) {
+	protected void paint(Graphics g) {
 
 //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 

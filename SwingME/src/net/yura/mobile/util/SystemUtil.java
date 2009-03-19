@@ -133,5 +133,26 @@ public class SystemUtil {
         }
     }
 
+    /**
+     * @see java.util.Collections#binarySearch(java.util.List, java.lang.Object, java.util.Comparator) Collections.binarySearch
+     */
+    public static int binarySearch(Vector l, Object key, Comparator c) {
+	int low = 0;
+	int high = l.size()-1;
+
+	while (low <= high) {
+	    int mid = (low + high) >>> 1;
+	    Object midVal = l.elementAt(mid);
+	    int cmp = (c!=null)?c.compare(midVal, key):String.valueOf(midVal).compareTo(String.valueOf(key));
+
+	    if (cmp < 0)
+		low = mid + 1;
+	    else if (cmp > 0)
+		high = mid - 1;
+	    else
+		return mid; // key found
+	}
+	return -(low + 1);  // key not found
+    }
 
 }

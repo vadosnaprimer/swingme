@@ -180,7 +180,9 @@ public class Table extends Panel {
         removeEditor();
         editingRow = pRow;
         editingColumn = pCol;
-        
+
+        if (editingRow==-1 || editingColumn==-1) { return; }
+
         int x=getCellX(editingColumn);
         int y=getCellY(editingRow);
         int currentRowHeight=getRowHeight(editingRow);
@@ -197,7 +199,10 @@ public class Table extends Panel {
         if (editorComp!=null) {
             editorComp.requestFocusInWindow();
         }
-        
+        else if (editingColumn==-1 && editingRow==-1 && getColumnCount()>0 && getRowCount()>0) {
+            editingRow=0;
+            editingColumn=0;
+        }
         repaint();
     }
      
@@ -214,6 +219,9 @@ public class Table extends Panel {
             return moveSelection(action);
         }
         else if (key!=0) { // if (event.isDownAction(Canvas.FIRE))
+
+            if (editingRow==-1 || editingColumn==-1) { return false; }
+
             editCellAt(editingRow, editingColumn);
             
             // dont pass on fire to text components as that will open the native editor
