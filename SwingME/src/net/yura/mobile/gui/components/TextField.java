@@ -112,5 +112,8 @@ public class TextField extends TextComponent {
     public String getName() {
         return "TextField";
     }
+        public boolean allowNewLine() {
+            return false;
+        }
         
 }

@@ -109,8 +109,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
      */
     public void setSelectedValue(Object a) {
-
-        setSelectedIndex( items.indexOf(a) );
+        setSelectedIndex( indexOf(a) );
     }
 
     public Vector getItems() {
@@ -636,6 +635,22 @@ public class List extends Component implements ActionListener {
     // #########################################################################
 
     private Vector items;
+
+    /**
+     * @see javax.swing.DefaultListModel#indexOf(java.lang.Object) DefaultListModel.indexOf
+     */
+    public int indexOf(Object a) {
+
+        int i=-1,s=getSize();
+        for (int c=0;c<s;c++) {
+            Object b = getElementAt(c);
+            if (a == b || (a!=null && a.equals(b))) {
+                i=c;
+                break;
+            }
+        }
+        return i;
+    }
 
     /**
      * @param index

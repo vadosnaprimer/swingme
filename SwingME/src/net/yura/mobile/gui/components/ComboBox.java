@@ -22,8 +22,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.border.LineBorder;
-import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.util.Option;
 
 /**
@@ -65,16 +64,14 @@ public class ComboBox extends Button implements ActionListener{
 
 	public void workoutSize() {
 		if (list!=null) {
-                    
-			Vector items = list.getItems();
 
-			if (items != null){
+			if (list.getSize()>0){
                                 int count = 0;
                                 int hi = 0;
-                                        
-				for (int i = 0; i < items.size(); i ++){
+                                int s = list.getSize();
+				for (int i = 0; i < s; i ++){
 					
-                                    Object obj = items.elementAt(i);
+                                    Object obj = list.getElementAt(i);
 
                                     Image img = (obj instanceof Option)?((Option)obj).getIcon():null;
                                     int lenW = getCombinedWidth(String.valueOf(obj),img!=null?img.getWidth():0);
@@ -150,16 +147,25 @@ public class ComboBox extends Button implements ActionListener{
 	
 	private void createList() {
 		if (list==null) {
-			list = new List( new DefaultListCellRenderer());
-			//list.setBackground(background);
-			list.addActionListener(this);
-			scroll = new ScrollPane(list);
-			//scroll.setBorder(activeBorder);
-                        // TODO use a window, and set the windows name to "Menu"
-                        // do this when doing tooltips
+                    setModel(new List());
 		}
 
+                if (scroll==null) {
+                    scroll = new ScrollPane(list);
+                }
+
+                // TODO use a window, and set the windows name to "Menu"
+                // do this when doing tooltips
 	}
+
+        /**
+         * @param list
+         * @see javax.swing.JComboBox#setModel(javax.swing.ComboBoxModel) JComboBox.setModel
+         */
+        public void setModel(List list) {
+            this.list = list;
+            list.addActionListener(this);
+        }
 
 	public void paintComponent(Graphics g) {
 
@@ -203,6 +209,9 @@ public class ComboBox extends Button implements ActionListener{
 		this.nonSelectedImage = nonSelectedImage;
 	}
 
+        /**
+         * return the vector, can not be a true representation of the model
+         */
 	public Vector getItems() {
 		return list.getItems();
 	}
@@ -211,7 +220,7 @@ public class ComboBox extends Button implements ActionListener{
 		createList();
 		list.setListData(items);
 		
-		if (items.size()>0) {
+		if (list.getSize()>0) {
 			setSelectedIndex(0);
 		}
 		else {
@@ -221,8 +230,10 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
 	public void actionPerformed(String actionCommand) {
-            
-                setValue( list.getSelectedValue() );
+
+                setSelectedIndex( list.getSelectedIndex() );
+
+                //setValue( list.getSelectedValue() );
 
                 dropDown.setVisible(false);
 		
@@ -245,10 +256,7 @@ public class ComboBox extends Button implements ActionListener{
          * @see javax.swing.JComboBox#setSelectedItem(java.lang.Object) JComboBox.setSelectedItem
          */
 	public void setSelectedItem(Object selected) {
-		createList();
-		list.setSelectedValue(selected);
-		super.setValue(selected);
-		
+            setSelectedIndex( list.indexOf(selected) );
 	}
 
         /**
@@ -256,7 +264,21 @@ public class ComboBox extends Button implements ActionListener{
          * @see javax.swing.JComboBox#setSelectedIndex(int) JComboBox.setSelectedIndex
          */
 	public void setSelectedIndex(int i) {
-		setSelectedItem( list.getItems().elementAt(i) );
+                createList();
+		list.setSelectedIndex( i );
+
+                // attempt to use the renderer to get the info to render
+                // TODO: maybe actually use the renderer to draw
+                ListCellRenderer r = list.getCellRenderer();
+                Component c = r.getListCellRendererComponent(list, list.getElementAt(i), i, true, false);
+                if (c instanceof Label) {
+                    Label l = (Label)c;
+                    super.setText( l.getText() );
+                    super.setIcon( l.getIcon() );
+                }
+                else {
+                    super.setValue( list.getElementAt(i) );
+                }
 	}
 	
 	/**

@@ -77,15 +77,15 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int MODE_ABC = 2;
         public static final int MODE_123 = 3;
 
-        private static final int MODE_init;
+        private static final boolean me4se;
         static {
-            int init = MODE_abc;
+            boolean init = false;
             try {
                 Class.forName("org.me4se.MIDletRunner");
-                init = MODE_123;
+                init = true;
             }
             catch(ClassNotFoundException ex) { }
-            MODE_init = init;
+            me4se = init;
         }
         
         private String label;
@@ -119,7 +119,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setConstraints(constraints);
                 setText(initialText);
 
-                mode = MODE_init;
+                mode = me4se?MODE_123:MODE_abc;
         }
 
         /**
@@ -127,6 +127,10 @@ public abstract class TextComponent extends Component implements ActionListener,
          */
         public void setPreferredWidth(double d) {
             preferredWidth = d;
+        }
+
+        public boolean allowNewLine() {
+            return true;
         }
         
         private void insertNewCharacter(char ch) {
@@ -208,8 +212,17 @@ public abstract class TextComponent extends Component implements ActionListener,
             
             // if it is a letter that can be typed
             // we dont want to allow Character.MAX_VALUE as its not a real input char
-            if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!='#' || allowOnlyNumberConstraint())) {
-                
+
+            if (me4se && keyCode==-5) {
+                keyCode='\n';
+            }
+
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!='#' || allowOnlyNumberConstraint())) {
+
+                if (keyCode=='\n' && !allowNewLine()) {
+                    return false;
+                }
+
                 String chars;
 
                 if (mode==MODE_123 && !allowOnlyNumberConstraint()) {
@@ -304,11 +317,11 @@ public abstract class TextComponent extends Component implements ActionListener,
                     
                 }
                 else if (keyEvent.justPressedAction(Canvas.FIRE)) {
-                       
+
                     if (textbox==null) {
                         textbox = new TextBox(label, getText(), maxSize, constraints);
                         textbox.addCommand(ok);
-                        textbox.addCommand(cancel); 
+                        textbox.addCommand(cancel);
                     }
                     else {
                        textbox.setConstraints(constraints);
@@ -319,7 +332,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                     textbox.setCommandListener(this);
                     Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
-                       
+
                     return true;
 		}
                 return false;
