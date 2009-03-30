@@ -225,6 +225,7 @@ public class ComboBox extends Button implements ActionListener{
 		}
 		else {
 			super.setText("");
+                        super.setIcon(null);
 		}
 
 	}
