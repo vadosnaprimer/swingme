@@ -1,0 +1,17 @@
+THIS IS NOT THE NORMAL KXML PARSER
+
+4 lines have been commented out!!!
+
+        // YURA srcPos = 0;
+        // YURA srcCount = 0;
+        // YURA peekCount = 0;
+        // YURA depth = 0;
+
+in the method:
+
+    public void setInput(Reader reader) throws XmlPullParserException {
+
+this is to allow the parser to carry on where it left off on a stream
+this is used in the Agent Project for streaming XML
+
+

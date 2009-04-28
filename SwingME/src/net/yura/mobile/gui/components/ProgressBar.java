@@ -36,7 +36,6 @@ public class ProgressBar extends Component {
      * Creates a horizontal progress bar that displays a border but no progress string.
      * The initial and minimum values are 0, and the maximum is 100.
      * @see javax.swing.JProgressBar#JProgressBar() JProgressBar.JProgressBar
-     * goes from 0 to loaded (inclusive)
      */
     public ProgressBar() {
 
@@ -63,7 +62,7 @@ public class ProgressBar extends Component {
     }
 
     /**
-     *  goes from 0 to maximum, then goes back to 0 and start again
+     *  goes from 0 to loaded (inclusive), then goes back to 0 and start again
      */
     public void animate() throws InterruptedException {
 

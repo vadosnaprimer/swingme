@@ -564,27 +564,17 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                         int currentLineLength = (w==Integer.MAX_VALUE)?-1:f.getWidth(str.substring(lineStart, end));
                         
                         if (currentLineLength > w && lineStart==wordStart) {
-                               // start to remove 1 char at a time,
-                               // and checking if we can fit the string into the width
-                               boolean ok=false;
-                               for (int c=(end-1);c>lineStart;c--) {
-                                   currentLineLength = f.getWidth(str.substring(lineStart, c));
+                                // start to remove 1 char at a time,
+                                // and checking if we can fit the string into the width
 
-                                   if (currentLineLength<=w) {
-                                        parts.addElement(new Integer(c));
-                                        wordStart = c;
-                                        lineStart = c;
-                                        ok = true;
-                                        break;
-                                   }
-                               }
-                               if (!ok) {
-                                   // this is bad, this means the width of 1 letter is still too wide
-                                   // so we must add this letter anyway
-                                   parts.addElement(new Integer(lineStart+1));
-                                   wordStart = lineStart+1;
-                                   lineStart = lineStart+1;
-                               }
+                                int a = getStringCharOffset( str.substring(lineStart, end), f, w );
+                                // this is bad, this means the width of 1 letter is still too wide
+                                // so we must add this letter anyway
+                                int c = lineStart + (a<1 ? 1 : a);
+
+                                parts.addElement(new Integer(c));
+                                wordStart = c;
+                                lineStart = c;
                         }
                         else if (currentLineLength > w) {
                              // here wordStart is the start of the OLD line

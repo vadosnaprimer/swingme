@@ -9,7 +9,7 @@
     <target name="do-deploy" description="copy lib to some other places">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
         <copy file="${deployment.jar}" todir="../cha/lib"/>
-        <copy file="${deployment.jar}" todir="../iPimp/lib"/>
+        <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
     </target>
 
     <!--

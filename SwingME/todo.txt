@@ -15,7 +15,6 @@ finish window decoration options, make sure works with ImageBorder
 make a good theme for the demo app
 
 make sure all components support touch screen
- * Spinner
  * Window resize
 
 make skinning of softkeys be fully flexable, so can have border padding and things like that

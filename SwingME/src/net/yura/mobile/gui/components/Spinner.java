@@ -65,7 +65,35 @@ public class Spinner extends Label {
                 setHorizontalAlignment(Graphics.HCENTER);
 
 	}
-	
+
+        public void pointerEvent(int type, int x, int y) {
+            super.pointerEvent(type, x, y);
+
+            if (type == DesktopPane.PRESSED) {
+                int offset=0;
+                if (nonSelectedImage != null) {
+                    // TODO
+                }
+                else {
+                        offset = (getWidthWithBorder() - getWidth())/2;
+                }
+                if (x <0 && x > -offset) {
+                    leftPress = true;
+                }
+                else if ( x> width && x< width + offset) {
+                    rightPress = true;
+                }
+                fire();
+            }
+            else if (type == DesktopPane.RELEASED) {
+                if (leftPress || rightPress) {
+                    leftPress = false;
+                    rightPress = false;
+                    repaint();
+                }
+            }
+        }
+
         public void setFocusable(boolean s) {
 		if (s) {
                     foreground = normalForeground;
@@ -145,7 +173,16 @@ public class Spinner extends Label {
 			rightPress = false;
 		}
 		
-		if (leftPress && index == 0) {
+                fire();
+		
+                boolean letgo = keypad.justReleasedAction(Canvas.LEFT) || keypad.justReleasedAction(Canvas.RIGHT);
+                
+		if (letgo) repaint();
+		return leftPress || rightPress || letgo;
+	}
+
+        private void fire() {
+            	if (leftPress && index == 0) {
 			if (continuous == true){
 				setIndex(list.size()-1);
 
@@ -158,16 +195,11 @@ public class Spinner extends Label {
 			if (continuous == true){
 				setIndex(0);
 			}
-		} 
+		}
 		else if (rightPress){
 			setIndex(index+1);
 		}
-		
-                boolean letgo = keypad.justReleasedAction(Canvas.LEFT) || keypad.justReleasedAction(Canvas.RIGHT);
-                
-		if (letgo) repaint();
-		return leftPress || rightPress || letgo;
-	}
+        }
 
 	public void paintComponent(Graphics g){
             super.paintComponent(g);

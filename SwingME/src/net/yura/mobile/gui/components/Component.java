@@ -92,10 +92,10 @@ public abstract class Component {
 	}
 
         /**
+         * This method WILL use small scroll, so if the component is too far then it wont gain focus
+         * @param direction can be up down right or left
          * @see java.awt.Component#transferFocus() Component.transferFocus
          * @see java.awt.Component#transferFocusBackward() Component.transferFocusBackward
-         * @param direction can be up down right or left
-         * This method WILL use small scroll, so if the component is too far then it wont gain focus
          */
         public void transferFocus(int direction) {
             parent.breakOutAction(this, direction, true,false);
@@ -116,6 +116,9 @@ public abstract class Component {
 		return parent;
 	}
 
+        /**
+         * @see javax.swing.SwingUtilities#windowForComponent(java.awt.Component) SwingUtilities.windowForComponent
+         */
         public Window getWindow() {
 
             if (parent == null) { return (this instanceof Window)?(Window)this : null; }
@@ -454,14 +457,23 @@ public abstract class Component {
 
 	}
 
+        /**
+         * @see java.awt.Component#getForeground() Component.getForeground
+         */
 	public int getForeground() {
 		return foreground;
 	}
 
+        /**
+         * @see javax.swing.JComponent#setForeground(java.awt.Color) JComponent.setForeground
+         */
 	public void setForeground(int foreground) {
 		this.foreground = foreground;
 	}
 
+        /**
+         * @see java.awt.Component#getBackground() Component.getBackground
+         */
 	public int getBackground() {
 		return background;
 	}

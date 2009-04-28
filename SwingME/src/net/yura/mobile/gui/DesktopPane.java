@@ -925,8 +925,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	public static void log(String s) {
 
-		//#mdebug
+            //#mdebug
 
+                try {
 			if (desktop.debugwindow==null) {
 
 				desktop.debugwindow = new Window();
@@ -956,8 +957,12 @@ public class DesktopPane extends Canvas implements Runnable {
                         else {
                             desktop.debugwindow.repaint();
                         }
-
-		//#enddebug
+                }
+                catch (Throwable th) {
+                    System.out.println("unable to log: "+s);
+                    th.printStackTrace();
+                }
+            //#enddebug
 	}
 
         // #####################################################################
