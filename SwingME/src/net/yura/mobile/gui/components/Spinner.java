@@ -23,6 +23,7 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
@@ -50,6 +51,8 @@ public class Spinner extends Label {
         private int normalForeground;
         private int activeForeground;
         private int disabledForeground;
+
+        private ChangeListener chl;
         
 	public Spinner() {
 		this(new Vector(), false);
@@ -65,6 +68,10 @@ public class Spinner extends Label {
                 setHorizontalAlignment(Graphics.HCENTER);
 
 	}
+
+        public void addChangeListener(ChangeListener aThis) {
+            chl = aThis;
+        }
 
         public void pointerEvent(int type, int x, int y) {
             super.pointerEvent(type, x, y);
@@ -297,11 +304,17 @@ public class Spinner extends Label {
         }
         
 	public void setIndex(int i) {
-            
+
+            int old = index;
+
             index = i;
             
             if (list!=null && !list.isEmpty()) {
                 super.setValue( list.elementAt(index) );
+            }
+
+            if (chl!=null && old!=index) {
+                chl.changeEvent(index);
             }
 
 	    repaint();

@@ -324,6 +324,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                         textbox.addCommand(cancel);
                     }
                     else {
+                       textbox.setString("");
                        textbox.setConstraints(constraints);
                        textbox.setTitle(label);
                        textbox.setString(getText());
