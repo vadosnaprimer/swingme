@@ -91,7 +91,7 @@ public class DesktopPane extends Canvas implements Runnable {
         private ToolTip tooltip;
         private ToolTip indicator;
 
-	private Vector repaintComponent = new Vector();
+	private final Vector repaintComponent = new Vector();
 
         private Thread animationThread;
 	private Component animatedComponent;
@@ -301,21 +301,25 @@ public class DesktopPane extends Canvas implements Runnable {
                 
             try {
 
-                if (!fullrepaint && !repaintComponent.isEmpty()) {
-                    for (int c=0;c<repaintComponent.size();c++) {
-                            if ( ((Component)repaintComponent.elementAt(c)).getWindow() !=currentWindow ) {
-                                fullrepaint = true;
-                                break;
-                            }
-                    }
-                    if (!fullrepaint) {
-			for (int c=0;c<repaintComponent.size();c++) {
-				paintComponent(g,(Component)repaintComponent.elementAt(c));
-			}
-                    }
-                }
+                synchronized(repaintComponent) {
 
-                repaintComponent.removeAllElements();
+                    if (!fullrepaint && !repaintComponent.isEmpty()) {
+                        for (int c=0;c<repaintComponent.size();c++) {
+                                if ( ((Component)repaintComponent.elementAt(c)).getWindow() !=currentWindow ) {
+                                    fullrepaint = true;
+                                    break;
+                                }
+                        }
+                        if (!fullrepaint) {
+                            for (int c=0;c<repaintComponent.size();c++) {
+                                    paintComponent(g,(Component)repaintComponent.elementAt(c));
+                            }
+                        }
+                    }
+
+                    repaintComponent.removeAllElements();
+
+                }
 
 		if (fullrepaint) {
 			fullrepaint = false;
@@ -454,45 +458,49 @@ public class DesktopPane extends Canvas implements Runnable {
 
         boolean found = false;
 
-        Component c1 = rc;
-        while (c1 != null)
-        {
-            if (repaintComponent.contains(c1))
+        synchronized(repaintComponent) {
+
+            Component c1 = rc;
+            while (c1 != null)
             {
-                found = true;
-                break;
+                if (repaintComponent.contains(c1))
+                {
+                    found = true;
+                    break;
+                }
+
+                c1 = c1.getParent(); // recurse
             }
 
-            c1 = c1.getParent(); // recurse
-        }
-
-        // If component or its father, not found, add it
-        if (!found)
-        {
-            repaintComponent.addElement(rc);
-
-            // Search the list for children, otherwise will be repainted again
-            for (int i = 0; i < repaintComponent.size(); i++)
+            // If component or its father, not found, add it
+            if (!found)
             {
-                Component c2 = (Component) repaintComponent.elementAt(i);
+                repaintComponent.addElement(rc);
 
-                // A component is children of rc, if one of its ancestors is rc
-                while (c2 != null)
+                // Search the list for children, otherwise will be repainted again
+                for (int i = 0; i < repaintComponent.size(); i++)
                 {
-                    c2 = c2.getParent(); // recurse
-                    if (c2 == rc)
+                    Component c2 = (Component) repaintComponent.elementAt(i);
+
+                    // A component is children of rc, if one of its ancestors is rc
+                    while (c2 != null)
                     {
-                        // Found a children, remove it
-                        repaintComponent.removeElementAt(i);
-                        i--;
-                        break;
+                        c2 = c2.getParent(); // recurse
+                        if (c2 == rc)
+                        {
+                            // Found a children, remove it
+                            repaintComponent.removeElementAt(i);
+                            i--;
+                            break;
+                        }
                     }
                 }
             }
+
         }
 
         repaint();
-	}
+    }
 
         /**
          * Repaint the softkeybar

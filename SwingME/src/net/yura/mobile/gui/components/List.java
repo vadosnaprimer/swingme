@@ -57,6 +57,9 @@ public class List extends Component implements ActionListener {
     private boolean horizontal;
     private boolean doubleClick;
 
+    private int fixedCellHeight = -1;
+    private int fixedCellWidth = -1;
+
     /**
      * @see javax.swing.JList#JList() JList.JList
      */
@@ -134,21 +137,24 @@ public class List extends Component implements ActionListener {
                 {
                     Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
                     c.workoutSize();
+                    int w = fixedCellWidth==-1?c.getWidthWithBorder():fixedCellWidth;
+                    int h = fixedCellHeight==-1?c.getHeightWithBorder():fixedCellHeight;
+
                     if (horizontal) {
-                        if (totalHeight<c.getHeightWithBorder()) {
-                            totalHeight=c.getHeightWithBorder();
+                        if (totalHeight<h) {
+                            totalHeight=h;
                         }
                     }
                     else {
-                        totalHeight = totalHeight + c.getHeightWithBorder();
+                        totalHeight = totalHeight + h;
                     }
 
                     if (horizontal) {
-                        totalWidth = totalWidth + c.getWidthWithBorder();
+                        totalWidth = totalWidth + w;
                     }
                     else {
-                        if (totalWidth<c.getWidthWithBorder()) {
-                            totalWidth=c.getWidthWithBorder();
+                        if (totalWidth<w) {
+                            totalWidth=w;
                         }
                     }
                 }
@@ -156,6 +162,7 @@ public class List extends Component implements ActionListener {
 
             setSize(totalWidth,totalHeight);
         //}
+
     }
 
 
@@ -200,26 +207,82 @@ public class List extends Component implements ActionListener {
         //workoutItemSize();
     }
 
+    private int[] getComponentAt(int x,int y) {
+
+        int i = -1;
+        int offset=0;
+
+        if (x<0 && y<0) {
+            // dont do anything
+        }
+        else if (horizontal && fixedCellWidth!=-1) {
+            i = x/fixedCellWidth;
+            offset = i*fixedCellWidth;
+        }
+        else if (!horizontal && fixedCellHeight!=-1) {
+            i = y/fixedCellHeight;
+            offset = i*fixedCellHeight;
+        }
+        else {
+
+            synchronized (renderer)
+            {
+                Component comp=null;
+
+                for(i=0; i < getSize(); i++){
+                    comp = getComponentFor(i,offset);
+
+                    int cw=comp.getWidthWithBorder();
+                    int ch=comp.getHeightWithBorder();
+
+                    int cx = comp.getXWithBorder();
+                    int cy = comp.getYWithBorder();
+
+                    if (
+                            x>=cx && x <=(cw+cx) &&
+                            y>=cy && y <=(ch+cy)
+                    ) {
+                        break;
+                    }
+
+                    offset = offset + ((horizontal)?cw:ch);
+                }
+            }
+
+        }
+
+        return new int[] {i,offset} ;
+    }
+
     public void paintComponent(Graphics g) {
 
-        int offset=0;
         boolean good=false;
-        for(int i = 0; i < getSize(); i++){
+        int clipx = g.getClipX();
+        int clipy = g.getClipY();
+
+        int[] objects=getComponentAt(clipx,clipy);
+        int i = objects[0];
+        int offset = objects[1];
+        if (i<0) { // if clip is too up/left
+            i=0;
+            offset=0;
+        }
+
+        for(; i < getSize(); i++){
             synchronized (renderer)
             {
                 Component c = getComponentFor(i,offset);
 
-                offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
                 //g.setColor(0x0000FF00);
                 //g.drawRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
 
                 int x = c.getXWithBorder();
                 int y = c.getYWithBorder();
 
-                if (x < g.getClipX()+g.getClipWidth() &&
-                    x + c.getWidthWithBorder() > g.getClipX() &&
-                    y < g.getClipY()+g.getClipHeight() &&
-                    y + c.getHeightWithBorder() > g.getClipY()
+                if (x < clipx+g.getClipWidth() &&
+                    x + c.getWidthWithBorder() > clipx &&
+                    y < clipy+g.getClipHeight() &&
+                    y + c.getHeightWithBorder() > clipy
                 ) {
                         x=c.getX();
                         y=c.getY();
@@ -233,6 +296,8 @@ public class List extends Component implements ActionListener {
                     // if we have done out painting but now things are out of the clip area
                     break;
                 }
+
+                offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
             }
         }
 
@@ -253,10 +318,17 @@ public class List extends Component implements ActionListener {
 
     private Component getComponentFor(int a) {
 
+        if (horizontal && fixedCellWidth!=-1) {
+            return getComponentFor(a,a*fixedCellWidth);
+        }
+        else if (!horizontal && fixedCellHeight!=-1) {
+            return getComponentFor(a,a*fixedCellHeight);
+        }
+
         int offset=0;
 
         for(int i = 0; true; i++){
-            Component c = getComponentFor(i,offset);
+                Component c = getComponentFor(i,offset);
 
                 if (i==a) {
                     return c;
@@ -273,11 +345,15 @@ public class List extends Component implements ActionListener {
 
         Component c = renderer.getListCellRendererComponent(this, item, i, isSelectedIndex(i), isFocusOwner() && i == current);
         c.workoutSize();
+
+        int w = fixedCellWidth!=-1?fixedCellWidth:c.getWidthWithBorder();
+        int h = fixedCellHeight!=-1?fixedCellHeight:c.getHeightWithBorder();
+
         c.setBoundsWithBorder(
                 ((horizontal)?offset:0),
                 ((horizontal)?0:offset),
-                ((horizontal)?c.getWidthWithBorder():width),
-                ((horizontal)?height:c.getHeightWithBorder())
+                ((horizontal)?w:width),
+                ((horizontal)?height:h)
                 );
         return c;
 
@@ -288,53 +364,33 @@ public class List extends Component implements ActionListener {
         if (useSelectButton) {
             DesktopPane.getDesktopPane().setComponentCommand(0, null);
         }
-                repaint();
+        repaint();
+    }
+
+    public void focusGained() {
+        super.focusGained();
+        if (getSize() != 0 ) {
+            if (current==-1) { current=0; }
+            setSelectedIndex(current);
+        }
+
+        if (useSelectButton) {
+            DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
+        }
 
     }
 
-        public void focusGained() {
-            super.focusGained();
-            if (getSize() != 0 ) {
-                if (current==-1) { current=0; }
-                setSelectedIndex(current);
-            }
-
-            if (useSelectButton) {
-                DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
-            }
-
-        }
-
-	private long doubleClickTime;
-	private int doubleClickX,doubleClickY;
+    private long doubleClickTime;
+    private int doubleClickX,doubleClickY;
 
     public void pointerEvent(int type, int x, int y) {
         super.pointerEvent(type, x, y);
 
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
 
-            int offset=0;
-            synchronized (renderer)
-            {
-                for(int i = 0; i < getSize(); i++){
-                    Component c = getComponentFor(i,offset);
-
-                    int cw=c.getWidthWithBorder();
-                    int ch=c.getHeightWithBorder();
-
-                    offset = offset + ((horizontal)?cw:ch);
-
-                    int cx = c.getXWithBorder();
-                    int cy = c.getYWithBorder();
-
-                    if (
-                            x>=cx && x <=(cw+cx) &&
-                            y>=cy && y <=(ch+cy)
-                    ) {
-                        setSelectedIndex(i);
-                        return;
-                    }
-                }
+            int i = getComponentAt(x, y)[0];
+            if (i>=0 && i<getSize()) {
+                setSelectedIndex(i);
             }
         }
         else if (type == DesktopPane.RELEASED) {
@@ -506,30 +562,30 @@ public class List extends Component implements ActionListener {
 
     }
 
-        /**
-         * @return the first selected value, or null if the selection is empty
-         * @see javax.swing.JList#getSelectedValue() JList.getSelectedValue
-         */
+    /**
+     * @return the first selected value, or null if the selection is empty
+     * @see javax.swing.JList#getSelectedValue() JList.getSelectedValue
+     */
     public Object getSelectedValue() {
 
             if (current==-1) return null;
             return getElementAt(current);
     }
 
-        /**
-         * @return the first selected index; returns -1 if there is no selected item
-         * @see javax.swing.JList#getSelectedIndex() JList.getSelectedIndex
-         */
+    /**
+     * @return the first selected index; returns -1 if there is no selected item
+     * @see javax.swing.JList#getSelectedIndex() JList.getSelectedIndex
+     */
     public int getSelectedIndex(){
         return current;
     }
 
 
 
-        /**
-         * @param a the index of the one cell to select
-         * @see javax.swing.JList#setSelectedIndex(int) JList.setSelectedIndex
-         */
+    /**
+     * @param a the index of the one cell to select
+     * @see javax.swing.JList#setSelectedIndex(int) JList.setSelectedIndex
+     */
     public void setSelectedIndex(int a) {
 
         int old = current;
@@ -628,6 +684,22 @@ public class List extends Component implements ActionListener {
         }
 
         return super.getToolTipLocationY();
+    }
+
+    /**
+     * @param height
+     * @see javax.swing.JList#setFixedCellHeight(int) JList.setFixedCellHeight
+     */
+    public void setFixedCellHeight(int height) {
+        fixedCellHeight = height;
+    }
+
+    /**
+     * @param width
+     * @see javax.swing.JList#setFixedCellWidth(int) JList.setFixedCellWidth
+     */
+    public void setFixedCellWidth(int width) {
+        fixedCellWidth = width;
     }
 
     // #########################################################################
