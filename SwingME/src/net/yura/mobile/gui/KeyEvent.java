@@ -193,6 +193,7 @@ public class KeyEvent {
     }
     /*
      * This is a bad method as it only returns the FIRST key that is down!
+     * it should though return the most recent of the down keys
      */
     public int getIsDownKey() {
            int res = 0;
@@ -339,8 +340,8 @@ public class KeyEvent {
                 int[] newKeyDown = new int[isDownKeys.length+1];
 
                 // Copy all data
-                System.arraycopy(isDownKeys, 0, newKeyDown, 0, isDownKeys.length);
-                newKeyDown[isDownKeys.length] = keyCode;
+                System.arraycopy(isDownKeys, 0, newKeyDown, 1, isDownKeys.length);
+                newKeyDown[0] = keyCode;
 
                 isDownKeys = newKeyDown;
             }

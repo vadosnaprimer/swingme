@@ -196,7 +196,14 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
 	public boolean keyEvent(KeyEvent keyEvent) {
-		
+
+            // if we are getting this event because of a release of a key
+            // we will ignore it
+            if (keyEvent.getJustReleasedKey()!=0) {
+                return false;
+            }
+
+            // most recent down key
             int keyCode = keyEvent.getIsDownKey();
             
             int justPressed = keyEvent.getJustPressedKey();

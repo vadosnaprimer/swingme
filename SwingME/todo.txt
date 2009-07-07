@@ -4,9 +4,16 @@ fix java.lang.NullPointerException at net.yura.mobile.gui.DesktopPane.showHideTo
 	happens sometimes on exit
 
 fix java.lang.NullPointerException something to do with softkeyrenderer
-	happens sometimes on startup
+	happens sometimes on startup
 
-fix text entry is too sensitive
+
+Hide mobile specific features: eg. key input indicator. And block # from changing mode.
+Stop ability to drag panels outside of application area.
+Ability to close dropdowns by clicking anywhere outside options panel.
+Menu: behave differently on PC and mobile. Close key should replace the "select" on a pc.
+Remove window controls. ALL OF THEM. ????
+
+
 fix menu getting stuck in loop when u open and close it really quickly
 fix when scrolling with the scrollbars, when the curser is dragged from the track or arrows, it should stop scrolling
 fix when switching orientation the textbox tooltip does not update
@@ -33,3 +40,11 @@ make TextField support more then just english language for number keypads
 make TextField support right to left languages
 
 add Tree Component
+
+
+ME4SE TODO:
+
+TABBING!!! should be able to tab between focusable elements
+Resizing: application resize when window is resized.
+add key events for ctrl being held down, for list selection
+
