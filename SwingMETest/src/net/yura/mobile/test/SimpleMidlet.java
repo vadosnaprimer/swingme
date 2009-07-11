@@ -21,7 +21,13 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
+import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.MenuBar;
+import net.yura.mobile.gui.components.MenuItem;
+import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 
@@ -50,6 +56,44 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 		mainWindow.add( new Label("Hello World!") );
 		mainWindow.setMaximum(true);
                 mainWindow.setVisible(true);
+
+
+                // this code is the same in normal java awt and SwingME
+            ActionListener actionListener = new ActionListener() {
+                //public void actionPerformed(ActionEvent e) { String action = e.getActionCommand();
+                public void actionPerformed(String action) {
+                    if ("exit".equals(action)) {
+                        System.exit(0);
+                    }
+                    else {
+                        System.out.println("unknown action "+action);
+                    }
+
+                }
+            };
+            Frame frame = new Frame("window");
+            Panel panel = new Panel();
+            Button button = new Button("exit");
+            button.setActionCommand("exit");
+            button.addActionListener(actionListener);
+            panel.add(button);
+            panel.add(new Label("label"));
+            frame.add(panel);
+            MenuBar menubar = new MenuBar();
+            Menu menu = new Menu("menu");
+            MenuItem open = new MenuItem("Open");
+            MenuItem close = new MenuItem("Close");
+            open.setActionCommand("open");
+            close.setActionCommand("close");
+            open.addActionListener(actionListener);
+            close.addActionListener(actionListener);
+            menu.add(open);
+            menu.add(close);
+            menubar.add(menu);
+            frame.setMenuBar(menubar);
+            frame.pack();
+            frame.setVisible(true);
+
 	}
 
 	public void actionPerformed(String actionCommand) {
