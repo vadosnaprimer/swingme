@@ -45,6 +45,10 @@ public class Menu extends Button {
         private int destX;
         private int destY;
 
+        public Menu(String string) {
+            super(string);
+        }
+
         /**
          * The menu will fire this command to the same listoner that
          * it will fire all the commands from the buttons being pressed

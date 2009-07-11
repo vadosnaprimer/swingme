@@ -44,6 +44,15 @@ public class Window extends Panel implements ActionListener {
         private ActionListener actionListener;
         
         private Component focusedComponent;
+
+
+        /**
+         * @see javax.swing.JFrame#setJMenuBar(javax.swing.JMenuBar)
+         */
+        public void setMenuBar(MenuBar menuBar) {
+            // TODO
+        }
+
         /**
          * @see java.awt.Window#isFocused() Window.isFocused
          */

@@ -47,4 +47,4 @@ ME4SE TODO:
 TABBING!!! should be able to tab between focusable elements
 Resizing: application resize when window is resized.
 add key events for ctrl being held down, for list selection
-
+add key events for ctrl-C and ctrl-V and access to clipboard
