@@ -574,6 +574,7 @@ for (int c=0;c<4;c++) {
                                     anotherlist.addElement("A REALLY LONG LIST ITEM, that will need things like side scrolling "+c);
                                 }
                                 l3.setListData(anotherlist);
+                                l3.setFixedCellHeight(15);
                                 tab3.add(new Label("a lable for the list"));
                                 tab3.add(l3);
                                 

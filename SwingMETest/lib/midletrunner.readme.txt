@@ -1,0 +1,119 @@
+DONE:
+browser url launching
+mousewheel goes up and down
+tab and shift tab do up and down
+file rename fix
+resize window
+del and clear give different codes
+ctrl gives -50 code
+
+
+
+
+
+  public final boolean platformRequest(String url) throws ConnectionNotFoundException {
+
+	if (url.startsWith("tel")) {
+		System.out.println("ME4SE: MIDlet.platformRequest('" + url + "') called in order to initiate a phone call.");
+		return false;
+	}
+	else {
+
+	    if (ApplicationManager.getInstance().applet != null) {
+		try {
+			ApplicationManager.getInstance().applet.getAppletContext().showDocument(new URL(url));
+		} catch (MalformedURLException e) {
+			throw new ConnectionNotFoundException(e.toString());
+		}
+		return false; // dont let the midlet exit in order to avoid the corresp.
+			      // page reload
+	    }
+	    else {
+		try {
+			edu.stanford.ejalbert.BrowserLauncher launcher = new edu.stanford.ejalbert.BrowserLauncher();
+			launcher.openURLinBrowser( url );
+		} catch (Exception e) {
+			throw new ConnectionNotFoundException(e.toString());
+		}
+		return false;
+	    }
+
+	}
+
+  }
+
+
+
+  public void mouseWheelMoved(MouseWheelEvent e) {
+
+	int a = e.getWheelRotation();
+	int c = a;
+
+//System.out.println("mouseWheelMoved "+a);
+
+
+	if (a<0) {
+		c++;
+		component.keyPressed("UP");
+	}
+	else {
+		c--;
+		component.keyPressed("DOWN");
+	}
+
+
+	while (c!=0) {
+
+		if (a<0) {
+			c++;
+			component.keyRepeated("UP");
+
+		}
+		else {
+			c--;
+			component.keyRepeated("DOWN");
+
+		}
+
+	}
+
+
+	if (a<0) {
+		component.keyReleased("UP");
+	}
+	else {
+		component.keyReleased("DOWN");
+	}
+
+
+
+  }
+
+
+
+line 223 of FileConnectionImpl.java
+
+return file.renameTo(new File(file.getParent(),newName));
+
+
+
+
+
+
+
+
+
+ScmWrapper.componentResized(ComponentEvent ev)
+
+scmcontainer.setBounds(int x, int y, int w, int h)
+scmcontainer.doLayout();
+
+scmdisplayable.setBounds(0, 0, w, h)
+scmdisplayable.doLayout()
+
+	((scmcanvas)scmdisplayable.main).setBounds(x, y, w, h);
+
+	((Canvas)scmdisplayable.displayable).sizeChanged(w, h);
+
+
+
