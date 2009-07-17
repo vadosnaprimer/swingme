@@ -208,8 +208,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 
 				info = new Panel( new BorderLayout() ) {
                                         { focusable=true; }
-                                  	public void pointerEvent(int type, int x, int y) {
-                                            super.pointerEvent(type, x, y);
+                                  	public void pointerEvent(int type, int x, int y,KeyEvent keys) {
+                                            super.pointerEvent(type, x, y, keys);
                                             infoLabel.setText("pointerEvent: "+x+","+y+"\n");
                                             switch(type) {
                                                 case DesktopPane.DRAGGED: infoLabel.append("DRAGGED"); break;
