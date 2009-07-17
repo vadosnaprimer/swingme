@@ -133,8 +133,8 @@ public class Table extends Panel {
 
     }
     
-    public void pointerEvent(int type, int x, int y) {
-        super.pointerEvent(type, x, y);
+    public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+        super.pointerEvent(type, x, y, keys);
         
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED ) {
             

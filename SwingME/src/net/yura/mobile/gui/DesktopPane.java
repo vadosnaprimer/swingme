@@ -77,6 +77,17 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
 
+        public static final boolean me4se;
+        static {
+            boolean init = false;
+            try {
+                Class.forName("org.me4se.MIDletRunner");
+                init = true;
+            }
+            catch(ClassNotFoundException ex) { }
+            me4se = init;
+        }
+
         // object variables
 
         protected Midlet midlet;
@@ -289,7 +300,10 @@ public class DesktopPane extends Canvas implements Runnable {
                             g.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
                         }
 
-                        wideScreen = (getWidth()>getHeight());
+                        oldw = getWidth();
+                        oldh = getHeight();
+
+                        wideScreen = (oldw>oldh);
 
 			animationThread = new Thread(this);
                         animationThread.start();
@@ -1055,7 +1069,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 if (pointerComponent!=null) {
-                    pointerComponent.pointerEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen());
+                    pointerComponent.pointerEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
                 }
 
                 if (type == RELEASED) {
@@ -1077,9 +1091,11 @@ public class DesktopPane extends Canvas implements Runnable {
         // other events from the canvas
         // #####################################################################
 
+        private int oldw,oldh;
+
         protected void sizeChanged(int w, int h) {
             //#debug
-            System.out.println("sizeChanged!! " +paintdone);
+            System.out.println("sizeChanged!! " +paintdone+" w="+w+" h="+h);
 
             if (!paintdone) return;
 
@@ -1087,9 +1103,9 @@ public class DesktopPane extends Canvas implements Runnable {
             wideScreen = (w>h);
 
             // this means we NEED to flip from 1 orientation to another
-            if (old!=wideScreen) {
-
+            if (old!=wideScreen && oldw==h && oldh==w) {
                 sideSoftKeys = wideScreen;
+            }
 
                 Vector win = Window.getAllWindows();
 
@@ -1098,13 +1114,17 @@ public class DesktopPane extends Canvas implements Runnable {
 
                     // TODO RESIZE better
                     if (window!=null) {
-                        window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
+                        if (window.getMaximum()) {
+                            window.setMaximum(true);
+                        }
+                        //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
                     }
                 }
                 fullRepaint();
-            }
+            //}
 
-
+            oldw=w;
+            oldh=h;
 
         }
 

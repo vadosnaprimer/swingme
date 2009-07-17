@@ -76,17 +76,6 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int MODE_Abc = 1;
         public static final int MODE_ABC = 2;
         public static final int MODE_123 = 3;
-
-        private static final boolean me4se;
-        static {
-            boolean init = false;
-            try {
-                Class.forName("org.me4se.MIDletRunner");
-                init = true;
-            }
-            catch(ClassNotFoundException ex) { }
-            me4se = init;
-        }
         
         private String label;
 	private int constraints;
@@ -119,7 +108,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setConstraints(constraints);
                 setText(initialText);
 
-                mode = me4se?MODE_123:MODE_abc;
+                mode = DesktopPane.me4se?MODE_123:MODE_abc;
         }
 
         /**
@@ -177,23 +166,29 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 	
 	public void actionPerformed(String actionCommand) {
-		if ("clear".equals(actionCommand)) {
-
-                    if (tmpChar!=0) {
-                        tmpChar=0;
-                        changedUpdate(caretPosition,1);
-                        updateSoftKeys();
-                        repaint();
-                    }
-                    else if (caretPosition>0) {
-                        
-                        text.deleteCharAt(caretPosition-1);
-                        changedUpdate(caretPosition,1);
-                        setCaretPosition(caretPosition-1);
-                    }
-                    
-		}
+            if ("clear".equals(actionCommand)) {
+                clear(true);
+            }
 	}
+
+        private void clear(boolean back) {
+           if (tmpChar!=0) {
+                tmpChar=0;
+                changedUpdate(caretPosition,1);
+                updateSoftKeys();
+                repaint();
+            }
+            else if (back && caretPosition>0) {
+                text.deleteCharAt(caretPosition-1);
+                changedUpdate(caretPosition-1,1);
+                setCaretPosition(caretPosition-1);
+            }
+            else if (!back && caretPosition<text.length()) {
+                text.deleteCharAt(caretPosition);
+                changedUpdate(caretPosition,1);
+                repaint();
+            }
+        }
 
 	public boolean keyEvent(KeyEvent keyEvent) {
 
@@ -220,7 +215,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             // if it is a letter that can be typed
             // we dont want to allow Character.MAX_VALUE as its not a real input char
 
-            if (me4se && keyCode==-5) {
+            if (DesktopPane.me4se && keyCode==-5) {
                 keyCode='\n';
             }
 
@@ -292,7 +287,11 @@ public abstract class TextComponent extends Component implements ActionListener,
                     return true;
                 }
                 else if (keyCode==KeyEvent.KEY_CLEAR) {
-			actionPerformed(SOFTKEY_CLEAR.getActionCommand());
+			clear(true);
+			return true;
+		}
+                else if (keyCode==KeyEvent.KEY_DELETE) {
+			clear(false);
 			return true;
 		}
                 else if (keyEvent.isDownAction(Canvas.LEFT)) {

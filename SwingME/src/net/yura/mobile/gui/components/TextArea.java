@@ -350,8 +350,8 @@ public class TextArea extends TextComponent {
         }
 
         
-        public void pointerEvent(int type, int x, int y) {
-            super.pointerEvent(type, x, y);
+        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+            super.pointerEvent(type, x, y, keys);
 
             if (type==DesktopPane.RELEASED) {
             

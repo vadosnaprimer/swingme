@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.KeyEvent;
 
 /**
  * @author Yura Mamyrin
@@ -61,8 +62,8 @@ public class TextField extends TextComponent {
 		g.setClip(oldClipX, oldClipY, oldClipW, oldClipH);
 	}
 
-        public void pointerEvent(int type, int x, int y) {
-            super.pointerEvent(type, x, y);
+        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+            super.pointerEvent(type, x, y, keys);
 
             if (type==DesktopPane.RELEASED) {
 

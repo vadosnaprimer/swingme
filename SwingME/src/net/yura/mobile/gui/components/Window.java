@@ -23,6 +23,7 @@ import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
 
 /**
@@ -44,7 +45,7 @@ public class Window extends Panel implements ActionListener {
         private ActionListener actionListener;
         
         private Component focusedComponent;
-
+        private boolean maximised;
 
         /**
          * @see javax.swing.JFrame#setJMenuBar(javax.swing.JMenuBar)
@@ -199,13 +200,19 @@ public class Window extends Panel implements ActionListener {
          * @see javax.swing.JInternalFrame#setMaximum(boolean) JInternalFrame.setMaximum
          */
         public void setMaximum(boolean a) {
+
+            maximised = a;
+
             if (a) {
                 setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
             }
             // TODO else???
         }
+        public boolean getMaximum() {
+            return maximised;
+        }
 
-        public void pointerEvent(int type, int x, int y) {
+        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
 
             // TODO to resize the window
             // if we drag next to the border
@@ -256,7 +263,7 @@ public class Window extends Panel implements ActionListener {
 
              }
              else if (CMD_MAX.equals(actionCommand)) {
-                 setMaximum(true);
+                 setMaximum( !maximised );
                  repaint();
              }
              else {

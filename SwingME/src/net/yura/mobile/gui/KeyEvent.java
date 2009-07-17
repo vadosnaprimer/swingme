@@ -33,6 +33,8 @@ public class KeyEvent {
 	public static final int KEY_SOFTKEY2 = -7;	//Default Softkey right value
         public static final int KEY_CLEAR = -8;         //Default Clear value, this NEEDS to be negative
 
+        public static final int KEY_DELETE = -9; // for me4se
+
         public static final int KEY_CALL = -10;
         public static final int KEY_END  = -11;
         public static final int KEY_MENU = -12;

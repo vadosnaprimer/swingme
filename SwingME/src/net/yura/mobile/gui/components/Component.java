@@ -217,14 +217,14 @@ public abstract class Component {
 		return false;
 	}
 
-	public void pointerEvent(int type, int x, int y) {
+	public void pointerEvent(int type, int x, int y, KeyEvent keys) {
             if (focusable) {
                 if (type == DesktopPane.PRESSED) {
                     if(!isFocusOwner()) { requestFocusInWindow(); }
                 }
             }
             else if (parent!=null) {
-                parent.pointerEvent(type,x+posX,y+posY);
+                parent.pointerEvent(type,x+posX,y+posY, keys);
             }
             //else {
             //    owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());

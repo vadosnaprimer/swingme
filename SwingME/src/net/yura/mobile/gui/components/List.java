@@ -383,41 +383,87 @@ public class List extends Component implements ActionListener {
     private long doubleClickTime;
     private int doubleClickX,doubleClickY;
 
-    public void pointerEvent(int type, int x, int y) {
-        super.pointerEvent(type, x, y);
+    public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+        super.pointerEvent(type, x, y, keys);
 
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
 
             int i = getComponentAt(x, y)[0];
+
             if (i>=0 && i<getSize()) {
-                setSelectedIndex(i);
+                selectNewPointer(i,keys);
             }
         }
         else if (type == DesktopPane.RELEASED) {
 
+            if (keys.isDownKey(KeyEvent.KEY_EDIT)) {
+                return;
+            }
             if (doubleClick) {
-		long time = System.currentTimeMillis();
+                long time = System.currentTimeMillis();
 
-		if (time < doubleClickTime + 300 && x>(doubleClickX-5) && x<(doubleClickX+5) && y>(doubleClickY-5) && y<(doubleClickY+5) ) {
+                if (time < doubleClickTime + 300 && x>(doubleClickX-5) && x<(doubleClickX+5) && y>(doubleClickY-5) && y<(doubleClickY+5) ) {
+                    fireActionPerformed();
+                }
 
-			fireActionPerformed();
-		}
-
-		doubleClickTime = time;
-		doubleClickX = x;
-		doubleClickY = y;
+                doubleClickTime = time;
+                doubleClickX = x;
+                doubleClickY = y;
             }
             else {
                 fireActionPerformed();
             }
+
         }
 
+    }
 
+    private boolean clearSelectionOnClick=false;
+    private void selectNewPointer(int i,KeyEvent keys) {
+        if (keys.isDownKey(KeyEvent.KEY_EDIT)) {
+            toggleHelper(current,selected==null,false);
+            toggleHelper(i,true,true);
+        }
+        else if (selected!=null && (clearSelectionOnClick || selected.isEmpty())) {
+            selected = null;
+        }
+        setSelectedIndex(i);
+    }
+
+    private void selectNewKey(int i,KeyEvent keys) {
+        if (keys.isDownKey(KeyEvent.KEY_EDIT) || keys.isDownKey('#')) {
+            toggleHelper(current, i==current || addMode , i==current || !addMode  );
+            toggleHelper(i, i!=current && addMode , i!=current && !addMode);
+        }
+        else if (selected!=null && selected.isEmpty()) {
+            selected = null;
+        }
+        setSelectedIndex(i);
+    }
+    private boolean addMode;
+    private void toggleHelper(int i,boolean addTest,boolean removeTest) {
+        if (i<0 || (!addTest && !removeTest)) return;
+        if (selected==null) {
+            selected = new Vector();
+        }
+        Object obj = getElementAt(i);
+        if (selected.contains(obj)) {
+            if (removeTest) {
+                selected.removeElement(obj);
+            }
+        }
+        else if (addTest) {
+            selected.addElement(obj);
+        }
     }
 
     public boolean keyEvent(KeyEvent keypad) {
 
-        if (current==-1) { return false; }
+        if (current<0) { return false; }
+
+        if (keypad.justPressedKey(KeyEvent.KEY_EDIT) || keypad.justPressedKey('#')) {
+            addMode = selected == null || !isSelectedIndex(current);
+        }
 
         int next = current+1;
         int prev = current-1;
@@ -437,7 +483,7 @@ public class List extends Component implements ActionListener {
 
 		int keyCode = keypad.getIsDownKey();
 
-		if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE) {
+		if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#') {
 
 			keyCode = keypad.getKeyChar(keyCode, keypad.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
 
@@ -449,7 +495,7 @@ public class List extends Component implements ActionListener {
 
 				if (!"".equals(item) && item.charAt(0) == keyCode) {
 
-					setSelectedIndex(i);
+					selectNewKey(i,keypad);
 					return true;
 
 				}
@@ -461,7 +507,7 @@ public class List extends Component implements ActionListener {
                 else if (keypad.isDownAction(Canvas.DOWN)) {
 
                     if (!horizontal && next!=-1) {
-                        setSelectedIndex(next);
+                        selectNewKey(next,keypad);
                         return true;
                     }
                     //else {
@@ -481,7 +527,7 @@ public class List extends Component implements ActionListener {
                 else if (keypad.isDownAction(Canvas.UP)) {
 
                     if (!horizontal && prev!=-1) {
-                        setSelectedIndex(prev);
+                        selectNewKey(prev,keypad);
                         return true;
                     }
                     //else {
@@ -500,7 +546,7 @@ public class List extends Component implements ActionListener {
                 else if (keypad.isDownAction(Canvas.RIGHT)) {
 
                     if (horizontal && next!=-1) {
-                        setSelectedIndex(next);
+                        selectNewKey(next,keypad);
                         return true;
                     }
                     //else {
@@ -522,7 +568,7 @@ public class List extends Component implements ActionListener {
                 else if (keypad.isDownAction(Canvas.LEFT)) {
 
                     if (horizontal && prev!=-1) {
-                        setSelectedIndex(prev);
+                        selectNewKey(prev,keypad);
                         return true;
                     }
                     //else {
@@ -540,9 +586,13 @@ public class List extends Component implements ActionListener {
 
                 }
                 else if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey('\n')) {
-
-                    return fireActionPerformed();
-
+                    if (keypad.isDownKey(KeyEvent.KEY_EDIT) || keypad.isDownKey('#')) {
+                        selectNewKey(current,keypad);
+                        return true;
+                    }
+                    else {
+                        return fireActionPerformed();
+                    }
                 }
                 else {
                     //if we did not consume the event
@@ -702,6 +752,21 @@ public class List extends Component implements ActionListener {
         fixedCellWidth = width;
     }
 
+    public Vector getSelectedValues() {
+        if (selected==null) {
+            Vector v = new Vector(1);
+            if (current>=0) {
+                v.addElement(getElementAt(current));
+            }
+            return v;
+        }
+        return selected;
+    }
+
+    public void setSelectedValues(Vector v) {
+        selected = v;
+    }
+
     // #########################################################################
     // ########################## DefaultListModel #############################
     // #########################################################################
@@ -772,11 +837,13 @@ public class List extends Component implements ActionListener {
     // ListSelectionModel
     // ##################################################
 
+    private Vector selected;
+
     /**
      * @see javax.swing.ListSelectionModel#isSelectedIndex(int) ListSelectionModel.isSelectedIndex
      */
     public boolean isSelectedIndex(int index) {
-        return current == index;
+        return selected==null?current == index:selected.contains(getElementAt(index));
     }
 
 }

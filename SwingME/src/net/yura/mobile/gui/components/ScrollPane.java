@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Graphics2D;
@@ -858,7 +859,7 @@ public class ScrollPane extends Panel implements Runnable {
 
 	}
 
-        public void pointerEvent(int type, int pointX, int pointY) {
+        public void pointerEvent(int type, int pointX, int pointY, KeyEvent keys) {
 
 
 		    int viewX = getViewPortX();
