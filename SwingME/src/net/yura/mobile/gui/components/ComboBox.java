@@ -21,7 +21,6 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.util.Option;
 
@@ -100,49 +99,29 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
 	public void fireActionPerformed() {
-
                 createList();
-                list.workoutSize();
-
-                int y;
-
-                int h = list.getHeightWithBorder();
-                if(h > DesktopPane.getDesktopPane().getHeight()/2){
-                        h = DesktopPane.getDesktopPane().getHeight()/2;
-                }
-
-                if ((getYOnScreen() + height + h) > (DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()) ){
-                        y = getYOnScreen() - h;
-                }
-                else {
-                        y = getYOnScreen() + height;
-                }
-
-                scroll.setPreferredSize(width, h);
-                
-
-                
                 if (dropDown==null) {
                     dropDown = new Window();
                     dropDown.setName("Menu");
                     dropDown.add(scroll);
                 }
+
+                list.workoutSize();
+                scroll.setPreferredSize(list.getWidth(), list.getHeight());
                 dropDown.pack();
-                dropDown.setLocation(getXOnScreen(), y);
+                if (dropDown.getWidthWithBorder()<getWidthWithBorder()) {
+                    dropDown.setBoundsWithBorder(0, 0, getWidthWithBorder(), dropDown.getHeightWithBorder());
+                }
+
+                Menu.positionMenuRelativeTo(
+                        dropDown,
+                        getXOnScreen() -(border!=null?border.getLeft():0), getYOnScreen(), getWidthWithBorder(),getHeight(),
+                        Graphics.TOP
+                        );
                 dropDown.setVisible(true);
                 
                 setSelected(true);
 
-                // TODO owner.setGlassPane(scroll);
-
-//                pbuttons = new CommandButton[2];
-//                pbuttons[0]=owner.getWindowCommands()[0];
-//                pbuttons[1]=owner.getWindowCommands()[1];
-//                owner.setWindowCommand(0, null);
-//                owner.setWindowCommand(1, null);
-//
-//                owner.repaint();
-        
         }
 	
 	private void createList() {

@@ -397,7 +397,7 @@ public class DesktopPane extends Canvas implements Runnable {
             if (tooltip.isShowing()) {
                 paintComponent(g,tooltip);
             }
-            if (indicator.getText()!=null) {
+            if (indicator.getText()!=null && !me4se) {
                 paintComponent(g,indicator);
             }
         }
@@ -423,7 +423,8 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         private Component getSoftkeyRenderer(int i) {
-            // if (theme==null || theme.softkeyRenderer==null) return null; // sometimes throws on emulator
+            if ( softkeyRenderer==null ) return null; // sometimes throws on emulator
+
             Component com = softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
             if (com==null) return null;
             com.workoutSize();
@@ -598,7 +599,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 // keyevent.getKeyAction(keyevent.getIsDownKey())
                                 // if another key was pressed first!
 
-				if (!consumed && (
+				if (!consumed && keyevent.getJustReleasedKey()==0 && ( // dont want to fire anything on release
 					keyevent.isDownAction(Canvas.RIGHT)||
 					keyevent.isDownAction(Canvas.DOWN) ||
 					keyevent.isDownAction(Canvas.LEFT)||
@@ -660,51 +661,51 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	private void showHideToolTip(boolean show) {
 
-                    Component focusedComponent = currentWindow.getFocusOwner();
+            Component focusedComponent;
 
-                    // if a tooltip should be setup
-                    if (show && focusedComponent!=null && focusedComponent.getToolTipText()!=null) {
+            // if a tooltip should be setup
+            if (show && currentWindow!=null && (focusedComponent = currentWindow.getFocusOwner()) !=null && focusedComponent.getToolTipText()!=null) {
 
-                        tooltip.setText( focusedComponent.getToolTipText() );
-                        tooltip.workoutSize();
-                        int x = focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen();
-                        int y = focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen();
-                        int w = tooltip.getWidthWithBorder();
-                        int h = tooltip.getHeightWithBorder();
-                        Border offset = tooltip.getBorder();
-                        int top = offset==null?0:offset.getTop();
-                        int left = offset==null?0:offset.getLeft();
+                tooltip.setText( focusedComponent.getToolTipText() );
+                tooltip.workoutSize();
+                int x = focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen();
+                int y = focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen();
+                int w = tooltip.getWidthWithBorder();
+                int h = tooltip.getHeightWithBorder();
+                Border offset = tooltip.getBorder();
+                int top = offset==null?0:offset.getTop();
+                int left = offset==null?0:offset.getLeft();
 
-                        if (x-left < 0) {
-                            x=left;
-                        }
-                        else if (x-left+w > getWidth()) {
-                            x = getWidth()-w+left;
-                        }
+                if (x-left < 0) {
+                    x=left;
+                }
+                else if (x-left+w > getWidth()) {
+                    x = getWidth()-w+left;
+                }
 
-                        if (y-top <0) {
-                            y=top;
-                        }
-                        else if (y-top+h > getHeight()) {
-                            y = getHeight()-h+top;
-                        }
+                if (y-top <0) {
+                    y=top;
+                }
+                else if (y-top+h > getHeight()) {
+                    y = getHeight()-h+top;
+                }
 
-                        tooltip.setLocation( x,y );
-                        animateComponent(tooltip);
+                tooltip.setLocation( x,y );
+                animateComponent(tooltip);
 
+            }
+            else if (tooltip!=null) {
+                // this will never be null unless this method is called
+                // before the midlet is initialised, and this can happen
+
+                // if there is a tooltip up or ready to go up,
+                // then kill it!
+                synchronized (this) {
+                    if (tooltip.isWaiting()) {
+                        animationThread.interrupt();
                     }
-                    else if (tooltip!=null) {
-                        // this will never be null unless this method is called
-                        // before the midlet is initialised, and this can happen
-
-                        // if there is a tooltip up or ready to go up,
-                        // then kill it!
-                        synchronized (this) {
-                            if (tooltip.isWaiting()) {
-                                animationThread.interrupt();
-                            }
-                        }
-                    }
+                }
+            }
 
 
 	}

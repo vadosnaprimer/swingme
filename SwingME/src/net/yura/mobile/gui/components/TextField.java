@@ -67,10 +67,10 @@ public class TextField extends TextComponent {
 
             if (type==DesktopPane.RELEASED) {
 
-                String text = getText()+" ";
+                String txt = getDisplayString()+" ";
 
                 // TODO take into account centre and right aligh
-                int mid = getStringCharOffset(text,font,x -offset);
+                int mid = getStringCharOffset(txt,font,x -offset);
 
                 setCaretPosition(mid);
             }

@@ -219,7 +219,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 keyCode='\n';
             }
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!='#' || allowOnlyNumberConstraint())) {
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!='#' || DesktopPane.me4se || allowOnlyNumberConstraint())) {
 
                 if (keyCode=='\n' && !allowNewLine()) {
                     return false;

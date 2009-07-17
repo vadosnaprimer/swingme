@@ -34,10 +34,11 @@ import net.yura.mobile.gui.KeyEvent;
 public class Menu extends Button {
 
         private int arrowDirection;
+        private Menu parentMenu;
 
         private Window popup;
         private Panel panel;
-        private Menu parentMenu;
+        private ScrollPane scroll;
 
         private boolean useAnimation=true;
         private boolean open;
@@ -68,27 +69,37 @@ public class Menu extends Button {
 
             super.fireActionPerformed();
 
+            panel.workoutSize(); // what out what the needed size is
+            scroll.setPreferredSize(panel.getWidth(), panel.getHeight());
+            popup.pack();
+
             if (getWindow()!=null) {
-                openMenu(getXOnScreen() -(border!=null?border.getLeft():0), getYOnScreen()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder());
+                positionMenuRelativeTo(
+                        popup,
+                        getXOnScreen() -(border!=null?border.getLeft():0), getYOnScreen()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder(),
+                        parentMenu==null?Graphics.TOP:Graphics.RIGHT
+                        );
+                openMenuAtLocation();
             }
-            else if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) {
-                openMenu(getXWithBorder(),getYWithBorder(),getWidthWithBorder(),getHeightWithBorder());
+            else if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) { // ???
+                positionMenuRelativeTo(
+                        popup,
+                        getXWithBorder(),getYWithBorder(),getWidthWithBorder(),getHeightWithBorder(),
+                        Graphics.TOP
+                        );
+                openMenuAtLocation();
             }
+
         }
 
 	public Vector getComponents() {
 		return panel.getComponents();
 	}
 
-        private void openMenu(int x, int y, int width, int height) {
+        public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,int direction) {
 
-            panel.workoutSize(); // what out what the needed size is
-            popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
-
-
-
-            int w = popup.getWidthWithBorder();
-            int h = popup.getHeightWithBorder();
+            int w = window.getWidthWithBorder();
+            int h = window.getHeightWithBorder();
 
             // resize the popup if its bigger then the screen! if it is then shrink it
             if (w > DesktopPane.getDesktopPane().getWidth()) {
@@ -101,7 +112,7 @@ public class Menu extends Button {
                 h = maxh;
             }
 
-            if (parentMenu == null) {
+            if (direction!=Graphics.RIGHT) {
                 // the right x position of whatever opended me!
                 int right = DesktopPane.getDesktopPane().getWidth() - x - width;
                 //int bottom = DesktopPane.getDesktopPane().getHeight() - y - height;
@@ -122,9 +133,7 @@ public class Menu extends Button {
                 //}
             }
             else {
-
                 x = x+width;
-
             }
 
             // check we r not going off the screen if we are then move us
@@ -141,34 +150,33 @@ public class Menu extends Button {
                 y = DesktopPane.getDesktopPane().getHeight() - h - softkeyHeight;
             }
 
-            openMenuAtLocation(x, y, w, h);
+            window.setBoundsWithBorder(x, y, w, h);
 
         }
 
         public void openMenuInCentre() {
 
             panel.workoutSize(); // what out what the needed size is
-            popup.setSize(panel.getWidthWithBorder(), panel.getHeightWithBorder());
+            scroll.setPreferredSize(panel.getWidth(), panel.getHeight());
+            popup.pack();
 
-            int w = popup.getWidthWithBorder();
-            int h = popup.getHeightWithBorder();
+            OptionPane.centre(popup);
 
-            // resize the popup if its bigger then the screen! if it is then shrink it
-            if (w > DesktopPane.getDesktopPane().getWidth()) {
-                w = DesktopPane.getDesktopPane().getWidth();
-            }
-            if (h > DesktopPane.getDesktopPane().getHeight()) {
-                h = DesktopPane.getDesktopPane().getHeight();
-            }
+            // TODO, make sure it does not go over the edges
+            // should be only 1 place that does this, optionpane already does this
 
-            openMenuAtLocation((DesktopPane.getDesktopPane().getWidth()-w)/2,(DesktopPane.getDesktopPane().getHeight()-h)/2,w,h);
-
+            openMenuAtLocation();
         }
 
 
-        private void openMenuAtLocation(int x, int y, int w, int h) {
+        private void openMenuAtLocation() {
 
             if (useAnimation) {
+
+                int x = popup.getXWithBorder();
+                int y = popup.getYWithBorder();
+                int w = popup.getWidthWithBorder();
+                int h = popup.getHeightWithBorder();
 
                 if (slide==Graphics.BOTTOM) {
                     popup.setBoundsWithBorder(x, DesktopPane.getDesktopPane().getHeight(), w, h);
@@ -193,10 +201,8 @@ public class Menu extends Button {
 
                 DesktopPane.getDesktopPane().animateComponent(this);
             }
-            else {
-                popup.setBoundsWithBorder(x, y, w, h);
-            }
-            DesktopPane.getDesktopPane().add(popup);
+
+            popup.setVisible(true);
         }
 
         /**
@@ -213,7 +219,8 @@ public class Menu extends Button {
             popup.setWindowCommand(1, new CommandButton("Cancel", "cancel"));
             popup.setActionListener(this);
             panel = new Panel(new BoxLayout(Graphics.VCENTER));
-            popup.add(new ScrollPane(panel));
+            scroll = new ScrollPane(panel);
+            popup.add(scroll);
             popup.setName("Menu");
             // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
 
