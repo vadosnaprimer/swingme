@@ -62,7 +62,10 @@ import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.util.ButtonGroup;
+import net.yura.mobile.gui.plaf.aether.AetherLookAndFeel;
+import net.yura.mobile.gui.ButtonGroup;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.util.Option;
 
 /**
@@ -80,7 +83,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Menu mainMenu;
         private Panel tableTest;
         
-        private Image image;
+        private Icon image;
         private TextArea infoLabel,viewText,loadPanel;
 	private Vector images;
 	private Window mainWindow;
@@ -104,7 +107,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 		mainWindow.setActionListener(this);
 
                 try {
-                    image = Image.createImage("/world_link.png");
+                    image = new Icon("/world_link.png");
                 }catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -153,6 +156,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 mainMenu = new Menu("Menu","mainMenu");
                                 mainMenu.addActionListener(this);
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
+                                mainMenu.addMenuItem("aether1", "Aether Theme 1", null);
+                                mainMenu.addMenuItem("aether2", "Aether Theme 2", null);
                                 mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
                                 mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
                                 mainMenu.addMenuItem("synthTheme3", "Synth Theme 3", null);
@@ -162,6 +167,12 @@ public class MainPane extends DesktopPane implements ActionListener {
 			addToScrollPane(mainmenu, new CommandButton(mainMenu), new CommandButton("Exit","exit") );
 			
 		}
+                else if ("aether1".equals(actionCommand)) {
+                    setupNewLookAndFeel( new AetherLookAndFeel() );
+                }
+                else if ("aether2".equals(actionCommand)) {
+                    setupNewLookAndFeel( synth );
+                }
                 else if ("metalTheme".equals(actionCommand)) {
                     
                     if (metal==null) {
@@ -654,7 +665,7 @@ for (int c=0;c<4;c++) {
                                 return this;
                             }
 
-                            protected void paintBorder(Graphics g) {
+                            protected void paintBorder(Graphics2D g) {
 
                                 if (foc && activeBorder!=null) {
                                     activeBorder.paintBorder(this, g, width, height);
