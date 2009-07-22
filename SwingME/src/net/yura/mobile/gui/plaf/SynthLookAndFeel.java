@@ -22,6 +22,7 @@ import java.util.Hashtable;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.util.StringUtil;
@@ -148,7 +149,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String paintCenter = parser.getAttributeValue(null, "paintCenter");
 
                                     try {
-                                        Image activeimage = Image.createImage(path);
+                                        Icon activeimage = new Icon(path);
                                         String[] split = StringUtil.split(sourceInsets, ' ');
                                         border = new MatteBorder(activeimage,
                                                 insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
@@ -260,9 +261,13 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 String id = parser.getAttributeValue(null, "id");
 
                                 try {
-                                    Image newImage = Image.createImage(path);
+                                    Icon newImage;
                                     if (x!=null && y!=null && width!=null && height!=null) {
-                                        newImage = Image.createImage(newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
+                                        Image image = Image.createImage(Image.createImage(path), Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
+                                        newImage = new Icon(image);
+                                    }
+                                    else {
+                                        newImage = new Icon(path);
                                     }
                                     params.put(id, newImage);
                                 }

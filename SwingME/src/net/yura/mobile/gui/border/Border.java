@@ -17,9 +17,9 @@
 
 package net.yura.mobile.gui.border;
 
-import javax.microedition.lcdui.Graphics;
-
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
+
 /**
  * @author Yura Mamyrin
  * @see javax.swing.border.Border
@@ -33,7 +33,7 @@ public interface Border {
      * @param height the height of the painted border
      * @see javax.swing.border.Border#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) Border.paintBorder
      */
-	void paintBorder(Component c, Graphics g,int width,int height);
+	void paintBorder(Component c, Graphics2D g,int width,int height);
         /**
          * @see javax.swing.border.Border#getBorderInsets(java.awt.Component) Border.getBorderInsets
          */

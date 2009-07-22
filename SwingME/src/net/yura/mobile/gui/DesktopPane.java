@@ -277,27 +277,28 @@ public class DesktopPane extends Canvas implements Runnable {
 		// cant do this
 	//}
 
+        private Graphics2D graphics;
 	/**
 	 * @param g The Graphics object
 	 */
-	protected void paint(Graphics g) {
+	protected void paint(Graphics gtmp) {
 
 //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
             if (!paintdone) {
 
                         if (background!=-1) {
-                            g.setColor(background);
-                            g.fillRect(0, 0, getWidth(), getHeight());
+                            gtmp.setColor(background);
+                            gtmp.fillRect(0, 0, getWidth(), getHeight());
                         }
 
                         if (splash!=null) {
-                            g.drawImage(splash, (getWidth()-splash.getWidth())/2, (getHeight()-splash.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                            gtmp.drawImage(splash, (getWidth()-splash.getWidth())/2, (getHeight()-splash.getHeight())/2, Graphics.TOP | Graphics.LEFT);
                             splash = null;
                         }
                         else if (background!=-1) {
-                            g.setColor(0x00FF0000);
-                            g.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
+                            gtmp.setColor(0x00FF0000);
+                            gtmp.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
                         }
 
                         oldw = getWidth();
@@ -309,6 +310,8 @@ public class DesktopPane extends Canvas implements Runnable {
                         animationThread.start();
 
 			paintdone = true;
+
+                        graphics = new Graphics2D(gtmp);
 
 			return;
             }
@@ -326,7 +329,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                         if (!fullrepaint) {
                             for (int c=0;c<repaintComponent.size();c++) {
-                                    paintComponent(g,(Component)repaintComponent.elementAt(c));
+                                    paintComponent(graphics,(Component)repaintComponent.elementAt(c));
                             }
                         }
                     }
@@ -337,14 +340,14 @@ public class DesktopPane extends Canvas implements Runnable {
 
 		if (fullrepaint) {
 			fullrepaint = false;
-                        paintFirst(g);
+                        paintFirst(graphics);
 			for (int c=0;c<windows.size();c++) {
-				paintComponent(g,(Window)windows.elementAt(c));
+				paintComponent(graphics,(Window)windows.elementAt(c));
 
                                 if (c==(windows.size()-2) && fade!=null) {
                                     for (int x = 0; x < getWidth(); x += fade.getWidth()) {
                                         for (int y = 0; y < getHeight(); y += fade.getHeight()) {
-                                            g.drawImage(fade, x, y, Graphics.TOP | Graphics.LEFT);
+                                            graphics.drawImage(fade, x, y, Graphics.TOP | Graphics.LEFT);
                                         }
                                     }
                                 }
@@ -355,17 +358,17 @@ public class DesktopPane extends Canvas implements Runnable {
                 //#mdebug
 		if (mem!=null) {
 
-			javax.microedition.lcdui.Font font = g.getFont();
+			javax.microedition.lcdui.Font font = gtmp.getFont();
 
-			g.setColor(0x00FFFFFF);
-			g.fillRect((getWidth() -(font.stringWidth(mem)+10))/2 , 0, font.stringWidth(mem)+10, font.getHeight()+10 );
-			g.setColor(0x00000000);
-			g.drawString(mem, (getWidth() -(font.stringWidth(mem)+10))/2 +5,5, Graphics.TOP | Graphics.LEFT );
+			gtmp.setColor(0x00FFFFFF);
+			gtmp.fillRect((getWidth() -(font.stringWidth(mem)+10))/2 , 0, font.stringWidth(mem)+10, font.getHeight()+10 );
+			gtmp.setColor(0x00000000);
+			gtmp.drawString(mem, (getWidth() -(font.stringWidth(mem)+10))/2 +5,5, Graphics.TOP | Graphics.LEFT );
 		}
                 //#enddebug
 
-		drawSoftkeys(g);
-                paintLast(g);
+		drawSoftkeys(graphics);
+                paintLast(graphics);
             }
             catch(Throwable th) {
                 //#debug
@@ -379,10 +382,10 @@ public class DesktopPane extends Canvas implements Runnable {
             fade = a;
         }
 
-        public void paintFirst(Graphics g) { }
-        public void paintLast(Graphics g) { }
+        public void paintFirst(Graphics2D g) { }
+        public void paintLast(Graphics2D g) { }
 
-        private void drawSoftkeys(Graphics g) {
+        private void drawSoftkeys(Graphics2D g) {
 
             Component com1 = getSoftkeyRenderer(0);
             if (com1!=null) {
@@ -402,7 +405,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
 
-        private void paintComponent(Graphics g,Component com) {
+        private void paintComponent(Graphics2D g,Component com) {
 
             int a=g.getClipX();
             int b=g.getClipY();

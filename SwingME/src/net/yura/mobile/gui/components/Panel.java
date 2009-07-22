@@ -20,7 +20,7 @@ package net.yura.mobile.gui.components;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.layout.Layout;
 
 /**
@@ -149,7 +149,7 @@ public class Panel extends Component {
          * @param g Graphics object
          * @see java.awt.Container#paint(java.awt.Graphics) Container.paint
          */
-	public void paint(Graphics g) {
+	public void paint(Graphics2D g) {
 		super.paint(g);
 
 		paintChildren(g);
@@ -159,7 +159,7 @@ public class Panel extends Component {
          * @param g Graphics object
          * @see java.awt.Container#paintComponents(java.awt.Graphics) Container.paintComponents
          */
-	public void paintChildren(Graphics g){
+	public void paintChildren(Graphics2D g){
             
             int clipX = g.getClipX();
             int clipY = g.getClipY();
@@ -190,7 +190,7 @@ public class Panel extends Component {
 
         
 	// does nothing, but can be overridden
-        public void paintComponent(Graphics g) {}
+        public void paintComponent(Graphics2D g) {}
 
         /**
          * @param w The preferred Width (can be -1 for no preference)
@@ -412,7 +412,7 @@ public class Panel extends Component {
 		
 	}
 
-        public void clip(Graphics g) {
+        public void clip(Graphics2D g) {
             if (parent!=null) {
                 parent.clip(g);
             }

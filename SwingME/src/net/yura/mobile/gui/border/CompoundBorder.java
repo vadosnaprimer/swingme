@@ -17,7 +17,7 @@
 
 package net.yura.mobile.gui.border;
 
-import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
 
 /**
@@ -70,7 +70,7 @@ public class CompoundBorder implements Border {
      * @param height
      * @see javax.swing.border.CompoundBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) CompoundBorder.paintBorder
      */
-    public void paintBorder(Component c, Graphics g, int width, int height) {
+    public void paintBorder(Component c, Graphics2D g, int width, int height) {
         
         g.translate(-insideBorder.getLeft(), -insideBorder.getTop());
         outsideBorder.paintBorder(c,g,width+insideBorder.getLeft()+insideBorder.getRight(),height+insideBorder.getTop()+insideBorder.getBottom());

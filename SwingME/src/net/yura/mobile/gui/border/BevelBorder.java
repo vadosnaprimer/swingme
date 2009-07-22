@@ -17,8 +17,7 @@
 
 package net.yura.mobile.gui.border;
 
-import javax.microedition.lcdui.Graphics;
-
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
 
 /**
@@ -79,7 +78,7 @@ public class BevelBorder implements Border {
          * @param height
          * @see javax.swing.border.BevelBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) EmptyBorder.paintBorder
          */
-	public void paintBorder(Component comp, Graphics g, int width,int height) {
+	public void paintBorder(Component comp, Graphics2D g, int width,int height) {
 
             for (int c=0;c<thickness;c++) {
 

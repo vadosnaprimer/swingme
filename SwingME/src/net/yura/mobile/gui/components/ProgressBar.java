@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 
 /**
  * @author Yura Mamyrin
@@ -43,7 +44,7 @@ public class ProgressBar extends Component {
             loaded = 100;
     }
 
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics2D g) {
 
             g.setColor(foreground);
             

@@ -18,6 +18,7 @@
 package net.yura.mobile.util;
 
 import javax.microedition.lcdui.Image;
+import net.yura.mobile.gui.Icon;
 
 /**
  * @author Yura Mamyrin
@@ -27,17 +28,17 @@ public class Option {
 	private String id;
 	private String value;
         private String tip;
-        private Image icon;
+        private Icon icon;
 
 	public Option(final String key, final String val) {
                 this(key,val,null);
 	}
-        public Option(final String key, final String val,final Image img) {
+        public Option(final String key, final String val,final Icon img) {
 		id = key;
 		value = val;
                 icon = img;
         }
-        public Option(String id, String title, Image icon, String tip) {
+        public Option(String id, String title, Icon icon, String tip) {
             	this.id = id;
 		value = title;
                 this.icon = icon;
@@ -54,7 +55,7 @@ public class Option {
         public String getValue() {
 		return value;
 	}
-        public Image getIcon() {
+        public Icon getIcon() {
             return icon;
         }
 

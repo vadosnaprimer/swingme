@@ -21,6 +21,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ChangeListener;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
@@ -136,7 +137,7 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @param component The component of the tab
          * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component) JTabbedPane.addTab
          */
-        public void addTab(String title, Image icon, Component component) {
+        public void addTab(String title, Icon icon, Component component) {
             addTab(title, icon, component, null);
         }
 
@@ -147,7 +148,7 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @param tip
          * @see javax.swing.JTabbedPane#addTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String) JTabbedPane.addTab
          */
-        public void addTab(String title, Image icon, Component component, String tip) {
+        public void addTab(String title, Icon icon, Component component, String tip) {
             tabList.addElement(new Option(null,title,icon,tip));
             tabs.addElement(component);
 
@@ -192,7 +193,7 @@ public class TabbedPane extends Panel implements ChangeListener {
          * @param index
          * @see javax.swing.JTabbedPane#insertTab(java.lang.String, javax.swing.Icon, java.awt.Component, java.lang.String, int) JTabbedPane.insertTab
          */
-        public void insertTab(String title, Image icon, Component component, String tip, int index) {
+        public void insertTab(String title, Icon icon, Component component, String tip, int index) {
 
             tabList.getItems().insertElementAt(new Option(null,title,icon,tip), index);
             tabs.insertElementAt(component,index);

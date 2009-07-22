@@ -25,6 +25,8 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
@@ -32,9 +34,10 @@ import net.yura.mobile.util.Option;
 
 public class Spinner extends Label {
     
-        // TODO:  may need more images
-	private Image selectedImage;
-	private Image nonSelectedImage;
+	private Icon leftSelectedIcon;
+	private Icon leftUnselectedIcon;
+	private Icon rightSelectedIcon;
+	private Icon rightUnselectedIcon;
         
 	private int index = 0;
 	
@@ -78,12 +81,12 @@ public class Spinner extends Label {
 
             if (type == DesktopPane.PRESSED) {
                 int offset=0;
-                if (nonSelectedImage != null) {
-                    // TODO
-                }
-                else {
+//                if (nonSelectedImage != null) {
+//                    // TODO
+//                }
+//                else {
                         offset = (getWidthWithBorder() - getWidth())/2;
-                }
+//                }
                 if (x <0 && x > -offset) {
                     leftPress = true;
                 }
@@ -122,15 +125,15 @@ public class Spinner extends Label {
 
                         Object obj = list.elementAt(i);
 
-                        Image img = (obj instanceof Option)?((Option)obj).getIcon():null;
+                        Icon img = (obj instanceof Option)?((Option)obj).getIcon():null;
                         
-                        int len = getCombinedWidth(String.valueOf(obj),img!=null?img.getWidth():0);
+                        int len = getCombinedWidth(String.valueOf(obj),img!=null?img.getIconWidth():0);
 
                         if (maxWidth < len){
                             maxWidth = len;
                         }
                         
-                        int hi = getCombinedHeight( img!=null?img.getHeight():0 );
+                        int hi = getCombinedHeight( img!=null?img.getIconHeight():0 );
                                 
                         if (maxHeight < hi){
                             maxHeight = hi;
@@ -139,7 +142,8 @@ public class Spinner extends Label {
 
                     }
 
-                    int w = maxWidth + ((normalBorder==null)?getArrowWidth()*2:0) + gap*2 + padding*2; // normalBorder.getLeft() + normalBorder.getRight()
+                    // ((normalBorder==null)?getArrowWidth()*2:0)
+                    int w = maxWidth + gap*2 + padding*2; // normalBorder.getLeft() + normalBorder.getRight()
                     int h = maxHeight + padding*2; // normalBorder.getTop() + normalBorder.getBottom()
 
                     if (w > width) width = w;
@@ -155,15 +159,15 @@ public class Spinner extends Label {
 
 	}
         
-        private int getArrowWidth() {
-            
-            if (nonSelectedImage!=null) {
-                return nonSelectedImage.getWidth();
-            }
-            else {
-                return getFont().getHeight()/2;
-            }
-        }
+//        private int getArrowWidth() {
+//
+//            if (nonSelectedImage!=null) {
+//                return nonSelectedImage.getWidth();
+//            }
+//            else {
+//                return getFont().getHeight()/2;
+//            }
+//        }
         
 	
 	public boolean keyEvent(KeyEvent keypad){
@@ -208,7 +212,7 @@ public class Spinner extends Label {
 		}
         }
 
-	public void paintComponent(Graphics g){
+	public void paintComponent(Graphics2D g){
             super.paintComponent(g);
             
             
@@ -220,73 +224,36 @@ public class Spinner extends Label {
             //b.paintBorder(this, g, width -gap*2 - arrowWidth*2 -normalBorder.getLeft() - normalBorder.getRight(), height-normalBorder.getTop() - normalBorder.getBottom());
             //g.translate(-arrowWidth-gap-normalBorder.getLeft(), -normalBorder.getTop());
 
+//
+//            if (nonSelectedImage != null) {
+//
+//                    // TODO: Finish
+//                    //g.drawImage(nonSelectedImage, 0, (height-nonSelectedImage.getHeight())/2 , 0 );
+//                    //g.drawImage(selectedImage, width-arrowWidth, (height-nonSelectedImage.getHeight())/2 , 0 );
+//            }
+//            else {
+//
+//                    int arrowHeight = getFont().getHeight();
+//                    int arrowWidth = arrowHeight/2;
+//                    int offset = (getWidthWithBorder() - getWidth())/2;
+//
+//                    if (leftPress){
+//                            g.setColor(0);
+//                    }
+//                    else{
+//                            g.setColor(0x00808080);
+//                    }
+//                    ScrollPane.drawLeftArrow(g, -arrowWidth -(offset-arrowWidth)/2, (height-arrowHeight)/2, arrowWidth, arrowHeight);
+//
+//                    if (rightPress){
+//                            g.setColor(0);
+//                    }
+//                    else{
+//                            g.setColor(0x00808080);
+//                    }
+//                    ScrollPane.drawRightArrow(g, width + (offset-arrowWidth)/2, (height-arrowHeight)/2, arrowWidth, arrowHeight);
+//            }
 
-            if (nonSelectedImage != null) {
-                
-                    // TODO: Finish
-                    //g.drawImage(nonSelectedImage, 0, (height-nonSelectedImage.getHeight())/2 , 0 );
-                    //g.drawImage(selectedImage, width-arrowWidth, (height-nonSelectedImage.getHeight())/2 , 0 );
-            }
-            else {
-
-                    int arrowHeight = getFont().getHeight();
-                    int arrowWidth = arrowHeight/2;
-                    int offset = (getWidthWithBorder() - getWidth())/2;
-                    
-                    if (leftPress){
-                            g.setColor(0);
-                    }
-                    else{
-                            g.setColor(0x00808080);
-                    }
-                    ScrollPane.drawLeftArrow(g, -arrowWidth -(offset-arrowWidth)/2, (height-arrowHeight)/2, arrowWidth, arrowHeight);
-
-                    if (rightPress){
-                            g.setColor(0);
-                    }
-                    else{
-                            g.setColor(0x00808080);
-                    }
-                    ScrollPane.drawRightArrow(g, width + (offset-arrowWidth)/2, (height-arrowHeight)/2, arrowWidth, arrowHeight);
-            }
-/*
-            int xoffset = 0;
-
-            if ((alignment&Graphics.LEFT)!=0) {
-                xoffset = arrowWidth+gap+normalBorder.getLeft();
-            }
-            else if ((alignment&Graphics.RIGHT)!=0) {
-                xoffset = -arrowWidth-gap-normalBorder.getRight();
-            }
-            
-            int yoffset=0;
-            if ((alignment&Graphics.TOP)!=0) {
-                yoffset = normalBorder.getTop();
-            }
-            else if ((alignment&Graphics.BOTTOM)!=0) {
-                yoffset = -normalBorder.getBottom();
-            }
-            
-            g.translate(xoffset, yoffset);
-            super.paintComponent(g);
-            g.translate(-xoffset, -yoffset);
- */
-	}
-	
-	public Image getSelectedImage() {
-		return selectedImage;
-	}
-
-	public void setSelectedImage(Image selectedImage) {
-		this.selectedImage = selectedImage;
-	}
-
-	public Image getNonSelectedImage() {
-		return nonSelectedImage;
-	}
-
-	public void setNonSelectedImage(Image nonSelectedImage) {
-		this.nonSelectedImage = nonSelectedImage;
 	}
 
 	

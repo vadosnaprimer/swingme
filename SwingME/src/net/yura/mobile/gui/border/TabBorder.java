@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.border;
 
 import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
 
 /**
@@ -41,7 +42,7 @@ public class TabBorder implements Border {
         orient = a;
     }
     
-    public void paintBorder(Component c, Graphics g, int width, int height) {
+    public void paintBorder(Component c, Graphics2D g, int width, int height) {
         
               int x=-2;
               int y=-2;

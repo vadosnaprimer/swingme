@@ -45,7 +45,9 @@ public class MetalLookAndFeel extends LookAndFeel {
     	public MetalLookAndFeel(int size) {
 
             Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, size));
-            
+
+            MetalIcon icon = new MetalIcon(font.getHeight()-1);
+
             Style defaultStyle = new Style();
             defaultStyle.addFont(font, Style.ALL);
             defaultStyle.addBackground( getSecondary3() , Style.ALL);

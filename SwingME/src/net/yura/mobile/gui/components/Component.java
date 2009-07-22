@@ -18,9 +18,8 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
-
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
@@ -182,7 +181,7 @@ public abstract class Component {
          * override and call super when things HAVE to be painted
          * @see java.awt.Component#paint(java.awt.Graphics) Component.paint
          */
-	public void paint(Graphics g) {
+	public void paint(Graphics2D g) {
 		//System.out.println("paint "+this);
                 paintBorder(g);
 		
@@ -200,7 +199,7 @@ public abstract class Component {
         /**
          * @see javax.swing.JComponent#paintBorder(java.awt.Graphics) JComponent.paintBorder
          */
-        protected void paintBorder(Graphics g) {
+        protected void paintBorder(Graphics2D g) {
 
             	if (border != null) {
 
@@ -210,7 +209,7 @@ public abstract class Component {
 
         }
     
-	public abstract void paintComponent(Graphics g);
+	public abstract void paintComponent(Graphics2D g);
     
 	public boolean keyEvent(KeyEvent keypad) {
 		

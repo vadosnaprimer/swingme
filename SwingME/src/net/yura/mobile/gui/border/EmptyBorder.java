@@ -17,8 +17,7 @@
 
 package net.yura.mobile.gui.border;
 
-import javax.microedition.lcdui.Graphics;
-
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
 
 /**
@@ -96,7 +95,7 @@ public class EmptyBorder implements Border {
          * @param height
          * @see javax.swing.border.EmptyBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) EmptyBorder.paintBorder
          */
-	public void paintBorder(Component c, Graphics g, int width,int height) { }
+	public void paintBorder(Component c, Graphics2D g, int width,int height) { }
 
         public boolean isBorderOpaque() {
             return false;

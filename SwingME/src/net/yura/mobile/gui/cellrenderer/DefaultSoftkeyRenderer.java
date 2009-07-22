@@ -21,6 +21,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Button;
@@ -63,7 +64,7 @@ public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
         return this;
     }
 
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics2D g) {
         
         Image b=getImage();
         if (b!=null) {

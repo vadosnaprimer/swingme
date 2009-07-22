@@ -21,6 +21,8 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.util.Option;
 
@@ -72,9 +74,9 @@ public class ComboBox extends Button implements ActionListener{
 					
                                     Object obj = list.getElementAt(i);
 
-                                    Image img = (obj instanceof Option)?((Option)obj).getIcon():null;
-                                    int lenW = getCombinedWidth(String.valueOf(obj),img!=null?img.getWidth():0);
-                                    int lenH = getCombinedHeight(img!=null?img.getHeight():0);
+                                    Icon img = (obj instanceof Option)?((Option)obj).getIcon():null;
+                                    int lenW = getCombinedWidth(String.valueOf(obj),img!=null?img.getIconWidth():0);
+                                    int lenH = getCombinedHeight(img!=null?img.getIconHeight():0);
 
                                     
 				    if (count < lenW){
@@ -146,16 +148,16 @@ public class ComboBox extends Button implements ActionListener{
             list.addActionListener(this);
         }
 
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics2D g) {
 
             if (nonSelectedImage == null){
 
-                int w = width - getFont().getHeight();
-                g.setColor( foreground );
-                g.drawLine(w , 0, w , height);
-
-                int gp = 2; // gap between arrow and sides
-                ScrollPane.drawDownArrow(g, w+1+gp, (height/2)-2, width-w-gp*2-1, height);
+//                int w = width - getFont().getHeight();
+//                g.setColor( foreground );
+//                g.drawLine(w , 0, w , height);
+//
+//                int gp = 2; // gap between arrow and sides
+//                ScrollPane.drawDownArrow(g, w+1+gp, (height/2)-2, width-w-gp*2-1, height);
             }
             else {
 

@@ -18,12 +18,12 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.util.ButtonGroup;
+import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
@@ -82,14 +82,14 @@ public class Button extends Label implements ActionListener {
          * @param img the Icon image to display on the button
          * @see javax.swing.JButton#JButton(java.lang.String, javax.swing.Icon) JButton.JButton
          */
-	public Button(String label, Image img) {
+	public Button(String label, Icon img) {
 		this(label);
                 
                 setIcon(img);
 	}
 
 
-        protected void paintBorder(Graphics g) {
+        protected void paintBorder(Graphics2D g) {
 
             if (!focusable && disabledBorder!=null) {
                 disabledBorder.paintBorder(this, g, width, height);

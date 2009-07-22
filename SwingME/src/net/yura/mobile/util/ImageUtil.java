@@ -17,6 +17,7 @@
 
 package net.yura.mobile.util;
 
+import net.yura.mobile.gui.Graphics2D;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -50,12 +51,13 @@ public class ImageUtil {
 
         g.setClip(cx,cy,cw,ch);
     }
-    
-    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
-        
-        fillArea(new Graphics2D(g,Sprite.TRANS_NONE), img, src_x, src_y, src_w, src_h, dest_x, dest_y, dest_w, dest_h, Sprite.TRANS_NONE );
-        
-    }
+
+//
+//    public static void fillArea(Graphics g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
+//
+//        fillArea(new Graphics2D(g,Sprite.TRANS_NONE), img, src_x, src_y, src_w, src_h, dest_x, dest_y, dest_w, dest_h, Sprite.TRANS_NONE );
+//
+//    }
     
     public static Image makeImage(int w,int h,int color) {
 

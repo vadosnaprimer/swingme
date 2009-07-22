@@ -26,6 +26,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
@@ -254,7 +255,7 @@ public class List extends Component implements ActionListener {
         return new int[] {i,offset} ;
     }
 
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics2D g) {
 
         boolean good=false;
         int clipx = g.getClipX();

@@ -15,7 +15,7 @@
  *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package net.yura.mobile.util;
+package net.yura.mobile.gui;
 
 import java.util.Vector;
 

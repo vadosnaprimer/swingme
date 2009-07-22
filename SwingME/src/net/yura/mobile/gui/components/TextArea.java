@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 
 /**
@@ -103,7 +104,7 @@ public class TextArea extends TextComponent {
 	/**
 	 * @param g The Graphics object
 	 */
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics2D g) {
 
                 String text = getDisplayString();
             
@@ -168,7 +169,8 @@ public class TextArea extends TextComponent {
                     }
 
                     String line = text.substring(beginIndex, lastDrawIndex);
-                    font.drawString(g, line , x, y, alignment);
+                    g.setFont(font);
+                    g.drawString(line , x, y);
 
                     if (showCaret && caretPosition >= beginIndex && caretPosition <= lastCaretIndex) {
 

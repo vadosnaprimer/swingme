@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.GridLayout;
@@ -33,7 +34,7 @@ public class TitleBar extends Panel implements ActionListener {
 
     private Label title;
     
-    public TitleBar(String title,Image icon,boolean resize,boolean move,boolean hide,boolean max,boolean close) {
+    public TitleBar(String title,Icon icon,boolean resize,boolean move,boolean hide,boolean max,boolean close) {
         super(new BorderLayout());
         setName("TitleBar");
         
@@ -91,7 +92,7 @@ public class TitleBar extends Panel implements ActionListener {
      * @param img the icon image to be displayed
      * @see java.awt.Frame#setIconImage(java.awt.Image) Frame.setIconImage
      */
-    public void setIconImage(Image img) {
+    public void setIconImage(Icon img) {
         title.setIcon(img);
     }
     

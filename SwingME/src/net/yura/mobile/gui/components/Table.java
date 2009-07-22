@@ -22,6 +22,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.celleditor.TableCellEditor;
@@ -311,7 +312,7 @@ public class Table extends Panel {
         
     }
     
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics2D g) {
         int x=0,y=0;
 
         int cols = getColumnCount();

@@ -22,6 +22,8 @@ import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
@@ -37,7 +39,7 @@ public class Label extends Component {
 	protected Font font;
 	
 	protected String string;
-	protected Image icon;
+	protected Icon icon;
 	protected int padding=2;	
 	protected int gap=2;
 	
@@ -70,7 +72,7 @@ public class Label extends Component {
          * @param icon The image to be displayed by the label
          * @see javax.swing.JLabel#JLabel(javax.swing.Icon) JLabel.JLabel
          */
-	public Label(Image icon) {
+	public Label(Icon icon) {
 		this();
                 setIcon(icon);
 		setHorizontalAlignment(Graphics.HCENTER);
@@ -81,7 +83,7 @@ public class Label extends Component {
          * @param icon The image to be displayed by the label
          * @see javax.swing.JLabel#JLabel(java.lang.String, javax.swing.Icon, int) JLabel.JLabel
          */
-        public Label(String text,Image icon) {
+        public Label(String text,Icon icon) {
                 this(text);
                 setIcon(icon);
         }
@@ -119,7 +121,7 @@ public class Label extends Component {
 
 	}
 	
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics2D g) {
 
 		int x=padding;
 		int y=padding;
@@ -211,10 +213,15 @@ public class Label extends Component {
 			
 			
 			g.setColor(foreground);
-			font.drawString(g, drawString, tx,ty, Graphics.TOP | Graphics.LEFT  );
+                        g.setFont(font);
+			g.drawString( drawString, tx,ty );
 		}
 
 	}
+
+        protected void paintIcon(Graphics2D g, int x, int y) {
+            icon.paintIcon(this, g, x, y);
+        }
 
 	protected int getCombinedWidth() {
             return getCombinedWidth(string,getIconWidth());
@@ -295,7 +302,7 @@ public class Label extends Component {
          * @return The icon of the label
          * @see javax.swing.JLabel#getIcon() JLabel.getIcon
          */
-	public Image getIcon() {
+	public Icon getIcon() {
 		return icon;
 	}
 
@@ -303,7 +310,7 @@ public class Label extends Component {
          * @param icon The icon of the label
          * @see javax.swing.JLabel#setIcon(javax.swing.Icon) JLabel.setIcon
          */
-	public void setIcon(Image icon) {
+	public void setIcon(Icon icon) {
 		this.icon = icon;
                 repaint();
 	}
@@ -352,7 +359,7 @@ public class Label extends Component {
         public void setValue(Object obj) {
             
             String drawString=null;
-            Image image=null;
+            Icon image=null;
             String tip=null;
             
             if (obj instanceof Option) {
@@ -406,24 +413,12 @@ public class Label extends Component {
         font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
     }
 
-    
-    /**
-     * @see javax.swing.Icon#getIconWidth() Icon.getIconWidth
-     */
-    protected int getIconWidth() {
-        return icon!=null?icon.getWidth():0;
+    private int getIconWidth() {
+        return icon!=null?icon.getIconWidth():0;
     }
-    
-    /**
-     * @see javax.swing.Icon#getIconHeight() Icon.getIconHeight
-     */
-    protected int getIconHeight() {
-        return icon!=null?icon.getHeight():0;
-    }
-    /**
-     * @see javax.swing.Icon#paintIcon(java.awt.Component, java.awt.Graphics, int, int) Icon.paintIcon
-     */
-    protected void paintIcon(Graphics g, int x, int y) {
-        g.drawImage(icon, x, y, Graphics.TOP | Graphics.LEFT);
+
+
+    private int getIconHeight() {
+        return icon!=null?icon.getIconHeight():0;
     }
 }

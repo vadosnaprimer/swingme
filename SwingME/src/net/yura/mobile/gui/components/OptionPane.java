@@ -21,10 +21,10 @@ import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
@@ -127,8 +127,8 @@ public class OptionPane extends Window {
         if (object instanceof Component) {
             return (Component)object;
         }
-        if (object instanceof Image) {
-            return new Label((Image)object);
+        if (object instanceof Icon) {
+            return new Label((Icon)object);
         }
         Label tmp = new Label();
         tmp.setValue(object);
@@ -153,7 +153,7 @@ public class OptionPane extends Window {
        setWindowCommand(1, (options.length > 1)?options[1]:null);
     }
 
-    public void setIcon(Image icon) {
+    public void setIcon(Icon icon) {
         this.icon.setIcon(icon);
     }
 
@@ -190,7 +190,7 @@ public class OptionPane extends Window {
     }
     
     private boolean factory;
-    public static void showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Image icon, CommandButton[] options, CommandButton initialValue) {
+    public static void showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, CommandButton[] options, CommandButton initialValue) {
 
         Vector myselfs = getAllWindows();
         OptionPane myself=null;

@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 
 /**
@@ -42,7 +43,7 @@ public class TextField extends TextComponent {
             workoutSize();
         }
     
-    	public void paintComponent(Graphics g) {
+    	public void paintComponent(Graphics2D g) {
             
 		String textString = getDisplayString();
 
@@ -53,7 +54,8 @@ public class TextField extends TextComponent {
 		g.clipRect(0, 0, width, height);
                 
                 g.setColor(isFocusOwner()?activeTextColor:foreground);
-		font.drawString(g, textString, offset, (height-font.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+                g.setFont(font);
+		g.drawString( textString, offset, (height-font.getHeight())/2 );
 
                 if (showCaret) {
                     int x = font.getWidth(textString.substring(0, caretPosition));

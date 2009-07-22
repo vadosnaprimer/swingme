@@ -24,6 +24,8 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.KeyEvent;
 
@@ -264,8 +266,9 @@ public class Menu extends Button {
          * @param name
          * @param icon
          * @see javax.swing.JMenu#add(java.lang.String) JMenu.add
+         * @deprecated
          */
-        public Button addMenuItem(String command,String name,Image icon) {
+        public Button addMenuItem(String command,String name,Icon icon) {
 
             Button b = new Button(name,icon);
             b.setActionCommand(command);
@@ -294,25 +297,25 @@ public class Menu extends Button {
 
 	}
 
-	public void paintComponent(Graphics g) {
+	public void paintComponent(Graphics2D g) {
 		super.paintComponent(g);
 
                 int s = getFont().getHeight();
 		int s2 = s/2;
 
-                if ((arrowDirection & Graphics.RIGHT ) !=0) {
-
-                    if ((arrowDirection & Graphics.TOP ) !=0) {
-                        ScrollPane.drawUpArrow(g, width-s-padding, (height-s2)/2, s, s2);
-                    }
-                    else if ((arrowDirection & Graphics.BOTTOM ) !=0) {
-                        ScrollPane.drawDownArrow(g, width-s-padding, (height-s2)/2, s, s2);
-                    }
-                    else {
-                        ScrollPane.drawRightArrow(g, width-s2-padding, (height-s)/2, s2, s);
-                    }
-
-                }
+//                if ((arrowDirection & Graphics.RIGHT ) !=0) {
+//
+//                    if ((arrowDirection & Graphics.TOP ) !=0) {
+//                        ScrollPane.drawUpArrow(g, width-s-padding, (height-s2)/2, s, s2);
+//                    }
+//                    else if ((arrowDirection & Graphics.BOTTOM ) !=0) {
+//                        ScrollPane.drawDownArrow(g, width-s-padding, (height-s2)/2, s, s2);
+//                    }
+//                    else {
+//                        ScrollPane.drawRightArrow(g, width-s2-padding, (height-s)/2, s2, s);
+//                    }
+//
+//                }
                 // TODO support left side arrows
 
 	}

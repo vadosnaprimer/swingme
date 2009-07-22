@@ -53,36 +53,6 @@ public class CheckBox extends RadioButton {
             setSelected(!isSelected());
         }
 
-    protected void paintIcon(Graphics g, int x, int y) {
-
-        if (icon==null) {
-
-            g.setColor(foreground);
-            
-            int w = getIconWidth();
-            int h = getIconHeight();
-
-            g.drawRect(x, y, w-1, h-1);
-
-            if (isSelected()) {
-
-                //g.fillRect(x+3, y+3, size-6, size-6);
-                
-                for (int pad=3;pad<6;pad++) {
-                    g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
-                    g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
-                }
-
-            }
-            
-        }
-        else {
-            super.paintIcon(g, x, y);
-        }
-
-    }
-        
-
         public String getName() {
             return "CheckBox";
         }

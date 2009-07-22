@@ -21,6 +21,8 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Properties;
@@ -31,7 +33,7 @@ import net.yura.mobile.util.Properties;
  */
 public class MatteBorder extends EmptyBorder {
 
-    private Image activeimage;
+    private Icon activeimage;
     private int imageTop;
     private int imageBottom;
     private int imageRight;
@@ -60,7 +62,7 @@ public class MatteBorder extends EmptyBorder {
          * @param tileIcon the icon to be used for tiling the border
          * @see javax.swing.border.MatteBorder#MatteBorder(int, int, int, int, javax.swing.Icon) MatteBorder.MatteBorder
          */
-        public MatteBorder(int top, int left, int bottom, int right, Image tileIcon) {
+        public MatteBorder(int top, int left, int bottom, int right, Icon tileIcon) {
               super(top,left,bottom,right);
               activeimage = tileIcon;
               back=true;
@@ -90,7 +92,7 @@ public class MatteBorder extends EmptyBorder {
         public static MatteBorder load(String name) throws Exception {
             
             int top,bottom,left,right;
-            Image activeimage;
+            Icon activeimage;
             int imageTop;
             int imageBottom;
             int imageRight;
@@ -108,7 +110,7 @@ public class MatteBorder extends EmptyBorder {
                     imageName = "/"+imageName;
             }
 
-            activeimage = Image.createImage(imageName);
+            activeimage = new Icon(imageName);
             imageTop=Integer.parseInt(newborder.getProperty("itop"));
             imageBottom=Integer.parseInt(newborder.getProperty("ibottom"));
             imageRight=Integer.parseInt(newborder.getProperty("iright"));
@@ -133,7 +135,7 @@ public class MatteBorder extends EmptyBorder {
 
 	}
 
-        public MatteBorder(Image i, int top, int left, int bottom, int right, int t, int l, int b, int r, boolean back, int color) {
+        public MatteBorder(Icon i, int top, int left, int bottom, int right, int t, int l, int b, int r, boolean back, int color) {
             super(top,left,bottom,right);
             activeimage = i;
             imageTop=t;
@@ -148,7 +150,7 @@ public class MatteBorder extends EmptyBorder {
          * @return the icon used for tiling the border or null if a solid color is being used
          * @see javax.swing.border.MatteBorder#getTileIcon() MatteBorder.getTileIcon
          */
-        public Image getTileIcon() {
+        public Icon getTileIcon() {
             return activeimage;
         }
         
@@ -161,7 +163,7 @@ public class MatteBorder extends EmptyBorder {
          * @param height
          * @see javax.swing.border.MatteBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) MatteBorder.paintBorder
          */
-        public void paintBorder(Component c, Graphics g, int width,int height) {
+        public void paintBorder(Component c, Graphics2D g, int width,int height) {
             
             if (activeimage==null) {
             
@@ -179,32 +181,38 @@ public class MatteBorder extends EmptyBorder {
             }
             else {
                 
-                int imageWidth=activeimage.getWidth();
-                int imageHeight=activeimage.getHeight();
+                int imageWidth=activeimage.getIconWidth();
+                int imageHeight=activeimage.getIconHeight();
                 
                 int topDiff = imageTop-top;
                 int rightDiff= imageRight-right;
                 int leftDiff= imageLeft-left;
                 int bottomDiff= imageBottom-bottom;
-                
-                g.drawRegion(activeimage, 0,  0, imageLeft, imageTop, Sprite.TRANS_NONE, -left, -top,Graphics.TOP|Graphics.LEFT);
-                g.drawRegion(activeimage, imageWidth-imageRight,  0, imageRight, imageTop, Sprite.TRANS_NONE, width-rightDiff, -top,Graphics.TOP|Graphics.LEFT);
-                g.drawRegion(activeimage, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff,Graphics.TOP|Graphics.LEFT);
-                g.drawRegion(activeimage, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff,Graphics.TOP|Graphics.LEFT);
+
+                Image image = activeimage.getImage();
+
+                g.drawRegion(image, 0,  0, imageLeft, imageTop, Sprite.TRANS_NONE, -left, -top,Graphics.TOP|Graphics.LEFT);
+                g.drawRegion(image, imageWidth-imageRight,  0, imageRight, imageTop, Sprite.TRANS_NONE, width-rightDiff, -top,Graphics.TOP|Graphics.LEFT);
+                g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff,Graphics.TOP|Graphics.LEFT);
+                g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff,Graphics.TOP|Graphics.LEFT);
 
                 
                 
-                ImageUtil.fillArea(g,activeimage,imageRight,0,imageWidth-imageRight-imageLeft,imageTop,
-                        leftDiff,-top,width-leftDiff-rightDiff,imageTop); // top line
+                ImageUtil.fillArea(g,image,imageRight,0,imageWidth-imageRight-imageLeft,imageTop,
+                        leftDiff,-top,width-leftDiff-rightDiff,imageTop,
+                        Sprite.TRANS_NONE); // top line
 
-                ImageUtil.fillArea(g,activeimage,imageRight,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
-                        leftDiff,height-bottomDiff,width-leftDiff-rightDiff,imageBottom); // bottom line
+                ImageUtil.fillArea(g,image,imageRight,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
+                        leftDiff,height-bottomDiff,width-leftDiff-rightDiff,imageBottom,
+                        Sprite.TRANS_NONE); // bottom line
 
-                ImageUtil.fillArea(g,activeimage,0,imageTop,imageLeft,imageHeight-imageTop-imageBottom,
-                        -left,topDiff,imageLeft,height-topDiff-bottomDiff); // left
+                ImageUtil.fillArea(g,image,0,imageTop,imageLeft,imageHeight-imageTop-imageBottom,
+                        -left,topDiff,imageLeft,height-topDiff-bottomDiff,
+                        Sprite.TRANS_NONE); // left
 
-                ImageUtil.fillArea(g,activeimage,imageWidth-imageRight,imageTop,imageRight,imageHeight-imageTop-imageBottom,
-                        width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff); // right
+                ImageUtil.fillArea(g,image,imageWidth-imageRight,imageTop,imageRight,imageHeight-imageTop-imageBottom,
+                        width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff,
+                        Sprite.TRANS_NONE); // right
                 
                 
                 if (!back && color==-1) {
@@ -215,8 +223,9 @@ public class MatteBorder extends EmptyBorder {
                 }
                 
                 else if (back) {
-                    ImageUtil.fillArea(g,activeimage,imageRight,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
-                            leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff); // centre
+                    ImageUtil.fillArea(g,image,imageRight,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
+                            leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff,
+                            Sprite.TRANS_NONE); // centre
                 }
                 
                 else if (color!=-1) {
