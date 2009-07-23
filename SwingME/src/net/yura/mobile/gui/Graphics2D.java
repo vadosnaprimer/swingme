@@ -31,8 +31,7 @@ public class Graphics2D {
         private Graphics g;
         private int trans;
 
-        public Graphics2D(Graphics g) {
-                this.g = g;
+        public Graphics2D() {
         }
 
         public void setTransform(int t) {
@@ -231,6 +230,10 @@ public class Graphics2D {
                         convertTrans(w,h),
                         convertTrans(h,w),
                         a1,a2);
+    }
+
+    void setGraphics(Graphics gtmp) {
+        g = gtmp;
     }
 
 }

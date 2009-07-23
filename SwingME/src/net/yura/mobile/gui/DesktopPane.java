@@ -311,12 +311,14 @@ public class DesktopPane extends Canvas implements Runnable {
 
 			paintdone = true;
 
-                        graphics = new Graphics2D(gtmp);
+                        graphics = new Graphics2D();
 
 			return;
             }
                 
             try {
+
+                graphics.setGraphics(gtmp);
 
                 synchronized(repaintComponent) {
 
