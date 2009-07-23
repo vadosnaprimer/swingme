@@ -45,7 +45,7 @@ public class Graphics2D {
         }
 
         public void drawRect(int x,int y,int w,int h) {
-
+                
                 g.drawRect(
                         convertTrans(x,y),
                         convertTrans(y,x),
@@ -234,6 +234,10 @@ public class Graphics2D {
 
     void setGraphics(Graphics gtmp) {
         g = gtmp;
+    }
+
+    public Graphics getGraphics() {
+        return this.g;
     }
 
 }

@@ -17,30 +17,31 @@
 
 package net.yura.mobile.gui.plaf;
 
-import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Button;
-import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.RadioButton;
 
 /**
  * @author Yura Mamyrin
  */
 public class MetalIcon extends Icon {
 
-    public MetalIcon(int size) {
+    public static final int RADIO = 0;
+    public static final int CHECKBOX = 1;
+    public static final int COMBO = 2;
+
+    int type;
+
+    public MetalIcon(int size, int type) {
         width = size;
         height = size;
+        this.type = type;
     }
 
-    public void paintIcon(Component c, Graphics g, int x, int y) {
-
-        if (c instanceof Button) {
-
-            Button b = (Button)c;
-            if (b instanceof CheckBox) {
-
+    public void paintIcon(Component c, Graphics2D g, int x, int y) {
+        
+        if (type == CHECKBOX) {
                 g.setColor(c.getForeground());
 
                 int w = getIconWidth();
@@ -48,37 +49,60 @@ public class MetalIcon extends Icon {
 
                 g.drawRect(x, y, w-1, h-1);
 
-                if (b.isSelected()) {
+                if (c instanceof Button) {
+                    Button b = (Button)c;
+                    if (b.isSelected()) {
 
-                    //g.fillRect(x+3, y+3, size-6, size-6);
+                        //g.fillRect(x+3, y+3, size-6, size-6);
 
-                    for (int pad=3;pad<6;pad++) {
-                        g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
-                        g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
+                        for (int pad=3;pad<6;pad++) {
+                            g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
+                            g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
+                        }
                     }
-
                 }
                 
 
 
-            }
-            else if (b instanceof RadioButton) {
-
+        }
+        
+        if (type == RADIO) {
                 g.setColor(c.getForeground());
 
                 int w = getIconWidth();
                 int h = getIconHeight();
 
-                g.drawArc(x, y, w-1, h-1, 0, 360);
+                g.getGraphics().drawArc(x, y, w-1, h-1, 0, 360);
 
-                if (b.isSelected()){
+                if (c instanceof Button) {
+                    Button b = (Button)c;
+                    if (b.isSelected()) {
+                        if (b.isSelected()){
 
-                    int w2 = w/4;
-                    int h2 = h/4;
-                    g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
+                            int w2 = w/4;
+                            int h2 = h/4;
+                            g.getGraphics().fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
+                        }
+                    }
                 }
-                
-            }
+        }
+
+        if (type == COMBO) {
+                int w = c.getWidth() - width;
+                g.setColor( c.getForeground() );
+
+                if ((w%2)==0) {
+                    w++;
+                }
+
+                g.drawLine(w , (c.getHeight()-height)/2, w , height);
+
+                int gp = 2; // gap between arrow and sides                
+                int top = (c.getHeight()/2)-2;
+                int iconWidth = width-(gp*2);
+                g.fillTriangle(w+gp+(iconWidth/2)+1, top+5, 
+                               w+gp+iconWidth, top,
+                               w+gp, top);
         }
     }
 }

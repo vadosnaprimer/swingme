@@ -21,9 +21,11 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
 
 /**
@@ -32,8 +34,8 @@ import net.yura.mobile.util.Option;
  */
 public class ComboBox extends Button implements ActionListener{
 
-	private Image selectedImage;
-	private Image nonSelectedImage;
+	private Icon selectedImage;
+	private Icon nonSelectedImage;
 
         private Window dropDown;
 	private List list;
@@ -56,6 +58,10 @@ public class ComboBox extends Button implements ActionListener{
 		
 		setItems(vec);
 	}
+
+        public String getName() {
+            return "ComboBox";
+        }
 
         public void setLoop(boolean b) {
             createList();
@@ -88,7 +94,7 @@ public class ComboBox extends Button implements ActionListener{
 					
 				}
 
-				width = count + padding*2 + ((nonSelectedImage == null)?getFont().getHeight():nonSelectedImage.getWidth());
+				width = count + padding*2 + ((nonSelectedImage == null)?getFont().getHeight():nonSelectedImage.getIconWidth());
 				height = hi + padding*2;
 			}
 			
@@ -150,22 +156,38 @@ public class ComboBox extends Button implements ActionListener{
 
 	public void paintComponent(Graphics2D g) {
 
-            if (nonSelectedImage == null){
-
+//            if (nonSelectedImage == null){
+//
 //                int w = width - getFont().getHeight();
 //                g.setColor( foreground );
 //                g.drawLine(w , 0, w , height);
 //
 //                int gp = 2; // gap between arrow and sides
 //                ScrollPane.drawDownArrow(g, w+1+gp, (height/2)-2, width-w-gp*2-1, height);
+//            }
+//            else {
+//
+//                g.drawImage((isFocusOwner())?selectedImage.getImage():nonSelectedImage.getImage(), width-nonSelectedImage.getImage().getWidth(), (height-nonSelectedImage.getImage().getHeight())/2 , 0 );
+//            }
+            if ((selectedImage != null) && isFocusOwner()) {
+                selectedImage.paintIcon(this, g, width-selectedImage.getIconWidth(), (height-selectedImage.getIconHeight())/2);
             }
-            else {
-
-                g.drawImage((isFocusOwner())?selectedImage:nonSelectedImage, width-nonSelectedImage.getWidth(), (height-nonSelectedImage.getHeight())/2 , 0 );
+            else if (nonSelectedImage != null) {
+                nonSelectedImage.paintIcon(this, g, width-nonSelectedImage.getIconWidth(), (height-nonSelectedImage.getIconHeight())/2);
             }
 
             super.paintComponent(g);
 	}
+
+        public void updateUI() {
+                super.updateUI();
+
+                Style st = DesktopPane.getDefaultTheme(this);
+                
+                nonSelectedImage = (Icon)st.getProperty("icon", Style.ALL);
+                selectedImage = (Icon)st.getProperty("icon", Style.SELECTED);
+        }
+
 	/*
         protected int getBorderColor() {
             if (border instanceof LineBorder) {
@@ -174,19 +196,19 @@ public class ComboBox extends Button implements ActionListener{
             return 0;
         }
         */
-	public Image getSelectedImage() {
+	public Icon getSelectedImage() {
 		return selectedImage;
 	}
 
-	public void setSelectedImage(Image selectedImage) {
+	public void setSelectedImage(Icon selectedImage) {
 		this.selectedImage = selectedImage;
 	}
 
-	public Image getNonSelectedImage() {
+	public Icon getNonSelectedImage() {
 		return nonSelectedImage;
 	}
 
-	public void setNonSelectedImage(Image nonSelectedImage) {
+	public void setNonSelectedImage(Icon nonSelectedImage) {
 		this.nonSelectedImage = nonSelectedImage;
 	}
 

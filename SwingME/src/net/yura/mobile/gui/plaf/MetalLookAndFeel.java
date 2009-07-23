@@ -46,24 +46,27 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, size));
 
-            MetalIcon icon = new MetalIcon(font.getHeight()-1);
+            MetalIcon radioIcon = new MetalIcon(font.getHeight()-1,MetalIcon.RADIO);
+            MetalIcon checkboxIcon = new MetalIcon(font.getHeight()-1,MetalIcon.CHECKBOX);
+            MetalIcon comboIcon = new MetalIcon(font.getHeight()-1,MetalIcon.COMBO);
 
             Style defaultStyle = new Style();
             defaultStyle.addFont(font, Style.ALL);
             defaultStyle.addBackground( getSecondary3() , Style.ALL);
             defaultStyle.addForeground( getBlack() , Style.ALL);
-            setStyleFor("",defaultStyle);
-            
-            
-            
+            setStyleFor("",defaultStyle);            
             
             
             Style radioStyle = new Style(defaultStyle);
             radioStyle.addForeground( getBlack() , Style.FOCUSED);
             radioStyle.addForeground( getSecondary2() , Style.DISABLED);
             radioStyle.addForeground( getPrimary1() , Style.FOCUSED);
+            radioStyle.addProperty(radioIcon, "icon", Style.ALL);
             setStyleFor("RadioButton",radioStyle);
-            setStyleFor("CheckBox",radioStyle);
+
+            Style checkboxStyle = new Style(radioStyle);
+            checkboxStyle.addProperty(checkboxIcon, "icon", Style.ALL);
+            setStyleFor("CheckBox",checkboxStyle);
 
 
             Style buttonStyle = new Style(radioStyle);
@@ -79,7 +82,10 @@ public class MetalLookAndFeel extends LookAndFeel {
             inputStyle.addBackground( getWhite() , Style.ALL);
             setStyleFor("List",inputStyle);
             setStyleFor("TextArea",inputStyle);
-            setStyleFor("ComboBox",inputStyle);
+
+            Style comboStyle = new Style(buttonStyle);
+            comboStyle.addProperty(comboIcon, "icon", Style.ALL);
+            setStyleFor("ComboBox",comboStyle);
 
             Style textStyle = new Style(inputStyle);
             textStyle.addBorder(inputBorder, Style.ALL);
