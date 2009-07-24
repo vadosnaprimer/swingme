@@ -156,8 +156,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 mainMenu = new Menu("Menu","mainMenu");
                                 mainMenu.addActionListener(this);
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
-                                mainMenu.addMenuItem("aether1", "Aether Theme 1", null);
-                                mainMenu.addMenuItem("aether2", "Aether Theme 2", null);
+                                mainMenu.addMenuItem("aether1", "Aether Default Theme", null);
+                                mainMenu.addMenuItem("aether2", "Aether .Net Theme", null);
                                 mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
                                 mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
                                 mainMenu.addMenuItem("synthTheme3", "Synth Theme 3", null);
@@ -171,7 +171,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                     setupNewLookAndFeel( new AetherLookAndFeel() );
                 }
                 else if ("aether2".equals(actionCommand)) {
-                    setupNewLookAndFeel( synth );
+                    setupNewLookAndFeel( new AetherLookAndFeel("net") );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
                     
@@ -305,8 +305,12 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 items.addElement(new Option("2","Two",image));
                                 items.addElement(new Option("3","Three option"));
                                 items.addElement(new Option("4",null,image,"(no text)"));
-                                
+
+                                ComboBox disabledCombo = new ComboBox(items);
+                                disabledCombo.setFocusable(false);
+
                                 componentTest.add( new ComboBox(items) );
+                                componentTest.add( disabledCombo );
                                 componentTest.add( new Spinner(items, false));
                                 
                                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line");
