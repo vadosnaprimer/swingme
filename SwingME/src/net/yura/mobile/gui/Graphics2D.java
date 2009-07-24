@@ -232,12 +232,18 @@ public class Graphics2D {
                         a1,a2);
     }
 
-    void setGraphics(Graphics gtmp) {
-        g = gtmp;
+    public void fillArc(int x, int y, int width, int height, int angle, int arc) {
+        // TODO: convert values based on transformation
+        g.fillArc(x, y, width, height, angle, arc);
     }
 
-    public Graphics getGraphics() {
-        return this.g;
+    public void drawArc(int x, int y, int width, int height, int angle, int arc) {
+        // TODO: convert values based on transformation
+        g.drawArc(x, y, width, height, angle, arc);
+    }
+
+    void setGraphics(Graphics gtmp) {
+        g = gtmp;
     }
 
 }

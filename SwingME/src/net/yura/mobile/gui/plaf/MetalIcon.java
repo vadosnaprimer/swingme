@@ -27,10 +27,6 @@ import net.yura.mobile.gui.components.Component;
  */
 public class MetalIcon extends Icon {
 
-    public static final int RADIO = 0;
-    public static final int CHECKBOX = 1;
-    public static final int COMBO = 2;
-
     int type;
 
     public MetalIcon(int size, int type) {
@@ -41,7 +37,7 @@ public class MetalIcon extends Icon {
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
         
-        if (type == CHECKBOX) {
+        if (type == LookAndFeel.ICON_CHECKBOX) {
                 g.setColor(c.getForeground());
 
                 int w = getIconWidth();
@@ -66,13 +62,13 @@ public class MetalIcon extends Icon {
 
         }
         
-        if (type == RADIO) {
+        if (type == LookAndFeel.ICON_RADIO) {
                 g.setColor(c.getForeground());
 
                 int w = getIconWidth();
                 int h = getIconHeight();
 
-                g.getGraphics().drawArc(x, y, w-1, h-1, 0, 360);
+                g.drawArc(x, y, w-1, h-1, 0, 360);
 
                 if (c instanceof Button) {
                     Button b = (Button)c;
@@ -81,13 +77,13 @@ public class MetalIcon extends Icon {
 
                             int w2 = w/4;
                             int h2 = h/4;
-                            g.getGraphics().fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
+                            g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
                         }
                     }
                 }
         }
 
-        if (type == COMBO) {
+        if (type == LookAndFeel.ICON_COMBO) {
                 int w = c.getWidth() - width;
                 g.setColor( c.getForeground() );
 

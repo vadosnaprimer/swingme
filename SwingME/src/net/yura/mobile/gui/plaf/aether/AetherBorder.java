@@ -231,6 +231,10 @@ public class AetherBorder implements Border {
 
         //System.out.println("-----------------------");
 
+        if ((c1 == -1) && (c2 == -1)) {
+            return;
+        }
+
 //        if (c1 == c2) {
 //            g.setColor(c1);
 //            g.fillRoundRect(x, y, width, height, corner, corner);

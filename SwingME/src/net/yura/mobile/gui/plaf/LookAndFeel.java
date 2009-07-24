@@ -26,7 +26,11 @@ import net.yura.mobile.gui.DesktopPane;
  * @see javax.swing.UIManager
  */
 public abstract class LookAndFeel {
-    
+
+        public static final int ICON_RADIO = 0;
+        public static final int ICON_CHECKBOX = 1;
+        public static final int ICON_COMBO = 2;
+
         private Hashtable styles;
         
         public LookAndFeel() {
