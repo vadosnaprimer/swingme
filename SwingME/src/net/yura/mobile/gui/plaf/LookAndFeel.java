@@ -30,6 +30,8 @@ public abstract class LookAndFeel {
         public static final int ICON_RADIO = 0;
         public static final int ICON_CHECKBOX = 1;
         public static final int ICON_COMBO = 2;
+        public static final int ICON_SPINNER_LEFT = 3;
+        public static final int ICON_SPINNER_RIGHT = 4;
 
         private Hashtable styles;
         

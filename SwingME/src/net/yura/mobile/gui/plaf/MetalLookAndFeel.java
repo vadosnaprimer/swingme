@@ -46,9 +46,13 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, size));
 
-            MetalIcon radioIcon = new MetalIcon(font.getHeight()-1,MetalIcon.RADIO);
-            MetalIcon checkboxIcon = new MetalIcon(font.getHeight()-1,MetalIcon.CHECKBOX);
-            MetalIcon comboIcon = new MetalIcon(font.getHeight()-1,MetalIcon.COMBO);
+            int iconSize = font.getHeight()-1;
+
+            MetalIcon radioIcon = new MetalIcon(iconSize,LookAndFeel.ICON_RADIO);
+            MetalIcon checkboxIcon = new MetalIcon(iconSize,LookAndFeel.ICON_CHECKBOX);
+            MetalIcon comboIcon = new MetalIcon(iconSize,LookAndFeel.ICON_COMBO);
+            MetalIcon spinnerLeftIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_LEFT);
+            MetalIcon spinnerRightIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_RIGHT);
 
             Style defaultStyle = new Style();
             defaultStyle.addFont(font, Style.ALL);
@@ -95,6 +99,8 @@ public class MetalLookAndFeel extends LookAndFeel {
             EmptyBorder padding = new EmptyBorder(0, font.getHeight(), 0, font.getHeight());
             Style spinnerStyle = new Style(radioStyle);
             spinnerStyle.addBorder(new CompoundBorder(padding, inputBorder ),Style.ALL);
+            spinnerStyle.addProperty(spinnerLeftIcon, "iconLeft", Style.ALL);
+            spinnerStyle.addProperty(spinnerRightIcon, "iconRight", Style.ALL);
             setStyleFor("Spinner",spinnerStyle);
             
             

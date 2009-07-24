@@ -169,11 +169,11 @@ public class ComboBox extends Button implements ActionListener{
 //
 //                g.drawImage((isFocusOwner())?selectedImage.getImage():nonSelectedImage.getImage(), width-nonSelectedImage.getImage().getWidth(), (height-nonSelectedImage.getImage().getHeight())/2 , 0 );
 //            }
-            if ((selectedImage != null) && isFocusOwner()) {
-                selectedImage.paintIcon(this, g, width-selectedImage.getIconWidth(), (height-selectedImage.getIconHeight())/2);
+            if ((selectedImage != null) && isSelected()) {
+                selectedImage.paintIcon(this, g, width+border.getRight()-selectedImage.getIconWidth(), (height-selectedImage.getIconHeight())/2);
             }
             else if (nonSelectedImage != null) {
-                nonSelectedImage.paintIcon(this, g, width-nonSelectedImage.getIconWidth(), (height-nonSelectedImage.getIconHeight())/2);
+                nonSelectedImage.paintIcon(this, g, width+border.getRight()-nonSelectedImage.getIconWidth(), (height-nonSelectedImage.getIconHeight())/2);
             }
 
             super.paintComponent(g);

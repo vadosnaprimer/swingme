@@ -17,10 +17,13 @@
 
 package net.yura.mobile.gui.plaf;
 
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.Spinner;
 
 /**
  * @author Yura Mamyrin
@@ -30,15 +33,19 @@ public class MetalIcon extends Icon {
     int type;
 
     public MetalIcon(int size, int type) {
+//        if ((size%2)==0) {
+//            size++;
+//        }
         width = size;
         height = size;
         this.type = type;
     }
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
-        
+
+        g.setColor( c.getForeground() );
+
         if (type == LookAndFeel.ICON_CHECKBOX) {
-                g.setColor(c.getForeground());
 
                 int w = getIconWidth();
                 int h = getIconHeight();
@@ -48,8 +55,6 @@ public class MetalIcon extends Icon {
                 if (c instanceof Button) {
                     Button b = (Button)c;
                     if (b.isSelected()) {
-
-                        //g.fillRect(x+3, y+3, size-6, size-6);
 
                         for (int pad=3;pad<6;pad++) {
                             g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
@@ -63,7 +68,6 @@ public class MetalIcon extends Icon {
         }
         
         if (type == LookAndFeel.ICON_RADIO) {
-                g.setColor(c.getForeground());
 
                 int w = getIconWidth();
                 int h = getIconHeight();
@@ -84,21 +88,38 @@ public class MetalIcon extends Icon {
         }
 
         if (type == LookAndFeel.ICON_COMBO) {
-                int w = c.getWidth() - width;
-                g.setColor( c.getForeground() );
-
-                if ((w%2)==0) {
-                    w++;
-                }
-
-                g.drawLine(w , (c.getHeight()-height)/2, w , height);
-
-                int gp = 2; // gap between arrow and sides                
-                int top = (c.getHeight()/2)-2;
-                int iconWidth = width-(gp*2);
-                g.fillTriangle(w+gp+(iconWidth/2)+1, top+5, 
-                               w+gp+iconWidth, top,
-                               w+gp, top);
+            g.drawLine(x, (c.getHeight()-height)/2, x , height);
+            drawSelectionArrow(c, g, x, y);
         }
+
+        if (type == LookAndFeel.ICON_SPINNER_LEFT) {
+            // TODO: Change color of spinner if pressed
+            int trans = g.getTransform();
+            g.setTransform(Sprite.TRANS_MIRROR_ROT90);
+            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight());
+            g.setTransform(trans);
+        }
+
+        if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
+            // TODO: Change color of spinner if pressed
+            int trans = g.getTransform();
+            g.setTransform(Sprite.TRANS_ROT90);
+            drawSelectionArrow(c, g, x, y);
+            g.setTransform(trans);
+        }
+    }
+
+    private void drawSelectionArrow(Component c, Graphics2D g, int x, int y) {
+        // Default arrow has point facing downwards
+        g.translate(x, y);
+
+        int gp = 2; // gap between arrow and sides
+        int top = (height/2)-2;
+        int iconWidth = width-(gp*2);
+        g.fillTriangle(gp+(iconWidth/2)+1, top+5,
+                       gp+iconWidth, top,
+                       gp, top);
+
+        g.translate(-x, -y);
     }
 }

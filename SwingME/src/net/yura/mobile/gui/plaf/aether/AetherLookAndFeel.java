@@ -39,6 +39,7 @@ public class AetherLookAndFeel extends LookAndFeel {
         int corner;
         int text = 0x00000;
         int disabledText = 0x00777777;
+        int tabHighlight;
 
         Vector defaultBorderSettings = new Vector();
         Vector focusedBorderSettings = new Vector();
@@ -55,12 +56,15 @@ public class AetherLookAndFeel extends LookAndFeel {
         Vector highlightAreaSettings = new Vector();
 
         Icon checkboxIcon = new Icon();
-        Icon checkboxFocusedIcon = new Icon();
         Icon checkboxSelectedIcon = new Icon();
         Icon radioIcon = new Icon();
         Icon radioFocusedIcon = new Icon();
         Icon comboBoxIcon = new Icon();
         Icon comboBoxSelectedIcon = new Icon();
+        Icon spinnerLeftIcon = new Icon();
+        Icon spinnerLeftSelectedIcon = new Icon();
+        Icon spinnerRightIcon = new Icon();
+        Icon spinnerRightSelectedIcon = new Icon();
 
         if (theme.equals("net")) {
             // office 2007
@@ -75,7 +79,7 @@ public class AetherLookAndFeel extends LookAndFeel {
             int lightFocused = 0x00FFF6CB;
 
             int hightlightSelected = 0x00FA954C;
-
+            tabHighlight = hightlightSelected;
             base = 0x00FFFFFF;
             baseHighlight = 0x00F0F000;
             corner = 0;
@@ -104,13 +108,13 @@ public class AetherLookAndFeel extends LookAndFeel {
             copyBorders(disabledBorderSettings, textareaDisabledSettings);
             textareaDisabledSettings.setElementAt(new AetherBorderSetting(base, base, 1, corner, 1), 1);
 
-            copyBorders(selectedBorderSettings, tabFocusedSettings);
-            tabFocusedSettings.setElementAt(new AetherBorderSetting(light, background, 1, corner, 1), 1);
+            tabFocusedSettings.addElement(new AetherBorderSetting(tabHighlight, tabHighlight, 1, corner, 1));
+            tabFocusedSettings.addElement(new AetherBorderSetting(light, background, 1, corner, 1));
             
-            copyBorders(selectedBorderSettings, tabSelectedSettings);
+            copyBorders(tabFocusedSettings, tabSelectedSettings);
             tabSelectedSettings.setElementAt(new AetherBorderSetting(background, background, 1, corner, 1), 1);
             
-            copyBorders(selectedBorderSettings, tabBottomFocusedSettings);
+            copyBorders(tabFocusedSettings, tabBottomFocusedSettings);
             tabBottomFocusedSettings.setElementAt(new AetherBorderSetting(background, light, 1, corner, 1), 1);
 
 //            highlightAreaSettings.addElement(new AetherBorderSetting(highlightFocused, highlightFocused, 1, 0, 1));
@@ -127,20 +131,26 @@ public class AetherLookAndFeel extends LookAndFeel {
             //checkboxSelectedSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, 0, 1));
 
             Vector comboBoxIconSettings = new Vector();
-            comboBoxIconSettings.addElement(new AetherBorderSetting(base, base, 1, corner, 1));
-            comboBoxIconSettings.addElement(new AetherBorderSetting(light, dark, 1, corner, 1));
+            copyBorders(defaultBorderSettings, comboBoxIconSettings);
+            comboBoxIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
+            comboBoxIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
 
             Vector comboBoxSelectedIconSettings = new Vector();
-            comboBoxSelectedIconSettings.addElement(new AetherBorderSetting(base, base, 1, corner, 1));
-            comboBoxSelectedIconSettings.addElement(new AetherBorderSetting(lightFocused, darkFocused, 1, corner, 1));
+            copyBorders(focusedBorderSettings, comboBoxSelectedIconSettings);
+            comboBoxSelectedIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
+            comboBoxSelectedIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
 
             checkboxIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
             //checkboxFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaSelectedSettings, highlight);
             checkboxSelectedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
             radioIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
             radioFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
-            comboBoxIcon = new AetherIcon(font.getHeight()+4, LookAndFeel.ICON_COMBO, comboBoxIconSettings, highlight);
-            comboBoxSelectedIcon = new AetherIcon(font.getHeight()+4, LookAndFeel.ICON_COMBO, comboBoxSelectedIconSettings, hightlightSelected);
+            comboBoxIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxIconSettings, highlight);
+            comboBoxSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxSelectedIconSettings, hightlightSelected);
+            spinnerLeftIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxIconSettings, highlight);
+            spinnerLeftSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxSelectedIconSettings, hightlightSelected);
+            spinnerRightIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxIconSettings, highlight);
+            spinnerRightSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxSelectedIconSettings, hightlightSelected);
         }
         else {
             // yura.net
@@ -187,6 +197,18 @@ public class AetherLookAndFeel extends LookAndFeel {
             textareaDisabledSettings.setElementAt(new AetherBorderSetting(base, base, 1, corner, 1), 1);
             textareaDisabledSettings.removeElementAt(2);
 
+            Vector checkboxSettings = new Vector();
+            checkboxSettings.addElement(new AetherBorderSetting(reallyDark, reallyDark, 1, 0, 1));
+            checkboxSettings.addElement(new AetherBorderSetting(base, base, 1, 0, 1));
+
+            Vector checkboxSelectedSettings = new Vector();
+            copyBorders(checkboxSettings, checkboxSelectedSettings);
+            checkboxSelectedSettings.setElementAt(new AetherBorderSetting(highlight, highlight, 1, 0, 1), 0);
+
+            copyBorders(focusedBorderSettings, textareaSelectedSettings);
+            textareaSelectedSettings.setElementAt(new AetherBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
+            textareaSelectedSettings.removeElementAt(2);
+
             copyBorders(selectedBorderSettings, tabFocusedSettings);
             tabFocusedSettings.setElementAt(new AetherBorderSetting(light, background, 1, corner, 1), 2);
 
@@ -195,6 +217,8 @@ public class AetherLookAndFeel extends LookAndFeel {
 
             copyBorders(selectedBorderSettings, tabBottomFocusedSettings);
             tabBottomFocusedSettings.setElementAt(new AetherBorderSetting(background, light, 1, corner, 1), 2);
+
+            tabHighlight = highlight;
 
             highlightAreaSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, 0, 1));
             highlightAreaSettings.addElement(new AetherBorderSetting(0x00FFFFFF, baseHighlight, 1, 0, 1));
@@ -205,20 +229,25 @@ public class AetherLookAndFeel extends LookAndFeel {
             titleSettings.addElement(new AetherBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
 
             Vector comboIconSetting = new Vector();
-            copyBorders(disabledBorderSettings, comboIconSetting);
+            copyBorders(defaultBorderSettings, comboIconSetting);
+            comboIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
             comboIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
 
             Vector comboSelectedIconSetting = new Vector();
-            copyBorders(defaultBorderSettings, comboSelectedIconSetting);
+            copyBorders(selectedBorderSettings, comboSelectedIconSetting);
+            comboSelectedIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
             comboSelectedIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
 
-            checkboxIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, dark);
-            //checkboxFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaSelectedSettings);
-            checkboxSelectedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaSelectedSettings, highlight);
+            checkboxIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, dark);
+            checkboxSelectedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSelectedSettings, highlight);
             radioIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, dark);
             radioFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaSelectedSettings, highlight);
-            comboBoxIcon = new AetherIcon(font.getHeight()+4, LookAndFeel.ICON_COMBO, comboIconSetting, disabledText);
-            comboBoxSelectedIcon = new AetherIcon(font.getHeight()+4, LookAndFeel.ICON_COMBO, comboSelectedIconSetting, text);
+            comboBoxIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboIconSetting, text);
+            comboBoxSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboSelectedIconSetting, text);
+            spinnerLeftIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboIconSetting, text);
+            spinnerLeftSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboSelectedIconSetting, text);
+            spinnerRightIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboIconSetting, text);
+            spinnerRightSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboSelectedIconSetting, text);
         }
 
         /*
@@ -247,8 +276,8 @@ public class AetherLookAndFeel extends LookAndFeel {
         Border textboxFocused = new AetherBorder(textareaSelectedSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
         Border textboxDisabled = new AetherBorder(textareaDisabledSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
 
-        Border spinnerBorder = new AetherBorder(textareaBorderSettings, 24, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border spinnerFocused = new AetherBorder(textareaSelectedSettings, 24, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
+        Border spinnerBorder = new AetherBorder(textareaBorderSettings, 0, 0, 20, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
+        Border spinnerFocused = new AetherBorder(textareaSelectedSettings, 0, 0, 20, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
 
         Border listItemFocused = new AetherBorder(highlightAreaSettings, 0, 0, 0, 0, 0, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
         Border listItemSelected = new AetherBorder(listItemSelectedSettings, 0, 0, 0, 0, 0, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
@@ -336,6 +365,7 @@ public class AetherLookAndFeel extends LookAndFeel {
         Style textbox = new Style(defaultStyle);
         textbox.addBorder(textboxBorder,Style.ALL);
         textbox.addBorder(textboxFocused,Style.FOCUSED);
+        textbox.addBorder(textboxFocused,Style.SELECTED);
         textbox.addBorder(textboxDisabled,Style.DISABLED);
         textbox.addBackground(-1,Style.ALL);
         textbox.addForeground(disabledText, Style.DISABLED);
@@ -365,6 +395,10 @@ public class AetherLookAndFeel extends LookAndFeel {
         spinner.addBorder(spinnerBorder,Style.ALL);
         spinner.addBorder(spinnerFocused,Style.FOCUSED);
         spinner.addBackground(-1,Style.ALL);
+        spinner.addProperty(spinnerLeftIcon, "iconLeft", Style.ALL);
+        spinner.addProperty(spinnerLeftSelectedIcon, "iconLeft", Style.SELECTED);
+        spinner.addProperty(spinnerRightIcon, "iconRight", Style.ALL);
+        spinner.addProperty(spinnerRightSelectedIcon, "iconRight", Style.SELECTED);
         setStyleFor("Spinner",spinner);
 
 
@@ -401,19 +435,19 @@ public class AetherLookAndFeel extends LookAndFeel {
 
         Style tabsTop = new Style(defaultStyle);
         tabsTop.addBackground(-1, Style.ALL);
-        tabsTop.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 0, 1, 0, highlight ), new MatteBorder(0, 0, 1, 0, highlight )), new EmptyBorder(2,0,-2,0)),Style.ALL);
+        tabsTop.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 0, 1, 0, tabHighlight ), new MatteBorder(0, 0, 1, 0, tabHighlight )), new EmptyBorder(2,0,-2,0)),Style.ALL);
         setStyleFor("TabTop", tabsTop);
 
         Style tabsBottom = new Style(tabsTop);
-        tabsBottom.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(1, 0, 0, 0, highlight ), new MatteBorder(1, 0, 0, 0, highlight )), new EmptyBorder(-2,0,2,0)),Style.ALL);
+        tabsBottom.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(1, 0, 0, 0, tabHighlight ), new MatteBorder(1, 0, 0, 0, tabHighlight )), new EmptyBorder(-2,0,2,0)),Style.ALL);
         setStyleFor("TabBottom", tabsBottom);
 
         Style tabsLeft = new Style(tabsTop);
-        tabsLeft.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 0, 0, 1, highlight ), new MatteBorder(1, 0, 0, 0, highlight )) , new EmptyBorder(0,2,0,-2)),Style.ALL);
+        tabsLeft.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 0, 0, 1, tabHighlight ), new MatteBorder(1, 0, 0, 0, tabHighlight )) , new EmptyBorder(0,2,0,-2)),Style.ALL);
         setStyleFor("TabLeft", tabsLeft);
 
         Style tabsRight = new Style(tabsTop);
-        tabsRight.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 1, 0, 0, highlight ), new MatteBorder(0, 1, 0, 0, highlight )), new EmptyBorder(0,-2,0,2)),Style.ALL);
+        tabsRight.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 1, 0, 0, tabHighlight ), new MatteBorder(0, 1, 0, 0, tabHighlight )), new EmptyBorder(0,-2,0,2)),Style.ALL);
         setStyleFor("TabRight", tabsRight);
 
         Style toolTip = new Style(defaultStyle);

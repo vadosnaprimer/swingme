@@ -215,6 +215,20 @@ public class Spinner extends Label {
 	public void paintComponent(Graphics2D g){
             super.paintComponent(g);
             
+            if (leftPress && (leftSelectedIcon!=null)) {
+                leftSelectedIcon.paintIcon(this, g, -normalBorder.getLeft(), (height-leftSelectedIcon.getIconHeight())/2);
+            }
+            else if (leftUnselectedIcon != null) {
+                leftUnselectedIcon.paintIcon(this, g, -normalBorder.getLeft(), (height-leftUnselectedIcon.getIconHeight())/2);
+            }
+
+            if (rightPress && (rightSelectedIcon!=null)) {
+                rightSelectedIcon.paintIcon(this, g, width+normalBorder.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
+            }
+            else if (rightUnselectedIcon != null) {
+                rightUnselectedIcon.paintIcon(this, g, width+normalBorder.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
+            }
+            
             
             //int arrowWidth = getArrowWidth();
             
@@ -345,6 +359,11 @@ public class Spinner extends Label {
                 activeForeground = theme.getForeground(Style.FOCUSED);
                 disabledForeground = theme.getForeground(Style.DISABLED);
                 normalForeground = theme.getForeground(Style.ALL);
-            
+
+                leftSelectedIcon = (Icon) theme.getProperty("iconLeft", Style.SELECTED);
+                leftUnselectedIcon = (Icon) theme.getProperty("iconLeft", Style.ALL);
+                rightSelectedIcon = (Icon) theme.getProperty("iconRight", Style.SELECTED);
+                rightUnselectedIcon = (Icon) theme.getProperty("iconRight", Style.ALL);
+                
         }
 }
