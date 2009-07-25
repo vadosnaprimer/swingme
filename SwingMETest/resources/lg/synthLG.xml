@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE synth SYSTEM "SynthME.dtd">
+
+<synth>
+
+    <style id="global">
+      <state>
+        <font name="PROPORTIONAL" size="SMALL" path="/lg/SmallFont.bmf" bmf="false" />
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="global" key=".*"/>
+
+    <style id="textArea">
+      <state>
+        <color type="BACKGROUND" value="#070707"/>
+      </state>
+    </style>
+    <bind style="textArea" key="TextArea"/>
+
+    <style id="tooltip">
+      <state>
+        <color type="BACKGROUND" value="#070707"/>
+      </state>
+    </style>
+    <bind style="tooltip" key="ToolTip"/>
+
+ <style id="progressBar">
+      <insets top="2" left="2" bottom="2" right="2"/>
+      <imageIcon id="track_fill" path="/lg/progressFill.png"/>
+      <state>
+        <imagePainter path="/lg/progressTrack.png" sourceInsets="15 24 15 24" paintCenter="false"/>
+        <property key="trackFill" value="track_fill"/>
+        <color type="BORDERFILL" value="#070707"/>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="progressBar" key="ProgressBar"/>
+
+    <style id="button">
+    <state>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <state value="FOCUSED">				<!-- top, left, bottom, right -->
+        <imagePainter path="/lg/highlight.png" sourceInsets="7 0 14 0" paintCenter="true"/>
+        <color type="BORDERFILL" value="#FFFFFF"/>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+      <state value="DISABLED">
+        <color type="FOREGROUND" value="#666666"/>
+      </state>
+
+    </style>
+    <bind style="button" key="Button"/>
+    <bind style="button" key="CheckBox"/>
+    <bind style="button" key="RadioButton"/>
+    <bind style="button" key="TextField"/>
+
+    <style id="tabtop">
+      <state>
+        <imagePainter path="/lg/tab_top.png" sourceInsets="0 10 7 10" paintCenter="false"/>
+      </state>
+    </style>
+    <bind style="tabtop" key="TabTop"/>
+
+
+    <style id="tabRendererTop">
+      <insets top="5" left="5" bottom="12" right="5"/>
+      <state value="SELECTED">
+        <imagePainter path="/lg/Tab.png" sourceInsets="10 10 10 10" paintCenter="true"/>
+        <color type="BORDERFILL" value="000000"/>
+      </state>
+      </style>
+    <bind style="tabRendererTop" key="TabRendererTop"/>
+
+
+    <style id="tabContentBottom">
+      <insets top="5" left="5" bottom="5" right="5"/>
+      <state>
+        <imagePainter path="/lg/tab_bottom.png" sourceInsets="10 10 10 10" paintCenter="false"/>
+        <color type="BORDERFILL" value="070707"/>
+      </state>
+    </style>
+    <bind style="tabContentBottom" key="TabContentBottom"/>
+
+
+    <style id="window">
+      <insets top="0" left="0" bottom="0" right="0"/>
+      <state>
+        <imagePainter path="/lg/mainWindow.png" sourceInsets="24 119 24 119" paintCenter="false"/>
+        <color type="BORDERFILL" value="#070707"/>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+        <color type="BACKGROUND" value="#000000"/>
+      </state>
+    </style>
+    <bind style="window" key="Window"/>
+
+
+    <style id="textWindow">
+      <insets top="0" left="0" bottom="0" right="0"/>
+      <state>
+        <imagePainter path="/lg/mainWindow.png" sourceInsets="24 119 24 119" paintCenter="false"/>
+        <color type="BORDERFILL" value="#070707"/>
+         <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="textWindow" key="TextWindow"/>
+
+
+    <style id="menu">
+       <insets top="7" left="7" bottom="7" right="7"/>
+      <state>
+        <imagePainter path="/lg/menu.png" sourceInsets="15 15 15 15" paintCenter="false"/>
+        <color type="BORDERFILL" value="#070707"/>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="menu" key="Menu"/>
+    <bind style="menu" key="Dialog"/>
+
+
+    <style id="softkeys">
+      <imageIcon id="button_normal" path="/lg/mainWindow.png" x="120" y="0" width="120" height="24"/>
+      <imageIcon id="bottom_right" path="/lg/mainWindow.png" x="120" y="24" width="120" height="24"/>
+      <imageIcon id="bottom_left" path="/lg/mainWindow.png" x="0" y="24" width="120" height="24"/>
+      <state>
+        <property key="button" value="button_normal"/>
+        <property key="bottomRight" value="bottom_right"/>
+        <property key="bottomLeft" value="bottom_left"/>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+      </state>
+    </style>
+    <bind style="softkeys" key="SoftkeyRenderer"/>
+
+
+    <style id="checkbox">
+      <imageIcon id="check_on" path="/lg/iconGrid.png" x="0" y="0" width="20" height="20"/>
+      <imageIcon id="check_on_disabled" path="/lg/iconGrid.png" x="0" y="20" width="20" height="20"/>
+      <imageIcon id="check_off" path="/lg/iconGrid.png" x="0" y="40" width="20" height="20"/>
+      <imageIcon id="check_off_disabled" path="/lg/iconGrid.png" x="0" y="60" width="20" height="20"/>
+      <state>
+        <property key="icon" value="check_off"/>
+      </state>
+      <state value="SELECTED">
+        <property key="icon" value="check_on"/>
+      </state>
+      <state value="DISABLED">
+        <property key="icon" value="check_off_disabled"/>
+      </state>
+      <state value="DISABLED AND SELECTED">
+        <property key="icon" value="check_on_disabled"/>
+      </state>
+    </style>
+    <bind style="checkbox" key="CheckBox"/>
+
+
+    <style id="radioButton">
+      <imageIcon id="radio_on" path="/lg/iconGrid.png" x="0" y="80" width="20" height="20"/>
+      <imageIcon id="radio_on_disabled" path="/lg/iconGrid.png" x="0" y="100" width="20" height="20"/>
+      <imageIcon id="radio_off" path="/lg/iconGrid.png" x="0" y="120" width="20" height="20"/>
+      <imageIcon id="radio_off_disabled" path="/lg/iconGrid.png" x="0" y="140" width="20" height="20"/>
+      <state>
+        <property key="icon" value="radio_off"/>
+      </state>
+      <state value="SELECTED">
+        <property key="icon" value="radio_on"/>
+      </state>
+      <state value="DISABLED">
+        <property key="icon" value="radio_off_disabled"/>
+      </state>
+      <state value="DISABLED AND SELECTED">
+        <property key="icon" value="radio_on_disabled"/>
+      </state>
+    </style>
+    <bind style="radioButton" key="RadioButton"/>
+
+
+
+    <style id="scrollpane">
+      <imageIcon id="thumb_top" path="/lg/Scrollbar.png" x="0" y="13" width="18" height="10"/>
+      <imageIcon id="thumb_fill" path="/lg/Scrollbar.png" x="0" y="23" width="18" height="10"/>
+      <imageIcon id="thump_bottom" path="/lg/Scrollbar.png" x="0" y="33" width="18" height="10"/>
+      <imageIcon id="track_top" path="/lg/Scrollbar.png" x="0" y="0" width="18" height="13"/>
+      <imageIcon id="track_fill" path="/lg/Scrollbar.png" x="0" y="43" width="18" height="20"/>
+      <imageIcon id="track_bottom" path="/lg/Scrollbar.png" x="0" y="63" width="18" height="13"/>
+      <imageIcon id="left_arrow" path="/lg/scrollArrows.png" x="0" y="0" width="14" height="14"/>
+      <imageIcon id="right_arrow" path="/lg/scrollArrows.png" x="0" y="14" width="14" height="14"/>
+      <state>
+        <property key="thumbTop" value="thumb_top"/>
+        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbFill" value="thumb_fill"/>
+        <property key="trackTop" value="track_top"/>
+        <property key="trackBottom" value="track_bottom"/>
+        <property key="trackFill" value="track_fill"/>
+        <property key="rightArrow" value="right_arrow"/>
+        <property key="leftArrow" value="left_arrow"/>
+      </state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
+
+    <style id="listRenderer">
+      <insets top="3" left="3" bottom="3" right="3"/>
+      <state>
+        <color type="FOREGROUND" value="#FFFFFF"/>
+        <!-- middle label used for Notification Subject -->
+        <!-- sn name used for Notification Sender -->
+        <!-- sn text used for Notification Body text -->
+                <color id="color_first_line" value="#FFFFFF"/>
+            <color id="color_second_line" value="#CCCCCC"/>
+            <color id="color_right_label" value="#CCCCCC"/>
+            <color id="color_middle_label" value="#CCCCCC"/>
+            <color id="color_sn_name" value="#FFFFFF"/>
+            <color id="color_sn_text" value="#CCCCCC"/>
+          
+            <color id="color_first_line_selected" value="#FFFFFF"/>
+            <color id="color_second_line_selected" value="#CCCCCC"/>
+            <color id="color_right_label_selected" value="#CCCCCC"/>
+            <color id="color_middle_label_selected" value="#CCCCCC"/>
+            <color id="color_sn_name_selected" value="#FFFFFF"/>
+            <color id="color_sn_text_selected" value="#CCCCCC"/>
+          
+        <property key="colorFirstLine" value="color_first_line"/>
+        <property key="colorSecondLine" value="color_second_line"/>
+        <property key="colorRightLabel" value="color_right_label"/>
+        <property key="colorMiddleLabel" value="color_middle_label"/>
+        <property key="colorSnName" value="color_sn_name"/>
+        <property key="colorSnText" value="color_sn_text"/>
+      </state>
+      <state value="SELECTED">
+        <imagePainter path="/lg/highlight.png" sourceInsets="7 0 14 0" paintCenter="true"/>
+        <color type="BORDERFILL" value="#00AEEF"/>
+        <property key="colorFirstLine" value="color_first_line_selected"/>
+        <property key="colorSecondLine" value="color_second_line_selected"/>
+        <property key="colorRightLabel" value="color_right_label_selected"/>
+        <property key="colorMiddleLabel" value="color_middle_label_selected"/>
+        <property key="colorSnName" value="color_sn_name_selected"/>
+        <property key="colorSnText" value="color_sn_text_selected"/>
+      </state>
+    </style>
+    <bind style="listRenderer" key="ListRenderer"/>
+
+</synth>

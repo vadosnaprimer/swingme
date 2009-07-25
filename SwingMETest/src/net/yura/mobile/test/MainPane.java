@@ -156,12 +156,13 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 mainMenu = new Menu("Menu","mainMenu");
                                 mainMenu.addActionListener(this);
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
-                                mainMenu.addMenuItem("aether1", "Aether Default Theme", null);
-                                mainMenu.addMenuItem("aether2", "Aether .Net Theme", null);
+                                mainMenu.addMenuItem("aether1", "Nimbus Default Theme", null);
+                                mainMenu.addMenuItem("aether2", "Nimbus .Net Theme", null);
                                 mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
                                 mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
                                 mainMenu.addMenuItem("synthTheme3", "Synth Theme 3", null);
                                 mainMenu.addMenuItem("synthTheme4", "Synth Theme 4", null);
+                                mainMenu.addMenuItem("synthTheme5", "Synth Theme 5", null);
 			}
 			
 			addToScrollPane(mainmenu, new CommandButton(mainMenu), new CommandButton("Exit","exit") );
@@ -193,6 +194,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                 }
                 else if ("synthTheme4".equals(actionCommand)) {
                     loadSynthSkin("/telus/synthVisto.xml");
+                }
+                else if ("synthTheme5".equals(actionCommand)) {
+                    loadSynthSkin("/lg/synthLG.xml");
                 }
                 else if ("windowTest1".equals(actionCommand)) {
 
