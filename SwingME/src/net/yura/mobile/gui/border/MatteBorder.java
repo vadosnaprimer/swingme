@@ -196,8 +196,6 @@ public class MatteBorder extends EmptyBorder {
                 g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff,Graphics.TOP|Graphics.LEFT);
                 g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff,Graphics.TOP|Graphics.LEFT);
 
-                
-                
                 ImageUtil.fillArea(g,image,imageRight,0,imageWidth-imageRight-imageLeft,imageTop,
                         leftDiff,-top,width-leftDiff-rightDiff,imageTop,
                         Sprite.TRANS_NONE); // top line
@@ -213,8 +211,7 @@ public class MatteBorder extends EmptyBorder {
                 ImageUtil.fillArea(g,image,imageWidth-imageRight,imageTop,imageRight,imageHeight-imageTop-imageBottom,
                         width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff,
                         Sprite.TRANS_NONE); // right
-                
-                
+
                 if (!back && color==-1) {
                     
                     // TODO matte tileing the border with the whole image

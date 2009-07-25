@@ -30,7 +30,7 @@ public class ImageUtil {
 
     public static void fillArea(Graphics2D g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
         
-        if (src_w==0 || src_h==0 || dest_w==0 || dest_h==0) return;
+        if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) return;
         
         final int cx = g.getClipX();
         final int cy = g.getClipY();

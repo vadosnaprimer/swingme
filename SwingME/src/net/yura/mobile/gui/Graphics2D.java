@@ -31,7 +31,7 @@ public class Graphics2D {
         private Graphics g;
         private int trans;
 
-        public Graphics2D() {
+        Graphics2D() {
         }
 
         public Graphics2D(Graphics g) {
@@ -199,7 +199,7 @@ public class Graphics2D {
         }
 
     public void translate(int x, int y) {
-        g.translate(x, y);
+        g.translate( convertTrans(x,y), convertTrans(y,x));
     }
 
     public void drawString(String drawString, int tx, int ty) {

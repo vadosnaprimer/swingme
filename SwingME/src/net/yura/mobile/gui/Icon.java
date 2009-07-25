@@ -50,14 +50,14 @@ public class Icon {
      * @see javax.swing.Icon#getIconHeight() Icon.getIconHeight
      */
     public int getIconHeight() {
-        return width;
+        return height;
     }
 
     /**
      * @see javax.swing.Icon#getIconWidth() Icon.getIconWidth
      */
     public int getIconWidth() {
-        return height;
+        return width;
     }
 
     /**
