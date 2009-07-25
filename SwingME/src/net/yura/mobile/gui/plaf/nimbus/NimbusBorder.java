@@ -1,4 +1,4 @@
-package net.yura.mobile.gui.plaf.aether;
+package net.yura.mobile.gui.plaf.nimbus;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
@@ -9,7 +9,7 @@ import net.yura.mobile.gui.components.Component;
 /**
  * @author Nathan
  */
-public class AetherBorder implements Border {
+public class NimbusBorder implements Border {
 
     int marginX;
     int marginY;
@@ -23,7 +23,7 @@ public class AetherBorder implements Border {
 
     int gradientOrientation = ORIENTATION_VERT;
 
-    public AetherBorder(Vector borders, int marginX, int marginY, int paddingX, int paddingY, int corner, int clip, int gradientOrientation) {
+    public NimbusBorder(Vector borders, int marginX, int marginY, int paddingX, int paddingY, int corner, int clip, int gradientOrientation) {
         this.borders = borders;
         this.marginX = marginX;
         this.marginY = marginY;
@@ -58,7 +58,7 @@ public class AetherBorder implements Border {
             // Determine required crop size
             int corner = 0;
             for (int b = 0 ; b<borders.size() ; b++) {
-                AetherBorderSetting border = (AetherBorderSetting) borders.elementAt(b);
+                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
                 if (border.corner > corner) {
                     corner = border.corner;
                 }
@@ -75,7 +75,7 @@ public class AetherBorder implements Border {
         
         // Draw the borders
         for (int b = 0 ; b<borders.size() ; b++) {
-            AetherBorderSetting border = (AetherBorderSetting) borders.elementAt(b);
+            NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
             drawRoundedGradientRect(border.color1,border.color2,g,x+b,y+b,w-(2*b),h-(2*b),border.corner,border.reflection);
         }
 

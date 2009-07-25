@@ -1,4 +1,4 @@
-package net.yura.mobile.gui.plaf.aether;
+package net.yura.mobile.gui.plaf.nimbus;
 
 import java.util.Vector;
 import javax.microedition.lcdui.game.Sprite;
@@ -11,13 +11,13 @@ import net.yura.mobile.gui.plaf.LookAndFeel;
 /**
  * @author Nathan
  */
-public class AetherIcon extends Icon {
+public class NimbusIcon extends Icon {
 
     int type;
     int color;
     Vector borders;
 
-    public AetherIcon(int size, int type, Vector borders, int color) {
+    public NimbusIcon(int size, int type, Vector borders, int color) {
 //        if ((size%2)==0) {
 //            size++;
 //        }
@@ -35,7 +35,7 @@ public class AetherIcon extends Icon {
         // Draw aether borders
         if ((type == LookAndFeel.ICON_RADIO)) {
             for (int b = 0 ; b<borders.size() ; b++) {
-                AetherBorderSetting border = (AetherBorderSetting) borders.elementAt(b);
+                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
                 g.setColor(border.color1);
                 g.fillArc(x+b, y+b, getIconWidth()-(b*2), getIconHeight()-(b*2), 0, 360);
             }
@@ -44,16 +44,16 @@ public class AetherIcon extends Icon {
 //            g.setColor(0x00FF0000);
 //            g.fillRect(x, y, getIconWidth(), getIconHeight());
             for (int b = 0 ; b<borders.size() ; b++) {
-                AetherBorderSetting border = (AetherBorderSetting) borders.elementAt(b);
-                AetherBorder.drawRoundedGradientRect(
+                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
+                NimbusBorder.drawRoundedGradientRect(
                             border.color1,
                             border.color2,
                             g, x+b, y+b,
                             getIconWidth()-(2*b),
                             getIconHeight()-(2*b),
                             border.corner, border.reflection,
-                            AetherBorder.CLIP_NONE,
-                            AetherBorder.ORIENTATION_VERT);
+                            NimbusBorder.CLIP_NONE,
+                            NimbusBorder.ORIENTATION_VERT);
             }
         }
 

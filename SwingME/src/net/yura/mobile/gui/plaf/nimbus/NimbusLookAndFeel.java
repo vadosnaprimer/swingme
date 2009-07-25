@@ -1,4 +1,4 @@
-package net.yura.mobile.gui.plaf.aether;
+package net.yura.mobile.gui.plaf.nimbus;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
@@ -17,13 +17,13 @@ import net.yura.mobile.gui.plaf.Style;
 /**
  * @author Nathan
  */
-public class AetherLookAndFeel extends LookAndFeel {
+public class NimbusLookAndFeel extends LookAndFeel {
 
-    public AetherLookAndFeel() {
+    public NimbusLookAndFeel() {
         this("");
     }
 
-    public AetherLookAndFeel(String theme) {
+    public NimbusLookAndFeel(String theme) {
 
         Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM));
 
@@ -84,170 +84,170 @@ public class AetherLookAndFeel extends LookAndFeel {
             baseHighlight = 0x00F0F000;
             corner = 0;
 
-            int mid = AetherBorder.getGradientColor(light, dark, 5, 10, 1);
-            int disabledBorderColor = AetherBorder.getGradientColor(dark, background, 6, 10, 1);
+            int mid = NimbusBorder.getGradientColor(light, dark, 5, 10, 1);
+            int disabledBorderColor = NimbusBorder.getGradientColor(dark, background, 6, 10, 1);
 
-            defaultBorderSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, corner, 1));
-            defaultBorderSettings.addElement(new AetherBorderSetting(light, dark, 1, corner, 1));
+            defaultBorderSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, corner, 1));
+            defaultBorderSettings.addElement(new NimbusBorderSetting(light, dark, 1, corner, 1));
             
-            focusedBorderSettings.addElement(new AetherBorderSetting(highlightFocused, highlightFocused, 1, corner, 1));
-            focusedBorderSettings.addElement(new AetherBorderSetting(lightFocused, darkFocused, 1, corner, 1));
+            focusedBorderSettings.addElement(new NimbusBorderSetting(highlightFocused, highlightFocused, 1, corner, 1));
+            focusedBorderSettings.addElement(new NimbusBorderSetting(lightFocused, darkFocused, 1, corner, 1));
             
-            selectedBorderSettings.addElement(new AetherBorderSetting(hightlightSelected, hightlightSelected, 1, corner, 1));
-            selectedBorderSettings.addElement(new AetherBorderSetting(hightlightSelected, darkFocused, 1, corner, 1));
+            selectedBorderSettings.addElement(new NimbusBorderSetting(hightlightSelected, hightlightSelected, 1, corner, 1));
+            selectedBorderSettings.addElement(new NimbusBorderSetting(hightlightSelected, darkFocused, 1, corner, 1));
             
             copyBorders(defaultBorderSettings, disabledBorderSettings);
-            disabledBorderSettings.setElementAt(new AetherBorderSetting(disabledBorderColor, disabledBorderColor, 1, corner, 1), 0);
+            disabledBorderSettings.setElementAt(new NimbusBorderSetting(disabledBorderColor, disabledBorderColor, 1, corner, 1), 0);
             
             copyBorders(defaultBorderSettings, textareaBorderSettings);
-            textareaBorderSettings.setElementAt(new AetherBorderSetting(base, base, 1, corner, 1), 1);
+            textareaBorderSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
            
             copyBorders(textareaBorderSettings, textareaSelectedSettings);
-            textareaSelectedSettings.setElementAt(new AetherBorderSetting(highlightFocused, highlightFocused, 1, corner, 1), 0);
+            textareaSelectedSettings.setElementAt(new NimbusBorderSetting(highlightFocused, highlightFocused, 1, corner, 1), 0);
 
             copyBorders(disabledBorderSettings, textareaDisabledSettings);
-            textareaDisabledSettings.setElementAt(new AetherBorderSetting(base, base, 1, corner, 1), 1);
+            textareaDisabledSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
 
-            tabFocusedSettings.addElement(new AetherBorderSetting(tabHighlight, tabHighlight, 1, corner, 1));
-            tabFocusedSettings.addElement(new AetherBorderSetting(light, background, 1, corner, 1));
+            tabFocusedSettings.addElement(new NimbusBorderSetting(tabHighlight, tabHighlight, 1, corner, 1));
+            tabFocusedSettings.addElement(new NimbusBorderSetting(light, background, 1, corner, 1));
             
             copyBorders(tabFocusedSettings, tabSelectedSettings);
-            tabSelectedSettings.setElementAt(new AetherBorderSetting(background, background, 1, corner, 1), 1);
+            tabSelectedSettings.setElementAt(new NimbusBorderSetting(background, background, 1, corner, 1), 1);
             
             copyBorders(tabFocusedSettings, tabBottomFocusedSettings);
-            tabBottomFocusedSettings.setElementAt(new AetherBorderSetting(background, light, 1, corner, 1), 1);
+            tabBottomFocusedSettings.setElementAt(new NimbusBorderSetting(background, light, 1, corner, 1), 1);
 
-//            highlightAreaSettings.addElement(new AetherBorderSetting(highlightFocused, highlightFocused, 1, 0, 1));
-//            highlightAreaSettings.addElement(new AetherBorderSetting(0x00FFFFFF, lightFocused, 1, 0, 1));
+//            highlightAreaSettings.addElement(new NimbusBorderSetting(highlightFocused, highlightFocused, 1, 0, 1));
+//            highlightAreaSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, lightFocused, 1, 0, 1));
             copyBorders(focusedBorderSettings, highlightAreaSettings);
             
-            listItemSelectedSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, 0, 1));
-            listItemSelectedSettings.addElement(new AetherBorderSetting(light, light, 1, 0, 1));
+            listItemSelectedSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
+            listItemSelectedSettings.addElement(new NimbusBorderSetting(light, light, 1, 0, 1));
 
-            titleSettings.addElement(new AetherBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
+            titleSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
 
             //Vector checkboxSelectedSettings = new Vector();
             //copyBorders(textareaBorderSettings,checkboxSelectedSettings);
-            //checkboxSelectedSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, 0, 1));
+            //checkboxSelectedSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
 
             Vector comboBoxIconSettings = new Vector();
             copyBorders(defaultBorderSettings, comboBoxIconSettings);
-            comboBoxIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
-            comboBoxIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
+            comboBoxIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
+            comboBoxIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
 
             Vector comboBoxSelectedIconSettings = new Vector();
             copyBorders(focusedBorderSettings, comboBoxSelectedIconSettings);
-            comboBoxSelectedIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
-            comboBoxSelectedIconSettings.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1),0);
+            comboBoxSelectedIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
+            comboBoxSelectedIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
 
-            checkboxIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
-            //checkboxFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaSelectedSettings, highlight);
-            checkboxSelectedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
-            radioIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
-            radioFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
-            comboBoxIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxIconSettings, highlight);
-            comboBoxSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxSelectedIconSettings, hightlightSelected);
-            spinnerLeftIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxIconSettings, highlight);
-            spinnerLeftSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxSelectedIconSettings, hightlightSelected);
-            spinnerRightIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxIconSettings, highlight);
-            spinnerRightSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxSelectedIconSettings, hightlightSelected);
+            checkboxIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
+            //checkboxFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaSelectedSettings, highlight);
+            checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
+            radioIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
+            radioFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
+            comboBoxIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxIconSettings, highlight);
+            comboBoxSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxSelectedIconSettings, hightlightSelected);
+            spinnerLeftIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxIconSettings, highlight);
+            spinnerLeftSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxSelectedIconSettings, hightlightSelected);
+            spinnerRightIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxIconSettings, highlight);
+            spinnerRightSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxSelectedIconSettings, hightlightSelected);
         }
         else {
             // yura.net
             background  = 0x00E0E3EC;
             highlight = 0x00576C7D;
-            dark = AetherBorder.getShade(0x00828282,1.1);
+            dark = NimbusBorder.getShade(0x00828282,1.1);
             light = 0x00F0F0EE;
             base = 0x00EEF2FB;
             baseHighlight = 0x00FFFFBB;
             corner = 4;
 
-            int mid = AetherBorder.getGradientColor(light, dark, 5, 10, 1);
-            int reallyDark = AetherBorder.getShade(light,0.5);
-            int buttonSelectedLight = AetherBorder.getShade(light, 1.1);
-            int buttonSelectedDark = AetherBorder.getGradientColor(light, dark, 6, 10, 1);
-            int disabledBorderColor = AetherBorder.getGradientColor(dark, background, 6, 10, 1);
-            int baseReallyHighlight = AetherBorder.getShade(baseHighlight, 1.1);
+            int mid = NimbusBorder.getGradientColor(light, dark, 5, 10, 1);
+            int reallyDark = NimbusBorder.getShade(light,0.5);
+            int buttonSelectedLight = NimbusBorder.getShade(light, 1.1);
+            int buttonSelectedDark = NimbusBorder.getGradientColor(light, dark, 6, 10, 1);
+            int disabledBorderColor = NimbusBorder.getGradientColor(dark, background, 6, 10, 1);
+            int baseReallyHighlight = NimbusBorder.getShade(baseHighlight, 1.1);
 
-            defaultBorderSettings.addElement(new AetherBorderSetting(reallyDark, reallyDark, 1, corner, 1));
-            defaultBorderSettings.addElement(new AetherBorderSetting(light, light, 1, corner, 1));
-            defaultBorderSettings.addElement(new AetherBorderSetting(light, dark, 1, corner, 1));
+            defaultBorderSettings.addElement(new NimbusBorderSetting(reallyDark, reallyDark, 1, corner, 1));
+            defaultBorderSettings.addElement(new NimbusBorderSetting(light, light, 1, corner, 1));
+            defaultBorderSettings.addElement(new NimbusBorderSetting(light, dark, 1, corner, 1));
 
-            focusedBorderSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, corner, 1));
-            //focusedBorderSettings.addElement(new AetherBorderSetting(AetherBorder.getShade(highlight,1.2), AetherBorder.getShade(highlight,1.2), 1, corner, 1));
-            focusedBorderSettings.addElement(new AetherBorderSetting(baseHighlight, baseHighlight, 1, corner, 1));
-            focusedBorderSettings.addElement(new AetherBorderSetting(buttonSelectedLight, buttonSelectedDark, 1, corner, 1));
+            focusedBorderSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, corner, 1));
+            //focusedBorderSettings.addElement(new NimbusBorderSetting(NimbusBorder.getShade(highlight,1.2), NimbusBorder.getShade(highlight,1.2), 1, corner, 1));
+            focusedBorderSettings.addElement(new NimbusBorderSetting(baseHighlight, baseHighlight, 1, corner, 1));
+            focusedBorderSettings.addElement(new NimbusBorderSetting(buttonSelectedLight, buttonSelectedDark, 1, corner, 1));
 
             copyBorders(focusedBorderSettings, selectedBorderSettings);
-            selectedBorderSettings.setElementAt(new AetherBorderSetting(AetherBorder.getShade(buttonSelectedLight, 0.9), AetherBorder.getShade(buttonSelectedDark, 0.9), 1, corner, 1), 2);
+            selectedBorderSettings.setElementAt(new NimbusBorderSetting(NimbusBorder.getShade(buttonSelectedLight, 0.9), NimbusBorder.getShade(buttonSelectedDark, 0.9), 1, corner, 1), 2);
 
             copyBorders(defaultBorderSettings, disabledBorderSettings);
-            disabledBorderSettings.setElementAt(new AetherBorderSetting(disabledBorderColor, disabledBorderColor, 1, corner, 1), 0);
-            disabledBorderSettings.setElementAt(new AetherBorderSetting(buttonSelectedLight, buttonSelectedDark, 1, corner, 1),2);
+            disabledBorderSettings.setElementAt(new NimbusBorderSetting(disabledBorderColor, disabledBorderColor, 1, corner, 1), 0);
+            disabledBorderSettings.setElementAt(new NimbusBorderSetting(buttonSelectedLight, buttonSelectedDark, 1, corner, 1),2);
 
             copyBorders(defaultBorderSettings, textareaBorderSettings);
-            textareaBorderSettings.setElementAt(new AetherBorderSetting(base, base, 1, corner, 1), 1);
+            textareaBorderSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
             textareaBorderSettings.removeElementAt(2);
 
             copyBorders(focusedBorderSettings, textareaSelectedSettings);
-            textareaSelectedSettings.setElementAt(new AetherBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
+            textareaSelectedSettings.setElementAt(new NimbusBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
             textareaSelectedSettings.removeElementAt(2);
 
             copyBorders(disabledBorderSettings, textareaDisabledSettings);
-            textareaDisabledSettings.setElementAt(new AetherBorderSetting(base, base, 1, corner, 1), 1);
+            textareaDisabledSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
             textareaDisabledSettings.removeElementAt(2);
 
             Vector checkboxSettings = new Vector();
-            checkboxSettings.addElement(new AetherBorderSetting(reallyDark, reallyDark, 1, 0, 1));
-            checkboxSettings.addElement(new AetherBorderSetting(base, base, 1, 0, 1));
+            checkboxSettings.addElement(new NimbusBorderSetting(reallyDark, reallyDark, 1, 0, 1));
+            checkboxSettings.addElement(new NimbusBorderSetting(base, base, 1, 0, 1));
 
             Vector checkboxSelectedSettings = new Vector();
             copyBorders(checkboxSettings, checkboxSelectedSettings);
-            checkboxSelectedSettings.setElementAt(new AetherBorderSetting(highlight, highlight, 1, 0, 1), 0);
+            checkboxSelectedSettings.setElementAt(new NimbusBorderSetting(highlight, highlight, 1, 0, 1), 0);
 
             copyBorders(focusedBorderSettings, textareaSelectedSettings);
-            textareaSelectedSettings.setElementAt(new AetherBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
+            textareaSelectedSettings.setElementAt(new NimbusBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
             textareaSelectedSettings.removeElementAt(2);
 
             copyBorders(selectedBorderSettings, tabFocusedSettings);
-            tabFocusedSettings.setElementAt(new AetherBorderSetting(light, background, 1, corner, 1), 2);
+            tabFocusedSettings.setElementAt(new NimbusBorderSetting(light, background, 1, corner, 1), 2);
 
             copyBorders(selectedBorderSettings, tabSelectedSettings);
-            tabSelectedSettings.setElementAt(new AetherBorderSetting(background, background, 1, corner, 1), 2);
+            tabSelectedSettings.setElementAt(new NimbusBorderSetting(background, background, 1, corner, 1), 2);
 
             copyBorders(selectedBorderSettings, tabBottomFocusedSettings);
-            tabBottomFocusedSettings.setElementAt(new AetherBorderSetting(background, light, 1, corner, 1), 2);
+            tabBottomFocusedSettings.setElementAt(new NimbusBorderSetting(background, light, 1, corner, 1), 2);
 
             tabHighlight = highlight;
 
-            highlightAreaSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, 0, 1));
-            highlightAreaSettings.addElement(new AetherBorderSetting(0x00FFFFFF, baseHighlight, 1, 0, 1));
+            highlightAreaSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
+            highlightAreaSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, baseHighlight, 1, 0, 1));
 
-            listItemSelectedSettings.addElement(new AetherBorderSetting(highlight, highlight, 1, 0, 1));
-            listItemSelectedSettings.addElement(new AetherBorderSetting(light, light, 1, 0, 1));
+            listItemSelectedSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
+            listItemSelectedSettings.addElement(new NimbusBorderSetting(light, light, 1, 0, 1));
 
-            titleSettings.addElement(new AetherBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
+            titleSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
 
             Vector comboIconSetting = new Vector();
             copyBorders(defaultBorderSettings, comboIconSetting);
-            comboIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
-            comboIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
+            comboIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
+            comboIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
 
             Vector comboSelectedIconSetting = new Vector();
             copyBorders(selectedBorderSettings, comboSelectedIconSetting);
-            comboSelectedIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
-            comboSelectedIconSetting.insertElementAt(new AetherBorderSetting(-1, -1, 1, corner, 1), 0);
+            comboSelectedIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
+            comboSelectedIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
 
-            checkboxIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, dark);
-            checkboxSelectedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSelectedSettings, highlight);
-            radioIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, dark);
-            radioFocusedIcon = new AetherIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaSelectedSettings, highlight);
-            comboBoxIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboIconSetting, text);
-            comboBoxSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboSelectedIconSetting, text);
-            spinnerLeftIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboIconSetting, text);
-            spinnerLeftSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboSelectedIconSetting, text);
-            spinnerRightIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboIconSetting, text);
-            spinnerRightSelectedIcon = new AetherIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboSelectedIconSetting, text);
+            checkboxIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, dark);
+            checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSelectedSettings, highlight);
+            radioIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, dark);
+            radioFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaSelectedSettings, highlight);
+            comboBoxIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboIconSetting, text);
+            comboBoxSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboSelectedIconSetting, text);
+            spinnerLeftIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboIconSetting, text);
+            spinnerLeftSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboSelectedIconSetting, text);
+            spinnerRightIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboIconSetting, text);
+            spinnerRightSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboSelectedIconSetting, text);
         }
 
         /*
@@ -257,51 +257,51 @@ public class AetherLookAndFeel extends LookAndFeel {
         Border windowBackground = new CompoundBorder(new LineBorder(dark), new LineBorder(highlight));
 
         // TODO, FIX ME this is bad, as adds extra class
-        Border titleBackground = new AetherBorder(titleSettings, 0, 0, 6, 0, 0, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT) {
+        Border titleBackground = new NimbusBorder(titleSettings, 0, 0, 6, 0, 0, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT) {
             public void paintBorder(Component c, Graphics2D g, int width, int height) {
                 super.paintBorder(c, g, width, height);
-                AetherBorderSetting border = (AetherBorderSetting) borders.elementAt(0);
-                g.setColor(AetherBorder.getShade(border.color2,0.8));
+                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(0);
+                g.setColor(NimbusBorder.getShade(border.color2,0.8));
                 g.drawLine(-getLeft(), height-1, width+getRight(), height-1);
             }
         };
 
 
-        Border buttonDefault  = new AetherBorder(defaultBorderSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border buttonDisabled  = new AetherBorder(disabledBorderSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border buttonFocused  = new AetherBorder(focusedBorderSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border buttonSelected  = new AetherBorder(selectedBorderSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
+        Border buttonDefault  = new NimbusBorder(defaultBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border buttonDisabled  = new NimbusBorder(disabledBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border buttonFocused  = new NimbusBorder(focusedBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border buttonSelected  = new NimbusBorder(selectedBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
 
-        Border textboxBorder = new AetherBorder(textareaBorderSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border textboxFocused = new AetherBorder(textareaSelectedSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border textboxDisabled = new AetherBorder(textareaDisabledSettings, 0, 0, 0, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
+        Border textboxBorder = new NimbusBorder(textareaBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border textboxFocused = new NimbusBorder(textareaSelectedSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border textboxDisabled = new NimbusBorder(textareaDisabledSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
 
-        Border spinnerBorder = new AetherBorder(textareaBorderSettings, 0, 0, 20, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border spinnerFocused = new AetherBorder(textareaSelectedSettings, 0, 0, 20, 0, corner, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
+        Border spinnerBorder = new NimbusBorder(textareaBorderSettings, 0, 0, 20, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border spinnerFocused = new NimbusBorder(textareaSelectedSettings, 0, 0, 20, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
 
-        Border listItemFocused = new AetherBorder(highlightAreaSettings, 0, 0, 0, 0, 0, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
-        Border listItemSelected = new AetherBorder(listItemSelectedSettings, 0, 0, 0, 0, 0, AetherBorder.CLIP_NONE, AetherBorder.ORIENTATION_VERT);
+        Border listItemFocused = new NimbusBorder(highlightAreaSettings, 0, 0, 0, 0, 0, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
+        Border listItemSelected = new NimbusBorder(listItemSelectedSettings, 0, 0, 0, 0, 0, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
 
-        Border tabTop  = new AetherBorder(defaultBorderSettings, 1, 2, 2, 0, corner, AetherBorder.CLIP_BOTTOM, AetherBorder.ORIENTATION_VERT);
-        Border tabTopSelected  = new AetherBorder(tabSelectedSettings, 1, 0, 2, 0, corner, AetherBorder.CLIP_BOTTOM, AetherBorder.ORIENTATION_VERT);
-        Border tabTopFocused  = new AetherBorder(tabFocusedSettings, 1, 0, 2, 0, corner, AetherBorder.CLIP_BOTTOM, AetherBorder.ORIENTATION_VERT);
+        Border tabTop  = new NimbusBorder(defaultBorderSettings, 1, 2, 2, 0, corner, NimbusBorder.CLIP_BOTTOM, NimbusBorder.ORIENTATION_VERT);
+        Border tabTopSelected  = new NimbusBorder(tabSelectedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_BOTTOM, NimbusBorder.ORIENTATION_VERT);
+        Border tabTopFocused  = new NimbusBorder(tabFocusedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_BOTTOM, NimbusBorder.ORIENTATION_VERT);
 
-        Border tabLeft  = new AetherBorder(defaultBorderSettings, 2, 1, 2, 0, corner, AetherBorder.CLIP_RIGHT, AetherBorder.ORIENTATION_HORI);
-        Border tabLeftSelected  = new AetherBorder(tabSelectedSettings, 0, 1, 2, 0, corner, AetherBorder.CLIP_RIGHT, AetherBorder.ORIENTATION_HORI);
-        Border tabLeftFocused  = new AetherBorder(tabFocusedSettings, 0, 1, 2, 0, corner, AetherBorder.CLIP_RIGHT, AetherBorder.ORIENTATION_HORI);
+        Border tabLeft  = new NimbusBorder(defaultBorderSettings, 2, 1, 2, 0, corner, NimbusBorder.CLIP_RIGHT, NimbusBorder.ORIENTATION_HORI);
+        Border tabLeftSelected  = new NimbusBorder(tabSelectedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_RIGHT, NimbusBorder.ORIENTATION_HORI);
+        Border tabLeftFocused  = new NimbusBorder(tabFocusedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_RIGHT, NimbusBorder.ORIENTATION_HORI);
 
-        Border tabBottom  = new AetherBorder(defaultBorderSettings, 1, 2, 2, 0, corner, AetherBorder.CLIP_TOP, AetherBorder.ORIENTATION_VERT);
-        Border tabBottomSelected  = new AetherBorder(tabSelectedSettings, 1, 0, 2, 0, corner, AetherBorder.CLIP_TOP, AetherBorder.ORIENTATION_VERT);
-        Border tabBottomFocused  = new AetherBorder(tabBottomFocusedSettings, 1, 0, 2, 0, corner, AetherBorder.CLIP_TOP, AetherBorder.ORIENTATION_VERT);
+        Border tabBottom  = new NimbusBorder(defaultBorderSettings, 1, 2, 2, 0, corner, NimbusBorder.CLIP_TOP, NimbusBorder.ORIENTATION_VERT);
+        Border tabBottomSelected  = new NimbusBorder(tabSelectedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_TOP, NimbusBorder.ORIENTATION_VERT);
+        Border tabBottomFocused  = new NimbusBorder(tabBottomFocusedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_TOP, NimbusBorder.ORIENTATION_VERT);
 
-        Border tabRight  = new AetherBorder(defaultBorderSettings, 2, 1, 2, 0, corner, AetherBorder.CLIP_LEFT, AetherBorder.ORIENTATION_HORI);
-        Border tabRightSelected  = new AetherBorder(tabSelectedSettings, 0, 1, 2, 0, corner, AetherBorder.CLIP_LEFT, AetherBorder.ORIENTATION_HORI);
-        Border tabRightFocused  = new AetherBorder(tabBottomFocusedSettings, 0, 1, 2, 0, corner, AetherBorder.CLIP_LEFT, AetherBorder.ORIENTATION_HORI);
+        Border tabRight  = new NimbusBorder(defaultBorderSettings, 2, 1, 2, 0, corner, NimbusBorder.CLIP_LEFT, NimbusBorder.ORIENTATION_HORI);
+        Border tabRightSelected  = new NimbusBorder(tabSelectedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_LEFT, NimbusBorder.ORIENTATION_HORI);
+        Border tabRightFocused  = new NimbusBorder(tabBottomFocusedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_LEFT, NimbusBorder.ORIENTATION_HORI);
 
         Border nullBorder = new LineBorder(background);
         Border checkboxBorder = new LineBorder(highlight,-1,1,false,Graphics.DOTTED);
 
-        Border tooltipBorder = new LineBorder(AetherBorder.getShade(baseHighlight,0.9),baseHighlight,1,true);
+        Border tooltipBorder = new LineBorder(NimbusBorder.getShade(baseHighlight,0.9),baseHighlight,1,true);
 
         /*
          * Apply the styles

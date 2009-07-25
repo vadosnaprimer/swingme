@@ -34,6 +34,10 @@ public class Graphics2D {
         public Graphics2D() {
         }
 
+        public Graphics2D(Graphics g) {
+            setGraphics(g);
+        }
+
         public void setTransform(int t) {
             trans = t;
         }
