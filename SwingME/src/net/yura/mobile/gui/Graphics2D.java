@@ -233,17 +233,27 @@ public class Graphics2D {
     }
 
     public void fillArc(int x, int y, int width, int height, int angle, int arc) {
-        // TODO: convert values based on transformation
-        g.fillArc(x, y, width, height, angle, arc);
+        g.fillArc(
+                convertTrans(x,y),
+                convertTrans(y,x),
+                convertTrans(width,height),
+                convertTrans(height,width), angle, arc);
     }
 
     public void drawArc(int x, int y, int width, int height, int angle, int arc) {
-        // TODO: convert values based on transformation
-        g.drawArc(x, y, width, height, angle, arc);
+        g.drawArc(
+                convertTrans(x,y),
+                convertTrans(y,x),
+                convertTrans(width,height),
+                convertTrans(height,width), angle, arc);
     }
 
     void setGraphics(Graphics gtmp) {
         g = gtmp;
+    }
+
+    public int getTransform() {
+        return trans;
     }
 
 }

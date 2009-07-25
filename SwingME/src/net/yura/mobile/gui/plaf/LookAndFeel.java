@@ -32,6 +32,7 @@ public abstract class LookAndFeel {
         public static final int ICON_COMBO = 2;
         public static final int ICON_SPINNER_LEFT = 3;
         public static final int ICON_SPINNER_RIGHT = 4;
+        public static final int ICON_TRACK_FILL = 5;
 
         private Hashtable styles;
         

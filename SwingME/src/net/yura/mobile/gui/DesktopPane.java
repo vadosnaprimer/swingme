@@ -369,7 +369,9 @@ public class DesktopPane extends Canvas implements Runnable {
 		}
                 //#enddebug
 
-		drawSoftkeys(graphics);
+                if (!windows.isEmpty()) {
+                    drawSoftkeys(graphics);
+                }
                 paintLast(graphics);
             }
             catch(Throwable th) {
@@ -428,7 +430,6 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         private Component getSoftkeyRenderer(int i) {
-            if ( softkeyRenderer==null ) return null; // sometimes throws on emulator
 
             Component com = softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
             if (com==null) return null;

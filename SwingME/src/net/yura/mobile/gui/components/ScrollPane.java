@@ -18,14 +18,12 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.gui.Graphics2D;
 
 /**
@@ -435,6 +433,7 @@ public class ScrollPane extends Panel implements Runnable {
 		// NEEDS to be same check as in getViewPortHeight
 		if ( componentWidth > (width-viewX) ) { // horizontal
 
+                    int t = g.getTransform();
                     g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
 
                     drawScrollBar(g,
@@ -447,7 +446,7 @@ public class ScrollPane extends Panel implements Runnable {
                             componentWidth
                             );
 
-                    g.setTransform( Sprite.TRANS_NONE );
+                    g.setTransform( t );
 		}
 
 
@@ -515,20 +514,7 @@ public class ScrollPane extends Panel implements Runnable {
                 // #############################################################
 
                 if (trackFill!=null) {
-
-                    tileIcon(g, trackFill,
-                            x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
-
-                }
-                else {
-                    g.setColor(scrollTrackCol);
-                    g.fillRect(x, starty, w, extenth);
-
-                    // draw the lines either side
-                    g.setColor(scrollBarCol);
-                    g.drawLine(x, starty, x, starty + extenth - 1);
-                    g.drawLine(x+w-1, starty, x+w-1, starty + extenth -1);
-
+                    tileIcon(g, trackFill, x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
                 }
 
                 // draw the thumb!
@@ -583,6 +569,8 @@ public class ScrollPane extends Panel implements Runnable {
         for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+h) {
             icon.paintIcon(this, g, dest_x, pos_y);
         }
+
+        icon.paintIcon(this, g, 0, 0);
 
         g.setClip(cx,cy,cw,ch);
 

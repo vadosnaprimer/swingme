@@ -17,13 +17,11 @@
 
 package net.yura.mobile.gui.plaf;
 
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.Spinner;
 
 /**
  * @author Yura Mamyrin
@@ -106,6 +104,18 @@ public class MetalIcon extends Icon {
             g.setTransform(Sprite.TRANS_ROT90);
             drawSelectionArrow(c, g, x, y);
             g.setTransform(trans);
+        }
+
+        if (type == LookAndFeel.ICON_TRACK_FILL) {
+
+                    g.setColor( c.getBackground() );
+                    g.fillRect(x, y, x+width, y+height);
+
+                    // draw the lines either side
+                    g.setColor( c.getForeground() );
+                    g.drawLine( x , y, x , y+height );
+                    g.drawLine(x+width, y, x+width, y+height);
+
         }
     }
 
