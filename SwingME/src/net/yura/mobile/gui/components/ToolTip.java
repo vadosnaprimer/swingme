@@ -44,7 +44,7 @@ public class ToolTip extends Label {
         }
     }
     
-    public String getName() {
+    public String getDefaultName() {
         return "ToolTip";
     }
 

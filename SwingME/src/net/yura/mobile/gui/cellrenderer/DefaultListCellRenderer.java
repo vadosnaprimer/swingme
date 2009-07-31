@@ -30,8 +30,9 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 
-        private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
-	protected Border normal,selected,focusedAndSelected;
+//        private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
+//	protected Border normal,selected,focusedAndSelected;
+    private int state;
 	
         /**
          * @see javax.swing.DefaultListCellRenderer#DefaultListCellRenderer() DefaultListCellRenderer.DefaultListCellRenderer
@@ -46,10 +47,26 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 			int index, boolean isSelected, boolean cellHasFocus) {
 
                 setValue(value);
-                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
-                setBackground(isSelected?colorSelected:colorNormal);
-                setForeground(isSelected?foregroundSelected:foregroundNormal);
-                
+//                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
+//                setBackground(isSelected?colorSelected:colorNormal);
+//                setForeground(isSelected?foregroundSelected:foregroundNormal);
+
+                state=Style.ALL;
+                if ( list!=null ) {
+                    if (list.isFocusable()) {
+                        //state |= Style.ENABLED;
+                    }
+                    else {
+                        state |= Style.DISABLED;
+                    }
+                }
+                if (cellHasFocus) {
+                    state |= Style.FOCUSED;
+                }
+                if (isSelected) {
+                    state |= Style.SELECTED;
+                }
+
 		return this;
 	}
         // max width!
@@ -57,22 +74,26 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
             return 10000;
         }
         
-        public String getName() {
+        public String getDefaultName() {
             return "ListRenderer";
         }
-        
-        public void updateUI() {
-                super.updateUI();
-                Style st = DesktopPane.getDefaultTheme(this);
-                normal = st.getBorder( Style.ENABLED );
-                focusedAndSelected = st.getBorder( Style.FOCUSED | Style.SELECTED);
-                selected = st.getBorder( Style.SELECTED );
-                
-                colorNormal = st.getBackground( Style.ALL );
-                colorSelected = st.getBackground( Style.SELECTED );
-                
-                foregroundNormal = st.getForeground( Style.ALL );
-                foregroundSelected = st.getForeground( Style.SELECTED );
+
+        public int getCurrentState() {
+            return state;
         }
+        
+//        public void updateUI() {
+//                super.updateUI();
+//                Style st = DesktopPane.getDefaultTheme(this);
+//                normal = st.getBorder( Style.ENABLED );
+//                focusedAndSelected = st.getBorder( Style.FOCUSED | Style.SELECTED);
+//                selected = st.getBorder( Style.SELECTED );
+//
+//                colorNormal = st.getBackground( Style.ALL );
+//                colorSelected = st.getBackground( Style.SELECTED );
+//
+//                foregroundNormal = st.getForeground( Style.ALL );
+//                foregroundSelected = st.getForeground( Style.SELECTED );
+//        }
 	
 }

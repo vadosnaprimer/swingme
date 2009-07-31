@@ -217,10 +217,6 @@ public class Label extends Component {
 
 	}
 
-        protected int getCurrentForeground() {
-            return foreground;
-        }
-
         protected void paintIcon(Graphics2D g, int x, int y) {
             icon.paintIcon(this, g, x, y);
         }
@@ -407,9 +403,6 @@ public class Label extends Component {
 
         }
 
-    public String getName() {
-        return "Label";
-    }
     public void updateUI() {
         super.updateUI();
         font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
@@ -422,5 +415,9 @@ public class Label extends Component {
 
     private int getIconHeight() {
         return icon!=null?icon.getIconHeight():0;
+    }
+
+    protected String getDefaultName() {
+        return "Label";
     }
 }

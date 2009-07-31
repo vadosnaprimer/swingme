@@ -17,7 +17,6 @@
 
 package net.yura.mobile.gui.components;
 
-import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 
@@ -131,7 +130,7 @@ public class ProgressBar extends Component {
         width = 50;
     }
 
-    public String getName() {
+    public String getDefaultName() {
         return "ProgressBar";
     }
 	

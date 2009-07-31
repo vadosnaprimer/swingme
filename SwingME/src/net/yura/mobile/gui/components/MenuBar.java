@@ -5,7 +5,7 @@ package net.yura.mobile.gui.components;
  */
 public class MenuBar extends Panel {
 
-    public String getName() {
+    public String getDefaultName() {
         return "MenuBar";
     }
 

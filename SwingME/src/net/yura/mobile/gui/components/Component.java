@@ -22,6 +22,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
 
 /**
@@ -34,10 +35,12 @@ public abstract class Component {
 	protected boolean focusable;
 
 	protected Panel parent;
+        private String name;
+        protected Style theme;
 
-	protected int background;
-	protected int foreground;
-	protected Border border;
+	protected int background=-1;
+	protected int foreground=-1;
+	private Border border;
         
         private String tooltip;
         
@@ -48,7 +51,29 @@ public abstract class Component {
 		focusable = true;
 		updateUI();
 	}
-	
+
+
+        /**
+         * @param n The new name for this panel
+         * @see java.awt.Component#setName(java.lang.String) Component.setName
+         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
+         */
+	public void setName(String n) {
+		name  = n;
+                updateUI();
+	}
+
+        /**
+         * @return The name of the panel
+         * @see java.awt.Component#getName() Component.getName
+         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
+         */
+        public String getName() {
+            return name==null?getDefaultName():name;
+        }
+
+        protected abstract String getDefaultName();
+
         /**
          * @see java.awt.Component#isFocusOwner() Component.isFocusOwner
          */
@@ -186,11 +211,16 @@ public abstract class Component {
                 paintBorder(g);
 
 		if (background!=-1) {
-			
 			g.setColor(background);
 			g.fillRect(0, 0, width, height);
-			
 		}
+                else {
+                    int back = theme.getBackground( getCurrentState() );
+                    if (back!=-1) {
+			g.setColor(back);
+			g.fillRect(0, 0, width, height);
+                    }
+                }
 		
 		paintComponent(g);
 		
@@ -201,18 +231,43 @@ public abstract class Component {
          */
         protected void paintBorder(Graphics2D g) {
 
-            	if (border != null) {
+            Border b = getCurrentBorder();
+            if (b != null) {
+		b.paintBorder(this, g,width,height);
+            }
 
-			border.paintBorder(this, g,width,height);
+        }
 
+        private final static Border empty = new EmptyBorder(0, 0, 0, 0);
+        /**
+         * @see javax.swing.JComponent#getInsets() JComponent.getInsets
+         */
+        public Border getInsets() {
+            Border b = getCurrentBorder();
+            return b==null?empty:b;
+        }
+
+        private Border getCurrentBorder() {
+                if (border != null) {
+                    return border;
 		}
+                else {
+                    return theme.getBorder( getCurrentState() );
+                }
+        }
 
+        public int getCurrentForeground() {
+		if (foreground!=-1) {
+                    return foreground;
+		}
+                else {
+                    return theme.getForeground( getCurrentState() );
+                }
         }
     
 	public abstract void paintComponent(Graphics2D g);
     
 	public boolean keyEvent(KeyEvent keypad) {
-		
 		return false;
 	}
 
@@ -242,23 +297,25 @@ public abstract class Component {
         }
 
         public void makeVisible() {
-                        scrollRectToVisible(
-                            (border!=null)?-border.getLeft():0, 
-                            (border!=null)?-border.getTop():0,
-                            getWidthWithBorder(),
-                            getHeightWithBorder(),
-                            false);
+            Border insets = getInsets();
+            scrollRectToVisible(
+                -insets.getLeft(),
+                -insets.getTop(),
+                getWidthWithBorder(),
+                getHeightWithBorder(),
+                false);
         }
 
         /**
          * This method checks if a component can be seen in the scrollpane
          */
         public boolean isComponentVisible() {
-                        return isRectVisible(
-                            (border!=null)?-border.getLeft():0, 
-                            (border!=null)?-border.getTop():0,
-                            getWidthWithBorder(),
-                            getHeightWithBorder());
+            Border insets = getInsets();
+            return isRectVisible(
+                -insets.getLeft(),
+                -insets.getTop(),
+                getWidthWithBorder(),
+                getHeightWithBorder());
         }
 
         /**
@@ -266,15 +323,7 @@ public abstract class Component {
          * to the MINIMUM that is needed for this component
          */
         public abstract void workoutSize();
-        
-        
-        /**
-         * @return this component's name
-         * @see java.awt.Component#getName() Component.getName
-         */
-        public abstract String getName();
-        
-        
+
         /**
          * @param a The color of the background of the component (-1 for no color to be used)
          * @see javax.swing.JComponent#setBackground(java.awt.Color) JComponent.setBackground
@@ -292,8 +341,9 @@ public abstract class Component {
          */
         public boolean isOpaque() {
             if (background!=-1) return true;
-            if (border!=null) {
-                return border.isBorderOpaque();
+            Border b = getCurrentBorder();
+            if (b!=null) {
+                return b.isBorderOpaque();
             }
             return false;
         }
@@ -355,60 +405,31 @@ public abstract class Component {
 	}
 	
 	public int getWidthWithBorder() {
-		
-		int w = getWidth();
-		
-		if (border!=null) {
-	
-			w = w + border.getRight() + border.getLeft();
-		}
-		return w;
+		Border insets = getInsets();
+		return getWidth() + insets.getRight() + insets.getLeft();
 	}
 	public int getHeightWithBorder() {
-		
-		int h = getHeight();
-
-		if (border!=null) {
-			
-			h = h + border.getTop() + border.getBottom();
-
-		}
-		return h;
+		Border insets = getInsets();
+		return getHeight() + insets.getTop() + insets.getBottom();
 	}
 
 	public int getXWithBorder() {
-		
-		int x = getX();
-		
-		if (border!=null) {
-	
-			x = x - border.getLeft();
-		}
-		return x;
+		Border insets = getInsets();
+                return getX() - insets.getLeft();
 	}
 	public int getYWithBorder() {
-		
-		int y = getY();
-
-		if (border!=null) {
-			
-			y = y - border.getTop();
-
-		}
-		return y;
+		Border insets = getInsets();
+		return getY() - insets.getTop();
 	}
 	
 	public void setBoundsWithBorder(int x,int y,int w,int h) {
-		
-		if (border!=null) {
-			
-			x = x + border.getLeft();
-			y = y + border.getTop();
-			w = w - ( border.getRight() + border.getLeft() );
-			h = h - ( border.getTop() + border.getBottom() );
-			
-		}
-		setBounds(x,y,w,h);
+		Border insets = getInsets();
+                setBounds(
+                    x + insets.getLeft(),
+                    y + insets.getTop(),
+                    w - ( insets.getRight() + insets.getLeft() ),
+                    h - ( insets.getTop() + insets.getBottom() )
+                );
 	}
 	
         /**
@@ -553,10 +574,10 @@ public abstract class Component {
          */
         public void updateUI() {
             
-            Style theme = DesktopPane.getDefaultTheme(this);
-            background = theme.getBackground(Style.ALL);
-            foreground = theme.getForeground(Style.ALL);
-            border = theme.getBorder(Style.ALL);
+            theme = DesktopPane.getDefaultTheme(this);
+            //background = theme.getBackground(Style.ALL);
+            //foreground = theme.getForeground(Style.ALL);
+            //border = theme.getBorder(Style.ALL);
         }
 
         /**
@@ -586,5 +607,22 @@ public abstract class Component {
         public int getToolTipLocationY() {
             return 5;
         }
-        
+
+        public int getCurrentState() {
+            int result=Style.ALL;
+
+            if (focusable) {
+                //result |= Style.ENABLED;
+            }
+            else {
+                result |= Style.DISABLED;
+            }
+
+            if (isFocusOwner()) {
+                result |= Style.FOCUSED;
+            }
+
+            return result;
+        }
+
 }

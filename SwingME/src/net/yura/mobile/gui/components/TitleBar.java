@@ -19,7 +19,6 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
@@ -72,7 +71,7 @@ public class TitleBar extends Panel implements ActionListener {
         }
 
         // always want it to take the style of this instead
-        buttonPanel.background=-1;
+        buttonPanel.setName("WindowControlPanel");
         
         this.title = new Label( title,icon );
         

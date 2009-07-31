@@ -52,7 +52,7 @@ public class TextField extends TextComponent {
 		int oldClipH = g.getClipHeight();
 		g.clipRect(0, 0, width, height);
                 
-                g.setColor(isFocusOwner()?activeTextColor:foreground);
+                g.setColor( getCurrentForeground() );
                 g.setFont(font);
 		g.drawString( textString, offset, (height-font.getHeight())/2 );
 
@@ -111,7 +111,7 @@ public class TextField extends TextComponent {
             height = font.getHeight() + padding*2; // put some padding in
         }
 
-    public String getName() {
+    public String getDefaultName() {
         return "TextField";
     }
         public boolean allowNewLine() {

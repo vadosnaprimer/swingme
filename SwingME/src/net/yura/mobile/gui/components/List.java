@@ -688,7 +688,7 @@ public class List extends Component implements ActionListener {
         this.useSelectButton = useSelectButton;
     }
 
-    public String getName() {
+    public String getDefaultName() {
         return "List";
     }
 

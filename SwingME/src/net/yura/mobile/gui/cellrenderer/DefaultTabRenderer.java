@@ -32,10 +32,11 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
     private int tabPlacement;
 
-    private Border normal;
-    private Border selected;
-    private Border selectedAndFocus;
-    private Border selectedAndDisabled;
+//    private Border normal;
+//    private Border selected;
+//    private Border selectedAndFocus;
+//    private Border selectedAndDisabled;
+    private int state;
 
     public DefaultTabRenderer() {
         setPadding(1);
@@ -50,22 +51,34 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
 
         setValue(value);
 
-        if (list!=null && !list.isFocusable() && isSelected) {
-            setBorder(selectedAndDisabled);
+//        if (list!=null && !list.isFocusable() && isSelected) {
+//            setBorder(selectedAndDisabled);
+//        }
+//        else {
+//            setBorder( cellHasFocus?selectedAndFocus:(isSelected?selected:normal) );
+//        }
+
+        state=Style.ALL;
+        if ( list!=null ) {
+            if (list.isFocusable()) {
+                //state |= Style.ENABLED;
+            }
+            else {
+                state |= Style.DISABLED;
+            }
         }
-        else {
-            setBorder( cellHasFocus?selectedAndFocus:(isSelected?selected:normal) );
+        if (cellHasFocus) {
+            state |= Style.FOCUSED;
         }
+        if (isSelected) {
+            state |= Style.SELECTED;
+        }
+
         return this;
     }
-    
-    private String name;
-    public void setName(String n) {
-        name = n;
-        updateUI();
-    }
-    public String getName() {
-        return name==null?"TabRenderer":name;
+
+    public String getDefaultName() {
+        return "TabRenderer";
     }
     
     /**
@@ -94,15 +107,18 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
         }
 
     }
-
-    public void updateUI() {
-            super.updateUI();
-
-            Style theme = DesktopPane.getDefaultTheme(this);
-
-            normal = theme.getBorder(Style.ALL);
-            selected = theme.getBorder(Style.SELECTED);
-            selectedAndFocus = theme.getBorder(Style.SELECTED | Style.FOCUSED);
-            selectedAndDisabled = theme.getBorder(Style.SELECTED | Style.DISABLED);
+    public int getCurrentState() {
+            return state;
     }
+
+//    public void updateUI() {
+//            super.updateUI();
+//
+//            Style theme = DesktopPane.getDefaultTheme(this);
+//
+//            normal = theme.getBorder(Style.ALL);
+//            selected = theme.getBorder(Style.SELECTED);
+//            selectedAndFocus = theme.getBorder(Style.SELECTED | Style.FOCUSED);
+//            selectedAndDisabled = theme.getBorder(Style.SELECTED | Style.DISABLED);
+//    }
 }

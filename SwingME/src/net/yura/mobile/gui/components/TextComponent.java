@@ -82,10 +82,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 	private int constraints;
         private int mode;
 
-	private Border activeBorder;
-        private Border disabledBorder;
-
-        protected int activeTextColor;
+//	private Border activeBorder;
+//        private Border disabledBorder;
+//
+//        protected int activeTextColor;
 
         protected StringBuffer text;
         protected Font font;
@@ -526,17 +526,17 @@ public abstract class TextComponent extends Component implements ActionListener,
 
 	}
 
-        protected void paintBorder(Graphics2D g) {
-            	if (!focusable && disabledBorder!=null) {
-			disabledBorder.paintBorder(this, g,width,height);
-		}
-                else if (isFocusOwner() && activeBorder!=null) {
-                    activeBorder.paintBorder(this, g,width,height);
-                }
-                else {
-                    super.paintBorder(g);
-                }
-        }
+//        protected void paintBorder(Graphics2D g) {
+//            	if (!focusable && disabledBorder!=null) {
+//			disabledBorder.paintBorder(this, g,width,height);
+//		}
+//                else if (isFocusOwner() && activeBorder!=null) {
+//                    activeBorder.paintBorder(this, g,width,height);
+//                }
+//                else {
+//                    super.paintBorder(g);
+//                }
+//        }
 
         public void setMode(int m) {
             
@@ -575,14 +575,14 @@ public abstract class TextComponent extends Component implements ActionListener,
             return  ((javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD & constraints) != 0) ||
                     ((javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE & constraints) != 0);
         }
-        
-	public int getActiveTextColor() {
-		return activeTextColor;
-	}
-
-	public void setActiveTextColor(int color) {
-		activeTextColor = color;
-	}
+//    
+//	public int getActiveTextColor() {
+//		return activeTextColor;
+//	}
+//
+//	public void setActiveTextColor(int color) {
+//		activeTextColor = color;
+//	}
 
         public void setConstraints(int m) {
 		constraints = m;
@@ -665,11 +665,11 @@ public abstract class TextComponent extends Component implements ActionListener,
                 Style theme = DesktopPane.getDefaultTheme(this);
         
                 font = theme.getFont(Style.ALL);
-
-		disabledBorder = theme.getBorder(Style.DISABLED);
-		activeBorder = theme.getBorder(Style.FOCUSED);
-
-		activeTextColor = theme.getForeground(Style.FOCUSED);
+//
+//		disabledBorder = theme.getBorder(Style.DISABLED);
+//		activeBorder = theme.getBorder(Style.FOCUSED);
+//
+//		activeTextColor = theme.getForeground(Style.FOCUSED);
         }
 
 

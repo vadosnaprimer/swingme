@@ -19,7 +19,6 @@ package net.yura.mobile.gui.components;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
@@ -65,8 +64,8 @@ public class TabbedPane extends Panel implements ChangeListener {
             tabBar = new Panel(l);
             tabBar.add(scroll);
             // this will ALWAYS be transparent as its the scroll that does the drawing for the theme
-            tabList.background = -1;
-            scroll.background = -1;
+            tabList.setName("TabList");
+            scroll.setName("TabScroll");
 
             setTabPlacement(a);
 

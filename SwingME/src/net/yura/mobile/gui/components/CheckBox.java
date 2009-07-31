@@ -17,8 +17,6 @@
 
 package net.yura.mobile.gui.components;
 
-import javax.microedition.lcdui.Graphics;
-
 /**
  * @author Yura Mamyrin
  * @see javax.swing.JCheckBox
@@ -53,7 +51,7 @@ public class CheckBox extends RadioButton {
             setSelected(!isSelected());
         }
 
-        public String getName() {
+        public String getDefaultName() {
             return "CheckBox";
         }
 	

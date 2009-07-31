@@ -103,7 +103,7 @@ public class RadioButton extends Button {
             return disabledSelectedImage;
         }
         
-        public String getName() {
+        public String getDefaultName() {
             return "RadioButton";
         }
         

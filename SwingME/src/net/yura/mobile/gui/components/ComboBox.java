@@ -24,6 +24,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
@@ -59,7 +60,7 @@ public class ComboBox extends Button implements ActionListener{
 		setItems(vec);
 	}
 
-        public String getName() {
+        public String getDefaultName() {
             return "ComboBox";
         }
 
@@ -123,7 +124,7 @@ public class ComboBox extends Button implements ActionListener{
 
                 Menu.positionMenuRelativeTo(
                         dropDown,
-                        getXOnScreen() -(border!=null?border.getLeft():0), getYOnScreen(), getWidthWithBorder(),getHeight(),
+                        getXOnScreen() - getInsets().getLeft(), getYOnScreen(), getWidthWithBorder(),getHeight(),
                         Graphics.TOP
                         );
                 dropDown.setVisible(true);
@@ -169,11 +170,14 @@ public class ComboBox extends Button implements ActionListener{
 //
 //                g.drawImage((isFocusOwner())?selectedImage.getImage():nonSelectedImage.getImage(), width-nonSelectedImage.getImage().getWidth(), (height-nonSelectedImage.getImage().getHeight())/2 , 0 );
 //            }
+
+            int right = getInsets().getRight();
+
             if ((selectedImage != null) && isSelected()) {
-                selectedImage.paintIcon(this, g, width+border.getRight()-selectedImage.getIconWidth(), (height-selectedImage.getIconHeight())/2);
+                selectedImage.paintIcon(this, g, width+right-selectedImage.getIconWidth(), (height-selectedImage.getIconHeight())/2);
             }
             else if (nonSelectedImage != null) {
-                nonSelectedImage.paintIcon(this, g, width+border.getRight()-nonSelectedImage.getIconWidth(), (height-nonSelectedImage.getIconHeight())/2);
+                nonSelectedImage.paintIcon(this, g, width+right-nonSelectedImage.getIconWidth(), (height-nonSelectedImage.getIconHeight())/2);
             }
 
             super.paintComponent(g);

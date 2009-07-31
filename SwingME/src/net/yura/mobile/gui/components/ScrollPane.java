@@ -85,9 +85,9 @@ public class ScrollPane extends Panel implements Runnable {
 
 	}
 
-        public void setName(String n) {
-            throw new IllegalArgumentException();
-        }
+//        public void setName(String n) {
+//            throw new IllegalArgumentException();
+//        }
 
 	public ScrollPane(Component view,int a) {
 		this(a);

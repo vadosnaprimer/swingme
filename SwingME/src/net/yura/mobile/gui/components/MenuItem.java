@@ -13,7 +13,7 @@ public class MenuItem extends Button {
         super(l);
     }
 
-    public String getName() {
+    public String getDefaultName() {
         return "MenuItem";
     }
 

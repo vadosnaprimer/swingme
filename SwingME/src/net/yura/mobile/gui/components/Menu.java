@@ -28,6 +28,7 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 
 /**
  * @author Yura Mamyrin
@@ -75,10 +76,12 @@ public class Menu extends Button {
             scroll.setPreferredSize(panel.getWidth(), panel.getHeight());
             popup.pack();
 
+            Border insets=getInsets();
+
             if (getWindow()!=null) {
                 positionMenuRelativeTo(
                         popup,
-                        getXOnScreen() -(border!=null?border.getLeft():0), getYOnScreen()-(border!=null?border.getTop():0), getWidthWithBorder(),getHeightWithBorder(),
+                        getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
                         parentMenu==null?Graphics.TOP:Graphics.RIGHT
                         );
                 openMenuAtLocation();

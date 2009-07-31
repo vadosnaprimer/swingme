@@ -29,7 +29,6 @@ import net.yura.mobile.gui.layout.Layout;
  */
 public class Panel extends Component {
 
-	private String name;
 	private Layout layout;
 	private Vector components;
 	private Hashtable constraints;
@@ -395,19 +394,12 @@ public class Panel extends Component {
             components.removeAllElements();
             constraints.clear();
 	}
-	
-        /**
-         * @param n The new name for this panel
-         * @see java.awt.Component#setName(java.lang.String) Component.setName
-         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
-         */
-	public void setName(String n) {
-		name  = n;
-                updateUI();
-	}
+
         
 	public String toString() {
-		
+
+            String name = getName();
+
 		return ((name!=null)?(name+" "):"")+super.toString() + " "+ components;
 		
 	}
@@ -441,14 +433,9 @@ public class Panel extends Component {
 		}
                 return this;
         }
-        
-        /**
-         * @return The name of the panel
-         * @see java.awt.Component#getName() Component.getName
-         * @see TabbedPane#add(net.yura.mobile.gui.components.Component)
-         */
-    public String getName() {
-        return name==null?"Panel":name;
+
+    protected String getDefaultName() {
+        return "Panel";
     }
 	
 }

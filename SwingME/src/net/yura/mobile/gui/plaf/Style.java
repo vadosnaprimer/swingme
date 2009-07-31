@@ -32,10 +32,10 @@ public class Style {
 
     public static final int ALL = 0;
     public static final int SELECTED = 8;
-    public static final int ENABLED = 1;
+    //public static final int ENABLED = 1;
     public static final int DISABLED = 2;
     public static final int FOCUSED = 4;
-    private static final int[] searchOrder = new int[] { SELECTED , FOCUSED , ENABLED , DISABLED };
+    private static final int[] searchOrder = new int[] { SELECTED , FOCUSED , DISABLED };
     
     private Font font;
     private Border border;

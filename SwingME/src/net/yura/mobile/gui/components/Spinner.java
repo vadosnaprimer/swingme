@@ -21,8 +21,6 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -43,17 +41,17 @@ public class Spinner extends Label {
 	
 	private Vector list;
 
-	private Border normalBorder;
-	private Border activeBorder;
+//	private Border normalBorder;
+//	private Border activeBorder;
         
 	private boolean continuous = false;
         
 	private boolean leftPress = false;
 	private boolean rightPress = false;
 
-        private int normalForeground;
-        private int activeForeground;
-        private int disabledForeground;
+//        private int normalForeground;
+//        private int activeForeground;
+//        private int disabledForeground;
 
         private ChangeListener chl;
         
@@ -104,15 +102,15 @@ public class Spinner extends Label {
             }
         }
 
-        public void setFocusable(boolean s) {
-		if (s) {
-                    foreground = normalForeground;
-                }
-                else {
-                    foreground = disabledForeground;
-                }
-                super.setFocusable(s);
-	}
+//        public void setFocusable(boolean s) {
+//		if (s) {
+//                    foreground = normalForeground;
+//                }
+//                else {
+//                    foreground = disabledForeground;
+//                }
+//                super.setFocusable(s);
+//	}
         
 	public void workoutSize() {
             
@@ -214,19 +212,21 @@ public class Spinner extends Label {
 
 	public void paintComponent(Graphics2D g){
             super.paintComponent(g);
-            
+
+            Border insets = getInsets();
+
             if (leftPress && (leftSelectedIcon!=null)) {
-                leftSelectedIcon.paintIcon(this, g, -normalBorder.getLeft(), (height-leftSelectedIcon.getIconHeight())/2);
+                leftSelectedIcon.paintIcon(this, g, -insets.getLeft(), (height-leftSelectedIcon.getIconHeight())/2);
             }
             else if (leftUnselectedIcon != null) {
-                leftUnselectedIcon.paintIcon(this, g, -normalBorder.getLeft(), (height-leftUnselectedIcon.getIconHeight())/2);
+                leftUnselectedIcon.paintIcon(this, g, -insets.getLeft(), (height-leftUnselectedIcon.getIconHeight())/2);
             }
 
             if (rightPress && (rightSelectedIcon!=null)) {
-                rightSelectedIcon.paintIcon(this, g, width+normalBorder.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
+                rightSelectedIcon.paintIcon(this, g, width+insets.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
             }
             else if (rightUnselectedIcon != null) {
-                rightUnselectedIcon.paintIcon(this, g, width+normalBorder.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
+                rightUnselectedIcon.paintIcon(this, g, width+insets.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
             }
             
             
@@ -311,34 +311,34 @@ public class Spinner extends Label {
         
 	public void focusLost() {
                 super.focusLost();
-		foreground = normalForeground;
-                super.setBorder(normalBorder);
+//		foreground = normalForeground;
+//                super.setBorder(normalBorder);
 		repaint();
 	}
 
 	public void focusGained() {
                 super.focusGained();
-		foreground = activeForeground;
-                super.setBorder(activeBorder);
+//		foreground = activeForeground;
+//                super.setBorder(activeBorder);
 		repaint();
 	}
 
-	public Border getActiveBorder() {
-		return activeBorder;
-	}
-
-	public void setActiveBorder(Border activeBorderColor) {
-		this.activeBorder = activeBorderColor;
-	}
-
-	public Border getBorder() {
-		return normalBorder;
-	}
-
-	public void setBorder(Border borderColor) {
-		this.normalBorder = borderColor;
-                super.setBorder(borderColor);
-	}
+//	public Border getActiveBorder() {
+//		return activeBorder;
+//	}
+//
+//	public void setActiveBorder(Border activeBorderColor) {
+//		this.activeBorder = activeBorderColor;
+//	}
+//
+//	public Border getBorder() {
+//		return normalBorder;
+//	}
+//
+//	public void setBorder(Border borderColor) {
+//		this.normalBorder = borderColor;
+//                super.setBorder(borderColor);
+//	}
 		
 	/**
 	 * This throws an IllegalArgumentException and you should use the 
@@ -347,18 +347,18 @@ public class Spinner extends Label {
 	public void setText(String a) {
 		throw new IllegalArgumentException();
 	}
-        public String getName() {
+        public String getDefaultName() {
             return "Spinner";
         }
         public void updateUI() {
                 super.updateUI();
                 Style theme = DesktopPane.getDefaultTheme(this);
-            	normalBorder = theme.getBorder(Style.ALL);
-		activeBorder = theme.getBorder(Style.FOCUSED);
-		
-                activeForeground = theme.getForeground(Style.FOCUSED);
-                disabledForeground = theme.getForeground(Style.DISABLED);
-                normalForeground = theme.getForeground(Style.ALL);
+//            	normalBorder = theme.getBorder(Style.ALL);
+//		activeBorder = theme.getBorder(Style.FOCUSED);
+//
+//                activeForeground = theme.getForeground(Style.FOCUSED);
+//                disabledForeground = theme.getForeground(Style.DISABLED);
+//                normalForeground = theme.getForeground(Style.ALL);
 
                 leftSelectedIcon = (Icon) theme.getProperty("iconLeft", Style.SELECTED);
                 leftUnselectedIcon = (Icon) theme.getProperty("iconLeft", Style.ALL);

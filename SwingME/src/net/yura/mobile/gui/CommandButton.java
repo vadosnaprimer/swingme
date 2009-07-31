@@ -22,6 +22,7 @@ import net.yura.mobile.gui.components.Button;
 
 /**
  * @author Yura Mamyrin
+ * @deprecated 
  */
 public class CommandButton extends Command {
 	

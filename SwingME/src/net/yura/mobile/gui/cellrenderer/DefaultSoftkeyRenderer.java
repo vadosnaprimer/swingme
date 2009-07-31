@@ -33,6 +33,7 @@ import net.yura.mobile.gui.plaf.Style;
  * This method can render a normal commandButton
  * and also wraps any Menu it may have
  * @author Yura Mamyrin
+ * @deprecated 
  */
 public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
 
@@ -118,7 +119,7 @@ public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
         return b;
     }
 
-    public String getName() {
+    public String getDefaultName() {
         return "SoftkeyRenderer";
     }
     public void updateUI() {

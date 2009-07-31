@@ -312,9 +312,9 @@ public class SynthLookAndFeel extends LookAndFeel {
             if (value==null) {
                 return result;
             }
-            if (value.indexOf("ENABLED")!=-1) {
-                result |= Style.ENABLED;
-            }
+//            if (value.indexOf("ENABLED")!=-1) {
+//                result |= Style.ENABLED;
+//            }
             if (value.indexOf("DISABLED")!=-1) {
                 result |= Style.DISABLED;
             }

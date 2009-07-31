@@ -41,7 +41,7 @@ public class MetalIcon extends Icon {
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
 
-        g.setColor( c.getForeground() );
+        g.setColor( c.getCurrentForeground() );
 
         if (type == LookAndFeel.ICON_CHECKBOX) {
 
@@ -87,23 +87,17 @@ public class MetalIcon extends Icon {
 
         if (type == LookAndFeel.ICON_COMBO) {
             g.drawLine(x, (c.getHeight()-height)/2, x , height);
-            drawSelectionArrow(c, g, x, y);
+            drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
 
         if (type == LookAndFeel.ICON_SPINNER_LEFT) {
             // TODO: Change color of spinner if pressed
-            int trans = g.getTransform();
-            g.setTransform(Sprite.TRANS_MIRROR_ROT90);
-            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight());
-            g.setTransform(trans);
+            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(),Sprite.TRANS_MIRROR_ROT90);
         }
 
         if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
             // TODO: Change color of spinner if pressed
-            int trans = g.getTransform();
-            g.setTransform(Sprite.TRANS_ROT90);
-            drawSelectionArrow(c, g, x, y);
-            g.setTransform(trans);
+            drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
 
         if (type == LookAndFeel.ICON_TRACK_FILL) {
@@ -119,9 +113,12 @@ public class MetalIcon extends Icon {
         }
     }
 
-    private void drawSelectionArrow(Component c, Graphics2D g, int x, int y) {
+    private void drawSelectionArrow(Component c, Graphics2D g, int x, int y, int transformation) {
         // Default arrow has point facing downwards
         g.translate(x, y);
+
+        int trans = g.getTransform();
+        g.setTransform(transformation);
 
         int gp = 2; // gap between arrow and sides
         int top = (height/2)-2;
@@ -129,6 +126,8 @@ public class MetalIcon extends Icon {
         g.fillTriangle(gp+(iconWidth/2)+1, top+5,
                        gp+iconWidth, top,
                        gp, top);
+
+        g.setTransform(trans);
 
         g.translate(-x, -y);
     }

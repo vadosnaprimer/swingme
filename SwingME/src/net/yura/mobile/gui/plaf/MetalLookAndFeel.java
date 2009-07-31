@@ -112,6 +112,8 @@ public class MetalLookAndFeel extends LookAndFeel {
             //scrollStyle.addProperty(new Integer( getSecondary3() ),"trackFill",Style.ALL );
 
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_FILL),"trackFill",Style.ALL );
+            scrollStyle.addProperty(spinnerLeftIcon,"leftArrow",Style.ALL );
+            scrollStyle.addProperty(spinnerRightIcon,"rightArrow",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
 
 
@@ -218,7 +220,10 @@ public class MetalLookAndFeel extends LookAndFeel {
             
             Style listCellRenderer = new Style(defaultStyle);
             listCellRenderer.addBorder(new EmptyBorder(1,1,1,1),Style.ALL);
-            listCellRenderer.addBorder(new LineBorder( getPrimary2() ,-1,1,false,Graphics.DOTTED),Style.FOCUSED);
+            Border darkline = new LineBorder( getPrimary2() ,-1,1,false,Graphics.DOTTED);
+            listCellRenderer.addBorder(darkline,Style.FOCUSED | Style.SELECTED);
+            listCellRenderer.addBorder(darkline,Style.FOCUSED);
+            listCellRenderer.addBorder(new LineBorder( getPrimary3() ,-1,1,false,Graphics.DOTTED),Style.SELECTED);
             listCellRenderer.addBackground( getWhite() , Style.ALL);
             listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
             setStyleFor("ListRenderer",listCellRenderer);
@@ -233,6 +238,16 @@ public class MetalLookAndFeel extends LookAndFeel {
             tooltipSkin.addBackground(getPrimary3(), Style.ALL);
             tooltipSkin.addBorder(new LineBorder( getPrimary1() ),Style.ALL);
             setStyleFor("ToolTip",tooltipSkin);
+
+
+            // TODO ???? is this needed
+            Style clear = new Style();
+            setStyleFor("WindowControlPanel",clear);
+            setStyleFor("TabList",clear);
+            
+            Style clear2 = new Style(scrollStyle);
+            clear2.addBackground(-1, Style.ALL);
+            setStyleFor("TabScroll",clear2);
 
 	}
 
