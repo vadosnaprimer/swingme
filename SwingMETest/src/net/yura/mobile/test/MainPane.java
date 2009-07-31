@@ -62,7 +62,7 @@ import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.gui.plaf.aether.AetherLookAndFeel;
+import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
@@ -169,10 +169,10 @@ public class MainPane extends DesktopPane implements ActionListener {
 			
 		}
                 else if ("aether1".equals(actionCommand)) {
-                    setupNewLookAndFeel( new AetherLookAndFeel() );
+                    setupNewLookAndFeel( new NimbusLookAndFeel() );
                 }
                 else if ("aether2".equals(actionCommand)) {
-                    setupNewLookAndFeel( new AetherLookAndFeel("net") );
+                    setupNewLookAndFeel( new NimbusLookAndFeel("net") );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
                     
@@ -653,9 +653,10 @@ for (int c=0;c<4;c++) {
                         // copy pasty from DefaultListCellRenderer
                         class MyCheckBox extends CheckBox implements ListCellRenderer {
 
-                            private boolean sel,foc;
-                            private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
+                            //private boolean sel,foc;
+                            //private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
                             //protected Border normal,selected,focusedAndSelected;
+                            private int state;
                             
                             public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                                 
@@ -663,48 +664,68 @@ for (int c=0;c<4;c++) {
 
                                 // a checkbox can be TICKED, but this is NOT the same as the cell being selected
                                 // so this isSelected is in ref to the cell in the table and not if the box is ticked or not
-                                sel = isSelected;
-                                foc = cellHasFocus;
+//                                sel = isSelected;
+//                                foc = cellHasFocus;
+//
+//                                //setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
+//                                setBackground(isSelected?colorSelected:colorNormal);
+//                                setForeground(isSelected?foregroundSelected:foregroundNormal);
 
-                                //setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
-                                setBackground(isSelected?colorSelected:colorNormal);
-                                setForeground(isSelected?foregroundSelected:foregroundNormal);
-                                
+                                state=Style.ALL;
+                                if ( list!=null ) {
+                                    if (list.isFocusable()) {
+                                        //state |= Style.ENABLED;
+                                    }
+                                    else {
+                                        state |= Style.DISABLED;
+                                    }
+                                }
+                                if (cellHasFocus) {
+                                    state |= Style.FOCUSED;
+                                }
+                                if (isSelected) {
+                                    state |= Style.SELECTED;
+                                }
+
+
                                 return this;
                             }
 
-                            protected void paintBorder(Graphics2D g) {
-
-                                if (foc && activeBorder!=null) {
-                                    activeBorder.paintBorder(this, g, width, height);
-                                }
-                                else if (sel && selectedBorder!=null) {
-                                    selectedBorder.paintBorder(this, g, width, height);
-                                }
-                                else if (border!=null) {
-                                    border.paintBorder(this, g, width, height);
-                                }
-
+                            public int getCurrentState() {
+                                return state;
                             }
+//                            protected void paintBorder(Graphics2D g) {
+//
+//                                if (foc && activeBorder!=null) {
+//                                    activeBorder.paintBorder(this, g, width, height);
+//                                }
+//                                else if (sel && selectedBorder!=null) {
+//                                    selectedBorder.paintBorder(this, g, width, height);
+//                                }
+//                                else if (border!=null) {
+//                                    border.paintBorder(this, g, width, height);
+//                                }
+//
+//                            }
 
-                            public String getName() {
-                                return "ListRenderer";
-                            }
+//                            public String getName() {
+//                                return "ListRenderer";
+//                            }
                             
-                            public void updateUI() {
-                                    super.updateUI();
-                                    Style st = DesktopPane.getDefaultTheme(this);
-
-                                    border = st.getBorder( Style.ENABLED );
-                                    activeBorder = st.getBorder( Style.FOCUSED | Style.SELECTED);
-                                    selectedBorder = st.getBorder( Style.SELECTED );
-
-                                    colorNormal = st.getBackground( Style.ALL );
-                                    colorSelected = st.getBackground( Style.SELECTED );
-
-                                    foregroundNormal = st.getForeground( Style.ALL );
-                                    foregroundSelected = st.getForeground( Style.SELECTED );
-                            }
+//                            public void updateUI() {
+//                                    super.updateUI();
+//                                    Style st = DesktopPane.getDefaultTheme(this);
+//
+//                                    border = st.getBorder( Style.ENABLED );
+//                                    activeBorder = st.getBorder( Style.FOCUSED | Style.SELECTED);
+//                                    selectedBorder = st.getBorder( Style.SELECTED );
+//
+//                                    colorNormal = st.getBackground( Style.ALL );
+//                                    colorSelected = st.getBackground( Style.SELECTED );
+//
+//                                    foregroundNormal = st.getForeground( Style.ALL );
+//                                    foregroundSelected = st.getForeground( Style.SELECTED );
+//                            }
 
                         }
 
