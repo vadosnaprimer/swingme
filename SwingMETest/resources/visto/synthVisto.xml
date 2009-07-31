@@ -175,7 +175,7 @@
     <style id="scrollpane">
       <imageIcon id="thumb_top" path="/visto/ScrollbarThumb.png" x="0" y="0" width="8" height="8"/>
       <imageIcon id="thumb_fill" path="/visto/ScrollbarThumb.png" x="0" y="8" width="8" height="10"/>
-      <imageIcon id="thump_bottom" path="/visto/ScrollbarThumb.png" x="0" y="18" width="8" height="8"/>
+      <imageIcon id="thumb_bottom" path="/visto/ScrollbarThumb.png" x="0" y="18" width="8" height="8"/>
       <imageIcon id="track_top" path="/visto/ScrollbarPole.png" x="0" y="0" width="12" height="7"/>
       <imageIcon id="track_fill" path="/visto/ScrollbarPole.png" x="0" y="7" width="12" height="20"/>
       <imageIcon id="track_bottom" path="/visto/ScrollbarPole.png" x="0" y="27" width="12" height="7"/>
@@ -183,7 +183,7 @@
       <imageIcon id="right_arrow" path="/visto/scrollArrows.png" x="0" y="30" width="15" height="30"/>
       <state>
         <property key="thumbTop" value="thumb_top"/>
-        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbBottom" value="thumb_bottom"/>
         <property key="thumbFill" value="thumb_fill"/>
         <property key="trackTop" value="track_top"/>
         <property key="trackBottom" value="track_bottom"/>

@@ -165,7 +165,7 @@
     <style id="scrollpane">
       <imageIcon id="thumb_top" path="/telus/ScrollbarThumb.png" x="0" y="0" width="7" height="7"/>
       <imageIcon id="thumb_fill" path="/telus/ScrollbarThumb.png" x="0" y="7" width="7" height="16"/>
-      <imageIcon id="thump_bottom" path="/telus/ScrollbarThumb.png" x="0" y="23" width="7" height="7"/>
+      <imageIcon id="thumb_bottom" path="/telus/ScrollbarThumb.png" x="0" y="23" width="7" height="7"/>
 
       <imageIcon id="track_top" path="/telus/ScrollbarPole.png" x="0" y="0" width="9" height="2"/>
       <imageIcon id="track_fill" path="/telus/ScrollbarPole.png" x="0" y="2" width="9" height="36"/>
@@ -175,7 +175,7 @@
       <imageIcon id="right_arrow" path="/telus/scrollArrows.png" x="0" y="30" width="15" height="30"/>
       <state>
         <property key="thumbTop" value="thumb_top"/>
-        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbBottom" value="thumb_bottom"/>
         <property key="thumbFill" value="thumb_fill"/>
         <property key="trackTop" value="track_top"/>
         <property key="trackBottom" value="track_bottom"/>

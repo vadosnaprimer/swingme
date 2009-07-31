@@ -169,7 +169,7 @@
 
       <imageIcon id="thumb_top" path="/iphone/thumb.png" x="0" y="0" width="14" height="14"/>
       <imageIcon id="thumb_fill" path="/iphone/thumb.png" x="0" y="14" width="14" height="14"/>
-      <imageIcon id="thump_bottom" path="/iphone/thumb.png" x="0" y="28" width="14" height="14"/>
+      <imageIcon id="thumb_bottom" path="/iphone/thumb.png" x="0" y="28" width="14" height="14"/>
 
       <imageIcon id="track_top" path="/iphone/track.png" x="0" y="0" width="14" height="22"/>
       <imageIcon id="track_fill" path="/iphone/track.png" x="0" y="22" width="14" height="12"/>
@@ -180,7 +180,7 @@
 -->
       <state>
         <property key="thumbTop" value="thumb_top"/>
-        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbBottom" value="thumb_bottom"/>
         <property key="thumbFill" value="thumb_fill"/>
         <property key="trackTop" value="track_top"/>
         <property key="trackBottom" value="track_bottom"/>

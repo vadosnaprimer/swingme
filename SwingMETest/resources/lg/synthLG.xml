@@ -180,7 +180,7 @@
     <style id="scrollpane">
       <imageIcon id="thumb_top" path="/lg/Scrollbar.png" x="0" y="13" width="18" height="10"/>
       <imageIcon id="thumb_fill" path="/lg/Scrollbar.png" x="0" y="23" width="18" height="10"/>
-      <imageIcon id="thump_bottom" path="/lg/Scrollbar.png" x="0" y="33" width="18" height="10"/>
+      <imageIcon id="thumb_bottom" path="/lg/Scrollbar.png" x="0" y="33" width="18" height="10"/>
       <imageIcon id="track_top" path="/lg/Scrollbar.png" x="0" y="0" width="18" height="13"/>
       <imageIcon id="track_fill" path="/lg/Scrollbar.png" x="0" y="43" width="18" height="20"/>
       <imageIcon id="track_bottom" path="/lg/Scrollbar.png" x="0" y="63" width="18" height="13"/>
@@ -188,7 +188,7 @@
       <imageIcon id="right_arrow" path="/lg/scrollArrows.png" x="0" y="14" width="14" height="14"/>
       <state>
         <property key="thumbTop" value="thumb_top"/>
-        <property key="thumpBottom" value="thump_bottom"/>
+        <property key="thumbBottom" value="thumb_bottom"/>
         <property key="thumbFill" value="thumb_fill"/>
         <property key="trackTop" value="track_top"/>
         <property key="trackBottom" value="track_bottom"/>
