@@ -18,8 +18,6 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -212,12 +210,16 @@ public class Label extends Component {
 			}
 			
 			
-			g.setColor(foreground);
+			g.setColor( getCurrentForeground() );
                         g.setFont(font);
 			g.drawString( drawString, tx,ty );
 		}
 
 	}
+
+        protected int getCurrentForeground() {
+            return foreground;
+        }
 
         protected void paintIcon(Graphics2D g, int x, int y) {
             icon.paintIcon(this, g, x, y);

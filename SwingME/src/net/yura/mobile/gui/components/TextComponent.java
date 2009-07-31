@@ -28,6 +28,7 @@ import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
 
@@ -81,8 +82,9 @@ public abstract class TextComponent extends Component implements ActionListener,
 	private int constraints;
         private int mode;
 
-	private Border borderColor;
-	private Border activeBorderColor;
+	private Border activeBorder;
+        private Border disabledBorder;
+
         protected int activeTextColor;
 
         protected StringBuffer text;
@@ -490,7 +492,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 
 	public void focusLost() {
 		super.focusLost();
-		setBorder(borderColor);
 		
 		showCaret = false;
 
@@ -507,7 +508,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 	
 	public void focusGained() {
                 super.focusGained();
-		setBorder(activeBorderColor);
 		
 		showCaret = true;
 
@@ -525,7 +525,19 @@ public abstract class TextComponent extends Component implements ActionListener,
 		repaint();
 
 	}
-	
+
+        protected void paintBorder(Graphics2D g) {
+            	if (!focusable && disabledBorder!=null) {
+			disabledBorder.paintBorder(this, g,width,height);
+		}
+                else if (isFocusOwner() && activeBorder!=null) {
+                    activeBorder.paintBorder(this, g,width,height);
+                }
+                else {
+                    super.paintBorder(g);
+                }
+        }
+
         public void setMode(int m) {
             
             if (m!=MODE_123 && allowOnlyNumberConstraint() ) {
@@ -593,6 +605,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 		return constraints;
 	}
 
+        /**
+         * @param str
+         * @see javax.swing.text.JTextComponent#setText(java.lang.String) JTextComponent.setText
+         */
 	public void setText(String str) {
 
 		String old = text==null?"":text.toString();
@@ -610,6 +626,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 		maxSize = size;
 	}
 
+        /**
+         * @return the text
+         * @see javax.swing.text.JTextComponent#getText() JTextComponent.getText
+         */
 	public String getText() {
             String s=text.toString();
             if (tmpChar==0) {
@@ -645,10 +665,11 @@ public abstract class TextComponent extends Component implements ActionListener,
                 Style theme = DesktopPane.getDefaultTheme(this);
         
                 font = theme.getFont(Style.ALL);
-		borderColor = theme.getBorder(Style.ALL);
-		activeBorderColor = theme.getBorder(Style.FOCUSED);
+
+		disabledBorder = theme.getBorder(Style.DISABLED);
+		activeBorder = theme.getBorder(Style.FOCUSED);
+
 		activeTextColor = theme.getForeground(Style.FOCUSED);
-        
         }
 
 

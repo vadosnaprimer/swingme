@@ -184,7 +184,7 @@ public abstract class Component {
 	public void paint(Graphics2D g) {
 		//System.out.println("paint "+this);
                 paintBorder(g);
-		
+
 		if (background!=-1) {
 			
 			g.setColor(background);

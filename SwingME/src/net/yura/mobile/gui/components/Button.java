@@ -45,8 +45,10 @@ public class Button extends Label implements ActionListener {
 	protected Border activeBorder;
         protected Border disabledBorder;
         protected Border selectedBorder;
-	
-        protected int normalForeground;
+        protected Border selectedFocusedBorder;
+
+        protected int selectedForeground;
+        protected int selectedFocusedForeground;
         protected int activeForeground;
         protected int disabledForeground;
         
@@ -94,6 +96,9 @@ public class Button extends Label implements ActionListener {
             if (!focusable && disabledBorder!=null) {
                 disabledBorder.paintBorder(this, g, width, height);
             }
+            else if (isSelected() && isFocusOwner() && selectedFocusedBorder!=null) {
+                selectedFocusedBorder.paintBorder(this, g, width, height);
+            }
             else if (isSelected() && selectedBorder!=null) {
                 selectedBorder.paintBorder(this, g, width, height);
             }
@@ -106,17 +111,6 @@ public class Button extends Label implements ActionListener {
 
         }
 
-
-        public void setFocusable(boolean s) {
-		if (s) {
-                    foreground = normalForeground;
-                }
-                else {
-                    foreground = disabledForeground;
-                }
-                super.setFocusable(s);
-	}
-        
         /**
          * @see javax.swing.AbstractButton#isSelected() AbstractButton.isSelected
          */
@@ -264,8 +258,6 @@ public class Button extends Label implements ActionListener {
 
 	public void focusLost() {
                 super.focusLost();
-		//super.setBorder(normalBorder);
-		foreground = normalForeground;
 		
 		if (useSelectButton) {
 			DesktopPane.getDesktopPane().setComponentCommand(0, null);
@@ -276,8 +268,6 @@ public class Button extends Label implements ActionListener {
 
 	public void focusGained() {
                 super.focusGained();
-		//super.setBorder(activeBorder);
-		foreground = activeForeground;
 		
 		if (useSelectButton) {
 			DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
@@ -286,6 +276,24 @@ public class Button extends Label implements ActionListener {
 		repaint();
 	}
 
+        protected int getCurrentForeground() {
+
+            if (!focusable) {
+                return disabledForeground;
+            }
+            else if (isSelected() && isFocusOwner()) {
+                return selectedFocusedForeground;
+            }
+            else if (isSelected()) {
+                return selectedForeground;
+            }
+            else if (isFocusOwner()) {
+                return activeForeground;
+            }
+            else {
+                return super.getCurrentForeground();
+            }
+        }
 
 	public void setButtonGroup(ButtonGroup buttonGroup) {
 		
@@ -323,11 +331,13 @@ public class Button extends Label implements ActionListener {
 
                 selectedBorder = st.getBorder( Style.SELECTED );
                 activeBorder = st.getBorder( Style.FOCUSED );
+                selectedFocusedBorder = st.getBorder( Style.SELECTED | Style.FOCUSED );
                 disabledBorder = st.getBorder( Style.DISABLED );
                 
 		activeForeground = st.getForeground(Style.FOCUSED);
+                selectedFocusedForeground = st.getForeground(Style.SELECTED | Style.FOCUSED);
                 disabledForeground = st.getForeground(Style.DISABLED);
-                normalForeground = st.getForeground(Style.ENABLED);
+                selectedForeground =  st.getForeground(Style.SELECTED);
 
         }
 }
