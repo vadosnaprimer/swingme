@@ -707,7 +707,7 @@ public class ScrollPane extends Panel implements Runnable {
 		this.scrollBarCol = scrollBarCol;
 	}
 
-        public void clip(Graphics g) {
+        public void clip(Graphics2D g) {
 
             	int viewX=getXOnScreen()+getViewPortX();
 		int viewY=getYOnScreen()+getViewPortY();
@@ -736,7 +736,7 @@ public class ScrollPane extends Panel implements Runnable {
                 Style theme = DesktopPane.getDefaultTheme(this);
 
                 thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
-                thumbBottom = (Icon) theme.getProperty("thumpBottom", Style.ALL);
+                thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
                 Object thumbFill = theme.getProperty("thumbFill", Style.ALL);
                 trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
                 trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
