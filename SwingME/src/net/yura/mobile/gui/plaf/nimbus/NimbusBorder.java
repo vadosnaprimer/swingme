@@ -1,7 +1,6 @@
 package net.yura.mobile.gui.plaf.nimbus;
 
 import java.util.Vector;
-import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
@@ -11,6 +10,9 @@ import net.yura.mobile.gui.components.Component;
  */
 public class NimbusBorder implements Border {
 
+    public static final int ORIENTATION_VERT = 0;
+    public static final int ORIENTATION_HORI = 90;
+
     int marginX;
     int marginY;
 
@@ -18,84 +20,99 @@ public class NimbusBorder implements Border {
     int paddingY;
 
     Vector borders;
-
-    int clip = CLIP_NONE;
+    int[] borderSizes = new int[4];
 
     int gradientOrientation = ORIENTATION_VERT;
 
-    public NimbusBorder(Vector borders, int marginX, int marginY, int paddingX, int paddingY, int corner, int clip, int gradientOrientation) {
+    public NimbusBorder(Vector borders, int marginX, int marginY, int paddingX, int paddingY) {
         this.borders = borders;
         this.marginX = marginX;
         this.marginY = marginY;
         this.paddingX = paddingX;
         this.paddingY = paddingY;
-        this.clip = clip;
-        this.gradientOrientation = gradientOrientation;
+
+        initialise();
     }
 
-    private void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int w, int h, int corner, double reflection) {
-        drawRoundedGradientRect(c1,c2,g,x,y,w,h,corner,reflection,clip,gradientOrientation);
+    NimbusBorder(Vector borderSettings) {
+        this(borderSettings,0,0,0,0);
+    }
 
+    private void initialise() {
+        borderSizes[NimbusBorderSetting.TOP] = borderSize(NimbusBorderSetting.TOP);
+        borderSizes[NimbusBorderSetting.BOTTOM] = borderSize(NimbusBorderSetting.BOTTOM);
+        borderSizes[NimbusBorderSetting.LEFT] = borderSize(NimbusBorderSetting.LEFT);
+        borderSizes[NimbusBorderSetting.RIGHT] = borderSize(NimbusBorderSetting.RIGHT);
     }
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
 
         if (borders == null) return;
 
-        int ch = g.getClipHeight();
-        int cw = g.getClipWidth();
-        int cx = g.getClipX();
-        int cy = g.getClipY();
-
         int x = -getLeft()+marginX;
         int y = -getTop()+marginY;
         int w = width+getLeft()+getRight()-marginX*2;
         int h = height+getTop()+getBottom()-marginY*2;
 
-        g.clipRect(x, y, w, h);
+        paintBorders(borders, g, x, y, w, h);
+    }
 
-        if (clip != CLIP_NONE) {
-            // Determine required crop size
-            int corner = 0;
-            for (int b = 0 ; b<borders.size() ; b++) {
-                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
-                if (border.corner > corner) {
-                    corner = border.corner;
-                }
-            }
-            corner += borders.size();
+    public static void paintBorders(Vector borders, Graphics2D g, int x, int y, int w, int h) {
 
-            switch (clip) {
-                case CLIP_BOTTOM: h = h+corner; break;
-                case CLIP_TOP: h = h+corner; y=y-corner; break;
-                case CLIP_RIGHT: w = w +corner; break;
-                case CLIP_LEFT: w = w +corner; x=x-corner; break;
-            }
-        }
-        
+        if (borders == null) return;
+
         // Draw the borders
+        int borderX = x;
+        int borderY = y;
+        int borderWidth = w;
+        int borderHeight = h;
+
         for (int b = 0 ; b<borders.size() ; b++) {
             NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
-            drawRoundedGradientRect(border.color1,border.color2,g,x+b,y+b,w-(2*b),h-(2*b),border.corner,border.reflection);
-        }
 
-        g.setClip(cx, cy, cw, ch);
+
+            // TODO: only draw visible part of border?
+            drawRoundedGradientRect(border.color1, border.color2,
+                    g,
+                    borderX,
+                    borderY,
+                    borderWidth,
+                    borderHeight,
+                    border.corner, border.reflection, border.gradientOrientation);
+
+            // Set sizes for the next border
+            borderX += border.thickness[NimbusBorderSetting.RIGHT];
+            borderY += border.thickness[NimbusBorderSetting.TOP];
+            borderWidth -= border.thickness[NimbusBorderSetting.RIGHT]+border.thickness[NimbusBorderSetting.LEFT];
+            borderHeight -= border.thickness[NimbusBorderSetting.TOP]+border.thickness[NimbusBorderSetting.BOTTOM];
+
+        }
+    }
+
+    private int borderSize(int position) {
+        // Remember inner border conts as background, hence -1...
+        int size = 0;
+        for (int i=0;i<borders.size()-1;i++) {
+            NimbusBorderSetting border = (NimbusBorderSetting)borders.elementAt(i);
+            size += border.thickness[position];
+        }
+        return size;
     }
 
     public int getTop() {
-        return marginY+borders.size()-1+paddingY;
+        return marginY+borderSizes[NimbusBorderSetting.TOP]+paddingY;
     }
 
     public int getBottom() {
-        return marginY+borders.size()-1+paddingY;
+        return marginY+borderSizes[NimbusBorderSetting.BOTTOM]+paddingY;
     }
 
     public int getRight() {
-        return marginX+borders.size()-1+paddingX;
+        return marginX+borderSizes[NimbusBorderSetting.RIGHT]+paddingX;
     }
 
     public int getLeft() {
-        return marginX+borders.size()-1+paddingX;
+        return marginX+borderSizes[NimbusBorderSetting.LEFT]+paddingX;
     }
 
     public boolean isBorderOpaque() {
@@ -106,41 +123,26 @@ public class NimbusBorder implements Border {
 
 
 
-
-
-
-
-
-
-        public static final int CLIP_NONE = 0;
-    public static final int CLIP_TOP = 1;
-    public static final int CLIP_LEFT = 2;
-    public static final int CLIP_BOTTOM = 3;
-    public static final int CLIP_RIGHT = 4;
-
-    public static final int ORIENTATION_VERT = 0;
-    public static final int ORIENTATION_HORI = 90;
-
-    private static int getRed(int rgb) {
+    public static int getRed(int rgb) {
         return ((rgb >> 16) & 0xFF);
     }
 
-    private static int getGreen(int rgb) {
+    public static int getGreen(int rgb) {
         return ((rgb >> 8) & 0xFF);
     }
 
-    private static int getBlue(int rgb) {
+    public static int getBlue(int rgb) {
         return ((rgb >> 0) & 0xFF);
     }
 
-    private static int getRGB(int r, int b, int g) {
+    public static int getRGB(int r, int b, int g) {
         r = ((r & 0xFF) << 16);
         g = ((g & 0xFF) << 8);
         b = ((b & 0xFF) << 0);
         return (r|g|b);
     }
 
-    public static int getGradientColor(int c1, int c2, int pos, int total,double reflection) {
+    public static int[] getGradientColors(int c1, int c2, int total, double reflection) {
 
         double max = (int) (total * reflection);
 
@@ -162,72 +164,59 @@ public class NimbusBorder implements Border {
         int g;
         int b;
         int offset;
+        int[] gradient = new int[total];
 
-        if (pos <= max) {
-            offset = pos;
+        for (int i=0;i<total;i++) {
+            if (i <= max) {
+                offset = i;
+            }
+            else {
+                offset =(int) (max-(i-max));
+            }
+
+            r = (int) (r1-(incrR*offset));
+            g = (int) (g1-(incrG*offset));
+            b = (int) (b1-(incrB*offset));
+            gradient[i] = getRGB(r, b, g);
+
+            //System.out.println(r+" "+g+" "+b);
         }
-        else {
-            offset =(int) (max-(pos-max));
-        }
-
-        r = (int) (r1-(incrR*offset));
-        g = (int) (g1-(incrG*offset));
-        b = (int) (b1-(incrB*offset));
-
-        if (r1>=255||g1>=255||b1>=255) {
-            //System.out.println("white");
-            //return 0x00FFFFFF;
-        }
-
-        //System.out.println(r+" "+g+" "+b);
-
-        return getRGB(r, b, g);
+        
+        return gradient;
     }
 
-    public static int getShade(int color, double perc) {
-        int r1 = getRed(color);
-        int g1 = getGreen(color);
-        int b1 = getBlue(color);
-
-        r1 = (int) (r1*perc);
-        g1 = (int) (g1*perc);
-        b1 = (int) (b1*perc);
-
-        //System.out.println(perc+" -> "+r1+" "+g1+" "+b1);
-
-        if (r1>=255||g1>=255||b1>=255) {
-            //System.out.println("white");
-            return 0x00FFFFFF;
-        }
-
-        return getRGB(r1, b1, g1);
-    }
-
-    private static final int[] corner8 = { 0,4,2,1,1 };
+    private static final int[] corner2 = { 0,2,1 };
+    private static final int[] corner3 = { 0,3,1,1 };
+    private static final int[] corner4 = { 0,4,2,1,1 };
 
     private static int getCornerLineWidth(int pos, int corner) {
-        //double w = (double) (corner*(1-Math.cos(MathUtil.asin(pos/corner))));
 
         switch (corner) {
             case 0: return 0;
             case 1: return 1;
-            case 2: return 1;
-            case 3: return 1;
-            case 4: return corner8[pos];
-            //case 3: return corner3[pos];
+            case 2: return corner2[pos];
+            case 3: return corner3[pos];
+            case 4: return corner4[pos];
         }
 
-        //System.out.println(corner+" "+pos+" = "+w);
-
-        //return (int) (corner-w);
-//        if (pos == 0) return corner;
-//        if (pos<corner) {
-//            return 1;
-//        }
         return 0;
     }
 
-    public static void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int width, int height, int corner, double reflection, int clip, int gradientOrientation) {
+    /**
+     *
+     * @param c1
+     * @param c2
+     * @param g
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param corners: top left, top right, bottom right, bottom left
+     * @param reflection
+     * @param clip
+     * @param gradientOrientation
+     */
+    public static void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int width, int height, int[] corners, double reflection, int gradientOrientation) {
 
         //System.out.println("-----------------------");
 
@@ -235,77 +224,82 @@ public class NimbusBorder implements Border {
             return;
         }
 
-//        if (c1 == c2) {
-//            g.setColor(c1);
-//            g.fillRoundRect(x, y, width, height, corner, corner);
-//        }
-//        else {
-            int axis;
-            int maxSize;
-            if (gradientOrientation == ORIENTATION_VERT) {
-                axis = height;
-                maxSize = width;
-            } else {
-                axis = width;
-                maxSize = height;
+        int axis;
+        int maxSize;
+        int tl; int tr; int bl; int br;
+
+        if (gradientOrientation == ORIENTATION_VERT) {
+            axis = height;
+            maxSize = width;
+            tl = 0;
+            tr = 1;
+            bl = 2;
+            br = 3;
+        } else {
+            axis = width;
+            maxSize = height;
+            tl = 0;
+            tr = 2;
+            bl = 1;
+            br = 3;
+        }
+
+        int maxCornerPre = (corners[tl]>corners[tr])?corners[tl]:corners[tr];
+        int maxCornerPost = (corners[bl]>corners[br])?corners[bl]:corners[br];
+
+        int[] gradient = getGradientColors(c1, c2, axis, reflection);
+
+        for (int i=0;i<axis;i++) {
+            boolean rounded = false; // is current line in the rounded section
+            int w = maxSize;
+            int offsetPre = 0;
+            int offsetPost = 0;
+            if (i<maxCornerPre) {
+                offsetPre = getCornerLineWidth(i+1,corners[tl]);
+                offsetPost = getCornerLineWidth(i+1,corners[tr]);
+                rounded = true;
             }
-            for (int i=0;i<axis;i++) {
-                int w = maxSize;
-                int offset = 0;
-                if (i<corner) {
-                    offset = getCornerLineWidth(i+1,corner);
-                    w = maxSize-(offset*2);
-                }
-                if ((axis-i)<=corner) {
-                    offset = getCornerLineWidth(axis-i,corner);
-                    w = maxSize-(offset*2);
-                }
-                if ((c1 == c2) && ((i>=corner) && ((axis-i)>corner))) {
-                    // FILL SOLID BLOCK
-                    g.setColor(c1);
-                    if (gradientOrientation == ORIENTATION_VERT) {
-                        g.fillRect(x, i+y, maxSize, axis-(corner*2));
-                    }
-                    else {
-                        g.fillRect(x+i, y, axis-(corner*2), maxSize);
-                    }
-                    i = axis-corner-1;
+            if ((axis-i)<=maxCornerPost) {
+                offsetPre = getCornerLineWidth(axis-i,corners[bl]);
+                offsetPost = getCornerLineWidth(axis-i,corners[br]);
+                rounded = true;
+            }
+            w = maxSize-offsetPre-offsetPost;
+            if ((c1 == c2) && (!rounded)) {
+                // FILL SOLID BLOCK
+                g.setColor(c1);
+                int blockSize = axis-maxCornerPre-maxCornerPost;
+                if (gradientOrientation == ORIENTATION_VERT) {
+                    g.fillRect(x, i+y, maxSize, blockSize);
                 }
                 else {
-                    // FILL GRADIENT LINE
-                    w = w-1;
-                    g.setColor(getGradientColor(c1,c2,i,axis,reflection));
-                    if (gradientOrientation == ORIENTATION_VERT) {
-                        g.drawLine(x+offset, y+i, x+offset+w, i+y);
-                    }
-                    else {
-                        g.drawLine(x+i, y+offset, x+i, y+offset+w);
-                    }
+                    g.fillRect(x+i, y, blockSize, maxSize);
+                }
+                i = axis-maxCornerPost-1;
+            }
+            else {
+                // FILL GRADIENT LINE
+                w = w-1;
+                g.setColor(gradient[i]);
+                if (gradientOrientation == ORIENTATION_VERT) {
+                    g.drawLine(x+offsetPre, y+i, x+offsetPre+w, i+y);
+                }
+                else {
+                    g.drawLine(x+i, y+offsetPre, x+i, y+offsetPre+w);
                 }
             }
-//        }
+        }
 
-    }
-
-    public static void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int width, int height, int corner, int gradientOrientation) {
-        drawRoundedGradientRect(c1, c2, g, x, y, width, height, corner,1.0,CLIP_NONE,gradientOrientation);
     }
 
     public static void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int width, int height, int corner, double reflection, int gradientOrientation) {
-        drawRoundedGradientRect(c1, c2, g, x, y, width, height, corner,reflection,CLIP_NONE,gradientOrientation);
+        int[] corners = {corner,corner,corner,corner};
+        drawRoundedGradientRect(c1, c2, g, x, y, width, height, corners, reflection, gradientOrientation);
     }
 
-    public static void drawGradientRect(int c1, int c2, Graphics g, int x, int y, int width, int height, double reflection, int gradientOrientation) {
-        if (c1 == c2) {
-            g.setColor(c1);
-            g.fillRect(x, y, width, height);
-        }
-        else {
-            for (int i=0;i<height;i++) {
-                g.setColor(getGradientColor(c1,c2,i,height,reflection));
-                g.fillRect(x, i+y, width, 1);
-            }
-        }
+    public static void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int width, int height, int corner, int gradientOrientation) {
+        drawRoundedGradientRect(c1, c2, g, x, y, width, height, corner,1.0,gradientOrientation);
     }
+
 }
 

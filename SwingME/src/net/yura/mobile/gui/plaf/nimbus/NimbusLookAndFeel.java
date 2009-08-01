@@ -1,16 +1,16 @@
 package net.yura.mobile.gui.plaf.nimbus;
 
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.border.MatteBorder;
-import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 
@@ -19,441 +19,492 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class NimbusLookAndFeel extends LookAndFeel {
 
+    private Hashtable uiSettings = new Hashtable();
+
     public NimbusLookAndFeel() {
-        this("");
+        this(null);
     }
 
-    public NimbusLookAndFeel(String theme) {
+    private void setUIDefault(String key,Object value) {
+        if (!uiSettings.containsKey(key)) {
+            uiSettings.put(key, value);
+        }
+    }
 
-        Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM));
+    public NimbusLookAndFeel(Hashtable styles) {
 
-        /*
-         * Color Scheme's
-         */
-        int background;
-        int dark;
-        int light;
-        int highlight;
-        int base;
-        int baseHighlight;
-        int corner;
-        int text = 0x00000;
-        int disabledText = 0x00777777;
-        int tabHighlight;
+        if (styles!=null) uiSettings = styles;
+
+        initDefaults();
+    }
+
+    private void initDefaults() {
+
+        Integer noColor = new Integer(-1);
+
+        // Primary Colors
+        setUIDefault("control", new Integer(0x00d6d9df));
+        setUIDefault("info", new Integer(0x00f2f2bd));
+        setUIDefault("nimbusAlertYellow", new Integer(0x00ffdc23));
+        setUIDefault("nimbusBase", new Integer(0x0033628c));
+        setUIDefault("nimbusDisabledText", new Integer(0x008e8f91));
+        setUIDefault("nimbusFocus", new Integer(0x0073a4d1));
+        setUIDefault("nimbusGreen", new Integer(0x00b0b332));
+        setUIDefault("nimbusInfoBlue", new Integer(0x002f5cb4));
+        setUIDefault("nimbusLightBackground", new Integer(0x00ffffff));
+        setUIDefault("nimbusOrange", new Integer(0x00bf6204));
+        setUIDefault("nimbusRed", new Integer(0x00a92e22));
+        setUIDefault("nimbusSelectedText", new Integer(0x00ffffff));
+        setUIDefault("nimbusSelectionBackground", new Integer(0x0039698a));
+        setUIDefault("text", new Integer(0x00000000));
+        setUIDefault("info",new Integer(NimbusBorder.getRGB(242, 242, 189)));
+        
+        // Secondary Colors
+        setUIDefault("nimbusBlueGrey",getDerivedColor("nimbusBase",0.032459438f,-0.48f,0.19607842f,0));
+        setUIDefault("infoText",getDerivedColor("text",0.0f,0.0f,0.0f,0));
+        setUIDefault("menuText",getDerivedColor("text",0.0f,0.0f,0.0f,0));
+        setUIDefault("menu",getDerivedColor("nimbusBase",0.021348298f,-0.6150531f,0.39999998f,0));
+        setUIDefault("scrollbar",getDerivedColor("nimbusBlueGrey",-0.006944418f,-0.07296763f,0.09019607f,0));
+        setUIDefault("controlText",getDerivedColor("text",0.0f,0.0f,0.0f,0));
+        setUIDefault("controlHighlight",getDerivedColor("nimbusBlueGrey",0.0f,-0.07333623f,0.20392156f,0));
+        setUIDefault("controlLHighlight",getDerivedColor("nimbusBlueGrey",0.0f,-0.098526314f,0.2352941f,0));
+        setUIDefault("controlShadow",getDerivedColor("nimbusBlueGrey",-0.0027777553f,-0.0212406f,0.13333333f,0));
+        setUIDefault("controlDkShadow",getDerivedColor("nimbusBlueGrey",-0.0027777553f,-0.0018306673f,-0.02352941f,0));
+        setUIDefault("textHighlight",getDerivedColor("nimbusSelectionBackground",0.0f,0.0f,0.0f,0));
+        setUIDefault("textHighlightText",getDerivedColor("nimbusSelectedText",0.0f,0.0f,0.0f,0));
+        setUIDefault("textInactiveText",getDerivedColor("nimbusDisabledText",0.0f,0.0f,0.0f,0));
+        setUIDefault("desktop",getDerivedColor("nimbusBase",-0.009207249f,-0.13984653f,-0.07450983f,0));
+        setUIDefault("activeCaption",getDerivedColor("nimbusBlueGrey",0.0f,-0.049920253f,0.031372547f,0));
+        setUIDefault("inactiveCaption",getDerivedColor("nimbusBlueGrey",-0.00505054f,-0.055526316f,0.039215684f,0));
+        setUIDefault("nimbusBorder",getDerivedColor("nimbusBlueGrey",0.0f,-0.017358616f,-0.11372548f,0));
+        setUIDefault("nimbusSelection",getDerivedColor("nimbusBase",-0.010750473f,-0.04875779f,-0.007843137f,0));
+
+        // Misc.
+        setUIDefault("font", new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM)));
+
+        int color1 = getDerivedColor("nimbusBase", 0.03f, -0.58f, 0.07f, 0).intValue();
+        int color2 = getDerivedColor("nimbusBase", 0.03f, -0.54f, -0.18f, 0).intValue();
+        int color3 = getDerivedColor("nimbusBase", 0.03f, -0.63f, 0.41f, 0).intValue();
+        int color4 = getDerivedColor("nimbusBase", 0.03f, -0.6f, 0.32f, 0).intValue();
+
+        // Default Stlyes
+        setUIDefault("background",new Integer(color3));
+        setUIDefault("foreground",uiSettings.get("text"));
+        setUIDefault("font",uiSettings.get("font"));
+
+        // Window
+        Border windowBorder = new LineBorder(decodeColor("desktop"),-1,1,true,1);
+        setUIDefault("Window.border", windowBorder);
+
+        // OptionPane
+        setUIDefault("Dialog.background", uiSettings.get("controlHighlight"));//uiSettings.get("controlLHighlight"));
+        setUIDefault("Dialog.border", windowBorder);
+
+        // TitleBar
+        int[] bottomBorderOnly = {0,0,1,0};
+        Vector titleSettings = new Vector();
+        titleSettings.addElement(new NimbusBorderSetting(decodeColor("controlDkShadow"), decodeColor("controlDkShadow"), bottomBorderOnly, 0, 1));
+        titleSettings.addElement(new NimbusBorderSetting(decodeColor("controlHighlight"), decodeColor("controlShadow"), 1, 0, 1));
+        Border title = new NimbusBorder(titleSettings);
+        setUIDefault("TitleBar.border", title);
+        setUIDefault("TitleBar.background", noColor);
+
+        // Label
+        setUIDefault("Label.background", noColor);
+
+        // Panel
+        setUIDefault("Panel.background", noColor);
+
+        int color17 = getDerivedColor("nimbusBase", 0.03f, -0.57f, 0.26f, 0).intValue();
+        int color18 = getDerivedColor("nimbusBase", 0.05f, -0.5f, 0.26f, 0).intValue();
+        int color19 = getDerivedColor("nimbusBase", 0.03f, -0.59f, 0.34f, 0).intValue();
+        int color20 = getDerivedColor("nimbusBase", 0.03f, -0.57f, 0.31f, 0).intValue();
+        
+        int color23 = getDerivedColor("nimbusBase", 0.03f, -0.55f, -0.02f, 0).intValue();
+        int color24 = getDerivedColor("nimbusBase", 0.03f, -0.42f, -0.34f, 0).intValue();
+        int color25 = getDerivedColor("nimbusBase", 0.03f, -0.63f, 0.43f, 0).intValue();
+        int color26 = getDerivedColor("nimbusBase", 0.03f, -0.6f, 0.4f, 0).intValue();
+
+        // BUTTONS
 
         Vector defaultBorderSettings = new Vector();
+        int color5 = getDerivedColor("nimbusBase", 0f, -0.35f, 0.01f, 0).intValue();
+        int color6 = getDerivedColor("nimbusBase", 0f, -0.1f, -0.26f, 0).intValue();
+        int color7 = getDerivedColor("nimbusBase", 0f, -0.58f, 0.38f, 0).intValue();
+        int color8 = getDerivedColor("nimbusBase", 0.04f, -0.33f, 0.38f, 0).intValue();
+        defaultBorderSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 3, 1));
+        defaultBorderSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 2, 0.65));
+
         Vector focusedBorderSettings = new Vector();
+        int color9 = getDerivedColor("nimbusBase", 0f, -0.28f, 0.12f, 0).intValue();
+        int color10 = getDerivedColor("nimbusBase", 0.06f, 0.36f, -0.44f, 0).intValue();
+        int color11 = getDerivedColor("nimbusBase", 0f, -0.59f, 0.40f, 0).intValue();
+        int color12 = getDerivedColor("nimbusBase", 0f, -0.46f, 0.32f, 0).intValue();
+        focusedBorderSettings.addElement(new NimbusBorderSetting(color24, color24, 1, 3, 1));
+        focusedBorderSettings.addElement(new NimbusBorderSetting(color25, color26, 1, 2, 0.65));
+        
         Vector selectedBorderSettings = new Vector();
+        int color13 = getDerivedColor("nimbusBase", -1f, -1f, -1f, 0).intValue();
+        int color14 = getDerivedColor("nimbusBase", 0f, 0.1f, -0.23f, 0).intValue();
+        int color15 = getDerivedColor("nimbusBase", 0f, -0.3f, 0.15f, 0).intValue();
+        int color16 = getDerivedColor("nimbusBase", 0f, -0f, 0f, 0).intValue();
+        selectedBorderSettings.addElement(new NimbusBorderSetting(color14, color14, 1, 3, 1));
+        selectedBorderSettings.addElement(new NimbusBorderSetting(color15, color16, 1, 2, 0.65));
+
         Vector disabledBorderSettings = new Vector();
+        disabledBorderSettings.addElement(new NimbusBorderSetting(color18, color18, 1, 3, 1));
+        disabledBorderSettings.addElement(new NimbusBorderSetting(color19, color20, 1, 2, 0.65));
+
+        setUIDefault("Button.border",new NimbusBorder(defaultBorderSettings));
+        setUIDefault("Button.background",noColor);
+
+        setUIDefault("Button[focused].border",new NimbusBorder(focusedBorderSettings));
+        setUIDefault("Button[selected].border",new NimbusBorder(selectedBorderSettings));
+        setUIDefault("Button[selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault("Button[focused+selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault("Button[disabled].border",new NimbusBorder(disabledBorderSettings));
+        setUIDefault("Button[disabled].foreground",uiSettings.get("inactiveCaption"));
+
+        int[] leftCorners = {3,0,3,0};
+        int[] leftInnerCorners = {2,0,2,0};
+        Vector buttonLeftSettings = new Vector();
+        buttonLeftSettings.addElement(new NimbusBorderSetting(color6, color6, 1, leftCorners, 1));
+        buttonLeftSettings.addElement(new NimbusBorderSetting(color7, color8, 1, leftInnerCorners, 0.65));
+
+        Vector buttonLeftSelectedSettings = new Vector();
+        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color13, color13, 1, leftCorners, 1));
+        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color15, color16, 1, leftInnerCorners, 0.65));
+
+        int[] rightCorners = {0,3,0,3};
+        int[] rightInnerCorners = {0,2,0,2};
+        Vector buttonRightSettings = new Vector();
+        buttonRightSettings.addElement(new NimbusBorderSetting(color6, color6, 1, rightCorners, 1));
+        buttonRightSettings.addElement(new NimbusBorderSetting(color7, color8, 1, rightInnerCorners, 0.65));
+
+        Vector buttonRightSelectedSettings = new Vector();
+        buttonRightSelectedSettings.addElement(new NimbusBorderSetting(color14, color14, 1, rightCorners, 1));
+        buttonRightSelectedSettings.addElement(new NimbusBorderSetting(color15, color16, 1, rightInnerCorners, 0.65));
+
+
+        Font font = (Font) uiSettings.get("font");
+
+        // TEXT AREAS
+
         Vector textareaBorderSettings = new Vector();
+        int colorLightYellow = getDerivedColor("nimbusAlertYellow", 0.02f, -0.59f, 0f, 0f).intValue();
+        textareaBorderSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusBorder"), decodeColor("nimbusBorder"), 1, 0, 1));
+        textareaBorderSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 1, 0, 1));
+
         Vector textareaSelectedSettings = new Vector();
+        copyBorders(textareaBorderSettings, textareaSelectedSettings);
+        textareaSelectedSettings.setElementAt(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), colorLightYellow, 1, 0, 1), 1);
+
         Vector textareaDisabledSettings = new Vector();
-        Vector tabFocusedSettings = new Vector();
-        Vector tabSelectedSettings = new Vector();
-        Vector tabBottomFocusedSettings = new Vector();
-        Vector titleSettings = new Vector();
+        copyBorders(textareaBorderSettings, textareaDisabledSettings);
+
+        setUIDefault("TextField.background",noColor);
+        setUIDefault("TextField.border",new NimbusBorder(textareaBorderSettings));
+        setUIDefault("TextField[focused].border",new NimbusBorder(textareaSelectedSettings));
+        setUIDefault("TextField[selected].border",new NimbusBorder(textareaSelectedSettings));
+        setUIDefault("TextField[disabled].border",new NimbusBorder(textareaDisabledSettings));
+        setUIDefault("TextField.foreground",uiSettings.get("nimbusDisabledText"));
+
+        setUIDefault("TextArea.background", uiSettings.get("nimbusLightBackground"));
+        // TODO: this doesn't work
+        setUIDefault("TextArea[disabled].background", noColor);
+
+        // LISTS
+        Vector listSettings = new Vector();
+        Vector listItemSettings = new Vector();
         Vector listItemSelectedSettings = new Vector();
-        Vector highlightAreaSettings = new Vector();
+        Vector listItemFocusedSettings = new Vector();
 
-        Icon checkboxIcon = new Icon();
-        Icon checkboxSelectedIcon = new Icon();
-        Icon radioIcon = new Icon();
-        Icon radioFocusedIcon = new Icon();
-        Icon comboBoxIcon = new Icon();
-        Icon comboBoxSelectedIcon = new Icon();
-        Icon spinnerLeftIcon = new Icon();
-        Icon spinnerLeftSelectedIcon = new Icon();
-        Icon spinnerRightIcon = new Icon();
-        Icon spinnerRightSelectedIcon = new Icon();
+        copyBorders(textareaBorderSettings, listSettings);
+        setUIDefault("Menu.border",new NimbusBorder(listSettings));
 
-        if (theme.equals("net")) {
-            // office 2007
-            background  = 0x00BBD7FC;
+        listItemSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, 0x00FFFFFF, 1, 0, 1));
+        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 1, 0, 1));
+        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusBlueGrey"), decodeColor("nimbusSelection"), 1, 0, 1));
+        setUIDefault("ListRenderer.background",uiSettings.get("nimbusLightBackground"));
+        setUIDefault("ListRenderer[selected].background", noColor);
+        setUIDefault("ListRenderer.border",new CompoundBorder(new LineBorder(decodeColor("nimbusLightBackground")),new NimbusBorder(listItemSettings)));
+        setUIDefault("ListRenderer[selected].border",new CompoundBorder(new LineBorder(decodeColor("nimbusSelection")),new NimbusBorder(listItemSelectedSettings)));
+        setUIDefault("ListRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault("ListRenderer[focused+selected].border",new CompoundBorder(new LineBorder(decodeColor("nimbusSelection")),new NimbusBorder(listItemFocusedSettings)));
 
-            highlight = 0x006593CF;
-            dark = 0x00AFD2FF;
-            light = 0x00E3EFFF;
+        // COMBOS
+        Vector comboBorderSettings = new Vector();
+        comboBorderSettings.addElement(new NimbusBorderSetting(color2, color2, 1, 3, 1));
+        comboBorderSettings.addElement(new NimbusBorderSetting(color3, color4, 1, 2, 0.65));
 
-            int highlightFocused = 0x00FEC579;
-            int darkFocused = 0x00FFDD79;
-            int lightFocused = 0x00FFF6CB;
+        Vector comboSelectedSettings = new Vector();
+        comboSelectedSettings.addElement(new NimbusBorderSetting(color24, color24, 1, 3, 1));
+        comboSelectedSettings.addElement(new NimbusBorderSetting(color25, color26, 1, 2, 0.65));
 
-            int hightlightSelected = 0x00FA954C;
-            tabHighlight = hightlightSelected;
-            base = 0x00FFFFFF;
-            baseHighlight = 0x00F0F000;
-            corner = 0;
+        Vector comboDisabledSettings = new Vector();
+        comboDisabledSettings.addElement(new NimbusBorderSetting(color18, color18, 1, 3, 1));
+        comboDisabledSettings.addElement(new NimbusBorderSetting(color19, color20, 1, 2, 0.65));
 
-            int mid = NimbusBorder.getGradientColor(light, dark, 5, 10, 1);
-            int disabledBorderColor = NimbusBorder.getGradientColor(dark, background, 6, 10, 1);
+        Icon comboBoxIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, buttonRightSettings, decodeColor("text"));
+        Icon comboBoxSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, buttonRightSelectedSettings, decodeColor("nimbusSelectedText"));
+        Icon comboBoxDisabledIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, disabledBorderSettings, decodeColor("nimbusDisabledText"));
 
-            defaultBorderSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, corner, 1));
-            defaultBorderSettings.addElement(new NimbusBorderSetting(light, dark, 1, corner, 1));
-            
-            focusedBorderSettings.addElement(new NimbusBorderSetting(highlightFocused, highlightFocused, 1, corner, 1));
-            focusedBorderSettings.addElement(new NimbusBorderSetting(lightFocused, darkFocused, 1, corner, 1));
-            
-            selectedBorderSettings.addElement(new NimbusBorderSetting(hightlightSelected, hightlightSelected, 1, corner, 1));
-            selectedBorderSettings.addElement(new NimbusBorderSetting(hightlightSelected, darkFocused, 1, corner, 1));
-            
-            copyBorders(defaultBorderSettings, disabledBorderSettings);
-            disabledBorderSettings.setElementAt(new NimbusBorderSetting(disabledBorderColor, disabledBorderColor, 1, corner, 1), 0);
-            
-            copyBorders(defaultBorderSettings, textareaBorderSettings);
-            textareaBorderSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
-           
-            copyBorders(textareaBorderSettings, textareaSelectedSettings);
-            textareaSelectedSettings.setElementAt(new NimbusBorderSetting(highlightFocused, highlightFocused, 1, corner, 1), 0);
+        setUIDefault("ComboBox.border",new NimbusBorder(comboBorderSettings));
+        setUIDefault("ComboBox.background",noColor);
+        setUIDefault("ComboBox.property[icon]",comboBoxIcon);
+        setUIDefault("ComboBox[focused].border",new NimbusBorder(comboSelectedSettings));
+        setUIDefault("ComboBox[selected].border",new NimbusBorder(comboSelectedSettings));
+        setUIDefault("ComboBox[selected].property[icon]",comboBoxSelectedIcon);
+        setUIDefault("ComboBox[disabled].border",new NimbusBorder(comboDisabledSettings));
+        setUIDefault("ComboBox[disabled].foreground",uiSettings.get("nimbusDisabledText"));
+        setUIDefault("ComboBox[disabled].property[icon]",comboBoxDisabledIcon);
 
-            copyBorders(disabledBorderSettings, textareaDisabledSettings);
-            textareaDisabledSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
+        // CHECKBOX
 
-            tabFocusedSettings.addElement(new NimbusBorderSetting(tabHighlight, tabHighlight, 1, corner, 1));
-            tabFocusedSettings.addElement(new NimbusBorderSetting(light, background, 1, corner, 1));
-            
-            copyBorders(tabFocusedSettings, tabSelectedSettings);
-            tabSelectedSettings.setElementAt(new NimbusBorderSetting(background, background, 1, corner, 1), 1);
-            
-            copyBorders(tabFocusedSettings, tabBottomFocusedSettings);
-            tabBottomFocusedSettings.setElementAt(new NimbusBorderSetting(background, light, 1, corner, 1), 1);
+        Vector checkboxSettings = new Vector();
+        checkboxSettings.addElement(new NimbusBorderSetting());
+        checkboxSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 1, 1));
+        checkboxSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 1, 1));
 
-//            highlightAreaSettings.addElement(new NimbusBorderSetting(highlightFocused, highlightFocused, 1, 0, 1));
-//            highlightAreaSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, lightFocused, 1, 0, 1));
-            copyBorders(focusedBorderSettings, highlightAreaSettings);
-            
-            listItemSelectedSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
-            listItemSelectedSettings.addElement(new NimbusBorderSetting(light, light, 1, 0, 1));
+        Vector checkboxSelectedSettings = new Vector();
+        checkboxSelectedSettings.addElement(new NimbusBorderSetting());
+        checkboxSelectedSettings.addElement(new NimbusBorderSetting(color10, color10, 1, 1, 1));
+        checkboxSelectedSettings.addElement(new NimbusBorderSetting(color11, color12, 1, 1, 0.65));
 
-            titleSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
+        Icon checkboxIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, decodeColor("text"));
+        Icon checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSelectedSettings, decodeColor("text"));
 
-            //Vector checkboxSelectedSettings = new Vector();
-            //copyBorders(textareaBorderSettings,checkboxSelectedSettings);
-            //checkboxSelectedSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
+        Border nullBorder = new LineBorder(decodeColor("background"));
 
-            Vector comboBoxIconSettings = new Vector();
-            copyBorders(defaultBorderSettings, comboBoxIconSettings);
-            comboBoxIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
-            comboBoxIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
+        setUIDefault("CheckBox.border",nullBorder);
+        setUIDefault("CheckBox[focused].border",new LineBorder(decodeColor("nimbusBorder"),-1,1,false,Graphics.DOTTED));
+        setUIDefault("CheckBox.property[icon]",checkboxIcon);
+        setUIDefault("CheckBox[selected].property[icon]",checkboxSelectedIcon);
 
-            Vector comboBoxSelectedIconSettings = new Vector();
-            copyBorders(focusedBorderSettings, comboBoxSelectedIconSettings);
-            comboBoxSelectedIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
-            comboBoxSelectedIconSettings.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1),0);
+        // RADIOBUTTON
 
-            checkboxIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
-            //checkboxFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaSelectedSettings, highlight);
-            checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, textareaBorderSettings, highlight);
-            radioIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
-            radioFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, highlight);
-            comboBoxIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxIconSettings, highlight);
-            comboBoxSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboBoxSelectedIconSettings, hightlightSelected);
-            spinnerLeftIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxIconSettings, highlight);
-            spinnerLeftSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboBoxSelectedIconSettings, hightlightSelected);
-            spinnerRightIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxIconSettings, highlight);
-            spinnerRightSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboBoxSelectedIconSettings, hightlightSelected);
+        Vector radioSettings = new Vector();
+        radioSettings.addElement(new NimbusBorderSetting());
+        radioSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 3, 1));
+        radioSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 3, 1));
+
+        Vector radioSelectedSettings = new Vector();
+        radioSelectedSettings.addElement(new NimbusBorderSetting());
+        radioSelectedSettings.addElement(new NimbusBorderSetting(color10, color10, 1, 3, 1));
+        radioSelectedSettings.addElement(new NimbusBorderSetting(color11, color12, 1, 3, 1));
+
+        Icon radioIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, radioSettings, decodeColor("text"));
+        Icon radioFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, radioSelectedSettings, decodeColor("text"));
+
+        setUIDefault("RadioButton.border",nullBorder);
+        setUIDefault("RadioButton[focused].border",new LineBorder(decodeColor("nimbusBorder"),-1,1,false,Graphics.DOTTED));
+        setUIDefault("RadioButton.property[icon]",radioIcon);
+        setUIDefault("RadioButton[selected].property[icon]",radioFocusedIcon);
+
+        // SPINNER
+
+        Icon spinnerLeftIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, buttonLeftSettings, decodeColor("text"));
+        Icon spinnerLeftSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, buttonLeftSelectedSettings, decodeColor("nimbusSelectedText"));
+        Icon spinnerRightIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, buttonRightSettings, decodeColor("text"));
+        Icon spinnerRightSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, buttonRightSelectedSettings, decodeColor("nimbusSelectedText"));
+
+        Vector spinnerBorderSettings = new Vector();
+        Vector spinnerSelectedSettings = new Vector();
+        Vector spinnerDisabledSettings = new Vector();
+        copyBorders(comboBorderSettings, spinnerBorderSettings);
+        copyBorders(comboSelectedSettings, spinnerSelectedSettings);
+        copyBorders(comboDisabledSettings, spinnerDisabledSettings);
+
+        setUIDefault("Spinner.background",noColor);
+        setUIDefault("Spinner.border",new NimbusBorder(spinnerBorderSettings,0,0,20,0));
+        setUIDefault("Spinner[focused].border",new NimbusBorder(spinnerSelectedSettings,0,0,20,0));
+        setUIDefault("Spinner.property[iconLeft]",spinnerLeftIcon);
+        setUIDefault("Spinner[selected].property[iconLeft]",spinnerLeftSelectedIcon);
+        setUIDefault("Spinner.property[iconRight]",spinnerRightIcon);
+        setUIDefault("Spinner[selected].property[iconRight]",spinnerRightSelectedIcon);
+
+        // TAB'S TOP
+
+        int[] topTabRendererBorders = {1,1,0,1};
+        int[] topCorners = {3,3,0,0};
+        int[] topInnerCorners = {2,2,0,0};
+        Vector tabRendererTopSettings = new Vector();
+        tabRendererTopSettings.addElement(new NimbusBorderSetting(color24, color24, topTabRendererBorders, topCorners, 1));
+        tabRendererTopSettings.addElement(new NimbusBorderSetting(color25, color26, topTabRendererBorders, topInnerCorners, 1));
+        NimbusBorder tabRendererTop = new NimbusBorder(tabRendererTopSettings,1,2,2,2);
+
+        Vector tabRendererTopFocusedSettings = new Vector();
+        tabRendererTopFocusedSettings.addElement(new NimbusBorderSetting(color13, color2, topTabRendererBorders, topCorners, 1));
+        tabRendererTopFocusedSettings.addElement(new NimbusBorderSetting(color15, color8, topTabRendererBorders, topInnerCorners, 1));
+        NimbusBorder tabRendererTopFocused = new NimbusBorder(tabRendererTopFocusedSettings,1,1,2,2);
+
+        Vector tabRendererTopSelectedSettings = new Vector();
+        tabRendererTopSelectedSettings.addElement(new NimbusBorderSetting(color6, color6, topTabRendererBorders, topCorners, 1));
+        tabRendererTopSelectedSettings.addElement(new NimbusBorderSetting(color7, color8, topTabRendererBorders, topInnerCorners, 1));
+        NimbusBorder tabRendererTopSelected = new NimbusBorder(tabRendererTopSelectedSettings,1,1,2,2);
+
+        setUIDefault("TabRendererTop.background",noColor);
+        setUIDefault("TabRendererTop.border",tabRendererTop);
+        setUIDefault("TabRendererTop[focused+selected].border",tabRendererTopFocused);
+        setUIDefault("TabRendererTop[selected].border",tabRendererTopSelected);
+
+        // TABS BOTTOM
+
+        int[] bottomTabRendererBorders = {0,1,1,1};
+        int[] bottomCorners = {0,0,3,3};
+        int[] bottomInnerCorners = {0,0,2,2};
+        Vector tabRendererBottomSettings = new Vector();
+        tabRendererBottomSettings.addElement(new NimbusBorderSetting(color24, color24, bottomTabRendererBorders, bottomCorners, 1));
+        tabRendererBottomSettings.addElement(new NimbusBorderSetting(color25, color26, bottomTabRendererBorders, bottomInnerCorners, 1));
+        NimbusBorder tabRendererBottom = new NimbusBorder(tabRendererBottomSettings,1,2,2,2);
+
+        Vector tabRendererBottomFocusedSettings = new Vector();
+        tabRendererBottomFocusedSettings.addElement(new NimbusBorderSetting(color13, color2, bottomTabRendererBorders, bottomCorners, 1));
+        tabRendererBottomFocusedSettings.addElement(new NimbusBorderSetting(color15, color8, bottomTabRendererBorders, bottomInnerCorners, 1));
+        NimbusBorder tabRendererBottomFocused = new NimbusBorder(tabRendererBottomFocusedSettings,1,1,2,2);
+
+        Vector tabRendererBottomSelectedSettings = new Vector();
+        tabRendererBottomSelectedSettings.addElement(new NimbusBorderSetting(color13, color5, bottomTabRendererBorders, bottomCorners, 1));
+        tabRendererBottomSelectedSettings.addElement(new NimbusBorderSetting(color15, color7, bottomTabRendererBorders, bottomInnerCorners, 1));
+        NimbusBorder tabRendererBottomSelected = new NimbusBorder(tabRendererBottomSelectedSettings,1,1,2,2);
+
+        setUIDefault("TabRendererBottom.background",noColor);
+        setUIDefault("TabRendererBottom.border",tabRendererBottom);
+        setUIDefault("TabRendererBottom[focused+selected].border",tabRendererBottomFocused);
+        setUIDefault("TabRendererBottom[selected].border",tabRendererBottomSelected);
+
+        // TABS LEFT
+        int[] leftTabRendererBorders = {1,0,1,1};
+        Vector tabRendererLeftSettings = new Vector();
+        tabRendererLeftSettings.addElement(new NimbusBorderSetting(color24, color24, leftTabRendererBorders, leftCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        tabRendererLeftSettings.addElement(new NimbusBorderSetting(color25, color26, leftTabRendererBorders, leftInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        NimbusBorder tabRendererLeft = new NimbusBorder(tabRendererLeftSettings,2,1,2,2);
+
+        Vector tabRendererLeftFocusedSettings = new Vector();
+        tabRendererLeftFocusedSettings.addElement(new NimbusBorderSetting(color13, color2, leftTabRendererBorders, leftCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        tabRendererLeftFocusedSettings.addElement(new NimbusBorderSetting(color15, color8, leftTabRendererBorders, leftInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        NimbusBorder tabRendererLeftFocused = new NimbusBorder(tabRendererLeftFocusedSettings,1,1,2,2);
+
+        Vector tabRendererLeftSelectedSettings = new Vector();
+        tabRendererLeftSelectedSettings.addElement(new NimbusBorderSetting(color5, color2, leftTabRendererBorders, leftCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        tabRendererLeftSelectedSettings.addElement(new NimbusBorderSetting(color7, color8, leftTabRendererBorders, leftInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        NimbusBorder tabRendererLeftSelected = new NimbusBorder(tabRendererLeftSelectedSettings,1,1,2,2);
+
+        setUIDefault("TabRendererLeft.background",noColor);
+        setUIDefault("TabRendererLeft.border",tabRendererLeft);
+        setUIDefault("TabRendererLeft[focused+selected].border",tabRendererLeftFocused);
+        setUIDefault("TabRendererLeft[selected].border",tabRendererLeftSelected);
+
+        // TABS RIGHT
+        int[] rightTabRendererBorders = {1,1,1,0};
+        Vector tabRendererRightSettings = new Vector();
+        tabRendererRightSettings.addElement(new NimbusBorderSetting(color24, color24, rightTabRendererBorders, rightCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        tabRendererRightSettings.addElement(new NimbusBorderSetting(color26, color25, rightTabRendererBorders, rightInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        NimbusBorder tabRendererRight = new NimbusBorder(tabRendererRightSettings,2,1,2,2);
+
+        Vector tabRendererRightFocusedSettings = new Vector();
+        tabRendererRightFocusedSettings.addElement(new NimbusBorderSetting(color13, color2, rightTabRendererBorders, rightCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        tabRendererRightFocusedSettings.addElement(new NimbusBorderSetting(color15, color8, rightTabRendererBorders, rightInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        NimbusBorder tabRendererRightFocused = new NimbusBorder(tabRendererRightFocusedSettings,1,1,2,2);
+
+        Vector tabRendererRightSelectedSettings = new Vector();
+        tabRendererRightSelectedSettings.addElement(new NimbusBorderSetting(color13, color5, rightTabRendererBorders, rightCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        tabRendererRightSelectedSettings.addElement(new NimbusBorderSetting(color15, color7, rightTabRendererBorders, rightInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        NimbusBorder tabRendererRightSelected = new NimbusBorder(tabRendererRightSelectedSettings,1,1,2,2);
+
+        setUIDefault("TabRendererRight.background",noColor);
+        setUIDefault("TabRendererRight.border",tabRendererRight);
+        setUIDefault("TabRendererRight[focused+selected].border",tabRendererRightFocused);
+        setUIDefault("TabRendererRight[selected].border",tabRendererRightSelected);
+
+        // TAB AREA TOP
+        Border tabTop = new CompoundBorder(new MatteBorder(0,0,1,0,color2),new MatteBorder(0,0,2,0,color8));
+        tabTop = new CompoundBorder(tabTop,new MatteBorder(0,0,1,0,color2));
+        setUIDefault("TabTop.background",noColor);
+        setUIDefault("TabTop.border",new CompoundBorder(tabTop,new EmptyBorder(0,0,-2,0)));
+
+        // TAB AREA BOTTOM
+        Border tabBottom = new CompoundBorder(new MatteBorder(1,0,0,0,color2),new MatteBorder(2,0,0,0,color15));
+        tabBottom = new CompoundBorder(tabBottom,new MatteBorder(1,0,0,0,color2));
+        setUIDefault("TabBottom.background",noColor);
+        setUIDefault("TabBottom.border",new CompoundBorder(tabBottom,new EmptyBorder(-2,0,0,0)));
+
+        // TAB AREA RIGHT
+        Border tabRight = new CompoundBorder(new MatteBorder(0,1,0,0,color2),new MatteBorder(0,2,0,0,color15));
+        tabRight = new CompoundBorder(tabRight,new MatteBorder(0,1,0,0,color2));
+        setUIDefault("TabRight.background",noColor);
+        setUIDefault("TabRight.border",new CompoundBorder(tabRight,new EmptyBorder(0,-2,0,0)));
+
+        // TAB AREA LEFT
+        Border tabLeft = new CompoundBorder(new MatteBorder(0,0,0,1,color2),new MatteBorder(0,0,0,2,color8));
+        tabLeft = new CompoundBorder(tabLeft,new MatteBorder(0,0,0,1,color2));
+        setUIDefault("TabLeft.background",noColor);
+        setUIDefault("TabLeft.border",new CompoundBorder(tabLeft,new EmptyBorder(0,0,0,-2)));
+
+        // SCROLL BARS
+
+        int[] squareCorners = {0,0,0,0};
+        int[] singleBorder = {1,1,1,1};
+
+        Vector thumbTopSettings = new Vector();
+        thumbTopSettings.addElement(new NimbusBorderSetting(color6, color6, topTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        thumbTopSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+
+        Vector thumbBottomSettings = new Vector();
+        thumbBottomSettings.addElement(new NimbusBorderSetting(color6, color6, bottomTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        thumbBottomSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+
+        int[] thumbFillBorders = {0,1,0,1};
+        Vector thumbFillSettings = new Vector();
+        thumbFillSettings.addElement(new NimbusBorderSetting(color6, color6, thumbFillBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        thumbFillSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+
+        Vector trackTopSettings = new Vector();
+        trackTopSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, topCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        trackTopSettings.addElement(new NimbusBorderSetting(color7, color8, singleBorder, topInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+
+        Vector trackBottomSettings = new Vector();
+        trackBottomSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, bottomCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        trackBottomSettings.addElement(new NimbusBorderSetting(color7, color8, singleBorder, bottomInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+
+        Vector trackFillSettings = new Vector();
+        trackFillSettings.addElement(new NimbusBorderSetting(color4, color4, 1, 0, 1));
+
+        Icon thumbTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_TOP, thumbTopSettings, decodeColor("text"));
+        Icon thumbBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_BOTTOM, thumbBottomSettings, decodeColor("text"));
+        Icon thumbFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_FILL, thumbFillSettings, decodeColor("text"));
+        Icon trackTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_TOP, trackTopSettings, decodeColor("text"));
+        Icon trackBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_BOTTOM, trackBottomSettings, decodeColor("text"));
+        Icon trackFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_FILL, trackFillSettings, decodeColor("text"));
+        Icon arrowUp = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
+        Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
+        Icon arrowLeft = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_LEFT, null, decodeColor("text"));
+        Icon arrowRight = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_RIGHT, null, decodeColor("text"));
+
+        setUIDefault("ScrollPane.background", noColor);
+        setUIDefault("ScrollPane.property[thumbTop]", thumbTop);
+        setUIDefault("ScrollPane.property[thumbBottom]", thumbBottom);
+        setUIDefault("ScrollPane.property[thumbFill]", thumbFill);
+        setUIDefault("ScrollPane.property[trackTop]", trackTop);
+        setUIDefault("ScrollPane.property[trackBottom]", trackBottom);
+        setUIDefault("ScrollPane.property[trackFill]", trackFill);
+        setUIDefault("ScrollPane.property[upArrow]", arrowUp);
+        setUIDefault("ScrollPane.property[downArrow]", arrowDown);
+        setUIDefault("ScrollPane.property[leftArrow]", arrowLeft);
+        setUIDefault("ScrollPane.property[rightArrow]", arrowRight);
+
+        // ToolTip
+
+        setUIDefault("ToolTip.background",uiSettings.get("nimbusAlertYellow"));
+        setUIDefault("ToolTip.border",new LineBorder(decodeColor("nimbusOrange")));
+
+    }
+
+    public int decodeColor(String name) {
+        if (uiSettings.containsKey(name)) {
+            return ((Integer) uiSettings.get(name)).intValue();
         }
-        else {
-            // yura.net
-            background  = 0x00E0E3EC;
-            highlight = 0x00576C7D;
-            dark = NimbusBorder.getShade(0x00828282,1.1);
-            light = 0x00F0F0EE;
-            base = 0x00EEF2FB;
-            baseHighlight = 0x00FFFFBB;
-            corner = 4;
-
-            int mid = NimbusBorder.getGradientColor(light, dark, 5, 10, 1);
-            int reallyDark = NimbusBorder.getShade(light,0.5);
-            int buttonSelectedLight = NimbusBorder.getShade(light, 1.1);
-            int buttonSelectedDark = NimbusBorder.getGradientColor(light, dark, 6, 10, 1);
-            int disabledBorderColor = NimbusBorder.getGradientColor(dark, background, 6, 10, 1);
-            int baseReallyHighlight = NimbusBorder.getShade(baseHighlight, 1.1);
-
-            defaultBorderSettings.addElement(new NimbusBorderSetting(reallyDark, reallyDark, 1, corner, 1));
-            defaultBorderSettings.addElement(new NimbusBorderSetting(light, light, 1, corner, 1));
-            defaultBorderSettings.addElement(new NimbusBorderSetting(light, dark, 1, corner, 1));
-
-            focusedBorderSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, corner, 1));
-            //focusedBorderSettings.addElement(new NimbusBorderSetting(NimbusBorder.getShade(highlight,1.2), NimbusBorder.getShade(highlight,1.2), 1, corner, 1));
-            focusedBorderSettings.addElement(new NimbusBorderSetting(baseHighlight, baseHighlight, 1, corner, 1));
-            focusedBorderSettings.addElement(new NimbusBorderSetting(buttonSelectedLight, buttonSelectedDark, 1, corner, 1));
-
-            copyBorders(focusedBorderSettings, selectedBorderSettings);
-            selectedBorderSettings.setElementAt(new NimbusBorderSetting(NimbusBorder.getShade(buttonSelectedLight, 0.9), NimbusBorder.getShade(buttonSelectedDark, 0.9), 1, corner, 1), 2);
-
-            copyBorders(defaultBorderSettings, disabledBorderSettings);
-            disabledBorderSettings.setElementAt(new NimbusBorderSetting(disabledBorderColor, disabledBorderColor, 1, corner, 1), 0);
-            disabledBorderSettings.setElementAt(new NimbusBorderSetting(buttonSelectedLight, buttonSelectedDark, 1, corner, 1),2);
-
-            copyBorders(defaultBorderSettings, textareaBorderSettings);
-            textareaBorderSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
-            textareaBorderSettings.removeElementAt(2);
-
-            copyBorders(focusedBorderSettings, textareaSelectedSettings);
-            textareaSelectedSettings.setElementAt(new NimbusBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
-            textareaSelectedSettings.removeElementAt(2);
-
-            copyBorders(disabledBorderSettings, textareaDisabledSettings);
-            textareaDisabledSettings.setElementAt(new NimbusBorderSetting(base, base, 1, corner, 1), 1);
-            textareaDisabledSettings.removeElementAt(2);
-
-            Vector checkboxSettings = new Vector();
-            checkboxSettings.addElement(new NimbusBorderSetting(reallyDark, reallyDark, 1, 0, 1));
-            checkboxSettings.addElement(new NimbusBorderSetting(base, base, 1, 0, 1));
-
-            Vector checkboxSelectedSettings = new Vector();
-            copyBorders(checkboxSettings, checkboxSelectedSettings);
-            checkboxSelectedSettings.setElementAt(new NimbusBorderSetting(highlight, highlight, 1, 0, 1), 0);
-
-            copyBorders(focusedBorderSettings, textareaSelectedSettings);
-            textareaSelectedSettings.setElementAt(new NimbusBorderSetting(baseReallyHighlight, baseHighlight, 1, corner, 1), 1);
-            textareaSelectedSettings.removeElementAt(2);
-
-            copyBorders(selectedBorderSettings, tabFocusedSettings);
-            tabFocusedSettings.setElementAt(new NimbusBorderSetting(light, background, 1, corner, 1), 2);
-
-            copyBorders(selectedBorderSettings, tabSelectedSettings);
-            tabSelectedSettings.setElementAt(new NimbusBorderSetting(background, background, 1, corner, 1), 2);
-
-            copyBorders(selectedBorderSettings, tabBottomFocusedSettings);
-            tabBottomFocusedSettings.setElementAt(new NimbusBorderSetting(background, light, 1, corner, 1), 2);
-
-            tabHighlight = highlight;
-
-            highlightAreaSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
-            highlightAreaSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, baseHighlight, 1, 0, 1));
-
-            listItemSelectedSettings.addElement(new NimbusBorderSetting(highlight, highlight, 1, 0, 1));
-            listItemSelectedSettings.addElement(new NimbusBorderSetting(light, light, 1, 0, 1));
-
-            titleSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, mid, 1, 0, 1));
-
-            Vector comboIconSetting = new Vector();
-            copyBorders(defaultBorderSettings, comboIconSetting);
-            comboIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
-            comboIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
-
-            Vector comboSelectedIconSetting = new Vector();
-            copyBorders(selectedBorderSettings, comboSelectedIconSetting);
-            comboSelectedIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
-            comboSelectedIconSetting.insertElementAt(new NimbusBorderSetting(-1, -1, 1, corner, 1), 0);
-
-            checkboxIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, dark);
-            checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSelectedSettings, highlight);
-            radioIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaBorderSettings, dark);
-            radioFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, textareaSelectedSettings, highlight);
-            comboBoxIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboIconSetting, text);
-            comboBoxSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_COMBO, comboSelectedIconSetting, text);
-            spinnerLeftIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboIconSetting, text);
-            spinnerLeftSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_LEFT, comboSelectedIconSetting, text);
-            spinnerRightIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboIconSetting, text);
-            spinnerRightSelectedIcon = new NimbusIcon(font.getHeight()+6, LookAndFeel.ICON_SPINNER_RIGHT, comboSelectedIconSetting, text);
-        }
-
-        /*
-         * Borders setup
-         */
-
-        Border windowBackground = new CompoundBorder(new LineBorder(dark), new LineBorder(highlight));
-
-        // TODO, FIX ME this is bad, as adds extra class
-        Border titleBackground = new NimbusBorder(titleSettings, 0, 0, 6, 0, 0, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT) {
-            public void paintBorder(Component c, Graphics2D g, int width, int height) {
-                super.paintBorder(c, g, width, height);
-                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(0);
-                g.setColor(NimbusBorder.getShade(border.color2,0.8));
-                g.drawLine(-getLeft(), height-1, width+getRight(), height-1);
-            }
-        };
-
-
-        Border buttonDefault  = new NimbusBorder(defaultBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border buttonDisabled  = new NimbusBorder(disabledBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border buttonFocused  = new NimbusBorder(focusedBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border buttonSelected  = new NimbusBorder(selectedBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-
-        Border textboxBorder = new NimbusBorder(textareaBorderSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border textboxFocused = new NimbusBorder(textareaSelectedSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border textboxDisabled = new NimbusBorder(textareaDisabledSettings, 0, 0, 0, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-
-        Border spinnerBorder = new NimbusBorder(textareaBorderSettings, 0, 0, 20, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border spinnerFocused = new NimbusBorder(textareaSelectedSettings, 0, 0, 20, 0, corner, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-
-        Border listItemFocused = new NimbusBorder(highlightAreaSettings, 0, 0, 0, 0, 0, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-        Border listItemSelected = new NimbusBorder(listItemSelectedSettings, 0, 0, 0, 0, 0, NimbusBorder.CLIP_NONE, NimbusBorder.ORIENTATION_VERT);
-
-        Border tabTop  = new NimbusBorder(defaultBorderSettings, 1, 2, 2, 0, corner, NimbusBorder.CLIP_BOTTOM, NimbusBorder.ORIENTATION_VERT);
-        Border tabTopSelected  = new NimbusBorder(tabSelectedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_BOTTOM, NimbusBorder.ORIENTATION_VERT);
-        Border tabTopFocused  = new NimbusBorder(tabFocusedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_BOTTOM, NimbusBorder.ORIENTATION_VERT);
-
-        Border tabLeft  = new NimbusBorder(defaultBorderSettings, 2, 1, 2, 0, corner, NimbusBorder.CLIP_RIGHT, NimbusBorder.ORIENTATION_HORI);
-        Border tabLeftSelected  = new NimbusBorder(tabSelectedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_RIGHT, NimbusBorder.ORIENTATION_HORI);
-        Border tabLeftFocused  = new NimbusBorder(tabFocusedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_RIGHT, NimbusBorder.ORIENTATION_HORI);
-
-        Border tabBottom  = new NimbusBorder(defaultBorderSettings, 1, 2, 2, 0, corner, NimbusBorder.CLIP_TOP, NimbusBorder.ORIENTATION_VERT);
-        Border tabBottomSelected  = new NimbusBorder(tabSelectedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_TOP, NimbusBorder.ORIENTATION_VERT);
-        Border tabBottomFocused  = new NimbusBorder(tabBottomFocusedSettings, 1, 0, 2, 0, corner, NimbusBorder.CLIP_TOP, NimbusBorder.ORIENTATION_VERT);
-
-        Border tabRight  = new NimbusBorder(defaultBorderSettings, 2, 1, 2, 0, corner, NimbusBorder.CLIP_LEFT, NimbusBorder.ORIENTATION_HORI);
-        Border tabRightSelected  = new NimbusBorder(tabSelectedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_LEFT, NimbusBorder.ORIENTATION_HORI);
-        Border tabRightFocused  = new NimbusBorder(tabBottomFocusedSettings, 0, 1, 2, 0, corner, NimbusBorder.CLIP_LEFT, NimbusBorder.ORIENTATION_HORI);
-
-        Border nullBorder = new LineBorder(background);
-        Border checkboxBorder = new LineBorder(highlight,-1,1,false,Graphics.DOTTED);
-
-        Border tooltipBorder = new LineBorder(NimbusBorder.getShade(baseHighlight,0.9),baseHighlight,1,true);
-
-        /*
-         * Apply the styles
-         */
-        
-        Style defaultStyle = new Style();
-        defaultStyle.addFont(font, Style.ALL);
-        defaultStyle.addBackground( background, Style.ALL);
-        defaultStyle.addForeground( text, Style.ALL);
-        setStyleFor("",defaultStyle);
-
-//        Style label = new Style(defaultStyle);
-//        label.addBackground(-1,Style.ALL);
-//        label.addBorder(new LineBorder(0x00FF0000),Style.ALL);
-//        setStyleFor("Label", label);
-
-        Style window = new Style(defaultStyle);
-        window.addBorder(windowBackground, Style.ALL);
-        setStyleFor("Window",window);
-        setStyleFor("Dialog",window);
-
-        Style scrollStyle = new Style(defaultStyle);
-        scrollStyle.addProperty(new Integer( dark ),"thumbFill",Style.ALL );
-        scrollStyle.addProperty(new Integer( light ),"trackFill",Style.ALL );
-        setStyleFor("ScrollPane",scrollStyle);
-
-        Style title = new Style();
-        title.addBorder(titleBackground,Style.ALL);
-        title.addBackground(-1, Style.ALL);
-        setStyleFor("TitleBar",title);
-        
-        Style buttonStyle = new Style(defaultStyle);
-        //buttonStyle.addFont(font, Style.ALL);
-        //buttonStyle.addForeground( 0x00000000 , Style.ALL);
-        buttonStyle.addBackground(-1, Style.ALL);
-        buttonStyle.addForeground( disabledText, Style.DISABLED);
-        buttonStyle.addBorder(buttonDefault, Style.ALL);
-        buttonStyle.addBorder(buttonFocused, Style.FOCUSED);
-        buttonStyle.addBorder(buttonSelected, Style.SELECTED);
-        buttonStyle.addBorder(buttonDisabled, Style.DISABLED);
-        setStyleFor("Button",buttonStyle);
-
-        Style clear = new Style(defaultStyle);
-        clear.addBackground(-1,Style.ALL);
-        setStyleFor("List",clear);
-        setStyleFor("Label",clear);
-
-        Style list = new Style(defaultStyle);
-        list.addBorder(new LineBorder(dark),Style.ALL);
-        list.addBackground(-1,Style.ALL);
-        setStyleFor("Menu",list);
-
-        Style listRenderer = new Style(defaultStyle);
-        listRenderer.addBackground(base,Style.ALL);
-        listRenderer.addBackground(-1,Style.SELECTED);
-        listRenderer.addBorder(new LineBorder( base ,-1,1,false),Style.ALL);
-        listRenderer.addBorder(listItemFocused,Style.FOCUSED|Style.SELECTED);
-        listRenderer.addBorder(listItemSelected,Style.SELECTED);
-        setStyleFor("ListRenderer",listRenderer);
-
-        Style textbox = new Style(defaultStyle);
-        textbox.addBorder(textboxBorder,Style.ALL);
-        textbox.addBorder(textboxFocused,Style.FOCUSED);
-        textbox.addBorder(textboxFocused,Style.SELECTED);
-        textbox.addBorder(textboxDisabled,Style.DISABLED);
-        textbox.addBackground(-1,Style.ALL);
-        textbox.addForeground(disabledText, Style.DISABLED);
-        //setStyleFor("TextArea",textbox);
-        setStyleFor("TextField",textbox);
-
-        Style comboBox = new Style(textbox);
-        comboBox.addProperty(comboBoxIcon,"icon", Style.ALL);
-        comboBox.addProperty(comboBoxSelectedIcon,"icon", Style.SELECTED);
-        setStyleFor("ComboBox", comboBox);
-
-        Style checkbox = new Style(defaultStyle);
-        checkbox.addBorder(checkboxBorder, Style.FOCUSED);
-        //checkbox.addBorder(null, Style.SELECTED);
-        checkbox.addBorder(nullBorder, Style.ALL);        
-        checkbox.addForeground(disabledText, Style.DISABLED);
-        checkbox.addProperty(checkboxIcon,"icon", Style.ALL);
-        checkbox.addProperty(checkboxSelectedIcon,"icon", Style.SELECTED);
-        setStyleFor("CheckBox", checkbox);
-
-        Style radio = new Style(checkbox);
-        radio.addProperty(radioIcon,"icon", Style.ALL);
-        radio.addProperty(radioFocusedIcon,"icon", Style.SELECTED);
-        setStyleFor("RadioButton", radio);
-
-        Style spinner = new Style(defaultStyle);
-        spinner.addBorder(spinnerBorder,Style.ALL);
-        spinner.addBorder(spinnerFocused,Style.FOCUSED);
-        spinner.addBackground(-1,Style.ALL);
-        spinner.addProperty(spinnerLeftIcon, "iconLeft", Style.ALL);
-        spinner.addProperty(spinnerLeftSelectedIcon, "iconLeft", Style.SELECTED);
-        spinner.addProperty(spinnerRightIcon, "iconRight", Style.ALL);
-        spinner.addProperty(spinnerRightSelectedIcon, "iconRight", Style.SELECTED);
-        setStyleFor("Spinner",spinner);
-
-
-        /**
-         * TABS
-         */
-        Style tabTopStyle = new Style(defaultStyle);
-        tabTopStyle.addBorder(tabTop, Style.ALL);
-        tabTopStyle.addBorder(tabTopSelected, Style.SELECTED);
-        tabTopStyle.addBorder(tabTopFocused, Style.SELECTED|Style.FOCUSED);
-        tabTopStyle.addBackground(-1,Style.ALL);
-        setStyleFor("TabRendererTop", tabTopStyle);
-
-        Style tabBottomStyle = new Style(defaultStyle);
-        tabBottomStyle.addBorder(tabBottom, Style.ALL);
-        tabBottomStyle.addBorder(tabBottomSelected, Style.SELECTED);
-        tabBottomStyle.addBorder(tabBottomFocused, Style.SELECTED|Style.FOCUSED);
-        tabBottomStyle.addBackground(-1,Style.ALL);
-        setStyleFor("TabRendererBottom", tabBottomStyle);
-
-        Style tabLeftStyle = new Style(defaultStyle);
-        tabLeftStyle.addBorder(tabLeft, Style.ALL);
-        tabLeftStyle.addBorder(tabLeftSelected, Style.SELECTED);
-        tabLeftStyle.addBorder(tabLeftFocused, Style.SELECTED|Style.FOCUSED);
-        tabLeftStyle.addBackground(-1,Style.ALL);
-        setStyleFor("TabRendererLeft", tabLeftStyle);
-
-        Style tabRightStyle = new Style(defaultStyle);
-        tabRightStyle.addBorder(tabRight, Style.ALL);
-        tabRightStyle.addBorder(tabRightSelected, Style.SELECTED);
-        tabRightStyle.addBorder(tabRightFocused, Style.SELECTED|Style.FOCUSED);
-        tabRightStyle.addBackground(-1,Style.ALL);
-        setStyleFor("TabRendererRight", tabRightStyle);
-
-        Style tabsTop = new Style(defaultStyle);
-        tabsTop.addBackground(-1, Style.ALL);
-        tabsTop.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 0, 1, 0, tabHighlight ), new MatteBorder(0, 0, 1, 0, tabHighlight )), new EmptyBorder(2,0,-2,0)),Style.ALL);
-        setStyleFor("TabTop", tabsTop);
-
-        Style tabsBottom = new Style(tabsTop);
-        tabsBottom.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(1, 0, 0, 0, tabHighlight ), new MatteBorder(1, 0, 0, 0, tabHighlight )), new EmptyBorder(-2,0,2,0)),Style.ALL);
-        setStyleFor("TabBottom", tabsBottom);
-
-        Style tabsLeft = new Style(tabsTop);
-        tabsLeft.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 0, 0, 1, tabHighlight ), new MatteBorder(1, 0, 0, 0, tabHighlight )) , new EmptyBorder(0,2,0,-2)),Style.ALL);
-        setStyleFor("TabLeft", tabsLeft);
-
-        Style tabsRight = new Style(tabsTop);
-        tabsRight.addBorder(new CompoundBorder( new CompoundBorder( new MatteBorder(0, 1, 0, 0, tabHighlight ), new MatteBorder(0, 1, 0, 0, tabHighlight )), new EmptyBorder(0,-2,0,2)),Style.ALL);
-        setStyleFor("TabRight", tabsRight);
-
-        Style toolTip = new Style(defaultStyle);
-        toolTip.addBorder(tooltipBorder,Style.ALL);
-        toolTip.addBackground(-1,Style.ALL);
-        setStyleFor("ToolTip", toolTip);
+        return 0;
     }
 
     private void copyBorders(Vector from,Vector too) {
@@ -461,6 +512,272 @@ public class NimbusLookAndFeel extends LookAndFeel {
         for (int i=0;i<from.size();i++) {
             too.insertElementAt(from.elementAt(i),i);
         }
+    }
+
+//    private Object getStyleSetting(String component,String setting,String state) {
+//
+//        String[] keys = {
+//            component+"["+state+"]."+setting,
+//            component+"."+setting,
+//            setting
+//        };
+//
+//        for (int i=0;i<keys.length;i++) {
+//            if (uiSettings.containsKey(keys[i])) {
+//                Object style = uiSettings.get(keys[i]);
+//                return style;
+//            }
+//        }
+//
+//        return null;
+//    }
+
+//    private int getStyleSettingAsInt(String component,String setting,String state) {
+//        Object o = getStyleSetting(component, setting, state);
+//        if (o != null) {
+//            return ((Integer)o).intValue();
+//        }
+//        return 0;
+//    }
+
+    public Style getStyle(String name) {
+
+        Style style = super.getStyle(name);
+
+        if (style != null) return style;
+
+        // GET DEFAULT STYLE
+        Style defaultStyle = new Style();
+        if (!name.equals("")) {
+            defaultStyle = getStyle("");
+        }
+
+        style = new Style(defaultStyle);
+
+        Hashtable states = new Hashtable();
+
+        states.put("all", new Integer(Style.ALL));
+        states.put("focused", new Integer(Style.FOCUSED));
+        states.put("selected", new Integer(Style.SELECTED));
+        states.put("disabled", new Integer(Style.DISABLED));
+
+        Enumeration settings = uiSettings.keys();
+        Enumeration values   = uiSettings.elements();
+        while (settings.hasMoreElements()) {
+
+            String key = (String) settings.nextElement();
+            Object value = values.nextElement();
+
+            String setting = null;
+            String component = null;
+            String property = null;
+            int styleState = 0;
+            if (name.equals("")) {
+                if (key.indexOf(".") == -1) {
+                    setting = key;
+                }
+            }
+            else if (key.startsWith(name) && (key.indexOf(".") > -1)) {
+              component = key.substring(0, key.indexOf("."));
+                setting = key.substring(key.indexOf(".")+1);
+
+                // Determine required state
+                if (component.indexOf("[") > -1) {
+                    String state = component.substring(component.indexOf("["), component.indexOf("]"));
+                    Enumeration stateNames = states.keys();
+                    Enumeration stateValues = states.elements();
+                    while (stateNames.hasMoreElements()) {
+                        String stateName = (String) stateNames.nextElement();
+                        Integer stateValue = (Integer) stateValues.nextElement();
+                        if (state.indexOf(stateName) > -1) {
+                            styleState |= stateValue.intValue();
+                        }
+                    }
+                }
+            }
+
+            if (setting != null) {
+                if (setting.indexOf("[") > -1) {
+                    property = setting.substring(setting.indexOf("[")+1, setting.indexOf("]"));
+                }
+
+                if (setting.equals("foreground")) {
+                    style.addForeground(((Integer)value).intValue(), styleState);
+                }
+                if (setting.equals("background")) {
+                    style.addBackground(((Integer)value).intValue(), styleState);
+                }
+                if (setting.equals("border")) {
+                    style.addBorder(((Border)value), styleState);
+                }
+                if (setting.equals("font")) {
+                    style.addFont(((Font)value), styleState);
+                }
+                if ((property != null) && (setting.indexOf("property") == 0)) {
+                    style.addProperty(value, property, styleState);
+                }
+            }
+        }
+//
+//        Enumeration values = states.elements();
+//        Enumeration keys = states.keys();
+//
+//        while (keys.hasMoreElements()) {
+//            String key = (String) keys.nextElement();
+//            int state = ((Integer) values.nextElement()).intValue();
+//
+//            // Helper... may get rid of this one
+//            Object setting = getStyleSetting(name,"borderSettings",key);
+//            if (setting != null) {
+//                int paddingX = getStyleSettingAsInt(name,"paddingX",key);
+//                int paddingY = getStyleSettingAsInt(name,"paddingY",key);
+//                int marginX = getStyleSettingAsInt(name,"marginX",key);
+//                int marginY = getStyleSettingAsInt(name,"marginY",key);
+//                Border border = new NimbusBorder((Vector) setting,marginX,marginY,paddingX,paddingY);
+//                style.addBorder(border, state);
+//            }
+//            // end helper
+//
+//            setting = getStyleSetting(name,"border",key);
+//            if (setting != null) {
+//                Border border = (Border) setting;
+//                style.addBorder(border, state);
+//            }
+//
+//            setting = getStyleSetting(name,"foreground",key);
+//            if (setting != null) {
+//                style.addForeground(((Integer) setting).intValue(), state);
+//            }
+//
+//            setting = getStyleSetting(name,"background",key);
+//            if (setting != null) {
+//                style.addBackground(((Integer) setting).intValue(), state);
+//            }
+//
+//            setting = getStyleSetting(name,"font",key);
+//            if (setting != null) {
+//                style.addFont((Font) setting, state);
+//            }
+//
+//            for (int i=0;i<properties.length;i++) {
+//                setting = getStyleSetting(name,"property["+properties[i]+"]",key);
+//                if (setting != null) {
+//                    style.addProperty(setting, properties[i], state);
+//                }
+//            }
+//        }
+
+        setStyleFor(name, style);
+
+        return style;
+    }
+
+    public Integer getDerivedColor(String color, float hOffset, float sOffset, float bOffset, float aOffset) {
+        int c = decodeColor(color);
+        float[] tmp = RGBtoHSB(NimbusBorder.getRed(c), NimbusBorder.getGreen(c), NimbusBorder.getBlue(c), null);
+        // apply offsets
+        tmp[0] = clamp(tmp[0] + hOffset);
+        tmp[1] = clamp(tmp[1] + sOffset);
+        tmp[2] = clamp(tmp[2] + bOffset);
+        //int alpha = clamp(src.getAlpha() + aOffset);
+        int newColor = (HSBtoRGB(tmp[0], tmp[1], tmp[2]) & 0xFFFFFF); // | (alpha << 24);
+        return new Integer(newColor);
+    }
+
+    private float clamp(float value) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 1) {
+            value = 1;
+        }
+        return value;
+    }
+
+    /*
+     * FROM java.awt.Color
+     */
+
+    public static float[] RGBtoHSB(int r, int g, int b, float[] hsbvals) {
+	float hue, saturation, brightness;
+	if (hsbvals == null) {
+	    hsbvals = new float[3];
+	}
+    	int cmax = (r > g) ? r : g;
+	if (b > cmax) cmax = b;
+	int cmin = (r < g) ? r : g;
+	if (b < cmin) cmin = b;
+
+	brightness = ((float) cmax) / 255.0f;
+	if (cmax != 0)
+	    saturation = ((float) (cmax - cmin)) / ((float) cmax);
+	else
+	    saturation = 0;
+	if (saturation == 0)
+	    hue = 0;
+	else {
+	    float redc = ((float) (cmax - r)) / ((float) (cmax - cmin));
+	    float greenc = ((float) (cmax - g)) / ((float) (cmax - cmin));
+	    float bluec = ((float) (cmax - b)) / ((float) (cmax - cmin));
+	    if (r == cmax)
+		hue = bluec - greenc;
+	    else if (g == cmax)
+	        hue = 2.0f + redc - bluec;
+            else
+		hue = 4.0f + greenc - redc;
+	    hue = hue / 6.0f;
+	    if (hue < 0)
+		hue = hue + 1.0f;
+	}
+	hsbvals[0] = hue;
+	hsbvals[1] = saturation;
+	hsbvals[2] = brightness;
+	return hsbvals;
+    }
+
+    public static int HSBtoRGB(float hue, float saturation, float brightness) {
+	int r = 0, g = 0, b = 0;
+    	if (saturation == 0) {
+	    r = g = b = (int) (brightness * 255.0f + 0.5f);
+	} else {
+	    float h = (hue - (float)Math.floor(hue)) * 6.0f;
+	    float f = h - (float)java.lang.Math.floor(h);
+	    float p = brightness * (1.0f - saturation);
+	    float q = brightness * (1.0f - saturation * f);
+	    float t = brightness * (1.0f - (saturation * (1.0f - f)));
+	    switch ((int) h) {
+	    case 0:
+		r = (int) (brightness * 255.0f + 0.5f);
+		g = (int) (t * 255.0f + 0.5f);
+		b = (int) (p * 255.0f + 0.5f);
+		break;
+	    case 1:
+		r = (int) (q * 255.0f + 0.5f);
+		g = (int) (brightness * 255.0f + 0.5f);
+		b = (int) (p * 255.0f + 0.5f);
+		break;
+	    case 2:
+		r = (int) (p * 255.0f + 0.5f);
+		g = (int) (brightness * 255.0f + 0.5f);
+		b = (int) (t * 255.0f + 0.5f);
+		break;
+	    case 3:
+		r = (int) (p * 255.0f + 0.5f);
+		g = (int) (q * 255.0f + 0.5f);
+		b = (int) (brightness * 255.0f + 0.5f);
+		break;
+	    case 4:
+		r = (int) (t * 255.0f + 0.5f);
+		g = (int) (p * 255.0f + 0.5f);
+		b = (int) (brightness * 255.0f + 0.5f);
+		break;
+	    case 5:
+		r = (int) (brightness * 255.0f + 0.5f);
+		g = (int) (p * 255.0f + 0.5f);
+		b = (int) (q * 255.0f + 0.5f);
+		break;
+	    }
+	}
+	return 0xff000000 | (r << 16) | (g << 8) | (b << 0);
     }
 
 }

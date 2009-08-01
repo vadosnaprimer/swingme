@@ -41,20 +41,7 @@ public class NimbusIcon extends Icon {
             }
         }
         else {
-//            g.setColor(0x00FF0000);
-//            g.fillRect(x, y, getIconWidth(), getIconHeight());
-            for (int b = 0 ; b<borders.size() ; b++) {
-                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
-                NimbusBorder.drawRoundedGradientRect(
-                            border.color1,
-                            border.color2,
-                            g, x+b, y+b,
-                            getIconWidth()-(2*b),
-                            getIconHeight()-(2*b),
-                            border.corner, border.reflection,
-                            NimbusBorder.CLIP_NONE,
-                            NimbusBorder.ORIENTATION_VERT);
-            }
+            NimbusBorder.paintBorders(borders, g, x, y, getIconWidth(), getIconHeight());
         }
 
         g.setColor(color);
@@ -93,27 +80,42 @@ public class NimbusIcon extends Icon {
 
         // Draw the combo box arrow
         if (type == LookAndFeel.ICON_COMBO) {
-            drawSelectionArrow(c, g, x, y);
+            drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
 
-        if (type == LookAndFeel.ICON_SPINNER_LEFT) {
-            int trans = g.getTransform();
-            g.setTransform(Sprite.TRANS_MIRROR_ROT90);
-            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight());
-            g.setTransform(trans);
+        if ((type == LookAndFeel.ICON_TRACK_TOP) || (type == LookAndFeel.ICON_ARROW_UP)) {
+            int top = (height/2)-3;
+            int middle = (width/2);
+
+            g.fillTriangle(x+middle, y+top,
+                           x+middle-3, y+top+6,
+                           x+middle+3, y+top+6);
         }
 
-        if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
-            int trans = g.getTransform();
-            g.setTransform(Sprite.TRANS_ROT90);
-            drawSelectionArrow(c, g, x, y);
-            g.setTransform(trans);
+        if ((type == LookAndFeel.ICON_TRACK_BOTTOM) || (type == LookAndFeel.ICON_ARROW_DOWN)) {
+            int top = (height/2)-3;
+            int middle = (width/2);
+
+            g.fillTriangle(x+middle, y+top+6,
+                           x+middle-3, y+top,
+                           x+middle+3, y+top);
+        }
+
+        if ((type == LookAndFeel.ICON_SPINNER_LEFT)  || (type == LookAndFeel.ICON_ARROW_LEFT)) {
+            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(), Sprite.TRANS_MIRROR_ROT90);
+        }
+
+        if ((type == LookAndFeel.ICON_SPINNER_RIGHT)   || (type == LookAndFeel.ICON_ARROW_RIGHT)) {
+            drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
     }
 
-    private void drawSelectionArrow(Component c, Graphics2D g, int x, int y) {
+    private void drawSelectionArrow(Component c, Graphics2D g, int x, int y, int transform) {
         // Default arrow has point facing downwards
         g.translate(x, y);
+
+        int trans = g.getTransform();
+        g.setTransform(transform);
 
         int top = (height/2)-3;
         int middle = (width/2);
@@ -121,7 +123,10 @@ public class NimbusIcon extends Icon {
         g.fillTriangle(middle, top+6,
                        middle-3, top,
                        middle+3, top);
+        
+        g.setTransform(trans);
 
         g.translate(-x, -y);
     }
+    
 }
