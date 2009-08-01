@@ -61,6 +61,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         
         // Secondary Colors
         setUIDefault("nimbusBlueGrey",getDerivedColor("nimbusBase",0.032459438f,-0.48f,0.19607842f,0));
+        setUIDefault("background",uiSettings.get("control"));
         setUIDefault("infoText",getDerivedColor("text",0.0f,0.0f,0.0f,0));
         setUIDefault("menuText",getDerivedColor("text",0.0f,0.0f,0.0f,0));
         setUIDefault("menu",getDerivedColor("nimbusBase",0.021348298f,-0.6150531f,0.39999998f,0));
@@ -82,13 +83,43 @@ public class NimbusLookAndFeel extends LookAndFeel {
         // Misc.
         setUIDefault("font", new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM)));
 
-        int color1 = getDerivedColor("nimbusBase", 0.03f, -0.58f, 0.07f, 0).intValue();
-        int color2 = getDerivedColor("nimbusBase", 0.03f, -0.54f, -0.18f, 0).intValue();
-        int color3 = getDerivedColor("nimbusBase", 0.03f, -0.63f, 0.41f, 0).intValue();
-        int color4 = getDerivedColor("nimbusBase", 0.03f, -0.6f, 0.32f, 0).intValue();
+        // Command button defaults
+        //int color1 = getDerivedColor("nimbusBase", 0.03f, -0.58f, 0.07f, 0).intValue();
+        int color2 = getDerivedColor("nimbusBlueGrey", 0f, -0.01f, -0.38f, 0).intValue();
+        int color3 = getDerivedColor("nimbusBlueGrey", 0f, -0.07f, 0.21f, 0).intValue();
+        int color4 = getDerivedColor("nimbusBlueGrey", 0f, -0.07f, 0.12f, 0).intValue();
+
+        // Command button selected
+        //int color23 = getDerivedColor("nimbusBase", 0.03f, -0.55f, -0.02f, 0).intValue();
+        int color24 = getDerivedColor("nimbusBlueGrey", 0f, 0.11f, -0.54f, 0).intValue();
+        int color25 = getDerivedColor("nimbusBlueGrey", 0f, -0.1f, 0.26f, 0).intValue();
+        int color26 = getDerivedColor("nimbusBlueGrey", 0f, -0.07f, 0.17f, 0).intValue();
+
+        // Default button defaults
+        int color5 = getDerivedColor("nimbusBase", 0f, -0.35f, 0.01f, 0).intValue();
+        int color6 = getDerivedColor("nimbusBase", 0f, -0.1f, -0.26f, 0).intValue();
+        int color7 = getDerivedColor("nimbusBase", 0f, -0.58f, 0.38f, 0).intValue();
+        int color8 = getDerivedColor("nimbusBase", 0f, -0.44f, 0.30f, 0).intValue();
+
+        // Default button focused
+        //int color9 = getDerivedColor("nimbusBase", 0f, -0.28f, 0.12f, 0).intValue();
+        int color10 = getDerivedColor("nimbusBase", 0f, -0.18f, -0.12f, 0).intValue();
+        int color11 = getDerivedColor("nimbusBase", 0f, -0.62f, 0.44f, 0).intValue();
+        int color12 = getDerivedColor("nimbusBase", 0f, -0.46f, 0.32f, 0).intValue();
+
+        // Default button selected
+        int color13 = getDerivedColor("nimbusBase", -1f, -1f, -1f, 0).intValue();
+        int color14 = getDerivedColor("nimbusBase", 0f, 0.1f, -0.23f, 0).intValue();
+        int color15 = getDerivedColor("nimbusBase", 0f, -0.3f, 0.15f, 0).intValue();
+        int color16 = getDerivedColor("nimbusBase", 0f, -0f, 0f, 0).intValue();
+
+        // Default button disabled
+        //int color17 = getDerivedColor("nimbusBase", 0.03f, -0.57f, 0.26f, 0).intValue();
+        int color18 = getDerivedColor("nimbusBase", 0.05f, -0.5f, 0.26f, 0).intValue();
+        int color19 = getDerivedColor("nimbusBase", 0.03f, -0.59f, 0.34f, 0).intValue();
+        int color20 = getDerivedColor("nimbusBase", 0.03f, -0.57f, 0.31f, 0).intValue();
 
         // Default Stlyes
-        setUIDefault("background",new Integer(color3));
         setUIDefault("foreground",uiSettings.get("text"));
         setUIDefault("font",uiSettings.get("font"));
 
@@ -115,39 +146,17 @@ public class NimbusLookAndFeel extends LookAndFeel {
         // Panel
         setUIDefault("Panel.background", noColor);
 
-        int color17 = getDerivedColor("nimbusBase", 0.03f, -0.57f, 0.26f, 0).intValue();
-        int color18 = getDerivedColor("nimbusBase", 0.05f, -0.5f, 0.26f, 0).intValue();
-        int color19 = getDerivedColor("nimbusBase", 0.03f, -0.59f, 0.34f, 0).intValue();
-        int color20 = getDerivedColor("nimbusBase", 0.03f, -0.57f, 0.31f, 0).intValue();
-        
-        int color23 = getDerivedColor("nimbusBase", 0.03f, -0.55f, -0.02f, 0).intValue();
-        int color24 = getDerivedColor("nimbusBase", 0.03f, -0.42f, -0.34f, 0).intValue();
-        int color25 = getDerivedColor("nimbusBase", 0.03f, -0.63f, 0.43f, 0).intValue();
-        int color26 = getDerivedColor("nimbusBase", 0.03f, -0.6f, 0.4f, 0).intValue();
-
         // BUTTONS
 
         Vector defaultBorderSettings = new Vector();
-        int color5 = getDerivedColor("nimbusBase", 0f, -0.35f, 0.01f, 0).intValue();
-        int color6 = getDerivedColor("nimbusBase", 0f, -0.1f, -0.26f, 0).intValue();
-        int color7 = getDerivedColor("nimbusBase", 0f, -0.58f, 0.38f, 0).intValue();
-        int color8 = getDerivedColor("nimbusBase", 0.04f, -0.33f, 0.38f, 0).intValue();
-        defaultBorderSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 3, 1));
+        defaultBorderSettings.addElement(new NimbusBorderSetting(color5, color5, 1, 3, 1));
         defaultBorderSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 2, 0.65));
 
         Vector focusedBorderSettings = new Vector();
-        int color9 = getDerivedColor("nimbusBase", 0f, -0.28f, 0.12f, 0).intValue();
-        int color10 = getDerivedColor("nimbusBase", 0.06f, 0.36f, -0.44f, 0).intValue();
-        int color11 = getDerivedColor("nimbusBase", 0f, -0.59f, 0.40f, 0).intValue();
-        int color12 = getDerivedColor("nimbusBase", 0f, -0.46f, 0.32f, 0).intValue();
         focusedBorderSettings.addElement(new NimbusBorderSetting(color24, color24, 1, 3, 1));
         focusedBorderSettings.addElement(new NimbusBorderSetting(color25, color26, 1, 2, 0.65));
         
         Vector selectedBorderSettings = new Vector();
-        int color13 = getDerivedColor("nimbusBase", -1f, -1f, -1f, 0).intValue();
-        int color14 = getDerivedColor("nimbusBase", 0f, 0.1f, -0.23f, 0).intValue();
-        int color15 = getDerivedColor("nimbusBase", 0f, -0.3f, 0.15f, 0).intValue();
-        int color16 = getDerivedColor("nimbusBase", 0f, -0f, 0f, 0).intValue();
         selectedBorderSettings.addElement(new NimbusBorderSetting(color14, color14, 1, 3, 1));
         selectedBorderSettings.addElement(new NimbusBorderSetting(color15, color16, 1, 2, 0.65));
 
@@ -165,20 +174,25 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("Button[disabled].border",new NimbusBorder(disabledBorderSettings));
         setUIDefault("Button[disabled].foreground",uiSettings.get("inactiveCaption"));
 
+        // ICON BUTTON SETTINGS
+
         int[] leftCorners = {3,0,3,0};
         int[] leftInnerCorners = {2,0,2,0};
         Vector buttonLeftSettings = new Vector();
-        buttonLeftSettings.addElement(new NimbusBorderSetting(color6, color6, 1, leftCorners, 1));
+        buttonLeftSettings.addElement(new NimbusBorderSetting(-1, -1, 1, leftCorners, 1));
+        buttonLeftSettings.addElement(new NimbusBorderSetting(color5, color5, new int[] {0,1,0,0}, leftCorners, 1));
         buttonLeftSettings.addElement(new NimbusBorderSetting(color7, color8, 1, leftInnerCorners, 0.65));
 
         Vector buttonLeftSelectedSettings = new Vector();
-        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color13, color13, 1, leftCorners, 1));
+        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(-1, -1, 1, leftCorners, 1));
+        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color13, color13, new int[] {0,1,0,0}, leftCorners, 1));
         buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color15, color16, 1, leftInnerCorners, 0.65));
 
         int[] rightCorners = {0,3,0,3};
         int[] rightInnerCorners = {0,2,0,2};
         Vector buttonRightSettings = new Vector();
-        buttonRightSettings.addElement(new NimbusBorderSetting(color6, color6, 1, rightCorners, 1));
+        buttonRightSettings.addElement(new NimbusBorderSetting(-1, -1, 1, rightCorners, 1));
+        buttonRightSettings.addElement(new NimbusBorderSetting(color5, color5, new int[] {0,0,0,1}, rightCorners, 1));
         buttonRightSettings.addElement(new NimbusBorderSetting(color7, color8, 1, rightInnerCorners, 0.65));
 
         Vector buttonRightSelectedSettings = new Vector();
@@ -216,21 +230,41 @@ public class NimbusLookAndFeel extends LookAndFeel {
         // LISTS
         Vector listSettings = new Vector();
         Vector listItemSettings = new Vector();
-        Vector listItemSelectedSettings = new Vector();
         Vector listItemFocusedSettings = new Vector();
+        Vector listItemSelectedSettings = new Vector();
+        Vector listItemFocusedSelectedSettings = new Vector();
 
+        int[] topBorderOnly = {1,0,0,0};
+        int[] topAndBottomBorders = {1,0,1,0};
         copyBorders(textareaBorderSettings, listSettings);
         setUIDefault("Menu.border",new NimbusBorder(listSettings));
 
-        listItemSettings.addElement(new NimbusBorderSetting(0x00FFFFFF, 0x00FFFFFF, 1, 0, 1));
-        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 1, 0, 1));
-        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusBlueGrey"), decodeColor("nimbusSelection"), 1, 0, 1));
-        setUIDefault("ListRenderer.background",uiSettings.get("nimbusLightBackground"));
-        setUIDefault("ListRenderer[selected].background", noColor);
-        setUIDefault("ListRenderer.border",new CompoundBorder(new LineBorder(decodeColor("nimbusLightBackground")),new NimbusBorder(listItemSettings)));
-        setUIDefault("ListRenderer[selected].border",new CompoundBorder(new LineBorder(decodeColor("nimbusSelection")),new NimbusBorder(listItemSelectedSettings)));
+        int seperatorBackground = getDerivedColor("nimbusLightBackground", 0f, 0f, -0.05f, 0f).intValue();
+        int seperatorSelectedBackground = getDerivedColor("nimbusSelection", 0f, 0f, -0.05f, 0f).intValue();
+        int darkerBackground = getDerivedColor("nimbusLightBackground", 0f, 0f, -0.15f, 0f).intValue();
+        int darkerSelection = getDerivedColor("nimbusSelection", 0f, 0f, -0.1f, 0f).intValue();
+        int lighterSelection = getDerivedColor("nimbusSelection", 0f, -0.1f, 0.2f, 0f).intValue();
+
+        listItemSettings.addElement(new NimbusBorderSetting(seperatorBackground, seperatorBackground, bottomBorderOnly, 0, 1));
+        listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), topBorderOnly, 0, 1));
+        listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 0, 0, 1));
+
+        listItemFocusedSettings.addElement(new NimbusBorderSetting(darkerBackground, darkerBackground, topAndBottomBorders, 0, 1));
+        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), darkerBackground, 1, 0, 0.65));
+        
+        listItemSelectedSettings.addElement(new NimbusBorderSetting(seperatorSelectedBackground, seperatorSelectedBackground, bottomBorderOnly, 0, 1));
+        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), topBorderOnly, 0, 1));
+        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 0, 0, 1));
+
+        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(darkerSelection, darkerSelection, topAndBottomBorders, 0, 1));
+        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(lighterSelection, decodeColor("nimbusSelection"), 1, 0, 0.65));
+
+        setUIDefault("ListRenderer.background", noColor);
+        setUIDefault("ListRenderer.border", new NimbusBorder(listItemSettings));
+        setUIDefault("ListRenderer[selected].border",new NimbusBorder(listItemSelectedSettings));
         setUIDefault("ListRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
-        setUIDefault("ListRenderer[focused+selected].border",new CompoundBorder(new LineBorder(decodeColor("nimbusSelection")),new NimbusBorder(listItemFocusedSettings)));
+        setUIDefault("ListRenderer[focused].border",new NimbusBorder(listItemFocusedSettings));
+        setUIDefault("ListRenderer[focused+selected].border",new NimbusBorder(listItemFocusedSelectedSettings));
 
         // COMBOS
         Vector comboBorderSettings = new Vector();
@@ -263,30 +297,32 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         Vector checkboxSettings = new Vector();
         checkboxSettings.addElement(new NimbusBorderSetting());
-        checkboxSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 1, 1));
-        checkboxSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 1, 1));
+        checkboxSettings.addElement(new NimbusBorderSetting(color2, color2, 1, 1, 1));
+        checkboxSettings.addElement(new NimbusBorderSetting(color3, color4, 1, 1, 1));
 
-        Vector checkboxSelectedSettings = new Vector();
-        checkboxSelectedSettings.addElement(new NimbusBorderSetting());
-        checkboxSelectedSettings.addElement(new NimbusBorderSetting(color10, color10, 1, 1, 1));
-        checkboxSelectedSettings.addElement(new NimbusBorderSetting(color11, color12, 1, 1, 0.65));
+//        Vector checkboxFocusedSettings = new Vector();
+//        checkboxFocusedSettings.addElement(new NimbusBorderSetting());
+//        checkboxFocusedSettings.addElement(new NimbusBorderSetting(color24, color24, 1, 1, 1));
+//        checkboxFocusedSettings.addElement(new NimbusBorderSetting(color25, color26, 1, 1, 1));
 
         Icon checkboxIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, decodeColor("text"));
-        Icon checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSelectedSettings, decodeColor("text"));
+        //Icon checkboxFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxFocusedSettings, decodeColor("text"));
+        Icon checkboxSelectedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_CHECKBOX, checkboxSettings, decodeColor("text"));
 
         Border nullBorder = new LineBorder(decodeColor("background"));
 
         setUIDefault("CheckBox.border",nullBorder);
         setUIDefault("CheckBox[focused].border",new LineBorder(decodeColor("nimbusBorder"),-1,1,false,Graphics.DOTTED));
         setUIDefault("CheckBox.property[icon]",checkboxIcon);
+        //setUIDefault("CheckBox[focused].property[icon]",checkboxFocusedIcon);
         setUIDefault("CheckBox[selected].property[icon]",checkboxSelectedIcon);
 
         // RADIOBUTTON
 
         Vector radioSettings = new Vector();
         radioSettings.addElement(new NimbusBorderSetting());
-        radioSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 3, 1));
-        radioSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 3, 1));
+        radioSettings.addElement(new NimbusBorderSetting(color2, color2, 1, 3, 1));
+        radioSettings.addElement(new NimbusBorderSetting(color3, color4, 1, 3, 1));
 
         Vector radioSelectedSettings = new Vector();
         radioSelectedSettings.addElement(new NimbusBorderSetting());
@@ -299,7 +335,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("RadioButton.border",nullBorder);
         setUIDefault("RadioButton[focused].border",new LineBorder(decodeColor("nimbusBorder"),-1,1,false,Graphics.DOTTED));
         setUIDefault("RadioButton.property[icon]",radioIcon);
-        setUIDefault("RadioButton[selected].property[icon]",radioFocusedIcon);
+        setUIDefault("RadioButton[selected].property[icon]",radioIcon);
 
         // SPINNER
 
@@ -574,10 +610,11 @@ public class NimbusLookAndFeel extends LookAndFeel {
             int styleState = 0;
             if (name.equals("")) {
                 if (key.indexOf(".") == -1) {
+                    // Is a default setting
                     setting = key;
                 }
             }
-            else if (key.startsWith(name) && (key.indexOf(".") > -1)) {
+            else if (key.startsWith(name+".") || key.startsWith(name+"[")) {
               component = key.substring(0, key.indexOf("."));
                 setting = key.substring(key.indexOf(".")+1);
 

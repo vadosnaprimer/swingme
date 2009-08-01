@@ -34,15 +34,15 @@ public class NimbusIcon extends Icon {
 
         // Draw aether borders
         if ((type == LookAndFeel.ICON_RADIO)) {
+            int corner = 4;//width/2;
+            int[] corners = {corner,corner,corner,corner};
             for (int b = 0 ; b<borders.size() ; b++) {
                 NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
-                g.setColor(border.color1);
-                g.fillArc(x+b, y+b, getIconWidth()-(b*2), getIconHeight()-(b*2), 0, 360);
+                border.corner = corners;
             }
         }
-        else {
-            NimbusBorder.paintBorders(borders, g, x, y, getIconWidth(), getIconHeight());
-        }
+
+        NimbusBorder.paintBorders(borders, g, x, y, getIconWidth(), getIconHeight());
 
         g.setColor(color);
 
