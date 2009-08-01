@@ -18,6 +18,7 @@
 package net.yura.mobile.test;
 
 import java.io.IOException;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
@@ -98,7 +99,8 @@ public class MainPane extends DesktopPane implements ActionListener {
 	public void initialize() {
 		
                 metal = new MetalLookAndFeel();
-                setLookAndFeel( metal );
+                //setLookAndFeel( metal );
+                setLookAndFeel( new NimbusLookAndFeel() );
 
                 mainWindow = new Window();
                 
@@ -157,6 +159,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 mainMenu.addActionListener(this);
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
                                 mainMenu.addMenuItem("aether1", "Nimbus Default Theme", null);
+                                mainMenu.addMenuItem("aetherGreen", "Nimbus Green Theme", null);
+                                mainMenu.addMenuItem("aetherRed", "Nimbus Red Theme", null);
                                 mainMenu.addMenuItem("aether2", "Nimbus .Net Theme", null);
                                 mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
                                 mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
@@ -172,7 +176,20 @@ public class MainPane extends DesktopPane implements ActionListener {
                     setupNewLookAndFeel( new NimbusLookAndFeel() );
                 }
                 else if ("aether2".equals(actionCommand)) {
-                    setupNewLookAndFeel( new NimbusLookAndFeel("net") );
+                    System.out.println("not setup yet....");
+                    //setupNewLookAndFeel( new NimbusLookAndFeel("net") );
+                }
+                else if ("aetherGreen".equals(actionCommand)) {
+                    Hashtable styles = new Hashtable();
+                    styles.put("nimbusBase", new Integer(0x00358c33));
+                    NimbusLookAndFeel green = new NimbusLookAndFeel(styles);
+                    setupNewLookAndFeel( green );
+                }
+                else if ("aetherRed".equals(actionCommand)) {
+                    Hashtable styles = new Hashtable();
+                    styles.put("nimbusBase", new Integer(0x008c3335));
+                    NimbusLookAndFeel red = new NimbusLookAndFeel(styles);
+                    setupNewLookAndFeel( red );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
                     
@@ -203,7 +220,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                     Window test1 = new Window();
                     test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
                     test1.add(new Label("LALAL TEST 1"));
-                    test1.setBackground(0x00FFFFFF);
+                    //test1.setBackground(0x00FFFFFF);
                     
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     
@@ -317,7 +334,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add( disabledCombo );
                                 componentTest.add( new Spinner(items, false));
                                 
-                                TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more then 1 line");
+                                TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more than 1 line");
                                 longText.setFocusable(false);
 				longText.setLineWrap(true);
                                 componentTest.add( longText );
