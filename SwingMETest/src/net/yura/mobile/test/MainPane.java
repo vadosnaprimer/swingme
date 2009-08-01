@@ -160,7 +160,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
                                 mainMenu.addMenuItem("aether1", "Nimbus Default Theme", null);
                                 mainMenu.addMenuItem("aetherGreen", "Nimbus Green Theme", null);
-                                mainMenu.addMenuItem("aetherRed", "Nimbus Red Theme", null);
+                                mainMenu.addMenuItem("aetherCharcoal", "Nimbus Charcoal Theme", null);
                                 mainMenu.addMenuItem("aether2", "Nimbus .Net Theme", null);
                                 mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
                                 mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
@@ -185,9 +185,11 @@ public class MainPane extends DesktopPane implements ActionListener {
                     NimbusLookAndFeel green = new NimbusLookAndFeel(styles);
                     setupNewLookAndFeel( green );
                 }
-                else if ("aetherRed".equals(actionCommand)) {
+                else if ("aetherCharcoal".equals(actionCommand)) {
                     Hashtable styles = new Hashtable();
-                    styles.put("nimbusBase", new Integer(0x008c3335));
+                    styles.put("nimbusBase", new Integer(0x00666666));
+                    styles.put("nimbusGreyBlue", new Integer(0x00999999));
+                    styles.put("control", new Integer(0x00bbbbbb));
                     NimbusLookAndFeel red = new NimbusLookAndFeel(styles);
                     setupNewLookAndFeel( red );
                 }
