@@ -54,8 +54,8 @@ public class ScrollPane extends Panel implements Runnable {
         private Icon upArrow;
         private Icon downArrow;
 
-	private int scrollTrackCol;
-	private int scrollBarCol;
+//	private int scrollTrackCol;
+//	private int scrollBarCol;
 
         /**
          * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
@@ -457,9 +457,9 @@ public class ScrollPane extends Panel implements Runnable {
          */
     public void drawScrollBar(Graphics2D g, int x,int y,int w,int h,int value,int extent, int max) {
 
-                int starty;
-                int extenth;
-                int box;
+                int starty=0;
+                int extenth = h;
+                int box=0;
 
                 // DRAW ARROWS
                 // #############################################################
@@ -475,40 +475,40 @@ public class ScrollPane extends Panel implements Runnable {
                     box = (trackTop.getIconHeight() >w)?w:trackTop.getIconHeight();
 
                 }
-                else {
-
-                    g.setColor(scrollTrackCol);
-                    g.fillRect(x, y, w, w);
-                    g.fillRect(x, y+h-w, w, w);
-
-                    g.setColor(scrollBarCol);
-                    g.drawRect(x, y, w - 1, w - 1);
-                    g.drawRect(x, y+h-w, w - 1, w - 1);
-
-                    int bararroww = w - 4;
-                    int bararrowh = (w - 4) / 2;
-                    int offset = (w - bararroww)/2 +1;
-
-		    g.fillTriangle(	x + 2+(bararroww/2), y+offset,
-					x + 2, y+offset+bararrowh,
-					x + 2+bararroww, y+offset+bararrowh);
-
-
-		    g.fillTriangle(	x + 2+(bararroww/2), y+h -w +offset+bararrowh,
-					x + 2, y+h -w +offset,
-					x + 2+bararroww, y+h -w +offset);
-
-
-
-		    // old way of doing this
-                    //drawUpArrow(g, x + 2, y+offset, bararroww, bararrowh);
-                    //drawDownArrow(g, x + 2, y+h -w +offset, bararroww, bararrowh);
-
-                    starty = w;
-                    extenth = h - starty - w;
-                    box = w;
-
-                }
+//                else {
+//
+//                    g.setColor(scrollTrackCol);
+//                    g.fillRect(x, y, w, w);
+//                    g.fillRect(x, y+h-w, w, w);
+//
+//                    g.setColor(scrollBarCol);
+//                    g.drawRect(x, y, w - 1, w - 1);
+//                    g.drawRect(x, y+h-w, w - 1, w - 1);
+//
+//                    int bararroww = w - 4;
+//                    int bararrowh = (w - 4) / 2;
+//                    int offset = (w - bararroww)/2 +1;
+//
+//		    g.fillTriangle(	x + 2+(bararroww/2), y+offset,
+//					x + 2, y+offset+bararrowh,
+//					x + 2+bararroww, y+offset+bararrowh);
+//
+//
+//		    g.fillTriangle(	x + 2+(bararroww/2), y+h -w +offset+bararrowh,
+//					x + 2, y+h -w +offset,
+//					x + 2+bararroww, y+h -w +offset);
+//
+//
+//
+//		    // old way of doing this
+//                    //drawUpArrow(g, x + 2, y+offset, bararroww, bararrowh);
+//                    //drawDownArrow(g, x + 2, y+h -w +offset, bararroww, bararrowh);
+//
+//                    starty = w;
+//                    extenth = h - starty - w;
+//                    box = w;
+//
+//                }
 
                 // draw the track fill color
                 // #############################################################
@@ -544,15 +544,15 @@ public class ScrollPane extends Panel implements Runnable {
                             x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
 
                 }
-                else {
-                    g.setColor(scrollBarCol);
-                    g.fillRect(
-                        x + 2,
-                        starty,
-                        w - 4,
-                        extenth
-                    );
-                }
+//                else {
+//                    g.setColor(scrollBarCol);
+//                    g.fillRect(
+//                        x + 2,
+//                        starty,
+//                        w - 4,
+//                        extenth
+//                    );
+//                }
 
     }
 
@@ -636,12 +636,12 @@ public class ScrollPane extends Panel implements Runnable {
 
     public void drawArrow(Graphics2D g, int x, int y, int w, int h,boolean canScroll,int direction) {
 
-	if (canScroll) {
-		g.setColor(scrollBarCol);
-	}
-	else {
-		g.setColor(scrollTrackCol);
-	}
+//	if (canScroll) {
+//		g.setColor(scrollBarCol);
+//	}
+//	else {
+//		g.setColor(scrollTrackCol);
+//	}
 
         switch (direction) {
             case Graphics.LEFT: {
@@ -694,18 +694,18 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
 
-	public int getScrollTrackCol() {
-		return scrollTrackCol;
-	}
-	public void setScrollTrackCol(int scrollTrackCol) {
-		this.scrollTrackCol = scrollTrackCol;
-	}
-	public int getScrollBarCol() {
-		return scrollBarCol;
-	}
-	public void setScrollBarCol(int scrollBarCol) {
-		this.scrollBarCol = scrollBarCol;
-	}
+//	public int getScrollTrackCol() {
+//		return scrollTrackCol;
+//	}
+//	public void setScrollTrackCol(int scrollTrackCol) {
+//		this.scrollTrackCol = scrollTrackCol;
+//	}
+//	public int getScrollBarCol() {
+//		return scrollBarCol;
+//	}
+//	public void setScrollBarCol(int scrollBarCol) {
+//		this.scrollBarCol = scrollBarCol;
+//	}
 
         public void clip(Graphics2D g) {
 
@@ -733,32 +733,32 @@ public class ScrollPane extends Panel implements Runnable {
         public void updateUI() {
                 super.updateUI();
 
-                Style theme = DesktopPane.getDefaultTheme(this);
+                //Style theme = DesktopPane.getDefaultTheme(this);
 
                 thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
                 thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
-                Object thumbFill = theme.getProperty("thumbFill", Style.ALL);
+                thumbFill = (Icon)theme.getProperty("thumbFill", Style.ALL);
                 trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
                 trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
-                Object trackFill = theme.getProperty("trackFill", Style.ALL);
+                trackFill = (Icon)theme.getProperty("trackFill", Style.ALL);
 
-                if (thumbFill instanceof Icon) {
-                    this.thumbFill = (Icon)thumbFill;
-                    scrollBarCol=-1;
-                }
-                else if (thumbFill instanceof Integer) {
-                    scrollBarCol = ((Integer)thumbFill).intValue();
-                    this.thumbFill = null;
-                }
+//                if (thumbFill instanceof Icon) {
+//                    this.thumbFill = (Icon)thumbFill;
+//                    scrollBarCol=-1;
+//                }
+//                else if (thumbFill instanceof Integer) {
+//                    scrollBarCol = ((Integer)thumbFill).intValue();
+//                    this.thumbFill = null;
+//                }
 
-                if (trackFill instanceof Icon) {
-                    this.trackFill = (Icon)trackFill;
-                    scrollTrackCol=-1;
-                }
-                else if (trackFill instanceof Integer) {
-                    scrollTrackCol = ((Integer)trackFill).intValue();
-                    this.trackFill=null;
-                }
+//                if (trackFill instanceof Icon) {
+//                    this.trackFill = (Icon)trackFill;
+//                    scrollTrackCol=-1;
+//                }
+//                else if (trackFill instanceof Integer) {
+//                    scrollTrackCol = ((Integer)trackFill).intValue();
+//                    this.trackFill=null;
+//                }
 
                 rightArrow = (Icon)theme.getProperty("rightArrow", Style.ALL);
                 leftArrow = (Icon)theme.getProperty("leftArrow", Style.ALL);

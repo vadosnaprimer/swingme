@@ -110,12 +110,12 @@ public class RadioButton extends Button {
         public void updateUI() {
                 super.updateUI();
                 
-                Style st = DesktopPane.getDefaultTheme(this);
+                //Style st = DesktopPane.getDefaultTheme(this);
 
-                icon = (Icon)st.getProperty("icon", Style.ALL);
-                selectedImage = (Icon)st.getProperty("icon", Style.SELECTED);
-                disabledImage = (Icon)st.getProperty("icon", Style.DISABLED);
-                disabledSelectedImage = (Icon)st.getProperty("icon", Style.DISABLED | Style.SELECTED);
+                icon = (Icon)theme.getProperty("icon", Style.ALL);
+                selectedImage = (Icon)theme.getProperty("icon", Style.SELECTED);
+                disabledImage = (Icon)theme.getProperty("icon", Style.DISABLED);
+                disabledSelectedImage = (Icon)theme.getProperty("icon", Style.DISABLED | Style.SELECTED);
 
         }
 

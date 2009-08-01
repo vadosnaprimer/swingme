@@ -30,14 +30,17 @@ public abstract class LookAndFeel {
         public static final int ICON_RADIO = 0;
         public static final int ICON_CHECKBOX = 1;
         public static final int ICON_COMBO = 2;
+
         public static final int ICON_SPINNER_LEFT = 3;
         public static final int ICON_SPINNER_RIGHT = 4;
-        public static final int ICON_TRACK_FILL = 5;
+
         public static final int ICON_THUMB_TOP = 6;
         public static final int ICON_THUMB_BOTTOM = 7;
         public static final int ICON_THUMB_FILL = 8;
         public static final int ICON_TRACK_TOP = 9;
         public static final int ICON_TRACK_BOTTOM = 10;
+        public static final int ICON_TRACK_FILL = 5;
+
         public static final int ICON_ARROW_UP = 11;
         public static final int ICON_ARROW_DOWN = 12;
         public static final int ICON_ARROW_RIGHT = 13;

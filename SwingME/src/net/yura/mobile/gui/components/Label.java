@@ -405,7 +405,7 @@ public class Label extends Component {
 
     public void updateUI() {
         super.updateUI();
-        font = DesktopPane.getDefaultTheme(this).getFont(Style.ALL);
+        font = theme.getFont(Style.ALL);
     }
 
     private int getIconWidth() {

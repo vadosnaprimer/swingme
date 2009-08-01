@@ -662,7 +662,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void updateUI() {
                 super.updateUI();
-                Style theme = DesktopPane.getDefaultTheme(this);
+                //Style theme = DesktopPane.getDefaultTheme(this);
         
                 font = theme.getFont(Style.ALL);
 //

@@ -125,7 +125,7 @@ public class DefaultSoftkeyRenderer extends Label implements ListCellRenderer {
     public void updateUI() {
         super.updateUI();
         
-        Style theme = DesktopPane.getDefaultTheme(this);
+        //Style theme = DesktopPane.getDefaultTheme(this);
         
         button = (Image)theme.getProperty("button", Style.ALL);
         bottomRight = (Image)theme.getProperty("bottomRight", Style.ALL);

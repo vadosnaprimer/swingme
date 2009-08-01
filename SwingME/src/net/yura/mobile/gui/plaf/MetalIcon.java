@@ -28,20 +28,24 @@ import net.yura.mobile.gui.components.Component;
  */
 public class MetalIcon extends Icon {
 
-    int type;
+    private int type;
+    private int foreground;
+    private int background;
 
-    public MetalIcon(int size, int type) {
+    public MetalIcon(int size, int type,int fore, int back) {
 //        if ((size%2)==0) {
 //            size++;
 //        }
         width = size;
         height = size;
         this.type = type;
+        foreground = fore;
+        background = back;
     }
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
 
-        g.setColor( c.getCurrentForeground() );
+        g.setColor( foreground==-1?c.getCurrentForeground():foreground );
 
         if (type == LookAndFeel.ICON_CHECKBOX) {
 
@@ -92,23 +96,66 @@ public class MetalIcon extends Icon {
 
         if (type == LookAndFeel.ICON_SPINNER_LEFT) {
             // TODO: Change color of spinner if pressed
+            g.setColor(foreground);
             drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(),Sprite.TRANS_MIRROR_ROT90);
         }
 
         if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
             // TODO: Change color of spinner if pressed
+            g.setColor(foreground);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
 
         if (type == LookAndFeel.ICON_TRACK_FILL) {
 
-                    g.setColor( c.getBackground() );
-                    g.fillRect(x, y, x+width, y+height);
+            g.setColor( background );
+            g.fillRect(x, y, width, height);
 
-                    // draw the lines either side
-                    g.setColor( c.getForeground() );
-                    g.drawLine( x , y, x , y+height );
-                    g.drawLine(x+width, y, x+width, y+height);
+            // draw the lines either side
+            g.setColor( foreground );
+            g.drawLine( x , y, x , y+height );
+            g.drawLine(x+width-1, y, x+width-1, y+height);
+
+        }
+
+        if (type == LookAndFeel.ICON_THUMB_FILL) {
+
+            g.setColor( foreground );
+            g.fillRect(x+2, y, width-4, height);
+
+        }
+
+        if (type == LookAndFeel.ICON_TRACK_TOP) {
+
+            g.setColor( background );
+            g.fillRect(x, y, width, height);
+
+            g.setColor(foreground);
+            g.drawRect(x, y, width-1, height-1);
+
+            int gp = 2; // gap between arrow and sides
+            int top = y+((height/2)-2);
+            int iconWidth = width-(gp*2);
+            g.fillTriangle(x+gp+(iconWidth/2)+1, top,
+                           x+gp+iconWidth, top+5,
+                           x+gp, top+5);
+
+        }
+
+        if (type == LookAndFeel.ICON_TRACK_BOTTOM) {
+
+            g.setColor( background );
+            g.fillRect(x, y, width, height);
+
+            g.setColor(foreground);
+            g.drawRect(x, y, width-1, height-1);
+
+            int gp = 2; // gap between arrow and sides
+            int top = y+((height/2)-2);
+            int iconWidth = width-(gp*2);
+            g.fillTriangle(x+gp+(iconWidth/2)+1, top+5,
+                           x+gp+iconWidth, top,
+                           x+gp, top);
 
         }
     }

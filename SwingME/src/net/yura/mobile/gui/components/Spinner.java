@@ -352,7 +352,7 @@ public class Spinner extends Label {
         }
         public void updateUI() {
                 super.updateUI();
-                Style theme = DesktopPane.getDefaultTheme(this);
+                //Style theme = DesktopPane.getDefaultTheme(this);
 //            	normalBorder = theme.getBorder(Style.ALL);
 //		activeBorder = theme.getBorder(Style.FOCUSED);
 //

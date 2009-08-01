@@ -48,11 +48,13 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             int iconSize = font.getHeight()-1;
 
-            MetalIcon radioIcon = new MetalIcon(iconSize,LookAndFeel.ICON_RADIO);
-            MetalIcon checkboxIcon = new MetalIcon(iconSize,LookAndFeel.ICON_CHECKBOX);
-            MetalIcon comboIcon = new MetalIcon(iconSize,LookAndFeel.ICON_COMBO);
-            MetalIcon spinnerLeftIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_LEFT);
-            MetalIcon spinnerRightIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_RIGHT);
+            MetalIcon radioIcon = new MetalIcon(iconSize,LookAndFeel.ICON_RADIO,-1,getSecondary3());
+            MetalIcon checkboxIcon = new MetalIcon(iconSize,LookAndFeel.ICON_CHECKBOX,-1,getSecondary3());
+            MetalIcon comboIcon = new MetalIcon(iconSize,LookAndFeel.ICON_COMBO,-1,getSecondary3());
+            MetalIcon spinnerLeftIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_LEFT,getBlack(),getSecondary3());
+            MetalIcon spinnerRightIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_RIGHT,getBlack(),getSecondary3());
+            MetalIcon spinnerLeftIconSelected = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_LEFT,getPrimary1(),getSecondary3());
+            MetalIcon spinnerRightIconSelected = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_RIGHT,getPrimary1(),getSecondary3());
 
             Style defaultStyle = new Style();
             defaultStyle.addFont(font, Style.ALL);
@@ -101,17 +103,25 @@ public class MetalLookAndFeel extends LookAndFeel {
             spinnerStyle.addBorder(new CompoundBorder(padding, inputBorder ),Style.ALL);
             spinnerStyle.addProperty(spinnerLeftIcon, "iconLeft", Style.ALL);
             spinnerStyle.addProperty(spinnerRightIcon, "iconRight", Style.ALL);
+            spinnerStyle.addProperty(spinnerLeftIconSelected, "iconLeft", Style.SELECTED);
+            spinnerStyle.addProperty(spinnerRightIconSelected, "iconRight", Style.SELECTED);
             setStyleFor("Spinner",spinnerStyle);
             
             
             
             
             Style scrollStyle = new Style(defaultStyle);
+            //scrollStyle.addBackground(, Style.ALL);
             //scrollStyle.addBorder(inputBorder,Style.ALL);
             //scrollStyle.addProperty(new Integer( getPrimary1() ),"thumbFill",Style.ALL );
             //scrollStyle.addProperty(new Integer( getSecondary3() ),"trackFill",Style.ALL );
 
-            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_FILL),"trackFill",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_FILL,getBlack(),getSecondary3()),"trackFill",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_FILL,getBlack(),getSecondary3()),"thumbFill",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_TOP,getBlack(),getSecondary3()),"trackTop",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_BOTTOM,getBlack(),getSecondary3()),"trackBottom",Style.ALL );
+
+
             scrollStyle.addProperty(spinnerLeftIcon,"leftArrow",Style.ALL );
             scrollStyle.addProperty(spinnerRightIcon,"rightArrow",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
@@ -238,16 +248,6 @@ public class MetalLookAndFeel extends LookAndFeel {
             tooltipSkin.addBackground(getPrimary3(), Style.ALL);
             tooltipSkin.addBorder(new LineBorder( getPrimary1() ),Style.ALL);
             setStyleFor("ToolTip",tooltipSkin);
-
-
-            // TODO ???? is this needed
-            Style clear = new Style();
-            setStyleFor("WindowControlPanel",clear);
-            setStyleFor("TabList",clear);
-            
-            Style clear2 = new Style(scrollStyle);
-            clear2.addBackground(-1, Style.ALL);
-            setStyleFor("TabScroll",clear2);
 
 	}
 

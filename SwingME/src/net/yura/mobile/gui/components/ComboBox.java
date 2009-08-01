@@ -186,10 +186,10 @@ public class ComboBox extends Button implements ActionListener{
         public void updateUI() {
                 super.updateUI();
 
-                Style st = DesktopPane.getDefaultTheme(this);
+                //Style st = DesktopPane.getDefaultTheme(this);
                 
-                nonSelectedImage = (Icon)st.getProperty("icon", Style.ALL);
-                selectedImage = (Icon)st.getProperty("icon", Style.SELECTED);
+                nonSelectedImage = (Icon)theme.getProperty("icon", Style.ALL);
+                selectedImage = (Icon)theme.getProperty("icon", Style.SELECTED);
         }
 
 	/*

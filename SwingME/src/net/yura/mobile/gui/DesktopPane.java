@@ -237,6 +237,16 @@ public class DesktopPane extends Canvas implements Runnable {
 
             theme = a;
 
+            // TODO find better way to do this
+            // HACK to clear the background colors on subcomponents
+            Style clear = new Style();
+            theme.setStyleFor("WindowControlPanel",clear);
+            theme.setStyleFor("TabList",clear);
+
+            Style clear2 = new Style( theme.getStyle("ScrollPane") );
+            clear2.addBackground(-1, Style.ALL);
+            theme.setStyleFor("TabScroll",clear2);
+
 //            if (defaultWidthOffset==0) {
 //                defaultWidthOffset = ScrollPane.getBarThickness(getWidth(), getHeight());
 //            }
