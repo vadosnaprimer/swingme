@@ -210,16 +210,10 @@ public abstract class Component {
 		//System.out.println("paint "+this);
                 paintBorder(g);
 
-		if (background!=-1) {
-			g.setColor(background);
-			g.fillRect(0, 0, width, height);
-		}
-                else {
-                    int back = theme.getBackground( getCurrentState() );
-                    if (back!=-1) {
-			g.setColor(back);
-			g.fillRect(0, 0, width, height);
-                    }
+                int back = getCurrentBackground();
+                if (back!=-1) {
+                    g.setColor(back);
+                    g.fillRect(0, 0, width, height);
                 }
 		
 		paintComponent(g);
@@ -245,6 +239,15 @@ public abstract class Component {
         public Border getInsets() {
             Border b = getCurrentBorder();
             return b==null?empty:b;
+        }
+
+        private int getCurrentBackground() {
+            if (background != -1) {
+                return background;
+            }
+            else {
+                return theme.getBackground( getCurrentState() );
+            }
         }
 
         private Border getCurrentBorder() {
@@ -340,7 +343,7 @@ public abstract class Component {
          * @see javax.swing.JComponent#isOpaque() JComponent.isOpaque
          */
         public boolean isOpaque() {
-            if (background!=-1) return true;
+            if (getCurrentBackground()!=-1) return true;
             Border b = getCurrentBorder();
             if (b!=null) {
                 return b.isBorderOpaque();
