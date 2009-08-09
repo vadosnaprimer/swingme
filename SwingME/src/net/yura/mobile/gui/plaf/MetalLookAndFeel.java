@@ -33,18 +33,13 @@ import net.yura.mobile.gui.border.TabBorder;
  */
 public class MetalLookAndFeel extends LookAndFeel {
 
-    public static final int FONT_SMALL = javax.microedition.lcdui.Font.SIZE_SMALL;
-    public static final int FONT_MEDIUM = javax.microedition.lcdui.Font.SIZE_MEDIUM;
-    public static final int FONT_LARGE = javax.microedition.lcdui.Font.SIZE_LARGE;
-
     public  MetalLookAndFeel() {
         this(FONT_MEDIUM);
     }
 
-
     	public MetalLookAndFeel(int size) {
 
-            Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, size));
+            Font font = new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, size));
 
             int iconSize = font.getHeight()-1;
 

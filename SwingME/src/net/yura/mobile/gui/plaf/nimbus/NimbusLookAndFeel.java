@@ -22,23 +22,17 @@ public class NimbusLookAndFeel extends LookAndFeel {
     private Hashtable uiSettings = new Hashtable();
 
     public NimbusLookAndFeel() {
-        this(null);
+        this(javax.microedition.lcdui.Font.SIZE_MEDIUM);
     }
 
-    private void setUIDefault(String key,Object value) {
-        if (!uiSettings.containsKey(key)) {
-            uiSettings.put(key, value);
-        }
+    public NimbusLookAndFeel(int size) {
+        this(size,null);
     }
 
-    public NimbusLookAndFeel(Hashtable styles) {
+    public NimbusLookAndFeel(int size,Hashtable styles) {
 
         if (styles!=null) uiSettings = styles;
 
-        initDefaults();
-    }
-
-    private void initDefaults() {
 
         Integer noColor = new Integer(-1);
 
@@ -81,7 +75,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("nimbusSelection",getDerivedColor("nimbusBase",-0.010750473f,-0.04875779f,-0.007843137f,0));
 
         // Misc.
-        setUIDefault("font", new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM)));
+        setUIDefault("font", new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, size)));
 
         // Command button defaults
         //int color1 = getDerivedColor("nimbusBase", 0.03f, -0.58f, 0.07f, 0).intValue();
@@ -547,6 +541,13 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("ToolTip.border",new LineBorder(decodeColor("nimbusOrange")));
 
     }
+
+    private void setUIDefault(String key,Object value) {
+        if (!uiSettings.containsKey(key)) {
+            uiSettings.put(key, value);
+        }
+    }
+
 
     public int decodeColor(String name) {
         if (uiSettings.containsKey(name)) {

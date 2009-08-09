@@ -27,6 +27,11 @@ import net.yura.mobile.gui.DesktopPane;
  */
 public abstract class LookAndFeel {
 
+        public static final int FONT_SMALL = javax.microedition.lcdui.Font.SIZE_SMALL;
+        public static final int FONT_MEDIUM = javax.microedition.lcdui.Font.SIZE_MEDIUM;
+        public static final int FONT_LARGE = javax.microedition.lcdui.Font.SIZE_LARGE;
+
+
         public static final int ICON_RADIO = 0;
         public static final int ICON_CHECKBOX = 1;
         public static final int ICON_COMBO = 2;
