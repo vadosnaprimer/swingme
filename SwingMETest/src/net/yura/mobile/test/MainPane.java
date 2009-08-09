@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -48,7 +49,6 @@ import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.BevelBorder;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
@@ -65,7 +65,6 @@ import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
-import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.util.Option;
 
@@ -182,7 +181,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("aetherGreen".equals(actionCommand)) {
                     Hashtable styles = new Hashtable();
                     styles.put("nimbusBase", new Integer(0x00358c33));
-                    NimbusLookAndFeel green = new NimbusLookAndFeel(styles);
+                    NimbusLookAndFeel green = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
                     setupNewLookAndFeel( green );
                 }
                 else if ("aetherCharcoal".equals(actionCommand)) {
@@ -190,7 +189,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                     styles.put("nimbusBase", new Integer(0x00666666));
                     styles.put("nimbusGreyBlue", new Integer(0x00999999));
                     styles.put("control", new Integer(0x00bbbbbb));
-                    NimbusLookAndFeel red = new NimbusLookAndFeel(styles);
+                    NimbusLookAndFeel red = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
                     setupNewLookAndFeel( red );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
