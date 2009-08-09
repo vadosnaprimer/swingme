@@ -221,7 +221,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("TextField[focused].border",new NimbusBorder(textareaSelectedSettings));
         setUIDefault("TextField[selected].border",new NimbusBorder(textareaSelectedSettings));
         setUIDefault("TextField[disabled].border",new NimbusBorder(textareaDisabledSettings));
-        setUIDefault("TextField.foreground",uiSettings.get("nimbusDisabledText"));
+        //setUIDefault("TextField.foreground",uiSettings.get("nimbusDisabledText"));
 
         setUIDefault("TextArea.background", uiSettings.get("nimbusLightBackground"));
         // TODO: this doesn't work
@@ -245,23 +245,31 @@ public class NimbusLookAndFeel extends LookAndFeel {
         int darkerSelection = getDerivedColor("nimbusSelection", 0f, 0f, -0.1f, 0f).intValue();
         int lighterSelection = getDerivedColor("nimbusSelection", 0f, -0.1f, 0.2f, 0f).intValue();
 
-        listItemSettings.addElement(new NimbusBorderSetting(seperatorBackground, seperatorBackground, bottomBorderOnly, 0, 1));
-        listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 2, 0, 1));
-        listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 0, 0, 1));
 
-        listItemFocusedSettings.addElement(new NimbusBorderSetting(darkerBackground, darkerBackground, bottomBorderOnly, 0, 1));
-        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 1, 0, 1));
-        listItemFocusedSettings.addElement(new NimbusBorderSetting(darkerBackground, darkerBackground, 1, 3, 1));
-        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), darkerBackground, 1, 2, 0.65));
-        
-        listItemSelectedSettings.addElement(new NimbusBorderSetting(seperatorSelectedBackground, seperatorSelectedBackground, bottomBorderOnly, 0, 1));
-        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 2, 0, 1));
-        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 0, 0, 1));
+         listItemSettings.addElement(new NimbusBorderSetting(seperatorBackground, seperatorBackground, bottomBorderOnly, 0, 1));
+         listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), topBorderOnly, 0, 1));
+//        listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 2, 0, 1));
+         listItemSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 0, 0, 1));
+ 
+         listItemFocusedSettings.addElement(new NimbusBorderSetting(darkerBackground, darkerBackground, topAndBottomBorders, 0, 1));
+         listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), darkerBackground, 1, 0, 0.65));
+//        listItemFocusedSettings.addElement(new NimbusBorderSetting(darkerBackground, darkerBackground, bottomBorderOnly, 0, 1));
+//        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 1, 0, 1));
+//        listItemFocusedSettings.addElement(new NimbusBorderSetting(darkerBackground, darkerBackground, 1, 3, 1));
+//        listItemFocusedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), darkerBackground, 1, 2, 0.65));
 
-        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(seperatorSelectedBackground, seperatorSelectedBackground, bottomBorderOnly, 0, 1));
-        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 1, 0, 1));
-        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(darkerSelection, darkerSelection, 1, 3, 1));
-        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(lighterSelection, decodeColor("nimbusSelection"), 1, 2, 0.65));
+         listItemSelectedSettings.addElement(new NimbusBorderSetting(seperatorSelectedBackground, seperatorSelectedBackground, bottomBorderOnly, 0, 1));
+         listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), topBorderOnly, 0, 1));
+//        listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 2, 0, 1));
+         listItemSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 0, 0, 1));
+
+         listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(darkerSelection, darkerSelection, topAndBottomBorders, 0, 1));
+         listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(lighterSelection, decodeColor("nimbusSelection"), 1, 0, 0.65));
+//        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(seperatorSelectedBackground, seperatorSelectedBackground, bottomBorderOnly, 0, 1));
+//        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusSelection"), decodeColor("nimbusSelection"), 1, 0, 1));
+//        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(darkerSelection, darkerSelection, 1, 3, 1));
+//        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(lighterSelection, decodeColor("nimbusSelection"), 1, 2, 0.65));
+
 
         setUIDefault("ListRenderer.background", noColor);
         setUIDefault("ListRenderer.border", new NimbusBorder(listItemSettings));

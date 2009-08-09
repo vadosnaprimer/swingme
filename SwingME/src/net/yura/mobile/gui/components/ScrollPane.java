@@ -32,7 +32,7 @@ import net.yura.mobile.gui.Graphics2D;
  */
 public class ScrollPane extends Panel implements Runnable {
 
-        public static final int MINIMUM_THUMB_SIZE=3;
+        public static final int MINIMUM_THUMB_SIZE=5;
 
 	public static final int MODE_NONE=-1;
 	public static final int MODE_SCROLLBARS=0;
@@ -457,9 +457,8 @@ public class ScrollPane extends Panel implements Runnable {
          */
     public void drawScrollBar(Graphics2D g, int x,int y,int w,int h,int value,int extent, int max) {
 
-                int starty=0;
+                int starty = 0;
                 int extenth = h;
-                int box=0;
 
                 // DRAW ARROWS
                 // #############################################################
@@ -472,43 +471,8 @@ public class ScrollPane extends Panel implements Runnable {
 
                     starty = trackTop.getIconHeight();
                     extenth = h - starty - trackBottom.getIconHeight();
-                    box = (trackTop.getIconHeight() >w)?w:trackTop.getIconHeight();
-
+                    
                 }
-//                else {
-//
-//                    g.setColor(scrollTrackCol);
-//                    g.fillRect(x, y, w, w);
-//                    g.fillRect(x, y+h-w, w, w);
-//
-//                    g.setColor(scrollBarCol);
-//                    g.drawRect(x, y, w - 1, w - 1);
-//                    g.drawRect(x, y+h-w, w - 1, w - 1);
-//
-//                    int bararroww = w - 4;
-//                    int bararrowh = (w - 4) / 2;
-//                    int offset = (w - bararroww)/2 +1;
-//
-//		    g.fillTriangle(	x + 2+(bararroww/2), y+offset,
-//					x + 2, y+offset+bararrowh,
-//					x + 2+bararroww, y+offset+bararrowh);
-//
-//
-//		    g.fillTriangle(	x + 2+(bararroww/2), y+h -w +offset+bararrowh,
-//					x + 2, y+h -w +offset,
-//					x + 2+bararroww, y+h -w +offset);
-//
-//
-//
-//		    // old way of doing this
-//                    //drawUpArrow(g, x + 2, y+offset, bararroww, bararrowh);
-//                    //drawDownArrow(g, x + 2, y+h -w +offset, bararroww, bararrowh);
-//
-//                    starty = w;
-//                    extenth = h - starty - w;
-//                    box = w;
-//
-//                }
 
                 // draw the track fill color
                 // #############################################################
@@ -520,40 +484,48 @@ public class ScrollPane extends Panel implements Runnable {
                 // draw the thumb!
                 // #############################################################
 
-                int space = h - box * 2 - 1;
-                extenth = (extent*space)/max;
-                int min = (thumbTop==null)?MINIMUM_THUMB_SIZE:thumbTop.getIconHeight()+thumbBottom.getIconHeight();
-                if (extenth < min) {
-                    extenth = min;
-                    space = space-extenth;
-                    max = max-extent;
-                }
-                starty = y+box+1+ (space*value)/max;
+                int[] tmp = getOffsets(x,y,w,h,value,extent,max);
+                starty = tmp[1];
+                extenth = tmp[2];
 
                 if (thumbTop!=null) {
                     int x1 = x + (w-thumbTop.getIconWidth())/2;
                     thumbTop.paintIcon(this, g, x1, starty);
                     thumbBottom.paintIcon(this, g, x1, starty+extenth-thumbBottom.getIconHeight());
                     starty = starty + thumbTop.getIconHeight();
-                    extenth = extenth - min;
+                    extenth = extenth - (thumbTop.getIconHeight()+thumbBottom.getIconHeight());
                 }
 
                 if (thumbFill!=null) {
-
-                    tileIcon(g, thumbFill,
-                            x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
-
+                    tileIcon(g, thumbFill, x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
                 }
-//                else {
-//                    g.setColor(scrollBarCol);
-//                    g.fillRect(
-//                        x + 2,
-//                        starty,
-//                        w - 4,
-//                        extenth
-//                    );
-//                }
 
+    }
+
+    private int[] getOffsets(int x,int y,int w, int h, int value,int extent, int max) {
+
+        int box = 0;
+        int topBotton = 0;
+        if (trackTop!=null) {
+            box = (trackTop.getIconHeight() >w)?w:trackTop.getIconHeight();
+            topBotton = (thumbTop==null)?0:thumbTop.getIconHeight()+thumbBottom.getIconHeight();
+        }
+
+        int space = h - box * 2;
+        int extenth = (int) ( (extent*space)/(double)max + 0.5);
+
+        int min = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
+        min = min>(space/2)?space/2:min;
+
+        if (extenth < min) {
+            extenth = min;
+            space = space-extenth;
+            max = max-extent;
+        }
+
+        int starty = y+box+ (int)( (space*value)/(double)max + 0.5 );
+
+        return new int[] {box,starty,extenth};
     }
 
     private void tileIcon(Graphics2D g, Icon icon,int dest_x,int dest_y,int dest_w,int dest_h) {
@@ -800,40 +772,43 @@ public class ScrollPane extends Panel implements Runnable {
 				int d1,int d2,int d3
 				) {
 
+                        int[] tmp = getOffsets(x1,y1,w1,h1,value1,extent1,max1);
+                        int box = tmp[0];
+                        int starty = tmp[1];
+                        int extenth = tmp[2];
 
-			int buttonHeight = (trackTop==null || trackTop.getIconHeight() >w1)?w1:trackTop.getIconHeight();
-			int space1 = h1 - (buttonHeight*2);
+                        //int buttonHeight = (trackTop==null || trackTop.getIconHeight() >w1)?w1:trackTop.getIconHeight();
+			//int space1 = h1 - (buttonHeight*2);
 
-
-                	if ( isPointInsideRect(     pointX, pointY, x1, y1, w1, buttonHeight ) ) {
+                	if ( isPointInsideRect(     pointX, pointY, x1, y1, w1, box ) ) {
 
 				go = true;
 				direction = d1;
 				jump = 10;
 
 			}
-			else if ( isPointInsideRect(pointX, pointY, x1, y1+buttonHeight ,w1, (space1*value1)/max1 ) ) {
+			else if ( isPointInsideRect(pointX, pointY, x1, y1+box ,w1, starty-y1-box ) ) {
 
 				go = true;
 				direction = d1;
-				jump = space1;
+				jump = extent1;
 
 			}
-			else if ( isPointInsideRect(pointX, pointY, x1, y1+buttonHeight + (space1*value1)/max1 ,w1,(extent1*space1)/max1 ) ) { // thumb on the right
+			else if ( isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth ) ) { // thumb on the right
 
 				direction = d3;
 				scrollDrag = value1;
 				scrollStart = pointY;
 
 			}
-			else if ( isPointInsideRect(pointX, pointY, x1, y1+buttonHeight + (space1*(value1+extent1))/max1  ,w1, h1-( buttonHeight*2 + (space1*(value1+extent1))/max1 ) ) ) {
+			else if ( isPointInsideRect(pointX, pointY, x1, starty+extenth  ,w1, h1 - box - (starty-y1) -extenth) ) {
 
 				go = true;
 				direction = d2;
-				jump = space1;
+				jump = extent1;
 
 			}
-                	else if ( isPointInsideRect(pointX, pointY, x1, y1+h1-buttonHeight, w1, buttonHeight) ) {
+                	else if ( isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box) ) {
 
 				go = true;
 				direction = d2;
@@ -947,39 +922,38 @@ public class ScrollPane extends Panel implements Runnable {
 
 			if (mode == MODE_SCROLLBARS && !go) {
 
-				// vertical
+				if (direction==Graphics.RIGHT) { // vertical
 
-				int w1 = width - viewX - viewWidth;
-				int h1 = viewHeight;
-                        	int max1 = getComponent().getHeight();
+                                       int newValue = getNewValue(
+                                            viewX + viewWidth,
+                                            viewY,
+                                            width - viewX - viewWidth,
+                                            viewHeight,
+                                            scrollDrag,//viewY-getComponent().getY(),
+                                            viewHeight,
+                                            getComponent().getHeight(),
 
-				int buttonHeight = (trackTop==null || trackTop.getIconHeight() >w1)?w1:trackTop.getIconHeight();
-				int space1 = h1 - (buttonHeight*2);
+                                            pointY-scrollStart
+                                        );
 
-                        	// horizontal
-
-				int w2 = viewWidth;
-				int h2 = height - viewY - viewHeight;
-                        	int max2 = getComponent().getWidth();
-
-				int buttonWidth = (trackTop == null || trackTop.getIconHeight() >h2)?h2:trackTop.getIconHeight();
-                        	int space2 = w2 - (buttonWidth*2);
-
-
-				if (direction==Graphics.RIGHT) {
-
-					int cX = getViewPortX()-getComponent().getX();
-					int cY = scrollDrag + (max1*(pointY-scrollStart))/space1;
-
-					makeVisible(cX,cY,viewWidth,viewHeight,false);
+					makeVisible( getViewPortX()-getComponent().getX() , newValue ,viewWidth,viewHeight,false);
 
 				}
-				else if (direction==Graphics.BOTTOM) {
+				else if (direction==Graphics.BOTTOM) { // horizontal
 
-					int cX = scrollDrag + (max2*(pointX-scrollStart))/space2;
-					int cY = getViewPortY()-getComponent().getY();
+                                    	int newValue = getNewValue(
+                                            viewY + viewHeight,
+                                            viewX,
+                                            height - viewY - viewHeight,
+                                            viewWidth,
+                                            scrollDrag,//viewX-getComponent().getX(),
+                                            viewWidth,
+                                            getComponent().getWidth(),
 
-					makeVisible(cX,cY,viewWidth,viewHeight,false);
+                                            pointX-scrollStart
+                                        );
+
+                                        makeVisible( newValue , getViewPortY()-getComponent().getY() ,viewWidth,viewHeight,false);
 				}
 			}
 
@@ -992,6 +966,13 @@ public class ScrollPane extends Panel implements Runnable {
 		}
 
 	}
+
+        private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
+
+            int[] offsets = getOffsets(x, y, w, h, value, extent, max);
+
+            return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
+        }
 
 	private int scrollDrag;
 	private int scrollStart;

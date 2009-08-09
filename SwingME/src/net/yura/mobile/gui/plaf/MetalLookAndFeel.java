@@ -116,9 +116,12 @@ public class MetalLookAndFeel extends LookAndFeel {
             //scrollStyle.addProperty(new Integer( getPrimary1() ),"thumbFill",Style.ALL );
             //scrollStyle.addProperty(new Integer( getSecondary3() ),"trackFill",Style.ALL );
 
-            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_FILL,getBlack(),getSecondary3()),"trackFill",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_TOP,getBlack(),getSecondary3()),"thumbTop",Style.ALL );
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_FILL,getBlack(),getSecondary3()),"thumbFill",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_BOTTOM,getBlack(),getSecondary3()),"thumbBottom",Style.ALL );
+
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_TOP,getBlack(),getSecondary3()),"trackTop",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_FILL,getBlack(),getSecondary3()),"trackFill",Style.ALL );
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_BOTTOM,getBlack(),getSecondary3()),"trackBottom",Style.ALL );
 
 
@@ -233,7 +236,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             Border darkline = new LineBorder( getPrimary2() ,-1,1,false,Graphics.DOTTED);
             listCellRenderer.addBorder(darkline,Style.FOCUSED | Style.SELECTED);
             listCellRenderer.addBorder(darkline,Style.FOCUSED);
-            listCellRenderer.addBorder(new LineBorder( getPrimary3() ,-1,1,false,Graphics.DOTTED),Style.SELECTED);
+            listCellRenderer.addBorder(new LineBorder( getPrimary3() ),Style.SELECTED);
             listCellRenderer.addBackground( getWhite() , Style.ALL);
             listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
             setStyleFor("ListRenderer",listCellRenderer);

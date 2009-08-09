@@ -33,15 +33,14 @@ public class NimbusIcon extends Icon {
         //System.out.println(c.getName()+" icon at "+x+" "+y);
 
         // Draw aether borders
-        if ((type == LookAndFeel.ICON_RADIO)) {
-            int corner = 4;//width/2;
-            int[] corners = {corner,corner,corner,corner};
-            for (int b = 0 ; b<borders.size() ; b++) {
-                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
-                border.corner = corners;
-            }
-        }
-
+//        if ((type == LookAndFeel.ICON_RADIO)) {
+//            int corner = 4;//width/2;
+//            int[] corners = {corner,corner,corner,corner};
+//            for (int b = 0 ; b<borders.size() ; b++) {
+//                NimbusBorderSetting border = (NimbusBorderSetting) borders.elementAt(b);
+//                border.corner = corners;
+//            }
+//        }
         NimbusBorder.paintBorders(borders, g, x, y, getIconWidth(), getIconHeight());
 
         g.setColor(color);
@@ -62,9 +61,8 @@ public class NimbusIcon extends Icon {
             }
 
         }
-
         // Draw a radio icon
-        if (type == LookAndFeel.ICON_RADIO) {
+        else if (type == LookAndFeel.ICON_RADIO) {
             int w = getIconWidth();
             int h = getIconHeight();
 
@@ -77,13 +75,11 @@ public class NimbusIcon extends Icon {
                 }
             }
         }
-
         // Draw the combo box arrow
-        if (type == LookAndFeel.ICON_COMBO) {
+        else if (type == LookAndFeel.ICON_COMBO) {
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
-
-        if ((type == LookAndFeel.ICON_TRACK_TOP) || (type == LookAndFeel.ICON_ARROW_UP)) {
+        else if ((type == LookAndFeel.ICON_TRACK_TOP) || (type == LookAndFeel.ICON_ARROW_UP)) {
             int top = (height/2)-3;
             int middle = (width/2);
 
@@ -91,8 +87,7 @@ public class NimbusIcon extends Icon {
                            x+middle-3, y+top+6,
                            x+middle+3, y+top+6);
         }
-
-        if ((type == LookAndFeel.ICON_TRACK_BOTTOM) || (type == LookAndFeel.ICON_ARROW_DOWN)) {
+        else if ((type == LookAndFeel.ICON_TRACK_BOTTOM) || (type == LookAndFeel.ICON_ARROW_DOWN)) {
             int top = (height/2)-3;
             int middle = (width/2);
 
@@ -100,12 +95,10 @@ public class NimbusIcon extends Icon {
                            x+middle-3, y+top,
                            x+middle+3, y+top);
         }
-
-        if ((type == LookAndFeel.ICON_SPINNER_LEFT)  || (type == LookAndFeel.ICON_ARROW_LEFT)) {
+        else if ((type == LookAndFeel.ICON_SPINNER_LEFT) || (type == LookAndFeel.ICON_ARROW_LEFT)) {
             drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(), Sprite.TRANS_MIRROR_ROT90);
         }
-
-        if ((type == LookAndFeel.ICON_SPINNER_RIGHT)   || (type == LookAndFeel.ICON_ARROW_RIGHT)) {
+        else if ((type == LookAndFeel.ICON_SPINNER_RIGHT) || (type == LookAndFeel.ICON_ARROW_RIGHT)) {
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
     }

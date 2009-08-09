@@ -37,7 +37,12 @@ public class MetalIcon extends Icon {
 //            size++;
 //        }
         width = size;
-        height = size;
+        if (type == LookAndFeel.ICON_THUMB_TOP || type == LookAndFeel.ICON_THUMB_BOTTOM) {
+            height = 1;
+        }
+        else {
+            height = size;
+        }
         this.type = type;
         foreground = fore;
         background = back;
@@ -68,8 +73,7 @@ public class MetalIcon extends Icon {
 
 
         }
-        
-        if (type == LookAndFeel.ICON_RADIO) {
+        else if (type == LookAndFeel.ICON_RADIO) {
 
                 int w = getIconWidth();
                 int h = getIconHeight();
@@ -88,44 +92,33 @@ public class MetalIcon extends Icon {
                     }
                 }
         }
-
-        if (type == LookAndFeel.ICON_COMBO) {
+        else if (type == LookAndFeel.ICON_COMBO) {
             g.drawLine(x, (c.getHeight()-height)/2, x , height);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
+        else if (type == LookAndFeel.ICON_SPINNER_LEFT) {
 
-        if (type == LookAndFeel.ICON_SPINNER_LEFT) {
-            // TODO: Change color of spinner if pressed
             g.setColor(foreground);
             drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(),Sprite.TRANS_MIRROR_ROT90);
         }
+        else if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
 
-        if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
-            // TODO: Change color of spinner if pressed
             g.setColor(foreground);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
-
-        if (type == LookAndFeel.ICON_TRACK_FILL) {
-
-            g.setColor( background );
-            g.fillRect(x, y, width, height);
-
-            // draw the lines either side
-            g.setColor( foreground );
-            g.drawLine( x , y, x , y+height );
-            g.drawLine(x+width-1, y, x+width-1, y+height);
+        else if (type == LookAndFeel.ICON_THUMB_TOP) {
 
         }
-
-        if (type == LookAndFeel.ICON_THUMB_FILL) {
+        else if (type == LookAndFeel.ICON_THUMB_FILL) {
 
             g.setColor( foreground );
             g.fillRect(x+2, y, width-4, height);
 
         }
+        else if (type == LookAndFeel.ICON_THUMB_BOTTOM) {
 
-        if (type == LookAndFeel.ICON_TRACK_TOP) {
+        }
+        else if (type == LookAndFeel.ICON_TRACK_TOP) {
 
             g.setColor( background );
             g.fillRect(x, y, width, height);
@@ -141,8 +134,18 @@ public class MetalIcon extends Icon {
                            x+gp, top+5);
 
         }
+        else if (type == LookAndFeel.ICON_TRACK_FILL) {
 
-        if (type == LookAndFeel.ICON_TRACK_BOTTOM) {
+            g.setColor( background );
+            g.fillRect(x, y, width, height);
+
+            // draw the lines either side
+            g.setColor( foreground );
+            g.drawLine( x , y, x , y+height );
+            g.drawLine(x+width-1, y, x+width-1, y+height);
+
+        }
+        else if (type == LookAndFeel.ICON_TRACK_BOTTOM) {
 
             g.setColor( background );
             g.fillRect(x, y, width, height);
