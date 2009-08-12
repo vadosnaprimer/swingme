@@ -84,10 +84,13 @@ public class Panel extends Component {
          * @param constraint
          * @see java.awt.Container#add(java.awt.Component, java.lang.Object) Container.add
          */
-       public void add(Component component,int constraint){
+        public void add(Component component,Object constraint){
 		addImpl(component);
-		constraints.put(component, new Integer(constraint));
+		constraints.put(component, constraint);
 	}
+        public void add(Component component,int constraint){
+            add(component,new Integer(constraint));
+        }
        
        /**
         * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
