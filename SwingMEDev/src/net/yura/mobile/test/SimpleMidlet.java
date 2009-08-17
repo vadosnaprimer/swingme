@@ -30,7 +30,7 @@ import net.yura.mobile.gui.components.MenuItem;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
-import net.yura.mobile.layout.ThinletXMLLoader;
+import net.yura.mobile.layout.XULLoader;
 
 /**
  * @author Yura Mamyrin
@@ -56,7 +56,7 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 
                 Panel panel=null;
                 try {
-                    panel = ThinletXMLLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
+                    panel = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
                 }
                 catch(Exception ex) {
                     ex.printStackTrace();
