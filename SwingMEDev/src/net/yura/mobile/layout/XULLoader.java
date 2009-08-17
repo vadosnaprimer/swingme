@@ -2,6 +2,7 @@ package net.yura.mobile.layout;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Vector;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Button;
@@ -11,6 +12,9 @@ import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.ProgressBar;
+import net.yura.mobile.gui.components.Spinner;
+import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.io.UTF8InputStreamReader;
@@ -25,12 +29,12 @@ public class XULLoader {
     public static Panel load(InputStream is, ActionListener listener) throws Exception {
 
         XULLoader loader = new XULLoader();
-        GridBagConstraints obj = (GridBagConstraints)loader.load(new UTF8InputStreamReader(is));
+        GridBagConstraints obj = (GridBagConstraints)loader.load(new UTF8InputStreamReader(is),listener);
 
         return (Panel)obj.component;
     }
 
-    public Object load(Reader reader) throws Exception {
+    public Object load(Reader reader,ActionListener listener) throws Exception {
 
         //if (parser==null) {
             KXmlParser parser = new KXmlParser();
@@ -39,10 +43,10 @@ public class XULLoader {
         parser.setInput(reader);
         parser.nextTag();
 
-        return readObject(parser);
+        return readObject(parser,listener);
     }
 
-    public Object readObject(KXmlParser parser) throws Exception {
+    public Object readObject(KXmlParser parser,ActionListener listener) throws Exception {
 
         String name = parser.getName();
 
@@ -78,24 +82,74 @@ public class XULLoader {
             }
             Panel panel = new Panel(new GridBagLayout(columns,gap,top,bottom,left,right));
 
-            // TODO add spacific stuff for panel
+            return readUIObject(parser, panel,listener);
+        }
+        else if (name.equals("tabbedpane")) {
+            TabbedPane tabbedpane = new TabbedPane();
 
-            return readUIObject(parser, panel);
+            return readUIObject(parser, tabbedpane,listener);
+        }
+        else if (name.equals("tab")) {
+            Panel tab = new Panel();
+
+            int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("text".equals(key)) {
+                    tab.setName(value);
+                }
+            }
+
+            return readUIObject(parser, tab,listener);
+        }
+        else if (name.equals("progressbar")) {
+            ProgressBar progress = new ProgressBar();
+
+            return readUIObject(parser, progress,listener);
+        }
+        else if (name.equals("slider")) {
+            Label slider = new Label("slider");
+
+            return readUIObject(parser, slider,listener);
+        }
+        else if (name.equals("spinbox")) {
+            Spinner spinner = new Spinner();
+
+            return readUIObject(parser, spinner,listener);
+        }
+        else if (name.equals("datespinbox")) {
+            Spinner spinner = new Spinner();
+
+            return readUIObject(parser, spinner,listener);
         }
         else if (name.equals("button")) {
             Button button = new Button();
 
-            readLabel(parser,button);
+            readButton(parser,button,listener);
 
-            return readUIObject(parser, button);
+            return readUIObject(parser, button,listener);
         }
         else if (name.equals("checkbox")) {
             CheckBox checkbox = new CheckBox();
 
-            readLabel(parser,checkbox);
+            readButton(parser,checkbox,listener);
             // TODO add spacific stuff for checkbox
 
-            return readUIObject(parser, checkbox);
+            return readUIObject(parser, checkbox,listener);
+        }
+        else if (name.equals("combobox")) {
+            ComboBox combobox = new ComboBox(new Vector());
+
+            readButton(parser,combobox,listener);
+            // TODO add spacific stuff for checkbox
+
+            return readUIObject(parser, combobox,listener);
+        }
+        else if (name.equals("list")) {
+            List list = new List();
+
+            return readUIObject(parser, list,listener);
         }
         else if (name.equals("textfield")) {
             TextField textfield = new TextField();
@@ -103,21 +157,31 @@ public class XULLoader {
 
             // TODO add spacific stuff for checkbox
 
-            return readUIObject(parser, textfield);
+            return readUIObject(parser, textfield,listener);
+        }
+        else if (name.equals("passwordfield")) {
+            TextField textfield = new TextField(TextField.PASSWORD);
+
+            return readUIObject(parser, textfield,listener);
+        }
+        else if (name.equals("numericfield")) {
+            TextField textfield = new TextField(TextField.NUMERIC);
+
+            return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("textarea")) {
             TextArea textfield = new TextArea();
 
             // TODO add spacific stuff for checkbox
 
-            return readUIObject(parser, textfield);
+            return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("label")) {
             Label label = new Label();
 
             readLabel(parser,label);
 
-            return readUIObject(parser, label);
+            return readUIObject(parser, label,listener);
         }
 
         // TODO add more components
@@ -134,6 +198,12 @@ public class XULLoader {
 
     }
 
+    private void readButton(KXmlParser parser, Button button,ActionListener listener) {
+
+        button.addActionListener(listener);
+        readLabel(parser, button);
+    }
+
     private void readLabel(KXmlParser parser, Label label) {
 
             int count = parser.getAttributeCount();
@@ -144,7 +214,6 @@ public class XULLoader {
                     label.setText(value);
                 }
             }
-
     }
 
     public Option readOption(KXmlParser parser) throws Exception {
@@ -174,10 +243,12 @@ public class XULLoader {
 
         Option op = new Option(name, text, icon, tooltip);
 
+        parser.skipSubTree();
+
         return op;
     }
 
-    public GridBagConstraints readUIObject(KXmlParser parser,Component comp) throws Exception {
+    public GridBagConstraints readUIObject(KXmlParser parser,Component comp,ActionListener listener) throws Exception {
 
 
         GridBagConstraints uiobject = new GridBagConstraints();
@@ -214,19 +285,23 @@ public class XULLoader {
 
         while (parser.nextTag() != KXmlParser.END_TAG) {
 
-            Object obj = readObject(parser);
+            Object obj = readObject(parser,listener);
 
-            if (uiobject.component instanceof Panel) {
+            if (uiobject.component instanceof TabbedPane) {
+                ((TabbedPane)uiobject.component).add( ((GridBagConstraints)obj).component );
+            }
+            else if (uiobject.component instanceof Panel) {
                 ((Panel)uiobject.component).add(((GridBagConstraints)obj).component, obj);
             }
-
-            // TODO add adding to other components, like tabbedpane
-
             else if (uiobject.component instanceof ComboBox) {
                 ((ComboBox)uiobject.component).getItems().addElement(obj);
             }
             else if (uiobject.component instanceof List) {
                 ((List)uiobject.component).getItems().addElement(obj);
+            }
+            else {
+                //#debug
+                System.out.println("what to do with this object: "+obj.getClass() +" "+obj+" parent="+uiobject.component);
             }
         }
 

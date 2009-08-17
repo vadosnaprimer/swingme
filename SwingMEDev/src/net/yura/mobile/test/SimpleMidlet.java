@@ -18,15 +18,8 @@
 package net.yura.mobile.test;
 
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.components.Button;
-import net.yura.mobile.gui.components.Frame;
-import net.yura.mobile.gui.components.Label;
-import net.yura.mobile.gui.components.Menu;
-import net.yura.mobile.gui.components.MenuBar;
-import net.yura.mobile.gui.components.MenuItem;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
@@ -52,11 +45,11 @@ public class SimpleMidlet extends Midlet implements ActionListener {
                 Window mainWindow = new Window();
                 
                 mainWindow.setActionListener(this);
-		mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
+		//mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
 
                 Panel panel=null;
                 try {
-                    panel = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
+                    panel = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
                 }
                 catch(Exception ex) {
                     ex.printStackTrace();

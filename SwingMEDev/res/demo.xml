@@ -31,7 +31,7 @@
                 <item selected="true" text="List item" />
                 <item text="List item" />
             </list>
-            <tree name="demotree" weighty="1">
+<!--            <tree name="demotree" weighty="1">
                 <node text="Tree node">
                     <node text="Tree node" />
                 </node>
@@ -58,7 +58,7 @@
                     <cell text="Cell" />
                     <cell text="Cell" />
                 </row>
-            </table>
+            </table>-->
         </panel>
     </tab>
     <tab text="Test" background="#E69900" >
