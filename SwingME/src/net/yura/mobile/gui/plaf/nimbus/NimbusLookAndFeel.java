@@ -264,13 +264,24 @@ public class NimbusLookAndFeel extends LookAndFeel {
 //        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(darkerSelection, darkerSelection, 1, 3, 1));
 //        listItemFocusedSelectedSettings.addElement(new NimbusBorderSetting(lighterSelection, decodeColor("nimbusSelection"), 1, 2, 0.65));
 
+        NimbusBorder tmp1 = new NimbusBorder(listItemSettings);
+        NimbusBorder tmp2 = new NimbusBorder(listItemSelectedSettings);
+        NimbusBorder tmp3 = new NimbusBorder(listItemFocusedSettings);
+        NimbusBorder tmp4 = new NimbusBorder(listItemFocusedSelectedSettings);
 
         setUIDefault("ListRenderer.background", noColor);
-        setUIDefault("ListRenderer.border", new NimbusBorder(listItemSettings));
-        setUIDefault("ListRenderer[selected].border",new NimbusBorder(listItemSelectedSettings));
+        setUIDefault("ListRenderer.border", tmp1);
+        setUIDefault("ListRenderer[selected].border",tmp2);
         setUIDefault("ListRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
-        setUIDefault("ListRenderer[focused].border",new NimbusBorder(listItemFocusedSettings));
-        setUIDefault("ListRenderer[focused+selected].border",new NimbusBorder(listItemFocusedSelectedSettings));
+        setUIDefault("ListRenderer[focused].border",tmp3);
+        setUIDefault("ListRenderer[focused+selected].border",tmp4);
+
+        setUIDefault("MenuItemRenderer.background", noColor);
+        setUIDefault("MenuItemRenderer.border", tmp1);
+        setUIDefault("MenuItemRenderer[selected].border",tmp2);
+        setUIDefault("MenuItemRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault("MenuItemRenderer[focused].border",tmp3);
+        setUIDefault("MenuItemRenderer[focused+selected].border",tmp4);
 
         // COMBOS
         Vector comboBorderSettings = new Vector();

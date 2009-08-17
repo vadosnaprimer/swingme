@@ -22,11 +22,9 @@ import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 
 /**
@@ -46,23 +44,25 @@ public class OptionPane extends Window {
     public static final int PLAIN_MESSAGE = -1;
     
     
-    private TitleBar title;
+    //private TitleBar title;
     private Panel content;
     private Label icon;
-    private CommandButton defaultCommand;
+    private Button defaultCommand;
     private ScrollPane scroll;
     
     public OptionPane() {
         setName("Dialog");
-        
-        super.setActionListener(this);
-        title = new TitleBar("", null, false, false, false, false, false);
+
+        setUndecorated(false);
+
+        //super.setActionListener(this);
+        //title = new TitleBar("", null, false, false, false, false, false);
         content = new Panel( new BoxLayout(Graphics.VCENTER) );
         
-        Panel panel = new Panel(new BorderLayout());
+        Panel panel = getContentPane();
         
-        add(title,Graphics.TOP);
-        add(panel);
+        //add(title,Graphics.TOP);
+        //add(panel);
         
         icon = new Label();
         
@@ -88,9 +88,9 @@ public class OptionPane extends Window {
     }
     
     public boolean keyEvent(KeyEvent keypad) {
-		
-        if (keypad.justPressedAction(Canvas.FIRE)) {
-            
+
+        if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey(KeyEvent.KEY_CALL)) {
+
             if (defaultCommand!=null) {
                 actionPerformed( defaultCommand.getActionCommand() );
             }
@@ -135,22 +135,33 @@ public class OptionPane extends Window {
         return tmp;
     }
     
-    public void setTitle(String newTitle) {
-        title.setTitle(newTitle);
-    }
-    
-    
     public void setMessageType(int messageType) {
         // TODO
     }
 
-    public void setInitialValue(CommandButton initialValue) {
+    public void setInitialValue(Button initialValue) {
         defaultCommand = initialValue;
     }
 
-    public void setOptions(CommandButton[] options) {
-       setWindowCommand(0, options[0]);
-       setWindowCommand(1, (options.length > 1)?options[1]:null);
+    public void setOptions(Button[] options) {
+        MenuBar menubar = getMenuBar();
+        if (menubar==null) {
+            System.out.println("setting initial menu bar");
+            menubar = new MenuBar();
+            setMenuBar(menubar);
+        }
+        else {
+            System.out.println("removing existing items");
+            menubar.removeAll();
+        }
+        for (int c=0;c<options.length;c++) {
+            System.out.println("adding menu bar item");
+            Button button = (Button)options[c];
+            button.addActionListener(this);
+            menubar.add(button);
+        }
+       //setWindowCommand(0, options[0]);
+       //setWindowCommand(1, (options.length > 1)?options[1]:null);
     }
 
     public void setIcon(Icon icon) {
@@ -160,11 +171,12 @@ public class OptionPane extends Window {
     private void open() {
         
         content.workoutSize(); // what out what the needed size is
+        System.out.println("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
         scroll.setPreferredSize(content.getWidth(), content.getHeight());
         pack();
 
         int maxw = DesktopPane.getDesktopPane().getWidth();
-        int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
+        int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getMenuHeight()*2;
 
         if (getHeightWithBorder() > maxh) {
             setFocusedComponent(null);
@@ -190,7 +202,7 @@ public class OptionPane extends Window {
     }
     
     private boolean factory;
-    public static void showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, CommandButton[] options, CommandButton initialValue) {
+    public static void showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, Button[] options, Button initialValue) {
 
         Vector myselfs = getAllWindows();
         OptionPane myself=null;
@@ -216,22 +228,22 @@ public class OptionPane extends Window {
         if (options==null) {
             switch (optionType) {
                 case YES_NO_OPTION:
-                    options = new CommandButton[] {new CommandButton("Yes","yes"),new CommandButton("No","no")};
+                    options = new Button[] {makeButton("Yes","yes"),makeButton("No","no")};
                     break;
                 case OK_CANCEL_OPTION:
-                    options = new CommandButton[] {new CommandButton("OK","ok"),new CommandButton("Cancel","cancel")};
+                    options = new Button[] {makeButton("OK","ok"),makeButton("Cancel","cancel")};
                     break;
                 case OK_OPTION:
                 default:
-                    options = new CommandButton[] {new CommandButton("OK","ok")};
+                    options = new Button[] {makeButton("OK","ok")};
                     break;
             }
             initialValue = options[0];
         }
         
         myself.setOptions(options);
+
         myself.setInitialValue(initialValue);
-        
         
         myself.open();
     }
@@ -246,6 +258,12 @@ public class OptionPane extends Window {
         
         showOptionDialog(parent, message, title, optionType, QUESTION_MESSAGE, null, null, null);
         
+    }
+
+    public static Button makeButton(String label,String actionCommand) {
+        Button button = new Button(label);
+        button.setActionCommand(actionCommand);
+        return button;
     }
     
 }

@@ -24,13 +24,10 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.gui.border.Border;
 
 /**
  * @author Yura Mamyrin
@@ -54,9 +51,14 @@ public abstract class TextComponent extends Component implements ActionListener,
     
         private static TextBox textbox;
     
-	private static CommandButton SOFTKEY_CLEAR = new CommandButton("Clear", "clear");
+	private static Button SOFTKEY_CLEAR;
+        static {
+            SOFTKEY_CLEAR = new Button("Clear");
+            SOFTKEY_CLEAR.setActionCommand("clear");
+            SOFTKEY_CLEAR.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+        }
 	public static void setClearButtonText(String a) {
-		SOFTKEY_CLEAR = new CommandButton(a,SOFTKEY_CLEAR.getActionCommand());
+		SOFTKEY_CLEAR.setText(a);
 	}
 
         private static Command ok = new Command("OK",Command.OK ,1);
@@ -156,13 +158,14 @@ public abstract class TextComponent extends Component implements ActionListener,
             if (isFocusOwner()) {
                 // put this back in to hide the clear action on phones it is not needed on
 		if (KeyEvent.useSoftKeyClear) {
-		
-			if(caretPosition==0 && tmpChar==0){
-				DesktopPane.getDesktopPane().setComponentCommand(1,null);
-			}
-                        else{
-				DesktopPane.getDesktopPane().setComponentCommand(1,SOFTKEY_CLEAR);
-			}
+                    if(caretPosition==0 && tmpChar==0){
+                            SOFTKEY_CLEAR.removeActionListener(this);
+                            getWindow().removeCommand(SOFTKEY_CLEAR);
+                    }
+                    else{
+                            SOFTKEY_CLEAR.addActionListener(this);
+                            getWindow().addCommand(SOFTKEY_CLEAR);
+                    }
 		}
             }
 	}
@@ -498,7 +501,8 @@ public abstract class TextComponent extends Component implements ActionListener,
                 autoAccept();
 
                 if (KeyEvent.useSoftKeyClear) {
-                    DesktopPane.getDesktopPane().setComponentCommand(1,null);
+                    SOFTKEY_CLEAR.removeActionListener(this);
+                    getWindow().removeCommand(SOFTKEY_CLEAR);
                 }
                 
                 DesktopPane.getDesktopPane().setIndicatorText(null);

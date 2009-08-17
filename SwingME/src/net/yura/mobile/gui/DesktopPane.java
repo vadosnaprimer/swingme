@@ -27,10 +27,10 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.gui.cellrenderer.DefaultSoftkeyRenderer;
-import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
@@ -94,8 +94,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
         private LookAndFeel theme;
         public int defaultSpace;
+        private int menuHeight;
 	//public int defaultWidthOffset;
-        public ListCellRenderer softkeyRenderer;
+        //public ListCellRenderer softkeyRenderer;
 
 	private Vector windows;
 	private Window currentWindow;
@@ -108,8 +109,8 @@ public class DesktopPane extends Canvas implements Runnable {
 	private Component animatedComponent;
 
         private Image splash;
-        private Image fade;
         private int background;
+        private Image fade;
 
         private boolean paintdone=false;
         private boolean fullrepaint;
@@ -117,9 +118,9 @@ public class DesktopPane extends Canvas implements Runnable {
         private boolean wideScreen;
         private boolean sideSoftKeys;
 
-	private CommandButton[] componentCommands;
+	//private CommandButton[] componentCommands;
          // to avoid creating new array every time
-        private CommandButton[] currentCommands;
+        //private CommandButton[] currentCommands;
 
 	/**
 	 * nothing should ever call serviceRepaints()
@@ -134,8 +135,8 @@ public class DesktopPane extends Canvas implements Runnable {
                 background = back;
                 splash = sph;
 
-		componentCommands = new CommandButton[2];
-		currentCommands = new CommandButton[2];
+		//componentCommands = new CommandButton[2];
+		//currentCommands = new CommandButton[2];
 
 		setFullScreenMode(true);
 
@@ -267,9 +268,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
             }
 
-            if (softkeyRenderer==null) {
-                softkeyRenderer = new DefaultSoftkeyRenderer();
-            }
+            Component c = new MenuItemRenderer().getListCellRendererComponent(null, new Button("test") , 0, false, false);
+            c.workoutSize();
+            menuHeight = c.getHeightWithBorder();
+
             tooltip = new ToolTip();
             indicator = new ToolTip();
             //currentWindow.setSize(getWidth(),getHeight());
@@ -379,9 +381,9 @@ public class DesktopPane extends Canvas implements Runnable {
 		}
                 //#enddebug
 
-                if (!windows.isEmpty()) {
-                    drawSoftkeys(graphics);
-                }
+//                if (!windows.isEmpty()) {
+//                    drawSoftkeys(graphics);
+//                }
                 paintLast(graphics);
             }
             catch(Throwable th) {
@@ -399,25 +401,25 @@ public class DesktopPane extends Canvas implements Runnable {
         public void paintFirst(Graphics2D g) { }
         public void paintLast(Graphics2D g) { }
 
-        private void drawSoftkeys(Graphics2D g) {
-
-            Component com1 = getSoftkeyRenderer(0);
-            if (com1!=null) {
-                paintComponent(g,com1);
-            }
-
-            Component com2 = getSoftkeyRenderer(1);
-            if (com2!=null) {
-                paintComponent(g,com2);
-            }
-
-            if (tooltip.isShowing()) {
-                paintComponent(g,tooltip);
-            }
-            if (indicator.getText()!=null && !me4se) {
-                paintComponent(g,indicator);
-            }
-        }
+//        private void drawSoftkeys(Graphics2D g) {
+//
+//            Component com1 = getSoftkeyRenderer(0);
+//            if (com1!=null) {
+//                paintComponent(g,com1);
+//            }
+//
+//            Component com2 = getSoftkeyRenderer(1);
+//            if (com2!=null) {
+//                paintComponent(g,com2);
+//            }
+//
+//            if (tooltip.isShowing()) {
+//                paintComponent(g,tooltip);
+//            }
+//            if (indicator.getText()!=null && !me4se) {
+//                paintComponent(g,indicator);
+//            }
+//        }
 
         private void paintComponent(Graphics2D g,Component com) {
 
@@ -439,27 +441,27 @@ public class DesktopPane extends Canvas implements Runnable {
             g.setClip(a,b,c,d);
         }
 
-        private Component getSoftkeyRenderer(int i) {
-
-            Component com = softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
-            if (com==null) return null;
-            com.workoutSize();
-            int h = com.getHeightWithBorder();
-            int w = com.getWidthWithBorder();
-            if (sideSoftKeys) {
-                com.setBoundsWithBorder(getWidth()-w, (i==0)?(getHeight()-h):0, w, h);
-            }
-            else {
-                com.setBoundsWithBorder((i==1)?(getWidth()-w):0, getHeight()-h, w, h);
-            }
-            return com;
-        }
-
-        public int getSoftkeyHeight() {
-            Component c = softkeyRenderer.getListCellRendererComponent(null, new CommandButton("a", "a"), 0, false, false);
-            c.workoutSize();
-            return c.getHeightWithBorder();
-        }
+//        private Component getSoftkeyRenderer(int i) {
+//
+//            Component com = softkeyRenderer.getListCellRendererComponent(null, getCurrentCommands()[i], i, sideSoftKeys && (i==1), !sideSoftKeys && (i==0));
+//            if (com==null) return null;
+//            com.workoutSize();
+//            int h = com.getHeightWithBorder();
+//            int w = com.getWidthWithBorder();
+//            if (sideSoftKeys) {
+//                com.setBoundsWithBorder(getWidth()-w, (i==0)?(getHeight()-h):0, w, h);
+//            }
+//            else {
+//                com.setBoundsWithBorder((i==1)?(getWidth()-w):0, getHeight()-h, w, h);
+//            }
+//            return com;
+//        }
+//
+//        public int getSoftkeyHeight() {
+//            Component c = softkeyRenderer.getListCellRendererComponent(null, new CommandButton("a", "a"), 0, false, false);
+//            c.workoutSize();
+//            return c.getHeightWithBorder();
+//        }
 
         // #####################################################################
         // Different ways of caling repaint
@@ -544,31 +546,31 @@ public class DesktopPane extends Canvas implements Runnable {
         // action handeling
         // #####################################################################
 
-        public CommandButton[] getCurrentCommands(){
-            currentCommands[0] = componentCommands[0] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[0]) : componentCommands[0];
-            currentCommands[1] = componentCommands[1] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[1]) : componentCommands[1];
-            return currentCommands;
-        }
+//        public CommandButton[] getCurrentCommands(){
+//            currentCommands[0] = componentCommands[0] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[0]) : componentCommands[0];
+//            currentCommands[1] = componentCommands[1] == null ? (currentWindow==null?null:currentWindow.getWindowCommands()[1]) : componentCommands[1];
+//            return currentCommands;
+//        }
 
-    /**
-     * @see Window#setWindowCommand
-     */
-	public void setComponentCommand(int i, CommandButton softkey) {
-
-            if (componentCommands[i]!=softkey) {
-                CommandButton old = getCurrentCommands()[i]; // get old 1
-		componentCommands[i] = softkey;
-                if (getCurrentCommands()[i]==softkey) { // check if we are the new 1
-                    if (old==null || softkey == null) {
-                        fullRepaint();
-                    }
-                    else {
-                        softkeyRepaint();
-                    }
-                }
-            }
-
-	}
+//    /**
+//     * @see Window#setWindowCommand
+//     */
+//	public void setComponentCommand(int i, CommandButton softkey) {
+//
+//            if (componentCommands[i]!=softkey) {
+//                CommandButton old = getCurrentCommands()[i]; // get old 1
+//		componentCommands[i] = softkey;
+//                if (getCurrentCommands()[i]==softkey) { // check if we are the new 1
+//                    if (old==null || softkey == null) {
+//                        fullRepaint();
+//                    }
+//                    else {
+//                        softkeyRepaint();
+//                    }
+//                }
+//            }
+//
+//	}
 
 	private void passKeyEvent(KeyEvent keyevent) {
 
@@ -584,78 +586,73 @@ public class DesktopPane extends Canvas implements Runnable {
 			}
                         //#enddebug
 
-                        CommandButton[] cmds = getCurrentCommands();
-                        Component focusedComponent = (currentWindow==null)?null:currentWindow.getFocusOwner();
 
-                        if (
-                                ( cmds[0]!=null && (keyevent.isDownKey(KeyEvent.KEY_SOFTKEY1) || keyevent.justReleasedKey(KeyEvent.KEY_SOFTKEY1)) ) ||
-                                ( cmds[1]!=null && (keyevent.isDownKey(KeyEvent.KEY_SOFTKEY2) || keyevent.justReleasedKey(KeyEvent.KEY_SOFTKEY2)) )
-                        ) {
+                        if (currentWindow!=null) {
 
-                            // ############# we use justReleasedKey for firing actions, this means the action is ONLY
-                            // ############# fired off when the key is released!!!
-
-                            if (keyevent.justPressedKey(KeyEvent.KEY_SOFTKEY1)) {
-                                softKeyActivated(0);
+                            Button mneonicButton=null;
+                            if (keyevent.getJustPressedKey()!=0) {
+                                mneonicButton = currentWindow.findMneonicButton(keyevent);
                             }
-                            else if (keyevent.justPressedKey(KeyEvent.KEY_SOFTKEY2)) {
-                                softKeyActivated(1);
-                            }
+                            Component focusedComponent = currentWindow.getFocusOwner();
 
+                            if (mneonicButton!=null) {
+
+                                mneonicButton.fireActionPerformed();
+
+                            }
+                            else if (focusedComponent!=null) {
+
+                                    boolean consumed = focusedComponent.keyEvent(keyevent);
+
+                                    //System.out.println("rootpane KEY PRESSED on "+activeComponent+" and consumed after is: "+consumed);
+
+                                    // TODO
+                                    // it may say that a down key is pressed, BUT
+                                    // getting the gameAction may not work
+                                    // keyevent.getKeyAction(keyevent.getIsDownKey())
+                                    // if another key was pressed first!
+
+                                    if (!consumed && keyevent.getJustReleasedKey()==0 && ( // dont want to fire anything on release
+                                            keyevent.isDownAction(Canvas.RIGHT)||
+                                            keyevent.isDownAction(Canvas.DOWN) ||
+                                            keyevent.isDownAction(Canvas.LEFT)||
+                                            keyevent.isDownAction(Canvas.UP)
+                                    )) {
+
+                                        focusedComponent.transferFocus( keyevent.getKeyAction(keyevent.getIsDownKey()) );
+
+                                    }
+                                    else if (!consumed ) {//&& keyListener!=null) {
+
+                                        boolean c = currentWindow.keyEvent(keypad);
+                                        if (!c) {
+                                            keyEvent(keyevent);
+                                        }
+                                    }
+
+                            }
+                            // sometimes keyevents come in on S40 b4 anything has been setup,
+                            // such as the fire key being released after you start the app
+                            else { //  if (keyListener!=null) {
+
+                                    if (
+
+                                            keyevent.isDownAction(Canvas.RIGHT)||
+                                            keyevent.isDownAction(Canvas.DOWN) ||
+                                            keyevent.isDownAction(Canvas.LEFT)||
+                                            keyevent.isDownAction(Canvas.UP)
+
+                                    ) {
+                                            currentWindow.passScrollUpDown( keyevent.getKeyAction(keyevent.getIsDownKey()) );
+                                    }
+                                    else {
+                                        boolean c = currentWindow.keyEvent(keypad);
+                                        if (!c) {
+                                            keyEvent(keyevent);
+                                        }
+                                    }
+                            }
                         }
-			else if (focusedComponent!=null) {
-
-				boolean consumed = focusedComponent.keyEvent(keyevent);
-
-				//System.out.println("rootpane KEY PRESSED on "+activeComponent+" and consumed after is: "+consumed);
-
-                                // TODO
-                                // it may say that a down key is pressed, BUT
-                                // getting the gameAction may not work
-                                // keyevent.getKeyAction(keyevent.getIsDownKey())
-                                // if another key was pressed first!
-
-				if (!consumed && keyevent.getJustReleasedKey()==0 && ( // dont want to fire anything on release
-					keyevent.isDownAction(Canvas.RIGHT)||
-					keyevent.isDownAction(Canvas.DOWN) ||
-					keyevent.isDownAction(Canvas.LEFT)||
-					keyevent.isDownAction(Canvas.UP)
-				)) {
-
-                                    focusedComponent.transferFocus( keyevent.getKeyAction(keyevent.getIsDownKey()) );
-
-				}
-				else if (!consumed ) {//&& keyListener!=null) {
-
-                                    boolean c = currentWindow.keyEvent(keypad);
-                                    if (!c) {
-					keyEvent(keyevent);
-                                    }
-				}
-
-			}
-                        // sometimes keyevents come in on S40 b4 anything has been setup,
-                        // such as the fire key being released after you start the app
-			else if (currentWindow!=null) { //  if (keyListener!=null) {
-
-				if (
-
-					keyevent.isDownAction(Canvas.RIGHT)||
-					keyevent.isDownAction(Canvas.DOWN) ||
-					keyevent.isDownAction(Canvas.LEFT)||
-					keyevent.isDownAction(Canvas.UP)
-
-				) {
-					currentWindow.passScrollUpDown( keyevent.getKeyAction(keyevent.getIsDownKey()) );
-				}
-                                else {
-                                    boolean c = currentWindow.keyEvent(keypad);
-                                    if (!c) {
-					keyEvent(keyevent);
-                                    }
-                                }
-			}
-
 
 
 		}
@@ -743,45 +740,45 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
 
-    public void softKeyActivated(int i) {
-
-                        Component focusedComponent = currentWindow.getFocusOwner();
-
-        		CommandButton[] panelCmds = currentWindow.getWindowCommands();
-                        ActionListener actionListener = currentWindow.getActionListener();
-
-                        if (
-                                        componentCommands[i]!=null &&
-					focusedComponent!=null &&
-                                        focusedComponent instanceof ActionListener
-				) {
-
-                                 if (componentCommands[i]!=null && componentCommands[i].getButton()!=null) {
-                                        Component renderer = getSoftkeyRenderer(i);
-                                        Button b = componentCommands[i].getButton();
-                                        b.setBoundsWithBorder(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
-                                        b.fireActionPerformed();
-                                 }
-                                 else {
-                                     ((ActionListener)focusedComponent).actionPerformed( componentCommands[i].getActionCommand() );
-                                 }
-
-			}
-			else if (actionListener!=null && panelCmds[i]!=null) {
-
-                                if (panelCmds[i]!=null && panelCmds[i].getButton()!=null) {
-                                    Component renderer = getSoftkeyRenderer(i);
-                                    Button b = panelCmds[i].getButton();
-                                    b.setBoundsWithBorder(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
-                                    b.fireActionPerformed();
-                                }
-                                else {
-                                    actionListener.actionPerformed( panelCmds[i].getActionCommand() );
-                                }
-
-			}
-
-    }
+//    public void softKeyActivated(int i) {
+//
+//                        Component focusedComponent = currentWindow.getFocusOwner();
+//
+//        		CommandButton[] panelCmds = currentWindow.getWindowCommands();
+//                        ActionListener actionListener = currentWindow.getActionListener();
+//
+//                        if (
+//                                        componentCommands[i]!=null &&
+//					focusedComponent!=null &&
+//                                        focusedComponent instanceof ActionListener
+//				) {
+//
+//                                 if (componentCommands[i]!=null && componentCommands[i].getButton()!=null) {
+//                                        Component renderer = getSoftkeyRenderer(i);
+//                                        Button b = componentCommands[i].getButton();
+//                                        b.setBoundsWithBorder(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
+//                                        b.fireActionPerformed();
+//                                 }
+//                                 else {
+//                                     ((ActionListener)focusedComponent).actionPerformed( componentCommands[i].getActionCommand() );
+//                                 }
+//
+//			}
+//			else if (actionListener!=null && panelCmds[i]!=null) {
+//
+//                                if (panelCmds[i]!=null && panelCmds[i].getButton()!=null) {
+//                                    Component renderer = getSoftkeyRenderer(i);
+//                                    Button b = panelCmds[i].getButton();
+//                                    b.setBoundsWithBorder(renderer.getXWithBorder(),renderer.getYWithBorder(),renderer.getWidthWithBorder(),renderer.getHeightWithBorder());
+//                                    b.fireActionPerformed();
+//                                }
+//                                else {
+//                                    actionListener.actionPerformed( panelCmds[i].getActionCommand() );
+//                                }
+//
+//			}
+//
+//    }
 
 
 
@@ -843,6 +840,9 @@ public class DesktopPane extends Canvas implements Runnable {
                         // we cant use repaint as soft keys may have changed and the
                         // new window may not be full screen
 			//currentWindow.repaint();
+
+                        pointerComponent = null;
+
                         fullRepaint();
 		}
                 //#mdebug
@@ -873,7 +873,7 @@ public class DesktopPane extends Canvas implements Runnable {
 		}
                 //#mdebug
                 else {
-                    throw new RuntimeException("cant remove, this window is not visible");
+                    throw new RuntimeException("cant remove, this window is not visible: " +w);
                 }
                 //#enddebug
 
@@ -975,8 +975,13 @@ public class DesktopPane extends Canvas implements Runnable {
                                 desktop.text.setFocusable(false);
                                 desktop.text.setLineWrap(true);
 				desktop.debugwindow.add( new ScrollPane(desktop.text) );
-                                desktop.debugwindow.setActionListener(desktop.debugwindow);
-				desktop.debugwindow.setWindowCommand(1, new CommandButton("OK","close") );
+                                MenuBar menubar = new MenuBar();
+                                Button close = new Button("Close");
+                                close.setActionCommand("close");
+                                close.addActionListener(desktop.debugwindow);
+                                close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                                menubar.add(close);
+                                desktop.debugwindow.setMenuBar(menubar);
                                 desktop.debugwindow.setBounds(10, 10, desktop.getWidth()-20, desktop.getHeight()/2);
 
                                 // This is not needed, but just in case something
@@ -1070,17 +1075,17 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 if (type == PRESSED) {
                     // check if pressing on a softkey
-                    for (int c=0;c<componentCommands.length;c++) {
-                        Component comp = getSoftkeyRenderer(c);
-                        if (comp!=null) {
-                            int cx = comp.getXWithBorder();
-                            int cy = comp.getYWithBorder();
-                            if (comp!=null && x>=cx && x<=cx+comp.getWidthWithBorder() && y>=cy && y<=cy+comp.getHeightWithBorder()) {
-                                softKeyActivated(c);
-                                return;
-                            }
-                        }
-                    }
+//                    for (int c=0;c<componentCommands.length;c++) {
+//                        Component comp = getSoftkeyRenderer(c);
+//                        if (comp!=null) {
+//                            int cx = comp.getXWithBorder();
+//                            int cy = comp.getYWithBorder();
+//                            if (comp!=null && x>=cx && x<=cx+comp.getWidthWithBorder() && y>=cy && y<=cy+comp.getHeightWithBorder()) {
+//                                softKeyActivated(c);
+//                                return;
+//                            }
+//                        }
+//                    }
 
                     pointerComponent = currentWindow.getComponentAt( x - currentWindow.getX(), y - currentWindow.getY());
                 }
@@ -1130,6 +1135,10 @@ public class DesktopPane extends Canvas implements Runnable {
                     Window window = (Window)((WeakReference)win.elementAt(c)).get();
 
                     // TODO RESIZE better
+
+                    // when the scren switches from 1 resolution to another, and the 'hidden' menubar is not repositioned,
+                    // it may cause it to stop being painted at all, as it may bcome totally off the screen
+
                     if (window!=null) {
                         if (window.getMaximum()) {
                             window.setMaximum(true);
@@ -1162,5 +1171,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
 	}
 
+    public int getMenuHeight() {
+        return menuHeight;
+    }
 
+    public boolean isSideSoftKeys() {
+        return sideSoftKeys;
+    }
+    
 }

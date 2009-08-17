@@ -20,11 +20,8 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
-
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
@@ -38,12 +35,16 @@ import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
  */
 public class List extends Component implements ActionListener {
 
-    private static CommandButton selectButton = new CommandButton("Select","select");
+    private static Button selectButton;
+
+    static {
+        selectButton = new Button("Select");
+        selectButton.setActionCommand( "select" );
+        selectButton.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+    }
 
     public static void setSelectButtonText(String a) {
-
-        selectButton = new CommandButton(a,selectButton.getActionCommand());
-
+        selectButton.setText(a);
     }
     private boolean useSelectButton;
 
@@ -213,8 +214,11 @@ public class List extends Component implements ActionListener {
         int i = -1;
         int offset=0;
 
-        if (x<0 && y<0) {
+        if ((horizontal && x<=0) || (!horizontal && y<=0)) {
             // dont do anything
+        }
+        else if (x > width || y > height) {
+            i = getSize(); // skip everything
         }
         else if (horizontal && fixedCellWidth!=-1) {
             i = x/fixedCellWidth;
@@ -240,8 +244,8 @@ public class List extends Component implements ActionListener {
                     int cy = comp.getYWithBorder();
 
                     if (
-                            x>=cx && x <=(cw+cx) &&
-                            y>=cy && y <=(ch+cy)
+                            (horizontal && x>=cx && x <=(cw+cx) ) ||
+                            (!horizontal && y>=cy && y <=(ch+cy))
                     ) {
                         break;
                     }
@@ -268,7 +272,6 @@ public class List extends Component implements ActionListener {
             i=0;
             offset=0;
         }
-
         for(; i < getSize(); i++){
             synchronized (renderer)
             {
@@ -317,7 +320,7 @@ public class List extends Component implements ActionListener {
         return renderer;
     }
 
-    private Component getComponentFor(int a) {
+    public Component getRendererComponentFor(int a) {
 
         if (horizontal && fixedCellWidth!=-1) {
             return getComponentFor(a,a*fixedCellWidth);
@@ -363,7 +366,8 @@ public class List extends Component implements ActionListener {
     public void focusLost() {
         super.focusLost();
         if (useSelectButton) {
-            DesktopPane.getDesktopPane().setComponentCommand(0, null);
+            selectButton.removeActionListener(this);
+            getWindow().removeCommand(selectButton);
         }
         repaint();
     }
@@ -376,7 +380,8 @@ public class List extends Component implements ActionListener {
         }
 
         if (useSelectButton) {
-            DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
+            selectButton.addActionListener(this);
+            getWindow().addCommand(selectButton);
         }
 
     }
@@ -513,7 +518,7 @@ public class List extends Component implements ActionListener {
                     }
                     //else {
                         if (horizontal && current!=-1) {
-                            Component c = getComponentFor(current);
+                            Component c = getRendererComponentFor(current);
                             int y = getYOnScreen();
                             scrollRectToVisible(c.getXWithBorder(),c.getHeightWithBorder()-1,c.getWidthWithBorder(),1,true);
                             if (y!=getYOnScreen()) {
@@ -533,7 +538,7 @@ public class List extends Component implements ActionListener {
                     }
                     //else {
                         if (horizontal && current!=-1) {
-                            Component c = getComponentFor(current);
+                            Component c = getRendererComponentFor(current);
                             int y = getYOnScreen();
                             scrollRectToVisible(c.getXWithBorder(),0,c.getWidthWithBorder(),1,true);
                             if (y!=getYOnScreen()) {
@@ -554,7 +559,7 @@ public class List extends Component implements ActionListener {
                         // TODO could get rid of this check and add the X pos to the width
                         // so you can scroll right even in horizontal mode
                         if (!horizontal && current!=-1) {
-                            Component c = getComponentFor(current);
+                            Component c = getRendererComponentFor(current);
                             int x = getXOnScreen();
                             scrollRectToVisible(c.getWidthWithBorder()-1,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
                             if (x!=getXOnScreen()) {
@@ -574,7 +579,7 @@ public class List extends Component implements ActionListener {
                     }
                     //else {
                         if (!horizontal && current!=-1) {
-                            Component c = getComponentFor(current);
+                            Component c = getRendererComponentFor(current);
                             int x = getXOnScreen();
                             scrollRectToVisible(0,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
                             if (x!=getXOnScreen()) {
@@ -645,7 +650,7 @@ public class List extends Component implements ActionListener {
         if (current!=-1) {
             synchronized (renderer)
             {
-                    Component c = getComponentFor(a);
+                    Component c = getRendererComponentFor(a);
                     // good, but too simple
                     // what if we are scrolled right already?
                     //scrollTo(c);
@@ -705,7 +710,7 @@ public class List extends Component implements ActionListener {
         if (current!=-1) {
             synchronized (renderer)
             {
-                Component c = getComponentFor(current);
+                Component c = getRendererComponentFor(current);
                 return c.getToolTipText();
             }
         }
@@ -717,7 +722,7 @@ public class List extends Component implements ActionListener {
         if (current!=-1) {
             synchronized (renderer)
             {
-                Component c = getComponentFor(current);
+                Component c = getRendererComponentFor(current);
                 return c.getX() + c.getToolTipLocationX();
             }
         }
@@ -729,7 +734,7 @@ public class List extends Component implements ActionListener {
         if (current!=-1) {
             synchronized (renderer)
             {
-                Component c = getComponentFor(current);
+                Component c = getRendererComponentFor(current);
                 return c.getY() + c.getToolTipLocationY();
             }
         }
@@ -767,6 +772,14 @@ public class List extends Component implements ActionListener {
     public void setSelectedValues(Vector v) {
         selected = v;
     }
+
+//    /**
+//     * @see javax.swing.JList#indexToLocation(int) JList.indexToLocation
+//     */
+//    public int[] indexToLocation(int index) {
+//        Component comp = getRendererComponentFor(index);
+//        return new int[] { comp.getXWithBorder(), comp.getYWithBorder() };
+//    }
 
     // #########################################################################
     // ########################## DefaultListModel #############################

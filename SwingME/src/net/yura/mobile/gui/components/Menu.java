@@ -17,18 +17,13 @@
 
 package net.yura.mobile.gui.components;
 
-import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
-import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.Icon;
-import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 
 /**
  * @author Yura Mamyrin
@@ -40,7 +35,7 @@ public class Menu extends Button {
         private Menu parentMenu;
 
         private Window popup;
-        private Panel panel;
+        private List menuItems;
         private ScrollPane scroll;
 
         private boolean useAnimation=true;
@@ -49,31 +44,23 @@ public class Menu extends Button {
         private int destX;
         private int destY;
 
-        public Menu(String string) {
-            super(string);
-        }
-
         /**
-         * The menu will fire this command to the same listoner that
-         * it will fire all the commands from the buttons being pressed
-         * so you HAVE to set the action that u will be getting from the menu
-         * as you almost always need to have a action listoner for the Menu
          * @param string the text for the menu label
          * @see javax.swing.JMenu#JMenu(java.lang.String) JMenu.JMenu
          */
-        public Menu(String string,String action) {
+        public Menu(String string) {
             super(string);
-            setActionCommand(action);
             makeWindow();
+
+            // TODO ???
             arrowDirection = Graphics.RIGHT;
         }
 
         public void fireActionPerformed() {
-
             super.fireActionPerformed();
 
-            panel.workoutSize(); // what out what the needed size is
-            scroll.setPreferredSize(panel.getWidth(), panel.getHeight());
+            menuItems.workoutSize(); // what out what the needed size is
+            scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
             popup.pack();
 
             Border insets=getInsets();
@@ -82,24 +69,24 @@ public class Menu extends Button {
                 positionMenuRelativeTo(
                         popup,
                         getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
-                        parentMenu==null?Graphics.TOP:Graphics.RIGHT
+                        Graphics.TOP
                         );
                 openMenuAtLocation();
             }
-            else if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) { // ???
+            else { // if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) { // ???
                 positionMenuRelativeTo(
                         popup,
                         getXWithBorder(),getYWithBorder(),getWidthWithBorder(),getHeightWithBorder(),
-                        Graphics.TOP
+                        parentMenu==null?Graphics.TOP:Graphics.RIGHT
                         );
                 openMenuAtLocation();
             }
 
         }
 
-	public Vector getComponents() {
-		return panel.getComponents();
-	}
+//	public Vector getComponents() {
+//		return panel.getComponents();
+//	}
 
         public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,int direction) {
 
@@ -111,7 +98,7 @@ public class Menu extends Button {
                 w = DesktopPane.getDesktopPane().getWidth();
             }
 
-            int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getSoftkeyHeight()*2;
+            int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getMenuHeight()*2;
 
             if (h > maxh) {
                 h = maxh;
@@ -161,8 +148,8 @@ public class Menu extends Button {
 
         public void openMenuInCentre() {
 
-            panel.workoutSize(); // what out what the needed size is
-            scroll.setPreferredSize(panel.getWidth(), panel.getHeight());
+            menuItems.workoutSize(); // what out what the needed size is
+            scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
             popup.pack();
 
             OptionPane.centre(popup);
@@ -214,35 +201,64 @@ public class Menu extends Button {
          * @see javax.swing.JMenu#removeAll() JMenu.removeAll
          */
         public void removeAll() {
-            panel.removeAll();
+            menuItems.getItems().removeAllElements();
         }
 
         private void makeWindow() {
 
             popup = new Window();
-            popup.setWindowCommand(0, new CommandButton(getText(), "select"));
-            popup.setWindowCommand(1, new CommandButton("Cancel", "cancel"));
-            popup.setActionListener(this);
-            panel = new Panel(new BoxLayout(Graphics.VCENTER));
-            scroll = new ScrollPane(panel);
+
+            if (!DesktopPane.me4se) {
+                MenuBar menubar = new MenuBar();
+                //Button select = new Button("Select");
+                Button cancel = new Button("Cancel");
+                cancel.setActionCommand("cancel");
+                cancel.addActionListener(this);
+                cancel.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                //menubar.add(select);
+                menubar.add(cancel);
+                popup.setMenuBar(menubar);
+            }
+
+            //popup.setWindowCommand(0, );
+            //popup.setWindowCommand(1, );
+            //popup.setActionListener(this);
+            menuItems = new List(new MenuItemRenderer());
+            menuItems.addActionListener(this);
+            menuItems.setUseSelectButton(true);
+            scroll = new ScrollPane(menuItems);
             popup.add(scroll);
             popup.setName("Menu");
+            
             // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
 
         }
 
     	public void actionPerformed(String actionCommand) {
 
-            popup.setVisible(false);
-
-            // cancel the parent menu
-            if (parentMenu!=null) { parentMenu.actionPerformed("cancel"); }
-            
-            if (!"cancel".equals(actionCommand)) {
-                ActionListener al = getActionListener();
-                if (al!=null) {
-                    al.actionPerformed(actionCommand);
+            if ("cancel".equals(actionCommand)) {
+                popup.setVisible(false);
+                // cancel the parent menu
+                if (parentMenu!=null) {
+                    parentMenu.actionPerformed(actionCommand);
                 }
+            }
+            else {
+                Button button = (Button)menuItems.getSelectedValue();
+
+                //if (button instanceof Menu) {
+                Component comp = menuItems.getRendererComponentFor( menuItems.getSelectedIndex() );
+                button.setBoundsWithBorder(getXOnScreen() + comp.getXWithBorder(), getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                //}
+                if (!(button instanceof Menu)) {
+                    popup.setVisible(false);
+                    // cancel the parent menu
+                    if (parentMenu!=null) {
+                        parentMenu.actionPerformed("cancel");
+                    }
+                }
+
+                button.fireActionPerformed();
             }
 
         }
@@ -252,7 +268,7 @@ public class Menu extends Button {
          * @see javax.swing.JMenu#add(java.awt.Component) JMenu.add
          */
         public void add(Component c) {
-            panel.add(c);
+            menuItems.addElement(c);
 
             if (c instanceof Menu) {
                 ((Menu)c).setParentMenu(this);
@@ -262,24 +278,6 @@ public class Menu extends Button {
 
         private void setParentMenu(Menu m) {
             parentMenu = m;
-        }
-
-        /**
-         * @param command
-         * @param name
-         * @param icon
-         * @see javax.swing.JMenu#add(java.lang.String) JMenu.add
-         * @deprecated
-         */
-        public Button addMenuItem(String command,String name,Icon icon) {
-
-            Button b = new Button(name,icon);
-            b.setActionCommand(command);
-            b.addActionListener(this);
-            b.setUseSelectButton(true);
-            add(b);
-
-            return b;
         }
 
 	public boolean keyEvent(KeyEvent keyEvent) {
@@ -324,6 +322,7 @@ public class Menu extends Button {
 	}
 
         public void animate() throws InterruptedException {
+
 
             try {
             
@@ -413,6 +412,31 @@ public class Menu extends Button {
 
         public void setArrowDirection(int a) {
             arrowDirection = a;
+        }
+
+        public Button findMneonicButton(KeyEvent keyevent) {
+            if (getMnemonic() == keyevent.getJustPressedKey()) {
+                return this;
+            }
+
+            int size = menuItems.getSize();
+            for(int i = 0; i < size; i++) {
+                Object component = menuItems.getElementAt(i);
+                if (component instanceof Menu) {
+                    Button button = ((Menu)component).findMneonicButton(keyevent);
+                    if (button!=null) {
+                        return button;
+                    }
+                }
+                else if (component instanceof Button) {
+                    Button button = (Button)component;
+                    if (button.getMnemonic() == keyevent.getJustPressedKey()) {
+                        return button;
+                    }
+                }
+            }
+            return null;
+
         }
 
 }

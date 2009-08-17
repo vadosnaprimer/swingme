@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.Layout;
 
 /**
@@ -362,7 +363,8 @@ public class Panel extends Component {
 	
 			}
 
-                    	if (parent!=null) {
+                    	//if (parent!=null) {
+                        if (!(parent instanceof Window)) {
                                 if (!scrolled) {
                                     parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
                                 }
@@ -440,6 +442,32 @@ public class Panel extends Component {
     protected String getDefaultName() {
         return "Panel";
     }
-	
+
+    public Button findMneonicButton(KeyEvent keyevent) {
+        for(int i = 0; i < components.size(); i++) {
+            Component component = (Component)components.elementAt(i);
+            if (component instanceof Menu) {
+                Button button = ((Menu)component).findMneonicButton(keyevent);
+                if (button!=null) {
+                    return button;
+                }
+            }
+            else if (component instanceof Button) {
+                Button button = (Button)component;
+                if (button.getMnemonic() == keyevent.getJustPressedKey()) {
+                    return button;
+                }
+            }
+            else if (component instanceof Panel) {
+                Button button = ((Panel)component).findMneonicButton(keyevent);
+                if (button!=null) {
+                    return button;
+                }
+            }
+
+        }
+        return null;
+    }
+
 }
 

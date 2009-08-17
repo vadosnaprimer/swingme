@@ -20,7 +20,6 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
@@ -33,11 +32,16 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class Button extends Label implements ActionListener {
 
-	private static CommandButton selectButton = new CommandButton("Select","select");
+	private static Button selectButton;
+        
+        static {
+            selectButton = new Button("Select");
+            selectButton.setActionCommand("select");
+        }
 
 	public static void setSelectButtonText(String a) {
 		
-		selectButton = new CommandButton(a,selectButton.getActionCommand());
+		selectButton.setText(a);
 		
 	}
 	
@@ -58,6 +62,7 @@ public class Button extends Label implements ActionListener {
 	protected ButtonGroup buttonGroup;
 	
 	private boolean useSelectButton;
+        private int mneonic;
 
         /**
          * @see javax.swing.JButton#JButton() JButton.JButton
@@ -219,7 +224,7 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.AbstractButton#fireActionPerformed(java.awt.event.ActionEvent) AbstractButton.fireActionPerformed
          */
 	public void fireActionPerformed() {
-
+System.out.println("Pressed: "+getActionCommand()+" -> "+getActionListener());
             if (buttonGroup!=null) {
                 if (!selected) {
                     setSelected(true);
@@ -254,7 +259,8 @@ public class Button extends Label implements ActionListener {
                 super.focusLost();
 		
 		if (useSelectButton) {
-			DesktopPane.getDesktopPane().setComponentCommand(0, null);
+                        selectButton.removeActionListener(this);
+			getWindow().removeCommand(selectButton);
 		}
 		
 		repaint();
@@ -264,7 +270,8 @@ public class Button extends Label implements ActionListener {
                 super.focusGained();
 		
 		if (useSelectButton) {
-			DesktopPane.getDesktopPane().setComponentCommand(0, selectButton);
+                        selectButton.addActionListener(this);
+			getWindow().addCommand(selectButton);
 		}
 		
 		repaint();
@@ -320,6 +327,20 @@ public class Button extends Label implements ActionListener {
                 result |= Style.SELECTED;
             }
             return result;
+        }
+
+        /**
+         * @see javax.swing.AbstractButton#getMnemonic() AbstractButton.getMnemonic
+         */
+        public int getMnemonic() {
+            return mneonic;
+        }
+
+        /**
+         * @see javax.swing.AbstractButton#setMnemonic(int) AbstractButton.setMnemonic
+         */
+        public void setMnemonic(int m) {
+            mneonic = m;
         }
 
 

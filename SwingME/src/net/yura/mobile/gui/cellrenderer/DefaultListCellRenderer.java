@@ -43,8 +43,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 	/**
          * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) DefaultListCellRenderer.getListCellRendererComponent
          */
-	public Component getListCellRendererComponent(List list, Object value,
-			int index, boolean isSelected, boolean cellHasFocus) {
+	public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
                 setValue(value);
 //                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));

@@ -17,7 +17,6 @@
 
 package net.yura.mobile.util;
 
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.Icon;
 
 /**

@@ -156,8 +156,9 @@ public class BorderLayout implements Layout {
                 int w2=0;
                 
                 for (int c=0;c<components.size();c++) {
-			
+
 			Component comp = (Component)components.elementAt(c);
+                        System.out.println("width of "+comp.getName()+" = "+comp.getWidthWithBorder());
                         Integer pos = (Integer)cons.get(comp);
                         int p = (pos==null)?0:pos.intValue();
                         
@@ -186,6 +187,7 @@ public class BorderLayout implements Layout {
 
 
                 }
+                System.out.println("Panel width = "+w2);
                 
                 return Math.max( w1,w2 );
     }
