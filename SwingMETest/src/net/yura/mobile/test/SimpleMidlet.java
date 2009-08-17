@@ -18,7 +18,6 @@
 package net.yura.mobile.test;
 
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Button;
@@ -26,7 +25,6 @@ import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.MenuBar;
-import net.yura.mobile.gui.components.MenuItem;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
@@ -49,10 +47,18 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 		rootpane.setLookAndFeel( new MetalLookAndFeel() );
 		
                 Window mainWindow = new Window();
-                
-                mainWindow.setActionListener(this);
-		mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
-                
+
+                Button exit = new Button("Exit");
+                exit.addActionListener(this);
+                exit.setActionCommand("exit");
+
+                //mainWindow.setActionListener(this);
+		//mainWindow.setWindowCommand(1, new CommandButton("Exit","exit") );
+
+                MenuBar bar = new MenuBar();
+                bar.add(exit);
+                mainWindow.setMenuBar(bar);
+
 		mainWindow.add( new Label("Hello World!") );
 		mainWindow.setMaximum(true);
                 mainWindow.setVisible(true);
@@ -81,8 +87,8 @@ public class SimpleMidlet extends Midlet implements ActionListener {
             frame.add(panel);
             MenuBar menubar = new MenuBar();
             Menu menu = new Menu("menu");
-            MenuItem open = new MenuItem("Open");
-            MenuItem close = new MenuItem("Close");
+            Button open = new Button("Open");
+            Button close = new Button("Close");
             open.setActionCommand("open");
             close.setActionCommand("close");
             open.addActionListener(actionListener);

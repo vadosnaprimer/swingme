@@ -26,7 +26,6 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.CommandButton;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
@@ -66,6 +65,7 @@ import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.util.Option;
 
 /**
@@ -105,7 +105,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 
 		mainWindow.setMaximum(true);
                 
-		mainWindow.setActionListener(this);
+		//mainWindow.setActionListener(this);
 
                 try {
                     image = new Icon("/world_link.png");
@@ -154,21 +154,21 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 addMainMenuButton("Table Test","tableTest");
                                 
-                                mainMenu = new Menu("Menu","mainMenu");
-                                mainMenu.addActionListener(this);
-                                mainMenu.addMenuItem("metalTheme", "Metal Theme", null);
-                                mainMenu.addMenuItem("aether1", "Nimbus Default Theme", null);
-                                mainMenu.addMenuItem("aetherGreen", "Nimbus Green Theme", null);
-                                mainMenu.addMenuItem("aetherCharcoal", "Nimbus Charcoal Theme", null);
-                                mainMenu.addMenuItem("aether2", "Nimbus .Net Theme", null);
-                                mainMenu.addMenuItem("synthTheme1", "Synth Theme 1", null);
-                                mainMenu.addMenuItem("synthTheme2", "Synth Theme 2", null);
-                                mainMenu.addMenuItem("synthTheme3", "Synth Theme 3", null);
-                                mainMenu.addMenuItem("synthTheme4", "Synth Theme 4", null);
-                                mainMenu.addMenuItem("synthTheme5", "Synth Theme 5", null);
+                                mainMenu = new Menu("Menu");
+                                //mainMenu.addActionListener(this);
+                                addMenuItem(mainMenu,"metalTheme", "Metal Theme");
+                                addMenuItem(mainMenu,"aether1", "Nimbus Default Theme");
+                                addMenuItem(mainMenu,"aetherGreen", "Nimbus Green Theme");
+                                addMenuItem(mainMenu,"aetherCharcoal", "Nimbus Charcoal Theme");
+                                addMenuItem(mainMenu,"aether2", "Nimbus .Net Theme");
+                                addMenuItem(mainMenu,"synthTheme1", "Synth Theme 1");
+                                addMenuItem(mainMenu,"synthTheme2", "Synth Theme 2");
+                                addMenuItem(mainMenu,"synthTheme3", "Synth Theme 3");
+                                addMenuItem(mainMenu,"synthTheme4", "Synth Theme 4");
+                                addMenuItem(mainMenu,"synthTheme5", "Synth Theme 5");
 			}
-			
-			addToScrollPane(mainmenu, new CommandButton(mainMenu), new CommandButton("Exit","exit") );
+
+			addToScrollPane(mainmenu, mainMenu, makeButton("Exit","exit") );
 			
 		}
                 else if ("aether1".equals(actionCommand)) {
@@ -300,7 +300,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 			}
 			
-			addToScrollPane(info, null,  new CommandButton("Back","mainmenu") );
+			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
 			
 		}
                 else if ("componentTest".equals(actionCommand)) {
@@ -308,6 +308,20 @@ public class MainPane extends DesktopPane implements ActionListener {
 			if (componentTest==null) {
 			
 				componentTest = new Panel( new FlowLayout(Graphics.VCENTER) );
+
+                                Menu testMain = new Menu("Menu");
+
+                                addMenuItem(testMain,"t1","test 1");
+                                addMenuItem(testMain,"t2","test 2");
+                                addMenuItem(testMain,"t3","test 3");
+
+                                Menu testMain2 = new Menu("sub Menu");
+
+                                addMenuItem(testMain2,"t1","test 4");
+                                addMenuItem(testMain2,"t2","test 5");
+                                addMenuItem(testMain2,"t3","test 6");
+
+                                testMain.add(testMain2);
 
 				componentTest.add( new Label("a Label") );
                                 if (image!=null) { componentTest.add( new Label( image ) ); }
@@ -318,6 +332,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 Button b2 = new Button("disabled");
                                 b2.setFocusable(false);
 				componentTest.add( b2 );
+
+                                componentTest.add(testMain);
 
                                 componentTest.add( new CheckBox("a CheckBox") );
                                 componentTest.add( new RadioButton("a RadioButton") );
@@ -353,19 +369,19 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 componentTest.add(email);
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
                                 
-                                menu = new Menu("Menu","popmenu");
+                                menu = new Menu("Menu");
                                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                                 menu.add(new Button("bob"));
                                 
-                                Menu menu2 = new Menu("Sub","sub");
-                                menu2.addActionListener(this);
+                                Menu menu2 = new Menu("Sub");
+                                //menu2.addActionListener(this);
                                 menu2.add(new Button("fred"));
-                                menu2.addMenuItem("action","item (will close menu)", null);
+                                addMenuItem(menu2,"action","item (will close menu)");
                                 menu.add(menu2);
                                 
 			}
 			
-			addToScrollPane(componentTest, new CommandButton(menu),  new CommandButton("Back","mainmenu") );
+			addToScrollPane(componentTest, menu, makeButton("Back","mainmenu") );
 			
 		}
                 else if ("componentTest2".equals(actionCommand)) {
@@ -399,7 +415,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                             componentTest2.add(component2);
                             
                         }
-                        addToScrollPane(componentTest2, new CommandButton("Back","mainmenu"), null );
+                        addToScrollPane(componentTest2, makeButton("Back","mainmenu"), null );
                 }
 		else if ("loadpanel".equals(actionCommand)) {
 			
@@ -412,7 +428,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 			}
 			
-			addToScrollPane(loadPanel, new CommandButton("Load","load") , new CommandButton("Back","mainmenu") );
+			addToScrollPane(loadPanel, makeButton("Load","load") , makeButton("Back","mainmenu") );
 		}
 		else if ("viewText".equals(actionCommand)) {
 			
@@ -475,7 +491,7 @@ for (int c=0;c<4;c++) {
                         edit.addActionListener(this);
                         edit.setSelected( viewText.isFocusable() );
 
-			addToScrollPane(p, new CommandButton("Back","mainmenu") , new CommandButton(edit) );
+			addToScrollPane(p, makeButton("Back","mainmenu") , edit );
 
 		}
                 else if ("open_text_edit".equals(actionCommand)) {
@@ -544,7 +560,7 @@ for (int c=0;c<4;c++) {
                                 border.add(menuTest);
 			}
 			
-			addToScrollPane(border, null , new CommandButton("Back","mainmenu") );
+			addToScrollPane(border, null , makeButton("Back","mainmenu") );
 		}
                 else if ("tabTest".equals(actionCommand)) {
 			
@@ -628,7 +644,7 @@ for (int c=0;c<4;c++) {
                                 
 			}
 			
-			addToScrollPane(tabPanel, null , new CommandButton("Back","mainmenu") );
+			addToScrollPane(tabPanel, null , makeButton("Back","mainmenu") );
 		}
                 else if ("tableTest".equals(actionCommand)) {
                     
@@ -783,7 +799,7 @@ for (int c=0;c<4;c++) {
                         tableTest.add(new ScrollPane(table));
 		    }
                     
-                    addToScrollPane(tableTest, null , new CommandButton("Back","mainmenu") );
+                    addToScrollPane(tableTest, null , makeButton("Back","mainmenu") );
                     
                 }
 		else if ("throwerror".equals(actionCommand)) {
@@ -803,27 +819,48 @@ for (int c=0;c<4;c++) {
 		}
 		
 	}
+
+        private Button makeButton(String label,String action) {
+            Button button = new Button(label);
+            System.out.println(action+" -> "+this);
+            button.setActionCommand(action);
+            button.addActionListener(this);
+            return button;
+        }
+
+        private void addMenuItem(Menu menu, String action, String label) {
+            menu.add(makeButton(label, action));
+        }
 	
 	private ScrollPane scroll;
-	private void addToScrollPane(Component a,CommandButton b,CommandButton c) {
+	private void addToScrollPane(Component a,Button b,Button c) {
 		
 		if (scroll==null) {
 			
 			scroll = new ScrollPane();
-                        Label label = new Label("yura.net Mobile");
-                        label.setHorizontalAlignment(Graphics.HCENTER);
-                        mainWindow.add(label,Graphics.TOP);
+                        //Label label = new Label("yura.net Mobile");
+                        //label.setHorizontalAlignment(Graphics.HCENTER);
+                        //mainWindow.add(label,Graphics.TOP);
                         mainWindow.add(scroll);
-                        mainWindow.add(new Label(""),Graphics.BOTTOM);
+                        //mainWindow.add(new Label(""),Graphics.BOTTOM);
+                        mainWindow.setMenuBar(new MenuBar());
 		}
 		
                	scroll.removeAll();
 		scroll.add(a);
 
-		mainWindow.revalidate();
-		
-		mainWindow.setWindowCommand(0, b);
-		mainWindow.setWindowCommand(1, c);
+                MenuBar bar = mainWindow.getMenuBar();
+                bar.removeAll();
+                if (b!=null) {
+                    b.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                    bar.add(b);
+                }
+                if (c!=null) {
+                    c.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                    bar.add(c);
+                }
+
+                mainWindow.revalidate();
 		
 		//setActiveComponent(getContentPane());
 		// TODO mainWindow.setupFocusedComponent();
