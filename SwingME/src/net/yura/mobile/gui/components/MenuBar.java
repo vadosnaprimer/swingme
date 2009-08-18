@@ -110,7 +110,7 @@ public class MenuBar extends List implements ActionListener {
             }
             return -1;
         }
-        throw new UnsupportedOperationException();
+        throw new RuntimeException();
     }
 
     public void pointerEvent(int type, int x, int y, KeyEvent keys) {
