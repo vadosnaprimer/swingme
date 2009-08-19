@@ -5,6 +5,12 @@
 <project name="UtilME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
+
+    <target name="do-deploy" description="copy lib to some other places">
+        <copy file="${deployment.jar}" todir="../SwingME/lib"/>
+        <copy file="${deployment.jar}" todir="../AgentLib/lib"/>
+    </target>
+
     <!--
 
             There exist several targets which are by default empty and which can be

@@ -169,10 +169,6 @@ public class XMLUtil {
             return tagName;
     }
 
-
-    public Object output;
-    public String method;
-
     private KXmlParser parser;
 
     public Object load(Reader reader) throws Exception {
@@ -184,22 +180,7 @@ public class XMLUtil {
         parser.setInput(reader);
         parser.nextTag();
 
-        //method="";
-        //Object object=null;
-
-        //method = parser.getAttributeValue(null, "method");
-        //output = null;
-
-        // read start tag
-        //while (parser.nextTag() != KXmlParser.END_TAG) {
-
-            output = readObject(parser);
-
-        //}
-
-        //parser.nextTag();
-
-        return output;
+        return readObject(parser);
     }
 
     public Vector readVector(KXmlParser parser) throws Exception {
