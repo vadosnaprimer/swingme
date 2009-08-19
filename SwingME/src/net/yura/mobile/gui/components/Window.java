@@ -369,6 +369,9 @@ public class Window extends Panel implements ActionListener {
         public void add(Component comp) {
             getContentPane().add(comp);
         }
+        public void add(Component comp,Object consta) {
+            getContentPane().add(comp,consta);
+        }
 
         public void workoutSize() {
 

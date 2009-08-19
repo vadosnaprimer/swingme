@@ -8,8 +8,10 @@
 
     <target name="do-deploy" description="copy lib to some other places">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
-        <copy file="${deployment.jar}" todir="../cha/lib"/>
+        <copy file="${deployment.jar}" todir="../VistoJ2ME/lib"/>
+        <copy file="${deployment.jar}" todir="../vauchacha/lib"/>
         <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
+        <copy file="${deployment.jar}" todir="../BadooMobile/lib"/>
     </target>
 
     <!--

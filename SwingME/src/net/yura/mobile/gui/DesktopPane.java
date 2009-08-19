@@ -384,6 +384,14 @@ public class DesktopPane extends Canvas implements Runnable {
 //                if (!windows.isEmpty()) {
 //                    drawSoftkeys(graphics);
 //                }
+
+                if (tooltip.isShowing()) {
+                    paintComponent(graphics,tooltip);
+                }
+                if (indicator.getText()!=null && !me4se) {
+                    paintComponent(graphics,indicator);
+                }
+
                 paintLast(graphics);
             }
             catch(Throwable th) {

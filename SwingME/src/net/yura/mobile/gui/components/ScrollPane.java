@@ -329,6 +329,9 @@ public class ScrollPane extends Panel implements Runnable {
 			height = 0;
 		}
 
+                super.workoutSize();
+                width = getComponent().getWidthWithBorder();
+                height = getComponent().getHeightWithBorder();
         }
 
 
@@ -687,7 +690,7 @@ public class ScrollPane extends Panel implements Runnable {
 		int viewWidth=getViewPortWidth(viewHeight);
 
 		g.clipRect(viewX, viewY, viewWidth, viewHeight);
-
+                super.clip(g);
         }
 
         /**

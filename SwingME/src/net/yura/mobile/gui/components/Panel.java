@@ -201,8 +201,8 @@ public class Panel extends Component {
          * @see javax.swing.JComponent#setPreferredSize(java.awt.Dimension) JComponent.setPreferredSize
          */
         public void setPreferredSize(int w, int h) {
-            preferredWidth = w;
-            preferredHeight = h;
+            //preferredWidth = w;
+            //preferredHeight = h;
         }
 	public int getPreferredWidth() {
 		return preferredWidth;

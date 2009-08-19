@@ -115,8 +115,8 @@ public class ComboBox extends Button implements ActionListener{
                     dropDown.add(scroll);
                 }
 
-                list.workoutSize();
-                scroll.setPreferredSize(list.getWidth(), list.getHeight());
+                //list.workoutSize();
+                //scroll.setPreferredSize(list.getWidth(), list.getHeight());
                 dropDown.pack();
                 if (dropDown.getWidthWithBorder()<getWidthWithBorder()) {
                     dropDown.setBoundsWithBorder(0, 0, getWidthWithBorder(), dropDown.getHeightWithBorder());

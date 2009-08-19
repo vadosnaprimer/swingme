@@ -59,8 +59,8 @@ public class Menu extends Button {
         public void fireActionPerformed() {
             super.fireActionPerformed();
 
-            menuItems.workoutSize(); // what out what the needed size is
-            scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
+            //menuItems.workoutSize(); // what out what the needed size is
+            //scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
             popup.pack();
 
             Border insets=getInsets();
@@ -148,8 +148,8 @@ public class Menu extends Button {
 
         public void openMenuInCentre() {
 
-            menuItems.workoutSize(); // what out what the needed size is
-            scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
+            //menuItems.workoutSize(); // what out what the needed size is
+            //scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
             popup.pack();
 
             OptionPane.centre(popup);
