@@ -113,6 +113,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                     ex.printStackTrace();
                 }
                 
+                mainWindow.setMenuBar(new MenuBar());
+                
                 mainWindow.setVisible(true);
 		actionPerformed("mainmenu");
 		
@@ -491,7 +493,7 @@ for (int c=0;c<4;c++) {
                         edit.addActionListener(this);
                         edit.setSelected( viewText.isFocusable() );
 
-			addToScrollPane(p, makeButton("Back","mainmenu") , edit );
+			addToContentPane(p, makeButton("Back","mainmenu") , edit );
 
 		}
                 else if ("open_text_edit".equals(actionCommand)) {
@@ -615,7 +617,12 @@ for (int c=0;c<4;c++) {
                                 
                                 Panel tab2 = new Panel( new FlowLayout() );
                                 tab2.setBackground(0x0000FF00);
-                                tab2.add( new Button("This is tab TWO") );
+
+                                TabbedPane level2 = new TabbedPane();
+                                level2.addTab("one", new Button("too?") );
+                                level2.addTab("two", new Button("This is tab TWO 2") );
+
+                                tab2.add( level2 );
 
                                 Panel tab3 = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 List l3 = new List( new DefaultListCellRenderer() );
@@ -637,14 +644,14 @@ for (int c=0;c<4;c++) {
 
                                 tabbedPane.add(tab1);
                                 tabbedPane.addTab("TAB 2", image, tab2,"i am a tooltip");
-                                tabbedPane.addTab("tab 3 eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", new ScrollPane(tab3));
+                                tabbedPane.addTab("eee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
                                 
                                 tabPanel = tabbedPane;
                                 
 			}
 			
-			addToScrollPane(tabPanel, null , makeButton("Back","mainmenu") );
+			addToContentPane(tabPanel, null , makeButton("Back","mainmenu") );
 		}
                 else if ("tableTest".equals(actionCommand)) {
                     
@@ -831,7 +838,17 @@ for (int c=0;c<4;c++) {
         private void addMenuItem(Menu menu, String action, String label) {
             menu.add(makeButton(label, action));
         }
-	
+
+
+        private void addToContentPane(Component a,Button b,Button c) {
+
+            Panel pane = mainWindow.getContentPane();
+            pane.removeAll();
+            pane.add(a);
+
+            setCommandButtons(b,c);
+        }
+
 	private ScrollPane scroll;
 	private void addToScrollPane(Component a,Button b,Button c) {
 		
@@ -841,13 +858,18 @@ for (int c=0;c<4;c++) {
                         //Label label = new Label("yura.net Mobile");
                         //label.setHorizontalAlignment(Graphics.HCENTER);
                         //mainWindow.add(label,Graphics.TOP);
-                        mainWindow.add(scroll);
+                        //mainWindow.add(scroll);
                         //mainWindow.add(new Label(""),Graphics.BOTTOM);
-                        mainWindow.setMenuBar(new MenuBar());
+                        
 		}
-		
                	scroll.removeAll();
 		scroll.add(a);
+
+                addToContentPane(scroll,b,c);
+
+	}
+
+        private void setCommandButtons(Button b,Button c) {
 
                 MenuBar bar = mainWindow.getMenuBar();
                 bar.removeAll();
@@ -861,12 +883,13 @@ for (int c=0;c<4;c++) {
                 }
 
                 mainWindow.revalidate();
-		
+
 		//setActiveComponent(getContentPane());
 		// TODO mainWindow.setupFocusedComponent();
-		
+
 		mainWindow.repaint();
-	}
+        }
+
 
     private void loadSynthSkin(String string) {
 

@@ -27,6 +27,7 @@ import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
+import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 
 /**
@@ -78,7 +79,7 @@ public class SimpleMidlet extends Midlet implements ActionListener {
                 }
             };
             Frame frame = new Frame("window");
-            Panel panel = new Panel();
+            Panel panel = new Panel(new FlowLayout());
             Button button = new Button("exit");
             button.setActionCommand("exit");
             button.addActionListener(actionListener);
@@ -87,6 +88,8 @@ public class SimpleMidlet extends Midlet implements ActionListener {
             frame.add(panel);
             MenuBar menubar = new MenuBar();
             Menu menu = new Menu("menu");
+//            MenuItem open = new MenuItem("Open");
+//            MenuItem close = new MenuItem("Close");
             Button open = new Button("Open");
             Button close = new Button("Close");
             open.setActionCommand("open");
