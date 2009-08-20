@@ -313,23 +313,9 @@ public class ScrollPane extends Panel implements Runnable {
 		}
 	}
 
-        public void workoutSize() {
+        public void workoutMinimumSize() {
 
-                if (preferredWidth!=-1) {
-                    width = preferredWidth;
-                }
-                else {
-			width = 0;
-		}
-
-                if (preferredHeight!=-1) {
-                    height = preferredHeight;
-                }
-                else {
-			height = 0;
-		}
-
-                super.workoutSize();
+                super.workoutMinimumSize();
                 width = getComponent().getWidthWithBorder();
                 height = getComponent().getHeightWithBorder();
         }
@@ -343,7 +329,7 @@ public class ScrollPane extends Panel implements Runnable {
 
 	    if (getComponents().size() == 1) {
 
-		getComponent().workoutSize();
+		//getComponent().workoutSize();
 
 		int viewHeight=getViewPortHeight();
 		int viewWidth=getViewPortWidth(viewHeight);

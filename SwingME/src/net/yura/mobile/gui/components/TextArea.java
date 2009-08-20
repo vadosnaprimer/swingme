@@ -43,7 +43,7 @@ import net.yura.mobile.gui.KeyEvent;
 public class TextArea extends TextComponent {
 	
 	private int[] lines;
-        private int widthUsed;
+        private int widthUsed=-1;
         
        	private int align;
         private int lineSpacing;
@@ -413,11 +413,14 @@ public class TextArea extends TextComponent {
         }
 
     private void setupHeight(int[] l,int w,boolean relayout) {
+        System.out.println("Setting up height");
+        System.out.println("Font: "+font);
+        System.out.println("Lines: "+l);
         lines = l;
         widthUsed = w;
         int oldh = height;
         height = ((lines.length+1) * font.getHeight()) + (lines.length * lineSpacing);
-
+        System.out.println("Height: "+height);
 
 	// we have just changed out height
 	// if we are in a scrollPane we should tell it, so it can adjust
@@ -428,6 +431,7 @@ public class TextArea extends TextComponent {
 
             Panel p = parent;
             while (!(p instanceof ScrollPane)) {
+                System.out.println("finding parent panel");
                 Panel pp = p.parent;
                 if (pp==null) {
                     break;
@@ -442,9 +446,11 @@ public class TextArea extends TextComponent {
 
 	}
 
+        System.out.println("Set up height finished");
+
     }
 
-    public void workoutSize() {
+    public void workoutMinimumSize() {
 
 	if (wrap) {
 

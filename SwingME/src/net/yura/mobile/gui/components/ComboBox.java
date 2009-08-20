@@ -19,12 +19,9 @@ package net.yura.mobile.gui.components;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
@@ -48,7 +45,7 @@ public class ComboBox extends Button implements ActionListener{
          * @see javax.swing.JComboBox#JComboBox() JComboBox.JComboBox
          */
 	public ComboBox() {
-
+            setHorizontalAlignment(Graphics.LEFT);
 	}
 	/**
          * @param vec an vector of objects to insert into the combo box
@@ -70,7 +67,7 @@ public class ComboBox extends Button implements ActionListener{
         }
 
 
-	public void workoutSize() {
+	public void workoutMinimumSize() {
 		if (list!=null) {
 
 			if (list.getSize()>0){
@@ -103,7 +100,7 @@ public class ComboBox extends Button implements ActionListener{
 		}
                 else {
                     // in case we are empty then use the normal size
-                    super.workoutSize();
+                    super.workoutMinimumSize();
                 }
 	}
 

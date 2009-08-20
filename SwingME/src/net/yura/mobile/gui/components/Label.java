@@ -98,7 +98,7 @@ public class Label extends Component {
         return padding;
     }
 
-	public void workoutSize() {
+	public void workoutMinimumSize() {
 		
 		int w = getCombinedWidth();
 		int h = getCombinedHeight();

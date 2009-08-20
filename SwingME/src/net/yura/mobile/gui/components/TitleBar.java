@@ -109,9 +109,12 @@ public class TitleBar extends Panel implements ActionListener {
         else if (type == DesktopPane.DRAGGED) {
 
             Window owner = getWindow();
-            
-            owner.setLocation(owner.getX()+(x-oldX),owner.getY()+(y-oldY));
-            DesktopPane.getDesktopPane().fullRepaint();
+
+            if (!owner.getMaximum()) {
+
+                owner.setLocation(owner.getX()+(x-oldX),owner.getY()+(y-oldY));
+                DesktopPane.getDesktopPane().fullRepaint();
+            }
 
         }
 

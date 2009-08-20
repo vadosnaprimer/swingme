@@ -43,7 +43,11 @@ public abstract class Component {
 	private Border border;
         
         private String tooltip;
-        
+
+
+        protected int preferredWidth=-1;
+        protected int preferredHeight=-1;
+
         /**
          * @see javax.swing.JComponent#JComponent() JComponent.JComponent
          */
@@ -52,6 +56,21 @@ public abstract class Component {
 		updateUI();
 	}
 
+        /**
+         * @param w The preferred Width (can be -1 for no preference)
+         * @param h The preferred Height (can be -1 for no preference)
+         * @see javax.swing.JComponent#setPreferredSize(java.awt.Dimension) JComponent.setPreferredSize
+         */
+        public void setPreferredSize(int w, int h) {
+            preferredWidth = w;
+            preferredHeight = h;
+        }
+	public int getPreferredWidth() {
+		return preferredWidth;
+	}
+	public int getPreferredHeight() {
+		return preferredHeight;
+	}
 
         /**
          * @param n The new name for this panel
@@ -325,7 +344,24 @@ public abstract class Component {
          * This sets the width and height of this component
          * to the MINIMUM that is needed for this component
          */
-        public abstract void workoutSize();
+        public abstract void workoutMinimumSize();
+
+
+        public void workoutSize() {
+
+            if (preferredWidth==-1 || preferredHeight==-1) {
+                workoutMinimumSize();
+            }
+
+            if (preferredWidth!=-1) {
+                width = preferredWidth;
+            }
+
+            if (preferredHeight!=-1) {
+                height = preferredHeight;
+            }
+
+        }
 
         /**
          * @param a The color of the background of the component (-1 for no color to be used)

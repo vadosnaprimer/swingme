@@ -126,7 +126,7 @@ public class List extends Component implements ActionListener {
     }
 
 
-    public void workoutSize() {
+    public void workoutMinimumSize() {
 
         //if (items!=null) {
 

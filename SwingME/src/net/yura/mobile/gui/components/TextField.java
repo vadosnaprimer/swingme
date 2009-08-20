@@ -99,7 +99,7 @@ public class TextField extends TextComponent {
             repaint();
         }
 
-        public void workoutSize() {
+        public void workoutMinimumSize() {
 
             if (preferredWidth!=-1) {
                 width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);

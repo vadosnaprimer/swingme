@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.DesktopPane;
@@ -78,6 +79,7 @@ public class Button extends Label implements ActionListener {
 	public Button(String label) {
 		super(label);
                 focusable = true;
+                setHorizontalAlignment(Graphics.HCENTER);
 	}
 	
         /**

@@ -209,7 +209,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             return (Component)tabs.elementAt(index);
         }
 
-        public void workoutSize() {
+        public void workoutMinimumSize() {
 
 //            tabList.workoutSize();
 //
@@ -237,7 +237,7 @@ public class TabbedPane extends Panel implements ChangeListener {
 		}
 	    }
 
-	    super.workoutSize();
+	    super.workoutMinimumSize();
 
         }
 

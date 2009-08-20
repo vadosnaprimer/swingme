@@ -34,9 +34,6 @@ public class Panel extends Component {
 	private Vector components;
 	private Hashtable constraints;
 
-        protected int preferredWidth=-1;
-        protected int preferredHeight=-1;
-        
 	/**
          * @see javax.swing.JPanel#JPanel() JPanel.JPanel
          */
@@ -196,26 +193,10 @@ public class Panel extends Component {
         public void paintComponent(Graphics2D g) {}
 
         /**
-         * @param w The preferred Width (can be -1 for no preference)
-         * @param h The preferred Height (can be -1 for no preference)
-         * @see javax.swing.JComponent#setPreferredSize(java.awt.Dimension) JComponent.setPreferredSize
-         */
-        public void setPreferredSize(int w, int h) {
-            //preferredWidth = w;
-            //preferredHeight = h;
-        }
-	public int getPreferredWidth() {
-		return preferredWidth;
-	}
-	public int getPreferredHeight() {
-		return preferredHeight;
-	}
-
-        /**
          * works out the current size of this panel
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
          */
-        public void workoutSize() {
+        public void workoutMinimumSize() {
             
             	for(int i = 0; i < components.size(); i++) {
 			
@@ -224,23 +205,12 @@ public class Panel extends Component {
 
 		}
                 
-                if (preferredWidth!=-1) {
-                    width = preferredWidth;
-                }
-                else if (layout!=null) {
+                if (layout!=null) {
 			width = layout.getPreferredWidth(this);
+                        height = layout.getPreferredHeight(this);
 		}
                 else {
-                    width =0;
-                }
-
-                if (preferredHeight!=-1) {
-                    height = preferredHeight;
-                }
-                else if (layout!=null) {
-			height = layout.getPreferredHeight(this);
-		}
-                else {
+                    width=0;
                     height=0;
                 }
 
@@ -273,10 +243,10 @@ public class Panel extends Component {
          * @see javax.swing.JComponent#revalidate() JComponent.revalidate
          */
         public void revalidate() {
-                for(int i = 0; i < components.size(); i++) {	
-			((Component)components.elementAt(i)).workoutSize();
-                }
-                doLayout();
+            for(int i = 0; i < components.size(); i++) {
+                    ((Component)components.elementAt(i)).workoutSize();
+            }
+            doLayout();
 
             Window w1 = getWindow();
 

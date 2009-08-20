@@ -384,8 +384,8 @@ public class Table extends Panel {
         
     }
 
-    public void workoutSize() {
-        super.workoutSize();
+    public void workoutMinimumSize() {
+        super.workoutMinimumSize();
 
         //int w = 0;
         int h = 0;

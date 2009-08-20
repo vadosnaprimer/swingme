@@ -373,7 +373,7 @@ public class Window extends Panel implements ActionListener {
             getContentPane().add(comp,consta);
         }
 
-        public void workoutSize() {
+        public void workoutMinimumSize() {
 
             int w=0;
             int h=0;

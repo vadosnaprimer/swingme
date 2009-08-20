@@ -112,7 +112,7 @@ public class Spinner extends Label {
 //                super.setFocusable(s);
 //	}
         
-	public void workoutSize() {
+	public void workoutMinimumSize() {
             
             if (list!=null && !list.isEmpty()) {
 

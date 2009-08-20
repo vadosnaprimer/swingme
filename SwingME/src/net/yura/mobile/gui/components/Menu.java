@@ -291,9 +291,9 @@ public class Menu extends Button {
 
 	}
 
-	public void workoutSize() {
+	public void workoutMinimumSize() {
 
-		super.workoutSize();
+		super.workoutMinimumSize();
 		width = width + getFont().getHeight()/( ((arrowDirection & Graphics.TOP ) !=0 || (arrowDirection & Graphics.BOTTOM ) !=0) ?1:2) + padding;
 
 	}

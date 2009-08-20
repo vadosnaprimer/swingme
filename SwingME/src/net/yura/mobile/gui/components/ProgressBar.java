@@ -124,7 +124,7 @@ public class ProgressBar extends Component {
         loading = v;
     }
     
-    public void workoutSize() {
+    public void workoutMinimumSize() {
         // TODO: what to put here?
         height = 20;
         width = 50;

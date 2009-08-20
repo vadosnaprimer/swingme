@@ -3,6 +3,7 @@ package net.yura.mobile.gui.layout;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Vector;
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Button;
@@ -213,6 +214,17 @@ public class XULLoader {
                 if ("text".equals(key)) {
                     label.setText(value);
                 }
+                else if ("alignment".equals(key)) {
+                    if ("center".equals(value)) { // default for button
+                        label.setHorizontalAlignment(Graphics.HCENTER);
+                    }
+                    else if ("right".equals(value)) {
+                        label.setHorizontalAlignment(Graphics.RIGHT);
+                    }
+                    else if ("left".equals(value)) { // default for label
+                        label.setHorizontalAlignment(Graphics.LEFT);
+                    }
+                }
             }
     }
 
@@ -279,6 +291,18 @@ public class XULLoader {
             }
             else if ("halign".equals(key)) {
                 uiobject.halign = value;
+            }
+            else if ("background".equals(key)) {
+                comp.setBackground( Integer.parseInt(value.substring(1),16) );
+            }
+            else if ("foreground".equals(key)) {
+                comp.setForeground( Integer.parseInt(value.substring(1),16) );
+            }
+            else if ("height".equals(key)) {
+                comp.setPreferredSize(comp.getPreferredWidth(), Integer.parseInt(value));
+            }
+            else if ("width".equals(key)) {
+                comp.setPreferredSize( Integer.parseInt(value),comp.getPreferredHeight());
             }
 
         }

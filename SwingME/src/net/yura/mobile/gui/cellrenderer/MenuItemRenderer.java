@@ -96,7 +96,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
             g.translate(-x, -y);
 
     }
-    public void workoutSize() {
+    public void workoutMinimumSize() {
         
         component.workoutSize();
         width = component.getWidth();
