@@ -2,10 +2,13 @@ package net.yura.mobile.gui.layout;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
@@ -17,6 +20,7 @@ import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.TextArea;
+import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.io.UTF8InputStreamReader;
 import net.yura.mobile.util.Option;
@@ -27,15 +31,22 @@ import org.kxml2.io.KXmlParser;
  */
 public class XULLoader {
 
-    public static Panel load(InputStream is, ActionListener listener) throws Exception {
+    public static final int VK_F1 = 112;
+    public static final int VK_F2 = 113;
+
+    public static XULLoader load(InputStream is, ActionListener listener) throws Exception {
 
         XULLoader loader = new XULLoader();
-        GridBagConstraints obj = (GridBagConstraints)loader.load(new UTF8InputStreamReader(is),listener);
 
-        return (Panel)obj.component;
+        loader.load(new UTF8InputStreamReader(is),listener);
+
+        return loader;
     }
 
-    public Object load(Reader reader,ActionListener listener) throws Exception {
+    private Hashtable components = new Hashtable();
+    private Component root;
+
+    public void load(Reader reader,ActionListener listener) throws Exception {
 
         //if (parser==null) {
             KXmlParser parser = new KXmlParser();
@@ -44,7 +55,31 @@ public class XULLoader {
         parser.setInput(reader);
         parser.nextTag();
 
-        return readObject(parser,listener);
+        GridBagConstraints rt = (GridBagConstraints)readObject(parser,listener);
+
+        root = rt.component;
+    }
+
+    public Component find(String name) {
+        return (Component)components.get(name);
+    }
+    public Component getRoot() {
+        return root;
+    }
+    public Hashtable getFormData() {
+        Hashtable data = new Hashtable();
+
+        Enumeration enu = components.keys();
+        while (enu.hasMoreElements()) {
+            String name = (String)enu.nextElement();
+            Component comp = (Component)components.get(name);
+
+            if (comp instanceof TextComponent) {
+                data.put(name, ((TextComponent)comp).getText() );
+            }
+        }
+
+        return data;
     }
 
     public Object readObject(KXmlParser parser,ActionListener listener) throws Exception {
@@ -201,8 +236,36 @@ public class XULLoader {
 
     private void readButton(KXmlParser parser, Button button,ActionListener listener) {
 
-        button.addActionListener(listener);
-        readLabel(parser, button);
+            int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("action".equals(key)) {
+                    button.setActionCommand(value);
+                }
+                else if ("mnemonic".equals(key)) {
+                    int mnemonic = Integer.parseInt(value);
+                    switch (mnemonic) {
+                        case VK_F1: mnemonic=KeyEvent.KEY_SOFTKEY1; break;
+                        case VK_F2: mnemonic=KeyEvent.KEY_SOFTKEY2; break;
+                    }
+                    button.setMnemonic(mnemonic);
+                }
+                else if ("type".equals(key)) {
+                    if ("default".equals(value)) {
+                        button.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                    }
+                    else if ("cancel".equals(value)) {
+                        button.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                    }
+                    else if ("link".equals(value)) {
+                        button.setName("Link");
+                    }
+                }
+            }
+
+            button.addActionListener(listener);
+            readLabel(parser, button);
     }
 
     private void readLabel(KXmlParser parser, Label label) {
@@ -213,6 +276,14 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if ("text".equals(key)) {
                     label.setText(value);
+                }
+                else if ("icon".equals(key)) {
+                    try {
+                        label.setIcon( new Icon(value) );
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 else if ("alignment".equals(key)) {
                     if ("center".equals(value)) { // default for button
@@ -249,7 +320,12 @@ public class XULLoader {
                 tooltip = value;
             }
             else if ("icon".equals(key)) {
-                icon = new Icon(value);
+                try {
+                    icon = new Icon(value);
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
@@ -277,7 +353,7 @@ public class XULLoader {
                 uiobject.weighty = Integer.parseInt(value);
             }
             else if ("colspan".equals(key)) {
-                System.out.println("Setting colspan to "+Integer.parseInt(value));
+//                System.out.println("Setting colspan to "+Integer.parseInt(value));
                 uiobject.colSpan = Integer.parseInt(value);
             }
             else if ("rowspan".equals(key)) {
@@ -303,6 +379,12 @@ public class XULLoader {
             }
             else if ("width".equals(key)) {
                 comp.setPreferredSize( Integer.parseInt(value),comp.getPreferredHeight());
+            }
+            else if ("name".equals(key)) {
+                components.put(value, comp);
+            }
+            else if ("tooltip".equals(key)) {
+                comp.setToolTipText(value);
             }
 
         }

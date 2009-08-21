@@ -4,7 +4,6 @@ import java.util.Hashtable;
 import java.util.Vector;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Panel;
-import net.yura.mobile.gui.layout.Layout;
 
 /**
  * @author Nathan
