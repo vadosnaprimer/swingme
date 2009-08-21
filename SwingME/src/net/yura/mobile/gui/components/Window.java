@@ -509,7 +509,7 @@ public class Window extends Panel implements ActionListener {
                 items.removeElement(softkey);
                 int mne = softkey.getMnemonic();
                 if (menubar!=null && mne!=0 && softkeybackup!=null) {
-                    for (int c=0;c<softkeybackup.size();c++) {
+                    for (int c=softkeybackup.size()-1;c>=0;c--) {
                         Button button = (Button)softkeybackup.elementAt(c);
                         if (button.getMnemonic() == mne) {
                             items.addElement(button);

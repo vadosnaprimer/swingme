@@ -208,13 +208,14 @@ public class Menu extends Button {
 
             popup = new Window();
             popup.setCloseOnFocusLost(true);
+            popup.addWindowListener(this);
 
             if (!DesktopPane.me4se) {
                 MenuBar menubar = new MenuBar();
                 //Button select = new Button("Select");
                 Button cancel = new Button("Cancel");
-                cancel.setActionCommand("cancel");
-                cancel.addActionListener(this);
+                cancel.setActionCommand(Window.CMD_CLOSE);
+                cancel.addActionListener(popup);
                 cancel.setMnemonic(KeyEvent.KEY_SOFTKEY2);
                 //menubar.add(select);
                 menubar.add(cancel);
@@ -237,7 +238,7 @@ public class Menu extends Button {
 
     	public void actionPerformed(String actionCommand) {
 
-            if ("cancel".equals(actionCommand)) {
+            if (Window.CMD_CLOSE.equals(actionCommand)) {
                 popup.setVisible(false);
                 // cancel the parent menu
                 if (parentMenu!=null) {
@@ -255,7 +256,7 @@ public class Menu extends Button {
                     popup.setVisible(false);
                     // cancel the parent menu
                     if (parentMenu!=null) {
-                        parentMenu.actionPerformed("cancel");
+                        parentMenu.actionPerformed(Window.CMD_CLOSE);
                     }
                 }
 
