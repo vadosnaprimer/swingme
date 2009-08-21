@@ -226,7 +226,6 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.AbstractButton#fireActionPerformed(java.awt.event.ActionEvent) AbstractButton.fireActionPerformed
          */
 	public void fireActionPerformed() {
-System.out.println("Pressed: "+getActionCommand()+" -> "+getActionListener());
             if (buttonGroup!=null) {
                 if (!selected) {
                     setSelected(true);

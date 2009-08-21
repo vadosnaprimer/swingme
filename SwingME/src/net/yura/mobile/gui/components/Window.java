@@ -410,7 +410,7 @@ public class Window extends Panel implements ActionListener {
                 h = h + ch;
             }
 
-            System.out.println("size: "+w+" "+h);
+            //System.out.println("size: "+w+" "+h);
 
             setSize(w, h);
         }
