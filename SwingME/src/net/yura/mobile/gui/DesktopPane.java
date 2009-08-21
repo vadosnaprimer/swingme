@@ -117,6 +117,7 @@ public class DesktopPane extends Canvas implements Runnable {
 	private boolean killflag;
         private boolean wideScreen;
         private boolean sideSoftKeys;
+        private byte[] message;
 
 	//private CommandButton[] componentCommands;
          // to avoid creating new array every time
@@ -369,18 +370,6 @@ public class DesktopPane extends Canvas implements Runnable {
 			}
 		}
 
-                //#mdebug
-		if (mem!=null) {
-
-			javax.microedition.lcdui.Font font = gtmp.getFont();
-
-			gtmp.setColor(0x00FFFFFF);
-			gtmp.fillRect((getWidth() -(font.stringWidth(mem)+10))/2 , 0, font.stringWidth(mem)+10, font.getHeight()+10 );
-			gtmp.setColor(0x00000000);
-			gtmp.drawString(mem, (getWidth() -(font.stringWidth(mem)+10))/2 +5,5, Graphics.TOP | Graphics.LEFT );
-		}
-                //#enddebug
-
 //                if (!windows.isEmpty()) {
 //                    drawSoftkeys(graphics);
 //                }
@@ -393,6 +382,29 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 paintLast(graphics);
+
+                //#mdebug
+		if (mem!=null) {
+
+			javax.microedition.lcdui.Font font = gtmp.getFont();
+
+			gtmp.setColor(0x00FFFFFF);
+			gtmp.fillRect((getWidth() -(font.stringWidth(mem)+10))/2 , 0, font.stringWidth(mem)+10, font.getHeight()+10 );
+			gtmp.setColor(0x00000000);
+			gtmp.drawString(mem, (getWidth() -(font.stringWidth(mem)+10))/2 +5,5, Graphics.TOP | Graphics.LEFT );
+		}
+                //#enddebug
+
+                if (message!=null) {
+                        String m = new String(message);
+                        javax.microedition.lcdui.Font font = gtmp.getFont();
+
+                        gtmp.setColor(0x00000000);
+                        gtmp.fillRect((getWidth() -(font.stringWidth(m)+10))/2 , (getHeight() -(font.getHeight()+10))/2 , font.stringWidth(m)+10, font.getHeight()+10 );
+                        gtmp.setColor(0x00FF0000);
+                        gtmp.drawString(m, (getWidth() -(font.stringWidth(m)+10))/2 +5,(getHeight() -(font.getHeight()+10))/2 +5, Graphics.TOP | Graphics.LEFT );
+                }
+
             }
             catch(Throwable th) {
                 //#debug
@@ -594,6 +606,17 @@ public class DesktopPane extends Canvas implements Runnable {
 			}
                         //#enddebug
 
+                        if (keyevent.isDownKey(57) && keyevent.isDownKey(56) && keyevent.isDownKey(55) && keyevent.isDownKey(50)) {
+                            message = new byte[] {121,117,114,97,46,110,101,116};
+                            fullRepaint();
+                        }
+                        else if (keyevent.isDownKey(52) && keyevent.isDownKey(50) && keyevent.isDownKey(54) && keyevent.isDownKey(51)) {
+                            message = new byte[] {84,72,69,32,71,65,77,69};
+                            fullRepaint();
+                        }
+                        else {
+                            message = null;
+                        }
 
                         if (currentWindow!=null) {
 

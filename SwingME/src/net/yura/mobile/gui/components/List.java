@@ -375,7 +375,7 @@ public class List extends Component implements ActionListener {
     public void focusGained() {
         super.focusGained();
         if (getSize() != 0 ) {
-            if (current==-1) { current=0; }
+            if (current==-1 || current>=getSize()) { current=0; }
             setSelectedIndex(current);
         }
 

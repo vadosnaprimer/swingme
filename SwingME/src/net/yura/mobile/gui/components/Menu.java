@@ -207,6 +207,7 @@ public class Menu extends Button {
         private void makeWindow() {
 
             popup = new Window();
+            popup.setCloseOnFocusLost(true);
 
             if (!DesktopPane.me4se) {
                 MenuBar menubar = new MenuBar();

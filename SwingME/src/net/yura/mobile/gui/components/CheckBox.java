@@ -27,6 +27,7 @@ public class CheckBox extends RadioButton {
      * @see javax.swing.JCheckBox#JCheckBox() JCheckBox.JCheckBox
      */
         public CheckBox() {
+            this("");
         }
 
     /**
@@ -34,7 +35,7 @@ public class CheckBox extends RadioButton {
      * @see javax.swing.JCheckBox#JCheckBox(java.lang.String) JCheckBox.JCheckBox
      */
 	public CheckBox(String label){
-            super(label);
+            this(label,false);
 	}
 	
         /**
@@ -43,8 +44,7 @@ public class CheckBox extends RadioButton {
          * @see javax.swing.JCheckBox#JCheckBox(java.lang.String, boolean) JCheckBox.JCheckBox
          */
         public CheckBox(String text, boolean selected) {
-             super(text);
-             setSelected(selected);
+             super(text,selected);
         }
 
         protected void toggleSelection() {

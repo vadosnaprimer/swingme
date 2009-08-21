@@ -21,6 +21,7 @@ import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
@@ -40,11 +41,9 @@ public class Window extends Panel implements ActionListener {
             return allWindows;
         }
         
-        //private CommandButton[] windowCommands;
-        private ActionListener actionListener;
-        
         private Component focusedComponent;
         private boolean maximised;
+        private boolean closeOnFocusLost;
 
         //private TitleBar titleBar;
         //private MenuBar menubar;
@@ -73,6 +72,10 @@ public class Window extends Panel implements ActionListener {
                 super.add(new Panel(new BorderLayout()));
 
 	}
+
+        public void setCloseOnFocusLost(boolean ch) {
+            closeOnFocusLost = ch;
+        }
 
         /**
          * @see java.awt.Frame#setUndecorated(boolean) Frame.setUndecorated
@@ -204,14 +207,6 @@ public class Window extends Panel implements ActionListener {
                     getMostRecentFocusOwner();
                 }
         }
-        
-        public ActionListener getActionListener() {
-		return actionListener;
-	}
-
-//	public void setActionListener(ActionListener actionListener) {
-//		this.actionListener = actionListener;
-//	}
 	
 	public void passScrollUpDown(int right) {
 		
@@ -297,6 +292,14 @@ public class Window extends Panel implements ActionListener {
 
             // TODO to resize the window
             // if we drag next to the border
+
+            if (closeOnFocusLost && type == DesktopPane.PRESSED &&
+                    (x<0 || y<0 || x>width || y>height)
+                    ) {
+                actionPerformed(CMD_CLOSE);
+            }
+
+
         }
 
 //        public CommandButton[] getWindowCommands() {

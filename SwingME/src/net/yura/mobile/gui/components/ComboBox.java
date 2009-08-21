@@ -108,6 +108,7 @@ public class ComboBox extends Button implements ActionListener{
                 createList();
                 if (dropDown==null) {
                     dropDown = new Window();
+                    dropDown.setCloseOnFocusLost(true);
                     dropDown.setName("Menu");
                     dropDown.add(scroll);
                 }

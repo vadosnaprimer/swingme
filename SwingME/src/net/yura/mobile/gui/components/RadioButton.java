@@ -17,7 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
-import net.yura.mobile.gui.DesktopPane;
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.plaf.Style;
@@ -36,6 +36,7 @@ public class RadioButton extends Button {
          * @see javax.swing.JRadioButton#JRadioButton() JRadioButton.JRadioButton
          */
         public RadioButton() {
+            this("");
         }
 
         /**
@@ -43,7 +44,7 @@ public class RadioButton extends Button {
          * @see javax.swing.JRadioButton#JRadioButton(java.lang.String) JRadioButton.JRadioButton
          */
 	public RadioButton(String label) {
-                super(label);
+                this(label,false);
 	}
 
         /**
@@ -54,6 +55,7 @@ public class RadioButton extends Button {
         public RadioButton(String string, boolean b) {
             super(string);
             setSelected(b);
+            setHorizontalAlignment(Graphics.LEFT);
         }
 
 
