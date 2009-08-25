@@ -126,7 +126,7 @@ public class XMLUtil {
 
     }
 
-    public static String getObjectType(Object object) {
+    public static String getObjectType(Object object) throws IOException {
 
             String tagName;
 
@@ -164,6 +164,7 @@ public class XMLUtil {
                 // TODO do something else??
                 System.out.println("unknown object: "+object.getClass());
                 tagName = object.getClass().getName();
+                throw new IOException();
             }
 
             return tagName;
@@ -290,7 +291,8 @@ public class XMLUtil {
             else {
                 // TODO load class or something???
                 System.out.println("unknown object: "+name);
-                return value;
+                //return value;
+                throw new IOException();
             }
 
         }
