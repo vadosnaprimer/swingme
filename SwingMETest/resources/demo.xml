@@ -2,8 +2,8 @@
 <tabbedpane background="#E69900" action="tabchanged" name="tabs" selected="2">
     <tab text="Basic" background="#E69900" >
             <panel columns="1" top="4" left="4" bottom="4" right="4" gap="4">
-                    <label text="Label" icon="/image.png" />
-                    <button text="Button" icon="/image.png" />
+                    <label text="Label" icon="/world_link.png" />
+                    <button text="Button" icon="/world_link.png" />
                     <checkbox text="CheckBox" selected="true" />
                     <progressbar value="50" />
                     <slider value="50" />
