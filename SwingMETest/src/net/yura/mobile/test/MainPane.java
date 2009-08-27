@@ -66,6 +66,7 @@ import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.MenuBar;
+import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
 
 /**
@@ -155,6 +156,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Window Test","windowTest1");
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 addMainMenuButton("Table Test","tableTest");
+                                addMainMenuButton("XUL Test","xulTest");
                                 
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
@@ -222,9 +224,17 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                     Window test1 = new Window();
                     test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
-                    test1.add(new Label("LALAL TEST 1"));
+
+                    //test1.add(new Label("LALAL TEST 1"));
                     //test1.setBackground(0x00FFFFFF);
-                    
+
+                    try {
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
+                        test1.add( loader.getRoot() );
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     
                     // Test that pack method works too
@@ -232,6 +242,19 @@ public class MainPane extends DesktopPane implements ActionListener {
                     
                     add(test1);
                     
+                }
+                else if ("xulTest".equals(actionCommand)) {
+
+                    Panel panel = null;
+
+                    try {
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
+                        panel = (Panel)loader.getRoot();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    addToScrollPane(panel, null,  makeButton("Back","mainmenu") );
                 }
                 else if ("info".equals(actionCommand)) {
 			
