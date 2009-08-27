@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<panel columns="2" top="4" left="4" right="4" gap="4">
-	<textfield name="number1" columns="4" />
-	<label text="+" halign="center" />
-	<textfield name="number2" columns="4" />
-	<button text="=" action="calculate" />
-	<textfield name="result" editable="false" columns="4" colspan="2" />
-</panel>
