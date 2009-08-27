@@ -13,7 +13,15 @@ import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 public class MenuBar extends List implements ActionListener {
 
     public MenuBar() {
-        super(null, new MenuItemRenderer(), true);
+
+		setLayoutOrientation(true);
+
+		MenuItemRenderer renderer = new MenuItemRenderer();
+
+		renderer.setName("MenuRenderer");
+
+		setCellRenderer(renderer);
+
         addActionListener(this);
     }
 

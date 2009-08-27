@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
@@ -29,113 +28,142 @@ import net.yura.mobile.gui.plaf.Style;
 public class RadioButton extends Button {
 
 	protected Icon selectedImage;
-        protected Icon disabledImage;
-        protected Icon disabledSelectedImage;
-	
-        /**
-         * @see javax.swing.JRadioButton#JRadioButton() JRadioButton.JRadioButton
-         */
-        public RadioButton() {
-            this("");
-        }
+	protected Icon disabledImage;
+	protected Icon disabledSelectedImage;
+	protected Icon focusedImage;
+	protected Icon focusedSelectedImage;
 
-        /**
-         * @param label
-         * @see javax.swing.JRadioButton#JRadioButton(java.lang.String) JRadioButton.JRadioButton
-         */
-	public RadioButton(String label) {
-                this(label,false);
+	/**
+	 * @see javax.swing.JRadioButton#JRadioButton() JRadioButton.JRadioButton
+	 */
+	public RadioButton() {
+		this("");
 	}
 
-        /**
-         * @param string
-         * @param b
-         * @see javax.swing.JRadioButton#JRadioButton(java.lang.String, boolean) JRadioButton.JRadioButton
-         */
-        public RadioButton(String string, boolean b) {
-            super(string);
-            setSelected(b);
-            setHorizontalAlignment(Graphics.LEFT);
-        }
+	/**
+	 * @param label
+	 * @see javax.swing.JRadioButton#JRadioButton(java.lang.String) JRadioButton.JRadioButton
+	 */
+	public RadioButton(String label) {
+		this(label, false);
+	}
 
+	/**
+	 * @param string
+	 * @param b
+	 * @see javax.swing.JRadioButton#JRadioButton(java.lang.String, boolean) JRadioButton.JRadioButton
+	 */
+	public RadioButton(String string, boolean b) {
+		super(string);
+		setSelected(b);
+		setHorizontalAlignment(Graphics.LEFT);
+	}
 
-        protected void toggleSelection() {
-            setSelected(true);
-        }
+	protected void toggleSelection() {
+		setSelected(true);
+	}
 
-        /**
-         * @see javax.swing.AbstractButton#getSelectedIcon() AbstractButton.getSelectedIcon
-         */
+	/**
+	 * @see javax.swing.AbstractButton#getRolloverSelectedIcon() AbstractButton.getRolloverSelectedIcon
+	 */
+	protected Icon getRolloverSelectedIcon() {
+		return focusedSelectedImage;
+	}
+
+	/**
+	 * @see javax.swing.AbstractButton#setRolloverSelectedIcon() AbstractButton.setRolloverSelectedIcon
+	 */
+	protected void setRolloverSelectedIcon(Icon focusedSelectedImage) {
+		this.focusedSelectedImage = focusedSelectedImage;
+	}
+
+	/**
+	 * @see javax.swing.AbstractButton#getRolloverIcon() AbstractButton.getRolloverIcon
+	 */
+	public Icon getRolloverIcon() {
+		return focusedImage;
+	}
+
+	/**
+	 * @see javax.swing.AbstractButton#setRolloverIcon() AbstractButton.setRolloverIcon
+	 */
+	public void setRolloverIcon(Icon rolloverIcon) {
+		this.focusedImage = rolloverIcon;
+	}
+
+	/**
+	 * @see javax.swing.AbstractButton#getSelectedIcon() AbstractButton.getSelectedIcon
+	 */
 	public Icon getSelectedIcon() {
 		return selectedImage;
 	}
 
-        /**
-         * @see javax.swing.AbstractButton#setSelectedIcon(javax.swing.Icon) AbstractButton.setSelectedIcon
-         */
+	/**
+	 * @see javax.swing.AbstractButton#setSelectedIcon(javax.swing.Icon) AbstractButton.setSelectedIcon
+	 */
 	public void setSelectedIcon(Icon selectedImage) {
 		this.selectedImage = selectedImage;
 	}
 
-        /**
-         * @see javax.swing.AbstractButton#setDisabledIcon(javax.swing.Icon) AbstractButton.setDisabledIcon
-         */
-        public void setDisabledIcon(Icon disabledIcon) {
-            disabledImage = disabledIcon;
-        }
-        
-        /**
-         * @see javax.swing.AbstractButton#getDisabledIcon() AbstractButton.getDisabledIcon
-         */
-        public Icon getDisabledIcon() {
-            return disabledImage;
-        }
-        
-        /**
-         * @see javax.swing.AbstractButton#setDisabledSelectedIcon(javax.swing.Icon) AbstractButton.setDisabledSelectedIcon
-         */
-        public void setDisabledSelectedIcon(Icon disabledSelectedIcon) {
-            disabledSelectedImage = disabledSelectedIcon;
-        }
-        
-        /**
-         * @see javax.swing.AbstractButton#getDisabledSelectedIcon() AbstractButton.getDisabledSelectedIcon
-         */
-        public Icon getDisabledSelectedIcon() {
-            return disabledSelectedImage;
-        }
-        
-        public String getDefaultName() {
-            return "RadioButton";
-        }
-        
-        public void updateUI() {
-                super.updateUI();
-                
-                //Style st = DesktopPane.getDefaultTheme(this);
+	/**
+	 * @see javax.swing.AbstractButton#setDisabledIcon(javax.swing.Icon) AbstractButton.setDisabledIcon
+	 */
+	public void setDisabledIcon(Icon disabledIcon) {
+		disabledImage = disabledIcon;
+	}
 
-                icon = (Icon)theme.getProperty("icon", Style.ALL);
-                selectedImage = (Icon)theme.getProperty("icon", Style.SELECTED);
-                disabledImage = (Icon)theme.getProperty("icon", Style.DISABLED);
-                disabledSelectedImage = (Icon)theme.getProperty("icon", Style.DISABLED | Style.SELECTED);
+	/**
+	 * @see javax.swing.AbstractButton#getDisabledIcon() AbstractButton.getDisabledIcon
+	 */
+	public Icon getDisabledIcon() {
+		return disabledImage;
+	}
 
-        }
+	/**
+	 * @see javax.swing.AbstractButton#setDisabledSelectedIcon(javax.swing.Icon) AbstractButton.setDisabledSelectedIcon
+	 */
+	public void setDisabledSelectedIcon(Icon disabledSelectedIcon) {
+		disabledSelectedImage = disabledSelectedIcon;
+	}
 
-    protected void paintIcon(Graphics2D g, int x, int y) {
+	/**
+	 * @see javax.swing.AbstractButton#getDisabledSelectedIcon() AbstractButton.getDisabledSelectedIcon
+	 */
+	public Icon getDisabledSelectedIcon() {
+		return disabledSelectedImage;
+	}
 
-        if (isSelected() && !focusable && disabledSelectedImage!=null) {
-            disabledSelectedImage.paintIcon(this, g, x, y);
-        }
-        else if (isSelected() && selectedImage!=null) {
-            selectedImage.paintIcon(this, g, x, y);
-        }
-        else if (!focusable && disabledImage!=null) {
-            disabledImage.paintIcon(this, g, x, y);
-        }
-        else {
-            super.paintIcon(g, x, y);
-        }
+	public String getDefaultName() {
+		return "RadioButton";
+	}
 
-    }
-        
+	public void updateUI() {
+		super.updateUI();
+
+		//Style st = DesktopPane.getDefaultTheme(this);
+
+		icon = (Icon) theme.getProperty("icon", Style.ALL);
+		focusedSelectedImage = (Icon) theme.getProperty("icon",  Style.SELECTED | Style.FOCUSED);
+		selectedImage = (Icon) theme.getProperty("icon", Style.SELECTED);
+		disabledImage = (Icon) theme.getProperty("icon", Style.DISABLED);
+		focusedImage = (Icon) theme.getProperty("icon", Style.FOCUSED);
+		disabledSelectedImage = (Icon) theme.getProperty("icon", Style.DISABLED | Style.SELECTED);
+
+	}
+
+	protected void paintIcon(Graphics2D g, int x, int y) {
+		if (isSelected() && !focusable && disabledSelectedImage != null) {
+			disabledSelectedImage.paintIcon(this, g, x, y);
+		} else if(isFocusOwner() && isSelected()&& focusedSelectedImage!=null){
+			focusedSelectedImage.paintIcon(this, g, x, y);
+		} else if (isSelected() && selectedImage!=null) {
+			selectedImage.paintIcon(this, g, x, y);
+		} else if (!focusable && disabledImage != null) {
+			disabledImage.paintIcon(this, g, x, y);
+		} else if (isFocusOwner() && focusedImage!=null) {
+			focusedImage.paintIcon(this, g, x, y);
+		} else {
+			super.paintIcon(g, x, y);
+		}
+	}
 }

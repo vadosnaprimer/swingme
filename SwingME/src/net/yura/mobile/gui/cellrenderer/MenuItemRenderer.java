@@ -53,9 +53,9 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
                     }
                 }
                 if (cellHasFocus) {
-                    state |= Style.FOCUSED;
+                    state |= Style.FOCUSED;			
                 }
-                if (isSelected) {
+                if (isSelected) {			
                     state |= Style.SELECTED;
                 }
 
@@ -67,6 +67,8 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
             component = (Button)value;
 
 
+		
+			
             // This is only used when component is NULL
             //setText(value.toString());
             //setHorizontalAlignment(left?Graphics.LEFT:Graphics.RIGHT);
@@ -87,6 +89,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
             //}
             
             component.workoutSize();
+			component.setForeground( getCurrentForeground() );
             
             int x = 0; //left?0:width-component.getWidth();
             int y = (height - component.getHeight()) / 2;

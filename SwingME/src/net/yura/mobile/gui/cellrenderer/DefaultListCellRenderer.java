@@ -17,8 +17,6 @@
 
 package net.yura.mobile.gui.cellrenderer;
 
-import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;

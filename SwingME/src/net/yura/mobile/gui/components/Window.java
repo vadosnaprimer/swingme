@@ -21,7 +21,6 @@ import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;

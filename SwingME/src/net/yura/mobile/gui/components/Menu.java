@@ -250,7 +250,7 @@ public class Menu extends Button {
 
                 //if (button instanceof Menu) {
                 Component comp = menuItems.getRendererComponentFor( menuItems.getSelectedIndex() );
-                button.setBoundsWithBorder(getXOnScreen() + comp.getXWithBorder(), getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                button.setBoundsWithBorder(menuItems.getXOnScreen() + comp.getXWithBorder(), menuItems.getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                 //}
                 if (!(button instanceof Menu)) {
                     popup.setVisible(false);
