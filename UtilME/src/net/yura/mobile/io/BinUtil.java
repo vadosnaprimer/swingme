@@ -14,6 +14,7 @@ import java.util.Vector;
  */
 public class BinUtil {
 
+    public static final int TYPE_BYTE_ARRAY = 13;
     public static final int TYPE_HASHTABLE = 12;
     public static final int TYPE_VECTOR = 10;
     public static final int TYPE_ARRAY = 11;
@@ -84,10 +85,18 @@ public class BinUtil {
             out.writeInt(TYPE_HASHTABLE);
             writeHashtable( out, (Hashtable)obj );
         }
+        else if (obj instanceof byte[]) {
+            out.writeInt(TYPE_BYTE_ARRAY);
+            byte[] bytes = ((byte[])obj);
+            out.writeInt( bytes.length );
+            out.write( bytes );
+        }
         else if (obj == null) {
             out.writeInt(TYPE_NULL);
         }
         else {
+            out.writeInt(-1);
+            out.writeInt(0);
             throw new IOException();
         }
     }
@@ -109,7 +118,7 @@ public class BinUtil {
 
     public void writeHashtable(DataOutputStream out, Hashtable hashtable) throws IOException {
         int size = hashtable.size();
-        out.writeInt(size);
+        out.writeInt(size*2);
 
         Enumeration enu = hashtable.keys();
         while (enu.hasMoreElements()) {
@@ -144,8 +153,22 @@ public class BinUtil {
             case TYPE_ARRAY: return readArray(in2);
             case TYPE_HASHTABLE: return readHashtable(in2);
             case TYPE_FLOAT: return new Float(in2.readFloat());
+            case TYPE_BYTE_ARRAY: {
+                int size = in2.readInt();
+                byte[] bytes = new byte[size];
+                in2.readFully(bytes);
+                return bytes;
+            }
             case TYPE_NULL: return null;
-            default: throw new IOException();
+            default: {
+                int n = in2.readInt();
+                System.out.println("unknown object, type: "+type+" length: "+n);
+                for (int c=0;c<n;c++) {
+                    Object obj = readObject(in2);
+                    System.out.println("unknown object, content: "+obj);
+                }
+                throw new IOException();
+            }
         }
 
     }
@@ -171,7 +194,7 @@ public class BinUtil {
     }
 
     public Object readHashtable(DataInputStream in2) throws IOException {
-        int size = in2.readInt();
+        int size = in2.readInt()/2;
         Hashtable vector = new Hashtable(size);
         for (int c=0;c<size;c++) {
             Object key = readObject(in2);
