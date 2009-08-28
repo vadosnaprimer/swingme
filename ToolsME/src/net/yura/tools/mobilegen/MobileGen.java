@@ -270,11 +270,19 @@ Class param = m.getParameterTypes()[0];
 ps.println("            "+(n==0?"":"else ")+"if (\""+paramName(m)+"\".equals(name)) {");
 if (param.isArray()) {
 ps.println("                Vector numbers = readVector(parser);");
-ps.println("                String[] array = new String[numbers.size()];");
+ps.println("                "+param.getComponentType().getSimpleName()+"[] array = new "+param.getComponentType().getSimpleName()+"[numbers.size()];");
 ps.println("                numbers.copyInto(array);");
-ps.println("                object.setNumbers(array);");
+ps.println("                object."+m.getName()+"(array);");
 }
-else  {
+else if (param == Object.class) {
+ps.println("                Object obj = null;");
+ps.println("                while (parser.nextTag() != KXmlParser.END_TAG) {");
+ps.println("                    if (obj!=null) { throw new IOException(); }");
+ps.println("                    obj = readObject(parser);");
+ps.println("                }");
+ps.println("                object."+m.getName()+"( obj );");
+}
+else {
 ps.println("                object."+m.getName()+"( read"+param.getSimpleName()+"(parser) );");
 }
 ps.println("            }");

@@ -1,0 +1,98 @@
+package net.yura.mobile.gen;
+import net.yura.tools.mobilegen.Test;
+import net.yura.tools.mobilegen.TestObject;
+import java.util.Hashtable;
+import java.util.Vector;
+import java.io.IOException;
+import net.yura.mobile.io.BinUtil;
+import java.io.DataOutputStream;
+import java.io.DataInputStream;
+/**
+ * THIS FILE IS GENERATED, DO NOT EDIT
+ */
+public class BinAccess extends BinUtil {
+    public static final int TYPE_TEST=20;
+    public static final int TYPE_TESTOBJECT=21;
+    public BinAccess() {
+    }
+    public void writeObject(DataOutputStream out, Object object) throws IOException {
+        if (object instanceof Test) {
+            out.writeInt(TYPE_TEST);
+            saveTest(out,(Test)object);
+        }
+        else if (object instanceof TestObject) {
+            out.writeInt(TYPE_TESTOBJECT);
+            saveTestObject(out,(TestObject)object);
+        }
+        else {
+            super.writeObject(out, object);
+        }
+    }
+    public void saveTest(DataOutputStream out,Test object) throws IOException {
+        out.writeInt(1);
+        out.writeInt( TYPE_INTEGER);
+        out.writeInt( object.getId() );
+    }
+    public void saveTestObject(DataOutputStream out,TestObject object) throws IOException {
+        out.writeInt(8);
+        out.writeInt( TYPE_BYTE);
+        out.writeByte( object.getAge() );
+        writeObject(out, object.getBody() );
+        out.writeInt( TYPE_INTEGER);
+        out.writeInt( object.getId() );
+        out.writeInt( TYPE_BYTE_ARRAY);
+        writeBytes( out, object.getImage() );
+        out.writeInt( TYPE_ARRAY);
+        writeArray( out, object.getLegs() );
+        out.writeInt( TYPE_STRING);
+        out.writeUTF( object.getName() );
+        out.writeInt( TYPE_VECTOR);
+        writeVector( out, object.getNumbers() );
+        out.writeInt( TYPE_ARRAY);
+        writeArray( out, object.getTimes() );
+    }
+    public Object readObject(DataInputStream in,int type,int size) throws IOException {
+        switch (type) {
+            case TYPE_TEST: return readTest(in,size);
+            case TYPE_TESTOBJECT: return readTestObject(in,size);
+            default: return super.readObject(in,type,size);
+        }
+    }
+    private Test readTest(DataInputStream in,int size) throws IOException {
+        Test object = new Test();
+        assertType(in.readInt() , TYPE_INTEGER);
+        object.setId( in.readInt() );
+        skipUnknownObjects(in,size - 1);
+        return object;
+    }
+    private TestObject readTestObject(DataInputStream in,int size) throws IOException {
+        TestObject object = new TestObject();
+        assertType(in.readInt() , TYPE_BYTE);
+        object.setAge( in.readByte() );
+        object.setBody( readObject(in) );
+        assertType(in.readInt() , TYPE_INTEGER);
+        object.setId( in.readInt() );
+        assertType(in.readInt() , TYPE_BYTE_ARRAY);
+        object.setImage( readBytes(in) );
+        {
+          assertType(in.readInt() , TYPE_ARRAY);
+          Object[] objects = readArray(in);
+          String[] array = new String[objects.length];
+          System.arraycopy(objects,0,array,0,objects.length);
+          object.setLegs(array);
+        }
+        assertType(in.readInt() , TYPE_STRING);
+        object.setName( in.readUTF() );
+        assertType(in.readInt() , TYPE_VECTOR);
+        object.setNumbers( readVector(in) );
+        {
+          assertType(in.readInt() , TYPE_ARRAY);
+          Object[] objects = readArray(in);
+          long[] array = new long[objects.length];
+          System.arraycopy(objects,0,array,0,objects.length);
+          object.setTimes(array);
+        }
+        skipUnknownObjects(in,size - 8);
+        return object;
+    }
+}

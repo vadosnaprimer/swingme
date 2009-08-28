@@ -11,6 +11,42 @@ public class TestObject extends Test {
     private String name;
     private byte age;
     private Vector numbers;
+    private Object body;
+    private String[] legs;
+    private byte[] image;
+    private long[] times;
+
+    public long[] getTimes() {
+        return times;
+    }
+
+    public void setTimes(long[] times) {
+        this.times = times;
+    }
+
+    public byte[] getImage() {
+        return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
+
+    public String[] getLegs() {
+        return legs;
+    }
+
+    public void setLegs(String[] legs) {
+        this.legs = legs;
+    }
+
+    public Object getBody() {
+        return body;
+    }
+
+    public void setBody(Object body) {
+        this.body = body;
+    }
 
     public byte getAge() {
         return age;
