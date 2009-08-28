@@ -87,9 +87,11 @@ public class BinUtil {
         }
         else if (obj instanceof byte[]) {
             out.writeInt(TYPE_BYTE_ARRAY);
-            byte[] bytes = ((byte[])obj);
-            out.writeInt( bytes.length );
-            out.write( bytes );
+            writeBytes(out, (byte[])obj);
+        }
+        else if (obj instanceof Character) {
+            out.writeInt(TYPE_CHARACTER);
+            out.writeChar(((Character)obj).charValue());
         }
         else if (obj == null) {
             out.writeInt(TYPE_NULL);
@@ -99,6 +101,13 @@ public class BinUtil {
             out.writeInt(0);
             throw new IOException();
         }
+    }
+
+    public void writeBytes(DataOutputStream out, byte[] bytes) throws IOException {
+
+            out.writeInt( bytes.length );
+            out.write( bytes );
+
     }
 
     public void writeVector(DataOutputStream out, Vector vector) throws IOException {
@@ -134,12 +143,6 @@ public class BinUtil {
 
         int type = in2.readInt();
 
-        return readObject(in2, type);
-
-    }
-
-    public Object readObject(DataInputStream in2,int type) throws IOException {
-
         switch (type) {
             case TYPE_INTEGER: return new Integer(in2.readInt());
             case TYPE_DOUBLE: return new Double(in2.readDouble());
@@ -153,27 +156,43 @@ public class BinUtil {
             case TYPE_ARRAY: return readArray(in2);
             case TYPE_HASHTABLE: return readHashtable(in2);
             case TYPE_FLOAT: return new Float(in2.readFloat());
-            case TYPE_BYTE_ARRAY: {
-                int size = in2.readInt();
-                byte[] bytes = new byte[size];
-                in2.readFully(bytes);
-                return bytes;
-            }
+            case TYPE_BYTE_ARRAY: return readBytes(in2);
             case TYPE_NULL: return null;
-            default: {
-                int n = in2.readInt();
-                System.out.println("unknown object, type: "+type+" length: "+n);
-                for (int c=0;c<n;c++) {
-                    Object obj = readObject(in2);
-                    System.out.println("unknown object, content: "+obj);
-                }
-                throw new IOException();
-            }
+        }
+
+        int size = in2.readInt();
+
+        return readObject(in2,type,size);
+
+    }
+
+    public Object readObject(DataInputStream in2,int type,int size) throws IOException {
+
+        System.out.println("unknown object, type: "+type+" length: "+size);
+        for (int c=0;c<size;c++) {
+            Object obj = readObject(in2);
+            System.out.println("unknown object, content: "+obj);
+        }
+        //return null;
+        throw new IOException();
+    }
+
+    public void skipUnknownObjects(DataInputStream in,int num) throws IOException {
+
+        for (int c=0;c<num;c++) {
+            Object obj = readObject(in);
+            System.out.println("unknown object found: "+obj);
         }
 
     }
 
-    public Object readVector(DataInputStream in2) throws IOException {
+    public static void assertType(int got,int want) {
+        if (want != got) {
+            throw new RuntimeException("wrong type, expected: "+want+" got: "+got);
+        }
+    }
+
+    public Vector readVector(DataInputStream in2) throws IOException {
         int size = in2.readInt();
         Vector vector = new Vector(size);
         for (int c=0;c<size;c++) {
@@ -191,6 +210,15 @@ public class BinUtil {
             vector[c] = obj;
         }
         return vector;
+    }
+
+    public byte[] readBytes(DataInputStream in2) throws IOException {
+
+        int size = in2.readInt();
+        byte[] bytes = new byte[size];
+        in2.readFully(bytes);
+        return bytes;
+        
     }
 
     public Object readHashtable(DataInputStream in2) throws IOException {
