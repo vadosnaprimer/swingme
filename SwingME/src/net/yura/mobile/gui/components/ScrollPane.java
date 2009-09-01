@@ -358,10 +358,7 @@ public class ScrollPane extends Panel implements Runnable {
 
 	public void paintChildren(Graphics2D g) {
 
-		int a=g.getClipX();
-		int b=g.getClipY();
-		int c=g.getClipWidth();
-		int d=g.getClipHeight();
+		int[] a=g.getClip();
 
 		int viewX=getViewPortX();
 		int viewY=getViewPortY();
@@ -372,14 +369,14 @@ public class ScrollPane extends Panel implements Runnable {
 		// scrollbars as they r painted over the top
 		g.clipRect(viewX, viewY, viewWidth, viewHeight);
 
-	    super.paintChildren(g);
+                super.paintChildren(g);
 
-	    g.setClip(a,b,c,d);
+                g.setClip(a);
 
-	    //g.setColor(0x00FF0000);
-	    //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
+                //g.setColor(0x00FF0000);
+                //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
 
-	    paintDecoration(g);
+                paintDecoration(g);
 	}
 
 	protected void paintDecoration(final Graphics2D g) {
@@ -520,10 +517,7 @@ public class ScrollPane extends Panel implements Runnable {
     private void tileIcon(Graphics2D g, Icon icon,int dest_x,int dest_y,int dest_w,int dest_h) {
         int h = icon.getIconHeight();
 
-        final int cx = g.getClipX();
-        final int cy = g.getClipY();
-        final int cw = g.getClipWidth();
-        final int ch = g.getClipHeight();
+        final int[] c = g.getClip();
 
         g.clipRect(dest_x,dest_y,dest_w,dest_h);
 
@@ -533,7 +527,7 @@ public class ScrollPane extends Panel implements Runnable {
 
         icon.paintIcon(this, g, 0, 0);
 
-        g.setClip(cx,cy,cw,ch);
+        g.setClip(c);
 
     }
 

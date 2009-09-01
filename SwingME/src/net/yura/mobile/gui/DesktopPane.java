@@ -443,10 +443,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         private void paintComponent(Graphics2D g,Component com) {
 
-            int a=g.getClipX();
-            int b=g.getClipY();
-            int c=g.getClipWidth();
-            int d=g.getClipHeight();
+            int[] a=g.getClip();
+
             if (com.getParent()!=null) {
                 com.getParent().clip(g);
             }
@@ -458,7 +456,7 @@ public class DesktopPane extends Canvas implements Runnable {
             com.paint(g);
             g.translate(-x, -y);
 
-            g.setClip(a,b,c,d);
+            g.setClip(a);
         }
 
 //        private Component getSoftkeyRenderer(int i) {

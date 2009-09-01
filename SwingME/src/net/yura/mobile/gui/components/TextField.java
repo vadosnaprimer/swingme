@@ -46,10 +46,7 @@ public class TextField extends TextComponent {
             
 		String textString = getDisplayString();
 
-		int oldClipX = g.getClipX();
-		int oldClipY = g.getClipY();
-		int oldClipW = g.getClipWidth();
-		int oldClipH = g.getClipHeight();
+		int[] oldClip = g.getClip();
 		g.clipRect(0, 0, width, height);
                 
                 g.setColor( getCurrentForeground() );
@@ -60,7 +57,7 @@ public class TextField extends TextComponent {
                     int x = font.getWidth(textString.substring(0, caretPosition));
                     g.drawLine(offset+x, padding, offset+x, height-padding-1);
                 }
-		g.setClip(oldClipX, oldClipY, oldClipW, oldClipH);
+		g.setClip(oldClip);
 	}
 
         public void pointerEvent(int type, int x, int y, KeyEvent keys) {

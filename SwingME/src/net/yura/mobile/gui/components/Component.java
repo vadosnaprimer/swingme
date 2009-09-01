@@ -251,7 +251,7 @@ public abstract class Component {
 
         }
 
-        private final static Border empty = new EmptyBorder(0, 0, 0, 0);
+        public final static Border empty = new EmptyBorder(0, 0, 0, 0);
         /**
          * @see javax.swing.JComponent#getInsets() JComponent.getInsets
          */

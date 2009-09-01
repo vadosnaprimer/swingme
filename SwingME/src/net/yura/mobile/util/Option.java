@@ -24,33 +24,50 @@ import net.yura.mobile.gui.Icon;
  */
 public class Option {
 
-	private String id;
+	private String key;
 	private String value;
         private String tip;
         private Icon icon;
+
+        public Option() {
+        }
 
 	public Option(final String key, final String val) {
                 this(key,val,null);
 	}
         public Option(final String key, final String val,final Icon img) {
-		id = key;
+		this.key = key;
 		value = val;
                 icon = img;
         }
         public Option(String id, String title, Icon icon, String tip) {
-            	this.id = id;
+            	this.key = id;
 		value = title;
                 this.icon = icon;
                 this.tip = tip;
         }
-        
+
+        public void setIcon(Icon icon) {
+            this.icon = icon;
+        }
+        public void setValue(String value) {
+            this.value = value;
+        }
+        public String getKey() {
+            return key;
+        }
+        public void setKey(String key) {
+            this.key = key;
+        }
+        public String getTip() {
+            return tip;
+        }
+        public void setTip(String tip) {
+            this.tip = tip;
+        }
         public String getToolTip() {
             return tip;
         }
-        
-	public String getId() {
-		return id;
-	}
         public String getValue() {
 		return value;
 	}
@@ -58,9 +75,6 @@ public class Option {
             return icon;
         }
 
-        public void setId(String string) {
-            id=string;
-        }
 
 	public String toString() {
 		return value;

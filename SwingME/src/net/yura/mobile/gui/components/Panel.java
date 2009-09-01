@@ -161,10 +161,7 @@ public class Panel extends Component {
          */
 	public void paintChildren(Graphics2D g){
             
-            int clipX = g.getClipX();
-            int clipY = g.getClipY();
-            int clipWidth = g.getClipWidth();
-            int clipHeight = g.getClipHeight();
+            int clip[] = g.getClip();
             
             for(int i = 0; i < components.size(); i++){
                     Component component = (Component)components.elementAt(i);
@@ -172,7 +169,7 @@ public class Panel extends Component {
                     int rx = component.getXWithBorder();
                     int ry = component.getYWithBorder();
                     
-                    if (!(rx>clipX+clipWidth || ry >clipY+clipHeight || rx+component.getWidthWithBorder()<clipX || ry+component.getHeightWithBorder()<clipY)) {
+                    if (!(rx>clip[0]+clip[2] || ry >clip[1]+clip[3] || rx+component.getWidthWithBorder()<clip[0] || ry+component.getHeightWithBorder()<clip[1])) {
 
                         int cx=component.getX();
                         int cy=component.getY();

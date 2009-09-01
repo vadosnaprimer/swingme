@@ -574,7 +574,7 @@ public class FileChooser extends Window implements Runnable {
         if (ftype == NativeUtil.TYPE_FOLDER) {
             if (imgDir==null) {
                 try {
-                    imgDir = Image.createImage("/dir.gif");
+                    imgDir = Image.createImage("/directory.gif");
                 }
                 catch (IOException ex) {
                     ex.printStackTrace();

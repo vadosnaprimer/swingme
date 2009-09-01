@@ -9,6 +9,9 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.border.TitledBorder;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
@@ -94,29 +97,46 @@ public class XULLoader {
             int top = 0;
             int bottom = 0;
             int count = parser.getAttributeCount();
+            String border = null;
+            String text = null;
             for (int c=0;c<count;c++) {
                 String key = parser.getAttributeName(c);
                 String value = parser.getAttributeValue(c);
                 if ("columns".equals(key)) {
                     columns = Integer.parseInt(value);
                 }
-                if ("gap".equals(key)) {
+                else if ("gap".equals(key)) {
                     gap = Integer.parseInt(value);
                 }
-                if ("top".equals(key)) {
+                else if ("top".equals(key)) {
                     top = Integer.parseInt(value);
                 }
-                if ("bottom".equals(key)) {
+                else if ("bottom".equals(key)) {
                     bottom = Integer.parseInt(value);
                 }
-                if ("left".equals(key)) {
+                else if ("left".equals(key)) {
                     left = Integer.parseInt(value);
                 }
-                if ("right".equals(key)) {
+                else if ("right".equals(key)) {
                     right = Integer.parseInt(value);
+                }
+                else if ("border".equals(key)) {
+                    border = value;
+                }
+                else if ("text".equals(key)) {
+                    text = value;
                 }
             }
             Panel panel = new Panel(new GridBagLayout(columns,gap,top,bottom,left,right));
+
+            Border border2=null;
+            if (border!=null) {
+                border2 = new LineBorder();
+            }
+            if (text!=null) {
+                border2 = new TitledBorder(border2, text, new Label().getFont());
+            }
+            panel.setBorder(border2);
 
             return readUIObject(parser, panel,listener);
         }
@@ -126,18 +146,19 @@ public class XULLoader {
             return readUIObject(parser, tabbedpane,listener);
         }
         else if (name.equals("tab")) {
-            Panel tab = new Panel();
-
-            int count = parser.getAttributeCount();
-            for (int c=0;c<count;c++) {
-                String key = parser.getAttributeName(c);
-                String value = parser.getAttributeValue(c);
-                if ("text".equals(key)) {
-                    tab.setName(value);
+            Tab tab = new Tab();
+            readOption(parser,tab);
+            while (parser.nextTag() != KXmlParser.END_TAG) {
+                Object obj = readObject(parser,listener);
+                if (tab.component == null) {
+                    tab.component = ((GridBagConstraints)obj).component;
+                }
+                else {
+                    //#debug
+                    System.out.println("ignored item in tab: "+obj);
                 }
             }
-
-            return readUIObject(parser, tab,listener);
+            return tab;
         }
         else if (name.equals("progressbar")) {
             ProgressBar progress = new ProgressBar();
@@ -191,26 +212,30 @@ public class XULLoader {
             TextField textfield = new TextField();
             //textfield.setPreferredWidth(0);
 
-            // TODO add spacific stuff for checkbox
+            readTextComponent(parser,textfield);
 
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("passwordfield")) {
             TextField textfield = new TextField(TextField.PASSWORD);
 
+            readTextComponent(parser,textfield);
+
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("numericfield")) {
             TextField textfield = new TextField(TextField.NUMERIC);
 
+            readTextComponent(parser,textfield);
+
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("textarea")) {
-            TextArea textfield = new TextArea();
+            TextArea textarea = new TextArea();
 
-            // TODO add spacific stuff for checkbox
+            readTextComponent(parser,textarea);
 
-            return readUIObject(parser, textfield,listener);
+            return readUIObject(parser, textarea,listener);
         }
         else if (name.equals("label")) {
             Label label = new Label();
@@ -223,7 +248,10 @@ public class XULLoader {
         // TODO add more components
 
         else if (name.equals("choice") || name.equals("item") ) {
-            return readOption(parser);
+            Option op = new Option();
+            readOption(parser,op);
+            parser.skipSubTree();
+            return op;
         }
         else {
             //#debug
@@ -278,12 +306,7 @@ public class XULLoader {
                     label.setText(value);
                 }
                 else if ("icon".equals(key)) {
-                    try {
-                        label.setIcon( new Icon(value) );
-                    }
-                    catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    label.setIcon( loadIcon(value) );
                 }
                 else if ("alignment".equals(key)) {
                     if ("center".equals(value)) { // default for button
@@ -299,41 +322,45 @@ public class XULLoader {
             }
     }
 
-    public Option readOption(KXmlParser parser) throws Exception {
+    public Icon loadIcon(String value) {
+        try {
+            return new Icon(value);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
-        String text=null;
-        String name = null;
-        String tooltip = null;
-        Icon icon = null;
+    private void readTextComponent(KXmlParser parser, TextComponent text) {
+            int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("text".equals(key)) {
+                    text.setText(value);
+                }
+            }
+    }
 
+    private void readOption(KXmlParser parser, Option op) {
         int count = parser.getAttributeCount();
         for (int c=0;c<count;c++) {
             String key = parser.getAttributeName(c);
             String value = parser.getAttributeValue(c);
             if ("text".equals(key)) {
-                text = value;
+                op.setValue(value);
             }
             else if ("name".equals(key)) {
-                name = value;
+                op.setKey(value);
             }
             else if ("tooltip".equals(key)) {
-                tooltip = value;
+                op.setTip(value);
             }
             else if ("icon".equals(key)) {
-                try {
-                    icon = new Icon(value);
-                }
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                op.setIcon( loadIcon(value) );
             }
         }
-
-        Option op = new Option(name, text, icon, tooltip);
-
-        parser.skipSubTree();
-
-        return op;
     }
 
     public GridBagConstraints readUIObject(KXmlParser parser,Component comp,ActionListener listener) throws Exception {
@@ -394,7 +421,8 @@ public class XULLoader {
             Object obj = readObject(parser,listener);
 
             if (uiobject.component instanceof TabbedPane) {
-                ((TabbedPane)uiobject.component).add( ((GridBagConstraints)obj).component );
+                Tab tab = (Tab)obj;
+                ((TabbedPane)uiobject.component).addTab(tab.getValue(), tab.getIcon(), tab.component, tab.getToolTip());
             }
             else if (uiobject.component instanceof Panel) {
                 ((Panel)uiobject.component).add(((GridBagConstraints)obj).component, obj);
@@ -413,6 +441,10 @@ public class XULLoader {
 
         return uiobject;
 
+    }
+
+    class Tab extends Option {
+        private Component component;
     }
 
 }

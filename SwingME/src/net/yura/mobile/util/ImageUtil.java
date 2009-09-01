@@ -32,10 +32,7 @@ public class ImageUtil {
         
         if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) return;
         
-        final int cx = g.getClipX();
-        final int cy = g.getClipY();
-        final int cw = g.getClipWidth();
-        final int ch = g.getClipHeight();
+        final int[] c = g.getClip();
         
         g.clipRect(dest_x,dest_y,dest_w,dest_h);
         
@@ -49,7 +46,7 @@ public class ImageUtil {
             }
         }
 
-        g.setClip(cx,cy,cw,ch);
+        g.setClip(c);
     }
 
 //

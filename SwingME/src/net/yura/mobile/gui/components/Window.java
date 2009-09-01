@@ -105,6 +105,8 @@ public class Window extends Panel implements ActionListener {
 
             MenuBar mbar = getMenuBar();
             if (mbar!=null) {
+                // TODO INSERT NOT CORRECT HERE!!!!!!!!!!!!!
+                // SHOULD BE REPLACE !!!!!!!!!!!!!!!
                 super.insert(menuBar, getComponents().indexOf(mbar) );
             }
             else {
@@ -150,6 +152,20 @@ public class Window extends Panel implements ActionListener {
                 }
             }
             return null;
+        }
+
+        public void setContentPane(Panel p) {
+
+            Panel mbar = getContentPane();
+            if (mbar!=null) {
+                // TODO INSERT NOT CORRECT HERE!!!!!!!!!!!!!
+                // SHOULD BE REPLACE !!!!!!!!!!!!!!!
+                super.insert(p, getComponents().indexOf(mbar) );
+            }
+            else {
+                super.add(p);
+            }
+
         }
 
         /**
