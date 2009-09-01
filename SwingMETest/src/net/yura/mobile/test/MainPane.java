@@ -65,6 +65,7 @@ import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
@@ -157,6 +158,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 addMainMenuButton("Table Test","tableTest");
                                 addMainMenuButton("XUL Test","xulTest");
+                                addMainMenuButton("XUL Test 2","xulTest2");
+                                addMainMenuButton("File Chooser","fileChooser");
+
                                 
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
@@ -248,13 +252,45 @@ public class MainPane extends DesktopPane implements ActionListener {
                     Panel panel = null;
 
                     try {
-                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/tabbedpane.xml"), this);
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), this);
                         panel = (Panel)loader.getRoot();
-                    } catch (Exception ex) {
+                    }
+                    catch (Exception ex) {
                         ex.printStackTrace();
                     }
 
-                    addToScrollPane(panel, null,  makeButton("Back","mainmenu") );
+                    addToScrollPane(panel, null, makeButton("Back","mainmenu") );
+                }
+                else if ("xulTest2".equals(actionCommand)) {
+
+                    final Window window = new Window();
+
+                    try {
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), new ActionListener() {
+                            public void actionPerformed(String arg0) {
+                                if ("ok()".equals(arg0)) {
+                                    OptionPane.showMessageDialog(this, "you clicked ok", "info", OptionPane.INFORMATION_MESSAGE);
+
+                                }
+                                else if ("close()".equals(arg0) || "ok".equals(arg0)) {
+                                    window.setVisible(false);
+                                }
+                                else if ("buttonOutputDirClicked()".equals(arg0)) {
+System.out.println("open file browser");
+                                }
+                            }
+                        });
+                        window.setContentPane( (Panel)loader.getRoot() );
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    window.setMaximum(true);
+                    window.setVisible(true);
+
                 }
                 else if ("info".equals(actionCommand)) {
 			
@@ -842,6 +878,11 @@ for (int c=0;c<4;c++) {
                         //new TextArea("bob the builder"),
                         new TextField(TextField.ANY)
                     },"Title",0);
+                }
+                else if ("fileChooser".equals(actionCommand)) {
+
+                    FileChooser chooser = new FileChooser();
+                    chooser.showDialog(this, "fileSelected", "Select File", "Select");
                 }
 		else {
 			
