@@ -221,7 +221,7 @@ public class BinUtil {
         
     }
 
-    public Object readHashtable(DataInputStream in2) throws IOException {
+    public Hashtable readHashtable(DataInputStream in2) throws IOException {
         int size = in2.readInt()/2;
         Hashtable vector = new Hashtable(size);
         for (int c=0;c<size;c++) {

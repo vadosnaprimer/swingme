@@ -9,6 +9,7 @@
     <target name="do-deploy" description="copy lib to some other places">
         <copy file="${deployment.jar}" todir="../SwingME/lib"/>
         <copy file="${deployment.jar}" todir="../AgentLib/lib"/>
+		<copy file="${deployment.jar}" todir="../ToolsME/lib"/>
     </target>
 
     <!--

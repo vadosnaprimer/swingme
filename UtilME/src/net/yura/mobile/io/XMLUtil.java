@@ -199,7 +199,7 @@ public class XMLUtil {
 
     }
 
-    public Hashtable readMap(KXmlParser parser) throws Exception {
+    public Hashtable readHashtable(KXmlParser parser) throws Exception {
 
         Hashtable map = new Hashtable();
 
@@ -250,7 +250,7 @@ public class XMLUtil {
         }
         else if ( TAG_HASHTABLE.equals(name) || "HashMap".equals(name)) {
 
-             return readMap(parser);
+             return readHashtable(parser);
         }
         else {
 
