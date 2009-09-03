@@ -1,4 +1,4 @@
-package net.yura.tools.mobilegen;
+package net.yura.tools.mobilegen.model;
 
 /**
  * @author Lenin

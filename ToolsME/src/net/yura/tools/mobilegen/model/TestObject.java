@@ -1,4 +1,4 @@
-package net.yura.tools.mobilegen;
+package net.yura.tools.mobilegen.model;
 
 import java.util.Vector;
 
@@ -13,24 +13,24 @@ public class TestObject extends Test {
     private Vector numbers;
     private Object body;
     private String[] legs;
-    private byte[] image;
-    private long[] times;
-
-    public long[] getTimes() {
-        return times;
-    }
-
-    public void setTimes(long[] times) {
-        this.times = times;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
+//    private byte[] image;
+//    private long[] times;
+//
+//    public long[] getTimes() {
+//        return times;
+//    }
+//
+//    public void setTimes(long[] times) {
+//        this.times = times;
+//    }
+//
+//    public byte[] getImage() {
+//        return image;
+//    }
+//
+//    public void setImage(byte[] image) {
+//        this.image = image;
+//    }
 
     public String[] getLegs() {
         return legs;

@@ -1,6 +1,6 @@
 package net.yura.mobile.gen;
-import net.yura.tools.mobilegen.Test;
-import net.yura.tools.mobilegen.TestObject;
+import net.yura.tools.mobilegen.model.Test;
+import net.yura.tools.mobilegen.model.TestObject;
 import java.util.Hashtable;
 import java.util.Vector;
 import org.kxml2.io.KXmlParser;
@@ -35,18 +35,12 @@ public class XMLAccess extends XMLUtil {
         serializer.attribute(null,"name", String.valueOf( object.getName() ) );
         serializer.attribute(null,"age", String.valueOf( object.getAge() ) );
         saveTest(serializer, object);
-        serializer.startTag(null,"times");
-        saveArray(serializer, object.getTimes() );
-        serializer.endTag(null,"times");
-        serializer.startTag(null,"image");
-        saveArray(serializer, object.getImage() );
-        serializer.endTag(null,"image");
-        serializer.startTag(null,"legs");
-        saveArray(serializer, object.getLegs() );
-        serializer.endTag(null,"legs");
         serializer.startTag(null,"body");
         saveObject(serializer, object.getBody() );
         serializer.endTag(null,"body");
+        serializer.startTag(null,"legs");
+        saveArray(serializer, object.getLegs() );
+        serializer.endTag(null,"legs");
         serializer.startTag(null,"numbers");
         saveVector(serializer, object.getNumbers() );
         serializer.endTag(null,"numbers");
@@ -100,31 +94,19 @@ public class XMLAccess extends XMLUtil {
         }
         while (parser.nextTag() != KXmlParser.END_TAG) {
             String name = parser.getName();
-            if ("times".equals(name)) {
-                Vector numbers = readVector(parser);
-                long[] array = new long[numbers.size()];
-                numbers.copyInto(array);
-                object.setTimes(array);
-            }
-            else if ("image".equals(name)) {
-                Vector numbers = readVector(parser);
-                byte[] array = new byte[numbers.size()];
-                numbers.copyInto(array);
-                object.setImage(array);
-            }
-            else if ("legs".equals(name)) {
-                Vector numbers = readVector(parser);
-                String[] array = new String[numbers.size()];
-                numbers.copyInto(array);
-                object.setLegs(array);
-            }
-            else if ("body".equals(name)) {
+            if ("body".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     if (obj!=null) { throw new IOException(); }
                     obj = readObject(parser);
                 }
                 object.setBody( obj );
+            }
+            else if ("legs".equals(name)) {
+                Vector numbers = readVector(parser);
+                String[] array = new String[numbers.size()];
+                numbers.copyInto(array);
+                object.setLegs(array);
             }
             else if ("numbers".equals(name)) {
                 object.setNumbers( readVector(parser) );

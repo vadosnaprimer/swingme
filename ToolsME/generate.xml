@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="UtilMEGen" default="build-generate" basedir=".">
+
+
+    <import file="nbproject/build-impl.xml"/>
+
+    <property name="lib.dir" value="./lib"/>
+    <property name="src.dir" value="./src"/>
+
+    <path id="class.path">
+        <fileset dir="${lib.dir}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+
+
+    <target name="build-generate" depends="jar,generate" description="build first then generate the persistance manager class">
+    </target>
+
+
+    <target name="generate" description="generate the persistance manager class">
+        <echo message="libs =${lib.dir}"/>
+        <echo message="class.path =${class.path}"/>
+
+        <taskdef classname="net.yura.tools.mobilegen.MobileXmlGen" classpath="./dist/${ant.project.name}.jar" name="gen-xml"/>
+        <gen-xml
+            generatedFile="${basedir}/src/net/yura/mobile/gen/XMLAccess.java"
+            classNamesFile="${basedir}/generate.properties"/>
+
+        <taskdef classname="net.yura.tools.mobilegen.MobileBinGen" classpath="./dist/${ant.project.name}.jar" name="gen-bin"/>
+        <gen-bin
+            generatedFile="${basedir}/src/net/yura/mobile/gen/BinAccess.java"
+            classNamesFile="${basedir}/generate.properties"/>
+    </target>
+
+</project>

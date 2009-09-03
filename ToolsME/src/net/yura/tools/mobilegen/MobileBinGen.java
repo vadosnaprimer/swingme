@@ -1,5 +1,7 @@
 package net.yura.tools.mobilegen;
 
+import net.yura.tools.mobilegen.model.TestObject;
+import net.yura.tools.mobilegen.model.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -17,9 +19,12 @@ import java.util.Vector;
 /**
  * @author Lenin
  */
-public class MobileBinGen {
+public class MobileBinGen extends BaseGen {
 
-    public static void main(String ... args) throws Exception {
+    @Override
+    public void doGen() throws Exception {
+
+   
 /*
         Class theclass = TestObject.class;
 
@@ -35,12 +40,12 @@ System.out.println(Arrays.asList(mymethods));
 String className = theclass.getSimpleName();
 
 */
-ArrayList<Class> classes = new ArrayList<Class>();
-classes.add(Test.class);
-classes.add(TestObject.class);
+//ArrayList<Class> classes = new ArrayList<Class>();
+//classes.add(Test.class);
+//classes.add(TestObject.class);
 
-
-PrintStream ps = new PrintStream(new File("src/net/yura/mobile/gen/BinAccess.java"));
+ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile());
+PrintStream ps = new PrintStream( new File(getGeneratedFile())); //new File("src/net/yura/mobile/gen/BinAccess.java"));
 
 int n = 0;
 
@@ -349,6 +354,7 @@ ps.println("    }");
 
         return result;
     }
+
 
 }
 

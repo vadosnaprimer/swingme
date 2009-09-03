@@ -1,6 +1,6 @@
 package net.yura.mobile.gen;
-import net.yura.tools.mobilegen.Test;
-import net.yura.tools.mobilegen.TestObject;
+import net.yura.tools.mobilegen.model.Test;
+import net.yura.tools.mobilegen.model.TestObject;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.io.IOException;
@@ -34,22 +34,18 @@ public class BinAccess extends BinUtil {
         out.writeInt( object.getId() );
     }
     public void saveTestObject(DataOutputStream out,TestObject object) throws IOException {
-        out.writeInt(8);
+        out.writeInt(6);
         out.writeInt( TYPE_BYTE);
         out.writeByte( object.getAge() );
         writeObject(out, object.getBody() );
         out.writeInt( TYPE_INTEGER);
         out.writeInt( object.getId() );
-        out.writeInt( TYPE_BYTE_ARRAY);
-        writeBytes( out, object.getImage() );
         out.writeInt( TYPE_ARRAY);
         writeArray( out, object.getLegs() );
         out.writeInt( TYPE_STRING);
         out.writeUTF( object.getName() );
         out.writeInt( TYPE_VECTOR);
         writeVector( out, object.getNumbers() );
-        out.writeInt( TYPE_ARRAY);
-        writeArray( out, object.getTimes() );
     }
     public Object readObject(DataInputStream in,int type,int size) throws IOException {
         switch (type) {
@@ -72,8 +68,6 @@ public class BinAccess extends BinUtil {
         object.setBody( readObject(in) );
         assertType(in.readInt() , TYPE_INTEGER);
         object.setId( in.readInt() );
-        assertType(in.readInt() , TYPE_BYTE_ARRAY);
-        object.setImage( readBytes(in) );
         {
           assertType(in.readInt() , TYPE_ARRAY);
           Object[] objects = readArray(in);
@@ -85,14 +79,7 @@ public class BinAccess extends BinUtil {
         object.setName( in.readUTF() );
         assertType(in.readInt() , TYPE_VECTOR);
         object.setNumbers( readVector(in) );
-        {
-          assertType(in.readInt() , TYPE_ARRAY);
-          Object[] objects = readArray(in);
-          long[] array = new long[objects.length];
-          System.arraycopy(objects,0,array,0,objects.length);
-          object.setTimes(array);
-        }
-        skipUnknownObjects(in,size - 8);
+        skipUnknownObjects(in,size - 6);
         return object;
     }
 }

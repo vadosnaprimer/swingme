@@ -13,9 +13,10 @@ import java.util.Vector;
 /**
  * @author Lenin
  */
-public class MobileGen {
+public class MobileXmlGen extends BaseGen {
 
-    public static void main(String ... args) throws Exception {
+    @Override
+    public void doGen() throws Exception {
 /*
         Class theclass = TestObject.class;
 
@@ -31,13 +32,13 @@ System.out.println(Arrays.asList(mymethods));
 String className = theclass.getSimpleName();
 
 */
-ArrayList<Class> classes = new ArrayList<Class>();
-classes.add(Test.class);
-classes.add(TestObject.class);
+//ArrayList<Class> classes = new ArrayList<Class>();
+//classes.add(Test.class);
+//classes.add(TestObject.class);
 
+ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile());
+PrintStream ps = new PrintStream( new File(getGeneratedFile())); //new File("src/net/yura/mobile/gen/XMLAccess.java"));
 
-
-PrintStream ps = new PrintStream(new File("src/net/yura/mobile/gen/XMLAccess.java"));
 
 int n = 0;
 
