@@ -33,20 +33,17 @@ public class TitledBorder implements Border {
         int fullHeight = height+topOffset+border.getTop()+border.getBottom();
         g.clipRect(-getLeft(), -border.getTop(), leftOffset, fullHeight);
         border.paintBorder(c, g, width, height+topOffset);
-
-
         g.setClip(clip);
+
         // paint strip right of text
         int textWidth = titleFont.getWidth(title)+2;
         g.clipRect(textWidth+LEFT_OFFSET, -border.getTop(), width-LEFT_OFFSET-textWidth+border.getRight(), fullHeight);
         border.paintBorder(c, g, width, height+topOffset);
-
-
         g.setClip(clip);
+
         // paint strip below text
         g.clipRect(LEFT_OFFSET, topOffset, textWidth, height+border.getBottom());
         border.paintBorder(c, g, width, height+topOffset);
-
         g.setClip(clip);
         g.translate(0, topOffset);
 

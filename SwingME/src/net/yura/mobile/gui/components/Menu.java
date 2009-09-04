@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
@@ -35,7 +36,7 @@ public class Menu extends Button {
         private Menu parentMenu;
 
         private Window popup;
-        private List menuItems;
+        private MenuBar menuItems;
         private ScrollPane scroll;
 
         private boolean useAnimation=true;
@@ -208,24 +209,26 @@ public class Menu extends Button {
 
             popup = new Window();
             popup.setCloseOnFocusLost(true);
-            popup.addWindowListener(this);
+            //popup.addWindowListener(this);
 
             if (!DesktopPane.me4se) {
-                MenuBar menubar = new MenuBar();
+                //MenuBar menubar = new MenuBar();
                 //Button select = new Button("Select");
                 Button cancel = new Button("Cancel");
-                cancel.setActionCommand(Window.CMD_CLOSE);
-                cancel.addActionListener(popup);
+                cancel.setActionCommand(Frame.CMD_CLOSE);
+                cancel.addActionListener(this);
                 cancel.setMnemonic(KeyEvent.KEY_SOFTKEY2);
                 //menubar.add(select);
-                menubar.add(cancel);
-                popup.setMenuBar(menubar);
+                //menubar.add(cancel);
+                //popup.setMenuBar(menubar);
+                popup.addCommand(cancel);
             }
 
             //popup.setWindowCommand(0, );
             //popup.setWindowCommand(1, );
             //popup.setActionListener(this);
-            menuItems = new List(new MenuItemRenderer());
+            menuItems = new MenuBar();
+            menuItems.setLayoutOrientation(false);
             menuItems.addActionListener(this);
             menuItems.setUseSelectButton(true);
             scroll = new ScrollPane(menuItems);
@@ -238,7 +241,7 @@ public class Menu extends Button {
 
     	public void actionPerformed(String actionCommand) {
 
-            if (Window.CMD_CLOSE.equals(actionCommand)) {
+            if (Frame.CMD_CLOSE.equals(actionCommand)) {
                 popup.setVisible(false);
                 // cancel the parent menu
                 if (parentMenu!=null) {
@@ -256,7 +259,7 @@ public class Menu extends Button {
                     popup.setVisible(false);
                     // cancel the parent menu
                     if (parentMenu!=null) {
-                        parentMenu.actionPerformed(Window.CMD_CLOSE);
+                        parentMenu.actionPerformed(Frame.CMD_CLOSE);
                     }
                 }
 
@@ -416,29 +419,11 @@ public class Menu extends Button {
             arrowDirection = a;
         }
 
-        public Button findMneonicButton(KeyEvent keyevent) {
-            if (getMnemonic() == keyevent.getJustPressedKey()) {
+        public Button findMneonicButton(int mnu) {
+            if (getMnemonic() == mnu) {
                 return this;
             }
-
-            int size = menuItems.getSize();
-            for(int i = 0; i < size; i++) {
-                Object component = menuItems.getElementAt(i);
-                if (component instanceof Menu) {
-                    Button button = ((Menu)component).findMneonicButton(keyevent);
-                    if (button!=null) {
-                        return button;
-                    }
-                }
-                else if (component instanceof Button) {
-                    Button button = (Button)component;
-                    if (button.getMnemonic() == keyevent.getJustPressedKey()) {
-                        return button;
-                    }
-                }
-            }
-            return null;
-
+            return menuItems.findMneonicButton(mnu);
         }
 
 }

@@ -239,7 +239,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             Style windowSkin = new Style(defaultStyle);
             // TODO: windowSkin.addBorder(new LineBorder( getSecondary1(), 2 ), Style.ALL);
             windowSkin.addBorder(new LineBorder( getPrimary1(), 2 ), Style.ALL);
-            setStyleFor("Window",windowSkin);
+            setStyleFor("Frame",windowSkin);
             setStyleFor("Dialog",windowSkin);
 
             Style tooltipSkin = new Style(defaultStyle);

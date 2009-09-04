@@ -165,6 +165,9 @@ public class Panel extends Component {
             
             for(int i = 0; i < components.size(); i++){
                     Component component = (Component)components.elementAt(i);
+                    if (!component.isVisible()) {
+                        continue;
+                    }
 
                     int rx = component.getXWithBorder();
                     int ry = component.getYWithBorder();
@@ -410,23 +413,29 @@ public class Panel extends Component {
         return "Panel";
     }
 
-    public Button findMneonicButton(KeyEvent keyevent) {
+    public Button findMneonicButton(int mnu) {
         for(int i = 0; i < components.size(); i++) {
             Component component = (Component)components.elementAt(i);
             if (component instanceof Menu) {
-                Button button = ((Menu)component).findMneonicButton(keyevent);
+                Button button = ((Menu)component).findMneonicButton(mnu);
+                if (button!=null) {
+                    return button;
+                }
+            }
+            else if (component instanceof MenuBar) {
+                Button button = ((MenuBar)component).findMneonicButton(mnu);
                 if (button!=null) {
                     return button;
                 }
             }
             else if (component instanceof Button) {
                 Button button = (Button)component;
-                if (button.getMnemonic() == keyevent.getJustPressedKey()) {
+                if (button.getMnemonic() == mnu) {
                     return button;
                 }
             }
             else if (component instanceof Panel) {
-                Button button = ((Panel)component).findMneonicButton(keyevent);
+                Button button = ((Panel)component).findMneonicButton(mnu);
                 if (button!=null) {
                     return button;
                 }

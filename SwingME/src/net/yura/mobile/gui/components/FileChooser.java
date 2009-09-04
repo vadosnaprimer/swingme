@@ -20,7 +20,7 @@ import net.yura.mobile.io.NativeUtil;
 /**
  * @author Yura Mamyrin
  */
-public class FileChooser extends Window implements Runnable {
+public class FileChooser extends Frame implements Runnable {
 
     private SelectableFileRenderer thumbOptionRenderer;
     private List fileList;

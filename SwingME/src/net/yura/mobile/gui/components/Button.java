@@ -92,6 +92,10 @@ public class Button extends Label implements ActionListener {
                 setIcon(img);
 	}
 
+        public boolean isVisible() {
+            if (!DesktopPane.me4se && (mneonic == KeyEvent.KEY_SOFTKEY1 || mneonic == KeyEvent.KEY_SOFTKEY2 || mneonic == KeyEvent.KEY_SOFTKEY3)) return false;
+            return super.isVisible();
+        }
 
 //        protected void paintBorder(Graphics2D g) {
 //
@@ -345,6 +349,14 @@ public class Button extends Label implements ActionListener {
         }
 
 
+	public int getXOnScreen() {
+            if (!isVisible()) return posX;
+            return super.getXOnScreen();
+	}
+	public int getYOnScreen() {
+            if (!isVisible()) return posY;
+            return super.getYOnScreen();
+        }
 //        public void updateUI() {
 //                super.updateUI();
 //

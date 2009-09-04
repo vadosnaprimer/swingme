@@ -20,39 +20,36 @@ package net.yura.mobile.gui.components;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
-import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
 
 /**
  * @author Yura Mamyrin
  * @see javax.swing.JFrame
  */
-public class Window extends Panel implements ActionListener {
+public class Window extends Panel {
 
-        public static final String CMD_MAX = "max";
-        public static final String CMD_MIN = "min";
-        public static final String CMD_CLOSE = "close";
-    
         private static Vector allWindows = new Vector();
         public static Vector getAllWindows() {
             return allWindows;
         }
         
         private Component focusedComponent;
-        private boolean maximised;
+
         private boolean closeOnFocusLost;
 
-        //private TitleBar titleBar;
-        //private MenuBar menubar;
-        //private Panel contentPane;
+        private Vector softkeys;
 
         /**
          * @see javax.swing.JFrame#JFrame() JFrame.JFrame
          */
 	public Window() {
 
+            setLayout( new BorderLayout() );
 		//contentPane = new Panel();
                 //setLayout( new BorderLayout() );
 
@@ -68,105 +65,12 @@ public class Window extends Panel implements ActionListener {
                 }
                 allWindows.addElement(new WeakReference(this));
 
-                super.add(new Panel(new BorderLayout()));
-
 	}
 
         public void setCloseOnFocusLost(boolean ch) {
             closeOnFocusLost = ch;
         }
 
-        /**
-         * @see java.awt.Frame#setUndecorated(boolean) Frame.setUndecorated
-         */
-        public void setUndecorated(boolean un) {
-            TitleBar tb = getTitleBar();
-            if (tb==null && !un) {
-                super.add(new TitleBar("", null, false, false, false, true, true));
-            }
-            else if (tb!=null && un) {
-                super.remove(tb);
-            }
-        }
-
-        /**
-         * @see
-         */
-        public void setTitle(String newTitle) {
-            TitleBar tb = getTitleBar();
-            tb.setTitle(newTitle);
-        }
-
-        /**
-         * @see javax.swing.JFrame#setJMenuBar(javax.swing.JMenuBar)
-         */
-        public void setMenuBar(MenuBar menuBar) {
-            //this.menubar = menuBar;
-
-            MenuBar mbar = getMenuBar();
-            if (mbar!=null) {
-                // TODO INSERT NOT CORRECT HERE!!!!!!!!!!!!!
-                // SHOULD BE REPLACE !!!!!!!!!!!!!!!
-                super.insert(menuBar, getComponents().indexOf(mbar) );
-            }
-            else {
-                super.add(menuBar);
-            }
-
-        }
-
-        /**
-         * @see javax.swing.JFrame#getJMenuBar() JFrame.getJMenuBar
-         */
-        public MenuBar getMenuBar() {
-            Vector components = getComponents();
-            for (int c=0;c<components.size();c++) {
-                Object obj = components.elementAt(c);
-                if (obj instanceof MenuBar) {
-                    return (MenuBar)obj;
-                }
-            }
-            return null;
-        }
-
-        /**
-         * not swing
-         */
-        public TitleBar getTitleBar() {
-            Vector components = getComponents();
-            for (int c=0;c<components.size();c++) {
-                Object obj = components.elementAt(c);
-                if (obj instanceof TitleBar) {
-                    return (TitleBar)obj;
-                }
-            }
-            return null;
-        }
-
-        public Panel getContentPane() {
-            Vector components = getComponents();
-            for (int c=0;c<components.size();c++) {
-                Object obj = components.elementAt(c);
-                if (!(obj instanceof MenuBar) && !(obj instanceof TitleBar)) {
-                    return (Panel)obj;
-                }
-            }
-            return null;
-        }
-
-        public void setContentPane(Panel p) {
-
-            Panel mbar = getContentPane();
-            if (mbar!=null) {
-                // TODO INSERT NOT CORRECT HERE!!!!!!!!!!!!!
-                // SHOULD BE REPLACE !!!!!!!!!!!!!!!
-                super.insert(p, getComponents().indexOf(mbar) );
-            }
-            else {
-                super.add(p);
-            }
-
-        }
 
         /**
          * @see java.awt.Window#isFocused() Window.isFocused
@@ -240,14 +144,14 @@ public class Window extends Panel implements ActionListener {
             revalidate();
         }
 
-        public void setLocation(int x, int y) {
-            super.setLocation(x, y);
-
-            MenuBar menubar = getMenuBar();
-            if (!DesktopPane.me4se && menubar!=null) {
-                menubar.setBoundsWithBorder(-getXOnScreen(),DesktopPane.getDesktopPane().getHeight() - getYOnScreen() - menubar.getHeightWithBorder(),DesktopPane.getDesktopPane().getWidth(),menubar.getHeightWithBorder());
-            }
-        }
+//        public void setLocation(int x, int y) {
+//            super.setLocation(x, y);
+//
+//            MenuBar menubar = getMenuBar();
+//            if (!DesktopPane.me4se && menubar!=null) {
+//                menubar.setBoundsWithBorder(-getXOnScreen(),DesktopPane.getDesktopPane().getHeight() - getYOnScreen() - menubar.getHeightWithBorder(),DesktopPane.getDesktopPane().getWidth(),menubar.getHeightWithBorder());
+//            }
+//        }
 
         /**
          * @see java.awt.Window#pack() Window.pack
@@ -285,33 +189,25 @@ public class Window extends Panel implements ActionListener {
         public boolean isVisible() {
             return DesktopPane.getDesktopPane().getAllFrames().contains(this);
         }
-        
-        /**
-         * @param a true to maxemise the window
-         * @see javax.swing.JInternalFrame#setMaximum(boolean) JInternalFrame.setMaximum
-         */
-        public void setMaximum(boolean a) {
-
-            maximised = a;
-
-            if (a) {
-                setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
-            }
-            // TODO else???
-        }
-        public boolean getMaximum() {
-            return maximised;
-        }
+       
 
         public void pointerEvent(int type, int x, int y, KeyEvent keys) {
 
             // TODO to resize the window
             // if we drag next to the border
 
+//            if (!DesktopPane.me4se && type == DesktopPane.PRESSED) {
+//                Button b = locationToIndex(x,y);
+//                if (b!=null) {
+//                    b.fireActionPerformed();
+//                    return;
+//                }
+//            }
+
             if (closeOnFocusLost && type == DesktopPane.PRESSED &&
                     (x<0 || y<0 || x>width || y>height)
                     ) {
-                actionPerformed(CMD_CLOSE);
+                setVisible(false);
             }
 
 
@@ -340,140 +236,44 @@ public class Window extends Panel implements ActionListener {
 //            }
 //	}
 
-        public void actionPerformed(String actionCommand) {
 
-             if (CMD_CLOSE.equals(actionCommand)) {
 
-                if (windowListener!=null) {
-                    windowListener.actionPerformed(actionCommand);
-                    return;
-                }
 
-                 setVisible(false);
-             }
-             else if (CMD_MIN.equals(actionCommand)) {
 
-                 if (parent==null) {
-                     Vector windows = DesktopPane.getDesktopPane().getAllFrames();
-                     if (windows.size()>1) {
-                         DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
-                     }
-                 }
 
-             }
-             else if (CMD_MAX.equals(actionCommand)) {
-                 setMaximum( !maximised );
-                 repaint();
-             }
-             else {
-                 //#debug
-                System.out.println("unknow Window command: "+actionCommand);
-             }
 
-        }
-
-        private ActionListener windowListener;
-        public void addWindowListener(ActionListener al) {
-            windowListener = al;
-        }
-
-        protected void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
-
-            // TODO ???? is this right
-            getContentPane().breakOutAction(component, direction, scrolltothere, forceFocus);
-
-        }
-
-        public void add(Component comp) {
-            getContentPane().add(comp);
-        }
-        public void add(Component comp,Object consta) {
-            getContentPane().add(comp,consta);
-        }
-
-        public void workoutMinimumSize() {
-
-            int w=0;
-            int h=0;
-
-            TitleBar titleBar = getTitleBar();
-            if (titleBar!=null) {
-                titleBar.workoutSize();
-                int tw = titleBar.getWidthWithBorder();
-                int th = titleBar.getHeightWithBorder();
-                if (tw>w) w = tw;
-                h = h +th;
-            }
-
-            MenuBar menubar = getMenuBar();
-            if (menubar!=null) {
-                menubar.workoutSize();
-                if (DesktopPane.me4se || maximised) {
-                    int mw = menubar.getWidthWithBorder();
-                    int mh = menubar.getHeightWithBorder();
-                    if (mw>w) w = mw;
-                    h = h + mh;
-                }
-            }
-
-            Panel contentPane = getContentPane();
-            if (contentPane!=null) {
-                contentPane.workoutSize();
-                int cw = contentPane.getWidthWithBorder();
-                int ch = contentPane.getHeightWithBorder();
-                if (cw>w) w = cw;
-                h = h + ch;
-            }
-
-            //System.out.println("size: "+w+" "+h);
-
-            setSize(w, h);
-        }
-
-        public void doLayout() {
-
-            int h=0;
-
-            TitleBar titleBar = getTitleBar();
-            if (titleBar!=null) {
-                int th = titleBar.getHeightWithBorder();
-                titleBar.setBoundsWithBorder(0, 0, width, th);
-                h = h+th;
-            }
-
-            MenuBar menubar = getMenuBar();
-            int mh = 0;
-            if (menubar!=null) {
-                mh = menubar.getHeightWithBorder();
-                if (DesktopPane.me4se) {
-                    menubar.setBoundsWithBorder(0, h, width,mh );
-                    h = h+mh;
-                }
-                else {
-                    menubar.setBoundsWithBorder(-getXOnScreen(),DesktopPane.getDesktopPane().getHeight() - getYOnScreen() - menubar.getHeightWithBorder(),DesktopPane.getDesktopPane().getWidth(),mh);
-                }
-            }
-
-            Panel contentPane = getContentPane();
-            if (contentPane!=null) {
-                contentPane.setBoundsWithBorder(0, h, width, height - h - (!DesktopPane.me4se && maximised?mh:0) );
-            }
-
-            super.doLayout();
-            
-        }
-
-        public Component getComponentAt(int x, int y) {
+        public Component getComponentAt(final int xclick,final int yclick) {
             if (!DesktopPane.me4se) {
-                MenuBar bar = getMenuBar();
-                if (bar!=null) {
-                    int i = bar.locationToIndex(x-bar.getX(), y-bar.getY());
-                    if (i>=0) {
-                        return bar;
+
+                    int x = xclick + getXOnScreen();
+                    int y = yclick + getYOnScreen();
+
+                    for (int i=0; i< 3; i++) {
+                        int key=0;
+                        switch (i) {
+                            case 0: key = KeyEvent.KEY_SOFTKEY1; break;
+                            case 1: key = KeyEvent.KEY_SOFTKEY2; break;
+                            case 2: key = KeyEvent.KEY_SOFTKEY3; break;
+                        }
+
+                        Button b = findMneonicButton(key);
+                        if (b!=null) {
+
+                            if (
+                                    (x >= b.getXWithBorder()) &&
+                                    (x <= (b.getXWithBorder()+b.getWidthWithBorder())) &&
+                                    (y >= b.getYWithBorder()) &&
+                                    (y <= (b.getYWithBorder()+b.getHeightWithBorder()))) {
+
+                                return b;
+
+                            }
+                        }
+
                     }
-                }
+
             }
-            return super.getComponentAt(x, y);
+            return super.getComponentAt(xclick, yclick);
         }
 
 
@@ -481,36 +281,148 @@ public class Window extends Panel implements ActionListener {
             return "Window";
         }
 
-        private Vector softkeybackup;
+        public void paint(Graphics2D g) {
+            super.paint(g);
+
+            if (!DesktopPane.me4se && getWindow() == DesktopPane.getDesktopPane().getSelectedFrame()) {
+
+                int offsetX = getXOnScreen();
+                int offsetY = getYOnScreen();
+                g.translate(-offsetX,-offsetY);
+
+                for (int i=0; i< 3; i++) {
+                    int key=0;
+                    switch (i) {
+                        case 0: key = KeyEvent.KEY_SOFTKEY1; break;
+                        case 1: key = KeyEvent.KEY_SOFTKEY2; break;
+                        case 2: key = KeyEvent.KEY_SOFTKEY3; break;
+                    }
+
+                    Button b = getSoftkeyForMneonic(key);
+
+                    if (b!=null) {
+                        Component component = getRendererComponentOnScreen(b);
+
+                        int x = component.getX();
+                        int y = component.getY();
+
+                        g.translate(x,y);
+                        component.paint(g);
+                        g.translate(-x, -y);
+                    }
+                }
+
+                g.translate(offsetX,offsetY);
+            }
+
+        }
+
+        private Button getSoftkeyForMneonic(int mnu) {
+            if (softkeys != null ) {
+                for (int c=softkeys.size()-1;c>=0;c--) {
+                    Button button = (Button)softkeys.elementAt(c);
+                    if (button.getMnemonic() == mnu) {
+                        return button;
+                    }
+                    else if (button instanceof Menu) {
+                            Button button2 = ((Menu)button).findMneonicButton(mnu);
+                            if (button2!=null) {
+                                return button2;
+                            }
+                    }
+                }
+            }
+            return super.findMneonicButton(mnu);
+        }
+
+    private ListCellRenderer softkeyRenderer;
+    public Component getRendererComponentOnScreen(Button button){
+
+            if (softkeyRenderer==null) {
+                MenuItemRenderer m = new MenuItemRenderer();
+                m.setName("SoftkeyRenderer");
+                softkeyRenderer = m;
+            }
+
+            boolean sideSoftKeys = DesktopPane.getDesktopPane().isSideSoftKeys();
+
+            int mnemonic = button.getMnemonic();
+
+            int desktopWidth = DesktopPane.getDesktopPane().getWidth();
+            int desktopHeight = DesktopPane.getDesktopPane().getHeight();
+
+    //System.out.println("Screen height: "+desktopHeight);
+
+            Component component = softkeyRenderer.getListCellRendererComponent(null,button,0,false,false);
+
+            component.workoutSize();
+            int componentWidth = component.getWidthWithBorder();
+            int componentHeight = component.getHeightWithBorder();
+
+    //System.out.println("Component height: "+componentHeight);
+
+            //button.setSize(componentWidth, componentHeight);
+
+            int bottom = desktopHeight-componentHeight;
+            int right = desktopWidth-componentWidth;
+
+    //System.out.println("Bottom: "+bottom);
+
+            int x = 0, y = 0;
+
+            if (mnemonic == KeyEvent.KEY_SOFTKEY1 && (!sideSoftKeys)) {
+                // Bottom left
+                x=0;
+                y=bottom;
+            }
+            else if ((mnemonic == KeyEvent.KEY_SOFTKEY2 && (!sideSoftKeys)) || (mnemonic == KeyEvent.KEY_SOFTKEY1 && sideSoftKeys)) {
+                // Bottom right
+                x = right;
+                y = bottom;
+            }
+            else if (mnemonic == KeyEvent.KEY_SOFTKEY3 && (!sideSoftKeys)) {
+                // Bottom middle
+                x = (desktopWidth/2)-(componentWidth/2);
+                y = bottom;
+            }
+            else if (mnemonic == KeyEvent.KEY_SOFTKEY2 && sideSoftKeys) {
+                // Top right
+                x = right;
+                y = 0;
+            }
+            else if (mnemonic == KeyEvent.KEY_SOFTKEY3 && sideSoftKeys) {
+                // Middle right
+                x = right;
+                y = (desktopHeight/2)-(componentHeight/2);
+            }
+            else {
+                // Not a softkey... will be at 0,0. throw exception?
+            }
+
+            component.setBoundsWithBorder(x, y, componentWidth, componentHeight);
+
+            return component;
+
+
+    }
 
         /**
          * @see javax.microedition.lcdui.Displayable#addCommand(javax.microedition.lcdui.Command) Displayable.addCommand
          */
         public void addCommand(Button softkey) {
             if (!DesktopPane.me4se) {
-                MenuBar menubar = getMenuBar();
-                if (menubar==null) {
-                    menubar = new MenuBar();
-                    setMenuBar(menubar);
+                if (softkeys==null) {
+                    softkeys = new Vector(1);
                 }
-                Vector items = menubar.getItems();
-                if (!items.contains(softkey)) {
-                    int mne = softkey.getMnemonic();
-                    if (mne!=0) {
-                        for (int c=0;c<items.size();c++) {
-                            Button button = (Button)items.elementAt(c);
-                            if (button.getMnemonic() == mne) {
-                                items.removeElement(button);
-                                if (softkeybackup==null) {
-                                    softkeybackup = new Vector(1);
-                                }
-                                softkeybackup.addElement(button);
-                                break;
-                            }
-                        }
-                    }
-                    items.addElement(softkey);
+                if (!softkeys.contains(softkey)) {
+                    softkeys.addElement(softkey);
                 }
+                //#mdebug
+                else {
+                    System.out.println("whats this all about?");
+                    throw new RuntimeException();
+                }
+                //#enddebug
             }
         }
 
@@ -518,48 +430,33 @@ public class Window extends Panel implements ActionListener {
          * @see javax.microedition.lcdui.Displayable#removeCommand(javax.microedition.lcdui.Command) Displayable.removeCommand
          */
         public void removeCommand(Button softkey) {
+            System.out.println("Lost focus to: "+this);
             if (!DesktopPane.me4se) {
-                MenuBar menubar = getMenuBar();
-                Vector items = menubar.getItems();
-                items.removeElement(softkey);
-                int mne = softkey.getMnemonic();
-                if (menubar!=null && mne!=0 && softkeybackup!=null) {
-                    for (int c=softkeybackup.size()-1;c>=0;c--) {
-                        Button button = (Button)softkeybackup.elementAt(c);
-                        if (button.getMnemonic() == mne) {
-                            items.addElement(button);
-                            break;
-                        }
-                    }
+                if (softkeys.contains(softkey)) {
+                    softkeys.removeElement(softkey);
                 }
+                //#mdebug
+                else {
+                    System.out.println("whats this all about?");
+                    throw new RuntimeException();
+                }
+                //#enddebug
             }
         }
 
-        public Button findMneonicButton(KeyEvent keyevent) {
-            MenuBar bar = getMenuBar();
-            if (bar!=null) {
+        public Button findMneonicButton(int mn) {
 
-                int size = bar.getSize();
-                for(int i = 0; i < size; i++) {
-                    Object component = bar.getElementAt(i);
-                    if (component instanceof Button) {
-                        Button button = (Button)component;
-                        if (button.getMnemonic() == keyevent.getJustPressedKey()) {
-                            Component comp = bar.getRendererComponentOnScreen(i);
-                            button.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
-                            return button;
-                        }
-                        else if (button instanceof Menu) {
-                            Button button2 = ((Menu)button).findMneonicButton(keyevent);
-                            if (button2!=null) {
-                                return button2;
-                            }
-                        }
-                    }
+            if (!DesktopPane.me4se) {
+                Button b = getSoftkeyForMneonic(mn);
+                if (b!=null) {
+                        Component comp = getRendererComponentOnScreen(b);
+                        b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                        return b;
                 }
+                return null;
             }
 
-            return super.findMneonicButton(keyevent);
+            return super.findMneonicButton(mn);
         }
 
 

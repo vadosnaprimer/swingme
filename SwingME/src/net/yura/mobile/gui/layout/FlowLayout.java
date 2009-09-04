@@ -80,9 +80,10 @@ public class FlowLayout implements Layout {
                     for (int c=0;c<components.size();c++) {
 
                             Component comp = (Component)components.elementAt(c);
-
-                            comp.setBoundsWithBorder(offset , (height-comp.getHeightWithBorder())/2, comp.getWidthWithBorder(), comp.getHeightWithBorder() );
-                            offset = offset + comp.getWidthWithBorder() + padding;
+                            if (comp.isVisible()) {
+                                comp.setBoundsWithBorder(offset , (height-comp.getHeightWithBorder())/2, comp.getWidthWithBorder(), comp.getHeightWithBorder() );
+                                offset = offset + comp.getWidthWithBorder() + padding;
+                            }
                     }
 
             }
@@ -93,18 +94,18 @@ public class FlowLayout implements Layout {
 		for (int c=0;c<components.size();c++) {
 			
 			Component comp = (Component)components.elementAt(c);
-			
-			int cheight = comp.getHeightWithBorder();
-			int cwidth = comp.getWidthWithBorder();
-				
-			int offset = (width - cwidth)/2;
+                        if (comp.isVisible()) {
+                            int cheight = comp.getHeightWithBorder();
+                            int cwidth = comp.getWidthWithBorder();
 
-			comp.setBoundsWithBorder(offset,down, cwidth, cheight );
-			
-			if (cheight!=0) {
-				down = down + cheight + padding;
-			}
-			
+                            int offset = (width - cwidth)/2;
+
+                            comp.setBoundsWithBorder(offset,down, cwidth, cheight );
+
+                            if (cheight!=0) {
+                                    down = down + cheight + padding;
+                            }
+                        }
 		}
 
             }
@@ -122,9 +123,7 @@ public class FlowLayout implements Layout {
                     for (int c=0;c<components.size();c++) {
 
                             Component comp = (Component)components.elementAt(c);
-
-                            if (fullheight < comp.getHeightWithBorder()+padding*2) {
-
+                            if (comp.isVisible() && fullheight < comp.getHeightWithBorder()+padding*2) {
                                     fullheight = comp.getHeightWithBorder()+padding*2;
                             }
 
@@ -140,9 +139,9 @@ public class FlowLayout implements Layout {
                     for (int c=0;c<components.size();c++) {
 
                             Component comp = (Component)components.elementAt(c);
-
-                            fullheight = fullheight + comp.getHeightWithBorder();
-
+                            if (comp.isVisible()) {
+                                fullheight = fullheight + comp.getHeightWithBorder();
+                            }
                     }
 
                     return fullheight;
@@ -161,10 +160,9 @@ public class FlowLayout implements Layout {
                     for (int c=0;c<components.size();c++) {
 
                             Component comp = (Component)components.elementAt(c);
-
-                            fullwidth = fullwidth + comp.getWidthWithBorder();
-
-
+                            if (comp.isVisible()) {
+                                fullwidth = fullwidth + comp.getWidthWithBorder();
+                            }
 
                     }
 
@@ -178,10 +176,8 @@ public class FlowLayout implements Layout {
 		for (int c=0;c<components.size();c++) {
 			
 			Component comp = (Component)components.elementAt(c);
-
                         // we DONT use +padding*2 even though really we should
-			if ( comp.getWidthWithBorder() > fullwidth) {
-				
+			if ( comp.isVisible() && comp.getWidthWithBorder() > fullwidth) {
 				fullwidth = comp.getWidthWithBorder();
 			}
 		}

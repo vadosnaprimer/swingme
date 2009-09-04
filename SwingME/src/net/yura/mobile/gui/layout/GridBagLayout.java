@@ -38,13 +38,12 @@ public class GridBagLayout implements Layout {
             Vector components = component.getComponents();
             Hashtable constraints = component.getConstraints();
             int count = 0; // count of the visible subcomponents
-//            for (Object comp = get(component, ":comp"); comp != null; comp = get(
-//                            comp, ":next")) {
-//                    if (getBoolean(comp, "visible", true)) {
-//                            count++;
-//                    }
-//            }
-            count = component.getComponentCount();
+            for (int c=0; c < components.size(); c++) {
+                    if ( ((Component) components.elementAt(c)).isVisible() ) {
+                            count++;
+                    }
+            }
+            //count = component.getComponentCount();
             if (count == 0) {
                     return null;
             } // zero subcomponent
@@ -66,9 +65,9 @@ public class GridBagLayout implements Layout {
             for (int compi=0; compi < count; compi++) {
                 Component subComponent = (Component) components.elementAt(compi);
                 GridBagConstraints subConstraint = (GridBagConstraints) constraints.get(subComponent);
-//                    if (!getBoolean(comp, "visible", true)) {
-//                            continue;
-//                    }
+                    if (!subComponent.isVisible() ) {
+                            continue;
+                    }
                     int colspan = ((columns != 0) && (columns < count)) ? Math.min(
                                     subConstraint.colSpan, columns) : 1;
                     int rowspan = (columns != 1) ? subConstraint.rowSpan : 1;
@@ -282,9 +281,9 @@ public class GridBagLayout implements Layout {
                 for (int compi=0; compi < component.getComponentCount(); compi++) {
                     Component subComponent = (Component) components.elementAt(compi);
                     GridBagConstraints subConstraint = (GridBagConstraints) constraints.get(subComponent);
-//                        if (!getBoolean(comp, "visible", true)) {
-//                                continue;
-//                        }
+                        if (!subComponent.isVisible()) {
+                                continue;
+                        }
                         int ix = areax + left
                                         + getSum(grid[0], 0, grid[4][compi], gap, true);
                         int iy = areay + top

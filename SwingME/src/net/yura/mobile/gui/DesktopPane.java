@@ -30,12 +30,14 @@ import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
+import net.yura.mobile.gui.layout.FlowLayout;
 
 /**
  * @author Yura Mamyrin
@@ -620,7 +622,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                             Button mneonicButton=null;
                             if (keyevent.getJustPressedKey()!=0) {
-                                mneonicButton = currentWindow.findMneonicButton(keyevent);
+                                mneonicButton = currentWindow.findMneonicButton(keyevent.getJustPressedKey());
                             }
                             Component focusedComponent = currentWindow.getFocusOwner();
 
@@ -986,7 +988,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // #####################################################################
 
         //#mdebug
-	private Window debugwindow;
+	private Frame debugwindow;
 	private TextArea text;
         private String mem;
         //#enddebug
@@ -998,28 +1000,31 @@ public class DesktopPane extends Canvas implements Runnable {
                 try {
 			if (desktop.debugwindow==null) {
 
-				desktop.debugwindow = new Window();
+				desktop.debugwindow = new Frame("Debug");
                                 desktop.debugwindow.setName("Dialog");
 				desktop.text = new TextArea();
                                 desktop.text.setFocusable(false);
                                 desktop.text.setLineWrap(true);
 				desktop.debugwindow.add( new ScrollPane(desktop.text) );
-                                MenuBar menubar = new MenuBar();
+                                //MenuBar menubar = new MenuBar();
                                 Button close = new Button("Close");
-                                close.setActionCommand("close");
+                                close.setActionCommand(Frame.CMD_CLOSE);
                                 close.addActionListener(desktop.debugwindow);
                                 close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
-                                menubar.add(close);
-                                desktop.debugwindow.setMenuBar(menubar);
-                                desktop.debugwindow.setBounds(10, 10, desktop.getWidth()-20, desktop.getHeight()/2);
+                                //menubar.add(close);
+                                //desktop.debugwindow.setMenuBar(menubar);
+                                Panel p = new Panel( new FlowLayout());
+                                p.add(close);
+                                desktop.debugwindow.add(p, Graphics.BOTTOM);
 
                                 // This is not needed, but just in case something
                                 // has gone wrong with the theme, we set some defaults
                                 desktop.text.setFont(new Font());
 				desktop.text.setForeground(0x00000000);
                                 desktop.text.setBackground(0x00FFFFFF);
-                                desktop.debugwindow.setBackground(0x00FFFFFF);
+                                //desktop.debugwindow.setBackground(0x00FFFFFF);
 
+                                desktop.debugwindow.setBounds(10, 10, desktop.getWidth()-20, desktop.getHeight()/2);
 			}
 
 			desktop.text.append(s+"\n");
@@ -1169,8 +1174,8 @@ public class DesktopPane extends Canvas implements Runnable {
                     // it may cause it to stop being painted at all, as it may bcome totally off the screen
 
                     if (window!=null) {
-                        if (window.getMaximum()) {
-                            window.setMaximum(true);
+                        if (window instanceof Frame && ((Frame)window).getMaximum()) {
+                            ((Frame)window).setMaximum(true);
                         }
                         //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
                     }

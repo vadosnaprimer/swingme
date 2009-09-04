@@ -53,19 +53,19 @@ public class TitleBar extends Panel implements ActionListener {
         if (hide) {
             Button b = new Button("_");
             b.addActionListener(this);
-            b.setActionCommand(Window.CMD_MIN);
+            b.setActionCommand(Frame.CMD_MIN);
             buttonPanel.add(b);
         }
         if (max) {
             Button b = new Button("[]");
             b.addActionListener(this);
-            b.setActionCommand(Window.CMD_MAX);
+            b.setActionCommand(Frame.CMD_MAX);
             buttonPanel.add(b);
         }
         if (close) {
             Button b = new Button("X");
             b.addActionListener(this);
-            b.setActionCommand(Window.CMD_CLOSE);
+            b.setActionCommand(Frame.CMD_CLOSE);
             buttonPanel.add(b);
 
         }
@@ -108,7 +108,7 @@ public class TitleBar extends Panel implements ActionListener {
         }
         else if (type == DesktopPane.DRAGGED) {
 
-            Window owner = getWindow();
+            Frame owner = (Frame)getWindow();
 
             if (!owner.getMaximum()) {
 
@@ -184,7 +184,9 @@ public class TitleBar extends Panel implements ActionListener {
 
         }
         else {
-            getWindow().actionPerformed(actionCommand);
+            if (getWindow() instanceof Frame) {
+                ((Frame)getWindow()).actionPerformed(actionCommand);
+            }
         }
     }
 

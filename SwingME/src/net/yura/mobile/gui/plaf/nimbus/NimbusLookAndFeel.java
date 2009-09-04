@@ -119,7 +119,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         // Window
         Border windowBorder = new LineBorder(decodeColor("desktop"),-1,1,true,1);
-        setUIDefault("Window.border", windowBorder);
+        setUIDefault("Frame.border", windowBorder);
 
         // OptionPane
         setUIDefault("Dialog.background", uiSettings.get("controlHighlight"));//uiSettings.get("controlLHighlight"));
@@ -276,12 +276,12 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("ListRenderer[focused].border",tmp3);
         setUIDefault("ListRenderer[focused+selected].border",tmp4);
 
-        setUIDefault("MenuItemRenderer.background", noColor);
-        setUIDefault("MenuItemRenderer.border", tmp1);
-        setUIDefault("MenuItemRenderer[selected].border",tmp2);
-        setUIDefault("MenuItemRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
-        setUIDefault("MenuItemRenderer[focused].border",tmp3);
-        setUIDefault("MenuItemRenderer[focused+selected].border",tmp4);
+        setUIDefault("MenuRenderer.background", noColor);
+        setUIDefault("MenuRenderer.border", tmp1);
+        setUIDefault("MenuRenderer[selected].border",tmp2);
+        setUIDefault("MenuRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault("MenuRenderer[focused].border",tmp3);
+        setUIDefault("MenuRenderer[focused+selected].border",tmp4);
 
         // COMBOS
         Vector comboBorderSettings = new Vector();

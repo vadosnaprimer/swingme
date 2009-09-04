@@ -393,7 +393,6 @@ public class List extends Component implements ActionListener {
         super.pointerEvent(type, x, y, keys);
 
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
-
             int i = getComponentAt(x, y)[0];
 
             if (i>=0 && i<getSize()) {

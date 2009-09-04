@@ -26,12 +26,13 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BoxLayout;
+import net.yura.mobile.gui.layout.FlowLayout;
 
 /**
  * @author Yura Mamyrin
  * @see javax.swing.JOptionPane
  */
-public class OptionPane extends Window {
+public class OptionPane extends Frame {
 
     public static final int YES_NO_OPTION = 0;
     public static final int OK_OPTION = 1;
@@ -49,11 +50,10 @@ public class OptionPane extends Window {
     private Label icon;
     private Button defaultCommand;
     private ScrollPane scroll;
+    private Panel cmdPanel;
     
     public OptionPane() {
         setName("Dialog");
-
-        setUndecorated(false);
 
         //super.setActionListener(this);
         //title = new TitleBar("", null, false, false, false, false, false);
@@ -69,6 +69,8 @@ public class OptionPane extends Window {
         panel.add(icon,Graphics.LEFT);
         scroll = new ScrollPane(content);
         panel.add( scroll );
+        cmdPanel = new Panel( new FlowLayout() );
+        panel.add( cmdPanel ,Graphics.BOTTOM);
     }
     
     
@@ -144,24 +146,23 @@ public class OptionPane extends Window {
     }
 
     public void setOptions(Button[] options) {
-        MenuBar menubar = getMenuBar();
-        if (menubar==null) {
-            System.out.println("setting initial menu bar");
-            menubar = new MenuBar();
-            setMenuBar(menubar);
-        }
-        else {
-            System.out.println("removing existing items");
-            menubar.removeAll();
-        }
+        cmdPanel.removeAll();
         for (int c=0;c<options.length;c++) {
-            System.out.println("adding menu bar item");
+
+            // this is same as menubar
+            if (options[c].getMnemonic() == 0) {
+                switch(c) {
+                    // TODO make sure this mnemonic is not used for another button
+                    case 0: options[c].setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
+                    case 1: options[c].setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
+                    case 2: options[c].setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
+                }
+            }
+
             Button button = (Button)options[c];
             button.addActionListener(this);
-            menubar.add(button);
+            cmdPanel.add(button);
         }
-       //setWindowCommand(0, options[0]);
-       //setWindowCommand(1, (options.length > 1)?options[1]:null);
     }
 
     public void setIcon(Icon icon) {

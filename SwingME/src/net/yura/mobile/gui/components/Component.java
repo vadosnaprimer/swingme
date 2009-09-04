@@ -56,6 +56,10 @@ public abstract class Component {
 		updateUI();
 	}
 
+        public boolean isVisible() {
+            return true;
+        }
+
         /**
          * @param w The preferred Width (can be -1 for no preference)
          * @param h The preferred Height (can be -1 for no preference)
@@ -114,6 +118,7 @@ public abstract class Component {
          * @see java.awt.Component#isFocusable() Component.isFocusable
          */
 	public boolean isFocusable() {
+            if (!isVisible()) return false;
 		return focusable;
 	}
 
@@ -296,7 +301,7 @@ public abstract class Component {
 	public void pointerEvent(int type, int x, int y, KeyEvent keys) {
             if (focusable) {
                 if (type == DesktopPane.PRESSED) {
-                    if(!isFocusOwner()) { requestFocusInWindow(); }
+                    if(!isFocusOwner() && isVisible()) { requestFocusInWindow(); }
                 }
             }
             else if (parent!=null) {
@@ -394,7 +399,7 @@ public abstract class Component {
             
                 // if we are not in a window, do nothing
                 Window w = getWindow();
-		if (w==null || !w.isVisible()) return;
+		if (!isVisible() || w==null || !w.isVisible()) return;
 		
 		if (!isOpaque()) {
 			
