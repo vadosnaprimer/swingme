@@ -47,7 +47,7 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 
 		rootpane.setLookAndFeel( new MetalLookAndFeel() );
 		
-                Window mainWindow = new Window();
+                Frame mainWindow = new Frame();
 
                 Button exit = new Button("Exit");
                 exit.addActionListener(this);

@@ -66,6 +66,7 @@ import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.FileChooser;
+import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
@@ -88,7 +89,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Icon image;
         private TextArea infoLabel,viewText,loadPanel;
 	private Vector images;
-	private Window mainWindow;
+	private Frame mainWindow;
 	
         private SynthLookAndFeel synth;
         private MetalLookAndFeel metal;
@@ -103,7 +104,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 //setLookAndFeel( metal );
                 setLookAndFeel( new NimbusLookAndFeel() );
 
-                mainWindow = new Window();
+                mainWindow = new Frame();
                 
 		mainWindow.setMaximum(true);
                 
@@ -226,8 +227,8 @@ public class MainPane extends DesktopPane implements ActionListener {
                 }
                 else if ("windowTest1".equals(actionCommand)) {
 
-                    Window test1 = new Window();
-                    test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
+                    Frame test1 = new Frame("Window Title");
+                    //test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
 
                     //test1.add(new Label("LALAL TEST 1"));
                     //test1.setBackground(0x00FFFFFF);
@@ -239,12 +240,22 @@ public class MainPane extends DesktopPane implements ActionListener {
                         ex.printStackTrace();
                     }
 
-                    test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
+
                     
                     // Test that pack method works too
                     //test1.pack();
-                    
-                    add(test1);
+
+                    //MenuBar bar = new MenuBar();
+
+                    Menu foo = new Menu("foo");
+                    foo.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                    foo.add( new Button("hehehehe :)") );
+                    //bar.add(foo);
+
+                    test1.add(foo,Graphics.RIGHT);
+
+                    test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
+                    test1.setVisible(true);
                     
                 }
                 else if ("xulTest".equals(actionCommand)) {
@@ -265,7 +276,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 }
                 else if ("xulTest2".equals(actionCommand)) {
 
-                    final Window window = new Window();
+                    final Frame window = new Frame();
 
                     try {
                         XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), new ActionListener() {
