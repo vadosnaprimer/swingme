@@ -204,7 +204,17 @@ public class XULLoader {
             return readUIObject(parser, combobox,listener);
         }
         else if (name.equals("list")) {
-            List list = new List();
+            final List list = new List();
+
+			final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("action".equals(key)) {
+                    list.setActionCommand(value);
+                }
+			}
 
             return readUIObject(parser, list,listener);
         }
