@@ -82,17 +82,7 @@
         <color type="BORDERFILL" value="#FFFFFF"/>
       </state>
     </style>
-    <bind style="window" key="Window"/>
-
-
-    <style id="textWindow">
-      <insets top="0" left="0" bottom="0" right="0"/>
-      <state>
-        <imagePainter path="/telus/mainWindow.png" sourceInsets="25 115 25 115" paintCenter="false"/>
-        <color type="BORDERFILL" value="#FFFFFF"/>
-      </state>
-    </style>
-    <bind style="textWindow" key="TextWindow"/>
+    <bind style="window" key="Frame"/>
 
 
     <style id="menu">

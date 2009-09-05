@@ -96,7 +96,7 @@
         <imagePainter path="/iphone/mainWindow.png" sourceInsets="44 0 44 0" paintCenter="true"/>
       </state>
     </style>
-    <bind style="window" key="Window"/>
+    <bind style="window" key="Frame"/>
 
 
     <style id="dialog">

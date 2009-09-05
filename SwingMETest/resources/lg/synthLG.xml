@@ -94,7 +94,7 @@
         <color type="BACKGROUND" value="#000000"/>
       </state>
     </style>
-    <bind style="window" key="Window"/>
+    <bind style="window" key="Frame"/>
 
 
     <style id="textWindow">

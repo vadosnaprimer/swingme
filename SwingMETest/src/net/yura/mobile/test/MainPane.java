@@ -42,7 +42,6 @@ import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TextField;
-import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
@@ -56,7 +55,6 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
-import net.yura.mobile.gui.components.TitleBar;
 import net.yura.mobile.gui.layout.GridLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
@@ -117,7 +115,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 }
                 
                 mainWindow.setMenuBar(new MenuBar());
-                
+                mainWindow.setUndecorated(true);
                 mainWindow.setVisible(true);
 		actionPerformed("mainmenu");
 		
@@ -228,6 +226,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("windowTest1".equals(actionCommand)) {
 
                     Frame test1 = new Frame("Window Title");
+                    test1.setIconImage(image);
                     //test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
 
                     //test1.add(new Label("LALAL TEST 1"));
