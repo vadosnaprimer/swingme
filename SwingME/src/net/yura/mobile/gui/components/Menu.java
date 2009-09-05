@@ -19,12 +19,10 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
-import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
-import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 
 /**
  * @author Yura Mamyrin
@@ -209,7 +207,7 @@ public class Menu extends Button {
 
             popup = new Window();
             popup.setCloseOnFocusLost(true);
-            //popup.addWindowListener(this);
+            popup.addWindowListener(this);
 
             if (!DesktopPane.me4se) {
                 //MenuBar menubar = new MenuBar();
@@ -231,6 +229,7 @@ public class Menu extends Button {
             menuItems.setLayoutOrientation(false);
             menuItems.addActionListener(this);
             menuItems.setUseSelectButton(true);
+            menuItems.setActionCommand("select");
             scroll = new ScrollPane(menuItems);
             popup.add(scroll);
             popup.setName("Menu");
@@ -241,14 +240,16 @@ public class Menu extends Button {
 
     	public void actionPerformed(String actionCommand) {
 
+            // from WindowListener or cancel button
             if (Frame.CMD_CLOSE.equals(actionCommand)) {
-                popup.setVisible(false);
                 // cancel the parent menu
+                popup.setVisible(false);
                 if (parentMenu!=null) {
                     parentMenu.actionPerformed(actionCommand);
                 }
             }
-            else {
+            else if ("select".equals(actionCommand)) {
+
                 Button button = (Button)menuItems.getSelectedValue();
 
                 //if (button instanceof Menu) {
@@ -265,6 +266,11 @@ public class Menu extends Button {
 
                 button.fireActionPerformed();
             }
+            //#mdebug
+            else {
+                System.out.println("unknown command in menu: "+actionCommand);
+            }
+            //#enddebug
 
         }
 

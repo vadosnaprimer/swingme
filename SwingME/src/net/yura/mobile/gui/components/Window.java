@@ -20,6 +20,7 @@ package net.yura.mobile.gui.components;
 import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
+import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
@@ -29,7 +30,7 @@ import net.yura.mobile.gui.layout.BorderLayout;
 
 /**
  * @author Yura Mamyrin
- * @see javax.swing.JFrame
+ * @see java.awt.Window
  */
 public class Window extends Panel {
 
@@ -42,10 +43,13 @@ public class Window extends Panel {
 
         private boolean closeOnFocusLost;
 
+        private ListCellRenderer softkeyRenderer;
         private Vector softkeys;
 
+        private ActionListener windowListener;
+
         /**
-         * @see javax.swing.JFrame#JFrame() JFrame.JFrame
+         * @see java.awt.Window#Window() Window.Window
          */
 	public Window() {
 
@@ -67,6 +71,10 @@ public class Window extends Panel {
 
 	}
 
+        /**
+         * not swing
+         * easy way to make menus and combo boxes close when u click outside of them
+         */
         public void setCloseOnFocusLost(boolean ch) {
             closeOnFocusLost = ch;
         }
@@ -163,6 +171,26 @@ public class Window extends Panel {
         }
 
         /**
+         * @see java.awt.Window#addWindowListener(java.awt.event.WindowListener) Window.addWindowListener
+         */
+        public void addWindowListener(ActionListener al) {
+            windowListener = al;
+        }
+
+        /**
+         * internal method that is called when a window autocloses or is closed from the titlebar
+         */
+        void doClose() {
+
+                if (windowListener!=null) {
+                    windowListener.actionPerformed(Frame.CMD_CLOSE);
+                }
+                else {
+                    setVisible(false);
+                }
+        }
+
+        /**
          * @param b true if the window is to be shown, false to hide the window
          * @see java.awt.Component#setVisible(boolean) Component.setVisible
          */
@@ -172,6 +200,7 @@ public class Window extends Panel {
                 DesktopPane.getDesktopPane().add(this);
             }
             else {
+
 //                // TODO ??
 //                if (parent==null) {
                     DesktopPane.getDesktopPane().remove(this);
@@ -207,40 +236,11 @@ public class Window extends Panel {
             if (closeOnFocusLost && type == DesktopPane.PRESSED &&
                     (x<0 || y<0 || x>width || y>height)
                     ) {
-                setVisible(false);
+                doClose();
             }
 
 
         }
-
-//        public CommandButton[] getWindowCommands() {
-//            return windowCommands;
-//        }
-//
-//        /**
-//         * @see DesktopPane#setComponentCommand
-//         */
-//	public void setWindowCommand(int i, CommandButton softkey) {
-//
-//            if (windowCommands[i]!=softkey) {
-//                CommandButton oldc = DesktopPane.getDesktopPane().getCurrentCommands()[i]; // get old 1
-//		windowCommands[i] = softkey;
-//                if (DesktopPane.getDesktopPane().getCurrentCommands()[i]==softkey) { // check if we are the new 1
-//                    if (oldc==null || softkey == null) {
-//                        DesktopPane.getDesktopPane().fullRepaint();
-//                    }
-//                    else {
-//                        DesktopPane.getDesktopPane().softkeyRepaint();
-//                    }
-//                }
-//            }
-//	}
-
-
-
-
-
-
 
         public Component getComponentAt(final int xclick,final int yclick) {
             if (!DesktopPane.me4se) {
@@ -275,7 +275,6 @@ public class Window extends Panel {
             }
             return super.getComponentAt(xclick, yclick);
         }
-
 
         protected String getDefaultName() {
             return "Window";
@@ -335,7 +334,6 @@ public class Window extends Panel {
             return super.findMneonicButton(mnu);
         }
 
-    private ListCellRenderer softkeyRenderer;
     public Component getRendererComponentOnScreen(Button button){
 
             if (softkeyRenderer==null) {
@@ -414,6 +412,7 @@ public class Window extends Panel {
                 if (softkeys==null) {
                     softkeys = new Vector(1);
                 }
+
                 if (!softkeys.contains(softkey)) {
                     softkeys.addElement(softkey);
                 }
@@ -430,7 +429,7 @@ public class Window extends Panel {
          * @see javax.microedition.lcdui.Displayable#removeCommand(javax.microedition.lcdui.Command) Displayable.removeCommand
          */
         public void removeCommand(Button softkey) {
-            System.out.println("Lost focus to: "+this);
+
             if (!DesktopPane.me4se) {
                 if (softkeys.contains(softkey)) {
                     softkeys.removeElement(softkey);

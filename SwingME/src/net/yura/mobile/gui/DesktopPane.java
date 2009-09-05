@@ -1009,7 +1009,10 @@ public class DesktopPane extends Canvas implements Runnable {
                                 //MenuBar menubar = new MenuBar();
                                 Button close = new Button("Close");
                                 close.setActionCommand(Frame.CMD_CLOSE);
-                                close.addActionListener(desktop.debugwindow);
+
+                                // hack to avoid having to make a new action listoner
+                                close.addActionListener(desktop.debugwindow.getTitleBar());
+
                                 close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
                                 //menubar.add(close);
                                 //desktop.debugwindow.setMenuBar(menubar);

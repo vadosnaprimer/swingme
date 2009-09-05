@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
@@ -183,11 +184,33 @@ public class TitleBar extends Panel implements ActionListener {
                 resize = true;
 
         }
-        else {
-            if (getWindow() instanceof Frame) {
-                ((Frame)getWindow()).actionPerformed(actionCommand);
-            }
+        else if (Frame.CMD_CLOSE.equals(actionCommand)) {
+             getWindow().doClose();
+         }
+         else if (Frame.CMD_MIN.equals(actionCommand)) {
+
+             //if (parent==null) {
+                 Vector windows = DesktopPane.getDesktopPane().getAllFrames();
+                 if (windows.size()>1) {
+                     DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
+                 }
+             //}
+
         }
+        else if (Frame.CMD_MAX.equals(actionCommand)) {
+             Window w = getWindow();
+             // can only maximise a frame
+             if (w instanceof Frame) {
+                 Frame f = (Frame)w;
+                 f.setMaximum( !f.isMaximum );
+                 f.repaint();
+             }
+        }
+        else {
+             //#debug
+            System.out.println("unknow Window command: "+actionCommand);
+        }
+
     }
 
     

@@ -18,7 +18,6 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
-
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
@@ -27,7 +26,6 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
-
 
 /**
  * @author Yura Mamyrin

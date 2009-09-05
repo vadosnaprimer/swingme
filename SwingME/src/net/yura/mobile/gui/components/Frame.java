@@ -1,15 +1,32 @@
+/*
+ *  This file is part of 'yura.net Swing ME'.
+ *
+ *  'yura.net Swing ME' is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  'yura.net Swing ME' is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public License
+ *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
-import javax.microedition.lcdui.Graphics;
-import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.layout.BorderLayout;
 
 /**
  * @author Yura Mamyrin
+ * @see javax.swing.JFrame
  */
-public class Frame extends Window implements ActionListener {
+public class Frame extends Window {
         public static final String CMD_MAX = "max";
         public static final String CMD_MIN = "min";
         public static final String CMD_CLOSE = "close";
@@ -18,11 +35,18 @@ public class Frame extends Window implements ActionListener {
          */
         protected boolean isMaximum;
 
+        /**
+         * @see javax.swing.JFrame#JFrame() JFrame.JFrame
+         */
         public Frame() {
             setUndecorated(false);
             setContentPane(new Panel(new BorderLayout()));
             setLayout(null); // we do our own layout
         }
+
+        /**
+         * @see javax.swing.JFrame#JFrame(java.lang.String) JFrame.JFrame
+         */
         public Frame(String name) {
             this();
             setTitle(name);
@@ -46,13 +70,24 @@ public class Frame extends Window implements ActionListener {
         }
 
         /**
-         * @see
+         * @see java.awt.Frame#setTitle(java.lang.String) Frame.setTitle
          */
         public void setTitle(String newTitle) {
             TitleBar tb = getTitleBar();
-            tb.setTitle(newTitle);
+            if (tb!=null) {
+                tb.setTitle(newTitle);
+            }
         }
 
+        /**
+         * @see java.awt.Frame#setIconImage(java.awt.Image) Frame.setIconImage
+         */
+        public void setIconImage(Icon icon) {
+            TitleBar tb = getTitleBar();
+            if (tb!=null) {
+                tb.setIconImage(icon);
+            }
+        }
 
         /**
          * @see javax.swing.JFrame#setJMenuBar(javax.swing.JMenuBar)
@@ -69,6 +104,9 @@ public class Frame extends Window implements ActionListener {
 
         }
 
+        /**
+         * @see javax.swing.JFrame#setContentPane(java.awt.Container) JFrame.setContentPane
+         */
         public void setContentPane(Panel p) {
 
             Panel mbar = getContentPane();
@@ -97,7 +135,7 @@ public class Frame extends Window implements ActionListener {
         /**
          * not swing
          */
-        private TitleBar getTitleBar() {
+        public TitleBar getTitleBar() {
             Vector components = getComponents();
             for (int c=0;c<components.size();c++) {
                 Object obj = components.elementAt(c);
@@ -108,6 +146,9 @@ public class Frame extends Window implements ActionListener {
             return null;
         }
 
+        /**
+         * @see javax.swing.JFrame#getContentPane() JFrame.getContentPane
+         */
         public Panel getContentPane() {
             Vector components = getComponents();
             for (int c=0;c<components.size();c++) {
@@ -118,9 +159,6 @@ public class Frame extends Window implements ActionListener {
             }
             return null;
         }
-
-
-
 
         public void workoutMinimumSize() {
 
@@ -192,44 +230,6 @@ public class Frame extends Window implements ActionListener {
             super.doLayout();
 
         }
-        
-        private ActionListener windowListener;
-        public void addWindowListener(ActionListener al) {
-            windowListener = al;
-        }
-
-        public void actionPerformed(String actionCommand) {
-
-             if (CMD_CLOSE.equals(actionCommand)) {
-
-                if (windowListener!=null) {
-                    windowListener.actionPerformed(actionCommand);
-                    return;
-                }
-
-                 setVisible(false);
-             }
-             else if (CMD_MIN.equals(actionCommand)) {
-
-                 if (parent==null) {
-                     Vector windows = DesktopPane.getDesktopPane().getAllFrames();
-                     if (windows.size()>1) {
-                         DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
-                     }
-                 }
-
-             }
-             else if (CMD_MAX.equals(actionCommand)) {
-                 setMaximum( !isMaximum );
-                 repaint();
-             }
-             else {
-                 //#debug
-                System.out.println("unknow Window command: "+actionCommand);
-             }
-
-        }
-
 
         protected void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
 
@@ -238,9 +238,11 @@ public class Frame extends Window implements ActionListener {
 
         }
 
+        // java 1.5 hack
         public void add(Component comp) {
             getContentPane().add(comp);
         }
+        // java 1.5 hack
         public void add(Component comp,Object consta) {
             getContentPane().add(comp,consta);
         }

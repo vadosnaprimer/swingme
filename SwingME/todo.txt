@@ -1,21 +1,17 @@
 TODO:
 
-Stop ability to drag panels outside of application area.
-Ability to close dropdowns by clicking anywhere outside options panel.
-Menu: behave differently on PC and mobile. Close key should replace the "select" on a pc.
-Remove window controls. ALL OF THEM. ????
+bug: clipping bug in titled border, can be seen when resizing XULTest1
+bug: when a window has only 1 focusable component and u move up, it loses focus then gains it again
+bug: when u first go into the edit panel, its wrapped as if there is a scrollbar there, even though there is none
 
 fix menu getting stuck in loop when u open and close it really quickly
 fix when scrolling with the scrollbars, when the curser is dragged from the track or arrows, it should stop scrolling
 fix when switching orientation the textbox indicator does not update on the phone
 
-finish window decoration options, make sure works with ImageBorder
 make a good theme for the demo app
 
-make sure all components support touch screen
- * Window resize
-
-make skinning of softkeys be fully flexable, so can have border padding and things like that
+make windows not drag outside of application area.
+make window resizing work with the mouse
 make bitmap Font support Unicode text
 make sure softkey mapping for strange devices works
 make strange sofkeys like the blackberry work, where softKeys are not really softKeys
@@ -30,8 +26,11 @@ make TextField have an predictive text option
 make TextField support more then just english language for number keypads
 make TextField support right to left languages
 
-add Tree Component
+add Tree Component (and add thinlet loading support for it)
+add SplitPane component (and add thinlet loading support for it)
+
 
 ME4SE TODO:
 
 add key events for ctrl-C and ctrl-V and access to clipboard for text
+add Symbian service for acess to phone clipboard

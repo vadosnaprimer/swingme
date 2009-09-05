@@ -32,7 +32,7 @@ import net.yura.mobile.gui.layout.FlowLayout;
  * @author Yura Mamyrin
  * @see javax.swing.JOptionPane
  */
-public class OptionPane extends Frame {
+public class OptionPane extends Frame implements ActionListener {
 
     public static final int YES_NO_OPTION = 0;
     public static final int OK_OPTION = 1;
