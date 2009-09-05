@@ -72,7 +72,7 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
 
         //setActionListener(this);
         
-        setName("TextWindow");
+        setName("Dialog");
         listTitle = new Label();
         //VistoPane.addTitleToWindow(this, listTitle);
         setMaximum(true);

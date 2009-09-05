@@ -4,6 +4,9 @@ bug: clipping bug in titled border, can be seen when resizing XULTest1
 bug: when a window has only 1 focusable component and u move up, it loses focus then gains it again
 bug: when u first go into the edit panel, its wrapped as if there is a scrollbar there, even though there is none
 
+fix menu smudge on me4se mode when opeing a menu
+fix menu bars not skinned in any theme
+fix its not clear what menu item is selected when the menu is open in metalTheme
 fix menu getting stuck in loop when u open and close it really quickly
 fix when scrolling with the scrollbars, when the curser is dragged from the track or arrows, it should stop scrolling
 fix when switching orientation the textbox indicator does not update on the phone
