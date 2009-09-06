@@ -115,7 +115,6 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         // Default Stlyes
         setUIDefault("foreground",uiSettings.get("text"));
-        setUIDefault("font",uiSettings.get("font"));
 
         // Window
         Border windowBorder = new LineBorder(decodeColor("desktop"),-1,1,true,1);
@@ -133,6 +132,18 @@ public class NimbusLookAndFeel extends LookAndFeel {
         Border title = new NimbusBorder(titleSettings);
         setUIDefault("TitleBar.border", title);
         setUIDefault("TitleBar.background", noColor);
+
+        // MenuBar
+        Vector menuSettings = new Vector();
+        int menuBarBorderColor = getDerivedColor("background",0.0f,0.0f,-0.1f,0).intValue();
+        int menuBarShadow = getDerivedColor("background",0.0f,0.0f,-0.05f,0).intValue();
+        menuSettings.addElement(new NimbusBorderSetting(menuBarBorderColor, menuBarBorderColor, bottomBorderOnly, 0, 1));
+        menuSettings.addElement(new NimbusBorderSetting(decodeColor("background"), menuBarShadow, 1, 0, 1));
+        Border menubar = new NimbusBorder(menuSettings);
+        setUIDefault("MenuBar.border", menubar);
+        setUIDefault("MenuBar.background", noColor);
+
+        // Menu Items
 
         // Label
         setUIDefault("Label.background", noColor);
@@ -501,11 +512,11 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         Vector thumbTopSettings = new Vector();
         thumbTopSettings.addElement(new NimbusBorderSetting(color6, color6, topTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
-        thumbTopSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+        //thumbTopSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
 
-        Vector thumbBottomSettings = new Vector();
-        thumbBottomSettings.addElement(new NimbusBorderSetting(color6, color6, bottomTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
-        thumbBottomSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+//        Vector thumbBottomSettings = new Vector();
+//        thumbBottomSettings.addElement(new NimbusBorderSetting(color6, color6, bottomTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
+//        thumbBottomSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
 
         int[] thumbFillBorders = {0,1,0,1};
         Vector thumbFillSettings = new Vector();
@@ -524,7 +535,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         trackFillSettings.addElement(new NimbusBorderSetting(color4, color4, 1, 0, 1));
 
         Icon thumbTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_TOP, thumbTopSettings, decodeColor("text"));
-        Icon thumbBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_BOTTOM, thumbBottomSettings, decodeColor("text"));
+        Icon thumbBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_BOTTOM, thumbTopSettings, decodeColor("text"));
         Icon thumbFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_FILL, thumbFillSettings, decodeColor("text"));
         Icon trackTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_TOP, trackTopSettings, decodeColor("text"));
         Icon trackBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_BOTTOM, trackBottomSettings, decodeColor("text"));

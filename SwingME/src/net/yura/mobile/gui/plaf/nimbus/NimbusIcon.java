@@ -41,6 +41,10 @@ public class NimbusIcon extends Icon {
 //                border.corner = corners;
 //            }
 //        }
+        if ((type == LookAndFeel.ICON_THUMB_TOP) || (type == LookAndFeel.ICON_THUMB_BOTTOM)) {
+            height = 1;
+        }
+        
         NimbusBorder.paintBorders(borders, g, x, y, getIconWidth(), getIconHeight());
 
         g.setColor(color);
