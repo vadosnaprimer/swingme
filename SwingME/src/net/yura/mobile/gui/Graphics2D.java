@@ -261,7 +261,7 @@ public class Graphics2D {
     }
 
     public int[] getClip() {
-        return new int[] {getClipX(),getClipY(),getClipWidth(),g.getClipHeight()};
+        return new int[] {getClipX(),getClipY(),getClipWidth(),getClipHeight()};
     }
 
     public void setClip(int[] clip) {
