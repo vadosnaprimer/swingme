@@ -208,7 +208,7 @@ public class GridBagLayout implements Layout {
                                 + bottom;
         }
 
-        //int titleheight = 0; //component.getHeight(); // title text and
+        int titleheight = 0; //component.getHeight(); // title text and
         // icon
         //setInteger(component, ":titleheight", titleheight, 0);
         //boolean scrollable = getBoolean(component, "scrollable", false);
@@ -245,18 +245,15 @@ public class GridBagLayout implements Layout {
 //                } else { // scrollpane isn't required
                         // components are relative to top/left corner
 //                        Rectangle bounds = getRectangle(component, "bounds");
-                        areawidth = component.getWidthWithBorder();//bounds.width;
-                        areaheight = component.getHeightWithBorder();//bounds.height;
-//                        if ("panel" == classname) {
-                                int topBorder = component.getInsets().getTop();
-                                int bottomBorder = component.getInsets().getBottom();
-                                int leftBorder = component.getInsets().getLeft();
-                                int rightBorder = component.getInsets().getRight();
+                        areawidth = component.getWidth();//bounds.width;
+                        areaheight = component.getHeight();//bounds.height;
+ //                        if ("panel" == classname) {
                                 areax = iborder;
-                                areay = 0;//Math.max(topBorder, titleheight);
-                                areawidth -= leftBorder + rightBorder;
-                                areaheight -= topBorder + bottomBorder;
-//                        } else { // dialog
+                                areay = Math.max(iborder, titleheight);
+                                areawidth -= 2 * iborder;
+                                areaheight -= areay + iborder;
+
+ //                        } else { // dialog
 //                                areax = 4;
 //                                areay = 4 + titleheight;
 //                                areawidth -= 8;
