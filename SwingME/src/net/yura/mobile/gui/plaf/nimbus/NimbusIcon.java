@@ -26,6 +26,11 @@ public class NimbusIcon extends Icon {
         this.type = type;
         this.borders = borders;
         this.color = color;
+
+        if ((type == LookAndFeel.ICON_THUMB_TOP) || (type == LookAndFeel.ICON_THUMB_BOTTOM)) {
+            height = 1;
+        }
+
     }
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
@@ -41,9 +46,7 @@ public class NimbusIcon extends Icon {
 //                border.corner = corners;
 //            }
 //        }
-        if ((type == LookAndFeel.ICON_THUMB_TOP) || (type == LookAndFeel.ICON_THUMB_BOTTOM)) {
-            height = 1;
-        }
+
         
         NimbusBorder.paintBorders(borders, g, x, y, getIconWidth(), getIconHeight());
 
