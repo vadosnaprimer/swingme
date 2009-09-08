@@ -157,7 +157,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 addMainMenuButton("Table Test","tableTest");
                                 addMainMenuButton("XUL Test","xulTest");
+                                addMainMenuButton("XUL Test 1","xulTest1");
                                 addMainMenuButton("XUL Test 2","xulTest2");
+                                addMainMenuButton("XUL Test 3","xulTest3");
                                 addMainMenuButton("File Chooser","fileChooser");
 
                                 
@@ -262,9 +264,25 @@ public class MainPane extends DesktopPane implements ActionListener {
                     Panel panel = null;
 
                     try {
-                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
                         //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/tabbedpane.xml"), this);
-                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), this);
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), this);
+                        panel = (Panel)loader.getRoot();
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    addToScrollPane(panel, null, makeButton("Back","mainmenu") );
+                }
+                else if ("xulTest1".equals(actionCommand)) {
+
+                    Panel panel = null;
+
+                    try {
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/tabbedpane.xml"), this);
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), this);
                         panel = (Panel)loader.getRoot();
                     }
                     catch (Exception ex) {
@@ -301,6 +319,23 @@ System.out.println("open file browser");
                     window.setMaximum(true);
                     window.setVisible(true);
 
+                }
+                else if ("xulTest3".equals(actionCommand)) {
+
+                    Frame panel = null;
+
+                    try {
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
+                        //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/tabbedpane.xml"), this);
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demodialog.xml"), this);
+                        panel = (Frame)loader.getRoot();
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+System.out.println(panel);
+                    panel.pack();
+                    panel.setVisible(true);
                 }
                 else if ("info".equals(actionCommand)) {
 			
@@ -903,7 +938,7 @@ for (int c=0;c<4;c++) {
 
         private Button makeButton(String label,String action) {
             Button button = new Button(label);
-            System.out.println(action+" -> "+this);
+            //System.out.println(action+" -> "+this);
             button.setActionCommand(action);
             button.addActionListener(this);
             return button;
@@ -919,6 +954,7 @@ for (int c=0;c<4;c++) {
             Panel pane = mainWindow.getContentPane();
             pane.removeAll();
             pane.add(a);
+            pane.add(new Label("yura.net Mobile"), Graphics.TOP);
 
             setCommandButtons(b,c);
         }
