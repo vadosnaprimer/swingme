@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,7 +46,9 @@ String className = theclass.getSimpleName();
 //classes.add(TestObject.class);
 
 ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile());
-PrintStream ps = new PrintStream( new File(getGeneratedFile())); //new File("src/net/yura/mobile/gen/BinAccess.java"));
+File f = new File(getGeneratedFile());
+System.out.println("saving to file: "+getGeneratedFile());
+PrintStream ps = new PrintStream( f); //new File("src/net/yura/mobile/gen/BinAccess.java"));
 
 int n = 0;
 
@@ -54,7 +57,7 @@ int n = 0;
 ps.println("package net.yura.mobile.gen;");
 
 for (Class c:classes) {
-ps.println("import "+c.getName()+";");
+ps.println("import "+c.getName().replaceAll("\\$", "\\.")+";");
 }
 
 ps.println("import java.util.Hashtable;");
@@ -140,7 +143,7 @@ String className = theclass.getSimpleName();
 
 ps.println("    public void save"+className+"(DataOutputStream out,"+className+" object) throws IOException {");
 
-ArrayList<Method> simpleMethods = getMethods(theclass,"get",true);
+ArrayList<Method> simpleMethods = getMethods(theclass,false);
 
 ps.println("        out.writeInt("+simpleMethods.size()+");");
 
@@ -149,19 +152,19 @@ for (Method m: simpleMethods) {
 
 Class param = m.getReturnType();
 
-if (param == String.class) {
-ps.println("        {");
-ps.println("            String string = object."+m.getName()+"();");
-ps.println("            if (string!=null) {");
-ps.println("                out.writeInt( TYPE_STRING);");
-ps.println("                out.writeUTF( string );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                out.writeInt( TYPE_NULL);");
-ps.println("            }");
-ps.println("        }");
-}
-else if (param == int.class) {
+//if (param == String.class) {
+//ps.println("        {");
+//ps.println("            String string = object."+m.getName()+"();");
+//ps.println("            if (string!=null) {");
+//ps.println("                out.writeInt( TYPE_STRING);");
+//ps.println("                out.writeUTF( string );");
+//ps.println("            }");
+//ps.println("            else {");
+//ps.println("                out.writeInt( TYPE_NULL);");
+//ps.println("            }");
+//ps.println("        }");
+//}
+if (param == int.class) {
 ps.println("        out.writeInt( TYPE_INTEGER);");
 ps.println("        out.writeInt( object."+m.getName()+"() );");
 }
@@ -183,7 +186,7 @@ ps.println("        out.writeShort( object."+m.getName()+"() );");
 }
 else if (param == long.class) {
 ps.println("        out.writeInt( TYPE_LONG);");
-ps.println("        out.writelong( object."+m.getName()+"() );");
+ps.println("        out.writeLong( object."+m.getName()+"() );");
 }
 else if (param == char.class) {
 ps.println("        out.writeInt( TYPE_CHAR);");
@@ -193,55 +196,55 @@ else if (param == byte.class) {
 ps.println("        out.writeInt( TYPE_BYTE);");
 ps.println("        out.writeByte( object."+m.getName()+"() );");
 }
-
-else if (param == Vector.class) {
-ps.println("        {");
-ps.println("            Vector vector = object."+m.getName()+"();");
-ps.println("            if (vector!=null) {");
-ps.println("                out.writeInt( TYPE_VECTOR);");
-ps.println("                writeVector( out, vector );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                out.writeInt( TYPE_NULL);");
-ps.println("            }");
-ps.println("        }");
-}
-else if (param == Hashtable.class) {
-ps.println("        {");
-ps.println("            Hashtable hashtable = object."+m.getName()+"();");
-ps.println("            if (hashtable!=null) {");
-ps.println("                out.writeInt( TYPE_HASHTABLE);");
-ps.println("                writeHashtable( out, hashtable );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                out.writeInt( TYPE_NULL);");
-ps.println("            }");
-ps.println("        }");
-}
-else if (param == byte[].class) {
-ps.println("        {");
-ps.println("            byte[] bytes = object."+m.getName()+"();");
-ps.println("            if (bytes!=null) {");
-ps.println("                out.writeInt( TYPE_BYTE_ARRAY);");
-ps.println("                writeBytes( out, bytes );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                out.writeInt( TYPE_NULL);");
-ps.println("            }");
-ps.println("        }");
-}
-else if (param.isArray()) {
-ps.println("        {");
-ps.println("            Object[] array = object."+m.getName()+"();");
-ps.println("            if (array!=null) {");
-ps.println("                out.writeInt( TYPE_ARRAY);");
-ps.println("                writeArray( out, array );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                out.writeInt( TYPE_NULL);");
-ps.println("            }");
-ps.println("        }");
-}
+//
+//else if (param == Vector.class) {
+//ps.println("        {");
+//ps.println("            Vector vector = object."+m.getName()+"();");
+//ps.println("            if (vector!=null) {");
+//ps.println("                out.writeInt( TYPE_VECTOR);");
+//ps.println("                writeVector( out, vector );");
+//ps.println("            }");
+//ps.println("            else {");
+//ps.println("                out.writeInt( TYPE_NULL);");
+//ps.println("            }");
+//ps.println("        }");
+//}
+//else if (param == Hashtable.class) {
+//ps.println("        {");
+//ps.println("            Hashtable hashtable = object."+m.getName()+"();");
+//ps.println("            if (hashtable!=null) {");
+//ps.println("                out.writeInt( TYPE_HASHTABLE);");
+//ps.println("                writeHashtable( out, hashtable );");
+//ps.println("            }");
+//ps.println("            else {");
+//ps.println("                out.writeInt( TYPE_NULL);");
+//ps.println("            }");
+//ps.println("        }");
+//}
+//else if (param == byte[].class) {
+//ps.println("        {");
+//ps.println("            byte[] bytes = object."+m.getName()+"();");
+//ps.println("            if (bytes!=null) {");
+//ps.println("                out.writeInt( TYPE_BYTE_ARRAY);");
+//ps.println("                writeBytes( out, bytes );");
+//ps.println("            }");
+//ps.println("            else {");
+//ps.println("                out.writeInt( TYPE_NULL);");
+//ps.println("            }");
+//ps.println("        }");
+//}
+//else if (param.isArray()) {
+//ps.println("        {");
+//ps.println("            Object[] array = object."+m.getName()+"();");
+//ps.println("            if (array!=null) {");
+//ps.println("                out.writeInt( TYPE_ARRAY);");
+//ps.println("                writeArray( out, array );");
+//ps.println("            }");
+//ps.println("            else {");
+//ps.println("                out.writeInt( TYPE_NULL);");
+//ps.println("            }");
+//ps.println("        }");
+//}
 else {
 ps.println("        writeObject(out, object."+m.getName()+"() );");
 }
@@ -260,17 +263,17 @@ ps.println("    private "+className+" read"+className+"(DataInputStream in,int s
 
 ps.println("        "+className+" object = new "+className+"();");
 
-ArrayList<Method> methods = getMethods(theclass,"set",true);
+ArrayList<Method> methods = getMethods(theclass,true);
 
 for (Method m: methods) {
 Class param = m.getParameterTypes()[0];
 
-if (param == String.class) {
-ps.println("        if (checkType(in.readInt() , TYPE_STRING)) {");
-ps.println("            object."+m.getName()+"( in.readUTF() );");
-ps.println("        }");
-}
-else if (param == int.class) {
+//if (param == String.class) {
+//ps.println("        if (checkType(in.readInt() , TYPE_STRING)) {");
+//ps.println("            object."+m.getName()+"( in.readUTF() );");
+//ps.println("        }");
+//}
+if (param == int.class) {
 ps.println("        checkType(in.readInt() , TYPE_INTEGER);");
 ps.println("        object."+m.getName()+"( in.readInt() );");
 }
@@ -303,31 +306,34 @@ ps.println("        checkType(in.readInt() , TYPE_BYTE);");
 ps.println("        object."+m.getName()+"( in.readByte() );");
 }
 
-else if (param == Vector.class) {
-ps.println("        if (checkType(in.readInt() , TYPE_VECTOR)) {");
-ps.println("            object."+m.getName()+"( readVector(in) );");
-ps.println("        }");
-}
-else if (param == Hashtable.class) {
-ps.println("        if (checkType(in.readInt() , TYPE_HASHTABLE)) {");
-ps.println("            object."+m.getName()+"( readHashtable(in) );");
-ps.println("        }");
-}
-else if (param == byte[].class) {
-ps.println("        if (checkType(in.readInt() , TYPE_BYTE_ARRAY)) {");
-ps.println("            object."+m.getName()+"( readBytes(in) );");
-ps.println("        }");
-}
+//else if (param == Vector.class) {
+//ps.println("        if (checkType(in.readInt() , TYPE_VECTOR)) {");
+//ps.println("            object."+m.getName()+"( readVector(in) );");
+//ps.println("        }");
+//}
+//else if (param == Hashtable.class) {
+//ps.println("        if (checkType(in.readInt() , TYPE_HASHTABLE)) {");
+//ps.println("            object."+m.getName()+"( readHashtable(in) );");
+//ps.println("        }");
+//}
+//else if (param == byte[].class) {
+//ps.println("        if (checkType(in.readInt() , TYPE_BYTE_ARRAY)) {");
+//ps.println("            object."+m.getName()+"( readBytes(in) );");
+//ps.println("        }");
+//}
 else if (param.isArray()) {
-ps.println("        if (checkType(in.readInt() , TYPE_ARRAY)) {");
-ps.println("            Object[] objects = readArray(in);");
-ps.println("            "+param.getComponentType().getSimpleName()+"[] array = new "+param.getComponentType().getSimpleName()+"[objects.length];");
-ps.println("            System.arraycopy(objects,0,array,0,objects.length);");
+ps.println("        {");
+ps.println("            Object[] objects = (Object[])readObject(in);");
+ps.println("            "+param.getComponentType().getSimpleName()+"[] array=null;");
+ps.println("            if (objects!=null) {");
+ps.println("                array = new "+param.getComponentType().getSimpleName()+"[objects.length];");
+ps.println("                System.arraycopy(objects,0,array,0,objects.length);");
+ps.println("            }");
 ps.println("            object."+m.getName()+"(array);");
 ps.println("        }");
 }
 else {
-ps.println("        object."+m.getName()+"( readObject(in) );");
+ps.println("        object."+m.getName()+"( ("+param.getSimpleName()+")readObject(in) );");
 }
 
 }
@@ -372,20 +378,20 @@ ps.println("    }");
 
 	}
 
-    private static ArrayList<Method> getMethods(Class theclass, String string,boolean incsuper) {
+    private static ArrayList<Method> getMethods(Class theclass, boolean set) {
         Method[] mymethods = theclass.getDeclaredMethods();
         ArrayList<Method> result = new ArrayList<Method>();
         for (Method method:mymethods) {
-            if ("get".equals(string) && method.getName().startsWith("get") ) {
+            if (set && method.getName().startsWith("set") && hasBeanProperty(mymethods,method.getName().substring(3)) ) {
                 result.add(method);
             }
-            else if ("set".equals(string) && method.getName().startsWith("set") ) {
+            else if (!set && method.getName().startsWith("get") && hasBeanProperty(mymethods,method.getName().substring(3)) ) {
                 result.add(method);
             }
         }
 
-        if (incsuper && theclass.getSuperclass() != Object.class) {
-            ArrayList<Method> result2 = getMethods(theclass.getSuperclass(), string, incsuper);
+        if ( theclass.getSuperclass() != Object.class) {
+            ArrayList<Method> result2 = getMethods(theclass.getSuperclass(), set);
             result.addAll(result2);
         }
 
@@ -397,7 +403,5 @@ ps.println("    }");
 
         return result;
     }
-
-
 }
 

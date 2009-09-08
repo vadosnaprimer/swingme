@@ -38,12 +38,12 @@ public class XMLAccess extends XMLUtil {
         serializer.startTag(null,"body");
         saveObject(serializer, object.getBody() );
         serializer.endTag(null,"body");
-        serializer.startTag(null,"legs");
-        saveArray(serializer, object.getLegs() );
-        serializer.endTag(null,"legs");
         serializer.startTag(null,"numbers");
-        saveVector(serializer, object.getNumbers() );
+        saveObject(serializer, object.getNumbers() );
         serializer.endTag(null,"numbers");
+        serializer.startTag(null,"legs");
+        saveObject(serializer, object.getLegs() );
+        serializer.endTag(null,"legs");
     }
     public Object readObject(KXmlParser parser) throws Exception {
         String name = parser.getName();
@@ -100,16 +100,29 @@ public class XMLAccess extends XMLUtil {
                     if (obj!=null) { throw new IOException(); }
                     obj = readObject(parser);
                 }
-                object.setBody( obj );
-            }
-            else if ("legs".equals(name)) {
-                Vector numbers = readVector(parser);
-                String[] array = new String[numbers.size()];
-                numbers.copyInto(array);
-                object.setLegs(array);
+                object.setBody( (Object)obj );
             }
             else if ("numbers".equals(name)) {
-                object.setNumbers( readVector(parser) );
+                Object obj = null;
+                while (parser.nextTag() != KXmlParser.END_TAG) {
+                    if (obj!=null) { throw new IOException(); }
+                    obj = readObject(parser);
+                }
+                object.setNumbers( (Vector)obj );
+            }
+            else if ("legs".equals(name)) {
+                Object obj = null;
+                while (parser.nextTag() != KXmlParser.END_TAG) {
+                    if (obj!=null) { throw new IOException(); }
+                    obj = readObject(parser);
+                }
+                String[] array = null;
+                if (obj!=null) {
+                    Object[] objects = (Object[])obj;
+                    array = new String[objects.length];
+                    System.arraycopy(objects,0,array,0,objects.length);
+                }
+                object.setLegs(array);
             }
             else {
                 System.out.println("unknown section: "+name);

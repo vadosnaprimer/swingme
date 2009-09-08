@@ -6,8 +6,10 @@ import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -37,7 +39,9 @@ String className = theclass.getSimpleName();
 //classes.add(TestObject.class);
 
 ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile());
-PrintStream ps = new PrintStream( new File(getGeneratedFile())); //new File("src/net/yura/mobile/gen/XMLAccess.java"));
+File f = new File(getGeneratedFile());
+System.out.println("saving to file: "+getGeneratedFile());
+PrintStream ps = new PrintStream( f ); //new File("src/net/yura/mobile/gen/XMLAccess.java"));
 
 
 int n = 0;
@@ -47,7 +51,7 @@ int n = 0;
 ps.println("package net.yura.mobile.gen;");
 
 for (Class c:classes) {
-ps.println("import "+c.getName()+";");
+ps.println("import "+c.getName().replaceAll("\\$", "\\.")+";");
 }
 
 ps.println("import java.util.Hashtable;");
@@ -130,7 +134,7 @@ String className = theclass.getSimpleName();
 
 ps.println("    public void save"+className+"(XmlSerializer serializer,"+className+" object) throws IOException {");
 
-ArrayList<Method> simpleMethods = getMethods(theclass,"get",true,false);
+ArrayList<Method> simpleMethods = getMethods(theclass,false,true,false);
 for (Method m: simpleMethods) {
 ps.println("        serializer.attribute(null,\""+paramName(m)+"\", String.valueOf( object."+m.getName()+"() ) );");
 }
@@ -139,19 +143,19 @@ if (theclass.getSuperclass()!=Object.class) {
 ps.println("        save"+theclass.getSuperclass().getSimpleName()+"(serializer, object);");
 }
 
-ArrayList<Method> complexMethods = getMethods(theclass,"get",false,false);
+ArrayList<Method> complexMethods = getMethods(theclass,false,false,false);
 for (Method m: complexMethods) {
 
 ps.println("        serializer.startTag(null,\""+paramName(m)+"\");");
 
-Class returntype = m.getReturnType();
-
-if (returntype.isArray()) {
-ps.println("        saveArray(serializer, object."+m.getName()+"() );");
-}
-else {
-ps.println("        save"+returntype.getSimpleName()+"(serializer, object."+m.getName()+"() );");
-}
+//Class returntype = m.getReturnType();
+//
+//if (returntype.isArray()) {
+//ps.println("        saveArray(serializer, object."+m.getName()+"() );");
+//}
+//else {
+ps.println("        saveObject(serializer, object."+m.getName()+"() );");
+//}
 
 ps.println("        serializer.endTag(null,\""+paramName(m)+"\");");
 
@@ -213,7 +217,7 @@ ps.println("        for (int c=0;c<count;c++) {");
 ps.println("            String key = parser.getAttributeName(c);");
 ps.println("            String value = parser.getAttributeValue(c);");
 
-ArrayList<Method> simpleMethods = getMethods(theclass,"set",true,true);
+ArrayList<Method> simpleMethods = getMethods(theclass,true,true,true);
 int n=0;
 for (Method m: simpleMethods) {
 Class param = m.getParameterTypes()[0];
@@ -250,18 +254,21 @@ ps.println("            "+(n==0?"":"else ")+"if (\""+paramName(m)+"\".equals(key
     }
 ps.println("            }");
 n++;
-if (n==simpleMethods.size()) {
+}
+
+if (simpleMethods.size()>0) {
 ps.println("            else {");
 ps.println("                System.out.println(\"unknown item found \"+key);");
 ps.println("            }");
 }
+else {
+ps.println("            System.out.println(\"unknown item found \"+key);");
 }
 
 ps.println("        }");
 
 
-ArrayList<Method> complexMethods = getMethods(theclass,"set",false,true);
-
+ArrayList<Method> complexMethods = getMethods(theclass,true,false,true);
 if (complexMethods.size() > 0) {
 ps.println("        while (parser.nextTag() != KXmlParser.END_TAG) {");
 ps.println("            String name = parser.getName();");
@@ -269,23 +276,35 @@ n=0;
 for (Method m: complexMethods) {
 Class param = m.getParameterTypes()[0];
 ps.println("            "+(n==0?"":"else ")+"if (\""+paramName(m)+"\".equals(name)) {");
-if (param.isArray()) {
-ps.println("                Vector numbers = readVector(parser);");
-ps.println("                "+param.getComponentType().getSimpleName()+"[] array = new "+param.getComponentType().getSimpleName()+"[numbers.size()];");
-ps.println("                numbers.copyInto(array);");
-ps.println("                object."+m.getName()+"(array);");
-}
-else if (param == Object.class) {
+//if (param.isArray()) {
+//ps.println("                Vector numbers = readVector(parser);");
+//ps.println("                "+param.getComponentType().getSimpleName()+"[] array = new "+param.getComponentType().getSimpleName()+"[numbers.size()];");
+//ps.println("                numbers.copyInto(array);");
+//ps.println("                object."+m.getName()+"(array);");
+//}
+//else if (param == Object.class) {
 ps.println("                Object obj = null;");
 ps.println("                while (parser.nextTag() != KXmlParser.END_TAG) {");
 ps.println("                    if (obj!=null) { throw new IOException(); }");
 ps.println("                    obj = readObject(parser);");
 ps.println("                }");
-ps.println("                object."+m.getName()+"( obj );");
+
+if (param.isArray()) {
+ps.println("                "+param.getComponentType().getSimpleName()+"[] array = null;");
+ps.println("                if (obj!=null) {");
+ps.println("                    Object[] objects = (Object[])obj;");
+ps.println("                    array = new "+param.getComponentType().getSimpleName()+"[objects.length];");
+ps.println("                    System.arraycopy(objects,0,array,0,objects.length);");
+ps.println("                }");
+ps.println("                object."+m.getName()+"(array);");
 }
 else {
-ps.println("                object."+m.getName()+"( read"+param.getSimpleName()+"(parser) );");
+ps.println("                object."+m.getName()+"( ("+param.getSimpleName()+")obj );");
 }
+//}
+//else {
+//ps.println("                object."+m.getName()+"( read"+param.getSimpleName()+"(parser) );");
+//}
 ps.println("            }");
 n++;
 if (n==complexMethods.size()) {
@@ -339,20 +358,21 @@ ps.println("    }");
 
 	}
 
-    private static ArrayList<Method> getMethods(Class theclass, String string, boolean simple,boolean incsuper) {
+    private static ArrayList<Method> getMethods(Class theclass, boolean set, boolean simple,boolean incsuper) {
         Method[] mymethods = theclass.getDeclaredMethods();
         ArrayList<Method> result = new ArrayList<Method>();
+
         for (Method method:mymethods) {
-            if ("get".equals(string) && method.getName().startsWith("get") && simple == isSimpleType(method.getReturnType()) ) {
+            if (set && method.getName().startsWith("set") && hasBeanProperty(mymethods, method.getName().substring(3)) && simple == isSimpleType(method.getParameterTypes()[0]) ) {
                 result.add(method);
             }
-            else if ("set".equals(string) && method.getName().startsWith("set") && simple == isSimpleType(method.getParameterTypes()[0]) ) {
+            else if (!set && method.getName().startsWith("get") && hasBeanProperty(mymethods, method.getName().substring(3))&& simple == isSimpleType(method.getReturnType()) ) {
                 result.add(method);
             }
         }
 
         if (incsuper && theclass.getSuperclass() != Object.class) {
-            ArrayList<Method> result2 = getMethods(theclass.getSuperclass(), string, simple, incsuper);
+            ArrayList<Method> result2 = getMethods(theclass.getSuperclass(), set, simple, incsuper);
             result.addAll(result2);
         }
 

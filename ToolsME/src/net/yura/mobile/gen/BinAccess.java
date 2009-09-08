@@ -40,36 +40,9 @@ public class BinAccess extends BinUtil {
         writeObject(out, object.getBody() );
         out.writeInt( TYPE_INTEGER);
         out.writeInt( object.getId() );
-        {
-            Object[] array = object.getLegs();
-            if (array!=null) {
-                out.writeInt( TYPE_ARRAY);
-                writeArray( out, array );
-            }
-            else {
-                out.writeInt( TYPE_NULL);
-            }
-        }
-        {
-            String string = object.getName();
-            if (string!=null) {
-                out.writeInt( TYPE_STRING);
-                out.writeUTF( string );
-            }
-            else {
-                out.writeInt( TYPE_NULL);
-            }
-        }
-        {
-            Vector vector = object.getNumbers();
-            if (vector!=null) {
-                out.writeInt( TYPE_VECTOR);
-                writeVector( out, vector );
-            }
-            else {
-                out.writeInt( TYPE_NULL);
-            }
-        }
+        writeObject(out, object.getLegs() );
+        writeObject(out, object.getName() );
+        writeObject(out, object.getNumbers() );
     }
     public Object readObject(DataInputStream in,int type,int size) throws IOException {
         switch (type) {
@@ -89,21 +62,20 @@ public class BinAccess extends BinUtil {
         TestObject object = new TestObject();
         checkType(in.readInt() , TYPE_BYTE);
         object.setAge( in.readByte() );
-        object.setBody( readObject(in) );
+        object.setBody( (Object)readObject(in) );
         checkType(in.readInt() , TYPE_INTEGER);
         object.setId( in.readInt() );
-        if (checkType(in.readInt() , TYPE_ARRAY)) {
-            Object[] objects = readArray(in);
-            String[] array = new String[objects.length];
-            System.arraycopy(objects,0,array,0,objects.length);
+        {
+            Object[] objects = (Object[])readObject(in);
+            String[] array=null;
+            if (objects!=null) {
+                array = new String[objects.length];
+                System.arraycopy(objects,0,array,0,objects.length);
+            }
             object.setLegs(array);
         }
-        if (checkType(in.readInt() , TYPE_STRING)) {
-            object.setName( in.readUTF() );
-        }
-        if (checkType(in.readInt() , TYPE_VECTOR)) {
-            object.setNumbers( readVector(in) );
-        }
+        object.setName( (String)readObject(in) );
+        object.setNumbers( (Vector)readObject(in) );
         skipUnknownObjects(in,size - 6);
         return object;
     }
