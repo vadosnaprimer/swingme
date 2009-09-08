@@ -40,12 +40,36 @@ public class BinAccess extends BinUtil {
         writeObject(out, object.getBody() );
         out.writeInt( TYPE_INTEGER);
         out.writeInt( object.getId() );
-        out.writeInt( TYPE_ARRAY);
-        writeArray( out, object.getLegs() );
-        out.writeInt( TYPE_STRING);
-        out.writeUTF( object.getName() );
-        out.writeInt( TYPE_VECTOR);
-        writeVector( out, object.getNumbers() );
+        {
+            Object[] array = object.getLegs();
+            if (array!=null) {
+                out.writeInt( TYPE_ARRAY);
+                writeArray( out, array );
+            }
+            else {
+                out.writeInt( TYPE_NULL);
+            }
+        }
+        {
+            String string = object.getName();
+            if (string!=null) {
+                out.writeInt( TYPE_STRING);
+                out.writeUTF( string );
+            }
+            else {
+                out.writeInt( TYPE_NULL);
+            }
+        }
+        {
+            Vector vector = object.getNumbers();
+            if (vector!=null) {
+                out.writeInt( TYPE_VECTOR);
+                writeVector( out, vector );
+            }
+            else {
+                out.writeInt( TYPE_NULL);
+            }
+        }
     }
     public Object readObject(DataInputStream in,int type,int size) throws IOException {
         switch (type) {
@@ -56,29 +80,30 @@ public class BinAccess extends BinUtil {
     }
     private Test readTest(DataInputStream in,int size) throws IOException {
         Test object = new Test();
-        assertType(in.readInt() , TYPE_INTEGER);
+        checkType(in.readInt() , TYPE_INTEGER);
         object.setId( in.readInt() );
         skipUnknownObjects(in,size - 1);
         return object;
     }
     private TestObject readTestObject(DataInputStream in,int size) throws IOException {
         TestObject object = new TestObject();
-        assertType(in.readInt() , TYPE_BYTE);
+        checkType(in.readInt() , TYPE_BYTE);
         object.setAge( in.readByte() );
         object.setBody( readObject(in) );
-        assertType(in.readInt() , TYPE_INTEGER);
+        checkType(in.readInt() , TYPE_INTEGER);
         object.setId( in.readInt() );
-        {
-          assertType(in.readInt() , TYPE_ARRAY);
-          Object[] objects = readArray(in);
-          String[] array = new String[objects.length];
-          System.arraycopy(objects,0,array,0,objects.length);
-          object.setLegs(array);
+        if (checkType(in.readInt() , TYPE_ARRAY)) {
+            Object[] objects = readArray(in);
+            String[] array = new String[objects.length];
+            System.arraycopy(objects,0,array,0,objects.length);
+            object.setLegs(array);
         }
-        assertType(in.readInt() , TYPE_STRING);
-        object.setName( in.readUTF() );
-        assertType(in.readInt() , TYPE_VECTOR);
-        object.setNumbers( readVector(in) );
+        if (checkType(in.readInt() , TYPE_STRING)) {
+            object.setName( in.readUTF() );
+        }
+        if (checkType(in.readInt() , TYPE_VECTOR)) {
+            object.setNumbers( readVector(in) );
+        }
         skipUnknownObjects(in,size - 6);
         return object;
     }

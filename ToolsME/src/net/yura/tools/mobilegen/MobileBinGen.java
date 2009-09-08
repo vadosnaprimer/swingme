@@ -150,8 +150,16 @@ for (Method m: simpleMethods) {
 Class param = m.getReturnType();
 
 if (param == String.class) {
-ps.println("        out.writeInt( TYPE_STRING);");
-ps.println("        out.writeUTF( object."+m.getName()+"() );");
+ps.println("        {");
+ps.println("            String string = object."+m.getName()+"();");
+ps.println("            if (string!=null) {");
+ps.println("                out.writeInt( TYPE_STRING);");
+ps.println("                out.writeUTF( string );");
+ps.println("            }");
+ps.println("            else {");
+ps.println("                out.writeInt( TYPE_NULL);");
+ps.println("            }");
+ps.println("        }");
 }
 else if (param == int.class) {
 ps.println("        out.writeInt( TYPE_INTEGER);");
@@ -187,20 +195,52 @@ ps.println("        out.writeByte( object."+m.getName()+"() );");
 }
 
 else if (param == Vector.class) {
-ps.println("        out.writeInt( TYPE_VECTOR);");
-ps.println("        writeVector( out, object."+m.getName()+"() );");
+ps.println("        {");
+ps.println("            Vector vector = object."+m.getName()+"();");
+ps.println("            if (vector!=null) {");
+ps.println("                out.writeInt( TYPE_VECTOR);");
+ps.println("                writeVector( out, vector );");
+ps.println("            }");
+ps.println("            else {");
+ps.println("                out.writeInt( TYPE_NULL);");
+ps.println("            }");
+ps.println("        }");
 }
 else if (param == Hashtable.class) {
-ps.println("        out.writeInt( TYPE_HASHTABLE);");
-ps.println("        writeHashtable( out, object."+m.getName()+"() );");
+ps.println("        {");
+ps.println("            Hashtable hashtable = object."+m.getName()+"();");
+ps.println("            if (hashtable!=null) {");
+ps.println("                out.writeInt( TYPE_HASHTABLE);");
+ps.println("                writeHashtable( out, hashtable );");
+ps.println("            }");
+ps.println("            else {");
+ps.println("                out.writeInt( TYPE_NULL);");
+ps.println("            }");
+ps.println("        }");
 }
 else if (param == byte[].class) {
-ps.println("        out.writeInt( TYPE_BYTE_ARRAY);");
-ps.println("        writeBytes( out, object."+m.getName()+"() );");
+ps.println("        {");
+ps.println("            byte[] bytes = object."+m.getName()+"();");
+ps.println("            if (bytes!=null) {");
+ps.println("                out.writeInt( TYPE_BYTE_ARRAY);");
+ps.println("                writeBytes( out, bytes );");
+ps.println("            }");
+ps.println("            else {");
+ps.println("                out.writeInt( TYPE_NULL);");
+ps.println("            }");
+ps.println("        }");
 }
 else if (param.isArray()) {
-ps.println("        out.writeInt( TYPE_ARRAY);");
-ps.println("        writeArray( out, object."+m.getName()+"() );");
+ps.println("        {");
+ps.println("            Object[] array = object."+m.getName()+"();");
+ps.println("            if (array!=null) {");
+ps.println("                out.writeInt( TYPE_ARRAY);");
+ps.println("                writeArray( out, array );");
+ps.println("            }");
+ps.println("            else {");
+ps.println("                out.writeInt( TYPE_NULL);");
+ps.println("            }");
+ps.println("        }");
 }
 else {
 ps.println("        writeObject(out, object."+m.getName()+"() );");
@@ -226,61 +266,64 @@ for (Method m: methods) {
 Class param = m.getParameterTypes()[0];
 
 if (param == String.class) {
-ps.println("        assertType(in.readInt() , TYPE_STRING);");
-ps.println("        object."+m.getName()+"( in.readUTF() );");
+ps.println("        if (checkType(in.readInt() , TYPE_STRING)) {");
+ps.println("            object."+m.getName()+"( in.readUTF() );");
+ps.println("        }");
 }
 else if (param == int.class) {
-ps.println("        assertType(in.readInt() , TYPE_INTEGER);");
+ps.println("        checkType(in.readInt() , TYPE_INTEGER);");
 ps.println("        object."+m.getName()+"( in.readInt() );");
 }
 else if (param == double.class) {
-ps.println("        assertType(in.readInt() , TYPE_DOUBLE);");
+ps.println("        checkType(in.readInt() , TYPE_DOUBLE);");
 ps.println("        object."+m.getName()+"( in.readDouble() );");
 }
 else if (param == float.class) {
-ps.println("        assertType(in.readInt() , TYPE_FLOAT);");
+ps.println("        checkType(in.readInt() , TYPE_FLOAT);");
 ps.println("        object."+m.getName()+"( in.readFloat() );");
 }
 else if (param == boolean.class) {
-ps.println("        assertType(in.readInt() , TYPE_BOOLEAN);");
+ps.println("        checkType(in.readInt() , TYPE_BOOLEAN);");
 ps.println("        object."+m.getName()+"( in.readBoolean() );");
 }
 else if (param == short.class) {
-ps.println("        assertType(in.readInt() , TYPE_SHORT);");
+ps.println("        checkType(in.readInt() , TYPE_SHORT);");
 ps.println("        object."+m.getName()+"( in.readShort() );");
 }
 else if (param == long.class) {
-ps.println("        assertType(in.readInt() , TYPE_LONG);");
+ps.println("        checkType(in.readInt() , TYPE_LONG);");
 ps.println("        object."+m.getName()+"( in.readLong() );");
 }
 else if (param == char.class) {
-ps.println("        assertType(in.readInt() , TYPE_CHAR);");
+ps.println("        checkType(in.readInt() , TYPE_CHAR);");
 ps.println("        object."+m.getName()+"( in.readChar() );");
 }
 else if (param == byte.class) {
-ps.println("        assertType(in.readInt() , TYPE_BYTE);");
+ps.println("        checkType(in.readInt() , TYPE_BYTE);");
 ps.println("        object."+m.getName()+"( in.readByte() );");
 }
 
 else if (param == Vector.class) {
-ps.println("        assertType(in.readInt() , TYPE_VECTOR);");
-ps.println("        object."+m.getName()+"( readVector(in) );");
+ps.println("        if (checkType(in.readInt() , TYPE_VECTOR)) {");
+ps.println("            object."+m.getName()+"( readVector(in) );");
+ps.println("        }");
 }
 else if (param == Hashtable.class) {
-ps.println("        assertType(in.readInt() , TYPE_HASHTABLE);");
-ps.println("        object."+m.getName()+"( readHashtable(in) );");
+ps.println("        if (checkType(in.readInt() , TYPE_HASHTABLE)) {");
+ps.println("            object."+m.getName()+"( readHashtable(in) );");
+ps.println("        }");
 }
 else if (param == byte[].class) {
-ps.println("        assertType(in.readInt() , TYPE_BYTE_ARRAY);");
-ps.println("        object."+m.getName()+"( readBytes(in) );");
+ps.println("        if (checkType(in.readInt() , TYPE_BYTE_ARRAY)) {");
+ps.println("            object."+m.getName()+"( readBytes(in) );");
+ps.println("        }");
 }
 else if (param.isArray()) {
-ps.println("        {");
-ps.println("          assertType(in.readInt() , TYPE_ARRAY);");
-ps.println("          Object[] objects = readArray(in);");
-ps.println("          "+param.getComponentType().getSimpleName()+"[] array = new "+param.getComponentType().getSimpleName()+"[objects.length];");
-ps.println("          System.arraycopy(objects,0,array,0,objects.length);");
-ps.println("          object."+m.getName()+"(array);");
+ps.println("        if (checkType(in.readInt() , TYPE_ARRAY)) {");
+ps.println("            Object[] objects = readArray(in);");
+ps.println("            "+param.getComponentType().getSimpleName()+"[] array = new "+param.getComponentType().getSimpleName()+"[objects.length];");
+ps.println("            System.arraycopy(objects,0,array,0,objects.length);");
+ps.println("            object."+m.getName()+"(array);");
 ps.println("        }");
 }
 else {
