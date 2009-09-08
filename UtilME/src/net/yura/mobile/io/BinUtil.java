@@ -186,14 +186,10 @@ public class BinUtil {
 
     }
 
-    public static boolean checkType(int got,int want) {
-        if (got == TYPE_NULL) {
-            return false;
-        }
+    public static void checkType(int got,int want) {
         if (want != got) {
             throw new RuntimeException("wrong type, expected: "+want+" got: "+got);
         }
-        return true;
     }
 
     public Vector readVector(DataInputStream in2) throws IOException {
