@@ -186,10 +186,14 @@ public class BinUtil {
 
     }
 
-    public static void assertType(int got,int want) {
+    public static boolean checkType(int got,int want) {
+        if (got == TYPE_NULL) {
+            return false;
+        }
         if (want != got) {
             throw new RuntimeException("wrong type, expected: "+want+" got: "+got);
         }
+        return true;
     }
 
     public Vector readVector(DataInputStream in2) throws IOException {
