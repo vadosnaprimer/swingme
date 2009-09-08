@@ -144,6 +144,11 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.AbstractButton#addActionListener(java.awt.event.ActionListener) AbstractButton.addActionListener
          */
 	public void addActionListener(ActionListener l) {
+                //#mdebug
+                if (al!=null) {
+                    System.out.println("trying to add a ActionListener when there is already one registered");
+                }
+                //#enddebug
 		al = l;
 	}
         
@@ -152,6 +157,11 @@ public class Button extends Label implements ActionListener {
          */
 	public void removeActionListener(ActionListener l) {
 		if (al == l) { al = null; }
+                //#mdebug
+                else {
+                    System.out.println("trying to remove a ActionListener that is not registered");
+                }
+                //#enddebug
 	}
 	
         /**

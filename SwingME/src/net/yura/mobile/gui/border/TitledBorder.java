@@ -35,7 +35,7 @@ public class TitledBorder implements Border {
 
     public TitledBorder(Border border, String title,Font f) {
         this.border = border;
-        if (border==null) { border = Component.empty; }
+        if (this.border==null) { this.border = Component.empty; }
         titleFont = f;
         this.title = title;
     }

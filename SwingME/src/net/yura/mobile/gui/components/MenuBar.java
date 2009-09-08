@@ -37,6 +37,7 @@ public class MenuBar extends List implements ActionListener {
 
         setCellRenderer(renderer);
 
+        setActionCommand("activate");
         addActionListener(this);
     }
 
@@ -77,19 +78,16 @@ public class MenuBar extends List implements ActionListener {
     }
 
     public void actionPerformed(String actionCommand) {
-        int index = getSelectedIndex();
-
-        Component comp = getRendererComponentFor( index );
-        //comp.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder() );
-
-        //Component comp = getRendererComponentOnScreen(index);
-
-        Button button = (Button)getElementAt(index);
-
-        button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
-
-        button.fireActionPerformed();
-
+        if ("activate".equals(actionCommand)) {
+            int index = getSelectedIndex();
+            Button button = (Button)getElementAt(index);
+            Component comp = getRendererComponentFor( index );
+            button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+            button.fireActionPerformed();
+        }
+        else {
+            super.actionPerformed(actionCommand);
+        }
     }
 
         public Button findMneonicButton(int mnu) {
@@ -97,16 +95,18 @@ public class MenuBar extends List implements ActionListener {
             int size = getSize();
             for(int i = 0; i < size; i++) {
                 Object component = getElementAt(i);
-                if (component instanceof Menu) {
-                    Button button = ((Menu)component).findMneonicButton(mnu);
-                    if (button!=null) {
-                        return button;
-                    }
-                }
-                else if (component instanceof Button) {
+                if (component instanceof Button) {
                     Button button = (Button)component;
                     if (button.getMnemonic() == mnu) {
+                        Component comp = getRendererComponentFor(i);
+                        button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                         return button;
+                    }
+                    else if (component instanceof Menu) {
+                        Button button1 = ((Menu)component).findMneonicButton(mnu);
+                        if (button1!=null) {
+                            return button1;
+                        }
                     }
                 }
             }

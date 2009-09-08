@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
@@ -16,10 +17,14 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
+import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ProgressBar;
+import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.TextArea;
@@ -47,6 +52,7 @@ public class XULLoader {
     }
 
     private Hashtable components = new Hashtable();
+    private Hashtable groups = new Hashtable();
     private Component root;
 
     public void load(Reader reader,ActionListener listener) throws Exception {
@@ -90,44 +96,25 @@ public class XULLoader {
         String name = parser.getName();
 
         if (name.equals("panel")) {
-            int columns = 0;
-            int gap = 0;
-            int left = 0;
-            int right = 0;
-            int top = 0;
-            int bottom = 0;
-            int count = parser.getAttributeCount();
+
             String border = null;
             String text = null;
+            final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
+
                 String key = parser.getAttributeName(c);
                 String value = parser.getAttributeValue(c);
-                if ("columns".equals(key)) {
-                    columns = Integer.parseInt(value);
-                }
-                else if ("gap".equals(key)) {
-                    gap = Integer.parseInt(value);
-                }
-                else if ("top".equals(key)) {
-                    top = Integer.parseInt(value);
-                }
-                else if ("bottom".equals(key)) {
-                    bottom = Integer.parseInt(value);
-                }
-                else if ("left".equals(key)) {
-                    left = Integer.parseInt(value);
-                }
-                else if ("right".equals(key)) {
-                    right = Integer.parseInt(value);
-                }
-                else if ("border".equals(key)) {
+                if ("border".equals(key)) {
                     border = value;
                 }
                 else if ("text".equals(key)) {
                     text = value;
                 }
             }
-            Panel panel = new Panel(new GridBagLayout(columns,gap,top,bottom,left,right));
+
+            GridBagLayout layout = readLayout(parser);
+
+            Panel panel = new Panel(layout);
 
             Border border2=null;
             if (border!=null) {
@@ -139,6 +126,28 @@ public class XULLoader {
             panel.setBorder(border2);
 
             return readUIObject(parser, panel,listener);
+        }
+        else if (name.equals("dialog")) {
+
+            Frame frame = new Frame();
+
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("icon".equals(key)) {
+                    frame.setIconImage( loadIcon(value) );
+                }
+                else if ("text".equals(key)) {
+                    frame.setTitle( value );
+                }
+            }
+
+            GridBagLayout layout = readLayout(parser);
+            frame.getContentPane().setLayout(layout);
+
+            return readUIObject(parser, frame,listener);
         }
         else if (name.equals("tabbedpane")) {
             TabbedPane tabbedpane = new TabbedPane();
@@ -180,18 +189,43 @@ public class XULLoader {
 
             return readUIObject(parser, spinner,listener);
         }
-        else if (name.equals("button")) {
+        else if (name.equals("button") || "menuitem".equals(name)) {
             Button button = new Button();
 
             readButton(parser,button,listener);
 
             return readUIObject(parser, button,listener);
         }
-        else if (name.equals("checkbox")) {
-            CheckBox checkbox = new CheckBox();
+        else if (name.equals("checkbox") || "checkboxmenuitem".equals(name)) {
 
+            Button checkbox;
+            boolean selected = false;
+            String group = null;
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("group".equals(key)) {
+                    group = value;
+                }
+                else if ("selected".equals(key)) {
+                    selected = "true".equalsIgnoreCase(value);
+                }
+            }
+            if (group == null) {
+                checkbox = new CheckBox();
+            }
+            else {
+                checkbox = new RadioButton();
+                ButtonGroup g = (ButtonGroup)groups.get(group);
+                if (g==null) {
+                    g = new ButtonGroup();
+                    groups.put(group, g);
+                }
+                g.add(checkbox);
+            }
+            checkbox.setSelected(selected);
             readButton(parser,checkbox,listener);
-            // TODO add spacific stuff for checkbox
 
             return readUIObject(parser, checkbox,listener);
         }
@@ -206,7 +240,7 @@ public class XULLoader {
         else if (name.equals("list")) {
             final List list = new List();
 
-			final int count = parser.getAttributeCount();
+            final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
 
                 String key = parser.getAttributeName(c);
@@ -214,7 +248,7 @@ public class XULLoader {
                 if ("action".equals(key)) {
                     list.setActionCommand(value);
                 }
-			}
+            }
 
             return readUIObject(parser, list,listener);
         }
@@ -254,9 +288,19 @@ public class XULLoader {
 
             return readUIObject(parser, label,listener);
         }
+        else if (name.equals("menubar")) {
+            MenuBar menubar = new MenuBar();
 
+            return readUIObject(parser, menubar,listener);
+        }
+        else if (name.equals("menu")) {
+            Menu menu = new Menu();
+
+            readButton(parser,menu,listener);
+
+            return readUIObject(parser, menu,listener);
+        }
         // TODO add more components
-
         else if (name.equals("choice") || name.equals("item") ) {
             Option op = new Option();
             readOption(parser,op);
@@ -313,7 +357,9 @@ public class XULLoader {
                 String key = parser.getAttributeName(c);
                 String value = parser.getAttributeValue(c);
                 if ("text".equals(key)) {
-                    label.setText(value);
+                    if (!(label instanceof ComboBox)) {
+                        label.setText(value);
+                    }
                 }
                 else if ("icon".equals(key)) {
                     label.setIcon( loadIcon(value) );
@@ -340,6 +386,44 @@ public class XULLoader {
             ex.printStackTrace();
             return null;
         }
+    }
+
+    private GridBagLayout readLayout(KXmlParser parser) {
+
+            int columns = 0;
+            int gap = 0;
+            int left = 0;
+            int right = 0;
+            int top = 0;
+            int bottom = 0;
+
+            int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("columns".equals(key)) {
+                    columns = Integer.parseInt(value);
+                }
+                else if ("gap".equals(key)) {
+                    gap = Integer.parseInt(value);
+                }
+                else if ("top".equals(key)) {
+                    top = Integer.parseInt(value);
+                }
+                else if ("bottom".equals(key)) {
+                    bottom = Integer.parseInt(value);
+                }
+                else if ("left".equals(key)) {
+                    left = Integer.parseInt(value);
+                }
+                else if ("right".equals(key)) {
+                    right = Integer.parseInt(value);
+                }
+
+            }
+
+            return new GridBagLayout(columns,gap,top,bottom,left,right);
+
     }
 
     private void readTextComponent(KXmlParser parser, TextComponent text) {
@@ -430,18 +514,24 @@ public class XULLoader {
 
             Object obj = readObject(parser,listener);
 
-            if (uiobject.component instanceof TabbedPane) {
+            if (comp instanceof TabbedPane) {
                 Tab tab = (Tab)obj;
-                ((TabbedPane)uiobject.component).addTab(tab.getValue(), tab.getIcon(), tab.component, tab.getToolTip());
+                ((TabbedPane)comp).addTab(tab.getValue(), tab.getIcon(), tab.component, tab.getToolTip());
             }
-            else if (uiobject.component instanceof Panel) {
-                ((Panel)uiobject.component).add(((GridBagConstraints)obj).component, obj);
+            else if (comp instanceof Panel) {
+                ((Panel)comp).add(((GridBagConstraints)obj).component, obj);
             }
-            else if (uiobject.component instanceof ComboBox) {
-                ((ComboBox)uiobject.component).getItems().addElement(obj);
+            else if (comp instanceof ComboBox) {
+                ((ComboBox)comp).getItems().addElement(obj);
             }
-            else if (uiobject.component instanceof List) {
-                ((List)uiobject.component).getItems().addElement(obj);
+            else if (comp instanceof MenuBar) {
+                ((MenuBar)comp).add( (Button) ((GridBagConstraints)obj).component );
+            }
+            else if (comp instanceof Menu) {
+                ((Menu)comp).add( ((GridBagConstraints)obj).component );
+            }
+            else if (comp instanceof List) {
+                ((List)comp).getItems().addElement(obj);
             }
             else {
                 //#debug

@@ -415,21 +415,21 @@ public class Panel extends Component {
     public Button findMneonicButton(int mnu) {
         for(int i = 0; i < components.size(); i++) {
             Component component = (Component)components.elementAt(i);
-            if (component instanceof Menu) {
-                Button button = ((Menu)component).findMneonicButton(mnu);
-                if (button!=null) {
+            if (component instanceof Button) {
+                Button button = (Button)component;
+                if (button.getMnemonic() == mnu) {
                     return button;
+                }
+                else if (component instanceof Menu) {
+                    Button button1 = ((Menu)component).findMneonicButton(mnu);
+                    if (button1!=null) {
+                        return button1;
+                    }
                 }
             }
             else if (component instanceof MenuBar) {
                 Button button = ((MenuBar)component).findMneonicButton(mnu);
                 if (button!=null) {
-                    return button;
-                }
-            }
-            else if (component instanceof Button) {
-                Button button = (Button)component;
-                if (button.getMnemonic() == mnu) {
                     return button;
                 }
             }

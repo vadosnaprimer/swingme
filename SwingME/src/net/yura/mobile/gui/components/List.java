@@ -176,18 +176,29 @@ public class List extends Component implements ActionListener {
     }
 
     public void addActionListener(ActionListener l) {
-
+        //#mdebug
+        if (al!=null) {
+            System.out.println("trying to add a ActionListener when there is already one registered");
+        }
+        //#enddebug
         al = l;
-
     }
     public void removeActionListener(ActionListener l) {
 
         if (al == l) { al = null; }
+        //#mdebug
+        else {
+            System.out.println("trying to remove a ActionListener that is not registered");
+        }
+        //#enddebug
     }
 
     public void setActionCommand(String ac) {
 
         actionCommand=ac;
+    }
+    public String getActionCommand() {
+        return actionCommand;
     }
 
     public void setLoop(boolean l) {
@@ -676,9 +687,13 @@ public class List extends Component implements ActionListener {
     public void actionPerformed(String actionCommand) {
 
         if(selectButton.getActionCommand().equals(actionCommand)) {
-
             fireActionPerformed();
         }
+        //#mdebug
+        else {
+            System.out.println("unknown command in List actionPerformed: " + actionCommand);
+        }
+        //#enddebug
 
     }
 

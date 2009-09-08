@@ -408,7 +408,7 @@ public class Window extends Panel {
          * @see javax.microedition.lcdui.Displayable#addCommand(javax.microedition.lcdui.Command) Displayable.addCommand
          */
         public void addCommand(Button softkey) {
-            if (!DesktopPane.me4se) {
+            //if (!DesktopPane.me4se) {
                 if (softkeys==null) {
                     softkeys = new Vector(1);
                 }
@@ -422,7 +422,7 @@ public class Window extends Panel {
                     throw new RuntimeException();
                 }
                 //#enddebug
-            }
+            //}
         }
 
         /**
@@ -430,7 +430,7 @@ public class Window extends Panel {
          */
         public void removeCommand(Button softkey) {
 
-            if (!DesktopPane.me4se) {
+            //if (!DesktopPane.me4se) {
                 if (softkeys.contains(softkey)) {
                     softkeys.removeElement(softkey);
                 }
@@ -440,22 +440,21 @@ public class Window extends Panel {
                     throw new RuntimeException();
                 }
                 //#enddebug
-            }
+            //}
         }
+
+
+
 
         public Button findMneonicButton(int mn) {
 
-            if (!DesktopPane.me4se) {
-                Button b = getSoftkeyForMneonic(mn);
-                if (b!=null) {
-                        Component comp = getRendererComponentOnScreen(b);
-                        b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
-                        return b;
-                }
-                return null;
+            Button b = getSoftkeyForMneonic(mn);
+            if (!DesktopPane.me4se && b!=null) {
+                    Component comp = getRendererComponentOnScreen(b);
+                    b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
             }
+            return b;
 
-            return super.findMneonicButton(mn);
         }
 
 

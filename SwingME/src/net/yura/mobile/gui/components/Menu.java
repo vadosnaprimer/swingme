@@ -43,16 +43,19 @@ public class Menu extends Button {
         private int destX;
         private int destY;
 
+        public Menu() {
+            makeWindow();
+            // TODO ???
+            arrowDirection = Graphics.RIGHT;
+        }
+
         /**
          * @param string the text for the menu label
          * @see javax.swing.JMenu#JMenu(java.lang.String) JMenu.JMenu
          */
         public Menu(String string) {
-            super(string);
-            makeWindow();
-
-            // TODO ???
-            arrowDirection = Graphics.RIGHT;
+            this();
+            setText(string);
         }
 
         public void fireActionPerformed() {
@@ -209,7 +212,7 @@ public class Menu extends Button {
             popup.setCloseOnFocusLost(true);
             popup.addWindowListener(this);
 
-            if (!DesktopPane.me4se) {
+            //if (!DesktopPane.me4se) {
                 //MenuBar menubar = new MenuBar();
                 //Button select = new Button("Select");
                 Button cancel = new Button("Cancel");
@@ -220,16 +223,26 @@ public class Menu extends Button {
                 //menubar.add(cancel);
                 //popup.setMenuBar(menubar);
                 popup.addCommand(cancel);
-            }
+            //}
 
             //popup.setWindowCommand(0, );
             //popup.setWindowCommand(1, );
             //popup.setActionListener(this);
             menuItems = new MenuBar();
             menuItems.setLayoutOrientation(false);
-            menuItems.addActionListener(this);
             menuItems.setUseSelectButton(true);
+
+            // #################################################################
+            // hack, this is not the best way of doing this, but its all i can think of for now
+
+            activateAction = menuItems.getActionCommand();
+            menuItems.removeActionListener(menuItems);
+
             menuItems.setActionCommand("select");
+            menuItems.addActionListener(this);
+
+            // #################################################################
+
             scroll = new ScrollPane(menuItems);
             popup.add(scroll);
             popup.setName("Menu");
@@ -237,6 +250,8 @@ public class Menu extends Button {
             // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
 
         }
+
+        private String activateAction;
 
     	public void actionPerformed(String actionCommand) {
 
@@ -252,9 +267,12 @@ public class Menu extends Button {
 
                 Button button = (Button)menuItems.getSelectedValue();
 
-                //if (button instanceof Menu) {
-                Component comp = menuItems.getRendererComponentFor( menuItems.getSelectedIndex() );
-                button.setBoundsWithBorder(menuItems.getXOnScreen() + comp.getXWithBorder(), menuItems.getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                menuItems.actionPerformed(activateAction);
+
+//
+//                //if (button instanceof Menu) {
+//                Component comp = menuItems.getRendererComponentFor( menuItems.getSelectedIndex() );
+//                button.setBoundsWithBorder(menuItems.getXOnScreen() + comp.getXWithBorder(), menuItems.getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                 //}
                 if (!(button instanceof Menu)) {
                     popup.setVisible(false);
@@ -264,7 +282,7 @@ public class Menu extends Button {
                     }
                 }
 
-                button.fireActionPerformed();
+//                button.fireActionPerformed();
             }
             //#mdebug
             else {
@@ -426,9 +444,6 @@ public class Menu extends Button {
         }
 
         public Button findMneonicButton(int mnu) {
-            if (getMnemonic() == mnu) {
-                return this;
-            }
             return menuItems.findMneonicButton(mnu);
         }
 
