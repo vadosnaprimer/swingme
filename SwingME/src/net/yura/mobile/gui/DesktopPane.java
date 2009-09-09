@@ -31,7 +31,6 @@ import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
-import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;

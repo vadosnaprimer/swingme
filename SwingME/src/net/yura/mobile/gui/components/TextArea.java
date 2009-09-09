@@ -174,13 +174,13 @@ public class TextArea extends TextComponent {
 
                     if (showCaret && caretPosition >= beginIndex && caretPosition <= lastCaretIndex) {
 
-                        int w = font.getWidth( text.substring(beginIndex, caretPosition) );
+                        int w = getStringWidth(font, text.substring(beginIndex, caretPosition) );
                         
                         if((align & Graphics.HCENTER) != 0) {
-                                w = (width - font.getWidth(line))/2 + w;
+                                w = (width - getStringWidth(font,line))/2 + w;
                         }
                         else if((align & Graphics.RIGHT) != 0) {
-                                w = width - (font.getWidth(line)-w); // not best efficency
+                                w = width - (getStringWidth(font,line)-w); // not best efficency
                         }
                         
                         g.drawLine(w, y, w, y+lineHeight-1);
@@ -345,7 +345,7 @@ public class TextArea extends TextComponent {
             text = text.substring(startOfLineOffset, line==lines.length?text.length():lines[line]);
 
             // TODO take into account centre and right aligh
-            int mid = getStringCharOffset(text,font,xPixelOffset);
+            int mid = searchStringCharOffset(text,font,xPixelOffset);
 
             setCaretPosition(startOfLineOffset+mid);
 
@@ -401,7 +401,7 @@ public class TextArea extends TextComponent {
 
             // TODO what about centre or right aligned?! will need the length of this line then!
 
-            int xoffset = font.getWidth(text);
+            int xoffset = getStringWidth(font,text);
             if (!doNotUpdateCaretPixelOffset) {
                 caretPixelOffset = xoffset;
             }
@@ -486,7 +486,7 @@ public class TextArea extends TextComponent {
 
                     int lastIndex = (i==lines.length)?text.length():lines[i];
 
-                    w = font.getWidth( text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) )
+                    w = getStringWidth(font, text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) )
                             +1; // this adds 1 extra pixel, so the carret can be
                                 // displayed at the end of the line
 
@@ -526,10 +526,17 @@ public class TextArea extends TextComponent {
     }
 
 
+    public int getStringWidth(Font f,String s) {
+        return f.getWidth(s);
+    }
+    public int getStringCharOffset(String text, Font font,int xPixelOffset) {
+        return searchStringCharOffset(text, font,xPixelOffset);
+    }
+
 	/**
 	 * If w == Integer.MAX_VALUE, then it wont wrap on words
 	 */
-        public static int[] getLines(String str,Font f,int startPos,int w) {
+        public int[] getLines(String str,Font f,int startPos,int w) {
 
 //#debug
 System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.length());
@@ -565,7 +572,7 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                             end = lineEnd;
                         }
 
-                        int currentLineLength = (w==Integer.MAX_VALUE)?-1:f.getWidth(str.substring(lineStart, end));
+                        int currentLineLength = (w==Integer.MAX_VALUE)?-1:getStringWidth(f,str.substring(lineStart, end));
                         
                         if (currentLineLength > w && lineStart==wordStart) {
                                 // start to remove 1 char at a time,

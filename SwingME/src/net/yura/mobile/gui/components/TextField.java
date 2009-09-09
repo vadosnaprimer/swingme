@@ -68,7 +68,7 @@ public class TextField extends TextComponent {
                 String txt = getDisplayString()+" ";
 
                 // TODO take into account centre and right aligh
-                int mid = getStringCharOffset(txt,font,x -offset);
+                int mid = searchStringCharOffset(txt,font,x -offset);
 
                 setCaretPosition(mid);
             }

@@ -678,7 +678,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
 
         // Crazy binary search!
-        public static int getStringCharOffset(String text, Font font,int xPixelOffset) {
+        public static int searchStringCharOffset(String text, Font font,int xPixelOffset) {
 
                 int first = 0;
                 int upto  = text.length();
