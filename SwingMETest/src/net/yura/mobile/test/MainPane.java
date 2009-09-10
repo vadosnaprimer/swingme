@@ -91,6 +91,8 @@ public class MainPane extends DesktopPane implements ActionListener {
 	
         private SynthLookAndFeel synth;
         private MetalLookAndFeel metal;
+
+        Frame xuldialog;
         
 	public MainPane(MyMidlet a) {
 		super(a,0,null);
@@ -156,10 +158,10 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Window Test","windowTest1");
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 addMainMenuButton("Table Test","tableTest");
-                                addMainMenuButton("XUL Test","xulTest");
-                                addMainMenuButton("XUL Test 1","xulTest1");
-                                addMainMenuButton("XUL Test 2","xulTest2");
-                                addMainMenuButton("XUL Test 3","xulTest3");
+                                addMainMenuButton("XUL mobile demo","xulTest");
+                                addMainMenuButton("XUL tabbedpane","xulTest1");
+                                addMainMenuButton("XUL generate","xulTest2");
+                                addMainMenuButton("XUL demodialog","xulTest3");
                                 addMainMenuButton("File Chooser","fileChooser");
 
                                 
@@ -255,6 +257,12 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                     test1.add(foo,Graphics.RIGHT);
 
+                    test1.setMaximizable(false);
+                    test1.setClosable(false);
+
+                    test1.setClosable(true);
+                    test1.setMaximizable(true);
+
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     test1.setVisible(true);
                     
@@ -322,20 +330,24 @@ System.out.println("open file browser");
                 }
                 else if ("xulTest3".equals(actionCommand)) {
 
-                    Frame panel = null;
-
                     try {
                         //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demo.xml"), this);
                         //XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/tabbedpane.xml"), this);
-                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demodialog.xml"), this);
-                        panel = (Frame)loader.getRoot();
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/demodialog.xml"), new ActionListener() {
+                            public void actionPerformed(String arg0) {
+                                if ("closeDialog".equals(arg0)) {
+                                    xuldialog.setVisible(false);
+                                }
+                            }
+                        });
+                        xuldialog = (Frame)loader.getRoot();
                     }
                     catch (Exception ex) {
                         ex.printStackTrace();
                     }
-System.out.println(panel);
-                    panel.pack();
-                    panel.setVisible(true);
+//System.out.println(xuldialog);
+                    xuldialog.pack();
+                    xuldialog.setVisible(true);
                 }
                 else if ("info".equals(actionCommand)) {
 			
