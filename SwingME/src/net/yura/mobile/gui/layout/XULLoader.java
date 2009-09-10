@@ -25,6 +25,7 @@ import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.RadioButton;
+import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.TextArea;
@@ -99,6 +100,7 @@ public class XULLoader {
 
             String border = null;
             String text = null;
+            boolean scrollable = false;
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
 
@@ -110,11 +112,14 @@ public class XULLoader {
                 else if ("text".equals(key)) {
                     text = value;
                 }
+                else if ("scrollable".equals(key)) {
+                    scrollable = "true".equalsIgnoreCase(value);
+                }
             }
 
             GridBagLayout layout = readLayout(parser);
 
-            Panel panel = new Panel(layout);
+            Panel panel = scrollable?new ScrollPane( new Panel(layout) ):new Panel(layout);
 
             Border border2=null;
             if (border!=null) {
@@ -133,6 +138,9 @@ public class XULLoader {
             frame.setClosable(false);
             frame.setMaximizable(false);
 
+            GridBagLayout layout = readLayout(parser);
+            frame.getContentPane().setLayout(layout);
+
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
 
@@ -143,6 +151,10 @@ public class XULLoader {
                 }
                 else if ("text".equals(key)) {
                     frame.setTitle( value );
+                }
+                else if ("scrollable".equals(key)) {
+                    Panel p = frame.getContentPane();
+                    frame.setContentPane( new ScrollPane(p) );
                 }
                 else if ("closable".equals(key)) {
                     frame.setClosable("true".equalsIgnoreCase(value));
@@ -157,9 +169,6 @@ public class XULLoader {
 //                    frame.setResizable("true".equalsIgnoreCase(value));
 //                }
             }
-
-            GridBagLayout layout = readLayout(parser);
-            frame.getContentPane().setLayout(layout);
 
             return readUIObject(parser, frame,listener);
         }
@@ -547,6 +556,21 @@ public class XULLoader {
             if (comp instanceof TabbedPane) {
                 Tab tab = (Tab)obj;
                 ((TabbedPane)comp).addTab(tab.getValue(), tab.getIcon(), tab.component, tab.getToolTip());
+            }
+            else if (comp instanceof Frame) {
+                Panel panel = ((Frame)comp).getContentPane();
+                if (panel instanceof ScrollPane) { panel = (Panel)((ScrollPane)panel).getComponent(); }
+
+                Component component = ((GridBagConstraints)obj).component;
+                if (panel.getComponentCount() == 0 && component instanceof MenuBar) {
+                    ((Frame)comp).setMenuBar( (MenuBar)component );
+                }
+                else {
+                    panel.add(component, obj);
+                }
+            }
+            else if (comp instanceof ScrollPane) {
+                ((Panel)((ScrollPane)comp).getComponent()).add(((GridBagConstraints)obj).component, obj);
             }
             else if (comp instanceof Panel) {
                 ((Panel)comp).add(((GridBagConstraints)obj).component, obj);
