@@ -130,6 +130,8 @@ public class XULLoader {
         else if (name.equals("dialog")) {
 
             Frame frame = new Frame();
+            frame.setClosable(false);
+            frame.setMaximizable(false);
 
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -142,6 +144,18 @@ public class XULLoader {
                 else if ("text".equals(key)) {
                     frame.setTitle( value );
                 }
+                else if ("closable".equals(key)) {
+                    frame.setClosable("true".equalsIgnoreCase(value));
+                }
+                else if ("maximizable".equals(key)) {
+                    frame.setMaximizable("true".equalsIgnoreCase(value));
+                }
+//                else if ("iconifiable".equals(key)) {
+//                    frame.setIconifiable("true".equalsIgnoreCase(value));
+//                }
+//                else if ("resizable".equals(key)) {
+//                    frame.setResizable("true".equalsIgnoreCase(value));
+//                }
             }
 
             GridBagLayout layout = readLayout(parser);
@@ -151,6 +165,22 @@ public class XULLoader {
         }
         else if (name.equals("tabbedpane")) {
             TabbedPane tabbedpane = new TabbedPane();
+
+            String pvalue = parser.getAttributeValue(null, "placement");
+            int placement = Graphics.TOP; // default
+            if ("left".equals(pvalue)) {
+                placement = Graphics.LEFT;
+            }
+            else if ("bottom".equals(pvalue)) {
+                placement = Graphics.BOTTOM;
+            }
+            else if ("right".equals(pvalue)) {
+                placement = Graphics.RIGHT;
+            }
+//            else if ("stacked".equals(value)) {
+//                placement = ???;
+//            }
+            tabbedpane.setTabPlacement(placement);
 
             return readUIObject(parser, tabbedpane,listener);
         }
@@ -324,6 +354,7 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if ("action".equals(key)) {
                     button.setActionCommand(value);
+                    button.addActionListener(listener);
                 }
                 else if ("mnemonic".equals(key)) {
                     int mnemonic = Integer.parseInt(value);
@@ -346,7 +377,6 @@ public class XULLoader {
                 }
             }
 
-            button.addActionListener(listener);
             readLabel(parser, button);
     }
 

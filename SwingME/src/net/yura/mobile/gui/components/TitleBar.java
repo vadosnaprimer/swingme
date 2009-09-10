@@ -32,44 +32,24 @@ import net.yura.mobile.gui.layout.GridLayout;
  */
 public class TitleBar extends Panel implements ActionListener {
 
+    private static String[] icons = new String[] {"#","+","_","[]","X"};
+    private static String[] commands = new String[] {"resize","move",Frame.CMD_MIN,Frame.CMD_MAX,Frame.CMD_CLOSE};
+
     private Label title;
+    private Panel buttonPanel;
     
     public TitleBar(String title,Icon icon,boolean resize,boolean move,boolean hide,boolean max,boolean close) {
         super(new BorderLayout());
         setName("TitleBar");
         
-        Panel buttonPanel = new Panel( new GridLayout(1,0,2) );
-        if (resize) {
-            Button b = new Button("#");
-            buttonPanel.add(b);
-            b.addActionListener(this);
-            b.setActionCommand("resize");
-        }
-        if (move) {
-            Button b = new Button("+");
-            buttonPanel.add(b);
-            b.addActionListener(this);
-            b.setActionCommand("move");
-        }
-        if (hide) {
-            Button b = new Button("_");
-            b.addActionListener(this);
-            b.setActionCommand(Frame.CMD_MIN);
-            buttonPanel.add(b);
-        }
-        if (max) {
-            Button b = new Button("[]");
-            b.addActionListener(this);
-            b.setActionCommand(Frame.CMD_MAX);
-            buttonPanel.add(b);
-        }
-        if (close) {
-            Button b = new Button("X");
-            b.addActionListener(this);
-            b.setActionCommand(Frame.CMD_CLOSE);
-            buttonPanel.add(b);
+        buttonPanel = new Panel( new GridLayout(1,0,2) );
 
-        }
+        setButtonVisable(commands[0],resize);
+        setButtonVisable(commands[1],move);
+        setButtonVisable(commands[2],hide);
+        setButtonVisable(commands[3],max);
+        setButtonVisable(commands[4],close);
+
 
         // always want it to take the style of this instead
         buttonPanel.setName("WindowControlPanel");
@@ -80,7 +60,50 @@ public class TitleBar extends Panel implements ActionListener {
         add(buttonPanel,Graphics.RIGHT);
 
     }
-    
+
+    public void setButtonVisable(String action,boolean vis) {
+
+        Button found = null;
+        Vector comps = buttonPanel.getComponents();
+        for (int c=0;c<comps.size();c++) {
+            Button button = (Button)comps.elementAt(c);
+            if (action.equals( button.getActionCommand() ) ) {
+                found = button;
+                break;
+            }
+        }
+
+        if (vis && found==null) {
+            String icon = "";
+            int pos=0;
+            for (int c=0;c<commands.length;c++) {
+                if (action.equals(commands[c])) {
+                    icon = icons[c];
+                    pos = c;
+                    break;
+                }
+            }
+            Button b = new Button(icon);
+            b.addActionListener(this);
+            b.setActionCommand(action);
+
+            // try and find a button that has a command later then our command
+            for (int c=0;c<comps.size();c++) {
+                Button button = (Button)comps.elementAt(c);
+                for (int i=pos+1;i<commands.length;i++) {
+                    if (commands[i].equals( button.getActionCommand() ) ) {
+                        buttonPanel.insert(b, c);
+                        return;
+                    }
+                }
+            }
+            buttonPanel.add(b);
+        }
+        else if (!vis && found!=null) {
+            buttonPanel.remove(found);
+        }
+    }
+
     /**
      * @param title the title to be displayed in the frame's border
      * @see java.awt.Frame#setTitle(java.lang.String) Frame.setTitle

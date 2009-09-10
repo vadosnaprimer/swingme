@@ -52,6 +52,20 @@ public class Frame extends Window {
             setTitle(name);
         }
 
+        public void setClosable(boolean b) {
+            TitleBar title = getTitleBar();
+            if (title!=null) {
+                title.setButtonVisable(CMD_CLOSE, b);
+            }
+        }
+
+        public void setMaximizable(boolean b) {
+            TitleBar title = getTitleBar();
+            if (title!=null) {
+                title.setButtonVisable(CMD_MAX, b);
+            }
+        }
+
         protected String getDefaultName() {
             return "Frame";
         }
