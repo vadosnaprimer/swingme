@@ -103,8 +103,10 @@ public class Panel extends Component {
          */
 	public void remove(Component component) {
 		components.removeElement(component);
-		
-		component.setParent(null);
+
+                if (component.getParent() == this) {
+                    component.setParent(null);
+                }
 		
 		constraints.remove(component);
 	}
