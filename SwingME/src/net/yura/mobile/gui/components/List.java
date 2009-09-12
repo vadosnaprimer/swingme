@@ -844,6 +844,28 @@ public class List extends Component implements ActionListener {
     }
 
     /**
+     * @param Object obj
+     * @see javax.swing.DefaultListModel#removeAllElements(java.lang.Object) DefaultListModel#removeElement
+     */
+    public boolean removeElement(Object obj) {
+        int idx = indexOf(obj);
+        if (idx >= 0) {
+            removeElementAt(idx);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @see javax.swing.DefaultListModel#removeAllElements(java.lang.Object) DefaultListModel#removeAllElements
+     */
+    public void removeAllElements() {
+        items.removeAllElements();
+        current = -1;
+    }
+
+    /**
      * @param i
      * @see javax.swing.DefaultListModel#removeElementAt(int) DefaultListModel#removeElementAt
      */
