@@ -216,7 +216,19 @@ public class Panel extends Component {
                 }
 
         }
-        
+
+
+	/**
+         * sets the new size and revaliates the window
+         * @param width new Width
+         * @param height new Height
+         * @see java.awt.Component#setSize(int, int) Component.setSize
+         */
+        public void setSize(int width, int height) {
+            super.setSize(width, height);
+            revalidate();
+        }
+
         /**
          * redo the layout
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
@@ -226,15 +238,14 @@ public class Panel extends Component {
 		if (layout!=null) {
 			layout.layoutPanel(this);
 		}
-                
-                for(int i = 0; i < components.size(); i++) {
-			
-			Component component = (Component)components.elementAt(i);
-			if (component instanceof Panel) {
+                else {
+                    for(int i = 0; i < components.size(); i++) {
+                        Component component = (Component)components.elementAt(i);
+                        if (component instanceof Panel) {
                             ((Panel)component).doLayout();
                         }
-
-		}
+                    }
+                }
                 
 	}
         

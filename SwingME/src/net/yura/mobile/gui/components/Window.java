@@ -112,7 +112,11 @@ public class Window extends Panel {
 	protected void setFocusedComponent(Component ac) {
 
             if (isFocused() && focusedComponent != null) {
-                   focusedComponent.focusLost();
+                // if we call focusLost on focusedComponent it still thinks its state is that is has focused
+                // and when it decides what to repaint, it bases it on
+                Component old = focusedComponent;
+                focusedComponent = null;
+                old.focusLost();
             }
 
 	    focusedComponent = ac;
@@ -140,17 +144,6 @@ public class Window extends Panel {
             breakOutAction(null,right,true,false);
 
 	}
-	
-	/**
-         * sets the new size and revaliates the window
-         * @param width new Width
-         * @param height new Height
-         * @see java.awt.Component#setSize(int, int) Component.setSize
-         */
-        public void setSize(int width, int height) {
-            super.setSize(width, height);
-            revalidate();
-        }
 
 //        public void setLocation(int x, int y) {
 //            super.setLocation(x, y);
