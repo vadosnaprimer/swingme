@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.border;
 
+import java.util.Random;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -231,7 +232,23 @@ public class MatteBorder extends EmptyBorder {
                     g.setColor(color);
                     g.fillRect(fillsides?-left:leftDiff,filltop?-top:topDiff,width-(fillsides?-(left+right):leftDiff+rightDiff),height-(filltop?-(top+bottom):topDiff+bottomDiff));
                 }
-                
+
+                //#mdebug
+                else {
+                    System.out.println("imagePainter has image but does not have anything to fill the area, this is prob bad");
+                }
+                if (DesktopPane.debug) {
+                    Random r = new Random();
+                    g.setColor( r.nextInt() );
+                    g.drawLine(-left, topDiff, width+right,topDiff);
+                    g.setColor( r.nextInt() );
+                    g.drawLine(-left, height-bottomDiff, width+right,height-bottomDiff);
+                    g.setColor( r.nextInt() );
+                    g.drawLine(leftDiff, -top, leftDiff,height+bottom);
+                    g.setColor( r.nextInt() );
+                    g.drawLine(width-rightDiff, -top, width-rightDiff,height+bottom);
+                }
+                //#enddebug
             }
             
         }

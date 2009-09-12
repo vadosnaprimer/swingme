@@ -30,8 +30,18 @@ public class ImageUtil {
 
     public static void fillArea(Graphics2D g,Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
         
-        if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) return;
-        
+        if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) {
+            // #debug
+            //System.out.println("calling tile on a area of size less then 0: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+            return;
+        }
+
+        //#mdebug
+        if ( ((src_w/dest_w)*(src_h/dest_h))>10 ) {
+            System.out.println("going to tile a very small image on a big area: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+        }
+        //#enddebug
+
         final int[] c = g.getClip();
         
         g.clipRect(dest_x,dest_y,dest_w,dest_h);

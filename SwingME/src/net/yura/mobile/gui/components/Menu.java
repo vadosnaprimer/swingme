@@ -231,6 +231,7 @@ public class Menu extends Button {
             menuItems = new MenuBar();
             menuItems.setLayoutOrientation(false);
             menuItems.setUseSelectButton(true);
+            menuItems.setLoop(true);
 
             // #################################################################
             // hack, this is not the best way of doing this, but its all i can think of for now

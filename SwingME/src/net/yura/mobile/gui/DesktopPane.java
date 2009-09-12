@@ -78,6 +78,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
 
+        public static final boolean debug = false;
         public static final boolean me4se;
         static {
             boolean init = false;
@@ -296,6 +297,8 @@ public class DesktopPane extends Canvas implements Runnable {
 	 * @param g The Graphics object
 	 */
 	protected void paint(Graphics gtmp) {
+
+
 
 //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
@@ -1124,6 +1127,7 @@ public class DesktopPane extends Canvas implements Runnable {
 //                    }
 
                     pointerComponent = currentWindow.getComponentAt( x - currentWindow.getX(), y - currentWindow.getY());
+
                 }
 
                 if (pointerComponent!=null) {
