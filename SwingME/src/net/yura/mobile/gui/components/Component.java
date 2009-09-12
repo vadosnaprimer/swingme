@@ -101,7 +101,8 @@ public abstract class Component {
          * @see java.awt.Component#isFocusOwner() Component.isFocusOwner
          */
 	public boolean isFocusOwner() {
-		return DesktopPane.getDesktopPane().getSelectedFrame()!=null && DesktopPane.getDesktopPane().getSelectedFrame().getFocusOwner() == this;
+            Window selectedWindow = DesktopPane.getDesktopPane().getSelectedFrame();
+            return selectedWindow !=null && selectedWindow.getFocusOwner() == this;
 	}
 
         /**

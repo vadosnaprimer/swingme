@@ -74,26 +74,36 @@ public class TextField extends TextComponent {
             }
         }
 
+        public void focusGained() {
+            super.focusGained();
+
+            setCaretPosition(getCaretPosition());
+
+        }
+
         public void setCaretPosition(int a) {
             
             super.setCaretPosition(a);
-            
-            int extraSpace=10;
-            String s = getDisplayString();
-            int x = font.getWidth(s.substring(0, caretPosition));
-            int fw = font.getWidth(s)+extraSpace;
-            
-            if (x > -offset+width-padding-extraSpace) {
-                offset = -x+(width*2)/3;
-            }
-            else if (x<-offset+padding) {
-                offset = -x+width/3;
-            }
-            
-            if (-offset+width-padding > fw) { offset=width-padding-fw; }
-            if (offset>padding) { offset=padding; }
 
-            repaint();
+            if (isFocusOwner()) {
+
+                int extraSpace=10;
+                String s = getDisplayString();
+                int x = font.getWidth(s.substring(0, caretPosition));
+                int fw = font.getWidth(s)+extraSpace;
+
+                if (x > -offset+width-padding-extraSpace) {
+                    offset = -x+(width*2)/3;
+                }
+                else if (x<-offset+padding) {
+                    offset = -x+width/3;
+                }
+
+                if (-offset+width-padding > fw) { offset=width-padding-fw; }
+                if (offset>padding) { offset=padding; }
+
+                repaint();
+            }
         }
 
         public void workoutMinimumSize() {
