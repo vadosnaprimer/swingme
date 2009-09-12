@@ -20,6 +20,7 @@ package net.yura.mobile.gui.components;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.layout.Layout;
 
@@ -226,7 +227,7 @@ public class Panel extends Component {
          */
         public void setSize(int width, int height) {
             super.setSize(width, height);
-            revalidate();
+            validate();
         }
 
         /**
@@ -248,13 +249,22 @@ public class Panel extends Component {
                 }
                 
 	}
-        
+
         /**
          * this means reclac the size of children
          * and then redo the layout
          * @see javax.swing.JComponent#revalidate() JComponent.revalidate
          */
         public void revalidate() {
+            DesktopPane.getDesktopPane().revalidateComponent(this);
+        }
+
+        /**
+         * this means reclac the size of children
+         * and then redo the layout
+         * @see javax.swing.JComponent#validate() JComponent.validate
+         */
+        public void validate() {
             for(int i = 0; i < components.size(); i++) {
                     ((Component)components.elementAt(i)).workoutSize();
             }

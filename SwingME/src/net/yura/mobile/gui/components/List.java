@@ -133,31 +133,30 @@ public class List extends Component implements ActionListener {
 
             for(int i = 0; i < getSize(); i++){
                 Object item = getElementAt(i);
-                synchronized (renderer)
-                {
-                    Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
-                    c.workoutSize();
-                    int w = fixedCellWidth==-1?c.getWidthWithBorder():fixedCellWidth;
-                    int h = fixedCellHeight==-1?c.getHeightWithBorder():fixedCellHeight;
 
-                    if (horizontal) {
-                        if (totalHeight<h) {
-                            totalHeight=h;
-                        }
-                    }
-                    else {
-                        totalHeight = totalHeight + h;
-                    }
+                Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
+                c.workoutSize();
+                int w = fixedCellWidth==-1?c.getWidthWithBorder():fixedCellWidth;
+                int h = fixedCellHeight==-1?c.getHeightWithBorder():fixedCellHeight;
 
-                    if (horizontal) {
-                        totalWidth = totalWidth + w;
-                    }
-                    else {
-                        if (totalWidth<w) {
-                            totalWidth=w;
-                        }
+                if (horizontal) {
+                    if (totalHeight<h) {
+                        totalHeight=h;
                     }
                 }
+                else {
+                    totalHeight = totalHeight + h;
+                }
+
+                if (horizontal) {
+                    totalWidth = totalWidth + w;
+                }
+                else {
+                    if (totalWidth<w) {
+                        totalWidth=w;
+                    }
+                }
+
             }
 
             setSize(totalWidth,totalHeight);
@@ -239,28 +238,25 @@ public class List extends Component implements ActionListener {
         }
         else {
 
-            synchronized (renderer)
-            {
-                Component comp=null;
+            Component comp=null;
 
-                for(i=0; i < getSize(); i++){
-                    comp = getComponentFor(i,offset);
+            for(i=0; i < getSize(); i++){
+                comp = getComponentFor(i,offset);
 
-                    int cw=comp.getWidthWithBorder();
-                    int ch=comp.getHeightWithBorder();
+                int cw=comp.getWidthWithBorder();
+                int ch=comp.getHeightWithBorder();
 
-                    int cx = comp.getXWithBorder();
-                    int cy = comp.getYWithBorder();
+                int cx = comp.getXWithBorder();
+                int cy = comp.getYWithBorder();
 
-                    if (
-                            (horizontal && x>=cx && x <=(cw+cx) ) ||
-                            (!horizontal && y>=cy && y <=(ch+cy))
-                    ) {
-                        break;
-                    }
-
-                    offset = offset + ((horizontal)?cw:ch);
+                if (
+                        (horizontal && x>=cx && x <=(cw+cx) ) ||
+                        (!horizontal && y>=cy && y <=(ch+cy))
+                ) {
+                    break;
                 }
+
+                offset = offset + ((horizontal)?cw:ch);
             }
 
         }
@@ -282,36 +278,35 @@ public class List extends Component implements ActionListener {
             offset=0;
         }
         for(; i < getSize(); i++){
-            synchronized (renderer)
-            {
-                Component c = getComponentFor(i,offset);
 
-                //g.setColor(0x0000FF00);
-                //g.drawRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
+            Component c = getComponentFor(i,offset);
 
-                int x = c.getXWithBorder();
-                int y = c.getYWithBorder();
+            //g.setColor(0x0000FF00);
+            //g.drawRect(c.getX(), c.getY(), c.getWidth(), c.getHeight());
 
-                if (x < clipx+g.getClipWidth() &&
-                    x + c.getWidthWithBorder() > clipx &&
-                    y < clipy+g.getClipHeight() &&
-                    y + c.getHeightWithBorder() > clipy
-                ) {
-                        x=c.getX();
-                        y=c.getY();
+            int x = c.getXWithBorder();
+            int y = c.getYWithBorder();
 
-                        good=true;
-                        g.translate(x, y);
-                        c.paint(g);
-                        g.translate(-x, -y);
-                }
-                else if (good) {
-                    // if we have done out painting but now things are out of the clip area
-                    break;
-                }
+            if (x < clipx+g.getClipWidth() &&
+                x + c.getWidthWithBorder() > clipx &&
+                y < clipy+g.getClipHeight() &&
+                y + c.getHeightWithBorder() > clipy
+            ) {
+                    x=c.getX();
+                    y=c.getY();
 
-                offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
+                    good=true;
+                    g.translate(x, y);
+                    c.paint(g);
+                    g.translate(-x, -y);
             }
+            else if (good) {
+                // if we have done out painting but now things are out of the clip area
+                break;
+            }
+
+            offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
+
         }
 
 
@@ -492,127 +487,123 @@ public class List extends Component implements ActionListener {
             if (next>=size) { next=-1; }
         }
 
-            synchronized (renderer) {
+        int keyCode = keypad.getIsDownKey();
 
+        if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#') {
 
-		int keyCode = keypad.getIsDownKey();
+                keyCode = keypad.getKeyChar(keyCode, keypad.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
 
-		if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#') {
+                for(int i = 0; i < getSize(); i++) {
 
-			keyCode = keypad.getKeyChar(keyCode, keypad.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
+                        String item = String.valueOf( getElementAt(i) );
 
-			for(int i = 0; i < getSize(); i++) {
+                        item = (item==null)?"null":item.toLowerCase();
 
-				String item = String.valueOf( getElementAt(i) );
+                        if (!"".equals(item) && item.charAt(0) == keyCode) {
 
-				item = (item==null)?"null":item.toLowerCase();
-
-				if (!"".equals(item) && item.charAt(0) == keyCode) {
-
-					selectNewKey(i,keypad);
-					return true;
-
-				}
-			}
-
-			return false;
-
-		}
-                else if (keypad.isDownAction(Canvas.DOWN)) {
-
-                    if (!horizontal && next!=-1) {
-                        selectNewKey(next,keypad);
-                        return true;
-                    }
-                    //else {
-                        if (horizontal && current!=-1) {
-                            Component c = getRendererComponentFor(current);
-                            int y = getYOnScreen();
-                            scrollRectToVisible(c.getXWithBorder(),c.getHeightWithBorder()-1,c.getWidthWithBorder(),1,true);
-                            if (y!=getYOnScreen()) {
+                                selectNewKey(i,keypad);
                                 return true;
-                            }
+
                         }
-
-                        return false;
-                    //}
-
                 }
-                else if (keypad.isDownAction(Canvas.UP)) {
 
-                    if (!horizontal && prev!=-1) {
-                        selectNewKey(prev,keypad);
-                        return true;
-                    }
-                    //else {
-                        if (horizontal && current!=-1) {
-                            Component c = getRendererComponentFor(current);
-                            int y = getYOnScreen();
-                            scrollRectToVisible(c.getXWithBorder(),0,c.getWidthWithBorder(),1,true);
-                            if (y!=getYOnScreen()) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    //}
+                return false;
 
-                }
-                else if (keypad.isDownAction(Canvas.RIGHT)) {
+        }
+        else if (keypad.isDownAction(Canvas.DOWN)) {
 
-                    if (horizontal && next!=-1) {
-                        selectNewKey(next,keypad);
-                        return true;
-                    }
-                    //else {
-                        // TODO could get rid of this check and add the X pos to the width
-                        // so you can scroll right even in horizontal mode
-                        if (!horizontal && current!=-1) {
-                            Component c = getRendererComponentFor(current);
-                            int x = getXOnScreen();
-                            scrollRectToVisible(c.getWidthWithBorder()-1,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
-                            if (x!=getXOnScreen()) {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    //}
-
-                }
-                else if (keypad.isDownAction(Canvas.LEFT)) {
-
-                    if (horizontal && prev!=-1) {
-                        selectNewKey(prev,keypad);
-                        return true;
-                    }
-                    //else {
-                        if (!horizontal && current!=-1) {
-                            Component c = getRendererComponentFor(current);
-                            int x = getXOnScreen();
-                            scrollRectToVisible(0,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
-                            if (x!=getXOnScreen()) {
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    //}
-
-                }
-                else if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey('\n')) {
-                    if (keypad.isDownKey(KeyEvent.KEY_EDIT) || keypad.isDownKey('#')) {
-                        selectNewKey(current,keypad);
-                        return true;
-                    }
-                    else {
-                        return fireActionPerformed();
-                    }
-                }
-                else {
-                    //if we did not consume the event
-                    return false;
-                }
+            if (!horizontal && next!=-1) {
+                selectNewKey(next,keypad);
+                return true;
             }
+            //else {
+                if (horizontal && current!=-1) {
+                    Component c = getRendererComponentFor(current);
+                    int y = getYOnScreen();
+                    scrollRectToVisible(c.getXWithBorder(),c.getHeightWithBorder()-1,c.getWidthWithBorder(),1,true);
+                    if (y!=getYOnScreen()) {
+                        return true;
+                    }
+                }
+
+                return false;
+            //}
+
+        }
+        else if (keypad.isDownAction(Canvas.UP)) {
+
+            if (!horizontal && prev!=-1) {
+                selectNewKey(prev,keypad);
+                return true;
+            }
+            //else {
+                if (horizontal && current!=-1) {
+                    Component c = getRendererComponentFor(current);
+                    int y = getYOnScreen();
+                    scrollRectToVisible(c.getXWithBorder(),0,c.getWidthWithBorder(),1,true);
+                    if (y!=getYOnScreen()) {
+                        return true;
+                    }
+                }
+                return false;
+            //}
+
+        }
+        else if (keypad.isDownAction(Canvas.RIGHT)) {
+
+            if (horizontal && next!=-1) {
+                selectNewKey(next,keypad);
+                return true;
+            }
+            //else {
+                // TODO could get rid of this check and add the X pos to the width
+                // so you can scroll right even in horizontal mode
+                if (!horizontal && current!=-1) {
+                    Component c = getRendererComponentFor(current);
+                    int x = getXOnScreen();
+                    scrollRectToVisible(c.getWidthWithBorder()-1,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
+                    if (x!=getXOnScreen()) {
+                        return true;
+                    }
+                }
+
+                return false;
+            //}
+
+        }
+        else if (keypad.isDownAction(Canvas.LEFT)) {
+
+            if (horizontal && prev!=-1) {
+                selectNewKey(prev,keypad);
+                return true;
+            }
+            //else {
+                if (!horizontal && current!=-1) {
+                    Component c = getRendererComponentFor(current);
+                    int x = getXOnScreen();
+                    scrollRectToVisible(0,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
+                    if (x!=getXOnScreen()) {
+                        return true;
+                    }
+                }
+
+                return false;
+            //}
+
+        }
+        else if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey('\n')) {
+            if (keypad.isDownKey(KeyEvent.KEY_EDIT) || keypad.isDownKey('#')) {
+                selectNewKey(current,keypad);
+                return true;
+            }
+            else {
+                return fireActionPerformed();
+            }
+        }
+        else {
+            //if we did not consume the event
+            return false;
+        }
 
     }
 
@@ -656,31 +647,29 @@ public class List extends Component implements ActionListener {
 
         current = a;
         if (current!=-1) {
-            synchronized (renderer)
-            {
-                    Component c = getRendererComponentFor(a);
-                    // good, but too simple
-                    // what if we are scrolled right already?
-                    //scrollTo(c);
 
-                    // THIS WILL NOT WORK if list in inside a panel inside a scrollpane
-                    // as posX and posY will be wrong!
-                    // ALSO WILLNOT WORK IN BOXLAYOUT HCENTRE IF NOT THE FIRST COMPONENT
-                    if (horizontal) {
-                        scrollRectToVisible( c.getXWithBorder(), -posY, c.getWidthWithBorder(), 1,false);
-                    }
-                    else {
-                        scrollRectToVisible( -posX, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
-                    }
+            Component c = getRendererComponentFor(a);
+            // good, but too simple
+            // what if we are scrolled right already?
+            //scrollTo(c);
 
+            // THIS WILL NOT WORK if list in inside a panel inside a scrollpane
+            // as posX and posY will be wrong!
+            // ALSO WILLNOT WORK IN BOXLAYOUT HCENTRE IF NOT THE FIRST COMPONENT
+            if (horizontal) {
+                scrollRectToVisible( c.getXWithBorder(), -posY, c.getWidthWithBorder(), 1,false);
             }
-                    if (chl!=null && old!=current) {
-                        chl.changeEvent(a);
-                    }
-                    // TODO as scroll to always does a repaint
-                    // we dont need it here
-                    // BUT what if we are not in a scrollPane??
-                    repaint();
+            else {
+                scrollRectToVisible( -posX, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
+            }
+
+            if (chl!=null && old!=current) {
+                chl.changeEvent(a);
+            }
+            // TODO as scroll to always does a repaint
+            // we dont need it here
+            // BUT what if we are not in a scrollPane??
+            repaint();
         }
     }
 
@@ -720,37 +709,24 @@ public class List extends Component implements ActionListener {
 
     public String getToolTipText() {
         if (current!=-1) {
-            synchronized (renderer)
-            {
-                Component c = getRendererComponentFor(current);
-                return c.getToolTipText();
-            }
+            Component c = getRendererComponentFor(current);
+            return c.getToolTipText();
         }
         return super.getToolTipText();
     }
 
     public int getToolTipLocationX() {
-
         if (current!=-1) {
-            synchronized (renderer)
-            {
-                Component c = getRendererComponentFor(current);
-                return c.getX() + c.getToolTipLocationX();
-            }
+            Component c = getRendererComponentFor(current);
+            return c.getX() + c.getToolTipLocationX();
         }
-
         return super.getToolTipLocationX();
     }
     public int getToolTipLocationY() {
-
         if (current!=-1) {
-            synchronized (renderer)
-            {
                 Component c = getRendererComponentFor(current);
                 return c.getY() + c.getToolTipLocationY();
-            }
         }
-
         return super.getToolTipLocationY();
     }
 

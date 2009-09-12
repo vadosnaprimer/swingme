@@ -55,6 +55,7 @@ public class TitleBar extends Panel implements ActionListener {
         buttonPanel.setName("WindowControlPanel");
         
         this.title = new Label( title,icon );
+        this.title.setName("TitleBarLabel");
         
         add(this.title);
         add(buttonPanel,Graphics.RIGHT);

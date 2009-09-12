@@ -106,6 +106,7 @@ public class DesktopPane extends Canvas implements Runnable {
         private ToolTip indicator;
 
 	private final Vector repaintComponent = new Vector();
+        private final Vector revalidateComponents = new Vector();
 
         private Thread animationThread;
 	private Component animatedComponent;
@@ -335,6 +336,14 @@ public class DesktopPane extends Canvas implements Runnable {
                 
             try {
 
+                synchronized(revalidateComponents) {
+                    for (int c=0;c<revalidateComponents.size();c++) {
+                        Panel panel = (Panel)revalidateComponents.elementAt(c);
+                        panel.validate();
+                    }
+                    revalidateComponents.removeAllElements();
+                }
+
                 graphics.setGraphics(gtmp);
 
                 synchronized(repaintComponent) {
@@ -504,21 +513,35 @@ public class DesktopPane extends Canvas implements Runnable {
 		repaint();
 	}
 
+    public void revalidateComponent(Component rc) {
+
+        addToComponentVector(rc,revalidateComponents);
+
+    }
+
     /**
      * this is called when you call repaint() on a component
      * @param rc The Component to repaint
      */
     public void repaintComponent(Component rc) {
+
+        addToComponentVector(rc,repaintComponent);
+
+        repaint();
+    }
+
+    private void addToComponentVector(Component rc,Vector vec) {
         // System.out.println("someone asking for repaint "+rc);
 
         boolean found = false;
 
-        synchronized(repaintComponent) {
+        synchronized(vec) {
 
+            // If we find the parent on the list, we don't need to add this one
             Component c1 = rc;
             while (c1 != null)
             {
-                if (repaintComponent.contains(c1))
+                if (vec.contains(c1))
                 {
                     found = true;
                     break;
@@ -530,12 +553,12 @@ public class DesktopPane extends Canvas implements Runnable {
             // If component or its father, not found, add it
             if (!found)
             {
-                repaintComponent.addElement(rc);
+                vec.addElement(rc);
 
                 // Search the list for children, otherwise will be repainted again
-                for (int i = 0; i < repaintComponent.size(); i++)
+                for (int i = 0; i < vec.size(); i++)
                 {
-                    Component c2 = (Component) repaintComponent.elementAt(i);
+                    Component c2 = (Component) vec.elementAt(i);
 
                     // A component is children of rc, if one of its ancestors is rc
                     while (c2 != null)
@@ -544,7 +567,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         if (c2 == rc)
                         {
                             // Found a children, remove it
-                            repaintComponent.removeElementAt(i);
+                            vec.removeElementAt(i);
                             i--;
                             break;
                         }
@@ -554,7 +577,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
 
-        repaint();
     }
 
         /**

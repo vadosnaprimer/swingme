@@ -128,6 +128,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             Style labelStyle = new Style(defaultStyle);
             labelStyle.addBackground(-1, Style.ALL);
             setStyleFor("Label",labelStyle);
+            setStyleFor("TitleBarLabel",labelStyle);
             
             Style tabTop = new Style(defaultStyle);
             tabTop.addBorder(new CompoundBorder( new MatteBorder(0, 0, 1, 0, getWhite() ), new EmptyBorder(0,0,-1,0)),Style.ALL);

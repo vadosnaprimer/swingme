@@ -147,6 +147,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         // Label
         setUIDefault("Label.background", noColor);
+        setUIDefault("TitleBarLabel.background", noColor);
 
         // Panel
         setUIDefault("Panel.background", noColor);
