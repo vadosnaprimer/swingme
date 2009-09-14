@@ -1,5 +1,6 @@
 TODO:
 
+bug: make test where there is laods of text then a button then loads of text again, make sure when u click down and up it goes back to the top of the list
 bug: when a window has only 1 focusable component and u move up, it loses focus then gains it again
 bug: when u first go into the edit panel, its wrapped as if there is a scrollbar there, even though there is none
 

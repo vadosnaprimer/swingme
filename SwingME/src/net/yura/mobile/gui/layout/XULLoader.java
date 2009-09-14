@@ -59,7 +59,7 @@ public class XULLoader {
     public void swapComponent(String name,Component comp) {
         Component old = find(name);
 
-        Panel p = comp.getParent();
+        Panel p = old.getParent();
         GridBagConstraints constr = (GridBagConstraints)p.getConstraints().get(old);
 
         int index = p.getComponents().indexOf(old);
