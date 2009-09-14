@@ -133,10 +133,10 @@ public class Panel extends Component {
         /**
          * @see java.awt.Container#add(java.awt.Component, java.lang.Object, int) Container.add
          */
-	public void insert(Component component,int constraint,int index) {
+	public void insert(Component component,Object constraint,int index) {
 		insert(component, index);
 		
-		constraints.put(component, new Integer(constraint) );
+		constraints.put(component, constraint );
 	}
 
         /**
@@ -227,7 +227,7 @@ public class Panel extends Component {
          */
         public void setSize(int width, int height) {
             super.setSize(width, height);
-            validate();
+            doLayout();
         }
 
         /**
@@ -269,9 +269,7 @@ public class Panel extends Component {
                     ((Component)components.elementAt(i)).workoutSize();
             }
             doLayout();
-
             Window w1 = getWindow();
-
             if (w1!=null) {
                 w1.setupFocusedComponent();
             }

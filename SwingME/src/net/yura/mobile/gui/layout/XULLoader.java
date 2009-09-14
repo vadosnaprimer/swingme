@@ -56,6 +56,19 @@ public class XULLoader {
     private Hashtable groups = new Hashtable();
     private Component root;
 
+    public void swapComponent(String name,Component comp) {
+        Component old = find(name);
+
+        Panel p = comp.getParent();
+        GridBagConstraints constr = (GridBagConstraints)p.getConstraints().get(old);
+
+        int index = p.getComponents().indexOf(old);
+        p.remove(old);
+        p.insert(comp, constr, index);
+
+        components.put(name, comp);
+    }
+
     public void load(Reader reader,ActionListener listener) throws Exception {
 
         //if (parser==null) {

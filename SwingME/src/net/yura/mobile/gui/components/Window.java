@@ -140,9 +140,7 @@ public class Window extends Panel {
         }
 	
 	public void passScrollUpDown(int right) {
-		
             breakOutAction(null,right,true,false);
-
 	}
 
 //        public void setLocation(int x, int y) {
@@ -160,6 +158,17 @@ public class Window extends Panel {
         public void pack() {
             workoutSize();
             doLayout();
+            setupFocusedComponent();
+        }
+
+        public void setSize(int width, int height) {
+            // workout size of children only, so that doLayout will work
+            Vector components = getComponents();
+            for(int i = 0; i < components.size(); i++) {
+                    Component component = (Component)components.elementAt(i);
+                    component.workoutSize();
+            }
+            super.setSize(width, height); // calls doLayout
             setupFocusedComponent();
         }
 
