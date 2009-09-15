@@ -53,19 +53,29 @@ public class BinAccess extends BinUtil {
     }
     private Test readTest(DataInputStream in,int size) throws IOException {
         Test object = new Test();
-        checkType(in.readInt() , TYPE_INTEGER);
-        object.setId( in.readInt() );
-        skipUnknownObjects(in,size - 1);
+        if (size>0) {
+            checkType(in.readInt() , TYPE_INTEGER);
+            object.setId( in.readInt() );
+        }
+        if (size>1) {
+            skipUnknownObjects(in,size - 1);
+        }
         return object;
     }
     private TestObject readTestObject(DataInputStream in,int size) throws IOException {
         TestObject object = new TestObject();
-        checkType(in.readInt() , TYPE_BYTE);
-        object.setAge( in.readByte() );
-        object.setBody( (Object)readObject(in) );
-        checkType(in.readInt() , TYPE_INTEGER);
-        object.setId( in.readInt() );
-        {
+        if (size>0) {
+            checkType(in.readInt() , TYPE_BYTE);
+            object.setAge( in.readByte() );
+        }
+        if (size>1) {
+            object.setBody( (Object)readObject(in) );
+        }
+        if (size>2) {
+            checkType(in.readInt() , TYPE_INTEGER);
+            object.setId( in.readInt() );
+        }
+        if (size>3) {
             Object[] objects = (Object[])readObject(in);
             String[] array=null;
             if (objects!=null) {
@@ -74,9 +84,15 @@ public class BinAccess extends BinUtil {
             }
             object.setLegs(array);
         }
-        object.setName( (String)readObject(in) );
-        object.setNumbers( (Vector)readObject(in) );
-        skipUnknownObjects(in,size - 6);
+        if (size>4) {
+            object.setName( (String)readObject(in) );
+        }
+        if (size>5) {
+            object.setNumbers( (Vector)readObject(in) );
+        }
+        if (size>6) {
+            skipUnknownObjects(in,size - 6);
+        }
         return object;
     }
 }
