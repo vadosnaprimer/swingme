@@ -323,7 +323,7 @@ ps.println("            object."+m.getName()+"( in.readByte() );");
 //ps.println("            object."+m.getName()+"( readBytes(in) );");
 //ps.println("        }");
 //}
-else if (param.isArray()) {
+else if (param != byte[].class && param.isArray()) {
 ps.println("            Object[] objects = (Object[])readObject(in);");
 ps.println("            "+param.getComponentType().getSimpleName()+"[] array=null;");
 ps.println("            if (objects!=null) {");
