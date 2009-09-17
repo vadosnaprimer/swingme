@@ -100,6 +100,13 @@ public class XULLoader {
             if (comp instanceof TextComponent) {
                 data.put(name, ((TextComponent)comp).getText() );
             }
+            else if (comp instanceof CheckBox) {
+                data.put(name, String.valueOf( ((CheckBox)comp).isSelected() ) );
+            }
+            else if (comp instanceof ComboBox) {
+                Object object= ((ComboBox)comp).getSelectedItem();
+                data.put(name, ( null == object )?"null":object );
+            }
         }
 
         return data;
