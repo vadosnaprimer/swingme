@@ -68,34 +68,50 @@ public class Panel extends Component {
             return constraints;
         }
 
-
-    /**
-     * @param component the component to be added 
-     * @see java.awt.Container#add(java.awt.Component) Container.add
-     */
+        /**
+         * @param component the component to be added
+         * @see java.awt.Container#add(java.awt.Component) Container.add
+         */
 	public void add(Component component){
-            addImpl(component);
-
+            addImpl(component,null,getComponentCount());
 	}
+
+        public void add(Component component,int constraint){
+            addImpl(component,new Integer(constraint),getComponentCount());
+        }
+
 	/**
          * @param component
          * @param constraint
          * @see java.awt.Container#add(java.awt.Component, java.lang.Object) Container.add
          */
         public void add(Component component,Object constraint){
-		addImpl(component);
-		constraints.put(component, constraint);
+            addImpl(component,constraint,getComponentCount());
 	}
-        public void add(Component component,int constraint){
-            add(component,new Integer(constraint));
-        }
-       
+
+        /**
+         * @see java.awt.Container#add(java.awt.Component, int) Container.add
+         */
+	public void insert(Component component,int index) {
+            addImpl(component,null, index);
+	}
+
+        /**
+         * @see java.awt.Container#add(java.awt.Component, java.lang.Object, int) Container.add
+         */
+	public void insert(Component component,Object constraint,int index) {
+            addImpl(component,constraint, index);
+	}
+
        /**
         * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
         */
-       private void addImpl(Component component) {
-           	components.addElement(component);
-		component.setParent( this );
+       protected void addImpl(Component component,Object cons,int index) {
+            components.insertElementAt(component,index);
+            if (cons!=null) {
+                constraints.put(component, cons);
+            }
+            component.setParent( this );
        }
        
         /**
@@ -103,40 +119,19 @@ public class Panel extends Component {
          * @see java.awt.Container#remove(java.awt.Component) Container.remove
          */
 	public void remove(Component component) {
-		components.removeElement(component);
-
-                if (component.getParent() == this) {
-                    component.setParent(null);
-                }
-		
-		constraints.remove(component);
+            remove( components.indexOf(component) );
 	}
         /**
          * @param c The index of the component to remove
          * @see java.awt.Container#remove(int) Container.remove
          */
         public void remove(int c) {
-            
-                Component component = (Component)components.elementAt(c);
-                remove(component);
-	}
-	
-        
-        /**
-         * @see java.awt.Container#add(java.awt.Component, int) Container.add
-         */
-	public void insert(Component component,int index) {
-		components.insertElementAt(component, index); 
-                component.setParent( this );
-	}
-	
-        /**
-         * @see java.awt.Container#add(java.awt.Component, java.lang.Object, int) Container.add
-         */
-	public void insert(Component component,Object constraint,int index) {
-		insert(component, index);
-		
-		constraints.put(component, constraint );
+            Component component = (Component)components.elementAt(c);
+            components.removeElementAt(c);
+            if (component.getParent() == this) {
+                component.setParent(null);
+            }
+            constraints.remove(component);
 	}
 
         /**
@@ -153,7 +148,6 @@ public class Panel extends Component {
          */
 	public void paint(Graphics2D g) {
 		super.paint(g);
-
 		paintChildren(g);
 	}
 	
