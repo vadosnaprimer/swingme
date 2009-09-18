@@ -240,7 +240,7 @@ public abstract class Component {
                     g.setColor(back);
                     g.fillRect(0, 0, width, height);
                 }
-		
+                //System.out.println("getname" + getName() + " " + getCurrentBackground() );
 		paintComponent(g);
 		
 	}
