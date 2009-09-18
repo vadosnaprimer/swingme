@@ -33,6 +33,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.io.UTF8InputStreamReader;
 import net.yura.mobile.util.Option;
+import net.yura.mobile.util.StringUtil;
 import org.kxml2.io.KXmlParser;
 
 /**
@@ -565,6 +566,34 @@ public class XULLoader {
             }
             else if ("tooltip".equals(key)) {
                 comp.setToolTipText(value);
+            }
+            else if("property".equals(key)) {
+                String[] properties = StringUtil.split(value, ',');
+                if( 0 < properties.length ) {
+                    for( int x=0; x<properties.length; x++ ) {
+                        String[] property = StringUtil.split(properties[x], '=');
+                        if( 2 == property.length ) {
+                            if( "plafname".equals(property[0]) ) {
+                                comp.setName( property[1] );
+                            }
+                            else if( "constraint".equals( property[0] ) ) {
+                                if( comp instanceof TextComponent ) {
+                                    ((TextComponent)comp).setConstraints( Integer.parseInt(property[1]) );
+                                }
+                            }
+                            //#mdebug
+                            else {
+                                System.out.println( "XULLoader.GridBagConstraints() - property key does not exist: " + property[0]);
+                            }
+                            //#enddebug
+                       }
+                       //#mdebug
+                       else {
+                            System.out.println("property does not have a key and value");
+                       }
+                       //#enddebug
+                    }
+                }
             }
 
         }
