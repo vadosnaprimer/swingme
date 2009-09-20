@@ -515,11 +515,13 @@ public abstract class Component {
 	}
 	
 	public void wait(int a) throws InterruptedException {
-
-                synchronized (DesktopPane.getDesktopPane()) {
-                        DesktopPane.getDesktopPane().wait(a);
+            DesktopPane dp = DesktopPane.getDesktopPane();
+            synchronized (dp) {
+                dp.wait(a);
+                if (dp.getAnimatedComponent()!=this) {
+                    throw new InterruptedException();
                 }
-
+            }
 	}
 
         /**

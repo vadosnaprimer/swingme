@@ -34,6 +34,7 @@ public class ToolTip extends Label {
 	    showing = true;
             DesktopPane.getDesktopPane().softkeyRepaint();
             wait(2000);
+
         }
         finally {
             if (showing) {

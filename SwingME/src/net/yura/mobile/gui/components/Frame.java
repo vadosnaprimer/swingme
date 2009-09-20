@@ -255,10 +255,20 @@ public class Frame extends Window {
         // java 1.5 hack
         public void add(Component comp) {
             getContentPane().add(comp);
+            //#debug
+            System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
         }
         // java 1.5 hack
         public void add(Component comp,Object consta) {
             getContentPane().add(comp,consta);
+            //#debug
+            System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
+        }
+        // java 1.5 hack
+        public void add(Component comp,int consta) {
+            getContentPane().add(comp,consta);
+            //#debug
+            System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
         }
 
         /**

@@ -159,6 +159,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
+    public Component getAnimatedComponent() {
+        return animatedComponent;
+    }
+
     public final void run() {
 
         try {
@@ -180,14 +184,13 @@ public class DesktopPane extends Canvas implements Runnable {
             Component ac;
 
             synchronized (this) {
-
                 while (animatedComponent==null) {
                     try {
                         wait();
                     }
                     catch (InterruptedException e) {
                         //#debug
-                        System.out.println("InterruptedException" );
+                        e.printStackTrace();
                     }
                     if (killflag) {
                         return;
@@ -195,31 +198,25 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 ac = animatedComponent;
-                animatedComponent = null;
-
-            } // End synchronized (this)
-
-            while (animatedComponent == null && ac != null)
-            {
-                try {
-                    ac.animate();
-                    ac = null; // Exit loop
-                }
-                catch (InterruptedException e) {
-                    // Ignore Interrupted Exception as this may be caused by
-                    // the producer thread calling interrupt()
-
-                    //#debug
-                    System.out.println("InterruptedException during animation" );
-                }
-                catch(Throwable th) {
-                    //#debug
-                    th.printStackTrace();
-                    log( "Error in animation: " + th.toString() );
-
-                    ac = null; // Exit loop
-                }
             }
+
+            try {
+                ac.animate();
+            }
+            catch (InterruptedException e) {
+                //#debug
+                System.out.println("InterruptedException during animation");
+            }
+            catch(Throwable th) {
+                //#debug
+                th.printStackTrace();
+                log( "Error in animation: " + th.toString() );
+            }
+
+            if (ac == animatedComponent) {
+                animatedComponent = null;
+            }
+
         }
 
     }
@@ -236,13 +233,18 @@ public class DesktopPane extends Canvas implements Runnable {
         if (Thread.currentThread() == animationThread) {
             return;
         }
-        animationThread.interrupt();
+
+        // does not
+        //animationThread.interrupt();
         notify();
     }
     // called by destroyApp
     synchronized void kill() {
         killflag=true;
-        animationThread.interrupt();
+        //animationThread.interrupt();
+
+        animatedComponent = null;
+
         notify();
     }
 
@@ -703,7 +705,12 @@ public class DesktopPane extends Canvas implements Runnable {
             // then kill it!
             synchronized (this) {
                 if (tooltip.isWaiting()) {
-                    animationThread.interrupt();
+                    //animationThread.interrupt();
+
+                    if (tooltip == animatedComponent) {
+                        animatedComponent = null;
+                    }
+                    notify();
                 }
             }
         }
@@ -922,7 +929,6 @@ public class DesktopPane extends Canvas implements Runnable {
                 desktop.text = new TextArea();
                 desktop.text.setFocusable(false);
                 desktop.text.setLineWrap(true);
-                desktop.debugwindow.add( new ScrollPane(desktop.text) );
                 //MenuBar menubar = new MenuBar();
                 Button close = new Button("Close");
                 close.setActionCommand(Frame.CMD_CLOSE);
@@ -935,7 +941,6 @@ public class DesktopPane extends Canvas implements Runnable {
                 //desktop.debugwindow.setMenuBar(menubar);
                 Panel p = new Panel( new FlowLayout());
                 p.add(close);
-                desktop.debugwindow.add(p, Graphics.BOTTOM);
 
                 // This is not needed, but just in case something
                 // has gone wrong with the theme, we set some defaults
@@ -943,6 +948,9 @@ public class DesktopPane extends Canvas implements Runnable {
                 desktop.text.setForeground(0x00000000);
                 desktop.text.setBackground(0x00FFFFFF);
                 //desktop.debugwindow.setBackground(0x00FFFFFF);
+
+                desktop.debugwindow.getContentPane().add( new ScrollPane(desktop.text) );
+                desktop.debugwindow.getContentPane().add(p, Graphics.BOTTOM);
 
                 desktop.debugwindow.setBounds(10, 10, desktop.getWidth()-20, desktop.getHeight()/2);
             }
