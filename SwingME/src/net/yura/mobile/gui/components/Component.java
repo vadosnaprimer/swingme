@@ -30,7 +30,7 @@ import net.yura.mobile.gui.plaf.Style;
  * @see javax.swing.JComponent
  */
 public abstract class Component {
-	
+
 	protected int posX,posY,width,height;
 	protected boolean focusable;
 
@@ -41,7 +41,7 @@ public abstract class Component {
 	protected int background=-1;
 	protected int foreground=-1;
 	private Border border;
-        
+
         private String tooltip;
 
 
@@ -128,7 +128,7 @@ public abstract class Component {
          */
 	public void setFocusable(boolean selectable) {
 		this.focusable = selectable;
-                
+
                 Window w = getWindow();
                 if (w!=null) {
                     Component c = w.getMostRecentFocusOwner();
@@ -149,7 +149,7 @@ public abstract class Component {
         public void transferFocus(int direction) {
             parent.breakOutAction(this, direction, true,false);
         }
-        
+
         /**
          * used by Panel when something is added or removed
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
@@ -181,7 +181,7 @@ public abstract class Component {
     public int getX(){
         return posX;
     }
-    
+
     /**
      * @return the current y coordinate of the component's origin
      * @see javax.swing.JComponent#getY() JComponent.getY
@@ -203,7 +203,7 @@ public abstract class Component {
     public int getHeight(){
         return height;
     }
-    
+
     /**
      * @see java.awt.Component#setBounds(int, int, int, int) Component.setBounds
      */
@@ -211,7 +211,7 @@ public abstract class Component {
     	setLocation(posX,posY);
     	setSize(width,height);
     }
-    
+
     /**
      * @see java.awt.Component#setSize(int, int) Component.setSize
      */
@@ -219,7 +219,7 @@ public abstract class Component {
     	this.width = width;
     	this.height = height;
     }
-    
+
     /**
      * @see java.awt.Component#setLocation(int, int) Component.setLocation
      */
@@ -242,7 +242,7 @@ public abstract class Component {
                 }
                 //System.out.println("getname" + getName() + " " + getCurrentBackground() );
 		paintComponent(g);
-		
+
 	}
 
         /**
@@ -292,9 +292,9 @@ public abstract class Component {
                     return theme.getForeground( getCurrentState() );
                 }
         }
-    
+
 	public abstract void paintComponent(Graphics2D g);
-    
+
 	public boolean keyEvent(KeyEvent keypad) {
 		return false;
 	}
@@ -312,16 +312,16 @@ public abstract class Component {
             //    owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
             //}
         }
-	
+
 	public void animate() throws InterruptedException { }
-	
+
 	public void focusLost() { }
 
 	public void focusGained() {
-        
+
             // default focusGained action, make me visible
             makeVisible();
-        
+
         }
 
         public void makeVisible() {
@@ -374,11 +374,11 @@ public abstract class Component {
          * @see javax.swing.JComponent#setBackground(java.awt.Color) JComponent.setBackground
          */
 	public void setBackground(int a) {
-	
+
 		background = a;
-		
+
 	}
-	
+
         /**
          * Opaque means it fully paint all its pixels
          * @return true if it is NOT transparent
@@ -392,29 +392,29 @@ public abstract class Component {
             }
             return false;
         }
-        
+
         /**
          * @see java.awt.Component#repaint() Component.repaint
          */
 	public void repaint() {
-            
+
                 // if we are not in a window, do nothing
                 Window w = getWindow();
 		if (!isVisible() || w==null || !w.isVisible()) return;
-		
+
 		if (!isOpaque()) {
-			
+
 			Panel p=parent;
-			
+
 			while (p!=null) {
-				
+
 				if (!p.isOpaque()) {
 					p = p.parent;
 				}
 				else {
 					break;
 				}
-				
+
 			}
 			// if we have reached the nothingness
 			if (p == null) {
@@ -448,7 +448,7 @@ public abstract class Component {
 	public void setBorder(Border border) {
 		this.border = border;
 	}
-	
+
 	public int getWidthWithBorder() {
 		Border insets = getInsets();
 		return getWidth() + insets.getRight() + insets.getLeft();
@@ -466,7 +466,7 @@ public abstract class Component {
 		Border insets = getInsets();
 		return getY() - insets.getTop();
 	}
-	
+
 	public void setBoundsWithBorder(int x,int y,int w,int h) {
 		Border insets = getInsets();
                 setBounds(
@@ -476,51 +476,49 @@ public abstract class Component {
                     h - ( insets.getTop() + insets.getBottom() )
                 );
 	}
-	
+
         /**
          * @see java.awt.Component#getLocationOnScreen() Component.getLocationOnScreen
          */
 	public int getXOnScreen() {
-		
+
 		int x = posX;
-		
+
 		Panel p=parent;
-		
+
 		while (p!=null) {
-			
+
 			x = x+p.posX;
 			p = p.parent;
 		}
-		
+
 		return x;
-		
+
 	}
-	
+
         /**
          * @see java.awt.Component#getLocationOnScreen() Component.getLocationOnScreen
          */
 	public int getYOnScreen() {
-		
+
 		int y = posY;
-		
+
 		Panel p=parent;
-		
+
 		while (p!=null) {
-			
+
 			y = y+p.posY;
 			p = p.parent;
 		}
-		
+
 		return y;
 	}
-	
+
 	public void wait(int a) throws InterruptedException {
             DesktopPane dp = DesktopPane.getDesktopPane();
-            synchronized (dp) {
-                dp.wait(a);
-                if (dp.getAnimatedComponent()!=this) {
-                    throw new InterruptedException();
-                }
+            dp.wait(a);
+            if (dp.getAnimatedComponent()!=this) {
+                throw new InterruptedException();
             }
 	}
 
@@ -544,17 +542,17 @@ public abstract class Component {
 	public int getBackground() {
 		return background;
 	}
-	
-	
-	
-	
+
+
+
+
 	private ScrollPane scroller;
-	
+
 	public void setScrollPanel(ScrollPane s) {
-		
+
 		scroller = s;
 	}
-	
+
 	/**
          * @param x X position inside CURRENT component
          * @param y Y position inside CURRENT component
@@ -565,16 +563,16 @@ public abstract class Component {
          * @see javax.swing.JComponent#scrollRectToVisible(java.awt.Rectangle) JComponent.scrollRectToVisible
          */
 	public boolean scrollRectToVisible(int x,int y,int w,int h,boolean smart) {
-		
+
 		if (scroller!=null) {
 			return scroller.makeVisible(x,y,w,h,smart);
 		}
-		
+
 		if (parent!=null) {
-			
+
 			return parent.scrollRectToVisible(posX+x,posY+y,w,h,smart);
 		}
-		
+
 		return true;
 	}
 
@@ -583,25 +581,25 @@ public abstract class Component {
          * @see javax.swing.JComponent#getVisibleRect() JComponent.getVisibleRect
          */
         public boolean isRectVisible(int x,int y,int w,int h) {
-		
+
 		if (scroller!=null) {
 			return scroller.isRectVisible(x,y,w,h);
 		}
-		
+
 		if (parent!=null) {
-			
+
 			return parent.isRectVisible(posX+x,posY+y,w,h);
 		}
-		
+
 		return true;
 	}
-	
+
 	public boolean scrollUpDown(int d) {
-            
+
             int oldx = posX;
             int oldy = posY;
-            
-		if (d==Canvas.RIGHT) {	
+
+		if (d==Canvas.RIGHT) {
 			scroller.makeVisible(width-1,-posY+scroller.getViewPortY(),1,1,true);
 		}
                 else if (d==Canvas.LEFT) {
@@ -609,7 +607,7 @@ public abstract class Component {
                 }
                 else if (d==Canvas.UP) {
                         scroller.makeVisible(-posX+scroller.getViewPortX(),0,1,1,true);
-                }  
+                }
 		else { // DOWN
 			scroller.makeVisible(-posX+scroller.getViewPortX(),height-1,1,1,true);
 		}
@@ -620,7 +618,7 @@ public abstract class Component {
          * @see javax.swing.JComponent#updateUI() JComponent.updateUI
          */
         public void updateUI() {
-            
+
             theme = DesktopPane.getDefaultTheme(this);
             //background = theme.getBackground(Style.ALL);
             //foreground = theme.getForeground(Style.ALL);
@@ -634,7 +632,7 @@ public abstract class Component {
         public String getToolTipText() {
             return tooltip;
         }
-        
+
         /**
          * @param text The Text to use as the tooltip
          * @see javax.swing.JComponent#setToolTipText(java.lang.String) JComponent.setToolTipText
