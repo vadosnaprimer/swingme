@@ -32,76 +32,68 @@ import net.yura.mobile.gui.Graphics2D;
  */
 public class ScrollPane extends Panel implements Runnable {
 
-        public static final int MINIMUM_THUMB_SIZE=5;
+    public static final int MINIMUM_THUMB_SIZE=5;
 
-	public static final int MODE_NONE=-1;
-	public static final int MODE_SCROLLBARS=0;
-	public static final int MODE_SCROLLARROWS=1;
-	public static final int MODE_INDICATOR=2;
+    public static final int MODE_NONE=-1;
+    public static final int MODE_SCROLLBARS=0;
+    public static final int MODE_SCROLLARROWS=1;
+    public static final int MODE_INDICATOR=2;
 
-	private int mode;
-	private int barThickness;
+    private int mode;
+    private int barThickness;
 
-        private Icon thumbTop;
-        private Icon thumbBottom;
-        private Icon thumbFill;
-        private Icon trackTop;
-        private Icon trackBottom;
-        private Icon trackFill;
+    private Icon thumbTop;
+    private Icon thumbBottom;
+    private Icon thumbFill;
+    private Icon trackTop;
+    private Icon trackBottom;
+    private Icon trackFill;
 
-        private Icon rightArrow;
-        private Icon leftArrow;
-        private Icon upArrow;
-        private Icon downArrow;
+    private Icon rightArrow;
+    private Icon leftArrow;
+    private Icon upArrow;
+    private Icon downArrow;
 
-//	private int scrollTrackCol;
-//	private int scrollBarCol;
 
-        /**
-         * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
-         */
-	public ScrollPane() {
-		this(MODE_SCROLLBARS);
-	}
+    /**
+     * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
+     */
+    public ScrollPane() {
+        this(MODE_SCROLLBARS);
+    }
 
-        /**
-         * @param view the component to display in the scrollpane's viewport
-         * @see javax.swing.JScrollPane#JScrollPane(java.awt.Component) JScrollPane.JScrollPane
-         */
-        public ScrollPane(Component view) {
-            this(view,MODE_SCROLLBARS);
-        }
+    /**
+     * @param view the component to display in the scrollpane's viewport
+     * @see javax.swing.JScrollPane#JScrollPane(java.awt.Component) JScrollPane.JScrollPane
+     */
+    public ScrollPane(Component view) {
+        this(view,MODE_SCROLLBARS);
+    }
 
-        public ScrollPane(int m) {
-		super(null);
-		setMode(m);
-                super.setName("ScrollPane");
+    public ScrollPane(int m) {
+        super(null);
+        setMode(m);
+        super.setName("ScrollPane");
 
-	}
+    }
 
-	public void setLayout(Layout lt) {
+    public void setLayout(Layout lt) {
 
-		if (lt!=null) throw new IllegalArgumentException();
+        if (lt!=null) throw new IllegalArgumentException();
 
-	}
+    }
 
-//        public void setName(String n) {
-//            throw new IllegalArgumentException();
-//        }
+    public ScrollPane(Component view,int a) {
+        this(a);
+        add(view);
+    }
 
-	public ScrollPane(Component view,int a) {
-		this(a);
-		add(view);
-	}
+    public void setMode(int m) {
 
-	public void setMode(int m) {
-
-		mode = m;
-	}
+        mode = m;
+    }
 
     public void setSize(int w, int h) {
-
-	//boolean resetChild = w!=width || h!=height;
 
         super.setSize(w, h);
 
@@ -113,378 +105,375 @@ public class ScrollPane extends Panel implements Runnable {
             default: throw new RuntimeException();
         }
 
-        // TODO WHY IS THIS HERE????
+        // Size of the scroll changed, we need to reset the component location
+        getComponent().setLocation(getViewPortX(), getViewPortY());
 
-	//if (resetChild) {
-	        // Size of the scroll changed, we need to reset the component location
-        	getComponent().setLocation(getViewPortX(), getViewPortY());
-	//}
     }
 
-	public static int getBarThickness(int w,int h) {
+    public static int getBarThickness(int w,int h) {
 
-		return Math.max(6, Math.min(w / 20, h / 20));
+        return Math.max(6, Math.min(w / 20, h / 20));
 
-	}
+    }
 
-	public Component getComponent() {
+    public Component getComponent() {
 
-		return ((Component)getComponents().elementAt(0));
+        return ((Component)getComponents().elementAt(0));
 
-	}
+    }
 
-	public void add(Component a) {
+    public void add(Component a) {
 
-		removeAll();
+        removeAll();
 
-		super.add(a);
-		//component = a;
-		//a.setOwner(owner);
-		//if (a instanceof Panel) {
-		//	((Panel)a).setScrollPanel(this);
-		//}
+        super.add(a);
+        //component = a;
+        //a.setOwner(owner);
+        //if (a instanceof Panel) {
+        //    ((Panel)a).setScrollPanel(this);
+        //}
 
-		a.setLocation(getViewPortX(), getViewPortY());
+        a.setLocation(getViewPortX(), getViewPortY());
 
-		a.setScrollPanel(this);
+        a.setScrollPanel(this);
 
-		// TODO does it take into account the border?
-	}
+        // TODO does it take into account the border?
+    }
 
-	public void add(Component component,String constraint){
-		throw new RuntimeException("must use add");
-	}
+    public void add(Component component,String constraint){
+        throw new RuntimeException("must use add");
+    }
 
-	public void remove(Component a){
-		super.remove(a);
+    public void remove(Component a){
+        super.remove(a);
 
-		//if (a instanceof Panel) {
-		//	((Panel)a).setScrollPanel(null);
-		//}
+        //if (a instanceof Panel) {
+        //    ((Panel)a).setScrollPanel(null);
+        //}
 
-		a.setScrollPanel(null);
-	}
+        a.setScrollPanel(null);
+    }
 
-	public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
+    public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
 
-		Component component = getComponent();
-                int oldX = component.getX();
-		int oldY = component.getY();
+        Component component = getComponent();
+        int oldX = component.getX();
+        int oldY = component.getY();
 
-		//System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
-		//System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
+        //System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
+        //System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
 
-		int right = x+w;
-		int bottom = y+h;
+        int right = x+w;
+        int bottom = y+h;
 
-		int componentX = -component.getX();
-		int componentY = -component.getY();
+        int componentX = -component.getX();
+        int componentY = -component.getY();
 
-		int viewX=getViewPortX();
-		int viewY=getViewPortY();
-		int viewHeight = getViewPortHeight();
-		int viewWidth = getViewPortWidth(viewHeight);
+        int viewX=getViewPortX();
+        int viewY=getViewPortY();
+        int viewHeight = getViewPortHeight();
+        int viewWidth = getViewPortWidth(viewHeight);
 
-		// check if the viewport is maybe already looks at part of this bigger area
-                // if it is, then we dont want to scroll to any part of it
-		if (!(x<=componentX+viewX && right>=componentX+viewX+viewWidth)) {
-                    if (right > (viewX + componentX + viewWidth)){
-                            componentX = right - viewWidth;
-                    }
+        // check if the viewport is maybe already looks at part of this bigger area
+        // if it is, then we dont want to scroll to any part of it
+        if (!(x<=componentX+viewX && right>=componentX+viewX+viewWidth)) {
+            if (right > (viewX + componentX + viewWidth)){
+                componentX = right - viewWidth;
+            }
 
-                    if (x < (viewX + componentX)){
-                            componentX = x-viewX;
-                    }
-                }
-
-                if (!(y<=componentY+viewY && bottom>=componentY+viewY+viewHeight)) {
-                    if (bottom > (viewY + componentY + viewHeight)){
-                            componentY = bottom - viewHeight;
-                    }
-
-                    if (y < (viewY + componentY)){
-                            componentY = y-viewY;
-                    }
-                }
-
-
-
-
-		// check we r not scrolling off the content panel
-		if ((viewX+componentX+viewWidth)>component.getWidth()) { componentX=component.getWidth()-viewWidth-viewX; }
-		if ((viewY+componentY+viewHeight)>component.getHeight()) { componentY=component.getHeight()-viewHeight-viewY; }
-		if (componentX<-viewX) { componentX=-viewX; }
-		if (componentY<-viewY) { componentY=-viewY; }
-
-		int xdiff=-componentX -component.getX();
-		int ydiff=-componentY -component.getY();
-
-		boolean goodscroll=true;
-
-		if (smartscroll) {
-
-			if (Math.abs(xdiff) > viewWidth) {
-
-				xdiff = (xdiff>0)?viewWidth*2/3:-viewWidth*2/3;
-
-				goodscroll = false;
-
-			}
-
-			if (Math.abs(ydiff) > viewHeight) {
-
-				ydiff = (ydiff>0)?viewHeight*2/3:-viewHeight*2/3;
-
-				goodscroll = false;
-
-			}
-		}
-
-		component.setBounds( component.getX()+xdiff , component.getY()+ydiff , component.getWidth(), component.getHeight());
-
-		//component.setBounds(15, 15, component.getWidth(), component.getHeight());
-
-		//System.out.println("new pos: x="+component.getX()+" y="+component.getY() );
-
-                // only repint if we have moved
-		if (oldX!=component.getX() || oldY!=component.getY()) {
-                    repaint();
-                }
-
-		return goodscroll;
-
-	}
-
-        /**
-         * check if something is currently visible or as visible as it can be
-         * i.e. scrolling wont make it more visible, even if its not all currently visible
-         */
-        public boolean isRectVisible(int x,int y,int w,int h) {
-
-            Component component = getComponent();
-            int viewX= -component.getX() + getViewPortX();
-            int viewY= -component.getY() + getViewPortY();
-		int viewHeight = getViewPortHeight();
-		int viewWidth = getViewPortWidth(viewHeight);
-
-                return ( ((x>=viewX && x+w<=viewX+viewWidth)||(x<=viewX && x+w>=viewX+viewWidth)) &&
-                         ((y>=viewY && y+h<=viewY+viewHeight)||(y<=viewY && y+h>=viewY+viewHeight))
-                        );
+            if (x < (viewX + componentX)){
+                componentX = x-viewX;
+            }
         }
 
-	public int getViewPortHeight() {
-		switch (mode) {
-			case MODE_SCROLLBARS: return height-getViewPortY()-((getComponent().getWidth()> (width-getViewPortX()) )?barThickness:0);
-			case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?height-(barThickness*2):height;
-			case MODE_NONE:
-			case MODE_INDICATOR: return height;
-			default: throw new RuntimeException();
-		}
-	}
-	public int getViewPortWidth() {
-		return getViewPortWidth(getViewPortHeight());
-	}
+        if (!(y<=componentY+viewY && bottom>=componentY+viewY+viewHeight)) {
+            if (bottom > (viewY + componentY + viewHeight)){
+                componentY = bottom - viewHeight;
+            }
 
-	private int getViewPortWidth(int vph) {
-		switch (mode) {
-			case MODE_SCROLLBARS: return width-getViewPortX()-((getComponent().getHeight()>vph)?barThickness:0);
-			case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?width-(barThickness*2):width;
-			case MODE_NONE:
-			case MODE_INDICATOR: return width;
-			default: throw new RuntimeException();
-		}
-	}
-	public int getViewPortX() {
-		switch (mode) {
-			case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?barThickness:0;
-			case MODE_SCROLLBARS:
-			case MODE_NONE:
-			case MODE_INDICATOR: return 0;
-			default: throw new RuntimeException();
-		}
-	}
-	public int getViewPortY() {
-		switch (mode) {
-			case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?barThickness:0;
-			case MODE_SCROLLBARS:
-			case MODE_NONE:
-			case MODE_INDICATOR: return 0;
-			default: throw new RuntimeException();
-		}
-	}
-
-        public void workoutMinimumSize() {
-
-                super.workoutMinimumSize();
-                width = getComponent().getWidthWithBorder();
-                height = getComponent().getHeightWithBorder();
+            if (y < (viewY + componentY)){
+                componentY = y-viewY;
+            }
         }
 
 
-        /**
-         * we have to do this here, as only here do we already know what OUR size is
-         * so we can resize the content how we want
-         */
-	public void doLayout() {
-
-	    if (getComponents().size() == 1) {
-
-		//getComponent().workoutSize();
-
-		int viewHeight=getViewPortHeight();
-		int viewWidth=getViewPortWidth(viewHeight);
-
-		// this is a hack to make it easer to code panels and not have a tiny amount of side scrolling
-		// as even though this is technically correct, it is very annoying to use this panel
-		// now panels that are the width of the scrollpane or less are set to the width of the viewPort
-
-		// TODO this hack is only for MODE_SCROLLBARS
-
-		// if we have no lower scroll bar AND the width of the component is less then or equal to the width of the scrollpane
-		if ( getComponent().getWidth() <= (width-getViewPortX())) {
-
-			getComponent().setSize(viewWidth, getComponent().getHeight());
-
-		}
-
-                if (getComponent().getHeight() <viewHeight) {
-                    getComponent().setSize(getComponent().getWidth(), viewHeight);
-                }
-
-                super.doLayout();
-	    }
-
-	}
-
-	public void paintChildren(Graphics2D g) {
-
-		int[] a=g.getClip();
-
-		int viewX=getViewPortX();
-		int viewY=getViewPortY();
-		int viewHeight=getViewPortHeight();
-		int viewWidth=getViewPortWidth(viewHeight);
-
-		// dont care about clipping for the
-		// scrollbars as they r painted over the top
-		g.clipRect(viewX, viewY, viewWidth, viewHeight);
-
-                super.paintChildren(g);
-
-                g.setClip(a);
-
-                //g.setColor(0x00FF0000);
-                //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
-
-                paintDecoration(g);
-	}
-
-	protected void paintDecoration(final Graphics2D g) {
-
-		switch (mode) {
-			case MODE_NONE: return;
-			case MODE_SCROLLBARS: drawScrollBars(g); return;
-			case MODE_SCROLLARROWS: drawScrollArrows(g,false); return;
-			case MODE_INDICATOR: drawScrollArrows(g,true); return;
-			default: throw new RuntimeException();
-		}
-
-	}
-
-	private void drawScrollBars(final Graphics2D g) {
-
-                int viewX = getViewPortX();
-                int viewY = getViewPortY();
-		int viewHeight=getViewPortHeight();
-                int viewWidth=getViewPortWidth(viewHeight);
-                int componentWidth = getComponent().getWidth();
-                int componentHeight = getComponent().getHeight();
 
 
-		// NEEDS to be same check as in getViewPortWidth
-		if ( componentHeight > viewHeight ) { // vertical
+        // check we r not scrolling off the content panel
+        if ((viewX+componentX+viewWidth)>component.getWidth()) { componentX=component.getWidth()-viewWidth-viewX; }
+        if ((viewY+componentY+viewHeight)>component.getHeight()) { componentY=component.getHeight()-viewHeight-viewY; }
+        if (componentX<-viewX) { componentX=-viewX; }
+        if (componentY<-viewY) { componentY=-viewY; }
 
-                    drawScrollBar(g,
-                            viewX + viewWidth,
-                            viewY,
-                            width - viewX - viewWidth,
-                            viewHeight,
-                            viewY-getComponent().getY(),
-                            viewHeight,
-                            componentHeight
-                            );
+        int xdiff=-componentX -component.getX();
+        int ydiff=-componentY -component.getY();
 
-		}
+        boolean goodscroll=true;
 
-		// NEEDS to be same check as in getViewPortHeight
-		if ( componentWidth > (width-viewX) ) { // horizontal
+        if (smartscroll) {
 
-                    int t = g.getTransform();
-                    g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
+            if (Math.abs(xdiff) > viewWidth) {
 
-                    drawScrollBar(g,
-                            viewY + viewHeight,
-                            viewX,
-                            height - viewY - viewHeight,
-                            viewWidth,
-                            viewX-getComponent().getX(),
-                            viewWidth,
-                            componentWidth
-                            );
+                xdiff = (xdiff>0)?viewWidth*2/3:-viewWidth*2/3;
 
-                    g.setTransform( t );
-		}
+                goodscroll = false;
+
+            }
+
+            if (Math.abs(ydiff) > viewHeight) {
+
+                ydiff = (ydiff>0)?viewHeight*2/3:-viewHeight*2/3;
+
+                goodscroll = false;
+
+            }
+        }
+
+        component.setBounds( component.getX()+xdiff , component.getY()+ydiff , component.getWidth(), component.getHeight());
+
+        //component.setBounds(15, 15, component.getWidth(), component.getHeight());
+
+        //System.out.println("new pos: x="+component.getX()+" y="+component.getY() );
+
+        // only repint if we have moved
+        if (oldX!=component.getX() || oldY!=component.getY()) {
+            repaint();
+        }
+
+        return goodscroll;
+
+    }
+
+    /**
+     * check if something is currently visible or as visible as it can be
+     * i.e. scrolling wont make it more visible, even if its not all currently visible
+     */
+    public boolean isRectVisible(int x,int y,int w,int h) {
+
+        Component component = getComponent();
+        int viewX= -component.getX() + getViewPortX();
+        int viewY= -component.getY() + getViewPortY();
+        int viewHeight = getViewPortHeight();
+        int viewWidth = getViewPortWidth(viewHeight);
+
+        return ( ((x>=viewX && x+w<=viewX+viewWidth)||(x<=viewX && x+w>=viewX+viewWidth)) &&
+                ((y>=viewY && y+h<=viewY+viewHeight)||(y<=viewY && y+h>=viewY+viewHeight))
+        );
+    }
+
+    public int getViewPortHeight() {
+        switch (mode) {
+            case MODE_SCROLLBARS: return height-getViewPortY()-((getComponent().getWidth()> (width-getViewPortX()) )?barThickness:0);
+            case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?height-(barThickness*2):height;
+            case MODE_NONE:
+            case MODE_INDICATOR: return height;
+            default: throw new RuntimeException();
+        }
+    }
+    public int getViewPortWidth() {
+        return getViewPortWidth(getViewPortHeight());
+    }
+
+    private int getViewPortWidth(int vph) {
+        switch (mode) {
+            case MODE_SCROLLBARS: return width-getViewPortX()-((getComponent().getHeight()>vph)?barThickness:0);
+            case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?width-(barThickness*2):width;
+            case MODE_NONE:
+            case MODE_INDICATOR: return width;
+            default: throw new RuntimeException();
+        }
+    }
+    public int getViewPortX() {
+        switch (mode) {
+            case MODE_SCROLLARROWS: return (getComponent().getWidth() > width)?barThickness:0;
+            case MODE_SCROLLBARS:
+            case MODE_NONE:
+            case MODE_INDICATOR: return 0;
+            default: throw new RuntimeException();
+        }
+    }
+    public int getViewPortY() {
+        switch (mode) {
+            case MODE_SCROLLARROWS: return (getComponent().getHeight() > height)?barThickness:0;
+            case MODE_SCROLLBARS:
+            case MODE_NONE:
+            case MODE_INDICATOR: return 0;
+            default: throw new RuntimeException();
+        }
+    }
+
+    public void workoutMinimumSize() {
+
+        super.workoutMinimumSize();
+        width = getComponent().getWidthWithBorder();
+        height = getComponent().getHeightWithBorder();
+    }
 
 
-	}
+    /**
+     * we have to do this here, as only here do we already know what OUR size is
+     * so we can resize the content how we want
+     */
+    public void doLayout() {
 
-        /**
-         * @see javax.swing.JScrollBar#JScrollBar(int, int, int, int, int) JScrollBar.JScrollBar
-         */
+        if (getComponents().size() == 1) {
+
+            //getComponent().workoutSize();
+
+            int viewHeight=getViewPortHeight();
+            int viewWidth=getViewPortWidth(viewHeight);
+
+            // this is a hack to make it easer to code panels and not have a tiny amount of side scrolling
+            // as even though this is technically correct, it is very annoying to use this panel
+            // now panels that are the width of the scrollpane or less are set to the width of the viewPort
+
+            // TODO this hack is only for MODE_SCROLLBARS
+
+            // if we have no lower scroll bar AND the width of the component is less then or equal to the width of the scrollpane
+            if ( getComponent().getWidth() <= (width-getViewPortX())) {
+
+                getComponent().setSize(viewWidth, getComponent().getHeight());
+
+            }
+
+            if (getComponent().getHeight() <viewHeight) {
+                getComponent().setSize(getComponent().getWidth(), viewHeight);
+            }
+
+            super.doLayout();
+        }
+
+    }
+
+    public void paintChildren(Graphics2D g) {
+
+        int[] a=g.getClip();
+
+        int viewX=getViewPortX();
+        int viewY=getViewPortY();
+        int viewHeight=getViewPortHeight();
+        int viewWidth=getViewPortWidth(viewHeight);
+
+        // dont care about clipping for the
+        // scrollbars as they r painted over the top
+        g.clipRect(viewX, viewY, viewWidth, viewHeight);
+
+        super.paintChildren(g);
+
+        g.setClip(a);
+
+        //g.setColor(0x00FF0000);
+        //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
+
+        paintDecoration(g);
+    }
+
+    protected void paintDecoration(final Graphics2D g) {
+
+        switch (mode) {
+            case MODE_NONE: return;
+            case MODE_SCROLLBARS: drawScrollBars(g); return;
+            case MODE_SCROLLARROWS: drawScrollArrows(g,false); return;
+            case MODE_INDICATOR: drawScrollArrows(g,true); return;
+            default: throw new RuntimeException();
+        }
+
+    }
+
+    private void drawScrollBars(final Graphics2D g) {
+
+        int viewX = getViewPortX();
+        int viewY = getViewPortY();
+        int viewHeight=getViewPortHeight();
+        int viewWidth=getViewPortWidth(viewHeight);
+        int componentWidth = getComponent().getWidth();
+        int componentHeight = getComponent().getHeight();
+
+
+        // NEEDS to be same check as in getViewPortWidth
+        if ( componentHeight > viewHeight ) { // vertical
+
+            drawScrollBar(g,
+                    viewX + viewWidth,
+                    viewY,
+                    width - viewX - viewWidth,
+                    viewHeight,
+                    viewY-getComponent().getY(),
+                    viewHeight,
+                    componentHeight
+            );
+
+        }
+
+        // NEEDS to be same check as in getViewPortHeight
+        if ( componentWidth > (width-viewX) ) { // horizontal
+
+            int t = g.getTransform();
+            g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
+
+            drawScrollBar(g,
+                    viewY + viewHeight,
+                    viewX,
+                    height - viewY - viewHeight,
+                    viewWidth,
+                    viewX-getComponent().getX(),
+                    viewWidth,
+                    componentWidth
+            );
+
+            g.setTransform( t );
+        }
+
+
+    }
+
+    /**
+     * @see javax.swing.JScrollBar#JScrollBar(int, int, int, int, int) JScrollBar.JScrollBar
+     */
     public void drawScrollBar(Graphics2D g, int x,int y,int w,int h,int value,int extent, int max) {
 
-                int starty = 0;
-                int extenth = h;
+        int starty = 0;
+        int extenth = h;
 
-                // DRAW ARROWS
-                // #############################################################
+        // DRAW ARROWS
+        // #############################################################
 
-                if (trackTop!=null) {
+        if (trackTop!=null) {
 
-                    int x1 = x + (w-trackTop.getIconWidth())/2;
-                    trackTop.paintIcon(this, g, x1, y);
-                    trackBottom.paintIcon(this, g, x1, y+h-trackBottom.getIconHeight() );
+            int x1 = x + (w-trackTop.getIconWidth())/2;
+            trackTop.paintIcon(this, g, x1, y);
+            trackBottom.paintIcon(this, g, x1, y+h-trackBottom.getIconHeight() );
 
-                    starty = trackTop.getIconHeight();
-                    extenth = h - starty - trackBottom.getIconHeight();
-                    
-                }
+            starty = trackTop.getIconHeight();
+            extenth = h - starty - trackBottom.getIconHeight();
 
-                // draw the track fill color
-                // #############################################################
+        }
 
-                if (trackFill!=null) {
-                    tileIcon(g, trackFill, x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
-                }
+        // draw the track fill color
+        // #############################################################
 
-                // draw the thumb!
-                // #############################################################
+        if (trackFill!=null) {
+            tileIcon(g, trackFill, x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
+        }
 
-                int[] tmp = getOffsets(x,y,w,h,value,extent,max);
-                starty = tmp[1];
-                extenth = tmp[2];
+        // draw the thumb!
+        // #############################################################
 
-                if (thumbTop!=null) {
-                    int x1 = x + (w-thumbTop.getIconWidth())/2;
-                    thumbTop.paintIcon(this, g, x1, starty);
-                    thumbBottom.paintIcon(this, g, x1, starty+extenth-thumbBottom.getIconHeight());
-                    starty = starty + thumbTop.getIconHeight();
-                    extenth = extenth - (thumbTop.getIconHeight()+thumbBottom.getIconHeight());
-                }
+        int[] tmp = getOffsets(x,y,w,h,value,extent,max);
+        starty = tmp[1];
+        extenth = tmp[2];
 
-                if (thumbFill!=null) {
-                    tileIcon(g, thumbFill, x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
-                }
+        if (thumbTop!=null) {
+            int x1 = x + (w-thumbTop.getIconWidth())/2;
+            thumbTop.paintIcon(this, g, x1, starty);
+            thumbBottom.paintIcon(this, g, x1, starty+extenth-thumbBottom.getIconHeight());
+            starty = starty + thumbTop.getIconHeight();
+            extenth = extenth - (thumbTop.getIconHeight()+thumbBottom.getIconHeight());
+        }
+
+        if (thumbFill!=null) {
+            tileIcon(g, thumbFill, x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
+        }
 
     }
 
@@ -532,71 +521,64 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
 
-	private void drawScrollArrows(final Graphics2D g,boolean indicator) {
+    private void drawScrollArrows(final Graphics2D g,boolean indicator) {
 
-		int viewHeight=getViewPortHeight();
-		int viewWidth=getViewPortWidth(viewHeight);
+        int viewHeight=getViewPortHeight();
+        int viewWidth=getViewPortWidth(viewHeight);
 
-		int viewX=getViewPortX();
-		int viewY=getViewPortY();
+        int viewX=getViewPortX();
+        int viewY=getViewPortY();
 
-		int d = barThickness*2;
-		int gap=2;
-		boolean canScroll;
+        int d = barThickness*2;
+        int gap=2;
+        boolean canScroll;
 
-		if (getComponent().getWidth() > width) {
+        if (getComponent().getWidth() > width) {
 
-			canScroll = getComponent().getX() < viewX;
+            canScroll = getComponent().getX() < viewX;
 
-			if (indicator) {
-				drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.LEFT);
-			}
-			else {
-						drawArrow(g, 0, (height-d)/2, barThickness, d,canScroll,Graphics.LEFT);
-			}
+            if (indicator) {
+                drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.LEFT);
+            }
+            else {
+                drawArrow(g, 0, (height-d)/2, barThickness, d,canScroll,Graphics.LEFT);
+            }
 
-			canScroll = (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth;
+            canScroll = (getComponent().getWidth()+getComponent().getX()-viewX) > viewWidth;
 
-			if (indicator) {
-				drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.RIGHT);
-			}
-			else {
-						drawArrow(g, width - barThickness , (height-d)/2, barThickness, d,canScroll,Graphics.RIGHT);
-			}
+            if (indicator) {
+                drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.RIGHT);
+            }
+            else {
+                drawArrow(g, width - barThickness , (height-d)/2, barThickness, d,canScroll,Graphics.RIGHT);
+            }
 
-		}
+        }
 
-		if (getComponent().getHeight() > height) {
+        if (getComponent().getHeight() > height) {
 
-			canScroll = getComponent().getY() < viewY;
+            canScroll = getComponent().getY() < viewY;
 
-			if (indicator) {
-				drawArrow(g, (width-d)/2, height+gap, d, barThickness,canScroll,Graphics.TOP);
-			}
-			else {
-						drawArrow(g, (width-d)/2, 0, d, barThickness,canScroll,Graphics.TOP);
-			}
+            if (indicator) {
+                drawArrow(g, (width-d)/2, height+gap, d, barThickness,canScroll,Graphics.TOP);
+            }
+            else {
+                drawArrow(g, (width-d)/2, 0, d, barThickness,canScroll,Graphics.TOP);
+            }
 
-			canScroll = (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight;
+            canScroll = (getComponent().getHeight()+getComponent().getY()-viewY) > viewHeight;
 
-			if (indicator) {
-				drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,canScroll,Graphics.BOTTOM);
-			}
-			else {
-						drawArrow(g, (width-d)/2,height-barThickness, d, barThickness,canScroll,Graphics.BOTTOM);
-			}
+            if (indicator) {
+                drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,canScroll,Graphics.BOTTOM);
+            }
+            else {
+                drawArrow(g, (width-d)/2,height-barThickness, d, barThickness,canScroll,Graphics.BOTTOM);
+            }
 
-		}
-	}
+        }
+    }
 
     public void drawArrow(Graphics2D g, int x, int y, int w, int h,boolean canScroll,int direction) {
-
-//	if (canScroll) {
-//		g.setColor(scrollBarCol);
-//	}
-//	else {
-//		g.setColor(scrollTrackCol);
-//	}
 
         switch (direction) {
             case Graphics.LEFT: {
@@ -644,356 +626,316 @@ public class ScrollPane extends Panel implements Runnable {
                 break;
             }
         }
-
-
     }
 
 
-//	public int getScrollTrackCol() {
-//		return scrollTrackCol;
-//	}
-//	public void setScrollTrackCol(int scrollTrackCol) {
-//		this.scrollTrackCol = scrollTrackCol;
-//	}
-//	public int getScrollBarCol() {
-//		return scrollBarCol;
-//	}
-//	public void setScrollBarCol(int scrollBarCol) {
-//		this.scrollBarCol = scrollBarCol;
-//	}
+    public void clip(Graphics2D g) {
 
-        public void clip(Graphics2D g) {
+        int viewX=getXOnScreen()+getViewPortX();
+        int viewY=getYOnScreen()+getViewPortY();
+        int viewHeight=getViewPortHeight();
+        int viewWidth=getViewPortWidth(viewHeight);
 
-            	int viewX=getXOnScreen()+getViewPortX();
-		int viewY=getYOnScreen()+getViewPortY();
-		int viewHeight=getViewPortHeight();
-		int viewWidth=getViewPortWidth(viewHeight);
+        g.clipRect(viewX, viewY, viewWidth, viewHeight);
+        super.clip(g);
+    }
 
-		g.clipRect(viewX, viewY, viewWidth, viewHeight);
-                super.clip(g);
+    /**
+     * as the is ALWAYS fully covered by its component, is uses that too, to work this out
+     */
+    public boolean isOpaque() {
+        boolean mine = super.isOpaque();
+        if (!mine) {
+            return getComponent().isOpaque();
+        }
+        else {
+            return mine;
+        }
+    }
+    public void updateUI() {
+        super.updateUI();
+
+
+        thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
+        thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
+        thumbFill = (Icon)theme.getProperty("thumbFill", Style.ALL);
+        trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
+        trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
+        trackFill = (Icon)theme.getProperty("trackFill", Style.ALL);
+
+
+
+        rightArrow = (Icon)theme.getProperty("rightArrow", Style.ALL);
+        leftArrow = (Icon)theme.getProperty("leftArrow", Style.ALL);
+        upArrow = (Icon)theme.getProperty("upArrow", Style.ALL);
+        downArrow = (Icon)theme.getProperty("downArrow", Style.ALL);
+    }
+
+
+    /**
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @return the top-most child is returned
+     * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
+     */
+    public Component getComponentAt(int x, int y) {
+
+        int viewX=getViewPortX();
+        int viewY=getViewPortY();
+        int viewHeight=getViewPortHeight();
+        int viewWidth=getViewPortWidth(viewHeight);
+
+        if ( isPointInsideRect(x,y,viewX,viewY,viewWidth,viewHeight) ) {
+
+            return super.getComponentAt(x,y);
+
         }
 
-        /**
-         * as the is ALWAYS fully covered by its component, is uses that too, to work this out
-         */
-        public boolean isOpaque() {
-            boolean mine = super.isOpaque();
-            if (!mine) {
-                return getComponent().isOpaque();
+        return this;
+    }
+
+    private boolean isPointInsideRect(int x,int y,int viewX,int viewY,int viewWidth,int viewHeight) {
+
+        return x>=viewX && x<(viewX+viewWidth) && y>=viewY && y<(viewY+viewHeight);
+
+    }
+
+    public void doClickInScrollbar(int x1,int y1,int w1,int h1,int value1,int extent1, int max1,
+            int pointX,int pointY,
+            int d1,int d2,int d3
+    ) {
+
+        int[] tmp = getOffsets(x1,y1,w1,h1,value1,extent1,max1);
+        int box = tmp[0];
+        int starty = tmp[1];
+        int extenth = tmp[2];
+
+
+        if ( isPointInsideRect(     pointX, pointY, x1, y1, w1, box ) ) {
+
+            go = true;
+            direction = d1;
+            jump = 10;
+
+        }
+        else if ( isPointInsideRect(pointX, pointY, x1, y1+box ,w1, starty-y1-box ) ) {
+
+            go = true;
+            direction = d1;
+            jump = extent1;
+
+        }
+        else if ( isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth ) ) { // thumb on the right
+
+            direction = d3;
+            scrollDrag = value1;
+            scrollStart = pointY;
+
+        }
+        else if ( isPointInsideRect(pointX, pointY, x1, starty+extenth  ,w1, h1 - box - (starty-y1) -extenth) ) {
+
+            go = true;
+            direction = d2;
+            jump = extent1;
+
+        }
+        else if ( isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box) ) {
+
+            go = true;
+            direction = d2;
+            jump = 10;
+
+        }
+
+
+        if (go) {
+
+            new Thread(this).start();
+
+        }
+
+    }
+
+    public void pointerEvent(int type, int pointX, int pointY, KeyEvent keys) {
+
+
+        int viewX = getViewPortX();
+        int viewY = getViewPortY();
+        int viewHeight=getViewPortHeight();
+        int viewWidth=getViewPortWidth(viewHeight);
+
+        if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
+
+            if (mode == MODE_SCROLLBARS) {
+
+                doClickInScrollbar(
+                        viewX + viewWidth,
+                        viewY,
+                        width - viewX - viewWidth,
+                        viewHeight,
+                        viewY-getComponent().getY(),
+                        viewHeight,
+                        getComponent().getHeight(),
+                        pointX,pointY,
+                        Graphics.TOP,Graphics.BOTTOM,Graphics.RIGHT
+                );
+
+                doClickInScrollbar(
+                        viewY + viewHeight,
+                        viewX,
+                        height - viewY - viewHeight,
+                        viewWidth,
+                        viewX-getComponent().getX(),
+                        viewWidth,
+                        getComponent().getWidth(),
+                        pointY,pointX,
+                        Graphics.LEFT,Graphics.RIGHT,Graphics.BOTTOM
+                );
+
+
             }
-            else {
-                return mine;
+            else if (mode == MODE_SCROLLARROWS) {
+
+                jump = 20;
+
+                if (getComponent().getWidth() > width) {
+
+                    if ( isPointInsideRect(pointX, pointY,   0, 0, barThickness, height )) {
+
+                        go = true;
+                        direction = Graphics.LEFT;
+
+                    }
+                    else if ( isPointInsideRect(pointX, pointY,   width - barThickness , 0, barThickness, height )) {
+
+                        go = true;
+                        direction = Graphics.RIGHT;
+
+                    }
+
+                }
+
+                if (getComponent().getHeight() > height) {
+
+                    if ( isPointInsideRect(pointX, pointY,   0, 0, width, barThickness)) {
+
+                        go = true;
+                        direction = Graphics.TOP;
+
+                    }
+                    else if ( isPointInsideRect(pointX, pointY,   0,height-barThickness, width, barThickness)) {
+
+                        go = true;
+                        direction = Graphics.BOTTOM;
+
+                    }
+
+                }
+
+                if (go) {
+
+                    new Thread(this).start();
+
+                }
+
             }
+
+
+
         }
-        public void updateUI() {
-                super.updateUI();
+        else if (type == DesktopPane.DRAGGED) {
 
-                //Style theme = DesktopPane.getDefaultTheme(this);
+            if (mode == MODE_SCROLLBARS && !go) {
 
-                thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
-                thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
-                thumbFill = (Icon)theme.getProperty("thumbFill", Style.ALL);
-                trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
-                trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
-                trackFill = (Icon)theme.getProperty("trackFill", Style.ALL);
+                if (direction==Graphics.RIGHT) { // vertical
 
-//                if (thumbFill instanceof Icon) {
-//                    this.thumbFill = (Icon)thumbFill;
-//                    scrollBarCol=-1;
-//                }
-//                else if (thumbFill instanceof Integer) {
-//                    scrollBarCol = ((Integer)thumbFill).intValue();
-//                    this.thumbFill = null;
-//                }
-
-//                if (trackFill instanceof Icon) {
-//                    this.trackFill = (Icon)trackFill;
-//                    scrollTrackCol=-1;
-//                }
-//                else if (trackFill instanceof Integer) {
-//                    scrollTrackCol = ((Integer)trackFill).intValue();
-//                    this.trackFill=null;
-//                }
-
-                rightArrow = (Icon)theme.getProperty("rightArrow", Style.ALL);
-                leftArrow = (Icon)theme.getProperty("leftArrow", Style.ALL);
-                upArrow = (Icon)theme.getProperty("upArrow", Style.ALL);
-                downArrow = (Icon)theme.getProperty("downArrow", Style.ALL);
-        }
-
-
-        /**
-         * @param x the x coordinate
-         * @param y the y coordinate 
-         * @return the top-most child is returned
-         * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
-         */
-        public Component getComponentAt(int x, int y) {
-
-            	int viewX=getViewPortX();
-		int viewY=getViewPortY();
-		int viewHeight=getViewPortHeight();
-		int viewWidth=getViewPortWidth(viewHeight);
-
-		if ( isPointInsideRect(x,y,viewX,viewY,viewWidth,viewHeight) ) {
-
-			return super.getComponentAt(x,y);
-
-		}
-
-		return this;
-	}
-
-	private boolean isPointInsideRect(int x,int y,int viewX,int viewY,int viewWidth,int viewHeight) {
-
-		return x>=viewX && x<(viewX+viewWidth) && y>=viewY && y<(viewY+viewHeight);
-
-	}
-
-	public void doClickInScrollbar(int x1,int y1,int w1,int h1,int value1,int extent1, int max1,
-				int pointX,int pointY,
-				int d1,int d2,int d3
-				) {
-
-                        int[] tmp = getOffsets(x1,y1,w1,h1,value1,extent1,max1);
-                        int box = tmp[0];
-                        int starty = tmp[1];
-                        int extenth = tmp[2];
-
-                        //int buttonHeight = (trackTop==null || trackTop.getIconHeight() >w1)?w1:trackTop.getIconHeight();
-			//int space1 = h1 - (buttonHeight*2);
-
-                	if ( isPointInsideRect(     pointX, pointY, x1, y1, w1, box ) ) {
-
-				go = true;
-				direction = d1;
-				jump = 10;
-
-			}
-			else if ( isPointInsideRect(pointX, pointY, x1, y1+box ,w1, starty-y1-box ) ) {
-
-				go = true;
-				direction = d1;
-				jump = extent1;
-
-			}
-			else if ( isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth ) ) { // thumb on the right
-
-				direction = d3;
-				scrollDrag = value1;
-				scrollStart = pointY;
-
-			}
-			else if ( isPointInsideRect(pointX, pointY, x1, starty+extenth  ,w1, h1 - box - (starty-y1) -extenth) ) {
-
-				go = true;
-				direction = d2;
-				jump = extent1;
-
-			}
-                	else if ( isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box) ) {
-
-				go = true;
-				direction = d2;
-				jump = 10;
-
-			}
-
-
-			if (go) {
-
-				new Thread(this).start();
-
-			}
-
-	}
-
-        public void pointerEvent(int type, int pointX, int pointY, KeyEvent keys) {
-
-
-		    int viewX = getViewPortX();
-		    int viewY = getViewPortY();
-		    int viewHeight=getViewPortHeight();
-		    int viewWidth=getViewPortWidth(viewHeight);
-
-
-		if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
-
-
-		    if (mode == MODE_SCROLLBARS) {
-
-			doClickInScrollbar(
+                    int newValue = getNewValue(
                             viewX + viewWidth,
                             viewY,
                             width - viewX - viewWidth,
                             viewHeight,
-                            viewY-getComponent().getY(),
+                            scrollDrag,//viewY-getComponent().getY(),
                             viewHeight,
                             getComponent().getHeight(),
 
-			    pointX,pointY,
+                            pointY-scrollStart
+                    );
 
-			    Graphics.TOP,Graphics.BOTTOM,Graphics.RIGHT
-			);
+                    makeVisible( getViewPortX()-getComponent().getX() , newValue ,viewWidth,viewHeight,false);
 
-			doClickInScrollbar(
+                }
+                else if (direction==Graphics.BOTTOM) { // horizontal
+
+                    int newValue = getNewValue(
                             viewY + viewHeight,
                             viewX,
                             height - viewY - viewHeight,
                             viewWidth,
-                            viewX-getComponent().getX(),
+                            scrollDrag,//viewX-getComponent().getX(),
                             viewWidth,
                             getComponent().getWidth(),
 
-			    pointY,pointX,
+                            pointX-scrollStart
+                    );
 
-			    Graphics.LEFT,Graphics.RIGHT,Graphics.BOTTOM
-			);
+                    makeVisible( newValue , getViewPortY()-getComponent().getY() ,viewWidth,viewHeight,false);
+                }
+            }
 
+        }
+        else if (type == DesktopPane.RELEASED) {
 
-		    }
-		    else if (mode == MODE_SCROLLARROWS) {
+            go = false;
+            direction = 0;
 
-			jump = 20;
-
-			if (getComponent().getWidth() > width) {
-
-				if ( isPointInsideRect(pointX, pointY,   0, 0, barThickness, height )) {
-
-					go = true;
-					direction = Graphics.LEFT;
-
-				}
-				else if ( isPointInsideRect(pointX, pointY,   width - barThickness , 0, barThickness, height )) {
-
-					go = true;
-					direction = Graphics.RIGHT;
-
-				}
-
-			}
-
-			if (getComponent().getHeight() > height) {
-
-				if ( isPointInsideRect(pointX, pointY,   0, 0, width, barThickness)) {
-
-					go = true;
-					direction = Graphics.TOP;
-
-				}
-				else if ( isPointInsideRect(pointX, pointY,   0,height-barThickness, width, barThickness)) {
-
-					go = true;
-					direction = Graphics.BOTTOM;
-
-				}
-
-			}
-
-			if (go) {
-
-				new Thread(this).start();
-
-			}
-
-		    }
-
-
-
-		}
-		else if (type == DesktopPane.DRAGGED) {
-
-			if (mode == MODE_SCROLLBARS && !go) {
-
-				if (direction==Graphics.RIGHT) { // vertical
-
-                                       int newValue = getNewValue(
-                                            viewX + viewWidth,
-                                            viewY,
-                                            width - viewX - viewWidth,
-                                            viewHeight,
-                                            scrollDrag,//viewY-getComponent().getY(),
-                                            viewHeight,
-                                            getComponent().getHeight(),
-
-                                            pointY-scrollStart
-                                        );
-
-					makeVisible( getViewPortX()-getComponent().getX() , newValue ,viewWidth,viewHeight,false);
-
-				}
-				else if (direction==Graphics.BOTTOM) { // horizontal
-
-                                    	int newValue = getNewValue(
-                                            viewY + viewHeight,
-                                            viewX,
-                                            height - viewY - viewHeight,
-                                            viewWidth,
-                                            scrollDrag,//viewX-getComponent().getX(),
-                                            viewWidth,
-                                            getComponent().getWidth(),
-
-                                            pointX-scrollStart
-                                        );
-
-                                        makeVisible( newValue , getViewPortY()-getComponent().getY() ,viewWidth,viewHeight,false);
-				}
-			}
-
-		}
-		else if (type == DesktopPane.RELEASED) {
-
-			go = false;
-			direction = 0;
-
-		}
-
-	}
-
-        private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
-
-            int[] offsets = getOffsets(x, y, w, h, value, extent, max);
-
-            return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
         }
 
-	private int scrollDrag;
-	private int scrollStart;
+    }
 
-	private int direction;
-	private boolean go;
-	private int jump;
+    private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
 
-	// this can also be done by kidnapping the animation thread
-	// and then giving it back when it is not needed any more
-	public void run() {
+        int[] offsets = getOffsets(x, y, w, h, value, extent, max);
 
-		while (go) {
+        return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
+    }
 
-			int cX = getViewPortX()-getComponent().getX();
-			int cY = getViewPortY()-getComponent().getY();
-			int viewHeight=getViewPortHeight();
-			int viewWidth=getViewPortWidth(viewHeight);
+    private int scrollDrag;
+    private int scrollStart;
 
-			switch(direction) {
+    private int direction;
+    private boolean go;
+    private int jump;
 
-				case Graphics.TOP: cY=cY-jump; break;
-				case Graphics.BOTTOM: cY=cY+jump; break;
-				case Graphics.LEFT: cX=cX-jump; break;
-				case Graphics.RIGHT: cX=cX+jump; break;
+    // this can also be done by kidnapping the animation thread
+    // and then giving it back when it is not needed any more
+    public void run() {
 
-			}
+        while (go) {
 
-			makeVisible(cX,cY,viewWidth,viewHeight,false);
+            int cX = getViewPortX()-getComponent().getX();
+            int cY = getViewPortY()-getComponent().getY();
+            int viewHeight=getViewPortHeight();
+            int viewWidth=getViewPortWidth(viewHeight);
 
-                	synchronized (this) {
-				try {
-	                        	wait(100);
-				}
-				catch(InterruptedException e) {}
-                	}
+            switch(direction) {
 
-		}
-	}
+                case Graphics.TOP: cY=cY-jump; break;
+                case Graphics.BOTTOM: cY=cY+jump; break;
+                case Graphics.LEFT: cX=cX-jump; break;
+                case Graphics.RIGHT: cX=cX+jump; break;
+
+            }
+
+            makeVisible(cX,cY,viewWidth,viewHeight,false);
+
+            synchronized (this) {
+                try {
+                    wait(100);
+                }
+                catch(InterruptedException e) {}
+            }
+
+        }
+    }
 
 }
