@@ -298,9 +298,16 @@ public class Panel extends Component {
 
             if (newone.isFocusable()) {
 
-                if ( (scrolltothere && scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus)) ||
-                                        ( newone.isComponentVisible() )
-                                        ) {
+                boolean requestFocus = false;
+
+                if (getWindow().getFocusOwner() == null) {
+                    breakOutAction(newone,direction,scrolltothere,forceFocus);
+                }
+                else if (scrolltothere) {
+                    requestFocus = scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus);
+                }
+
+                if (requestFocus || newone.isComponentVisible()) {
                     newone.requestFocusInWindow();
                 }
 

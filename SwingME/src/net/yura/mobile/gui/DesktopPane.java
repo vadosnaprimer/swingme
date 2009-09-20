@@ -98,8 +98,6 @@ public class DesktopPane extends Canvas implements Runnable {
     private LookAndFeel theme;
     public int defaultSpace;
     private int menuHeight;
-    //public int defaultWidthOffset;
-    //public ListCellRenderer softkeyRenderer;
 
     private Vector windows = new Vector();
     private Window currentWindow;
@@ -156,7 +154,8 @@ public class DesktopPane extends Canvas implements Runnable {
         // and that will in tern call initialise of the midlet
         Display.getDisplay(m).setCurrent(this);
         repaint();
-        serviceRepaints();
+        // TODO: (Yura) Can we really comment this?
+        //serviceRepaints();
 
     }
 
@@ -171,9 +170,14 @@ public class DesktopPane extends Canvas implements Runnable {
             log( "Error in initialize: " + th.toString() );
         }
 
+        // Set thread to maximum priority (smother animations and text input)
+        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
         while (true) {
 
             if (killflag) { return; }
+
+            Component ac;
 
             synchronized (this) {
 
@@ -190,13 +194,16 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                 }
 
+                ac = animatedComponent;
+                animatedComponent = null;
+
+            } // End synchronized (this)
+
+            while (animatedComponent == null && ac != null)
+            {
                 try {
-
-
-                    Component ac = animatedComponent;
-                    animatedComponent = null;
                     ac.animate();
-
+                    ac = null; // Exit loop
                 }
                 catch (InterruptedException e) {
                     // Ignore Interrupted Exception as this may be caused by
@@ -209,6 +216,8 @@ public class DesktopPane extends Canvas implements Runnable {
                     //#debug
                     th.printStackTrace();
                     log( "Error in animation: " + th.toString() );
+
+                    ac = null; // Exit loop
                 }
             }
         }
@@ -228,11 +237,13 @@ public class DesktopPane extends Canvas implements Runnable {
             return;
         }
         animationThread.interrupt();
+        notify();
     }
     // called by destroyApp
     synchronized void kill() {
         killflag=true;
         animationThread.interrupt();
+        notify();
     }
 
     /**
@@ -311,6 +322,7 @@ public class DesktopPane extends Canvas implements Runnable {
             oldw = getWidth();
             oldh = getHeight();
 
+            // Initialize wideScreen for the first time
             wideScreen = (oldw>oldh);
 
             animationThread = new Thread(this);
@@ -748,7 +760,9 @@ public class DesktopPane extends Canvas implements Runnable {
     public void setSelectedFrame(Window w) {
         if (windows.contains(w) || w==null) {
 
-            if (currentWindow == w) return;
+            if (currentWindow == w) {
+                return;
+            }
 
             if (currentWindow!=null) {
                 Component focusedComponent = currentWindow.getFocusOwner();
@@ -1047,7 +1061,22 @@ public class DesktopPane extends Canvas implements Runnable {
         //#debug
         System.out.println("sizeChanged!! " +paintdone+" w="+w+" h="+h);
 
+        sizeChangedImpl();
+        fullRepaint();
+    }
+
+    private void sizeChangedImpl() {
+
+        // Until we don't do the initial setup, ignore this.
         if (!paintdone) return;
+
+        int w = super.getWidth();
+        int h = super.getHeight();
+
+        if (oldw==h && oldh==w) {
+            // Noting to do. Just return;
+            return;
+        }
 
         boolean old = wideScreen;
         wideScreen = (w>h);
@@ -1074,9 +1103,6 @@ public class DesktopPane extends Canvas implements Runnable {
                 //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
             }
         }
-        fullRepaint();
-        //}
-
         oldw=w;
         oldh=h;
 
@@ -1089,6 +1115,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         //System.out.println("showNotify");
         keypad.clear();
+
+        // A landscape change can happens when we are hidden. So check it now.
+        sizeChangedImpl();
+
         fullRepaint();
 
     }
