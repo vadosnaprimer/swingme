@@ -108,7 +108,12 @@ public class DesktopPane extends Canvas implements Runnable {
     private final Vector revalidateComponents = new Vector();
 
     private Thread animationThread;
-    private Component animatedComponent;
+
+    // the nextAnimatedComponent can be == to animatedComponent
+    // in this case, once the first animation is finished
+    // it will start the animation off again
+    private Component currentAnimatedComponent;
+    private Component nextAnimatedComponent;
 
     private Image splash;
     private int background;
@@ -160,7 +165,7 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public Component getAnimatedComponent() {
-        return animatedComponent;
+        return currentAnimatedComponent;
     }
 
     public final void run() {
@@ -181,10 +186,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
             if (killflag) { return; }
 
-            Component ac;
-
             synchronized (this) {
-                while (animatedComponent==null) {
+                currentAnimatedComponent = nextAnimatedComponent;
+                nextAnimatedComponent = null;
+
+                if (currentAnimatedComponent==null) {
                     try {
                         wait();
                     }
@@ -192,31 +198,23 @@ public class DesktopPane extends Canvas implements Runnable {
                         //#debug
                         e.printStackTrace();
                     }
-                    if (killflag) {
-                        return;
-                    }
+
+                    continue; // Go to while (true) again
                 }
 
-                ac = animatedComponent;
+                try {
+                    currentAnimatedComponent.animate();
+                }
+                catch (InterruptedException e) {
+                    //#debug
+                    System.out.println("InterruptedException during animation");
+                }
+                catch(Throwable th) {
+                    //#debug
+                    th.printStackTrace();
+                    log( "Error in animation: " + th.toString() );
+                }
             }
-
-            try {
-                ac.animate();
-            }
-            catch (InterruptedException e) {
-                //#debug
-                System.out.println("InterruptedException during animation");
-            }
-            catch(Throwable th) {
-                //#debug
-                th.printStackTrace();
-                log( "Error in animation: " + th.toString() );
-            }
-
-            if (ac == animatedComponent) {
-                animatedComponent = null;
-            }
-
         }
 
     }
@@ -226,7 +224,8 @@ public class DesktopPane extends Canvas implements Runnable {
      * @param com The Component to call animte() on
      */
     public synchronized void animateComponent(Component com) {
-        animatedComponent = com;
+        currentAnimatedComponent = null;
+        nextAnimatedComponent = com;
 
         // in case this is called from initialize
         // like when a textfield is added to the main window at starttime
@@ -234,18 +233,15 @@ public class DesktopPane extends Canvas implements Runnable {
             return;
         }
 
-        // does not
+        // does not work on N70
         //animationThread.interrupt();
         notify();
     }
     // called by destroyApp
-    synchronized void kill() {
+    void kill() {
         killflag=true;
-        //animationThread.interrupt();
 
-        animatedComponent = null;
-
-        notify();
+        animateComponent(null);
     }
 
     /**
@@ -704,13 +700,9 @@ public class DesktopPane extends Canvas implements Runnable {
             // if there is a tooltip up or ready to go up,
             // then kill it!
             synchronized (this) {
-                if (tooltip.isWaiting()) {
-                    //animationThread.interrupt();
-
-                    if (tooltip == animatedComponent) {
-                        animatedComponent = null;
-                    }
-                    notify();
+                if ((tooltip.isWaiting() && nextAnimatedComponent==null)
+                     || nextAnimatedComponent == tooltip) {
+                    animateComponent(null);
                 }
             }
         }
