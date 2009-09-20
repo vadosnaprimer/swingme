@@ -62,21 +62,21 @@ public class ProtoOutputStream extends OutputStream
 
     public void write( int fieldIndex , long    value ) throws IOException 
     {
-        byte[] prefix  = encodeBytes( longToByteArray( encodeFieldIndexAndWireFormatType( fieldIndex , ProtoBase.WIRE_FORMAT_VARINT ) ) );
+        byte[] prefix  = encodeBytes( longToByteArray( encodeFieldIndexAndWireFormatType( fieldIndex , ProtoInputStream.WIRE_FORMAT_VARINT ) ) );
         byte[] payload = encodeVariableInteger( value );
         write( concatenate( prefix , payload ) ); 
     }
 
     public void write( int fieldIndex , double  value ) throws IOException 
     {
-        byte[] prefix  = encodeBytes( longToByteArray( encodeFieldIndexAndWireFormatType( fieldIndex , ProtoBase.WIRE_FORMAT_SIXTY_FOUR_BIT ) ) );
+        byte[] prefix  = encodeBytes( longToByteArray( encodeFieldIndexAndWireFormatType( fieldIndex , ProtoInputStream.WIRE_FORMAT_SIXTY_FOUR_BIT ) ) );
         byte[] payload = encodeDouble( value );
         write( concatenate( prefix , payload ) ); 
     }
 
     public void write( int fieldIndex , float   value ) throws IOException 
     { 
-        byte[] prefix  = encodeBytes( longToByteArray( encodeFieldIndexAndWireFormatType( fieldIndex , ProtoBase.WIRE_FORMAT_THIRTY_TWO_BIT ) ) );
+        byte[] prefix  = encodeBytes( longToByteArray( encodeFieldIndexAndWireFormatType( fieldIndex , ProtoInputStream.WIRE_FORMAT_THIRTY_TWO_BIT ) ) );
         byte[] payload = encodeSingle( value );
         write( concatenate( prefix , payload ) ); 
     }
@@ -105,34 +105,34 @@ public class ProtoOutputStream extends OutputStream
     public int javaTypeToWireFormatType( java.lang.Object value ) throws IOException
     {
         if ( value instanceof byte[] )
-            return ProtoBase.WIRE_FORMAT_LENGTH_DELIMITED;
+            return ProtoInputStream.WIRE_FORMAT_LENGTH_DELIMITED;
     
         if ( value instanceof java.lang.String )
-            return ProtoBase.WIRE_FORMAT_LENGTH_DELIMITED;        
+            return ProtoInputStream.WIRE_FORMAT_LENGTH_DELIMITED;        
 
         if ( value instanceof java.lang.Boolean )
-            return ProtoBase.WIRE_FORMAT_VARINT;
+            return ProtoInputStream.WIRE_FORMAT_VARINT;
 
         if ( value instanceof java.lang.Byte )
-            return ProtoBase.WIRE_FORMAT_VARINT;
+            return ProtoInputStream.WIRE_FORMAT_VARINT;
     
         if ( value instanceof java.lang.Character )
-            return ProtoBase.WIRE_FORMAT_VARINT;
+            return ProtoInputStream.WIRE_FORMAT_VARINT;
     
         if ( value instanceof java.lang.Double )
-            return ProtoBase.WIRE_FORMAT_SIXTY_FOUR_BIT;
+            return ProtoInputStream.WIRE_FORMAT_SIXTY_FOUR_BIT;
 
         if ( value instanceof java.lang.Float )
-            return ProtoBase.WIRE_FORMAT_THIRTY_TWO_BIT;
+            return ProtoInputStream.WIRE_FORMAT_THIRTY_TWO_BIT;
 
         if ( value instanceof java.lang.Integer )
-            return ProtoBase.WIRE_FORMAT_VARINT;
+            return ProtoInputStream.WIRE_FORMAT_VARINT;
 
         if ( value instanceof java.lang.Long )
-            return ProtoBase.WIRE_FORMAT_VARINT;
+            return ProtoInputStream.WIRE_FORMAT_VARINT;
 
         if ( value instanceof java.lang.Short )
-            return ProtoBase.WIRE_FORMAT_VARINT;
+            return ProtoInputStream.WIRE_FORMAT_VARINT;
 
         throw new IOException("Unsupported Java Type");
     }

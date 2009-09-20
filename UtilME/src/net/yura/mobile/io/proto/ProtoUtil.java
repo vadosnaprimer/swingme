@@ -32,7 +32,7 @@ public class ProtoUtil
     public final static int END_OF_OBJECT          =    1; // Special field used to define the end of variable length objects.
     public final static int PREFIX_OBJECTTYPE      =    2;
 
-    protected int prefixMessage = null;
+    protected int prefixMessage = UNKNOWN;
 
     // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     // CONSTRUCTOR
@@ -73,16 +73,16 @@ public class ProtoUtil
         
         ProtoObject proto = null;
         
-        if ( this.prefixMessage != ProtoInputStream.UNKNOWN )
+        if ( this.prefixMessage != UNKNOWN )
         {
             switch( this.prefixMessage )
             {
                 case END:     // End of collection
-                    this.prefixMessage = ProtoInputStream.UNKNOWN;
+                    this.prefixMessage = UNKNOWN;
                     return null;
 
             	case NULL:    // Returns NULL
-                    this.prefixMessage = ProtoInputStream.UNKNOWN;
+                    this.prefixMessage = UNKNOWN;
                     return null;
             	                      
             	case JAVA_LANG_BOOLEAN:      
@@ -177,7 +177,7 @@ public class ProtoUtil
 
     	if ( object == null )
     	{
-    		writePrefix( ProtoInputStream.NULL , _out );
+    		writePrefix( NULL , _out );
     		return;
     	}
     
@@ -187,7 +187,7 @@ public class ProtoUtil
     
     	if ( object instanceof java.util.Hashtable )
     	{
-    		writePrefix( ProtoInputStream.JAVA_UTIL_HASHTABLE , _out );
+    		writePrefix( JAVA_UTIL_HASHTABLE , _out );
     		
     		Hashtable   h = (Hashtable)object;
     		Enumeration e = h.keys();
@@ -202,11 +202,11 @@ public class ProtoUtil
     		}
 
             // Write end of collection prefix type
-    		writePrefix( ProtoInputStream.END , _out );
+    		writePrefix( END , _out );
     	}
     	else if ( object instanceof java.util.Vector )
     	{
-    		writePrefix( ProtoInputStream.JAVA_UTIL_VECTOR , _out );
+    		writePrefix( JAVA_UTIL_VECTOR , _out );
     
     		Vector      v = (Vector)object;
     		Enumeration e = v.elements();
@@ -218,23 +218,23 @@ public class ProtoUtil
     		}
 
             // Write end of collection prefix type
-    		writePrefix( ProtoInputStream.END , _out );
+    		writePrefix( END , _out );
     	}
     	else 
     	{
-    	    int p = ProtoInputStream.UNKNOWN;
+    	    int p = UNKNOWN;
     	    
-    		p = ( object instanceof java.lang.Boolean   ? ProtoInputStream.JAVA_LANG_BOOLEAN   : p );
-    		p = ( object instanceof java.lang.Byte      ? ProtoInputStream.JAVA_LANG_BYTE      : p );
-    		p = ( object instanceof java.lang.Character ? ProtoInputStream.JAVA_LANG_CHARACTER : p );
-    		p = ( object instanceof java.lang.Double    ? ProtoInputStream.JAVA_LANG_DOUBLE    : p );
-    		p = ( object instanceof java.lang.Float     ? ProtoInputStream.JAVA_LANG_FLOAT     : p );
-    		p = ( object instanceof java.lang.Integer   ? ProtoInputStream.JAVA_LANG_INTEGER   : p );
-    		p = ( object instanceof java.lang.Long      ? ProtoInputStream.JAVA_LANG_LONG      : p );
-    		p = ( object instanceof java.lang.Short     ? ProtoInputStream.JAVA_LANG_SHORT     : p );
-    		p = ( object instanceof java.lang.String    ? ProtoInputStream.JAVA_LANG_STRING    : p );
+    		p = ( object instanceof java.lang.Boolean   ? JAVA_LANG_BOOLEAN   : p );
+    		p = ( object instanceof java.lang.Byte      ? JAVA_LANG_BYTE      : p );
+    		p = ( object instanceof java.lang.Character ? JAVA_LANG_CHARACTER : p );
+    		p = ( object instanceof java.lang.Double    ? JAVA_LANG_DOUBLE    : p );
+    		p = ( object instanceof java.lang.Float     ? JAVA_LANG_FLOAT     : p );
+    		p = ( object instanceof java.lang.Integer   ? JAVA_LANG_INTEGER   : p );
+    		p = ( object instanceof java.lang.Long      ? JAVA_LANG_LONG      : p );
+    		p = ( object instanceof java.lang.Short     ? JAVA_LANG_SHORT     : p );
+    		p = ( object instanceof java.lang.String    ? JAVA_LANG_STRING    : p );
     
-            if ( p != ProtoInputStream.UNKNOWN )
+            if ( p != UNKNOWN )
             {
         		writePrefix( p , _out );
         		_out.write( 0 , object );
@@ -253,7 +253,7 @@ public class ProtoUtil
 
     public int readPrefix( ProtoInputStream in ) throws IOException
     {
-        int      objPrefix      = ProtoInputStream.UNKNOWN;
+        int      objPrefix      = UNKNOWN;
         ProtoObject protoObject = null;
         ProtoInputStream _in = ( in == null ? this.protoInputStream : in );
         
@@ -285,7 +285,7 @@ public class ProtoUtil
         ProtoOutputStream _out = ( out == null ? this.protoOutputStream : out );
         if ( prefix != null )
         {   
-            if (  prefix == ProtoInputStream.UNKNOWN )
+            if (  prefix == UNKNOWN )
                 throw new IOException("Attempt to create UNKNOWN object type prefix");
             _out.write( PREFIX_OBJECTTYPE ,  prefix );
         }            

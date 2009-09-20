@@ -132,11 +132,11 @@ public class ProtoInputStream extends InputStream
         
         switch( type )
         {
-            case ProtoBase.WIRE_FORMAT_VARINT:
+            case ProtoInputStream.WIRE_FORMAT_VARINT:
                 value = readVariableInteger();          
                 break;
                 
-            case ProtoBase.WIRE_FORMAT_SIXTY_FOUR_BIT:    
+            case ProtoInputStream.WIRE_FORMAT_SIXTY_FOUR_BIT:    
                 length  = 8L;
                 payload = new byte[ (int)length ];
                 read( payload );
@@ -153,7 +153,7 @@ public class ProtoInputStream extends InputStream
                         
                 break;
                 
-            case ProtoBase.WIRE_FORMAT_LENGTH_DELIMITED: 
+            case ProtoInputStream.WIRE_FORMAT_LENGTH_DELIMITED: 
                 length = readVariableInteger();
                 
                 payload = new byte[ (int)length ];
@@ -165,7 +165,7 @@ public class ProtoInputStream extends InputStream
                 
                 break;
                 
-            case ProtoBase.WIRE_FORMAT_THIRTY_TWO_BIT:    
+            case ProtoInputStream.WIRE_FORMAT_THIRTY_TWO_BIT:    
                 length  = 4L;
                 payload = new byte[ (int)length ];
                 if ( read( payload ) < 4 )
@@ -176,8 +176,8 @@ public class ProtoInputStream extends InputStream
                         (((long)payload[0]));
                 break;
 
-            case ProtoBase.WIRE_FORMAT_START_GROUP:       
-            case ProtoBase.WIRE_FORMAT_END_GROUP:    
+            case ProtoInputStream.WIRE_FORMAT_START_GROUP:       
+            case ProtoInputStream.WIRE_FORMAT_END_GROUP:    
                 throw new IOException( "Deprecated Wire Type (Group)" );
                  
             default:
