@@ -345,16 +345,20 @@ public class DesktopPane extends Canvas implements Runnable {
 
             graphics.setGraphics(gtmp);
 
+            // For thread safety, we cache fullrepaint now, and clean it
+            boolean doFullRepaint = fullrepaint;
+            fullrepaint = false;
+
             synchronized(repaintComponent) {
 
-                if (!fullrepaint && !repaintComponent.isEmpty()) {
+                if (!doFullRepaint && !repaintComponent.isEmpty()) {
                     for (int c=0;c<repaintComponent.size();c++) {
                         if ( ((Component)repaintComponent.elementAt(c)).getWindow() !=currentWindow ) {
-                            fullrepaint = true;
+                            doFullRepaint = true;
                             break;
                         }
                     }
-                    if (!fullrepaint) {
+                    if (!doFullRepaint) {
                         for (int c=0;c<repaintComponent.size();c++) {
                             paintComponent(graphics,(Component)repaintComponent.elementAt(c));
                         }
@@ -365,8 +369,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
             }
 
-            if (fullrepaint) {
-                fullrepaint = false;
+            if (doFullRepaint) {
                 paintFirst(graphics);
                 for (int c=0;c<windows.size();c++) {
                     paintComponent(graphics,(Window)windows.elementAt(c));
