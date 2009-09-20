@@ -67,6 +67,8 @@ public class XULLoader {
         p.remove(old);
         p.insert(comp, constr, index);
 
+        comp.setName( old.getName() );
+
         components.put(name, comp);
     }
 

@@ -42,7 +42,7 @@ import net.yura.mobile.gui.KeyEvent;
  */
 public class TextArea extends TextComponent {
 	
-	private int[] lines;
+	protected int[] lines;
         private int widthUsed=-1;
         
        	private int align;
@@ -70,7 +70,7 @@ public class TextArea extends TextComponent {
 
             align = alignment;
             
-            preferredWidth = 0.9;
+            preferredPercentWidth = 0.9;
             
             //width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
 	}
@@ -199,9 +199,20 @@ public class TextArea extends TextComponent {
 	/**
 	 * Set's the line spacing
 	 * @param lineSpacing spacing between lines
+         * @see swing.text.StyleConstants#setLineSpacing(javax.swing.text.MutableAttributeSet, float) StyleConstants.setLineSpacing
 	 */	
 	public void setLineSpacing(int lineSpacing) {
 		this.lineSpacing = lineSpacing;
+	}
+
+
+        	/**
+	 * Get the line spacing
+	 * @param lineSpacing spacing between lines
+         * @see swing.text.StyleConstants#getLineSpacing() StyleConstants.getLineSpacing
+	 */
+	public int getLineSpacing() {
+            return lineSpacing;
 	}
 	
 	/**
@@ -458,8 +469,8 @@ public class TextArea extends TextComponent {
 		}
 		else {
 
-                    if (preferredWidth!=-1) {
-                        width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
+                    if (preferredPercentWidth!=-1) {
+                        width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredPercentWidth);
                     }
                     else if (width==0) {
                         // make a guess at the width
@@ -502,7 +513,7 @@ public class TextArea extends TextComponent {
         else {
             // if we have no preferredWidth
             // reset back to 0, just in case the layout DOES not resize it
-            if (preferredWidth==-1) {
+            if (preferredPercentWidth==-1) {
                 width = 0;
             }
         }
@@ -571,14 +582,15 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                         else {
                             end = lineEnd;
                         }
-
                         int currentLineLength = (w==Integer.MAX_VALUE)?-1:getStringWidth(f,str.substring(lineStart, end));
-                        
+
                         if (currentLineLength > w && lineStart==wordStart) {
+                               
                                 // start to remove 1 char at a time,
                                 // and checking if we can fit the string into the width
 
                                 int a = getStringCharOffset( str.substring(lineStart, end), f, w );
+
                                 // this is bad, this means the width of 1 letter is still too wide
                                 // so we must add this letter anyway
                                 int c = lineStart + (a<1 ? 1 : a);

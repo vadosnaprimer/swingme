@@ -37,7 +37,7 @@ public class TextField extends TextComponent {
             super("TextField", "", 100, a);
             
             offset = padding;
-            preferredWidth = 0.5;
+            preferredPercentWidth = 0.5;
             
             workoutSize();
         }
@@ -108,8 +108,8 @@ public class TextField extends TextComponent {
 
         public void workoutMinimumSize() {
 
-            if (preferredWidth!=-1) {
-                width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
+            if (preferredPercentWidth!=-1) {
+                width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredPercentWidth);
             }
             else {
                 width = 0;

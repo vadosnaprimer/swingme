@@ -97,9 +97,9 @@ public abstract class TextComponent extends Component implements ActionListener,
         
 	protected boolean showCaret;
 	
-        private char tmpChar;
+        protected char tmpChar;
         private long lastKeyEvent;
-        protected double preferredWidth=-1;
+        protected double preferredPercentWidth=-1;
         
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
@@ -119,7 +119,7 @@ public abstract class TextComponent extends Component implements ActionListener,
          * @param d the Preferred Width, can be -1 for no Preferred Width
          */
         public void setPreferredWidth(double d) {
-            preferredWidth = d;
+            preferredPercentWidth = d;
         }
 
         public boolean allowNewLine() {
