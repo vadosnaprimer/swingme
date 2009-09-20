@@ -39,7 +39,7 @@ public class BinUtil {
         return readObject(int2);
     }
 
-    public void writeObject(DataOutputStream out, Object obj) throws IOException {
+    protected void writeObject(DataOutputStream out, Object obj) throws IOException {
 
         if (obj instanceof Double) {
             out.writeInt(TYPE_DOUBLE);
@@ -103,14 +103,14 @@ public class BinUtil {
         }
     }
 
-    public void writeBytes(DataOutputStream out, byte[] bytes) throws IOException {
+    protected void writeBytes(DataOutputStream out, byte[] bytes) throws IOException {
 
             out.writeInt( bytes.length );
             out.write( bytes );
 
     }
 
-    public void writeVector(DataOutputStream out, Vector vector) throws IOException {
+    protected void writeVector(DataOutputStream out, Vector vector) throws IOException {
         int size = vector.size();
         out.writeInt(size);
         for (int c=0;c<size;c++) {
@@ -118,14 +118,14 @@ public class BinUtil {
         }
     }
 
-    public void writeArray(DataOutputStream out, Object[] object) throws IOException {
+    protected void writeArray(DataOutputStream out, Object[] object) throws IOException {
         out.writeInt(object.length);
         for (int c=0;c<object.length;c++) {
             writeObject( out, object[c] );
         }
     }
 
-    public void writeHashtable(DataOutputStream out, Hashtable hashtable) throws IOException {
+    protected void writeHashtable(DataOutputStream out, Hashtable hashtable) throws IOException {
         int size = hashtable.size();
         out.writeInt(size*2);
 
@@ -139,7 +139,7 @@ public class BinUtil {
 
     }
 
-    public Object readObject(DataInputStream in2) throws IOException {
+    protected Object readObject(DataInputStream in2) throws IOException {
 
         int type = in2.readInt();
 
@@ -166,7 +166,7 @@ public class BinUtil {
 
     }
 
-    public Object readObject(DataInputStream in2,int type,int size) throws IOException {
+    protected Object readObject(DataInputStream in2,int type,int size) throws IOException {
 
         System.out.println("unknown object, type: "+type+" length: "+size);
         for (int c=0;c<size;c++) {
@@ -177,7 +177,7 @@ public class BinUtil {
         throw new IOException();
     }
 
-    public void skipUnknownObjects(DataInputStream in,int num) throws IOException {
+    protected void skipUnknownObjects(DataInputStream in,int num) throws IOException {
 
         for (int c=0;c<num;c++) {
             Object obj = readObject(in);
@@ -186,13 +186,13 @@ public class BinUtil {
 
     }
 
-    public static void checkType(int got,int want) {
+    protected static void checkType(int got,int want) {
         if (want != got) {
             throw new RuntimeException("wrong type, expected: "+want+" got: "+got);
         }
     }
 
-    public Vector readVector(DataInputStream in2) throws IOException {
+    protected Vector readVector(DataInputStream in2) throws IOException {
         int size = in2.readInt();
         Vector vector = new Vector(size);
         for (int c=0;c<size;c++) {
@@ -202,7 +202,7 @@ public class BinUtil {
         return vector;
     }
 
-    public Object[] readArray(DataInputStream in2) throws IOException {
+    protected Object[] readArray(DataInputStream in2) throws IOException {
         int size = in2.readInt();
         Object[] vector = new Object[size];
         for (int c=0;c<size;c++) {
@@ -212,7 +212,7 @@ public class BinUtil {
         return vector;
     }
 
-    public byte[] readBytes(DataInputStream in2) throws IOException {
+    protected byte[] readBytes(DataInputStream in2) throws IOException {
 
         int size = in2.readInt();
         byte[] bytes = new byte[size];
@@ -221,7 +221,7 @@ public class BinUtil {
         
     }
 
-    public Hashtable readHashtable(DataInputStream in2) throws IOException {
+    protected Hashtable readHashtable(DataInputStream in2) throws IOException {
         int size = in2.readInt()/2;
         Hashtable vector = new Hashtable(size);
         for (int c=0;c<size;c++) {

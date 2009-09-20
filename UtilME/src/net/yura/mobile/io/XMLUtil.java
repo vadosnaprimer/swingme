@@ -29,6 +29,20 @@ public class XMLUtil {
     public static final String TAG_BYTE = "Byte";
     public static final String TAG_NULL = "nulltype";
 
+    private KXmlParser parser;
+
+    public Object load(Reader reader) throws Exception {
+
+        if (parser==null) {
+            parser = new KXmlParser();
+        }
+
+        parser.setInput(reader);
+        parser.nextTag();
+
+        return readObject(parser);
+    }
+
     public void save(OutputStream output,Object object) throws IOException {
 
             XmlSerializer serializer = new KXmlSerializer();
@@ -46,18 +60,18 @@ public class XMLUtil {
 
     }
 
-    public void saveVector(XmlSerializer serializer,Vector object) throws IOException {
+    protected void saveVector(XmlSerializer serializer,Vector object) throws IOException {
         for (int c=0;c<object.size();c++) {
             saveObject( serializer, object.elementAt(c) );
         }
     }
-    public void saveArray(XmlSerializer serializer,Object[] object) throws IOException {
+    protected void saveArray(XmlSerializer serializer,Object[] object) throws IOException {
         for (int c=0;c<object.length;c++) {
             saveObject( serializer, object[c] );
         }
     }
 
-    public void saveHashtable(XmlSerializer serializer,Hashtable object) throws IOException {
+    protected void saveHashtable(XmlSerializer serializer,Hashtable object) throws IOException {
 
         Enumeration enu = object.keys();
         while (enu.hasMoreElements()) {
@@ -81,7 +95,7 @@ public class XMLUtil {
         }
     }
 
-    public static boolean isSimpleObject(Object object) {
+    protected static boolean isSimpleObject(Object object) {
         return object == null ||
                 object instanceof String ||
                 object instanceof Integer ||
@@ -94,7 +108,7 @@ public class XMLUtil {
                 object instanceof Boolean;
     }
 
-    public void saveObject(XmlSerializer serializer,Object object) throws IOException {
+    protected void saveObject(XmlSerializer serializer,Object object) throws IOException {
 
         if (object instanceof Hashtable) {
 
@@ -126,7 +140,7 @@ public class XMLUtil {
 
     }
 
-    public static String getObjectType(Object object) throws IOException {
+    protected static String getObjectType(Object object) throws IOException {
 
             String tagName;
 
@@ -170,21 +184,7 @@ public class XMLUtil {
             return tagName;
     }
 
-    private KXmlParser parser;
-
-    public Object load(Reader reader) throws Exception {
-
-        if (parser==null) {
-            parser = new KXmlParser();
-        }
-
-        parser.setInput(reader);
-        parser.nextTag();
-
-        return readObject(parser);
-    }
-
-    public Vector readVector(KXmlParser parser) throws Exception {
+    protected Vector readVector(KXmlParser parser) throws Exception {
 
         Vector vector = new Vector();
 
@@ -199,7 +199,7 @@ public class XMLUtil {
 
     }
 
-    public Hashtable readHashtable(KXmlParser parser) throws Exception {
+    protected Hashtable readHashtable(KXmlParser parser) throws Exception {
 
         Hashtable map = new Hashtable();
 
@@ -234,7 +234,7 @@ public class XMLUtil {
 
     }
 
-    public Object readObject(KXmlParser parser) throws Exception {
+    protected Object readObject(KXmlParser parser) throws Exception {
 
         String name = parser.getName();
 

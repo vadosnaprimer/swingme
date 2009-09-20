@@ -1,7 +1,11 @@
 package net.yura.mobile.io.proto;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class ProtoUtil
 {
@@ -283,12 +287,12 @@ public class ProtoUtil
     public void writePrefix( int prefix , ProtoOutputStream out ) throws IOException
     {
         ProtoOutputStream _out = ( out == null ? this.protoOutputStream : out );
-        if ( prefix != null )
-        {   
-            if (  prefix == UNKNOWN )
-                throw new IOException("Attempt to create UNKNOWN object type prefix");
-            _out.write( PREFIX_OBJECTTYPE ,  prefix );
-        }            
+ 
+        if (  prefix == UNKNOWN ) {
+            throw new IOException("Attempt to create UNKNOWN object type prefix");
+        }
+        _out.write( PREFIX_OBJECTTYPE ,  prefix );
+          
         _out.write( END_OF_OBJECT , (byte)0 );
         _out.flush();
     }

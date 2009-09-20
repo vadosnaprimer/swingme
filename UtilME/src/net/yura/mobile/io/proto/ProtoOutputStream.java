@@ -1,7 +1,9 @@
 package net.yura.mobile.io.proto;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
 
 public class ProtoOutputStream extends OutputStream
 {
@@ -162,6 +164,7 @@ public class ProtoOutputStream extends OutputStream
             }
             catch( UnsupportedEncodingException uee )
             {
+                throw new RuntimeException();
             }
             
             return bytes;        

@@ -1,8 +1,5 @@
 package net.yura.mobile.io.proto;
 
-import java.io.*;
-import java.util.*;
-
 public class ProtoObject
 {
 	private int    index           = 0;
@@ -19,7 +16,7 @@ public class ProtoObject
 	    this.value   = value;
 	    this.payload = payload;
 	}
-
+/*
     public String toString()
     {
         StringBuffer sb = new StringBuffer();
@@ -34,7 +31,7 @@ public class ProtoObject
         sb.append( "}" );
         return( sb.toString() );
     }
-
+*/
 	public int getIndex()
 	{
 		return this.index;
