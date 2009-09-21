@@ -930,7 +930,7 @@ public class ScrollPane extends Panel implements Runnable {
 
             synchronized (this) {
                 try {
-                    wait(100);
+                    wait( (long) 100);
                 }
                 catch(InterruptedException e) {}
             }
