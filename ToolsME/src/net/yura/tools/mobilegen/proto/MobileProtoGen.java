@@ -4,7 +4,10 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
-public class MobileProtoGen
+import org.apache.tools.ant.*;
+import org.apache.tools.ant.types.*;
+
+public class MobileProtoGen // extends Task
 {
     String protoSource    = null;
     String objectPackage  = null;
@@ -16,6 +19,7 @@ public class MobileProtoGen
     Vector raw            = null;
     Vector messages       = null;
     Hashtable messageDefs = null;
+    Hashtable enumDefs    = null;
     
     Hashtable mapping     = null;
 
@@ -44,7 +48,60 @@ public class MobileProtoGen
     	
 	}
 
-    // TODO : ANT TASKS
+    // BEGIN: ANT TASK 
+    
+    public MobileProtoGen()
+    {
+	    this.messages    = new Vector();
+	    this.messageDefs = new Hashtable();
+	    this.enumDefs    = new Hashtable();
+    }
+
+    public void setProtoSource( String argument )
+    {
+	    this.protoSource   = argument;
+    }
+    
+    public void setObjectPackage( String argument )
+    {
+	    this.objectPackage = argument;
+    }
+    
+    public void setOutputPackage( String argument )
+    {
+	    this.outputPackage = argument;
+    }
+    
+    public void setOutputClass( String argument )
+    {
+	    this.outputClass   = argument;
+    }
+    
+    public void setSourceRoot( String argument )
+    {
+	    this.sourceRoot    = argument;
+	    StringBuffer tmp = new StringBuffer( sourceRoot );
+    }
+
+	public void execute() throws BuildException 
+	{
+	    tmp.append( File.separator );
+	    tmp.append( this.outputPackage.replace( "." , File.separator ) );
+	    tmp.append( File.separator );
+	    tmp.append( this.outputClass );
+	    tmp.append( ".java" );
+	    this.outputFileName = tmp.toString();
+	    
+	    if ( process() )
+	    {
+    	    if ( !emit() )
+    	        throw new BuildException( "Could not generate output file" );
+    	}
+    	else
+    	    throw new BuildException( "Could not parse input file" );
+    }
+    
+    // END: ANT TASK
 
 	public MobileProtoGen( String protoSource , String objectPackage , String outputPackage , String outputClass , String sourceRoot  )
 	{
@@ -67,6 +124,7 @@ public class MobileProtoGen
 	     
 	    this.messages    = new Vector();
 	    this.messageDefs = new Hashtable();
+	    this.enumDefs    = new Hashtable();
 	}
 
 	public boolean process()
@@ -314,7 +372,74 @@ public class MobileProtoGen
     
     public void parseEnum( String enm ) throws ParsingException
     {
-        // TODO
+        StringBuffer regex = new StringBuffer();
+        
+        regex.append( "enum" );    // Keyword "enum"
+        regex.append( "\\s+?" );   // One or more whitespace characters        
+        regex.append( "(\\w+?)" ); // Enum name parameter
+        regex.append( "\\s+?" );   // One or more whitespace characters        
+        regex.append( "\\{" );     // Opening definition brace
+        regex.append( "(.*)" );    // Field definitions
+        regex.append( "\\}" );     // Closing definition brace               
+
+        Pattern parsingPattern = Pattern.compile( regex.toString() , Pattern.DOTALL );
+        Matcher parsingMatcher = parsingPattern.matcher(enm);
+         
+        if ( !parsingMatcher.find() )
+            throw new ParsingException( "ERROR : Unable to parse message." );
+            
+        String name   = parsingMatcher.group(1);
+        String fields = parsingMatcher.group(2);
+        name   = ( name   == null ? "" : name.trim()   );
+        fields = ( fields == null ? "" : fields.trim() ); 
+        
+        EnumDefinition ed = new EnumDefinition( name );
+
+        String [] enumArray = fields.split( "\\," );    
+    
+        for( int i = 0 ; i < enumArray.length ; i++ )
+        {
+            parseEnumeratedValue( ed , enumArray[i] );
+        }
+
+        this.enumDefs.put( name , ed );   
+    }    
+    
+    public void parseEnumeratedValue( EnumDefinition ed , String assignment ) throws ParsingException
+    {
+        StringBuffer regex = new StringBuffer();
+        
+        regex.append( "(\\w+?)" ); // Enum name parameter
+        regex.append( "\\s+?" );   // One or more whitespace characters        
+        regex.append( "\\=" );     // Equals
+        regex.append( "\\s+?" );   // One or more whitespace characters        
+        regex.append( "(\\d+)" );  // Value
+        
+        Pattern parsingPattern = Pattern.compile( regex.toString() , Pattern.DOTALL );
+        Matcher parsingMatcher = parsingPattern.matcher(assignment);
+         
+        if ( !parsingMatcher.find() )
+            throw new ParsingException( "ERROR : Unable to parse enumerated value :" + assignment );
+            
+        String name   = parsingMatcher.group(1);
+        String value  = parsingMatcher.group(2);
+        
+        name  = ( name   == null ? "" : name.trim()   );
+        value = ( value  == null ? "" : value.trim() ); 
+        
+        int v = 0;
+        try
+        {
+            v = Integer.parseInt( value );
+        }
+        catch( Exception e )
+        {
+            throw new ParsingException( "ERROR : Unable to parse enumerated value, invalid numeric :" + assignment ); 
+        }
+        
+        System.out.println( "Adding enumerated value \"" + name + "\", value " + value );
+        
+        ed.addValue( name , v );        
     }    
 
 	public boolean emit()
@@ -664,6 +789,37 @@ public class MobileProtoGen
             
             section.append( "                case " + getFieldConstant( objectName , f.getName() ) + ":\n" );
 
+            // If the field is an enumeration
+            if ( isEnum( f.getType() ) )
+            {
+                EnumDefinition ed = getEnumDef( f.getType() );
+            
+                section.append( "                  // ENUMERATED INTEGER\n" );
+
+                // For debug purposes, we treat this as per a string
+                
+                section.append( "                  {\n" );
+                section.append( "                      int i = (protoObject.getInteger()).intValue();\n" );
+                section.append( "                      switch( i )\n" );
+                section.append( "                      {\n");
+                
+                Hashtable h = ed.getValues();
+                Enumeration keys = h.keys();
+                for( ; keys.hasMoreElements() ; )
+                {
+                    String enumerationKey   = (String)keys.nextElement();
+                    int    enumerationValue = ((Integer)h.get(enumerationKey)).intValue();                 
+                    section.append( "                          case " + enumerationKey + ":  obj." + makeName("set",f.getName()) + "( \"" + enumerationKey + "\" ); break; // " + enumerationValue + "\n" );
+                }            
+                
+                section.append( "                          default: throw new IOException(\"Unknown Enumerated Value\");\n" );
+                section.append( "                      }\n" );
+                section.append( "                  }\n" );
+                
+                section.append( "                  break;\n" );
+                continue;
+            }
+
             // If the field is just a simple single primitive
             if ( isPrimitive( f.getType() ) && !f.getRepeated() )
             {
@@ -671,6 +827,7 @@ public class MobileProtoGen
                 section.append( "                  " );
                 section.append( getProtoObjectAssignment( objectName , f.getType() , f.getMap() , f.getName() ) ); 
                 section.append( "\n                  break;\n" );
+                continue;
             }
 
             // If the field is just a simple repeated primitive, it's a vector
@@ -683,6 +840,7 @@ public class MobileProtoGen
                 section.append( "                  bais.close();\n" );
                 section.append( "                  bais = null;\n" );
                 section.append( "                  break;\n" );
+                continue;
             }
             
             // If the field is just a single message, it's an object (in theory, could be a hashtable)
@@ -697,6 +855,7 @@ public class MobileProtoGen
                 section.append( "                  bais.close();\n" );
                 section.append( "                  bais = null;\n" );
                 section.append( "                  break;\n" );
+                continue;
             }
             
             // If the field is just a repeated message, it's a Vector of objects
@@ -711,6 +870,7 @@ public class MobileProtoGen
                 section.append( "                  bais.close();\n" );
                 section.append( "                  bais = null;\n" );
                 section.append( "                  break;\n" );
+                continue;
             }
         } 
 
@@ -756,8 +916,26 @@ public class MobileProtoGen
 
         for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
         {
-
             FieldDefinition f = (FieldDefinition)e.nextElement();
+
+            // If the field is an enumeration
+            if ( isEnum( f.getType() ) )
+            {
+                EnumDefinition ed = getEnumDef( f.getType() );
+
+                section.append( "             // FIELD : " + f.getName() + "\n" );
+                section.append( "             // ENUMERATED INTEGER\n" );
+                section.append( "             String s = obj.get_type();\n");
+
+                Hashtable h = ed.getValues();
+                Enumeration keys = h.keys();
+                for( ; keys.hasMoreElements() ; )
+                {
+                    String enumerationKey   = (String)keys.nextElement();
+                    int    enumerationValue = ((Integer)h.get(enumerationKey)).intValue();                 
+                    section.append( "             if ( s.equals( \"" + enumerationKey + "\"   ) ) _out.write( " + getFieldConstant( objectName , f.getName() ) + " , " + enumerationValue + " );\n");
+                }            
+            }
 
             // If the field is just a simple single primitive
             if ( isPrimitive( f.getType() ) && !f.getRepeated() )
@@ -790,7 +968,7 @@ public class MobileProtoGen
             }
             
             // If the field is just a single message, it's an object (in theory, could be a hashtable)
-            if ( !isPrimitive( f.getType() ) && !f.getRepeated() )
+            if ( !isPrimitive( f.getType() ) && !isEnum( f.getType() ) && !f.getRepeated() )
             {
                 if ( !isDefined( f.getType() ) )
                     throw new ParsingException( "ERROR : Message \"" + objectName + "\" has undefined type \"" + f.getType() + "\" for field \"" + f.getName() + "\". You may be missing a message or enumeration definition." );
@@ -812,7 +990,7 @@ public class MobileProtoGen
             }
     
             // If the field is just a repeated message, it's a Vector of objects
-            if ( !isPrimitive( f.getType() ) && f.getRepeated() )
+            if ( !isPrimitive( f.getType() ) && !isEnum( f.getType() ) && f.getRepeated() )
             {
                 if ( !isDefined( f.getType() ) )
                     throw new ParsingException( "ERROR : Message \"" + objectName + "\" has undefined type \"" + f.getType() + "\" for field \"" + f.getName() + "\". You may be missing a message or enumeration definition." );
@@ -843,8 +1021,9 @@ public class MobileProtoGen
             }                    
         }
 
-        section.append( "         _out.write( END_OF_OBJECT , (byte)0 );\n" );
-        section.append( "         _out.flush();\n" );
+        section.append( "        }\n\n" );	    
+        section.append( "        _out.write( END_OF_OBJECT , (byte)0 );\n" );
+        section.append( "        _out.flush();\n" );
         section.append( "    }\n" );	    
 
         return section.toString();
@@ -967,10 +1146,20 @@ public class MobileProtoGen
 	{
 	    return ( this.messageDefs.get( messageName ) != null );
 	}
+	
+	public boolean isEnum( String enumName )
+	{
+	    return ( this.enumDefs.get( enumName ) != null );
+	}
 
 	public MessageDefinition getMessageDef( String messageName )
 	{
 	    return ( (MessageDefinition)this.messageDefs.get( messageName ) );
+	}
+
+	public EnumDefinition getEnumDef( String enumName )
+	{
+	    return ( (EnumDefinition)this.enumDefs.get( enumName ) );
 	}
 }
 
