@@ -1076,7 +1076,7 @@ public class DesktopPane extends Canvas implements Runnable {
         int w = super.getWidth();
         int h = super.getHeight();
 
-        if (oldw==h && oldh==w) {
+        if (oldw==w && oldh==h) {
             // Noting to do. Just return;
             return;
         }
