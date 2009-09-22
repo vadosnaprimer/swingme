@@ -690,7 +690,6 @@ public class MobileProtoGen // extends Task
     	    if ( !objectOnClassPath( md.getName() ) )
     	    {
     	        StringBuffer ifStatement = new StringBuffer();
-    	        StringBuffer fieldBuffer = new StringBuffer();
                 String delimiter         = "";
                 for( Enumeration en = md.getFields().elements() ; en.hasMoreElements() ; )
                 {
@@ -700,17 +699,13 @@ public class MobileProtoGen // extends Task
                     ifStatement.append( delimiter );
                     ifStatement.append( " ( h.get( \"" + f.getName() + "\" ) != null ) \n" );
                     delimiter = " && ";
-
-                    fieldBuffer.append( "                _out.write( " + getFieldConstant( md.getName() , f.getName() ) + " , (String)h.get( \"" + f.getName() + "\" ) );\n" );
                 }
                 
                 section.append( "            if (\n" );
                 section.append( ifStatement );
                 section.append( "               )\n" );                
                 section.append( "            {\n" );
-                section.append( "                writePrefix( " + getMessageConstant( md.getName() ) + " , _out );\n" );                
-                section.append( fieldBuffer );                
-                section.append( "                _out.flush();\n" );                
+                section.append( "                " + makeName("write",md.getName()) +  "( h , _out );\n" );                
                 section.append( "                return;\n" );                
                 section.append( "            }\n\n" );
             }
@@ -752,8 +747,49 @@ public class MobileProtoGen // extends Task
     
     public boolean objectOnClassPath( String objectName )
     {
-        // TODO Find object on class path
-        return true;
+        // The full directory will be sourceRoot + objectPackage + objectName
+
+        StringBuffer fileName = new StringBuffer( "" );
+        
+        if ( this.sourceRoot != null )
+        {
+            if ( this.sourceRoot.length() > 0 )
+            {
+                fileName.append( this.sourceRoot );
+                fileName.append( File.separator );
+            }
+        }
+        
+        if ( this.objectPackage != null )
+        {
+            if ( this.objectPackage.length() > 0 )
+            {
+                String tmp = this.objectPackage.replace( '.' , File.separatorChar );
+                fileName.append( tmp ); 
+                fileName.append( File.separator );
+            }
+        }
+        
+        fileName.append( objectName );
+        fileName.append( ".java" );
+        
+        //System.out.println( "Checking for existence of " + fileName.toString() );
+        
+        try
+        {
+            File file = new File( fileName.toString() ); 
+            if ( file.exists() )
+            {
+                //System.out.println( " - Found!" );
+                return true;
+            }
+        }
+        catch( SecurityException se )
+        {
+        }
+        
+        //System.out.println( " - Not Found!" );
+        return false;
     }
     
     public String emitReadMessageMethod( MessageDefinition md ) throws ParsingException
@@ -1029,7 +1065,7 @@ public class MobileProtoGen // extends Task
         return section.toString();
     }
     
-    public String emitReadHashtableMethod( MessageDefinition md )
+    public String emitReadHashtableMethod( MessageDefinition md ) throws ParsingException
     {
 	    StringBuffer section = new StringBuffer();
 	    
@@ -1041,7 +1077,53 @@ public class MobileProtoGen // extends Task
         section.append( "( ProtoInputStream in ) throws IOException\n" );	    
         section.append( "    {\n" );	   
         
-        // TODO
+        section.append( "        java.util.Hashtable h = new java.util.Hashtable();\n" );
+        section.append( "        ProtoObject protoObject = null;\n" );
+        section.append( "        ProtoInputStream _in = ( in == null ? protoInputStream : in );\n" );
+    
+        section.append( "        boolean inObject = true;\n" );
+        section.append( "        while ( inObject )\n" );
+        section.append( "        {\n" );
+        section.append( "            protoObject = _in.readProto();\n" );
+    
+        section.append( "            switch( protoObject.getIndex() )\n" );
+        section.append( "            {\n" );
+        
+        for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
+        {
+            FieldDefinition fd = (FieldDefinition)e.nextElement();
+
+            // ENUMERATED TYPE
+
+
+            // SINGLE PRIMITIVE          
+            if ( isPrimitive( fd.getType() ) && !isEnum( fd.getType() ) && !fd.getRepeated() ) 
+            {
+                section.append( "                // SINGLE PRIMITIVE, NOT REPEATED\n" );
+                section.append( "                case " + getFieldConstant( md.getName() , fd.getName() ) + ":\n" );
+                section.append( "                    h.put( " + getProtoObjectMethod( fd.getType() , fd.getMap() ) + " );\n" );
+                section.append( "                    break;\n\n" );     
+            }
+
+            // REPEATED PRIMITIVE            
+
+
+            // SINGLE MESSAGE
+
+
+            // REPEATED MESSAGE
+        }
+            
+        section.append( "                case END_OF_OBJECT:\n" );
+        section.append( "                default:\n" );
+        section.append( "                    inObject = false;\n" );
+        section.append( "                    break; \n" );                  
+        section.append( "            }\n" );
+        section.append( "        }\n" );
+    
+        section.append( "        protoObject = null;\n" );
+    
+        section.append( "        return h; \n" );       
          
         section.append( "    }\n" );	    
 	    
@@ -1058,10 +1140,15 @@ public class MobileProtoGen // extends Task
         section.append( "    public void " );
         section.append( methodName );
         section.append( "( Hashtable " );
-        section.append( " obj , ProtoOutputStream in ) throws IOException\n" );	    
+        section.append( " obj , ProtoOutputStream out ) throws IOException\n" );	    
         section.append( "    {\n" );	    
 
-        // TODO
+        section.append( "        ProtoInputStream _out = ( out == null ? protoInputStream : out );\n" );
+        for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
+        {
+            FieldDefinition f = (FieldDefinition)e.nextElement();
+            section.append( "        _out.write( " + getFieldConstant( objectName , f.getName() ) + " , obj.get( \"" + f.getName() + "\" ) );\n" );
+        }
 
         section.append( "    }\n" );	    
 
