@@ -579,13 +579,13 @@ public class XULLoader {
                                 comp.setName( property[1] );
                             }
                             else if( "constraint".equals( property[0] ) ) {
-                                if( comp instanceof TextField ) {
-                                    ((TextField)comp).setConstraints( Integer.parseInt(property[1]) );
+                                if( comp instanceof TextComponent ) {
+                                    ((TextComponent)comp).setConstraints( Integer.parseInt(property[1]) );
                                 }
                             }
                             else if( "maxsize".equals( property[0] ) ) {
-                                if( comp instanceof TextField ) {
-                                    ((TextField)comp).setMaxSize( Integer.parseInt(property[1]) );
+                                if( comp instanceof TextComponent ) {
+                                    ((TextComponent)comp).setMaxSize( Integer.parseInt(property[1]) );
                                 }
                             }
                             //#mdebug
