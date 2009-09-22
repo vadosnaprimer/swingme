@@ -60,8 +60,8 @@ public class TextField extends TextComponent {
 		g.setClip(oldClip);
 	}
 
-        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
-            super.pointerEvent(type, x, y, keys);
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            super.processMouseEvent(type, x, y, keys);
 
             if (type==DesktopPane.RELEASED) {
 

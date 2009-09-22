@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
@@ -48,6 +49,8 @@ public abstract class Component {
         protected int preferredWidth=-1;
         protected int preferredHeight=-1;
 
+        private ChangeListener focusListener;
+
         /**
          * @see javax.swing.JComponent#JComponent() JComponent.JComponent
          */
@@ -56,8 +59,18 @@ public abstract class Component {
 		updateUI();
 	}
 
+        /**
+         * @see java.awt.Component#isVisible() Component.isVisible
+         */
         public boolean isVisible() {
             return true;
+        }
+
+        /**
+         * @see java.awt.Component#addFocusListener(java.awt.event.FocusListener) Component.addFocusListener
+         */
+        public void addFocusListener(ChangeListener lis) {
+            focusListener = lis;
         }
 
         /**
@@ -69,9 +82,15 @@ public abstract class Component {
             preferredWidth = w;
             preferredHeight = h;
         }
+        /**
+         * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
+         */
 	public int getPreferredWidth() {
 		return preferredWidth;
 	}
+        /**
+         * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
+         */
 	public int getPreferredHeight() {
 		return preferredHeight;
 	}
@@ -293,20 +312,29 @@ public abstract class Component {
                 }
         }
 
+        /**
+         * @see javax.swing.JComponent#paintComponent(java.awt.Graphics) JComponent.paintComponent
+         */
 	public abstract void paintComponent(Graphics2D g);
 
-	public boolean keyEvent(KeyEvent keypad) {
+        /**
+         * @see javax.swing.JComponent#processKeyEvent(java.awt.event.KeyEvent) JComponent.processKeyEvent
+         */
+	public boolean processKeyEvent(KeyEvent keypad) {
 		return false;
 	}
 
-	public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+        /**
+         * @see java.awt.Component#processMouseEvent(java.awt.event.MouseEvent) Component.processMouseEvent
+         */
+	public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             if (focusable) {
                 if (type == DesktopPane.PRESSED) {
                     if(!isFocusOwner() && isVisible()) { requestFocusInWindow(); }
                 }
             }
             else if (parent!=null) {
-                parent.pointerEvent(type,x+posX,y+posY, keys);
+                parent.processMouseEvent(type,x+posX,y+posY, keys);
             }
             //else {
             //    owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
@@ -315,8 +343,14 @@ public abstract class Component {
 
 	public void animate() throws InterruptedException { }
 
+        /**
+         * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent) FocusListener.focusLost
+         */
 	public void focusLost() { }
 
+        /**
+         * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent) FocusListener.focusGained
+         */
 	public void focusGained() {
 
             // default focusGained action, make me visible
@@ -349,10 +383,13 @@ public abstract class Component {
         /**
          * This sets the width and height of this component
          * to the MINIMUM that is needed for this component
+         * @see javax.swing.JComponent#getMinimumSize() JComponent.getMinimumSize
          */
         public abstract void workoutMinimumSize();
 
-
+        /**
+         * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
+         */
         public void workoutSize() {
 
             if (preferredWidth==-1 || preferredHeight==-1) {
@@ -429,6 +466,9 @@ public abstract class Component {
 		}
 	}
 
+        /**
+         * @see java.awt.Component#toString() Component.toString
+         */
 	public String toString() {
 		return this.getClass().getName();
 	}

@@ -756,7 +756,7 @@ public class ScrollPane extends Panel implements Runnable {
 
     }
 
-    public void pointerEvent(int type, int pointX, int pointY, KeyEvent keys) {
+    public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
 
 
         int viewX = getViewPortX();

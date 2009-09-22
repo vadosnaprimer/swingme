@@ -393,8 +393,8 @@ public class List extends Component implements ActionListener {
     private long doubleClickTime;
     private int doubleClickX,doubleClickY;
 
-    public void pointerEvent(int type, int x, int y, KeyEvent keys) {
-        super.pointerEvent(type, x, y, keys);
+    public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+        super.processMouseEvent(type, x, y, keys);
 
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
             int i = getComponentAt(x, y)[0];
@@ -466,7 +466,7 @@ public class List extends Component implements ActionListener {
         }
     }
 
-    public boolean keyEvent(KeyEvent keypad) {
+    public boolean processKeyEvent(KeyEvent keypad) {
 
         if (current<0) { return false; }
 
@@ -820,7 +820,7 @@ public class List extends Component implements ActionListener {
     }
 
     /**
-     * @param Object obj
+     * @param obj the object to remove
      * @see javax.swing.DefaultListModel#removeAllElements(java.lang.Object) DefaultListModel#removeElement
      */
     public boolean removeElement(Object obj) {

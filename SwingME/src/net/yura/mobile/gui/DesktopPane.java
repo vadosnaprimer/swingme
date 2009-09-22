@@ -293,7 +293,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private Graphics2D graphics;
     /**
-     * @param g The Graphics object
+     * @param gtmp The Graphics object
      */
     protected void paint(Graphics gtmp) {
 
@@ -591,7 +591,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
                 else if (focusedComponent!=null) {
 
-                    boolean consumed = focusedComponent.keyEvent(keyevent);
+                    boolean consumed = focusedComponent.processKeyEvent(keyevent);
 
                     //System.out.println("rootpane KEY PRESSED on "+activeComponent+" and consumed after is: "+consumed);
 
@@ -613,7 +613,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                     else if (!consumed ) {//&& keyListener!=null) {
 
-                        boolean c = currentWindow.keyEvent(keypad);
+                        boolean c = currentWindow.processKeyEvent(keypad);
                         if (!c) {
                             keyEvent(keyevent);
                         }
@@ -635,7 +635,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         currentWindow.passScrollUpDown( keyevent.getKeyAction(keyevent.getIsDownKey()) );
                     }
                     else {
-                        boolean c = currentWindow.keyEvent(keypad);
+                        boolean c = currentWindow.processKeyEvent(keypad);
                         if (!c) {
                             keyEvent(keyevent);
                         }
@@ -1036,7 +1036,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
 
             if (pointerComponent!=null) {
-                pointerComponent.pointerEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
+                pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
             }
 
             if (type == RELEASED) {

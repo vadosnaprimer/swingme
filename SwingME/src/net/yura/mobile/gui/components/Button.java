@@ -187,7 +187,7 @@ public class Button extends Label implements ActionListener {
             return al;
         }
 
-	public boolean keyEvent(KeyEvent keyEvent) {
+	public boolean processKeyEvent(KeyEvent keyEvent) {
             
             	if (keyEvent.justPressedAction(Canvas.FIRE) || keyEvent.justPressedKey('\n')) {
                     
@@ -200,8 +200,8 @@ public class Button extends Label implements ActionListener {
         }
 
         private boolean oldState;
-        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
-            super.pointerEvent(type, x, y, keys);
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            super.processMouseEvent(type, x, y, keys);
 
             if (!focusable) return;
 

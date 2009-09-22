@@ -24,8 +24,8 @@ package net.yura.mobile.gui;
 public interface ActionListener {
 
     /**
-     * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent) ActionListener.actionPerformed
      * @param actionCommand The Command of the action
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent) ActionListener.actionPerformed
      */
 	void actionPerformed(String actionCommand);
 	

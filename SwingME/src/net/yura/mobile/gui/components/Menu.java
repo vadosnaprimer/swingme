@@ -310,14 +310,14 @@ public class Menu extends Button {
             parentMenu = m;
         }
 
-	public boolean keyEvent(KeyEvent keyEvent) {
+	public boolean processKeyEvent(KeyEvent keyEvent) {
 
             if (keyEvent.justPressedAction(Canvas.RIGHT)) {
 
                     fireActionPerformed();
                     return true;
             }
-            return super.keyEvent(keyEvent);
+            return super.processKeyEvent(keyEvent);
 
 	}
 

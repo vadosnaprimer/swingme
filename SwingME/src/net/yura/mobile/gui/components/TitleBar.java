@@ -124,7 +124,7 @@ public class TitleBar extends Panel implements ActionListener {
     private boolean move,resize;
     private Component old;
     
-    public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+    public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
 
         if (type == DesktopPane.PRESSED) {
             oldX=x;
@@ -145,7 +145,7 @@ public class TitleBar extends Panel implements ActionListener {
 
     }
 
-    public boolean keyEvent(KeyEvent keypad) {
+    public boolean processKeyEvent(KeyEvent keypad) {
 
             Window owner = getWindow();
         

@@ -89,7 +89,7 @@ public class OptionPane extends Frame implements ActionListener {
         }
     }
     
-    public boolean keyEvent(KeyEvent keypad) {
+    public boolean processKeyEvent(KeyEvent keypad) {
 
         if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey(KeyEvent.KEY_CALL)) {
 

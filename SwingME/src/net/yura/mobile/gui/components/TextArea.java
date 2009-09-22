@@ -199,17 +199,16 @@ public class TextArea extends TextComponent {
 	/**
 	 * Set's the line spacing
 	 * @param lineSpacing spacing between lines
-         * @see swing.text.StyleConstants#setLineSpacing(javax.swing.text.MutableAttributeSet, float) StyleConstants.setLineSpacing
+         * @see javax.swing.text.StyleConstants#setLineSpacing(javax.swing.text.MutableAttributeSet, float) StyleConstants.setLineSpacing
 	 */	
 	public void setLineSpacing(int lineSpacing) {
 		this.lineSpacing = lineSpacing;
 	}
 
 
-        	/**
+        /**
 	 * Get the line spacing
-	 * @param lineSpacing spacing between lines
-         * @see swing.text.StyleConstants#getLineSpacing() StyleConstants.getLineSpacing
+         * @see javax.swing.text.StyleConstants#getLineSpacing() StyleConstants.getLineSpacing
 	 */
 	public int getLineSpacing() {
             return lineSpacing;
@@ -317,8 +316,8 @@ public class TextArea extends TextComponent {
 
         }
         
-        public boolean keyEvent(KeyEvent keyEvent) {
-            boolean result = super.keyEvent(keyEvent);
+        public boolean processKeyEvent(KeyEvent keyEvent) {
+            boolean result = super.processKeyEvent(keyEvent);
             
             if (!result) {
                 if (keyEvent.isDownAction(Canvas.UP)) {
@@ -363,8 +362,8 @@ public class TextArea extends TextComponent {
         }
 
         
-        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
-            super.pointerEvent(type, x, y, keys);
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            super.processMouseEvent(type, x, y, keys);
 
             if (type==DesktopPane.RELEASED) {
             

@@ -53,7 +53,7 @@ public interface Border {
 
         /**
          * @return Returns whether or not the border is opaque. If the border is opaque, it is responsible for filling in it's own background when painting. 
-         * @see javax.swing.border.Border#isBorderOpaque()
+         * @see javax.swing.border.Border#isBorderOpaque() Border.isBorderOpaque
          */
         public boolean isBorderOpaque();
 }

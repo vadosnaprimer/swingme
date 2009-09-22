@@ -222,7 +222,7 @@ public class Window extends Panel {
         }
        
 
-        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
 
             // TODO to resize the window
             // if we drag next to the border

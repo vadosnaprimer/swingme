@@ -74,8 +74,8 @@ public class Spinner extends Label {
             chl = aThis;
         }
 
-        public void pointerEvent(int type, int x, int y, KeyEvent keys) {
-            super.pointerEvent(type, x, y, keys);
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            super.processMouseEvent(type, x, y, keys);
 
             if (type == DesktopPane.PRESSED) {
                 int offset=0;
@@ -168,7 +168,7 @@ public class Spinner extends Label {
 //        }
         
 	
-	public boolean keyEvent(KeyEvent keypad){
+	public boolean processKeyEvent(KeyEvent keypad){
 		if (keypad.justPressedAction(Canvas.LEFT)){
 			leftPress = true;
 		}

@@ -133,8 +133,8 @@ public class Table extends Panel {
 
     }
     
-    public void pointerEvent(int type, int x, int y, KeyEvent keys) {
-        super.pointerEvent(type, x, y, keys);
+    public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+        super.processMouseEvent(type, x, y, keys);
         
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED ) {
             
@@ -206,7 +206,7 @@ public class Table extends Panel {
         repaint();
     }
      
-    public boolean keyEvent(KeyEvent event) {
+    public boolean processKeyEvent(KeyEvent event) {
         
         int key = event.getIsDownKey();
         int action = event.getKeyAction(key);
@@ -227,7 +227,7 @@ public class Table extends Panel {
             // dont pass on fire to text components as that will open the native editor
             if (editorComp!=null && !(editorComp instanceof TextComponent && action == Canvas.FIRE)) {
                 // now pass the current event onto that component
-                editorComp.keyEvent(event);
+                editorComp.processKeyEvent(event);
             }
         }
 
