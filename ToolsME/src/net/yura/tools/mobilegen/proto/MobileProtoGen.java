@@ -1,4 +1,4 @@
-package net.yura.tools.mobilegen;
+package net.yura.tools.mobilegen.proto;
 
 import java.io.*;
 import java.util.*;
@@ -85,6 +85,8 @@ public class MobileProtoGen // extends Task
 
 	public void execute() throws BuildException 
 	{
+	    StringBuffer tmp = new StringBuffer();
+	
 	    tmp.append( File.separator );
 	    tmp.append( this.outputPackage.replace( "." , File.separator ) );
 	    tmp.append( File.separator );
