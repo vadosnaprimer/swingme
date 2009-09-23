@@ -15,7 +15,12 @@
 
 
 
-    <target name="build-generate" depends="jar,generate" description="build first then generate the persistance manager class">
+    <target name="build-generate" description="build first then generate the persistance manager class">
+
+        <delete dir="${basedir}/src/net/yura/mobile/gen/" includes="**"/>
+
+        <antcall target="jar"/>
+        <antcall target="generate"/>
     </target>
 
 
@@ -32,6 +37,16 @@
         <gen-bin
             generatedFile="${basedir}/src/net/yura/mobile/gen/BinAccess.java"
             classNamesFile="${basedir}/generate.properties"/>
+
+
+
+        <taskdef classname="net.yura.tools.mobilegen.proto.MobileProtoGen" classpath="./dist/${ant.project.name}.jar" name="gen-proto"/>
+        <gen-proto
+            protoSource="${basedir}/test.proto"
+            objectPackage="net.yura.tools.mobilegen.model"
+            outputPackage="net.yura.mobile.gen"
+            outputClass="ProtoAccess"
+            sourceRoot="${basedir}/src"/>
     </target>
 
 </project>

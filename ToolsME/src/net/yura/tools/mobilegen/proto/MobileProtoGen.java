@@ -86,7 +86,8 @@ public class MobileProtoGen // extends Task
 	public void execute() throws BuildException 
 	{
 	    StringBuffer tmp = new StringBuffer();
-	
+
+            tmp.append( sourceRoot );
 	    tmp.append( File.separator );
 	    tmp.append( this.outputPackage.replace( "." , File.separator ) );
 	    tmp.append( File.separator );
@@ -248,7 +249,7 @@ public class MobileProtoGen // extends Task
     public void parseMessage( String msg ) throws PatternSyntaxException , ParsingException
     {
         // Find message name and fields using regex
-        
+System.out.println("hi "+msg);
         StringBuffer regex = new StringBuffer();
         
         regex.append( "message" ); // Keyword "message"
@@ -269,7 +270,8 @@ public class MobileProtoGen // extends Task
         String fields = parsingMatcher.group(2);
         name   = ( name   == null ? "" : name.trim()   );
         fields = ( fields == null ? "" : fields.trim() ); 
-        
+
+
         // If the message name is "Prefix" or "Suffix" , ignore it
         // Prefix is used to define object types   (and is not represented by a message type in the engine)
         // Suffix is used to define end of objects (and is not represented by a message type in the engine)
@@ -277,6 +279,19 @@ public class MobileProtoGen // extends Task
         if ( !name.toLowerCase().equals("prefix") && !name.toLowerCase().equals("suffix") )
         {
             MessageDefinition md = new MessageDefinition( name );
+
+            // Attempt to get a class definition
+
+            try
+            {
+                System.out.println( "Looking for class " + this.objectPackage + "." + name);
+                Class c = Class.forName( this.objectPackage + "." + name );
+                md.setImplementation(c);
+            }
+            catch( ClassNotFoundException cnfe )
+            {
+                System.out.println( "Warning - Unable to find class " + this.objectPackage + "." + name);
+            }
 
             // Split fields
             //System.out.println( "Processing : Message " + name + ", Fields " + fields );
@@ -358,6 +373,34 @@ public class MobileProtoGen // extends Task
             tag      = ( tag      == null ? "0" : tag.trim()     );
 
             FieldDefinition fd = new FieldDefinition( name );
+
+            Class messageClass = md.getImplementation();
+            Class returnType   = null;
+            if ( messageClass != null )
+            {
+                try
+                {
+                    java.lang.reflect.Method method = messageClass.getMethod( makeName( "get" , name) , (Class [])null );
+
+                    if ( method != null )
+                        returnType = method.getReturnType();
+
+                    if ( returnType != null )
+                    {
+                        System.out.println( "Field " + fd.getName() + ", " + returnType.getCanonicalName());
+                    }
+
+                    fd.setImplementation(returnType);
+                }
+                catch( NoSuchMethodException nsme )
+                {
+                    // We have no idea what the return type is. so we will be setting it to null
+                }
+                catch( SecurityException se )
+                {
+                }
+            }
+
             fd.setRequired(required);
             fd.setRepeated(repeated);
             fd.setType(type);
@@ -503,6 +546,9 @@ public class MobileProtoGen // extends Task
         headerSection.append("package net.yura.mobile.gen;\n\n");
         headerSection.append("import java.io.*;\n");
         headerSection.append("import java.util.*;\n");
+        headerSection.append("import ");
+        headerSection.append(this.objectPackage);
+        headerSection.append(".*;\n");
         headerSection.append("import net.yura.mobile.io.proto.*;\n\n");
         headerSection.append("public class ProtoAccess extends ProtoUtil\n");
         headerSection.append("{\n");
@@ -628,7 +674,7 @@ public class MobileProtoGen // extends Task
         section.append( "            return result;\n" );
         
         section.append( "        // END, or NULL\n" );
-        section.append( "        if ( result == null && this.prefixMessage == ProtoInputStream.UNKNOWN )\n" );
+        section.append( "        if ( result == null && this.prefixMessage == ProtoUtil.UNKNOWN )\n" );
         section.append( "        {\n" );
         section.append( "            return null;\n" );
         section.append( "        }\n" );
@@ -657,7 +703,7 @@ public class MobileProtoGen // extends Task
     {
 	    StringBuffer section = new StringBuffer();
 
-        section.append( "    public void writeObject( Object obj , ProtoOutputStream out )\n" );	    
+        section.append( "    public void writeObject( Object obj , ProtoOutputStream out ) throws IOException\n" );
         section.append( "    {\n" );	
         
         section.append( "        ProtoOutputStream _out = ( out == null ? this.protoOutputStream : out );\n" );
@@ -670,18 +716,18 @@ public class MobileProtoGen // extends Task
 	        
     	    if ( objectOnClassPath( md.getName() ) )
     	    {
-                section.append( "        if ( object instanceof " + cast(md.getName()) + " )\n" );
+                section.append( "        if ( obj instanceof " + cast(md.getName()) + " )\n" );
                 section.append( "        {\n" );
                 section.append( "            writePrefix( " + getMessageConstant(md.getName()) + " , _out );\n" );
-                section.append( "            " + makeName( "write" , md.getName() ) + "(" + cast(md.getName()) + ")obj , _out );\n" );	
+                section.append( "            " + makeName( "write" , md.getName() ) + "((" + cast(md.getName()) + ")obj , _out );\n" );
                 section.append( "            return;\n" );
                 section.append( "        }\n\n" );
             }
         }
             	
-        section.append( "        if ( object instanceof java.util.Hashtable )\n" );
+        section.append( "        if ( obj instanceof java.util.Hashtable )\n" );
         section.append( "        {\n" );
-        section.append( "            Hashtable h = (Hashtable)object;\n" );
+        section.append( "            Hashtable h = (Hashtable)obj;\n" );
 
         // FOR EACH UNDEFINED OBJECT WRITE OUT THE FOLLOWING BLOCK
 
@@ -715,7 +761,7 @@ public class MobileProtoGen // extends Task
     	    
         section.append( "        }\n" );
 
-        section.append( "        super.writeObject( object , out );\n" );
+        section.append( "        super.writeObject( obj , out );\n" );
         section.append( "    }\n" );	    
 
         return section.toString();
@@ -802,14 +848,17 @@ public class MobileProtoGen // extends Task
 	    String methodName = makeName( "read" , objectName );
 	    
         section.append( "    public " );
-        section.append( objectName );
+        section.append( cast(objectName) );
         section.append( " " );
         section.append( methodName );
         section.append( "( ProtoInputStream in ) throws IOException\n" );	    
         section.append( "    {\n" );	
-        
+
+        section.append( "        Hashtable hashtableOfObjectArraysAsVectors = new Hashtable();\n" );
+        section.append( "        Hashtable hashtableOfObjectArrayTypes = new Hashtable();\n" );
+
         section.append( "        ByteArrayInputStream bais          = null;\n" );
-        section.append( "        " + objectName + "           obj" + objectName + " = new " + objectName + "();\n" );
+        section.append( "        " + cast(objectName) + "           obj" + objectName + " = new " + cast(objectName) + "();\n" );
         section.append( "        ProtoObject          protoObject   = null;\n\n" );
         section.append( "        ProtoInputStream _in = ( in == null ? this.protoInputStream : in );\n\n" );
         section.append( "        boolean inObject = true;\n" );
@@ -826,6 +875,41 @@ public class MobileProtoGen // extends Task
             FieldDefinition f = (FieldDefinition)e.nextElement();
             
             section.append( "                case " + getFieldConstant( objectName , f.getName() ) + ":\n" );
+
+            Class fieldClass = f.getImplementation();
+            if ( fieldClass != null )
+            {
+                if ( fieldClass.isArray() && f.getRepeated() )
+                {
+                    // We'll be building a vector here, then converting to the appropriate array of objects
+                    section.append( "                  // OBJECT ARRAY\n" );
+                    section.append( "                  hashtableOfObjectArrayTypes.put( \"" + f.getName() + "\" , \"" + fieldClass.getCanonicalName() + "\" );\n" );
+                    section.append( "                  Vector temporaryVector = (Vector)hashtableOfObjectArraysAsVectors.get( \"" + f.getName() + "\" );\n" );
+                    section.append( "                  if ( temporaryVector == null )\n" );
+                    section.append( "                  {\n" );
+                    section.append( "                      temporaryVector = new Vector();\n" );
+                    section.append( "                      hashtableOfObjectArraysAsVectors.put( \"" + f.getName() + "\" , temporaryVector );\n" );
+                    section.append( "                  }\n" );
+                    section.append( "                  bais = new ByteArrayInputStream( protoObject.getPayload() );\n" );
+                    section.append( "                  Object temporaryObject = readObject(new ProtoInputStream(bais) );\n" );
+                    section.append( "                  temporaryVector.addElement( temporaryObject );\n" );
+                    section.append( "                  bais.close();\n" );
+                    section.append( "                  bais = null;\n" );
+                    section.append( "                  break;\n" );
+                    continue;
+                }
+            }
+
+            if ( f.getMap().trim().equals("Object") && f.getType().trim().equals("bytes") )
+            {
+                section.append( "                  // OBJECT\n" );
+                section.append( "                  bais = new ByteArrayInputStream( protoObject.getPayload() );\n" );
+                section.append( "                  obj" + objectName + "." + makeName("set",f.getName()) + "( readObject(new ProtoInputStream(bais)) );\n" );
+                section.append( "                  bais.close();\n" );
+                section.append( "                  bais = null;\n" );
+                section.append( "                  break;\n" );
+                continue;
+            }
 
             // If the field is an enumeration
             if ( isEnum( f.getType() ) )
@@ -847,7 +931,7 @@ public class MobileProtoGen // extends Task
                 {
                     String enumerationKey   = (String)keys.nextElement();
                     int    enumerationValue = ((Integer)h.get(enumerationKey)).intValue();                 
-                    section.append( "                          case " + enumerationKey + ":  obj." + makeName("set",f.getName()) + "( \"" + enumerationKey + "\" ); break; // " + enumerationValue + "\n" );
+                    section.append( "                          case " + enumerationKey + ":  obj" + objectName + "." + makeName("set",f.getName()) + "( \"" + enumerationKey + "\" ); break; // " + enumerationValue + "\n" );
                 }            
                 
                 section.append( "                          default: throw new IOException(\"Unknown Enumerated Value\");\n" );
@@ -863,7 +947,7 @@ public class MobileProtoGen // extends Task
             {
                 section.append( "                  // SINGLE INSTANCE OF PRIMITIVE FIELD\n" );
                 section.append( "                  " );
-                section.append( getProtoObjectAssignment( objectName , f.getType() , f.getMap() , f.getName() ) ); 
+                section.append( getProtoObjectAssignment( "obj" + objectName , f.getType() , f.getMap() , f.getName() ) );
                 section.append( "\n                  break;\n" );
                 continue;
             }
@@ -874,7 +958,7 @@ public class MobileProtoGen // extends Task
                 section.append( "                  // REPEATED INSTANCE OF PRIMITIVE FIELD --> VECTOR\n" );
                 String s = getProtoObjectMethod( f.getType() , f.getMap() );
                 section.append( "                  bais = new ByteArrayInputStream( protoObject.getPayload() );\n" );
-                section.append( "                  (" + objectName + "." + makeName("get",f.getName()) + "()).addElement( " + s + " );\n" );
+                section.append( "                  (obj" + objectName + "." + makeName("get",f.getName()) + "()).addElement( " + s + " );\n" );
                 section.append( "                  bais.close();\n" );
                 section.append( "                  bais = null;\n" );
                 section.append( "                  break;\n" );
@@ -889,7 +973,7 @@ public class MobileProtoGen // extends Task
 
                 section.append( "                  // SINGLE INSTANCE OF MESSAGE OBJECT --> OBJECT\n" );
                 section.append( "                  bais = new ByteArrayInputStream( protoObject.getPayload() );\n" );
-                section.append( "                  (" + objectName + "." + makeName("set",f.getName()) + "(" + makeName("read",f.getType()) + "(new ProtoInputStream(bais)) );\n" );
+                section.append( "                  (obj" + objectName + "." + makeName("set",f.getName()) + "(" + makeName("read",f.getType()) + "(new ProtoInputStream(bais)) );\n" );
                 section.append( "                  bais.close();\n" );
                 section.append( "                  bais = null;\n" );
                 section.append( "                  break;\n" );
@@ -904,7 +988,7 @@ public class MobileProtoGen // extends Task
             
                 section.append( "                  // REPEATED INSTANCE OF MESSAGE OBJECT --> VECTOR\n" );
                 section.append( "                  bais = new ByteArrayInputStream( protoObject.getPayload() );\n" );
-                section.append( "                  (" + objectName + "." + makeName("get",f.getName()) + "()).addElement( " + makeName("read",f.getType()) + "(new ProtoInputStream(bais)) );\n" );
+                section.append( "                  (obj" + objectName + "." + makeName("get",f.getName()) + "()).addElement( " + makeName("read",f.getType()) + "(new ProtoInputStream(bais)) );\n" );
                 section.append( "                  bais.close();\n" );
                 section.append( "                  bais = null;\n" );
                 section.append( "                  break;\n" );
@@ -921,7 +1005,40 @@ public class MobileProtoGen // extends Task
         section.append( "            }\n\n" );
         section.append( "        }\n\n" );
         section.append( "        protoObject = null;\n\n" );
-        section.append( "        return obj;\n\n" );       
+
+        section.append( "        for( Enumeration keys = hashtableOfObjectArraysAsVectors.keys() ; keys.hasMoreElements() ; )\n" );
+        section.append( "        {\n" );
+        section.append( "            String fieldName = (String)keys.nextElement();\n" );
+        section.append( "            String className = (String)hashtableOfObjectArrayTypes.get( fieldName ); \n" );
+        section.append( "            Vector temporaryVector = (Vector)hashtableOfObjectArraysAsVectors.get( fieldName );\n" );
+        section.append( "            if ( temporaryVector != null )\n" );
+        section.append( "            {\n" );
+
+
+        for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
+        {
+            FieldDefinition f = (FieldDefinition)e.nextElement();
+
+            Class fieldClass = f.getImplementation();
+            if ( fieldClass != null )
+            {
+                if ( fieldClass.isArray() && f.getRepeated() )
+                {
+                    section.append( "                if ( fieldName.equals( \"" + f.getName() + "\" ) )\n" );
+                    section.append( "                {\n" );
+                    String baseName = fieldClass.getCanonicalName().replace('[',' ').replace(']',' ');
+                    section.append( "                    " + baseName + "[] temporaryObjectArray = new " + baseName + "[ temporaryVector.size() ];\n" );
+                    section.append( "                    temporaryVector.copyInto( temporaryObjectArray );\n" );
+                    section.append( "                    obj" + objectName +  "." + makeName("set",f.getName()) + "( temporaryObjectArray );\n" );
+                    section.append( "                }\n" );
+                }
+            }
+        }
+
+        section.append( "            }\n" );
+        section.append( "        }\n" );
+
+        section.append( "        return obj" + objectName + ";\n\n" );
         section.append( "    }\n" );
 	    
         return section.toString();
@@ -937,8 +1054,8 @@ public class MobileProtoGen // extends Task
         section.append( "    public void " );
         section.append( methodName );
         section.append( "( " );
-        section.append( objectName );
-        section.append( " obj , ProtoOutputStream in ) throws IOException\n" );	    
+        section.append( cast(objectName) );
+        section.append( " obj , ProtoOutputStream out ) throws IOException\n" );
         section.append( "    {\n" );	
         
         section.append( "         ByteArrayOutputStream baos   = null;\n" );
@@ -973,6 +1090,45 @@ public class MobileProtoGen // extends Task
                     int    enumerationValue = ((Integer)h.get(enumerationKey)).intValue();                 
                     section.append( "             if ( s.equals( \"" + enumerationKey + "\"   ) ) _out.write( " + getFieldConstant( objectName , f.getName() ) + " , " + enumerationValue + " );\n");
                 }            
+                continue;
+            }
+
+            // If the return type is an object array
+            Class fieldClass = f.getImplementation();
+
+            if ( fieldClass != null )
+            {
+                if ( fieldClass.isArray() && f.getRepeated() )
+                {
+                    section.append( "             // FIELD : " + f.getName() + "\n" );
+                    section.append( "             // OBJECT ARRAY\n" );
+                    section.append( "             v = new Vector();\n" );
+                    section.append( "             Object [] tmpArray = (Object [])obj." + makeName( "get" , f.getName() ) + "();\n" );
+                    section.append( "             for( int arrayIndex = 0 ; arrayIndex < tmpArray.length ; arrayIndex++ ) v.add( tmpArray[arrayIndex] );\n" );
+
+                    section.append( "             v.addAll( (Collection));\n" );
+                    section.append( "             Enumeration e = v.elements();\n" );
+                    section.append( "             for( ; e.hasMoreElements() ; )\n" );
+                    section.append( "             {\n" );
+                    section.append( "                 protoOutputStream.write( " );
+                    section.append( getFieldConstant( objectName , f.getName() ) );
+                    section.append( " , e.nextElement() );\n" );
+                    section.append( "             } \n\n" );
+                }
+                continue;
+            }
+
+            if ( f.getMap().trim().equals("Object") && f.getType().trim().equals("bytes") )
+            {
+                section.append( "             // FIELD : " + f.getName() + "\n" );
+                section.append( "             // OBJECT\n" );
+                section.append( "             baos = new ByteArrayOutputStream();\n" );
+                section.append( "             writeObject( obj." + makeName("get",f.getName()) + "() , new ProtoOutputStream( baos ) );\n" );
+                section.append( "             buffer = baos.toByteArray();\n" );
+                section.append( "             baos.close();\n" );
+                section.append( "             baos   = null;\n" );
+                section.append( "             _out.write( buffer );      \n\n" );
+                continue;
             }
 
             // If the field is just a simple single primitive
@@ -985,6 +1141,7 @@ public class MobileProtoGen // extends Task
                 section.append( " , obj." );
                 section.append( makeName( "get" , f.getName() ) );
                 section.append( "() );\n\n" );
+                continue;
             }                
                 
             // If the field is just a simple repeated primitive, it's a vector
@@ -1003,6 +1160,7 @@ public class MobileProtoGen // extends Task
                 section.append( " , e.nextElement() );\n" );
                 section.append( "                 }\n" );
                 section.append( "             } \n\n" );
+                continue;
             }
             
             // If the field is just a single message, it's an object (in theory, could be a hashtable)
@@ -1019,12 +1177,13 @@ public class MobileProtoGen // extends Task
                 section.append( "             baos.close();\n" );
                 section.append( "             baos   = null;\n" );
                 section.append( "             length = _out.encodeVariableInteger((long)buffer.length);\n" );
-                section.append( "             id     = _out.encodeVariableInteger( _out.encodeFieldIndexAndWireFormatType( " + getFieldConstant( objectName , f.getName() ) + " , ProtoBase.WIRE_FORMAT_LENGTH_DELIMITED ) );\n" );
+                section.append( "             id     = _out.encodeVariableInteger( _out.encodeFieldIndexAndWireFormatType( " + getFieldConstant( objectName , f.getName() ) + " , ProtoInputStream.WIRE_FORMAT_LENGTH_DELIMITED ) );\n" );
                 section.append( "             _out.write( id );\n" );
                 section.append( "             _out.write( length );\n" );
                 section.append( "             _out.write( buffer );      \n" );        
                 section.append( "             id     = null;\n" );
                 section.append( "             length = null;\n\n" );
+                continue;
             }
     
             // If the field is just a repeated message, it's a Vector of objects
@@ -1042,7 +1201,7 @@ public class MobileProtoGen // extends Task
                 section.append( "                 for( ; e.hasMoreElements() ; )\n" );
                 section.append( "                 {\n" );
                 section.append( "                     baos = new ByteArrayOutputStream();\n" );
-                section.append( "                     " + makeName( "write" , md.getName() ) + "( (com.exeus.proto.Number)e.nextElement() , new ProtoOutputStream( baos ) );\n" );
+                section.append( "                     " + makeName( "write" , f.getType() ) + "( (" + cast(f.getType()) + ")e.nextElement() , new ProtoOutputStream( baos ) );\n" );
                 section.append( "                     buffer = baos.toByteArray();\n" );
                 section.append( "                     baos.close();\n" );
                 section.append( "                     baos   = null;\n" );
@@ -1056,6 +1215,7 @@ public class MobileProtoGen // extends Task
                 section.append( "                     buffer = null;\n" );
                 section.append( "                 }\n" );
                 section.append( "             }\n\n" );
+                continue;
             }                    
         }
 
@@ -1103,7 +1263,7 @@ public class MobileProtoGen // extends Task
             {
                 section.append( "                // SINGLE PRIMITIVE, NOT REPEATED\n" );
                 section.append( "                case " + getFieldConstant( md.getName() , fd.getName() ) + ":\n" );
-                section.append( "                    h.put( " + getProtoObjectMethod( fd.getType() , fd.getMap() ) + " );\n" );
+                section.append( "                    h.put( \"" + fd.getName() + "\" , " + getProtoObjectMethod( fd.getType() , fd.getMap() ) + " );\n" );
                 section.append( "                    break;\n\n" );     
             }
 
@@ -1145,7 +1305,7 @@ public class MobileProtoGen // extends Task
         section.append( " obj , ProtoOutputStream out ) throws IOException\n" );	    
         section.append( "    {\n" );	    
 
-        section.append( "        ProtoInputStream _out = ( out == null ? protoInputStream : out );\n" );
+        section.append( "        ProtoOutputStream _out = ( out == null ? protoOutputStream : out );\n" );
         for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
         {
             FieldDefinition f = (FieldDefinition)e.nextElement();
@@ -1161,51 +1321,36 @@ public class MobileProtoGen // extends Task
 	{
 	    return "\n}\n";
 	}
-	
+
 	public String getProtoObjectMethod( String type , String map ) throws ParsingException
 	{
-	    if ( type.equals( "double"     ) ) { return "protoObject.getDouble().doubleValue()"; } 
-	    if ( type.equals( "float"      ) ) { return "protoObject.getFloat().floatValue()"; } 
-	    if ( type.equals( "bool"       ) ) { return "protoObject.getBoolean().booleanValue()"; } 
-	    if ( type.equals( "string"     ) ) { return "protoObject.getString()"; } 
-	    if ( type.equals( "bytes"      ) ) { return "protoObject.getByteArray()"; } 
+            if ( type.equals( "double"     ) ) { return "protoObject.getDouble().doubleValue()"; }
+            if ( type.equals( "float"      ) ) { return "protoObject.getFloat().floatValue()"; }
+            if ( type.equals( "bool"       ) ) { return "protoObject.getBoolean().booleanValue()"; }
+            if ( type.equals( "string"     ) ) { return "protoObject.getString()"; }
+            if ( type.equals( "bytes"      ) ) { return "protoObject.getByteArray()"; }
 
-        if ( map.equals( "byte" )  && type.equals( "int32" ) ) { return "protoObject.getByte().byteValue()"; } 
-        if ( map.equals( "char" )  && type.equals( "int32" ) ) { return "protoObject.getCharacter().charValue()"; } 
-        if ( map.equals( "short" ) && type.equals( "int32" ) ) { return "protoObject.getShort().shortValue()"; } 
-        if ( map.equals( "int" )   && type.equals( "int32" ) ) { return "protoObject.getInteger().intValue()"; } 
-        if ( map.equals( "long" )  && type.equals( "int32" ) ) { return "protoObject.getLong().longValue()"; } 
+            if ( map.equals( "byte" )  && type.equals( "int32" ) ) { return "protoObject.getByte().byteValue()"; }
+            if ( map.equals( "char" )  && type.equals( "int32" ) ) { return "protoObject.getCharacter().charValue()"; }
+            if ( map.equals( "short" ) && type.equals( "int32" ) ) { return "protoObject.getShort().shortValue()"; }
+            if ( map.equals( "int" )   && type.equals( "int32" ) ) { return "protoObject.getInteger().intValue()"; }
+            if ( map.equals( "long" )  && type.equals( "int32" ) ) { return "protoObject.getLong().longValue()"; }
 
-        if ( map.equals( "byte" )  && type.equals( "int64" ) ) { return "protoObject.getByte().byteValue()"; } 
-        if ( map.equals( "char" )  && type.equals( "int64" ) ) { return "protoObject.getCharacter().charValue()"; } 
-        if ( map.equals( "short" ) && type.equals( "int64" ) ) { return "protoObject.getShort().shortValue()"; } 
-        if ( map.equals( "int" )   && type.equals( "int64" ) ) { return "protoObject.getInteger().intValue()"; } 
-        if ( map.equals( "long" )  && type.equals( "int64" ) ) { return "protoObject.getLong().longValue()"; } 
+            if ( map.equals( "byte" )  && type.equals( "int64" ) ) { return "protoObject.getByte().byteValue()"; }
+            if ( map.equals( "char" )  && type.equals( "int64" ) ) { return "protoObject.getCharacter().charValue()"; }
+            if ( map.equals( "short" ) && type.equals( "int64" ) ) { return "protoObject.getShort().shortValue()"; }
+            if ( map.equals( "int" )   && type.equals( "int64" ) ) { return "protoObject.getInteger().intValue()"; }
+            if ( map.equals( "long" )  && type.equals( "int64" ) ) { return "protoObject.getLong().longValue()"; }
 
-        if ( map.equals( "byte" )  && type.equals( "sint32" ) ) { return "protoObject.getByte().byteValue()"; } 
-        if ( map.equals( "char" )  && type.equals( "sint32" ) ) { return "protoObject.getCharacter().charValue()"; } 
-        if ( map.equals( "short" ) && type.equals( "sint32" ) ) { return "protoObject.getShort().shortValue()"; } 
-        if ( map.equals( "int" )   && type.equals( "sint32" ) ) { return "protoObject.getInteger().intValue()"; } 
-        if ( map.equals( "long" )  && type.equals( "sint32" ) ) { return "protoObject.getLong().longValue()"; } 
+            if ( type.equals( "int32"      ) ) { return "protoObject.getInteger().intValue()"; }
+            if ( type.equals( "int64"      ) ) { return "protoObject.getLong().longValue()"; }
 
-        if ( map.equals( "byte" )  && type.equals( "sint64" ) ) { return "protoObject.getByte().byteValue()"; } 
-        if ( map.equals( "char" )  && type.equals( "sint64" ) ) { return "protoObject.getCharacter().charValue()"; } 
-        if ( map.equals( "short" ) && type.equals( "sint64" ) ) { return "protoObject.getShort().shortValue()"; } 
-        if ( map.equals( "int" )   && type.equals( "sint64" ) ) { return "protoObject.getInteger().intValue()"; } 
-        if ( map.equals( "long" )  && type.equals( "sint64" ) ) { return "protoObject.getLong().longValue()"; } 
-
-	    if ( type.equals( "int32"      ) ) { return "protoObject.getInteger().intValue()"; } 
-	    if ( type.equals( "int64"      ) ) { return "protoObject.getLong().longValue()"; } 
-	    
-	    if ( type.equals( "sint32"     ) ) { return "protoObject.getInteger().intValue()"; } 
-	    if ( type.equals( "sint64"     ) ) { return "protoObject.getLong().longValue()"; } 
-	    
-	    throw new ParsingException("ERROR : Encountered unsupported Field Type : " + type + ". Please convert to a supported type i.e. one of double, float, bool, string, bytes, int32, int64, sint32 or sint64." );
+            throw new ParsingException("ERROR : Encountered unsupported Field Type : " + type + ". Please convert to a supported type i.e. one of double, float, bool, string, bytes, int32, int64." );
 	}
 	
 	public String getProtoObjectAssignment( String objectName , String type , String map , String name ) throws ParsingException
 	{
-	    return "objectName." + makeName("set",name) + "(" + getProtoObjectMethod(type,map) + ");";
+	    return objectName + "." + makeName("set",name) + "(" + getProtoObjectMethod(type,map) + ");";
 	}
 	
 	public boolean isPrimitive( String type )
@@ -1336,13 +1481,14 @@ class Definition
 
 class MessageDefinition extends Definition
 {
-	protected Vector fields;
-	
-	public MessageDefinition( String name )
-	{
-	    super(name);
-	    this.fields = new Vector();
-	}
+    protected Vector fields;
+    protected Class messageClass;
+
+    public MessageDefinition( String name )
+    {
+        super(name);
+        this.fields = new Vector();
+    }
 	
     public void setFields( Vector fields )
     {
@@ -1353,10 +1499,20 @@ class MessageDefinition extends Definition
         return this.fields;
     }
     
-	public void addField( FieldDefinition fd )
-	{
-	    this.fields.addElement( fd );
-	}
+    public void addField( FieldDefinition fd )
+    {
+        this.fields.addElement( fd );
+    }
+
+    public Class getImplementation()
+    {
+        return this.messageClass;
+    }
+
+    public void setImplementation( Class messageClass )
+    {
+        this.messageClass = messageClass;
+    }
 }
 
 class EnumDefinition extends Definition
@@ -1393,6 +1549,7 @@ class FieldDefinition extends Definition
 	protected String type;
 	protected String map;
 	protected boolean enumeratedType = false;
+        protected Class fieldClass;
 	
 	public FieldDefinition( String name )
 	{
@@ -1429,4 +1586,15 @@ class FieldDefinition extends Definition
 	{
 	    this.enumeratedType = enumeratedType;
 	}
+
+    public Class getImplementation()
+    {
+        return this.fieldClass;
+    }
+
+    public void setImplementation( Class fieldClass )
+    {
+        this.fieldClass = fieldClass;
+    }
+
 }    
