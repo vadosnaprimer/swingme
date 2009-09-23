@@ -356,6 +356,15 @@ public class XULLoader {
         else if (name.equals("textarea")) {
             TextArea textarea = new TextArea();
 
+            String wrap = parser.getAttributeValue(null, "wrap");
+            if ("true".equals(wrap)) {
+                textarea.setLineWrap(true);
+            }
+            String editable = parser.getAttributeValue(null, "editable");
+            if ("false".equals(editable)) {
+                textarea.setFocusable(false);
+            }
+
             readTextComponent(parser,textarea);
 
             return readUIObject(parser, textarea,listener);
