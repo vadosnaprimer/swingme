@@ -140,7 +140,7 @@ public class MobileProtoGen // extends Task
 	    return result;
 	}
 	
-	public boolean parseProto()
+	private boolean parseProto()
 	{
 	    boolean result = false;
 	    try
@@ -220,7 +220,7 @@ public class MobileProtoGen // extends Task
         return result;	    
 	}
 
-    public boolean parseRaw()
+    private boolean parseRaw()
     {
         boolean result = true;
         for( Enumeration e = raw.elements() ; e.hasMoreElements() ; )
@@ -308,7 +308,7 @@ System.out.println("hi "+msg);
     }
 
     // [required|optional] [repeated] fieldtype fieldname = fieldtag [packed=true|false];
-    public void parseField( MessageDefinition md , String fld ) throws PatternSyntaxException , ParsingException
+    private void parseField( MessageDefinition md , String fld ) throws PatternSyntaxException , ParsingException
     {
         String tmp = fld;
         
@@ -415,7 +415,7 @@ System.out.println("hi "+msg);
         }      
     }
     
-    public void parseEnum( String enm ) throws ParsingException
+    private void parseEnum( String enm ) throws ParsingException
     {
         StringBuffer regex = new StringBuffer();
         
@@ -450,7 +450,7 @@ System.out.println("hi "+msg);
         this.enumDefs.put( name , ed );   
     }    
     
-    public void parseEnumeratedValue( EnumDefinition ed , String assignment ) throws ParsingException
+    private void parseEnumeratedValue( EnumDefinition ed , String assignment ) throws ParsingException
     {
         StringBuffer regex = new StringBuffer();
         
@@ -487,7 +487,7 @@ System.out.println("hi "+msg);
         ed.addValue( name , v );        
     }    
 
-	public boolean emit()
+	private boolean emit()
 	{
         boolean result = true;
 	    StringBuffer output = new StringBuffer();
@@ -539,7 +539,7 @@ System.out.println("hi "+msg);
         return result;
 	}
 	
-	public String emitHeader()
+	private String emitHeader()
 	{
 	    StringBuffer headerSection = new StringBuffer();
 
@@ -559,7 +559,7 @@ System.out.println("hi "+msg);
         return headerSection.toString();
     }
     
-    public String getMessageConstant( String messageName )
+    private String getMessageConstant( String messageName )
     {
 	    StringBuffer prefix = new StringBuffer( this.objectPackage != null ? this.objectPackage.replace( "." , "_" ).toUpperCase() : "" );
         prefix.append( ( messageName == null ? "" : "_" ) );
@@ -567,7 +567,7 @@ System.out.println("hi "+msg);
 	    return prefix.toString();
     }
 
-    public String getFieldConstant( String messageName , String fieldName )
+    private String getFieldConstant( String messageName , String fieldName )
     {
         StringBuffer prefix = new StringBuffer( getMessageConstant( messageName ) );
         prefix.append( ( fieldName == null ? "" : "_" ) );
@@ -575,21 +575,21 @@ System.out.println("hi "+msg);
         return prefix.toString();
     }
     
-    public String cast( String messageName )
+    private String cast( String messageName )
     {
 	    StringBuffer c = new StringBuffer( this.objectPackage == null ? "" : ( this.objectPackage.length() == 0 ? "" : this.objectPackage + "." ) );
 	    c.append( ( messageName == null ? "" : messageName ) );
 	    return c.toString();
     }
     
-    public String makeName( String prefix , String partialCamelCase )
+    private String makeName( String prefix , String partialCamelCase )
     {
         StringBuffer sb = new StringBuffer();
         
         sb.append( prefix == null ? "" : prefix );
         
         String s = ( partialCamelCase == null ? "" : partialCamelCase );
-        s = ( partialCamelCase == "" ? "unknownEntity" : partialCamelCase );
+        s = ( partialCamelCase.equals("") ? "unknownEntity" : partialCamelCase );
         
         sb.append( s.length() > 0 ? s.substring(0,1).toUpperCase() : "" );
         sb.append( s.length() > 1 ? s.substring(1) : "" );
@@ -597,7 +597,7 @@ System.out.println("hi "+msg);
         return sb.toString();
     }
 
-	public String emitObjectIdentities()
+	private String emitObjectIdentities()
 	{
 	    int id = 10000;
 	
@@ -617,7 +617,7 @@ System.out.println("hi "+msg);
         return section.toString();          	        
 	}
 
-	public String emitFieldIdentities()
+	private String emitFieldIdentities()
 	{
 	    StringBuffer section = new StringBuffer();
 	    for( Enumeration messageEnum = this.messages.elements() ; messageEnum.hasMoreElements() ; )
@@ -647,7 +647,7 @@ System.out.println("hi "+msg);
         return section.toString();          	        
 	}
 	
-	public String emitCollectionMethods()
+	private String emitCollectionMethods()
     {
 	    StringBuffer section = new StringBuffer();
 
@@ -659,7 +659,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     
-    public String emitReadObjectMethod()
+    private String emitReadObjectMethod()
     {
 	    StringBuffer section = new StringBuffer();
 	    
@@ -699,7 +699,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
 
-    public String emitWriteObjectMethod()
+    private String emitWriteObjectMethod()
     {
 	    StringBuffer section = new StringBuffer();
 
@@ -767,7 +767,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     
-	public String emitObjectMethods() throws ParsingException
+	private String emitObjectMethods() throws ParsingException
     {
 	    StringBuffer section = new StringBuffer();
 	    
@@ -793,7 +793,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     
-    public boolean objectOnClassPath( String objectName )
+    private boolean objectOnClassPath( String objectName )
     {
         // The full directory will be sourceRoot + objectPackage + objectName
 
@@ -840,7 +840,7 @@ System.out.println("hi "+msg);
         return false;
     }
     
-    public String emitReadMessageMethod( MessageDefinition md ) throws ParsingException
+    private String emitReadMessageMethod( MessageDefinition md ) throws ParsingException
     {
 	    StringBuffer section = new StringBuffer();
 	    
@@ -1044,7 +1044,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     
-    public String emitWriteMessageMethod( MessageDefinition md ) throws ParsingException
+    private String emitWriteMessageMethod( MessageDefinition md ) throws ParsingException
     {
 	    StringBuffer section = new StringBuffer();
 
@@ -1106,7 +1106,7 @@ System.out.println("hi "+msg);
                     section.append( "             Object [] tmpArray = (Object [])obj." + makeName( "get" , f.getName() ) + "();\n" );
                     section.append( "             for( int arrayIndex = 0 ; arrayIndex < tmpArray.length ; arrayIndex++ ) v.add( tmpArray[arrayIndex] );\n" );
 
-                    section.append( "             v.addAll( (Collection));\n" );
+                    section.append( "             v.addAll( tmpArray );\n" );
                     section.append( "             Enumeration e = v.elements();\n" );
                     section.append( "             for( ; e.hasMoreElements() ; )\n" );
                     section.append( "             {\n" );
@@ -1227,7 +1227,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     
-    public String emitReadHashtableMethod( MessageDefinition md ) throws ParsingException
+    private String emitReadHashtableMethod( MessageDefinition md ) throws ParsingException
     {
 	    StringBuffer section = new StringBuffer();
 	    
@@ -1292,7 +1292,7 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     
-    public String emitWriteHashtableMethod( MessageDefinition md )
+    private String emitWriteHashtableMethod( MessageDefinition md )
     {
 	    StringBuffer section = new StringBuffer();
 
@@ -1317,12 +1317,12 @@ System.out.println("hi "+msg);
         return section.toString();
     }
     	
-	public String emitTrailer()
+	private String emitTrailer()
 	{
 	    return "\n}\n";
 	}
 
-	public String getProtoObjectMethod( String type , String map ) throws ParsingException
+	private String getProtoObjectMethod( String type , String map ) throws ParsingException
 	{
             if ( type.equals( "double"     ) ) { return "protoObject.getDouble().doubleValue()"; }
             if ( type.equals( "float"      ) ) { return "protoObject.getFloat().floatValue()"; }
@@ -1348,12 +1348,12 @@ System.out.println("hi "+msg);
             throw new ParsingException("ERROR : Encountered unsupported Field Type : " + type + ". Please convert to a supported type i.e. one of double, float, bool, string, bytes, int32, int64." );
 	}
 	
-	public String getProtoObjectAssignment( String objectName , String type , String map , String name ) throws ParsingException
+	private String getProtoObjectAssignment( String objectName , String type , String map , String name ) throws ParsingException
 	{
 	    return objectName + "." + makeName("set",name) + "(" + getProtoObjectMethod(type,map) + ");";
 	}
 	
-	public boolean isPrimitive( String type )
+	private boolean isPrimitive( String type )
 	{
 	    if ( type == null ) return false;
 
@@ -1376,22 +1376,22 @@ System.out.println("hi "+msg);
 	        );
 	}
 	
-	public boolean isDefined( String messageName )
+	private boolean isDefined( String messageName )
 	{
 	    return ( this.messageDefs.get( messageName ) != null );
 	}
 	
-	public boolean isEnum( String enumName )
+	private boolean isEnum( String enumName )
 	{
 	    return ( this.enumDefs.get( enumName ) != null );
 	}
 
-	public MessageDefinition getMessageDef( String messageName )
+	private MessageDefinition getMessageDef( String messageName )
 	{
 	    return ( (MessageDefinition)this.messageDefs.get( messageName ) );
 	}
 
-	public EnumDefinition getEnumDef( String enumName )
+	private EnumDefinition getEnumDef( String enumName )
 	{
 	    return ( (EnumDefinition)this.enumDefs.get( enumName ) );
 	}
