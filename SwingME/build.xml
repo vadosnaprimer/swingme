@@ -6,11 +6,27 @@
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
 
-    <target name="do-deploy" description="copy lib to some other places">
+    <available file="../SwingMETest" type="dir" property="SwingMETest"/>
+    <available file="../VistoJ2ME" type="dir" property="VistoJ2ME"/>
+    <available file="../vauchacha" type="dir" property="vauchacha"/>
+    <available file="../AgentClient" type="dir" property="AgentClient"/>
+    <available file="../BadooMobile" type="dir" property="BadooMobile"/>
+
+    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5"/>
+
+    <target name="d1" if="SwingMETest">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
+    </target>
+    <target name="d2" if="VistoJ2ME">
         <copy file="${deployment.jar}" todir="../VistoJ2ME/lib"/>
+    </target>
+    <target name="d3" if="vauchacha">
         <copy file="${deployment.jar}" todir="../vauchacha/lib"/>
+    </target>
+    <target name="d4" if="AgentClient">
         <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
+    </target>
+    <target name="d5" if="BadooMobile">
         <copy file="${deployment.jar}" todir="../BadooMobile/lib"/>
     </target>
 
