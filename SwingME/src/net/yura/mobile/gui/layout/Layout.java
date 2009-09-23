@@ -23,7 +23,6 @@ import net.yura.mobile.gui.components.Panel;
  * @author Yura Mamyrin
  * @see java.awt.LayoutManager
  */
-
 public interface Layout {
 
 	/**

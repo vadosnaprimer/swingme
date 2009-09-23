@@ -18,7 +18,6 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
-import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
@@ -49,7 +48,8 @@ public abstract class Component {
         protected int preferredWidth=-1;
         protected int preferredHeight=-1;
 
-        private ChangeListener focusListener;
+        // maybe later, but prob not needed
+        //private ChangeListener focusListener;
 
         /**
          * @see javax.swing.JComponent#JComponent() JComponent.JComponent
@@ -66,12 +66,12 @@ public abstract class Component {
             return true;
         }
 
-        /**
-         * @see java.awt.Component#addFocusListener(java.awt.event.FocusListener) Component.addFocusListener
-         */
-        public void addFocusListener(ChangeListener lis) {
-            focusListener = lis;
-        }
+//        /**
+//         * @see java.awt.Component#addFocusListener(java.awt.event.FocusListener) Component.addFocusListener
+//         */
+//        public void addFocusListener(ChangeListener lis) {
+//            focusListener = lis;
+//        }
 
         /**
          * @param w The preferred Width (can be -1 for no preference)
