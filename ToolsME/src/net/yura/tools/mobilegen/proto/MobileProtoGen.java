@@ -1072,9 +1072,14 @@ System.out.println("hi "+msg);
         for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
         {
             FieldDefinition f = (FieldDefinition)e.nextElement();
+            // If the return type is an object array
+            Class fieldClass = f.getImplementation();
+
+            boolean emitted = false;
+
 
             // If the field is an enumeration
-            if ( isEnum( f.getType() ) )
+            if ( !emitted && isEnum( f.getType() ) )
             {
                 EnumDefinition ed = getEnumDef( f.getType() );
 
@@ -1089,14 +1094,11 @@ System.out.println("hi "+msg);
                     String enumerationKey   = (String)keys.nextElement();
                     int    enumerationValue = ((Integer)h.get(enumerationKey)).intValue();                 
                     section.append( "             if ( s.equals( \"" + enumerationKey + "\"   ) ) _out.write( " + getFieldConstant( objectName , f.getName() ) + " , " + enumerationValue + " );\n");
-                }            
-                continue;
+                }
+                emitted = true;
             }
 
-            // If the return type is an object array
-            Class fieldClass = f.getImplementation();
-
-            if ( fieldClass != null )
+            if ( !emitted && fieldClass != null )
             {
                 if ( fieldClass.isArray() && f.getRepeated() )
                 {
@@ -1113,11 +1115,11 @@ System.out.println("hi "+msg);
                     section.append( getFieldConstant( objectName , f.getName() ) );
                     section.append( " , e.nextElement() );\n" );
                     section.append( "             } \n\n" );
+                    emitted = true;
                 }
-                continue;
             }
 
-            if ( f.getMap().trim().equals("Object") && f.getType().trim().equals("bytes") )
+            if ( !emitted && f.getMap().trim().equals("Object") && f.getType().trim().equals("bytes") )
             {
                 section.append( "             // FIELD : " + f.getName() + "\n" );
                 section.append( "             // OBJECT\n" );
@@ -1127,11 +1129,12 @@ System.out.println("hi "+msg);
                 section.append( "             baos.close();\n" );
                 section.append( "             baos   = null;\n" );
                 section.append( "             _out.write( buffer );      \n\n" );
-                continue;
+                emitted = true;
             }
 
+
             // If the field is just a simple single primitive
-            if ( isPrimitive( f.getType() ) && !f.getRepeated() )
+            if ( !emitted && isPrimitive( f.getType() ) && !f.getRepeated() )
             {
                 section.append( "             // FIELD : " + f.getName() + "\n" );
                 section.append( "             // SINGLE INSTANCE OF PRIMITIVE FIELD.\n" );
@@ -1140,11 +1143,11 @@ System.out.println("hi "+msg);
                 section.append( " , obj." );
                 section.append( makeName( "get" , f.getName() ) );
                 section.append( "() );\n\n" );
-                continue;
+                emitted = true;
             }                
                 
             // If the field is just a simple repeated primitive, it's a vector
-            if ( isPrimitive( f.getType() ) && f.getRepeated() )
+            if ( !emitted && isPrimitive( f.getType() ) && f.getRepeated() )
             {
                 section.append( "             // FIELD : " + f.getName() + "\n" );
                 section.append( "             // REPEATED INSTANCE OF PRIMITIVE FIELD --> VECTOR\n" );
@@ -1159,11 +1162,11 @@ System.out.println("hi "+msg);
                 section.append( " , e.nextElement() );\n" );
                 section.append( "                 }\n" );
                 section.append( "             } \n\n" );
-                continue;
+                emitted = true;
             }
             
             // If the field is just a single message, it's an object (in theory, could be a hashtable)
-            if ( !isPrimitive( f.getType() ) && !isEnum( f.getType() ) && !f.getRepeated() )
+            if ( !emitted && !isPrimitive( f.getType() ) && !isEnum( f.getType() ) && !f.getRepeated() )
             {
                 if ( !isDefined( f.getType() ) )
                     throw new ParsingException( "ERROR : Message \"" + objectName + "\" has undefined type \"" + f.getType() + "\" for field \"" + f.getName() + "\". You may be missing a message or enumeration definition." );
@@ -1182,11 +1185,11 @@ System.out.println("hi "+msg);
                 section.append( "             _out.write( buffer );      \n" );        
                 section.append( "             id     = null;\n" );
                 section.append( "             length = null;\n\n" );
-                continue;
+                emitted = true;
             }
     
             // If the field is just a repeated message, it's a Vector of objects
-            if ( !isPrimitive( f.getType() ) && !isEnum( f.getType() ) && f.getRepeated() )
+            if ( !emitted && !isPrimitive( f.getType() ) && !isEnum( f.getType() ) && f.getRepeated() )
             {
                 if ( !isDefined( f.getType() ) )
                     throw new ParsingException( "ERROR : Message \"" + objectName + "\" has undefined type \"" + f.getType() + "\" for field \"" + f.getName() + "\". You may be missing a message or enumeration definition." );
@@ -1205,7 +1208,7 @@ System.out.println("hi "+msg);
                 section.append( "                     baos.close();\n" );
                 section.append( "                     baos   = null;\n" );
                 section.append( "                     length = _out.encodeVariableInteger((long)buffer.length);\n" );
-                section.append( "                     id     = _out.encodeVariableInteger( _out.encodeFieldIndexAndWireFormatType( " + getFieldConstant( objectName , f.getName() ) + " , ProtoBase.WIRE_FORMAT_LENGTH_DELIMITED ) );\n" );
+                section.append( "                     id     = _out.encodeVariableInteger( _out.encodeFieldIndexAndWireFormatType( " + getFieldConstant( objectName , f.getName() ) + " , ProtoInputStream.WIRE_FORMAT_LENGTH_DELIMITED ) );\n" );
                 section.append( "                     _out.write( id );\n" );
                 section.append( "                     _out.write( length );\n" );
                 section.append( "                     _out.write( buffer );      \n" );        
@@ -1214,7 +1217,7 @@ System.out.println("hi "+msg);
                 section.append( "                     buffer = null;\n" );
                 section.append( "                 }\n" );
                 section.append( "             }\n\n" );
-                continue;
+                emitted = true;
             }                    
         }
 
