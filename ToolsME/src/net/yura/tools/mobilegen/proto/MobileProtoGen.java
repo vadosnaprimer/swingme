@@ -1104,16 +1104,17 @@ System.out.println("hi "+msg);
                 {
                     section.append( "             // FIELD : " + f.getName() + "\n" );
                     section.append( "             // OBJECT ARRAY\n" );
-                    section.append( "             v = new Vector();\n" );
+                    //section.append( "             v = new Vector();\n" );
                     section.append( "             Object [] tmpArray = (Object [])obj." + makeName( "get" , f.getName() ) + "();\n" );
-                    section.append( "             for( int arrayIndex = 0 ; arrayIndex < tmpArray.length ; arrayIndex++ ) v.add( tmpArray[arrayIndex] );\n" );
+                    section.append( "             for( int arrayIndex = 0 ; arrayIndex < tmpArray.length ; arrayIndex++ )\n " ); //v.add( tmpArray[arrayIndex] );\n" );
 
-                    section.append( "             Enumeration e = v.elements();\n" );
-                    section.append( "             for( ; e.hasMoreElements() ; )\n" );
+                    //section.append( "             Enumeration e = v.elements();\n" );
+                    //section.append( "             for( ; e.hasMoreElements() ; )\n" );
                     section.append( "             {\n" );
                     section.append( "                 protoOutputStream.write( " );
                     section.append( getFieldConstant( objectName , f.getName() ) );
-                    section.append( " , e.nextElement() );\n" );
+                    //section.append( " , e.nextElement() );\n" );
+                    section.append( " , tmpArray[ arrayIndex ] );\n" );
                     section.append( "             } \n\n" );
                     emitted = true;
                 }
