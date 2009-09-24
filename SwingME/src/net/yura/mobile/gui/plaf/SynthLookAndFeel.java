@@ -349,16 +349,15 @@ public class SynthLookAndFeel extends LookAndFeel {
                 else if ("SYSTEM".equals(fontName)) {
                     fname=javax.microedition.lcdui.Font.FACE_SYSTEM;
                 }
-
                 if (fontStyle!=null) {
-                    if (fontStyle.indexOf("BOLD")!=1) {
+                    if (fontStyle.indexOf("BOLD")!=-1) {
                         fstyle |= javax.microedition.lcdui.Font.STYLE_BOLD;
                     }
-                    if (fontStyle.indexOf("ITALIC")!=1) {
+                    if (fontStyle.indexOf("ITALIC")!=-1) {
                         fstyle |= javax.microedition.lcdui.Font.STYLE_ITALIC;
                     }
-                    if (fontStyle.indexOf("UNDERLINED")!=1) {
-                        fstyle |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
+                    if (fontStyle.indexOf("UNDERLINED")!=-1) {
+                       fstyle |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
                     }
                 }
 
