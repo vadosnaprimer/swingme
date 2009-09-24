@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.regex.*;
 
 import org.apache.tools.ant.*;
-import org.apache.tools.ant.types.*;
 
 public class MobileProtoGen // extends Task
 {
@@ -161,7 +160,7 @@ public class MobileProtoGen // extends Task
 	                line = line + ";";
 	                line = line.replaceAll( "\\/\\/" , "" );
 	                line = line.replaceAll( "\\@map " , " @" );
-	                System.out.println(line);
+	                //System.out.println(line);
 	            }
 	        
 	            line = line.replaceAll( "\\s+"        , " " );
@@ -249,7 +248,6 @@ public class MobileProtoGen // extends Task
     public void parseMessage( String msg ) throws PatternSyntaxException , ParsingException
     {
         // Find message name and fields using regex
-System.out.println("hi "+msg);
         StringBuffer regex = new StringBuffer();
         
         regex.append( "message" ); // Keyword "message"
@@ -385,10 +383,10 @@ System.out.println("hi "+msg);
                     if ( method != null )
                         returnType = method.getReturnType();
 
-                    if ( returnType != null )
-                    {
-                        System.out.println( "Field " + fd.getName() + ", " + returnType.getCanonicalName());
-                    }
+                    //if ( returnType != null )
+                    //{
+                        //System.out.println( "Field " + fd.getName() + ", " + returnType.getCanonicalName());
+                    //}
 
                     fd.setImplementation(returnType);
                 }
@@ -947,7 +945,7 @@ System.out.println("hi "+msg);
             {
                 section.append( "                  // SINGLE INSTANCE OF PRIMITIVE FIELD\n" );
                 section.append( "                  " );
-                section.append( getProtoObjectAssignment( "obj" + objectName , f.getType() , f.getMap() , f.getName() ) );
+                section.append( getProtoObjectAssignment( "obj" + objectName , f ) );
                 section.append( "\n                  break;\n" );
                 continue;
             }
@@ -956,7 +954,7 @@ System.out.println("hi "+msg);
             if ( isPrimitive( f.getType() ) && f.getRepeated() )
             {
                 section.append( "                  // REPEATED INSTANCE OF PRIMITIVE FIELD --> VECTOR\n" );
-                String s = getProtoObjectMethod( f.getType() , f.getMap() );
+                String s = getProtoObjectMethod( f );
                 section.append( "                  bais = new ByteArrayInputStream( protoObject.getPayload() );\n" );
                 section.append( "                  (obj" + objectName + "." + makeName("get",f.getName()) + "()).addElement( " + s + " );\n" );
                 section.append( "                  bais.close();\n" );
@@ -1269,7 +1267,7 @@ System.out.println("hi "+msg);
             {
                 section.append( "                // SINGLE PRIMITIVE, NOT REPEATED\n" );
                 section.append( "                case " + getFieldConstant( md.getName() , fd.getName() ) + ":\n" );
-                section.append( "                    h.put( \"" + fd.getName() + "\" , " + getProtoObjectMethod( fd.getType() , fd.getMap() ) + " );\n" );
+                section.append( "                    h.put( \"" + fd.getName() + "\" , " + getProtoObjectMethod( fd ) + " );\n" );
                 section.append( "                    break;\n\n" );
                 continue;
             }
@@ -1329,35 +1327,51 @@ System.out.println("hi "+msg);
 	    return "\n}\n";
 	}
 
-	private String getProtoObjectMethod( String type , String map ) throws ParsingException
+	private String getProtoObjectMethod( FieldDefinition f ) throws ParsingException
 	{
-            if ( type.equals( "double"     ) ) { return "protoObject.getDouble().doubleValue()"; }
-            if ( type.equals( "float"      ) ) { return "protoObject.getFloat().floatValue()"; }
-            if ( type.equals( "bool"       ) ) { return "protoObject.getBoolean().booleanValue()"; }
-            if ( type.equals( "string"     ) ) { return "protoObject.getString()"; }
-            if ( type.equals( "bytes"      ) ) { return "protoObject.getByteArray()"; }
+        String type = f.getType();
+        String map  = f.getMap();
 
-            if ( map.equals( "byte" )  && type.equals( "int32" ) ) { return "protoObject.getByte().byteValue()"; }
-            if ( map.equals( "char" )  && type.equals( "int32" ) ) { return "protoObject.getCharacter().charValue()"; }
-            if ( map.equals( "short" ) && type.equals( "int32" ) ) { return "protoObject.getShort().shortValue()"; }
-            if ( map.equals( "int" )   && type.equals( "int32" ) ) { return "protoObject.getInteger().intValue()"; }
-            if ( map.equals( "long" )  && type.equals( "int32" ) ) { return "protoObject.getLong().longValue()"; }
+        Class c = f.getImplementation();
+        if ( c != null )
+        {
+            System.out.println("Class:" + c.getName());
+            if ( c.getName().toLowerCase().contains("byte"))      map = "byte";
+            if ( c.getName().toLowerCase().contains("char"))      map = "char";
+            if ( c.getName().toLowerCase().contains("short"))     map = "short";
+            if ( c.getName().toLowerCase().contains("integer"))   map = "int";
+            if ( c.getName().toLowerCase().contains("long"))      map = "long";
+        }
 
-            if ( map.equals( "byte" )  && type.equals( "int64" ) ) { return "protoObject.getByte().byteValue()"; }
-            if ( map.equals( "char" )  && type.equals( "int64" ) ) { return "protoObject.getCharacter().charValue()"; }
-            if ( map.equals( "short" ) && type.equals( "int64" ) ) { return "protoObject.getShort().shortValue()"; }
-            if ( map.equals( "int" )   && type.equals( "int64" ) ) { return "protoObject.getInteger().intValue()"; }
-            if ( map.equals( "long" )  && type.equals( "int64" ) ) { return "protoObject.getLong().longValue()"; }
+        if ( type.equals( "double"     ) ) { return "protoObject.getDouble().doubleValue()"; }
+        if ( type.equals( "float"      ) ) { return "protoObject.getFloat().floatValue()"; }
+        if ( type.equals( "bool"       ) ) { return "protoObject.getBoolean().booleanValue()"; }
+        if ( type.equals( "string"     ) ) { return "protoObject.getString()"; }
+        if ( type.equals( "bytes"      ) ) { return "protoObject.getByteArray()"; }
 
-            if ( type.equals( "int32"      ) ) { return "protoObject.getInteger().intValue()"; }
-            if ( type.equals( "int64"      ) ) { return "protoObject.getLong().longValue()"; }
+        if ( map.equals( "byte" )  && type.equals( "int32" ) ) { return "protoObject.getByte().byteValue()"; }
+        if ( map.equals( "char" )  && type.equals( "int32" ) ) { return "protoObject.getCharacter().charValue()"; }
+        if ( map.equals( "short" ) && type.equals( "int32" ) ) { return "protoObject.getShort().shortValue()"; }
+        if ( map.equals( "int" )   && type.equals( "int32" ) ) { return "protoObject.getInteger().intValue()"; }
+        if ( map.equals( "long" )  && type.equals( "int32" ) ) { return "protoObject.getLong().longValue()"; }
 
-            throw new ParsingException("ERROR : Encountered unsupported Field Type : " + type + ". Please convert to a supported type i.e. one of double, float, bool, string, bytes, int32, int64." );
+        if ( map.equals( "byte" )  && type.equals( "int64" ) ) { return "protoObject.getByte().byteValue()"; }
+        if ( map.equals( "char" )  && type.equals( "int64" ) ) { return "protoObject.getCharacter().charValue()"; }
+        if ( map.equals( "short" ) && type.equals( "int64" ) ) { return "protoObject.getShort().shortValue()"; }
+        if ( map.equals( "int" )   && type.equals( "int64" ) ) { return "protoObject.getInteger().intValue()"; }
+        if ( map.equals( "long" )  && type.equals( "int64" ) ) { return "protoObject.getLong().longValue()"; }
+
+        if ( type.equals( "int32"      ) ) { return "protoObject.getInteger().intValue()"; }
+        if ( type.equals( "int64"      ) ) { return "protoObject.getLong().longValue()"; }
+
+        throw new ParsingException("ERROR : Encountered unsupported Field Type : " +
+            type +
+            ". Please convert to a supported type i.e. one of double, float, bool, string, bytes, int32, int64." );
 	}
 	
-	private String getProtoObjectAssignment( String objectName , String type , String map , String name ) throws ParsingException
+	private String getProtoObjectAssignment( String objectName , FieldDefinition f ) throws ParsingException
 	{
-	    return objectName + "." + makeName("set",name) + "(" + getProtoObjectMethod(type,map) + ");";
+	    return objectName + "." + makeName("set",f.getName()) + "(" + getProtoObjectMethod(f) + ");";
 	}
 	
 	private boolean isPrimitive( String type )

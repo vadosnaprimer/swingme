@@ -38,14 +38,14 @@ message Suffix {
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 message Test {
-	required int32 id                = 1201; // @map int
+	required int32 id                = 1201;
 }
 
 // Number was originally defined as a public static class inside TestObject.
 
 message Number {
 	required string number           = 1202;
-	required int32  type             = 1203; // @map int
+	required int32  type             = 1203;
 }
 
 // TestObject extends Test. In order to simplify Java OO extension, we just copy the fields from
@@ -57,7 +57,7 @@ message Number {
 message TestObject {
 	required int32 id                = 1204; 
 	required string  name            = 1205;
-	required int32   age             = 1206; // @map byte
+	required int32   age             = 1206;
 	repeated required Number numbers = 1207;  
 	repeated required bytes body     = 1208; // @map Object
 	repeated required string legs    = 1209; 
