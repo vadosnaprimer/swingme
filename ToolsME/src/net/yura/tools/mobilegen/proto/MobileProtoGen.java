@@ -1080,7 +1080,7 @@ System.out.println("hi "+msg);
 
                 section.append( "             // FIELD : " + f.getName() + "\n" );
                 section.append( "             // ENUMERATED INTEGER\n" );
-                section.append( "             String s = obj.get_type();\n");
+                section.append( "             String s = obj." + makeName("get",f.getName()) + "();\n");
 
                 Hashtable h = ed.getValues();
                 Enumeration keys = h.keys();
@@ -1106,7 +1106,6 @@ System.out.println("hi "+msg);
                     section.append( "             Object [] tmpArray = (Object [])obj." + makeName( "get" , f.getName() ) + "();\n" );
                     section.append( "             for( int arrayIndex = 0 ; arrayIndex < tmpArray.length ; arrayIndex++ ) v.add( tmpArray[arrayIndex] );\n" );
 
-                    section.append( "             v.addAll( tmpArray );\n" );
                     section.append( "             Enumeration e = v.elements();\n" );
                     section.append( "             for( ; e.hasMoreElements() ; )\n" );
                     section.append( "             {\n" );
@@ -1255,6 +1254,9 @@ System.out.println("hi "+msg);
         {
             FieldDefinition fd = (FieldDefinition)e.nextElement();
 
+            // OBJECT ARRAY
+
+
             // ENUMERATED TYPE
 
 
@@ -1264,7 +1266,8 @@ System.out.println("hi "+msg);
                 section.append( "                // SINGLE PRIMITIVE, NOT REPEATED\n" );
                 section.append( "                case " + getFieldConstant( md.getName() , fd.getName() ) + ":\n" );
                 section.append( "                    h.put( \"" + fd.getName() + "\" , " + getProtoObjectMethod( fd.getType() , fd.getMap() ) + " );\n" );
-                section.append( "                    break;\n\n" );     
+                section.append( "                    break;\n\n" );
+                continue;
             }
 
             // REPEATED PRIMITIVE            

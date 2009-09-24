@@ -94,15 +94,7 @@ public class XMLAccess extends XMLUtil {
         }
         while (parser.nextTag() != KXmlParser.END_TAG) {
             String name = parser.getName();
-            if ("body".equals(name)) {
-                Object obj = null;
-                while (parser.nextTag() != KXmlParser.END_TAG) {
-                    if (obj!=null) { throw new IOException(); }
-                    obj = readObject(parser);
-                }
-                object.setBody( (Object)obj );
-            }
-            else if ("legs".equals(name)) {
+            if ("legs".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     if (obj!=null) { throw new IOException(); }
@@ -115,6 +107,14 @@ public class XMLAccess extends XMLUtil {
                     System.arraycopy(objects,0,array,0,objects.length);
                 }
                 object.setLegs(array);
+            }
+            else if ("body".equals(name)) {
+                Object obj = null;
+                while (parser.nextTag() != KXmlParser.END_TAG) {
+                    if (obj!=null) { throw new IOException(); }
+                    obj = readObject(parser);
+                }
+                object.setBody( (Object)obj );
             }
             else if ("numbers".equals(name)) {
                 Object obj = null;
