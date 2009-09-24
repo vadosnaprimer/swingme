@@ -199,7 +199,15 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
 
         if (gridView.isSelected()) {
             if (fileTabel==null) {
-                fileTabel = new FileGrid();
+                fileTabel = new FileGrid( DesktopPane.getDesktopPane().getWidth() / thumbSize);
+
+                SelectableFileRenderer editor = new SelectableFileRenderer();
+                editor.addActionListener(FileChooser.this);
+                editor.setActionCommand("tableClick");
+                fileTabel.setDefaultEditor(SelectableFile.class, editor);
+                fileTabel.setDefaultRenderer(SelectableFile.class, thumbOptionRenderer);
+
+
             }
             
             int w = DesktopPane.getDesktopPane().getWidth();
@@ -355,27 +363,23 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
      * @author emarcato
      * 
      */
-    class FileGrid extends Table {
+    public static class FileGrid extends Table {
 
-            public FileGrid() {
-                
-                SelectableFileRenderer editor = new SelectableFileRenderer();
-                editor.addActionListener(FileChooser.this);
-                editor.setActionCommand("tableClick");
-                
-                setDefaultEditor(SelectableFile.class, editor);
-                setDefaultRenderer(SelectableFile.class, thumbOptionRenderer);
+            private int colCount;
+
+            public FileGrid(int cw) {
+                colCount = cw;
             }
 
             public Object getSelectedValue() {
                 return getValueAt(getSelectedRow(), getSelectedColumn());
             }
             
-            private Vector getItems() {
+            public Vector getItems() {
                 return dataVector;
             }
 
-            private void setListData(Vector files) {
+            public void setListData(Vector files) {
                 dataVector = files;
             }
             
@@ -383,9 +387,8 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
                 return (rowIndex* getColumnCount() ) + columnIndex;
             }
 
-
             public Class getColumnClass(int columnIndex) {
-                return SelectableFile.class;
+                return super.getColumnClass(0);
             }
 
             public Object getValueAt(int rowIndex, int columnIndex) {
@@ -406,7 +409,7 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
             }
 
             public int getColumnCount() {
-                return DesktopPane.getDesktopPane().getWidth() / thumbSize;
+                return colCount;
             }
 
             public int getRowCount() {

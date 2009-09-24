@@ -387,22 +387,33 @@ public class Table extends Panel {
         super.workoutMinimumSize();
 
         //int w = 0;
-        int h = 0;
         
         //int c = getColumnCount();
         //for (int a=0;a<c;a++) {
         //    w = w + getColumnWidth(a);
         //}
-        
-        int r = getRowCount();
-        for (int a=0;a<r;a++) {
-            h = h + getRowHeight(a);
-        }
-        
+
         //width = w;
         if (height==0) { // no prefured height
+            int h = 0;
+            int r = getRowCount();
+            for (int a=0;a<r;a++) {
+                h = h + getRowHeight(a);
+            }
             height = h;
         }
+
+        if (width==0) {
+            int w=0;
+            for (int c=0;c<colWidths.size();c++) {
+                 Integer i = ((Integer)colWidths.elementAt(c));
+                 if (i!=null) {
+                    w = w + i.intValue();
+                 }
+            }
+            width = w;
+        }
+
         
     }
     
@@ -446,9 +457,10 @@ public class Table extends Panel {
      * @see javax.swing.JTable#getCellRenderer(int, int) JTable.getCellRenderer
      */
     public ListCellRenderer getCellRenderer(int row, int column) {
-
                 ListCellRenderer renderer = (ListCellRenderer)renderers.get( getColumnClass(column) );
+
                 if (renderer==null) renderer = (ListCellRenderer)renderers.get(Object.class);
+                
 		return renderer;
 
     }

@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.celleditor;
 
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
@@ -43,6 +44,9 @@ public class DefaultCellEditor implements TableCellEditor {
     }
     public DefaultCellEditor(TextField textField) {
         component = textField;
+    }
+    public DefaultCellEditor(Button b) {
+        component = b;
     }
     
     public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
