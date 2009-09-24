@@ -27,7 +27,7 @@ import net.yura.mobile.gui.plaf.Style;
 /**
  * @author Yura Mamyrin
  */
-class ButtonEditor extends Button implements ListCellRenderer, TableCellEditor {
+public class ButtonEditor extends Button implements ListCellRenderer, TableCellEditor {
 
         private int state;
         private Object obj;
