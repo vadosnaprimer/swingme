@@ -28,6 +28,12 @@ public abstract class SocketClient implements Runnable {
     private SocketConnection sc=null;
     private InputStream in=null;
 
+    private String server;
+
+    public SocketClient(String server) {
+        this.server = server;
+    }
+
     public void addToOutbox(Object obj) {
 
         if (writeThread==null) {
@@ -42,8 +48,7 @@ public abstract class SocketClient implements Runnable {
                             updateState(CONNECTING);
 
                             try {
-                                //sc = (SocketConnection) Connector.open("socket://localhost:9876");
-                                sc = (SocketConnection) Connector.open("socket://yura.dmus.org:9876");
+                                sc = (SocketConnection) Connector.open("socket://"+server);
                                 out = sc.openOutputStream();
                                 in = sc.openInputStream();
                             }
@@ -70,8 +75,8 @@ public abstract class SocketClient implements Runnable {
 
                     //Task task = (Task)object;
                     try {
+//#debug
 System.out.println("sending object: "+object);
-
                         updateState(COMMUNICATING);
 
                         write(out, object);
@@ -128,6 +133,7 @@ System.out.println("sending object: "+object);
             }
 
             updateState(COMMUNICATING);
+//#debug
 System.out.println("got object: "+task);
             try {
                 handleObject( task );
