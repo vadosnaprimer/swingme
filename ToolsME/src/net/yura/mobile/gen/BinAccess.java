@@ -15,7 +15,7 @@ public class BinAccess extends BinUtil {
     public static final int TYPE_TESTOBJECT=21;
     public BinAccess() {
     }
-    public void writeObject(DataOutputStream out, Object object) throws IOException {
+    protected void writeObject(DataOutputStream out, Object object) throws IOException {
         if (object instanceof Test) {
             out.writeInt(TYPE_TEST);
             saveTest(out,(Test)object);
@@ -28,12 +28,12 @@ public class BinAccess extends BinUtil {
             super.writeObject(out, object);
         }
     }
-    public void saveTest(DataOutputStream out,Test object) throws IOException {
+    protected void saveTest(DataOutputStream out,Test object) throws IOException {
         out.writeInt(1);
         out.writeInt( TYPE_INTEGER);
         out.writeInt( object.getId() );
     }
-    public void saveTestObject(DataOutputStream out,TestObject object) throws IOException {
+    protected void saveTestObject(DataOutputStream out,TestObject object) throws IOException {
         out.writeInt(6);
         out.writeInt( TYPE_BYTE);
         out.writeByte( object.getAge() );
@@ -44,14 +44,14 @@ public class BinAccess extends BinUtil {
         writeObject(out, object.getName() );
         writeObject(out, object.getNumbers() );
     }
-    public Object readObject(DataInputStream in,int type,int size) throws IOException {
+    protected Object readObject(DataInputStream in,int type,int size) throws IOException {
         switch (type) {
             case TYPE_TEST: return readTest(in,size);
             case TYPE_TESTOBJECT: return readTestObject(in,size);
             default: return super.readObject(in,type,size);
         }
     }
-    private Test readTest(DataInputStream in,int size) throws IOException {
+    protected Test readTest(DataInputStream in,int size) throws IOException {
         Test object = new Test();
         if (size>0) {
             checkType(in.readInt() , TYPE_INTEGER);
@@ -62,7 +62,7 @@ public class BinAccess extends BinUtil {
         }
         return object;
     }
-    private TestObject readTestObject(DataInputStream in,int size) throws IOException {
+    protected TestObject readTestObject(DataInputStream in,int size) throws IOException {
         TestObject object = new TestObject();
         if (size>0) {
             checkType(in.readInt() , TYPE_BYTE);

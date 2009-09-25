@@ -69,7 +69,7 @@ ps.println("public class XMLAccess extends XMLUtil {");
 ps.println("    public XMLAccess() {");
 ps.println("    }");
 
-ps.println("    public void saveObject(XmlSerializer serializer,Object object) throws IOException {");
+ps.println("    protected void saveObject(XmlSerializer serializer,Object object) throws IOException {");
 
 n=0;
 for (Class c:classes) {
@@ -96,7 +96,7 @@ for (Class c:classes) {
 printSaveMethod(ps,c);
 }
 
-ps.println("    public Object readObject(KXmlParser parser) throws Exception {");
+ps.println("    protected Object readObject(KXmlParser parser) throws Exception {");
 
 ps.println("        String name = parser.getName();");
 
@@ -132,7 +132,7 @@ ps.println("}");
 
 String className = theclass.getSimpleName();
 
-ps.println("    public void save"+className+"(XmlSerializer serializer,"+className+" object) throws IOException {");
+ps.println("    protected void save"+className+"(XmlSerializer serializer,"+className+" object) throws IOException {");
 
 ArrayList<Method> simpleMethods = getMethods(theclass,false,true,false);
 for (Method m: simpleMethods) {
@@ -169,7 +169,7 @@ ps.println("    }");
 
 String className = theclass.getSimpleName();
 
-ps.println("    private "+className+" read"+className+"(KXmlParser parser) throws Exception {");
+ps.println("    protected "+className+" read"+className+"(KXmlParser parser) throws Exception {");
 
 ps.println("        "+className+" object = new "+className+"();");
 

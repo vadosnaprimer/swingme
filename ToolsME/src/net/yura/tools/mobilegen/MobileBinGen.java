@@ -81,7 +81,7 @@ n++;
 ps.println("    public BinAccess() {");
 ps.println("    }");
 
-ps.println("    public void writeObject(DataOutputStream out, Object object) throws IOException {");
+ps.println("    protected void writeObject(DataOutputStream out, Object object) throws IOException {");
 
 n=0;
 for (Class c:classes) {
@@ -107,7 +107,7 @@ for (Class c:classes) {
 printSaveMethod(ps,c);
 }
 
-ps.println("    public Object readObject(DataInputStream in,int type,int size) throws IOException {");
+ps.println("    protected Object readObject(DataInputStream in,int type,int size) throws IOException {");
 
 ps.println("        switch (type) {");
 
@@ -141,7 +141,7 @@ ps.println("}");
 
 String className = theclass.getSimpleName();
 
-ps.println("    public void save"+className+"(DataOutputStream out,"+className+" object) throws IOException {");
+ps.println("    protected void save"+className+"(DataOutputStream out,"+className+" object) throws IOException {");
 
 ArrayList<Method> simpleMethods = getMethods(theclass,false);
 
@@ -259,7 +259,7 @@ ps.println("    }");
 
 String className = theclass.getSimpleName();
 
-ps.println("    private "+className+" read"+className+"(DataInputStream in,int size) throws IOException {");
+ps.println("    protected "+className+" read"+className+"(DataInputStream in,int size) throws IOException {");
 
 ps.println("        "+className+" object = new "+className+"();");
 
