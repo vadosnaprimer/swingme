@@ -138,37 +138,9 @@ public class XULLoader {
 
         if (name.equals("panel")) {
 
-            String border = null;
-            String text = null;
-            boolean scrollable = false;
-            final int count = parser.getAttributeCount();
-            for (int c=0;c<count;c++) {
+            Panel panel = new Panel();
 
-                String key = parser.getAttributeName(c);
-                String value = parser.getAttributeValue(c);
-                if ("border".equals(key)) {
-                    border = value;
-                }
-                else if ("text".equals(key)) {
-                    text = value;
-                }
-                else if ("scrollable".equals(key)) {
-                    scrollable = "true".equalsIgnoreCase(value);
-                }
-            }
-
-            GridBagLayout layout = readLayout(parser);
-
-            Panel panel = scrollable?new ScrollPane( new Panel(layout) ):new Panel(layout);
-
-            Border border2=null;
-            if (border!=null) {
-                border2 = new LineBorder();
-            }
-            if (text!=null) {
-                border2 = new TitledBorder(border2, text, new Label().getFont());
-            }
-            panel.setBorder(border2);
+            panel = readPanel(parser,panel,listener);
 
             return readUIObject(parser, panel,listener);
         }
@@ -402,6 +374,45 @@ public class XULLoader {
             return null;
         }
 
+    }
+
+    protected Panel readPanel(KXmlParser parser, Panel panel, ActionListener listener) {
+
+            String border = null;
+            String text = null;
+            boolean scrollable = false;
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("border".equals(key)) {
+                    border = value;
+                }
+                else if ("text".equals(key)) {
+                    text = value;
+                }
+                else if ("scrollable".equals(key)) {
+                    scrollable = "true".equalsIgnoreCase(value);
+                }
+            }
+
+            GridBagLayout layout = readLayout(parser);
+
+            panel.setLayout(layout);
+
+            panel = scrollable?new ScrollPane( panel ):panel;
+
+            Border border2=null;
+            if (border!=null) {
+                border2 = new LineBorder();
+            }
+            if (text!=null) {
+                border2 = new TitledBorder(border2, text, new Label().getFont());
+            }
+            panel.setBorder(border2);
+
+            return panel;
     }
 
     private void readButton(KXmlParser parser, Button button,ActionListener listener) {
