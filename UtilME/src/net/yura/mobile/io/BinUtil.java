@@ -32,6 +32,7 @@ public class BinUtil {
     public void save(OutputStream out, Object obj) throws IOException {
         DataOutputStream out2 = new DataOutputStream(out);
         writeObject(out2,obj);
+        out2.flush();
     }
 
     public Object load(InputStream in) throws IOException {
