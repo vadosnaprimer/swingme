@@ -15,6 +15,7 @@ public class ProtoInputStream extends InputStream
     public static final int WIRE_FORMAT_THIRTY_TWO_BIT    = 5;
 
     // JAVA TYPES (USED INTERNALLY WHEN MAPPING FIELD TYPES - NOT THE SAME AS OBJECT TYPES)
+    public static final int UNKNOWN_JAVA_TYPE             = -1;
     public static final int JAVA_BOOLEAN                  = 0;
     public static final int JAVA_BYTE                     = 1;
     public static final int JAVA_CHARACTER                = 2;
@@ -25,6 +26,11 @@ public class ProtoInputStream extends InputStream
     public static final int JAVA_SHORT                    = 7;
     public static final int JAVA_BYTE_ARRAY               = 8;
     public static final int JAVA_STRING                   = 9;
+    public static final int JAVA_STRING_ARRAY             = 10;
+    public static final int JAVA_OBJECT                   = 11;
+    public static final int JAVA_OBJECT_ARRAY             = 12;
+    public static final int JAVA_ENUMERATION              = 13;
+    public static final int JAVA_HASHTABLE                = 14;
 
     // MAXIMUM FIELD INDEX POSSIBLE
     public static final long MAXIMUM_FIELD_INDEX          = 536870911L;

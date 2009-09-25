@@ -1239,61 +1239,10 @@ public class MobileProtoGen // extends Task
         section.append( methodName );
         section.append( "( ProtoInputStream in ) throws IOException\n" );	    
         section.append( "    {\n" );	   
-        
-        section.append( "        java.util.Hashtable h = new java.util.Hashtable();\n" );
-        section.append( "        ProtoObject protoObject = null;\n" );
         section.append( "        ProtoInputStream _in = ( in == null ? protoInputStream : in );\n" );
-    
-        section.append( "        boolean inObject = true;\n" );
-        section.append( "        while ( inObject )\n" );
-        section.append( "        {\n" );
-        section.append( "            protoObject = _in.readProto();\n" );
-    
-        section.append( "            switch( protoObject.getIndex() )\n" );
-        section.append( "            {\n" );
-        
-        for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
-        {
-            FieldDefinition fd = (FieldDefinition)e.nextElement();
+        section.append( "        return (Hashtable)readObject( _in );\n");
+        section.append( "    }\n" );
 
-            // OBJECT ARRAY
-
-
-            // ENUMERATED TYPE
-
-
-            // SINGLE PRIMITIVE          
-            if ( isPrimitive( fd.getType() ) && !isEnum( fd.getType() ) && !fd.getRepeated() ) 
-            {
-                section.append( "                // SINGLE PRIMITIVE, NOT REPEATED\n" );
-                section.append( "                case " + getFieldConstant( md.getName() , fd.getName() ) + ":\n" );
-                section.append( "                    h.put( \"" + fd.getName() + "\" , " + getProtoObjectMethod( fd ) + " );\n" );
-                section.append( "                    break;\n\n" );
-                continue;
-            }
-
-            // REPEATED PRIMITIVE            
-
-
-            // SINGLE MESSAGE
-
-
-            // REPEATED MESSAGE
-        }
-            
-        section.append( "                case END_OF_OBJECT:\n" );
-        section.append( "                default:\n" );
-        section.append( "                    inObject = false;\n" );
-        section.append( "                    break; \n" );                  
-        section.append( "            }\n" );
-        section.append( "        }\n" );
-    
-        section.append( "        protoObject = null;\n" );
-    
-        section.append( "        return h; \n" );       
-         
-        section.append( "    }\n" );	    
-	    
         return section.toString();
     }
     
@@ -1311,13 +1260,8 @@ public class MobileProtoGen // extends Task
         section.append( "    {\n" );	    
 
         section.append( "        ProtoOutputStream _out = ( out == null ? protoOutputStream : out );\n" );
-        for( Enumeration e = md.getFields().elements() ; e.hasMoreElements() ; )
-        {
-            FieldDefinition f = (FieldDefinition)e.nextElement();
-            section.append( "        _out.write( " + getFieldConstant( objectName , f.getName() ) + " , obj.get( \"" + f.getName() + "\" ) );\n" );
-        }
-
-        section.append( "    }\n" );	    
+        section.append( "        writeObject( obj , _out ); \n");
+        section.append( "    }\n" );
 
         return section.toString();
     }
