@@ -181,7 +181,7 @@ System.out.println("got object: "+task);
     protected abstract void updateState(int c);
 
     protected abstract void write(OutputStream out, Object object) throws IOException;
-    protected abstract Object read(InputStream in) throws Exception;
+    protected abstract Object read(InputStream in) throws IOException;
 
     protected abstract void connected(InputStream in,OutputStream out);
     protected abstract void disconnected();

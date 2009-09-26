@@ -33,7 +33,7 @@ public class SymbianLink extends SocketClient {
         access.save(out, object);
     }
 
-    protected Object read(InputStream in) throws Exception {
+    protected Object read(InputStream in) throws IOException {
         return access.load(in);
     }
 
