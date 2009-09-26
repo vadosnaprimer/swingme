@@ -31,16 +31,22 @@ public class XMLUtil {
 
     private KXmlParser parser;
 
-    public Object load(Reader reader) throws Exception {
-
-        if (parser==null) {
-            parser = new KXmlParser();
+    public Object load(Reader reader) throws IOException {
+        try {
+            if (parser==null) {
+                parser = new KXmlParser();
+            }
+            parser.setInput(reader);
+            parser.nextTag();
+            return readObject(parser);
         }
-
-        parser.setInput(reader);
-        parser.nextTag();
-
-        return readObject(parser);
+        catch(IOException ex) {
+            throw ex;
+        }
+        catch(Exception ex) { // other exceptions here are just IOException really
+            ex.printStackTrace();
+            throw new IOException(ex.toString());
+        }
     }
 
     public void save(OutputStream output,Object object) throws IOException {
