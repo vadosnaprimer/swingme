@@ -77,6 +77,10 @@ public class Table extends Panel {
         
         // should ALWAYS be selectable to that pointer event can give it focus
         focusable = true;
+
+        // default renderer
+        setDefaultRenderer(Object.class, new DefaultListCellRenderer());
+        setDefaultEditor(Object.class, new DefaultCellEditor( new TextField() ));
     }
     
     public Table(Vector data, Vector names) {
@@ -84,10 +88,6 @@ public class Table extends Panel {
         
         dataVector=data;
         columnIdentifiers=names;
-        
-        // default renderer
-        setDefaultRenderer(Object.class, new DefaultListCellRenderer());
-        setDefaultEditor(Object.class, new DefaultCellEditor( new TextField() ));
 
     }
     
