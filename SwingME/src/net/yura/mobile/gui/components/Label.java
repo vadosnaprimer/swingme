@@ -245,7 +245,7 @@ public class Label extends Component {
         }
         
 	protected int getCombinedHeight(int iconHeight) {
-		int fw = (font!=null)?font.getHeight():0;
+		int fw = (font!=null && !"".equals(string))?font.getHeight():0;
 		if ((textPosition & Graphics.VCENTER)!= 0) {
 			if (iconHeight<=0 && font == null) return 0;
 			if (iconHeight>0) {
