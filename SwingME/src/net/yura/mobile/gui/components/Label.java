@@ -264,7 +264,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setText(java.lang.String) JLabel.setText
          */
 	public void setText(String a) {
-		System.out.println("Setting label text to "+a);
+            
 		string = a;
 		
 	}
