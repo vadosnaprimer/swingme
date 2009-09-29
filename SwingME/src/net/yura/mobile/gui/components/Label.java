@@ -128,7 +128,7 @@ public class Label extends Component {
                 String drawString = this.string;
 		int combinedwidth = getCombinedWidth();
 
-                if (font!=null && drawString!=null && combinedwidth > width-(padding*2)) {
+                if (font!=null && drawString!=null && !"".equals(drawString) && combinedwidth > width-(padding*2)) {
                     combinedwidth = width-(padding*2);
                     int w = ((((textPosition & Graphics.HCENTER) == 0) && iconWidth>0)?(combinedwidth-iconWidth-gap):combinedwidth) - font.getWidth(extension);
                     int a = TextArea.searchStringCharOffset(drawString, font, w);
@@ -245,7 +245,7 @@ public class Label extends Component {
         }
         
 	protected int getCombinedHeight(int iconHeight) {
-		int fw = (font!=null && !"".equals(string))?font.getHeight():0;
+		int fw = (font!=null && !"".equals(string) && string != null)?font.getHeight():0;
 		if ((textPosition & Graphics.VCENTER)!= 0) {
 			if (iconHeight<=0 && font == null) return 0;
 			if (iconHeight>0) {
@@ -264,7 +264,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setText(java.lang.String) JLabel.setText
          */
 	public void setText(String a) {
-		
+		System.out.println("Setting label text to "+a);
 		string = a;
 		
 	}
