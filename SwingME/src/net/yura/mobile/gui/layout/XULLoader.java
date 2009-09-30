@@ -607,7 +607,8 @@ public class XULLoader {
                 comp.setToolTipText(value);
             }
             else if("property".equals(key)) {
-                String[] properties = StringUtil.split(value, ',');
+                // @see http://thinlet.sourceforge.net/properties.html
+                String[] properties = StringUtil.split(value, ';');
                 if( 0 < properties.length ) {
                     for( int x=0; x<properties.length; x++ ) {
                         String[] property = StringUtil.split(properties[x], '=');

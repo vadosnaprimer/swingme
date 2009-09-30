@@ -55,6 +55,8 @@ public class OptionPane extends Frame implements ActionListener {
     public OptionPane() {
         setName("Dialog");
 
+        setMaximizable(false);
+
         //super.setActionListener(this);
         //title = new TitleBar("", null, false, false, false, false, false);
         content = new Panel( new BoxLayout(Graphics.VCENTER) );

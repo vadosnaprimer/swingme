@@ -40,6 +40,10 @@ public class Frame extends Window {
          */
         public Frame() {
             setUndecorated(false);
+            if (DesktopPane.me4se) {
+                setMaximizable(true);
+                setClosable(true);
+            }
             setContentPane(new Panel(new BorderLayout()));
             setLayout(null); // we do our own layout
         }
@@ -76,7 +80,7 @@ public class Frame extends Window {
         public void setUndecorated(boolean un) {
             TitleBar tb = getTitleBar();
             if (tb==null && !un) {
-                super.add(new TitleBar("", null, false, false, false, true, true));
+                super.add(new TitleBar("", null, false, false, false, false, false));
             }
             else if (tb!=null && un) {
                 super.remove(tb);

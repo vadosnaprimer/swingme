@@ -15,7 +15,7 @@ public class SymbianLink extends SocketClient {
 
     // TODO do not forget that all messages that failed to send go into the offlinebox
     public SymbianLink() {
-        super("localhost:4444");
+        super("127.0.0.1:4444");
     }
 
     protected void handleObject(Object obj) {
