@@ -90,7 +90,7 @@ public class RMSBackup extends QueueProcessorThread {
     public void remove(Object obj) {
 
             Object bookingId = helper.getObjectId(obj);
-            Integer i = (Integer)table.get(bookingId);
+            Integer i = (Integer)table.remove(bookingId);
 
             try {
                 RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
