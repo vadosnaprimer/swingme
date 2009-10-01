@@ -298,6 +298,7 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if ("action".equals(key)) {
                     list.setActionCommand(value);
+                    list.addActionListener(listener);
                 }
             }
 
