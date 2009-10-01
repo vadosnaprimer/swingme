@@ -50,6 +50,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.io.UTF8InputStreamReader;
 import net.yura.mobile.util.Option;
+import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
 import org.kxml2.io.KXmlParser;
 
@@ -70,10 +71,20 @@ public class XULLoader {
         return loader;
     }
 
+    public static XULLoader load(InputStream is, ActionListener listener, Properties properties) throws Exception {
+
+        XULLoader loader = new XULLoader();
+
+        loader.load(new UTF8InputStreamReader(is),listener,properties);
+
+        return loader;
+    }
+
     private Hashtable components = new Hashtable();
     private Hashtable groups = new Hashtable();
     private Component root;
-
+    private Properties properties;
+    
     public void swapComponent(String name,Component comp) {
         Component old = find(name);
 
@@ -101,6 +112,22 @@ public class XULLoader {
         GridBagConstraints rt = (GridBagConstraints)readObject(parser,listener);
 
         root = rt.component;
+    }
+
+    public void load(Reader reader,ActionListener listener,Properties properties) throws Exception {
+        this.properties = properties;
+        load(reader,listener);
+    }
+
+    private String getPropertyText(String key) {
+        if (properties != null) {
+            String translated = properties.getProperty(key);
+            System.out.println("Translate "+key+" to "+translated);
+            if (translated != null) {
+                return translated;
+            }
+        }
+        return "???"+key+"???";
     }
 
     public Component find(String name) {
@@ -153,6 +180,9 @@ public class XULLoader {
             GridBagLayout layout = readLayout(parser);
             frame.getContentPane().setLayout(layout);
 
+            String title = null;
+            boolean i18n = false;
+
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
 
@@ -162,7 +192,10 @@ public class XULLoader {
                     frame.setIconImage( loadIcon(value) );
                 }
                 else if ("text".equals(key)) {
-                    frame.setTitle( value );
+                    title = value;
+                }
+                else if ("i18n".equals(key)) {
+                    i18n = ("true".equals(value));
                 }
                 else if ("scrollable".equals(key)) {
                     Panel p = frame.getContentPane();
@@ -180,6 +213,13 @@ public class XULLoader {
 //                else if ("resizable".equals(key)) {
 //                    frame.setResizable("true".equalsIgnoreCase(value));
 //                }
+            }
+
+            if (title != null) {
+                if (i18n) {
+                    title = getPropertyText(title);
+                }
+                frame.setTitle( title );
             }
 
             return readUIObject(parser, frame,listener);
@@ -451,6 +491,8 @@ public class XULLoader {
     }
 
     private void readLabel(KXmlParser parser, Label label) {
+            String labelText = null;
+            boolean i18n = false;
 
             int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -458,8 +500,12 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if ("text".equals(key)) {
                     if (!(label instanceof ComboBox)) {
-                        label.setText(value);
+                        labelText = value;
                     }
+                }
+                else if ("i18n".equals(key)) {
+                    System.out.println("Text needs translating");
+                    i18n = ("true".equals(value));
                 }
                 else if ("icon".equals(key)) {
                     label.setIcon( loadIcon(value) );
@@ -475,6 +521,13 @@ public class XULLoader {
                         label.setHorizontalAlignment(Graphics.LEFT);
                     }
                 }
+            }
+
+            if (labelText != null) {
+                if (i18n) {
+                    labelText = getPropertyText(labelText);
+                }
+                label.setText(labelText);
             }
     }
 
@@ -527,23 +580,42 @@ public class XULLoader {
     }
 
     private void readTextComponent(KXmlParser parser, TextComponent text) {
+            String textLabel = null;
+            boolean i18n = false;
+
             int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
                 String key = parser.getAttributeName(c);
                 String value = parser.getAttributeValue(c);
                 if ("text".equals(key)) {
-                    text.setText(value);
+                    textLabel = value;
                 }
+                else if ("i18n".equals(key)) {
+                    i18n = ("true".equals(value));
+                }
+            }
+
+            if (textLabel != null) {
+                if (i18n) {
+                    textLabel = getPropertyText(textLabel);
+                }
+                text.setText(textLabel);
             }
     }
 
     private void readOption(KXmlParser parser, Option op) {
+        String label = null;
+        boolean i18n = false;
+
         int count = parser.getAttributeCount();
         for (int c=0;c<count;c++) {
             String key = parser.getAttributeName(c);
             String value = parser.getAttributeValue(c);
             if ("text".equals(key)) {
-                op.setValue(value);
+                label = value;
+            }
+            else if ("i18n".equals(key)) {
+                i18n = ("true".equals(value));
             }
             else if ("name".equals(key)) {
                 op.setKey(value);
@@ -554,6 +626,13 @@ public class XULLoader {
             else if ("icon".equals(key)) {
                 op.setIcon( loadIcon(value) );
             }
+        }
+
+        if (label != null) {
+            if (i18n) {
+                label = getPropertyText(label);
+            }
+            op.setValue(label);
         }
     }
 
