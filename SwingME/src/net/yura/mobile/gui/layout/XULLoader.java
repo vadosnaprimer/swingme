@@ -606,6 +606,9 @@ public class XULLoader {
             else if ("tooltip".equals(key)) {
                 comp.setToolTipText(value);
             }
+            else if ("visible".equals(key)) {
+                comp.setVisible( "true".equals(value) );
+            }
             else if("property".equals(key)) {
                 // @see http://thinlet.sourceforge.net/properties.html
                 String[] properties = StringUtil.split(value, ';');

@@ -44,7 +44,7 @@ public abstract class Component {
 	private Border border;
 
         private String tooltip;
-
+        private boolean visible;
 
         protected int preferredWidth=-1;
         protected int preferredHeight=-1;
@@ -58,6 +58,7 @@ public abstract class Component {
          */
 	public Component() {
 		focusable = true;
+                visible = true;
 		updateUI();
 	}
 
@@ -65,7 +66,14 @@ public abstract class Component {
          * @see java.awt.Component#isVisible() Component.isVisible
          */
         public boolean isVisible() {
-            return true;
+            return visible;
+        }
+
+        /**
+         * @see java.awt.Component#setVisible(boolean) Component.setVisible
+         */
+        public void setVisible(boolean v) {
+            visible = v;
         }
 
         /**
