@@ -27,6 +27,8 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.gui.layout.GridBagConstraints;
+import net.yura.mobile.gui.layout.GridBagLayout;
 
 /**
  * @author Yura Mamyrin
@@ -57,9 +59,12 @@ public class OptionPane extends Frame implements ActionListener {
 
         setMaximizable(false);
 
-        //super.setActionListener(this);
-        //title = new TitleBar("", null, false, false, false, false, false);
-        content = new Panel( new BoxLayout(Graphics.VCENTER) );
+        content = new Panel( new GridBagLayout(1, 3, 4, 4, 4, 4) );
+        // we need to use a layout manager that has
+        // * gaps betwen elements
+        // * streaches components to the max width
+        // * allows components of different heights
+        // * has gaps round the edge
         
         Panel panel = getContentPane();
         
@@ -67,14 +72,23 @@ public class OptionPane extends Frame implements ActionListener {
         //add(panel);
         
         icon = new Label();
-        
-        panel.add(icon,Graphics.LEFT);
-        scroll = new ScrollPane(content);
+
+        Panel c = new Panel( new BoxLayout(Graphics.VCENTER) );
+
+        if (DesktopPane.me4se) {
+            panel.add(icon,Graphics.LEFT);
+        }
+        else {
+            c.add(icon);
+        }
+
+        c.add(content);
+
+        scroll = new ScrollPane(c);
         panel.add( scroll );
         cmdPanel = new Panel( new FlowLayout() );
         panel.add( cmdPanel ,Graphics.BOTTOM);
     }
-    
     
     private ActionListener actionListener;
 
@@ -106,22 +120,23 @@ public class OptionPane extends Frame implements ActionListener {
     public void setMessage(Object newMessage) {
         
         content.removeAll();
-        content.setLocation(0, 0);
+        scroll.getComponent().setLocation(0, 0);
+        GridBagConstraints constraints = new GridBagConstraints();
         
         if (newMessage instanceof Object[]) {
             Object[] objects = (Object[])newMessage;
             for (int c=0;c<objects.length;c++) {
-                content.add(getComponentFromObject(objects[c]));
+                content.add(getComponentFromObject(objects[c]),constraints);
             }
         }
         else if (newMessage instanceof Vector) {
             Vector objects = (Vector)newMessage;
             for (int c=0;c<objects.size();c++) {
-                content.add(getComponentFromObject(objects.elementAt(c)));
+                content.add(getComponentFromObject(objects.elementAt(c)),constraints);
             }
         }
         else {
-            content.add(getComponentFromObject(newMessage));
+            content.add(getComponentFromObject(newMessage),constraints);
         }
         
         

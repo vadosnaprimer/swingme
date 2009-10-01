@@ -50,11 +50,11 @@ public class BoxLayout implements Layout {
 
                     int offset=0;
                     for (int c=0;c<components.size();c++) {
-
                             Component comp = (Component)components.elementAt(c);
-
-                            comp.setBoundsWithBorder((axis==Graphics.HCENTER)?offset:0 , (axis==Graphics.HCENTER)?0:offset, (axis==Graphics.HCENTER)?comp.getWidthWithBorder():width, (axis==Graphics.HCENTER)?height:comp.getHeightWithBorder() );
-                            offset = offset + ((axis==Graphics.HCENTER)?comp.getWidthWithBorder():comp.getHeightWithBorder());
+                            if (comp.isVisible()) {
+                                comp.setBoundsWithBorder((axis==Graphics.HCENTER)?offset:0 , (axis==Graphics.HCENTER)?0:offset, (axis==Graphics.HCENTER)?comp.getWidthWithBorder():width, (axis==Graphics.HCENTER)?height:comp.getHeightWithBorder() );
+                                offset = offset + ((axis==Graphics.HCENTER)?comp.getWidthWithBorder():comp.getHeightWithBorder());
+                            }
                     }
 
     }
@@ -63,18 +63,18 @@ public class BoxLayout implements Layout {
                     Vector components = panel.getComponents();
                     int height=0;
                     for (int c=0;c<components.size();c++) {
-
                             Component comp = (Component)components.elementAt(c);
+                            if (comp.isVisible()) {
 
-                            if (axis == Graphics.HCENTER) {
-                                if (height < comp.getHeightWithBorder()) {
-                                    height = comp.getHeightWithBorder();
+                                if (axis == Graphics.HCENTER) {
+                                    if (height < comp.getHeightWithBorder()) {
+                                        height = comp.getHeightWithBorder();
+                                    }
+                                }
+                                else {
+                                    height = height + comp.getHeightWithBorder();
                                 }
                             }
-                            else {
-                                height = height + comp.getHeightWithBorder();
-                            }
-
                     }
                     return height;
     }
@@ -83,18 +83,18 @@ public class BoxLayout implements Layout {
                     Vector components = panel.getComponents();
                     int width=0;
                     for (int c=0;c<components.size();c++) {
-
                             Component comp = (Component)components.elementAt(c);
+                            if (comp.isVisible()) {
 
-                            if (axis == Graphics.HCENTER) {
-                                width = width + comp.getWidthWithBorder();
-                            }
-                            else {
-                                if (width < comp.getWidthWithBorder()) {
-                                    width = comp.getWidthWithBorder();
+                                if (axis == Graphics.HCENTER) {
+                                    width = width + comp.getWidthWithBorder();
+                                }
+                                else {
+                                    if (width < comp.getWidthWithBorder()) {
+                                        width = comp.getWidthWithBorder();
+                                    }
                                 }
                             }
-
                     }
                     return width;
     }
