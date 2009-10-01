@@ -122,7 +122,6 @@ public class XULLoader {
     private String getPropertyText(String key) {
         if (properties != null) {
             String translated = properties.getProperty(key);
-            System.out.println("Translate "+key+" to "+translated);
             if (translated != null) {
                 return translated;
             }
@@ -157,6 +156,44 @@ public class XULLoader {
         }
 
         return data;
+    }
+
+    public void setFormData(Hashtable data) {
+        Enumeration componentNames = data.keys();
+        Enumeration values = data.elements();
+        while (componentNames.hasMoreElements()) {
+            String componentName = (String) componentNames.nextElement();
+            Object value = values.nextElement();
+            Component component = (Component) find(componentName);
+            if (component != null) {
+                if (component instanceof TextComponent) {
+                    ((TextComponent) component).setText((String)value);
+                }
+                else if (component instanceof CheckBox) {
+                    ((CheckBox) component).setSelected("true".equals(value));
+                }
+                else if (component instanceof ComboBox)
+                    if (!"null".equals(value)) {
+                        ComboBox combo = (ComboBox) component;
+                        Option selected = (Option) value;
+                        if (selected != null) {
+                            Vector items = combo.getItems();
+                            for (int i=0;i<items.size();i++) {
+                                Option option = (Option) items.elementAt(i);
+                                if (option != null) {
+                                    if (option.getKey().equals(selected.getKey())) {
+                                        combo.setSelectedIndex(i);
+                                    }
+                                }
+                            }
+                            if (combo.getSelectedIndex() == -1) {
+                                items.addElement(selected);
+                                combo.setSelectedIndex(items.size()-1);
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     public Object readObject(KXmlParser parser,ActionListener listener) throws Exception {
@@ -504,7 +541,6 @@ public class XULLoader {
                     }
                 }
                 else if ("i18n".equals(key)) {
-                    System.out.println("Text needs translating");
                     i18n = ("true".equals(value));
                 }
                 else if ("icon".equals(key)) {
