@@ -29,6 +29,7 @@ import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.GridBagConstraints;
 import net.yura.mobile.gui.layout.GridBagLayout;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -72,6 +73,7 @@ public class OptionPane extends Frame implements ActionListener {
         //add(panel);
         
         icon = new Label();
+        icon.setHorizontalAlignment(Graphics.HCENTER);
 
         Panel c = new Panel( new BoxLayout(Graphics.VCENTER) );
 
@@ -155,7 +157,14 @@ public class OptionPane extends Frame implements ActionListener {
     }
     
     public void setMessageType(int messageType) {
-        // TODO
+        Icon icn=null;
+        switch (messageType) {
+            case WARNING_MESSAGE: icn = (Icon)theme.getProperty("WARNING_MESSAGE", Style.ALL); break;
+            case ERROR_MESSAGE: icn = (Icon)theme.getProperty("ERROR_MESSAGE", Style.ALL); break;
+            case INFORMATION_MESSAGE: icn = (Icon)theme.getProperty("INFORMATION_MESSAGE", Style.ALL); break;
+            case QUESTION_MESSAGE: icn = (Icon)theme.getProperty("QUESTION_MESSAGE", Style.ALL); break;
+        }
+        setIcon(icn);
     }
 
     public void setInitialValue(Button initialValue) {
@@ -241,8 +250,10 @@ public class OptionPane extends Frame implements ActionListener {
         myself.setTitle(title);
         myself.setActionListener(parent);
         myself.setMessageType(messageType);
-        myself.setIcon(icon);
-        
+        if (icon!=null) {
+            myself.setIcon(icon);
+        }
+
         if (options==null) {
             switch (optionType) {
                 case YES_NO_OPTION:

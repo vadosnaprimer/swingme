@@ -17,8 +17,10 @@
 
 package net.yura.mobile.gui.plaf;
 
+import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.BevelBorder;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
@@ -241,6 +243,12 @@ public class MetalLookAndFeel extends LookAndFeel {
             // TODO: windowSkin.addBorder(new LineBorder( getSecondary1(), 2 ), Style.ALL);
             windowSkin.addBorder(new LineBorder( getPrimary1(), 2 ), Style.ALL);
             setStyleFor("Frame",windowSkin);
+
+            addMetalIcon(windowSkin,"/metal-warning.png" , "WARNING_MESSAGE");
+            addMetalIcon(windowSkin,"/metal-question.png" , "QUESTION_MESSAGE");
+            addMetalIcon(windowSkin,"/metal-error.png" , "ERROR_MESSAGE");
+            addMetalIcon(windowSkin,"/metal-info.png" , "INFORMATION_MESSAGE");
+
             setStyleFor("Dialog",windowSkin);
 
             Style tooltipSkin = new Style(defaultStyle);
@@ -249,6 +257,17 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("ToolTip",tooltipSkin);
 
 	}
+
+        public void addMetalIcon(Style style, String icon,String prop) {
+            try {
+                Icon icn = new Icon(icon);
+                style.addProperty(icn, prop, Style.ALL);
+            }
+            catch (IOException ex) {
+                //#debug
+                System.out.println("can not find icon for metal theme "+icon);
+            }
+        }
 
     // the color colors
     protected int getPrimary1() { return 0x00666699; } // the dark color
