@@ -151,7 +151,17 @@ public class XULLoader {
             }
             else if (comp instanceof ComboBox) {
                 Object object= ((ComboBox)comp).getSelectedItem();
-                data.put(name, ( null == object )?"null":object );
+                String value = null;
+                if (object instanceof String) {
+                    value = (String) object;
+                }
+                else if (object instanceof Label) {
+                    value = ((Label)object).getText();
+                }
+                else if (object instanceof Option) {
+                    value = ((Option)object).getKey();
+                }
+                data.put(name, ( null == value )?"null":value );
             }
         }
 
@@ -174,22 +184,29 @@ public class XULLoader {
                 }
                 else if (component instanceof ComboBox)
                     if (!"null".equals(value)) {
+                        int index = -1;
                         ComboBox combo = (ComboBox) component;
-                        Option selected = (Option) value;
-                        if (selected != null) {
-                            Vector items = combo.getItems();
-                            for (int i=0;i<items.size();i++) {
-                                Option option = (Option) items.elementAt(i);
-                                if (option != null) {
-                                    if (option.getKey().equals(selected.getKey())) {
-                                        combo.setSelectedIndex(i);
-                                    }
+                        Vector items = combo.getItems();
+                        for (int i=0;i<items.size();i++) {
+                            Object item = items.elementAt(i);
+                            if (item instanceof String) {
+                                if (((String)item).equals(value)) {
+                                    index = i;
                                 }
                             }
-                            if (combo.getSelectedIndex() == -1) {
-                                items.addElement(selected);
-                                combo.setSelectedIndex(items.size()-1);
+                            else if (item instanceof Label) {
+                                if (((Label)item).getText().equals(value)) {
+                                    index = i;
+                                }
                             }
+                            else if (item instanceof Option) {
+                                if (((Option)item).getKey().equals(value)) {
+                                    index = i;
+                                }
+                            }
+                        }
+                        if (index > -1) {
+                            combo.setSelectedIndex(index);
                         }
                     }
             }
