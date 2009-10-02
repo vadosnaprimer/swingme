@@ -160,7 +160,12 @@ public class DesktopPane extends Canvas implements Runnable {
         Display.getDisplay(m).setCurrent(this);
         repaint();
         // TODO: (Yura) Can we really comment this?
-        //serviceRepaints();
+        
+        // TODO me4se needs to be here, or keyboard events dont come in
+        // WHY WHY WHY??!!! this is very strange
+        if (me4se) {
+            serviceRepaints();
+        }
 
     }
 
