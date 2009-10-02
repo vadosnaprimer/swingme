@@ -198,11 +198,11 @@ public class OptionPane extends Frame implements ActionListener {
 
         if (getHeightWithBorder() > maxh) {
             setFocusedComponent(null);
-            setBoundsWithBorder(0,0,getWidthWithBorder() + ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight()), maxh);
+            setBoundsWithBorder(0,0,getWidthWithBorder() + scroll.getBarThickness(), maxh);
         }
         if (getWidthWithBorder() > maxw) {
             setFocusedComponent(null);
-            setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:ScrollPane.getBarThickness(scroll.getWidth(),scroll.getHeight())) );
+            setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:scroll.getBarThickness()) );
         }
         getMostRecentFocusOwner();
         

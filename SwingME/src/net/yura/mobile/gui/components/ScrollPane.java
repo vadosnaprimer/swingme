@@ -98,9 +98,9 @@ public class ScrollPane extends Panel implements Runnable {
         super.setSize(w, h);
 
         switch (mode) {
-            case MODE_SCROLLBARS: barThickness = (trackTop != null) ? trackTop.getIconWidth() : getBarThickness(w, h); break;
+            case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
             case MODE_SCROLLARROWS: // fall though
-            case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : getBarThickness(w, h); break;
+            case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : 0; break;
             case MODE_NONE: barThickness = 0; break;
             default: throw new RuntimeException();
         }
@@ -110,9 +110,9 @@ public class ScrollPane extends Panel implements Runnable {
 
     }
 
-    public static int getBarThickness(int w,int h) {
+    public int getBarThickness() {
 
-        return Math.max(6, Math.min(w / 20, h / 20));
+        return (trackTop != null) ? trackTop.getIconWidth() : 0;
 
     }
 

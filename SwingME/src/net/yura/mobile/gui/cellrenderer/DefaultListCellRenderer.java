@@ -44,6 +44,11 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 	public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
                 setValue(value);
+
+                if ("".equals(getText())) {
+                    setText(" ");
+                }
+
 //                setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
 //                setBackground(isSelected?colorSelected:colorNormal);
 //                setForeground(isSelected?foregroundSelected:foregroundNormal);

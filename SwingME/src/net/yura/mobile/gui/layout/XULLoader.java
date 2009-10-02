@@ -119,14 +119,17 @@ public class XULLoader {
         load(reader,listener);
     }
 
-    private String getPropertyText(String key) {
-        if (properties != null) {
-            String translated = properties.getProperty(key);
-            if (translated != null) {
-                return translated;
+    private String getPropertyText(String key,boolean i18n) {
+        if (i18n) {
+            if (properties != null) {
+                String translated = properties.getProperty(key);
+                if (translated != null) {
+                    return translated;
+                }
             }
+            return "???"+key+"???";
         }
-        return "???"+key+"???";
+        return key;
     }
 
     public Component find(String name) {
@@ -270,10 +273,7 @@ public class XULLoader {
             }
 
             if (title != null) {
-                if (i18n) {
-                    title = getPropertyText(title);
-                }
-                frame.setTitle( title );
+                frame.setTitle( getPropertyText(title,i18n) );
             }
 
             return readUIObject(parser, frame,listener);
@@ -577,10 +577,7 @@ public class XULLoader {
             }
 
             if (labelText != null) {
-                if (i18n) {
-                    labelText = getPropertyText(labelText);
-                }
-                label.setText(labelText);
+                label.setText( getPropertyText(labelText,i18n) );
             }
     }
 
@@ -649,10 +646,7 @@ public class XULLoader {
             }
 
             if (textLabel != null) {
-                if (i18n) {
-                    textLabel = getPropertyText(textLabel);
-                }
-                text.setText(textLabel);
+                text.setText( getPropertyText(textLabel,i18n) );
             }
     }
 
@@ -682,10 +676,7 @@ public class XULLoader {
         }
 
         if (label != null) {
-            if (i18n) {
-                label = getPropertyText(label);
-            }
-            op.setValue(label);
+            op.setValue( getPropertyText(label,i18n) );
         }
     }
 
@@ -744,10 +735,10 @@ public class XULLoader {
             }
             else if("property".equals(key)) {
                 // @see http://thinlet.sourceforge.net/properties.html
-                String[] properties = StringUtil.split(value, ';');
-                if( 0 < properties.length ) {
-                    for( int x=0; x<properties.length; x++ ) {
-                        String[] property = StringUtil.split(properties[x], '=');
+                String[] cProperties = StringUtil.split(value, ';');
+                if( 0 < cProperties.length ) {
+                    for( int x=0; x<cProperties.length; x++ ) {
+                        String[] property = StringUtil.split(cProperties[x], '=');
                         if( 2 == property.length ) {
                             if( "plafname".equals(property[0]) ) {
                                 comp.setName( property[1] );
