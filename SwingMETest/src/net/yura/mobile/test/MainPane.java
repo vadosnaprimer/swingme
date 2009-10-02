@@ -120,7 +120,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 mainWindow.setUndecorated(true);
                 mainWindow.setVisible(true);
 		actionPerformed("mainmenu");
-		
+
 	}
 	
         private void addMainMenuButton(String a,String b) {
@@ -255,7 +255,17 @@ public class MainPane extends DesktopPane implements ActionListener {
                     foo.add( new Button("hehehehe :)") );
                     //bar.add(foo);
 
-                    test1.add(foo,Graphics.RIGHT);
+                Button close = new Button("Close");
+                close.setActionCommand(Frame.CMD_CLOSE);
+                // hack to avoid having to make a new action listoner
+                close.addActionListener(test1.getTitleBar());
+                close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+
+                Panel p = new Panel( new FlowLayout() );
+                p.add(foo);
+                p.add(close);
+
+                    test1.add(p,Graphics.BOTTOM);
 
                     test1.setMaximizable(false);
                     test1.setClosable(false);
@@ -359,8 +369,8 @@ System.out.println("open file browser");
                                 
 				info = new Panel( new BorderLayout() ) {
                                         { focusable=true; }
-                                  	public void pointerEvent(int type, int x, int y,KeyEvent keys) {
-                                            super.pointerEvent(type, x, y, keys);
+                                  	public void processMouseEvent(int type, int x, int y,KeyEvent keys) {
+                                            super.processMouseEvent(type, x, y, keys);
                                             infoLabel.setText("pointerEvent: "+x+","+y+"\n");
                                             switch(type) {
                                                 case DesktopPane.DRAGGED: infoLabel.append("DRAGGED"); break;
@@ -934,7 +944,7 @@ for (int c=0;c<4;c++) {
                         "Hello, whats your name?",
                         //new TextArea("bob the builder"),
                         new TextField(TextField.ANY)
-                    },"Title",0);
+                    },"Title",OptionPane.QUESTION_MESSAGE);
                 }
                 else if ("fileChooser".equals(actionCommand)) {
 
