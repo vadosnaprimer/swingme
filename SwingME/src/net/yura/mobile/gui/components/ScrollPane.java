@@ -229,8 +229,9 @@ public class ScrollPane extends Panel implements Runnable {
             }
         }
 
-        component.setBounds( component.getX()+xdiff , component.getY()+ydiff , component.getWidth(), component.getHeight());
+        component.setLocation( component.getX()+xdiff , component.getY()+ydiff );
 
+        // NEVER CALL setBounds here as it will call setSize and that will cause a revalidate
         //component.setBounds(15, 15, component.getWidth(), component.getHeight());
 
         //System.out.println("new pos: x="+component.getX()+" y="+component.getY() );

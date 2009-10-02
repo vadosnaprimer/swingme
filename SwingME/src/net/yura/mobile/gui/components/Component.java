@@ -488,7 +488,7 @@ public abstract class Component {
          * @see java.awt.Component#toString() Component.toString
          */
 	public String toString() {
-		return this.getClass().getName();
+		return getName();
 	}
 
         /**

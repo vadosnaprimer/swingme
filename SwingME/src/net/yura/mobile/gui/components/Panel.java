@@ -390,8 +390,7 @@ public class Panel extends Component {
 
 
     public String toString() {
-        String name = getName();
-        return ((name!=null)?(name+" "):"")+super.toString() + " "+ components;
+        return super.toString() + " "+ components;
     }
 
     public void clip(Graphics2D g) {
