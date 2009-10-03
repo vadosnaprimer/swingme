@@ -381,7 +381,8 @@ System.out.println("open file browser");
                                             infoLabel.repaint();
 
                                         }  
-                                    	public boolean keyEvent(KeyEvent keypad) {
+                                    	public boolean processKeyEvent(KeyEvent keypad) {
+
                                             int code1 = keypad.getJustPressedKey();
                                             int code2 = keypad.getJustReleasedKey();
                                             int code3 = keypad.getIsDownKey();
