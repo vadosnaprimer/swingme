@@ -149,22 +149,22 @@ public class XULLoader {
             if (comp instanceof TextComponent) {
                 data.put(name, ((TextComponent)comp).getText() );
             }
-            else if (comp instanceof CheckBox) {
-                data.put(name, String.valueOf( ((CheckBox)comp).isSelected() ) );
-            }
             else if (comp instanceof ComboBox) {
                 Object object= ((ComboBox)comp).getSelectedItem();
                 String value = null;
                 if (object instanceof String) {
                     value = (String) object;
                 }
-                else if (object instanceof Label) {
-                    value = ((Label)object).getText();
-                }
                 else if (object instanceof Option) {
                     value = ((Option)object).getKey();
                 }
-                data.put(name, ( null == value )?"null":value );
+                else {
+                    value = String.valueOf( object );
+                }
+                data.put(name, value );
+            }
+            else if (comp instanceof Button) {
+                data.put(name, String.valueOf( ((Button)comp).isSelected() ) );
             }
         }
 
@@ -173,45 +173,44 @@ public class XULLoader {
 
     public void setFormData(Hashtable data) {
         Enumeration componentNames = data.keys();
-        Enumeration values = data.elements();
+        //Enumeration values = data.elements(); // can not do this
         while (componentNames.hasMoreElements()) {
             String componentName = (String) componentNames.nextElement();
-            Object value = values.nextElement();
+            Object value = data.get( componentName );
             Component component = (Component) find(componentName);
             if (component != null) {
                 if (component instanceof TextComponent) {
                     ((TextComponent) component).setText((String)value);
                 }
-                else if (component instanceof CheckBox) {
-                    ((CheckBox) component).setSelected("true".equals(value));
-                }
-                else if (component instanceof ComboBox)
+                else if (component instanceof ComboBox) {
                     if (!"null".equals(value)) {
                         int index = -1;
                         ComboBox combo = (ComboBox) component;
-                        Vector items = combo.getItems();
+                        Vector items = combo.getItems(); // TODO should use methods in modal
                         for (int i=0;i<items.size();i++) {
                             Object item = items.elementAt(i);
                             if (item instanceof String) {
                                 if (((String)item).equals(value)) {
                                     index = i;
-                                }
-                            }
-                            else if (item instanceof Label) {
-                                if (((Label)item).getText().equals(value)) {
-                                    index = i;
+                                    break;
                                 }
                             }
                             else if (item instanceof Option) {
                                 if (((Option)item).getKey().equals(value)) {
                                     index = i;
+                                    break;
                                 }
                             }
+                            // should NOT have components inside here!
                         }
                         if (index > -1) {
                             combo.setSelectedIndex(index);
                         }
                     }
+                }
+                else if (component instanceof Button) {
+                    ((Button) component).setSelected("true".equals(value));
+                }
             }
         }
     }
