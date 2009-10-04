@@ -77,6 +77,12 @@ public abstract class QueueProcessorThread extends Thread {
         return runnning;
     }
 
+    public void clearInbox() {
+        synchronized(this) {
+            inbox.removeAllElements();
+        }
+    }
+
     public abstract void process(Object object) throws Exception;
 
 }
