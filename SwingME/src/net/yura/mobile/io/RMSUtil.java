@@ -7,7 +7,6 @@ import javax.microedition.rms.RecordStoreFullException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.Vector;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
@@ -70,8 +69,7 @@ public class RMSUtil {
 		// Close the record store.
 		recordStore.closeRecordStore();
 
-                // avoid any nullpointers
-                return vals==null?new Vector():vals;
+                return vals;
 	}
 
 
