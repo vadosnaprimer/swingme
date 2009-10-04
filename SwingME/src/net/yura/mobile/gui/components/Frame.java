@@ -251,8 +251,10 @@ public class Frame extends Window {
 
         protected void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
 
-            // TODO ???? is this right
-            getContentPane().breakOutAction(component, direction, scrolltothere, forceFocus);
+            Component cp = getContentPane();
+            if (component == null || component == cp) {
+                getContentPane().breakOutAction(component, direction, scrolltothere, forceFocus);
+            }
 
         }
 

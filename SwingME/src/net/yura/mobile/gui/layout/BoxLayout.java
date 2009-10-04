@@ -24,7 +24,7 @@ import net.yura.mobile.gui.components.Panel;
 
 /**
  * @author Yura Mamyrin
- * @see java.awt.BoxLayout
+ * @see javax.swing.BoxLayout
  */
 public class BoxLayout implements Layout {
 

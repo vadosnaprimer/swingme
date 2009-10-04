@@ -22,7 +22,8 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
 
 /**
- * @author Administrator
+ * @author Yura Mamyrin
+ * @see javax.swing.border.TitledBorder
  */
 public class TitledBorder implements Border {
 
@@ -33,6 +34,9 @@ public class TitledBorder implements Border {
     protected Font   titleFont;
     protected int  titleColor;
 
+    /**
+     * @see javax.swing.border.TitledBorder#TitledBorder(javax.swing.border.Border, java.lang.String) TitledBorder.TitledBorder
+     */
     public TitledBorder(Border border, String title,Font f) {
         this.border = border;
         if (this.border==null) { this.border = Component.empty; }
@@ -40,6 +44,9 @@ public class TitledBorder implements Border {
         this.title = title;
     }
 
+    /**
+     * @see javax.swing.border.TitledBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) TitledBorder.paintBorder
+     */
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
         int topOffset = (getTop() - border.getTop()) /2;
         int leftOffset = getLeft()+LEFT_OFFSET;

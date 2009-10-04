@@ -111,6 +111,8 @@ public class Window extends Panel {
          */
 	protected void setFocusedComponent(Component ac) {
 
+            if (focusedComponent == ac) return;
+
             if (isFocused() && focusedComponent != null) {
                 // if we call focusLost on focusedComponent it still thinks its state is that is has focused
                 // and when it decides what to repaint, it bases it on
