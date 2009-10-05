@@ -854,11 +854,15 @@ public class DesktopPane extends Canvas implements Runnable {
     // platform Requests
     // #####################################################################
 
+    public static Midlet getMidlet() {
+        return desktop.midlet;
+    }
+
     public static void call(String number) {
 
         try {
             // TODO remove spaces from number
-            desktop.midlet.platformRequest( "tel:" + number );
+            getMidlet().platformRequest( "tel:" + number );
         }
         catch (ConnectionNotFoundException e) {
             log("can not call: "+number+" "+e.toString());
@@ -871,7 +875,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public static void openURL(String url) {
 
         try {
-            desktop.midlet.platformRequest( url );
+            getMidlet().platformRequest( url );
         }
         catch (ConnectionNotFoundException e) {
             log("can not open url: "+url+" "+e.toString());
@@ -883,7 +887,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
     public static void vibration(int duration){
         try {
-            Display.getDisplay(desktop.midlet).vibrate(duration);
+            Display.getDisplay( getMidlet() ).vibrate(duration);
         }
         catch(Exception e){
             log("can not vibration "+e.toString());
@@ -892,13 +896,9 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
-    public static Midlet getMidlet() {
-        return desktop.midlet;
-    }
-
     public static void exit() {
         try {
-            desktop.midlet.destroyApp(true);
+            getMidlet().destroyApp(true);
         }
         catch(Exception ex) {
             // as you called this yourself, you should not be throwing here
@@ -906,6 +906,11 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
+    public static void hide() {
+
+        Display.getDisplay( getMidlet() ).setCurrent(null);
+
+    }
 
     // #####################################################################
     // debug dialog
