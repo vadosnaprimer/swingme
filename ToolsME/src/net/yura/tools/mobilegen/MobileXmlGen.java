@@ -136,7 +136,23 @@ ps.println("    protected void save"+className+"(XmlSerializer serializer,"+clas
 
 ArrayList<Method> simpleMethods = getMethods(theclass,false,true,false);
 for (Method m: simpleMethods) {
+Class param = m.getReturnType();
+if (param.isPrimitive()) {
 ps.println("        serializer.attribute(null,\""+paramName(m)+"\", String.valueOf( object."+m.getName()+"() ) );");
+}
+else if (param == String.class) {
+ps.println("        if (object."+m.getName()+"()!=null) {");
+ps.println("            serializer.attribute(null,\""+paramName(m)+"\", object."+m.getName()+"() );");
+ps.println("        }");
+}
+else if (param == byte[].class) {
+ps.println("        if (object."+m.getName()+"()!=null) {");
+ps.println("            serializer.attribute(null,\""+paramName(m)+"\", new String( org.bouncycastle.util.encoders.Base64.encode( object."+m.getName()+"() ) ) );");
+ps.println("        }");
+}
+else {
+    throw new RuntimeException();
+}
 }
 
 if (theclass.getSuperclass()!=Object.class) {
@@ -248,6 +264,9 @@ ps.println("            "+(n==0?"":"else ")+"if (\""+paramName(m)+"\".equals(key
     }
     else if (param == byte.class) {
     ps.println("                object."+m.getName()+"( Byte.parseByte(value) );");
+    }
+    else if (param == byte[].class) {
+    ps.println("                object."+m.getName()+"( org.bouncycastle.util.encoders.Base64.decode(value) );");
     }
     else {
     throw new RuntimeException();
@@ -384,6 +403,6 @@ ps.println("    }");
     }
 
     private static boolean isSimpleType(Class c) {
-        return  c.isPrimitive() || c == String.class;
+        return  c.isPrimitive() || c == String.class || c == byte[].class;
     }
 }

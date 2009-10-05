@@ -18,25 +18,26 @@ public class Test {
         this.id = id;
     }
 
-    public static void main(String[] args) {
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Test other = (Test) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
 
-        Hashtable table1 = new Hashtable();
-        table1.put(new Test(), new TestObject());
-        Vector vector1 = new Vector();
-        TestObject to1 = new TestObject();
-        to1.setAge( (byte)22 );
-        to1.setName("lala");
-        vector1.addElement("bob");
-        vector1.addElement(to1);
-        table1.put("fred", vector1);
-        Hashtable login = new Hashtable();
-        // the keys in this hashtable correspond to a known
-        // messagetype, so in the server end this should come out as a Login
-        // object as defined in the proto file
-        login.put("username", "yura");
-        login.put("password", "pa55word");
-        table1.put("login", login);
-
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + this.id;
+        return hash;
     }
 
 }
