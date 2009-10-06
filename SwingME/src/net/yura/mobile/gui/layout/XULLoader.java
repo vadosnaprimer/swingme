@@ -702,9 +702,6 @@ public class XULLoader {
             else if ("rowspan".equals(key)) {
                 uiobject.rowSpan = Integer.parseInt(value);
             }
-            else if ("columns".equals(key)) {
-                uiobject.column = Integer.parseInt(value);
-            }
             else if ("valign".equals(key)) {
                 uiobject.valign = value;
             }
