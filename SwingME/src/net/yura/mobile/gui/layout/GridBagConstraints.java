@@ -26,39 +26,34 @@ public class GridBagConstraints {
     /**
      * @see java.awt.GridBagConstraints#weightx GridBagConstraints.weightx
      */
-    int weightx;
+    public int weightx;
 
     /**
      * @see java.awt.GridBagConstraints#weighty GridBagConstraints.weighty
      */
-    int weighty;
-
-    /**
-     * @see java.awt.GridBagConstraints#gridx GridBagConstraints.gridx
-     */
-    int column;
+    public int weighty;
 
     /**
      * @see java.awt.GridBagConstraints#gridwidth GridBagConstraints.gridwidth
      */
-    int colSpan;
+    public int colSpan;
 
     /**
      * @see java.awt.GridBagConstraints#gridheight GridBagConstraints.gridheight
      */
-    int rowSpan;
+    public int rowSpan;
 
     /**
      * @see java.awt.GridBagConstraints#anchor GridBagConstraints.anchor
      * @see java.awt.GridBagConstraints#fill GridBagConstraints.fill
      */
-    String halign;
+    public String halign;
 
     /**
      * @see java.awt.GridBagConstraints#anchor GridBagConstraints.anchor
      * @see java.awt.GridBagConstraints#fill GridBagConstraints.fill
      */
-    String valign;
+    public String valign;
 
     Component component;
 
@@ -94,7 +89,4 @@ public class GridBagConstraints {
         return rowSpan;
     }
 
-    public int getColumn() {
-        return column;
-    }
 }
