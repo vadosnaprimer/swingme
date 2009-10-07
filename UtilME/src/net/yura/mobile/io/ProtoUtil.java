@@ -6,9 +6,9 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import net.jarlehansen.protobuf.javame.WireFormat;
-import net.jarlehansen.protobuf.javame.input.CodedInputStream;
-import net.jarlehansen.protobuf.javame.output.CodedOutputStream;
+import net.yura.mobile.io.proto.CodedInputStream;
+import net.yura.mobile.io.proto.CodedOutputStream;
+import net.yura.mobile.io.proto.WireFormat;
 
 /**
  * @author Yura Mamyrin
@@ -30,12 +30,13 @@ public class ProtoUtil {
 
         int size = computeAnonymousObjectSize(obj);
 
-        byte[] message = new byte[size];
-        CodedOutputStream out2 = CodedOutputStream.newInstance(message);
+        //byte[] message = new byte[size];
+        CodedOutputStream out2 = CodedOutputStream.newInstance(out);
         encodeAnonymousObject(out2,obj);
 
-        out.write(message);
-System.out.println("size "+size);
+        out2.flush();
+        //out.write(message);
+System.out.println("save size "+size);
         return size;
     }
 
@@ -307,9 +308,7 @@ System.out.println("size "+size);
             // nothing??
         }
         else {
-
-
-
+            throw new IOException();
         }
 
     }
