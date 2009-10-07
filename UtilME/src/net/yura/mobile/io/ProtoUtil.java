@@ -3,6 +3,7 @@ package net.yura.mobile.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import net.jarlehansen.protobuf.javame.WireFormat;
@@ -20,6 +21,10 @@ public class ProtoUtil {
     private static final int DEFAULT_FIELD = 1;
 
     private static final int VECTOR_ELEMENT = 1;
+
+    private static final int KEY_VALUE = 1;
+    private static final int HASHTABLE_KEY = 1;
+    private static final int HASHTABLE_VALUE = 2;
 
     public int save(OutputStream out, Object obj) throws IOException {
 
@@ -77,13 +82,17 @@ System.out.println("size "+size);
         return obj;
     }
 
-
     private Object decodeObject(CodedInputStream in2,int type) throws IOException {
 
         switch (type) {
             case BinUtil.TYPE_VECTOR: return decodeVector(in2);
-            //case BinUtil.TYPE_ARRAY: return decodeArray(in2);
-            //case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
+            case BinUtil.TYPE_ARRAY: {
+                Vector v = decodeVector(in2);
+                Object[] array = new Object[v.size()];
+                v.copyInto(array);
+                return array;
+            }
+            case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
         }
 
         Object simple=null;
@@ -147,6 +156,61 @@ System.out.println("size "+size);
         return vector;
     }
 
+    private Hashtable decodeHashtable(CodedInputStream in2) throws IOException {
+        Hashtable hashtable = new Hashtable();
+
+        while (!in2.isAtEnd()) {
+            final int tag = in2.readTag();
+            final int fieldNo = WireFormat.getTagFieldNumber(tag);
+            final int wireType = WireFormat.getTagWireType(tag);
+    System.out.println("read field "+fieldNo );
+    System.out.println("wire type "+wireType );
+
+            if (fieldNo == KEY_VALUE) {
+
+                final int size = in2.readBytesSize();
+                final int lim = in2.pushLimit(size);
+
+                Object key = null;
+                Object value = null;
+                
+                while (!in2.isAtEnd()) {
+                    final int tag2 = in2.readTag();
+                    final int fieldNo2 = WireFormat.getTagFieldNumber(tag2);
+                    final int wireType2 = WireFormat.getTagWireType(tag2);
+            System.out.println("read field "+fieldNo2 );
+            System.out.println("wire type "+wireType2 );
+
+                    if (fieldNo2 == HASHTABLE_KEY) {
+
+                        int size2 = in2.readBytesSize();
+                        int lim2 = in2.pushLimit(size2);
+                        System.out.println("object size "+size2);
+                        key = decodeAnonymousObject(in2);
+                        in2.popLimit(lim2);
+
+                    }
+                    else if (fieldNo2 == HASHTABLE_VALUE) {
+
+                        int size2 = in2.readBytesSize();
+                        int lim2 = in2.pushLimit(size2);
+                        System.out.println("object size "+size2);
+                        value = decodeAnonymousObject(in2);
+                        in2.popLimit(lim2);
+                    }
+                }
+
+                hashtable.put(key, value);
+
+                in2.popLimit(lim);
+
+            }
+
+        }
+
+        return hashtable;
+    }
+
     // #########################################################################
 
     private int computeObjectSize(Object obj) {
@@ -175,12 +239,12 @@ System.out.println("size "+size);
         else if (obj instanceof Byte) {
             return CodedOutputStream.computeInt32Size(DEFAULT_FIELD,((Byte)obj).byteValue());
         }
-//        else if (obj instanceof Object[]) {
-//            return computeArraySize( (Object[])obj );
-//        }
-//        else if (obj instanceof Hashtable) {
-//            return computeHashtableSize( (Hashtable)obj );
-//        }
+        else if (obj instanceof Object[]) {
+            return computeArraySize( (Object[])obj );
+        }
+        else if (obj instanceof Hashtable) {
+            return computeHashtableSize( (Hashtable)obj );
+        }
         else if (obj instanceof byte[]) {
             return CodedOutputStream.computeBytesSize(DEFAULT_FIELD, ((byte[])obj).length );
         }
@@ -227,12 +291,12 @@ System.out.println("size "+size);
         else if (obj instanceof Byte) {
             out.writeInt32(DEFAULT_FIELD, ((Byte)obj).byteValue());
         }
-//        else if (obj instanceof Object[]) {
-//            writeArray( out, (Object[])obj );
-//        }
-//        else if (obj instanceof Hashtable) {
-//            writeHashtable( out, (Hashtable)obj );
-//        }
+        else if (obj instanceof Object[]) {
+            encodeArray( out, (Object[])obj );
+        }
+        else if (obj instanceof Hashtable) {
+            encodeHashtable( out, (Hashtable)obj );
+        }
         else if (obj instanceof byte[]) {
             out.writeBytes(DEFAULT_FIELD, (byte[])obj);
         }
@@ -281,11 +345,72 @@ System.out.println("size "+size);
         return size;
     }
 
+    private int computeArraySize(Object[] vector) {
+        int size=0;
+        for (int c=0;c<vector.length;c++) {
+            int s = computeAnonymousObjectSize( vector[c] );
+            size = size + CodedOutputStream.computeBytesSize(VECTOR_ELEMENT, s);
+        }
+        return size;
+    }
+
+
+    private int computeHashtableSize(Hashtable hashtable) {
+
+        int totalSize = 0;
+
+        Enumeration enu = hashtable.keys();
+        while (enu.hasMoreElements()) {
+            Object key = enu.nextElement();
+            Object value = hashtable.get(key);
+
+            int keySize = computeAnonymousObjectSize(key);
+            int valueSize = computeAnonymousObjectSize(value);
+            int size1 = CodedOutputStream.computeBytesSize(HASHTABLE_KEY, keySize);
+            int size2 = CodedOutputStream.computeBytesSize(HASHTABLE_VALUE, valueSize);
+
+            int s = CodedOutputStream.computeBytesSize(KEY_VALUE, size1+size2);
+
+            totalSize = totalSize + s;
+        }
+
+        return totalSize;
+
+    }
+
     private void encodeVector(CodedOutputStream out, Vector vector) throws IOException {
         for (int c=0;c<vector.size();c++) {
             Object obj = vector.elementAt(c);
             out.writeBytes(VECTOR_ELEMENT, computeAnonymousObjectSize(obj));
             encodeAnonymousObject( out, obj );
+        }
+    }
+    private void encodeArray(CodedOutputStream out, Object[] vector) throws IOException {
+        for (int c=0;c<vector.length;c++) {
+            Object obj = vector[c];
+            out.writeBytes(VECTOR_ELEMENT, computeAnonymousObjectSize(obj));
+            encodeAnonymousObject( out, obj );
+        }
+    }
+
+    private void encodeHashtable(CodedOutputStream out, Hashtable vector) throws IOException {
+        Enumeration enu = vector.keys();
+        while (enu.hasMoreElements()) {
+            Object key = enu.nextElement();
+            Object value = vector.get(key);
+
+            int keySize = computeAnonymousObjectSize(key);
+            int valueSize = computeAnonymousObjectSize(value);
+            int size1 = CodedOutputStream.computeBytesSize(HASHTABLE_KEY, keySize);
+            int size2 = CodedOutputStream.computeBytesSize(HASHTABLE_VALUE, valueSize);
+
+            out.writeBytes(KEY_VALUE,size1+size2 );
+
+            out.writeBytes(HASHTABLE_KEY, keySize);
+            encodeAnonymousObject( out, key );
+
+            out.writeBytes(HASHTABLE_VALUE, valueSize);
+            encodeAnonymousObject( out, value );
         }
     }
 
