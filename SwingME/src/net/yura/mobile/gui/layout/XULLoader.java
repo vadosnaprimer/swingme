@@ -749,6 +749,11 @@ public class XULLoader {
                                     ((TextComponent)comp).setMaxSize( Integer.parseInt(property[1]) );
                                 }
                             }
+                            else if( "fixedCellHeight".equals( property[0] ) ) {
+                                if (comp instanceof List) {
+                                    ((List)comp).setFixedCellHeight( Integer.parseInt(property[1]) );
+                                }
+                            }
                             //#mdebug
                             else {
                                 System.out.println( "XULLoader.GridBagConstraints() - property key does not exist: " + property[0]);

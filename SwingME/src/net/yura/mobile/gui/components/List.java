@@ -738,6 +738,10 @@ public class List extends Component implements ActionListener {
         fixedCellHeight = height;
     }
 
+    public int getFixedCellHeight(){
+        return fixedCellHeight;
+    }
+
     /**
      * @param width
      * @see javax.swing.JList#setFixedCellWidth(int) JList.setFixedCellWidth
