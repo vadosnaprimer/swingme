@@ -4,6 +4,24 @@
 
     <import file="nbproject/build-impl.xml"/>
 
+
+    <!-- REAL PROTO -->
+    <property name="outdir" value="./src"/>
+    <property name="srcdir" value="${basedir}"/>
+    <property name="proto" value="${basedir}\test.proto"/>
+
+    <target name="protoc" description="generate proto files">
+        <exec executable="${basedir}/proto/protoc.exe">
+          <arg value="--java_out=${outdir}" />
+          <arg value="--proto_path=${srcdir}" />
+          <arg value="${proto}" />
+        </exec>
+    </target>
+
+
+
+
+
     <property name="lib.dir" value="./lib"/>
     <property name="src.dir" value="./src"/>
 
@@ -40,7 +58,7 @@
 
 
 
-        <taskdef classname="net.yura.tools.mobilegen.proto.MobileProtoGen" classpath="./dist/${ant.project.name}.jar" name="gen-proto"/>
+        <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpath="./dist/${ant.project.name}.jar" name="gen-proto"/>
         <gen-proto
             protoSource="${basedir}/test.proto"
             objectPackage="net.yura.tools.mobilegen.model"

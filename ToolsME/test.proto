@@ -1,36 +1,31 @@
+
+option java_package = "net.yura.server.gen";
+option java_outer_classname = "TestProtos";
+
 enum ObjectType {
 
-    UNKNOWN                            =    0;
-    END                                =    1;
-    NULL                               =    2;
-    
-    JAVA_LANG_BOOLEAN                  = 1001;
-    JAVA_LANG_BYTE                     = 1002;
-    JAVA_LANG_CHARACTER                = 1003;
-    JAVA_LANG_DOUBLE                   = 1004;
-    JAVA_LANG_FLOAT                    = 1005;
-    JAVA_LANG_INTEGER                  = 1006;
-    JAVA_LANG_LONG                     = 1007;
-    JAVA_LANG_SHORT                    = 1008;
-    JAVA_LANG_STRING                   = 1009;
-    JAVA_UTIL_HASHTABLE                = 1010;
-    JAVA_UTIL_VECTOR                   = 1011;
-    
-    TEST                               = 10001;
-    NUMBER                             = 10002;
-    TEST_OBJECT                        = 10003;
-}
+    TYPE_BYTE_ARRAY = 13;
+    TYPE_HASHTABLE = 12;
+    TYPE_VECTOR = 10;
+    TYPE_ARRAY = 11;
+    TYPE_STRING = 5;
+    TYPE_INTEGER = 1;
+    TYPE_DOUBLE = 2;
+    TYPE_FLOAT = 3;
+    TYPE_BOOLEAN = 4;
+    TYPE_SHORT = 6;
+    TYPE_LONG = 7;
+    TYPE_CHARACTER = 8;
+    TYPE_BYTE = 9;
+    TYPE_NULL = 0;
 
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Objects required for Collections and variable size objects
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-message Prefix {
-    required ObjectType objectType = 2;
-}
+    TYPE_MESSAGE = 20;
+    TYPE_LOGIN = 22;
+    TYPE_BOB                                = 10000;
+    TYPE_TEST                               = 10001;
 
-message Suffix {
-    required int32 endOfObject = 1; // @map byte
+    TYPE_TEST_OBJECT                        = 10003;
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -43,10 +38,7 @@ message Test {
 
 // Number was originally defined as a public static class inside TestObject.
 
-message Number {
-	required string number           = 1202;
-	required int32  type             = 1203;
-}
+
 
 // TestObject extends Test. In order to simplify Java OO extension, we just copy the fields from
 // the Test object to TestObject. 
@@ -58,7 +50,59 @@ message TestObject {
 	required int32 id                = 1204; 
 	required string  name            = 1205;
 	required int32   age             = 1206;
-	repeated required Number numbers = 1207;  
-	repeated required bytes body     = 1208; // @map Object
-	repeated required string legs    = 1209; 
+
+	repeated Object body     = 1208;
+	repeated string legs    = 1209; 
+}
+
+
+message Login {
+    required string username = 1;
+    required string password = 2;
+    optional Type type = 3;
+    repeated TestObject tests = 4;
+}
+
+enum Type {
+    BOBA = 1;
+    FRED = 2;
+    LALA = 3;
+}
+
+// the problem with this is that we need to keep
+// track how many bytes we have ready as we read from the stream
+
+
+
+message Vector {
+    repeated Object elements = 1;
+}
+
+message Hashtable {
+    repeated KeyValue mappings = 1;
+}
+
+message KeyValue {
+    required Object key = 1;
+    optional Object value = 2;
+}
+
+message Object {
+    required ObjectType objectType = 1;
+    optional bytes value = 2;
+}
+
+message Bob {
+    repeated Vector vec1 = 1;
+    repeated Vector vec2 = 2;
+    repeated Vector vec3 = 3;
+}
+
+message String {
+    optional string value = 1;
+}
+
+message Message {
+    required MessageType type = 1;
+    optional Object body = 2;
 }

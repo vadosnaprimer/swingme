@@ -2,6 +2,8 @@ package net.yura.tools.mobilegen.test;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,7 +15,11 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Vector;
 import net.yura.mobile.gen.BinAccess;
+
 import net.yura.mobile.gen.XMLAccess;
+import net.yura.mobile.io.ProtoUtil;
+import net.yura.mobile.io.proto.ProtoInputStream;
+import net.yura.mobile.io.proto.ProtoOutputStream;
 import net.yura.tools.mobilegen.model.Test;
 import net.yura.tools.mobilegen.model.TestObject;
 import org.kxml2.io.KXmlParser;
@@ -56,7 +62,7 @@ public class Test1 {
 
     public static void main(String... args) throws Exception {
 
-
+/*
         ReadWrite kxml = new ReadWrite() {
             XMLAccess xml = new XMLAccess();
             @Override
@@ -121,25 +127,72 @@ public class Test1 {
                 return xml.load( new InputStreamReader(is) );
             }
         };
-
         doTest(kxml2);
 
 
-/*
         ReadWrite proto = new ReadWrite() {
             ProtoAccess bin = new ProtoAccess();
             @Override
             void save(Object o) throws Exception {
-                bin.save(os,  o);
+                bin.writeObject(o, new ProtoOutputStream( os ) );
+            }
+            @Override
+            Object read() throws Exception {
+                return bin.readObject( new ProtoInputStream(is) );
+            }
+        };
+        doTest(proto);
+
+
+        ReadWrite proto2 = new ReadWrite() {
+            ProtoUtil bin = new ProtoUtil();
+            @Override
+            void save(Object o) throws Exception {
+                bin.save(os, o);
             }
             @Override
             Object read() throws Exception {
                 return bin.load(is);
             }
         };
+*/
 
-        doTest(proto);
- */
+
+
+
+        ReadWrite proto2 = new ReadWrite() {
+            ProtoUtil bin = new ProtoUtil();
+
+            int size;
+
+            @Override
+            void save(Object o) throws Exception {
+
+//                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                size = bin.save(os, o);
+//                byte[] bytes = out.toByteArray();
+//                System.out.println("bytes array size "+bytes.length);
+//                for (int c=0;c<bytes.length;c++) {
+//                    System.out.println("reading "+c+" "+bytes[c]);
+//                }
+//                os.write( bytes );
+                //os.write( ((net.yura.server.gen.TestProtos.Object)o).toByteArray() );
+            }
+            @Override
+            Object read() throws Exception {
+                return bin.load(is, size);
+//                int c=0;
+//                while (is.available()>0) {
+//                    c++;
+//                    System.out.println("reading "+c+" "+is.read());
+//                }
+//                return null; // net.yura.server.gen.TestProtos.Object.parseFrom( bytes );
+            }
+        };
+
+
+        doTest(proto2);
+ 
 
     }
 
@@ -148,14 +201,16 @@ public class Test1 {
     public static void doTest(final ReadWrite util) throws Exception {
 
         final Vector objects = new Vector();
-        objects.add(getTestObject1());
         objects.add(getTestObject2());
-        objects.add(getTestObject1());
-        objects.add(getTestObject2());
-        objects.add(getTestObject1());
-        objects.add(getTestObject2());
-        objects.add(getTestObject1());
-
+        //objects.add( Test2.getTest1() );
+        /*
+        objects.add(getTestObject4());
+        objects.add(getTestObject3());
+        objects.add(getTestObject4());
+        objects.add(getTestObject3());
+        objects.add(getTestObject4());
+        objects.add(getTestObject3());
+*/
         Thread a = new Thread() {
             @Override
             public void run() {
@@ -172,21 +227,55 @@ public class Test1 {
         };
         a.start();
 
+        Thread.sleep(3000);
+
         System.out.println();
 
         XMLAccess kxml = new XMLAccess();
 
         for (Object obj:objects) {
             Object o1 = util.read();
-            System.out.print("equals=" +obj.equals(o1) +" ");
+            System.out.print("equals=" +obj.equals(o1) +" "+o1);
             kxml.save(System.out, o1);
             System.out.println();
         }
 
     }
 
-
     public static Object getTestObject1() {
+
+        return "bob the builder";
+
+    }
+
+
+    public static Object getTestObject2() {
+
+        Vector bob = new Vector();
+
+        bob.add("hello1");
+
+        Vector bob2 = new Vector();
+        bob2.add( new Integer(-666) );
+        bob2.add(null);
+        bob2.add( new Float(666) );
+
+        bob.add(bob2);
+
+        //bob.add(new byte[] {1,2,3,4,5,6,7,8,9,0} ); // kills the kml print out
+        bob.add("lala");
+        bob.add(null);
+        //bob.add( new Object[] {"bob","the","builder","no",new Short( (short)5 ) } );
+
+        Hashtable table = new Hashtable();
+        table.put(new Double(123), new Double(456));
+        table.put("KeyExample","ValueExample");
+
+        bob.add(table);
+        return bob;
+    }
+
+    public static Object getTestObject3() {
 
         Hashtable table1 = new Hashtable();
         table1.put(new Test(), new TestObject());
@@ -212,7 +301,7 @@ public class Test1 {
 
     }
 
-    public static Object getTestObject2() {
+    public static Object getTestObject4() {
 
         TestObject product2 = new TestObject();
         product2.setName("yura1");
