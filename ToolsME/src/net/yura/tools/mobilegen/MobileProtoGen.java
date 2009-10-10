@@ -168,71 +168,122 @@ printLoadMethods(ps);
 
 Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
 for (ProtoLoader.FieldDefinition field:fields) {
-    int fieldId = field.getID();
 
-    if (message.getImplementation() != Hashtable.class) {
-
-        if (field.repeated) {
-            if (field.getImplementation() == Vector.class) {
-ps.println("        Vector vector = object.get"+field.getName()+"();");
-ps.println("        for (int c=0;c<vector.size();c++) {");
-ps.println("            Object obj = vector.elementAt(c);");
-            }
-            else { // must be a array
-ps.println("        "+field.getImplementation().getComponentType().getSimpleName()+"[] array = object.get"+firstUp(field.getName())+"();");
-ps.println("        for (int c=0;c<array.length;c++) {");
-ps.println("            "+field.getImplementation().getComponentType().getSimpleName()+" obj = array[c];");
-            }
-            if (field.packed) {
-printSaveCalcField(ps,field,calc);
+        final String type;
+        if (field.getEnumeratedType()!=null) {
+            type = "String";
+        }
+        else if (message.getImplementation() == Hashtable.class) {
+            if (isPrimitive(field.getType())) {
+                type = primitiveToJavaType(field.getType());
             }
             else {
-printSaveCalcField(ps,field,calc);
+                type = field.getType();
             }
+        }
+        else {
+            if (field.repeated && field.getImplementation().isArray()) {
+                type = field.getImplementation().getComponentType().getSimpleName();
+            }
+            else {
+                type = field.getImplementation().getSimpleName();
+            }
+        }
+
+
+        if (field.repeated) {
+            if (field.getImplementation() == null || field.getImplementation() == Vector.class) {
+                if (field.getImplementation() == null) {
+ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+field.getName()+"\");");
+                }
+                else {
+ps.println("        Vector "+field.getName()+"Vector = object.get"+field.getName()+"();");
+                }
+ps.println("        for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
+ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector.elementAt(c);");
+            }
+            else { // must be a array
+ps.println("        "+type+"[] array = object.get"+firstUp(field.getName())+"();");
+ps.println("        for (int c=0;c<array.length;c++) {");
+ps.println("            "+type+" "+field.getName()+"Value = array[c];");
+            }
+                        printSaveCalcField(ps,field,message,calc);
+
 ps.println("        }");
         }
         else {
-            if (field.required) {
-printSaveCalcField(ps,field,calc);
+
+            if (message.getImplementation() == Hashtable.class) {
+                ps.println(type+" "+field.getName()+"Value = ("+type+")object.get(\""+field.getName()+"\");");
             }
-            else { // options
-ps.println("        if (object.get"+firstUp(field.getName())+"()!=null) {");
-printSaveCalcField(ps,field,calc);
-ps.println("        }");
+            else {
+                ps.println(type+" "+field.getName()+"Value = object.get"+firstUp(field.getName())+"();");
             }
+            printSaveCalcField(ps,field,message,calc);
         }
-    }
-    else { // hashtable
 
-
-    }
 }
 
 
     }
 
-    private void printSaveCalcField(PrintStream ps, FieldDefinition field,boolean calc) {
+    private void printSaveCalcField(PrintStream ps, FieldDefinition field,MessageDefinition message,boolean calc) {
+
+        boolean optional = !field.repeated && !field.required;
+
+        if (optional) {
+            ps.println("if ("+field.getName()+"Value!=null) {");
+        }
+
+        final String thing;
+        final String type;
+        if (field.getEnumeratedType()!=null) {
+            thing = "get"+field.getType()+"Enum("+field.getName()+"Value)";
+            type = "int32";
+        }
+        else {
+            thing = field.getName()+"Value";
+            type = field.getType();
+        }
 
         if (calc) {
-
-Class param = field.getImplementation();
-if (param.isPrimitive() || param == String.class) {
-ps.println("        size = size + CodedOutputStream.compute"+firstUp(field.getType())+"Size("+field.getID()+", object.get"+firstUp(field.getName())+"() );");
-}
-else {
-ps.println("         int s = compute"+param.getSimpleName()+"Size(object.get"+firstUp(field.getName())+"() );");
-ps.println("         size = size + CodedOutputStream.computeBytesSize("+field.getID()+", s);");
-}
+            if ( isPrimitive(type) ) {
+                ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+thing+" );");
+            }
+            else {
+                if ( "Object".equals(type) ) {
+                    ps.println("int s = computeAnonymousObjectSize( "+thing+" );");
+                }
+                else {
+                    ps.println("int s = compute"+type+"Size( "+thing+" );");
+                }
+                ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", s);");
+            }
         }
         else {
+            if ( isPrimitive(type) ) {
+                ps.println("        out.write"+firstUp(type)+"("+field.getID()+", "+thing+" );");
+            }
+            else {
+                if ( "Object".equals(type) ) {
+                    ps.println("int s = computeAnonymousObjectSize( "+thing+" );");
+                }
+                else {
+                    ps.println("int s = compute"+type+"Size( "+thing+" );");
+                }
 
-Class param = field.getImplementation();
-if (param.isPrimitive() || param == String.class) {
-ps.println("        out.write"+firstUp(field.getType())+"("+field.getID()+", object.get"+firstUp(field.getName())+"() );");
-}
-else {
-ps.println("        write"+param.getSimpleName()+"( out, "+field.getID()+", object.get"+firstUp(field.getName())+"() );");
-}
+                ps.println("out.writeBytes("+field.getID()+",s);");
+                if ( "Object".equals(type) ) {
+                    ps.println("encodeAnonymousObject( out, "+thing+" );");
+                }
+                else {
+                    ps.println("encode"+type+"( out, "+thing+" );");
+                }
+            }
+        }
+
+        if (optional) {
+            ps.println("}");
         }
     }
 
@@ -256,7 +307,7 @@ ps.println("        write"+param.getSimpleName()+"( out, "+field.getID()+", obje
 
 for (MessageDefinition message:messages) {
 
-ps.println("    private "+message.getImplementation().getSimpleName()+" decode"+message.getName()+"(CodedInputStream in2) {");
+ps.println("    private "+message.getImplementation().getSimpleName()+" decode"+message.getName()+"(CodedInputStream in2) throws IOException {");
 
 
 ps.println("        "+message.getImplementation().getSimpleName()+" object = new "+message.getImplementation().getSimpleName()+"();");
@@ -279,7 +330,7 @@ ps.println("                case "+field.getID()+": {");
 if (message.getImplementation() != Hashtable.class) {
 System.out.println(message+" "+field);
     if (field.getImplementation().isPrimitive() || field.getImplementation() == String.class) {
-    ps.println("                object.set"+firstUp(field.getName())+"( in2.read"+firstUp(field.getType())+"() );");
+    ps.println("                object.set"+firstUp(field.getName())+"( ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"() );");
     }
     else {
     ps.println("                int size = in2.readBytesSize();");
@@ -400,14 +451,15 @@ ps.println("            Hashtable table = (Hashtable)obj;");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() == Hashtable.class) {
-ps.print("            if (table.size() == "+getMessageFromEnum(enu.getKey()).getFields().size());
 
+String line ="";
 Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
 for (ProtoLoader.FieldDefinition field:fields) {
-ps.print(" && table.get(\""+field.getName()+"\")!=null");
+line = line +" && table.get(\""+field.getName()+"\")!=null";
 }
 
-ps.println(") {");
+ps.println("            if (table.size() == "+getMessageFromEnum(enu.getKey()).getFields().size()+line+") {");
+
 ps.println("                return "+enu.getKey()+";");
 ps.println("            }");
     }
@@ -469,4 +521,72 @@ ps.println("    }");
         return md;
     }
 
+    private static boolean isPrimitive( String type ) {
+
+        return(
+            type.equals( "double"   ) ||
+            type.equals( "float"    ) ||
+            type.equals( "int32"    ) ||
+            type.equals( "int64"    ) ||
+            type.equals( "uint32"   ) ||
+            type.equals( "uint64"   ) ||
+            type.equals( "sint32"   ) ||
+            type.equals( "sint64"   ) ||
+            type.equals( "fixed32"  ) ||
+            type.equals( "fixed64"  ) ||
+            type.equals( "sfixed32" ) ||
+            type.equals( "sfixed64" ) ||
+            type.equals( "bool"     ) ||
+            type.equals( "string"   ) ||
+            type.equals( "bytes"    )
+            );
+    }
+    private static String primitiveToJavaType( String type ) {
+
+        if (
+            type.equals( "string"   )
+            )
+            return "String";
+
+        if (
+            type.equals( "int32"    ) ||
+            type.equals( "uint32"   ) ||
+            type.equals( "sint32"   ) ||
+            type.equals( "fixed32"  ) ||
+            type.equals( "sfixed32" )
+            )
+            return "Integer";
+
+        if (
+            type.equals( "int64"    ) ||
+            type.equals( "uint64"   ) ||
+            type.equals( "sint64"   ) ||
+            type.equals( "fixed64"  ) ||
+            type.equals( "sfixed64" )
+            )
+            return "Long";
+
+        if (
+            type.equals( "bytes"    )
+            )
+            return "byte[]";
+
+        if (
+            type.equals( "double"   )
+            )
+            return "Double";
+
+        if (
+            type.equals( "float"    )
+            )
+            return "Float";
+
+        if (
+            type.equals( "bool"     )
+            )
+            return "Boolean";
+
+        throw new RuntimeException();
+
+    }
 }

@@ -64,13 +64,13 @@ public class ProtoAccess extends ProtoUtil {
     protected int getObjectTypeEnum(Object obj) {
         if (obj instanceof Hashtable) {
             Hashtable table = (Hashtable)obj;
-            if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null            ) {
+            if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null) {
                 return TYPE_BOB;
             }
-            if (table.size() == 4 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null            ) {
+            if (table.size() == 5 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null) {
                 return TYPE_LOGIN;
             }
-            if (table.size() == 1 && table.get("body")!=null            ) {
+            if (table.size() == 1 && table.get("body")!=null) {
                 return TYPE_MESSAGE;
             }
         }
@@ -84,61 +84,171 @@ public class ProtoAccess extends ProtoUtil {
     }
     private int computeMessageSize(Hashtable object) {
         int size=0;
+        Object bodyValue = (Object)object.get("body");
+        if (bodyValue!=null) {
+            int s = computeAnonymousObjectSize( bodyValue );
+            size = size + CodedOutputStream.computeBytesSize(1, s);
+        }
         return size;
     }
     private int computeLoginSize(Hashtable object) {
         int size=0;
+        String usernameValue = (String)object.get("username");
+        size = size + CodedOutputStream.computeStringSize(1, usernameValue );
+        String passwordValue = (String)object.get("password");
+        size = size + CodedOutputStream.computeStringSize(2, passwordValue );
+        String typeValue = (String)object.get("type");
+        if (typeValue!=null) {
+            size = size + CodedOutputStream.computeInt32Size(3, getTypeEnum(typeValue) );
+        }
+        Vector testsVector = (Vector)object.get("tests");
+        for (int c=0;c<testsVector.size();c++) {
+            TestObject testsValue = (TestObject)testsVector.elementAt(c);
+            int s = computeTestObjectSize( testsValue );
+            size = size + CodedOutputStream.computeBytesSize(4, s);
+        }
+        byte[] imageValue = (byte[])object.get("image");
+        if (imageValue!=null) {
+            size = size + CodedOutputStream.computeBytesSize(5, imageValue );
+        }
         return size;
     }
     private int computeBobSize(Hashtable object) {
         int size=0;
+        Vector vec1Vector = (Vector)object.get("vec1");
+        for (int c=0;c<vec1Vector.size();c++) {
+            Vector vec1Value = (Vector)vec1Vector.elementAt(c);
+            int s = computeVectorSize( vec1Value );
+            size = size + CodedOutputStream.computeBytesSize(1, s);
+        }
+        Vector vec2Vector = (Vector)object.get("vec2");
+        for (int c=0;c<vec2Vector.size();c++) {
+            Vector vec2Value = (Vector)vec2Vector.elementAt(c);
+            int s = computeVectorSize( vec2Value );
+            size = size + CodedOutputStream.computeBytesSize(2, s);
+        }
+        Vector vec3Vector = (Vector)object.get("vec3");
+        for (int c=0;c<vec3Vector.size();c++) {
+            Vector vec3Value = (Vector)vec3Vector.elementAt(c);
+            int s = computeVectorSize( vec3Value );
+            size = size + CodedOutputStream.computeBytesSize(3, s);
+        }
         return size;
     }
     private int computeTestSize(Test object) {
         int size=0;
-        size = size + CodedOutputStream.computeInt32Size(1201, object.getId() );
+        int idValue = object.getId();
+        size = size + CodedOutputStream.computeInt32Size(1201, idValue );
         return size;
     }
     private int computeTestObjectSize(TestObject object) {
         int size=0;
-        size = size + CodedOutputStream.computeInt32Size(1204, object.getId() );
-        size = size + CodedOutputStream.computeStringSize(1205, object.getName() );
-        size = size + CodedOutputStream.computeInt32Size(1206, object.getAge() );
-        if (object.getBody()!=null) {
-            int s = computeObjectSize(object.getBody() );
+        int idValue = object.getId();
+        size = size + CodedOutputStream.computeInt32Size(1204, idValue );
+        String nameValue = object.getName();
+        size = size + CodedOutputStream.computeStringSize(1205, nameValue );
+        byte ageValue = object.getAge();
+        size = size + CodedOutputStream.computeInt32Size(1206, ageValue );
+        String myTypeValue = object.getMyType();
+        size = size + CodedOutputStream.computeInt32Size(1207, getTypeEnum(myTypeValue) );
+        Object bodyValue = object.getBody();
+        if (bodyValue!=null) {
+            int s = computeAnonymousObjectSize( bodyValue );
             size = size + CodedOutputStream.computeBytesSize(1208, s);
         }
         String[] array = object.getLegs();
         for (int c=0;c<array.length;c++) {
-            String obj = array[c];
-            int s = computeString[]Size(object.getLegs() );
-            size = size + CodedOutputStream.computeBytesSize(1209, s);
+            String legsValue = array[c];
+            size = size + CodedOutputStream.computeStringSize(1209, legsValue );
+        }
+        byte[] imageValue = object.getImage();
+        if (imageValue!=null) {
+            size = size + CodedOutputStream.computeBytesSize(1, imageValue );
         }
         return size;
     }
     private void encodeMessage(CodedOutputStream out, Hashtable object) throws IOException {
+        Object bodyValue = (Object)object.get("body");
+        if (bodyValue!=null) {
+            int s = computeAnonymousObjectSize( bodyValue );
+            out.writeBytes(1,s);
+            encodeAnonymousObject( out, bodyValue );
+        }
     }
     private void encodeLogin(CodedOutputStream out, Hashtable object) throws IOException {
+        String usernameValue = (String)object.get("username");
+        out.writeString(1, usernameValue );
+        String passwordValue = (String)object.get("password");
+        out.writeString(2, passwordValue );
+        String typeValue = (String)object.get("type");
+        if (typeValue!=null) {
+            out.writeInt32(3, getTypeEnum(typeValue) );
+        }
+        Vector testsVector = (Vector)object.get("tests");
+        for (int c=0;c<testsVector.size();c++) {
+            TestObject testsValue = (TestObject)testsVector.elementAt(c);
+            int s = computeTestObjectSize( testsValue );
+            out.writeBytes(4,s);
+            encodeTestObject( out, testsValue );
+        }
+        byte[] imageValue = (byte[])object.get("image");
+        if (imageValue!=null) {
+            out.writeBytes(5, imageValue );
+        }
     }
     private void encodeBob(CodedOutputStream out, Hashtable object) throws IOException {
+        Vector vec1Vector = (Vector)object.get("vec1");
+        for (int c=0;c<vec1Vector.size();c++) {
+            Vector vec1Value = (Vector)vec1Vector.elementAt(c);
+            int s = computeVectorSize( vec1Value );
+            out.writeBytes(1,s);
+            encodeVector( out, vec1Value );
+        }
+        Vector vec2Vector = (Vector)object.get("vec2");
+        for (int c=0;c<vec2Vector.size();c++) {
+            Vector vec2Value = (Vector)vec2Vector.elementAt(c);
+            int s = computeVectorSize( vec2Value );
+            out.writeBytes(2,s);
+            encodeVector( out, vec2Value );
+        }
+        Vector vec3Vector = (Vector)object.get("vec3");
+        for (int c=0;c<vec3Vector.size();c++) {
+            Vector vec3Value = (Vector)vec3Vector.elementAt(c);
+            int s = computeVectorSize( vec3Value );
+            out.writeBytes(3,s);
+            encodeVector( out, vec3Value );
+        }
     }
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
-        out.writeInt32(1201, object.getId() );
+        int idValue = object.getId();
+        out.writeInt32(1201, idValue );
     }
     private void encodeTestObject(CodedOutputStream out, TestObject object) throws IOException {
-        out.writeInt32(1204, object.getId() );
-        out.writeString(1205, object.getName() );
-        out.writeInt32(1206, object.getAge() );
-        if (object.getBody()!=null) {
-            writeObject( out, 1208, object.getBody() );
+        int idValue = object.getId();
+        out.writeInt32(1204, idValue );
+        String nameValue = object.getName();
+        out.writeString(1205, nameValue );
+        byte ageValue = object.getAge();
+        out.writeInt32(1206, ageValue );
+        String myTypeValue = object.getMyType();
+        out.writeInt32(1207, getTypeEnum(myTypeValue) );
+        Object bodyValue = object.getBody();
+        if (bodyValue!=null) {
+            int s = computeAnonymousObjectSize( bodyValue );
+            out.writeBytes(1208,s);
+            encodeAnonymousObject( out, bodyValue );
         }
         String[] array = object.getLegs();
         for (int c=0;c<array.length;c++) {
-            String obj = array[c];
-            writeString[]( out, 1209, object.getLegs() );
+            String legsValue = array[c];
+            out.writeString(1209, legsValue );
+        }
+        byte[] imageValue = object.getImage();
+        if (imageValue!=null) {
+            out.writeBytes(1, imageValue );
         }
     }
-    private Hashtable decodeMessage(CodedInputStream in2) {
+    private Hashtable decodeMessage(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
@@ -152,7 +262,7 @@ public class ProtoAccess extends ProtoUtil {
         }
         return object;
     }
-    private Hashtable decodeLogin(CodedInputStream in2) {
+    private Hashtable decodeLogin(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
@@ -171,11 +281,14 @@ public class ProtoAccess extends ProtoUtil {
                 case 4: {
                     break;
                 }
+                case 5: {
+                    break;
+                }
             }
         }
         return object;
     }
-    private Hashtable decodeBob(CodedInputStream in2) {
+    private Hashtable decodeBob(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
@@ -195,7 +308,7 @@ public class ProtoAccess extends ProtoUtil {
         }
         return object;
     }
-    private Test decodeTest(CodedInputStream in2) {
+    private Test decodeTest(CodedInputStream in2) throws IOException {
         Test object = new Test();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
@@ -203,14 +316,14 @@ public class ProtoAccess extends ProtoUtil {
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1201: {
-                    object.setId( in2.readInt32() );
+                    object.setId( (int)in2.readInt32() );
                     break;
                 }
             }
         }
         return object;
     }
-    private TestObject decodeTestObject(CodedInputStream in2) {
+    private TestObject decodeTestObject(CodedInputStream in2) throws IOException {
         TestObject object = new TestObject();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
@@ -218,15 +331,19 @@ public class ProtoAccess extends ProtoUtil {
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1204: {
-                    object.setId( in2.readInt32() );
+                    object.setId( (int)in2.readInt32() );
                     break;
                 }
                 case 1205: {
-                    object.setName( in2.readString() );
+                    object.setName( (String)in2.readString() );
                     break;
                 }
                 case 1206: {
-                    object.setAge( in2.readInt32() );
+                    object.setAge( (byte)in2.readInt32() );
+                    break;
+                }
+                case 1207: {
+                    object.setMyType( (String)in2.readType() );
                     break;
                 }
                 case 1208: {
@@ -241,6 +358,14 @@ public class ProtoAccess extends ProtoUtil {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
                     object.setLegs( decodeString[](in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
+                    break;
+                }
+                case 1: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setImage( decodebyte[](in2) );
                     vector.addElement(obj);
                     in2.popLimit(lim);
                     break;

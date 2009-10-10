@@ -108,14 +108,16 @@ public class ProtoLoader {
         {
             String s = (String)e.nextElement();
             s = s.replace( "\\{" , " {" );
-
-                if ( s.startsWith( "message" ) )
-                    parseMessage(s);
-
                 if ( s.startsWith( "enum" ) )
                     parseEnum(s);
         }
-
+        for( Enumeration e = raw.elements() ; e.hasMoreElements() ; )
+        {
+            String s = (String)e.nextElement();
+            s = s.replace( "\\{" , " {" );
+                if ( s.startsWith( "message" ) )
+                    parseMessage(s);
+        }
     }
 
 
@@ -278,6 +280,13 @@ public class ProtoLoader {
         fd.setRequired(required);
         fd.setRepeated(repeated);
         fd.setType(type);
+
+
+        EnumDefinition enu = this.enumDefs.get( type );
+        if (enu!=null) {
+            fd.setEnumeratedType(enu);
+        }
+
         //fd.setMap( javaType );
         fd.setID( Integer.parseInt(tag) );
 
@@ -437,8 +446,7 @@ public class ProtoLoader {
 
     class FieldDefinition {
         protected String type;
-        protected String map;
-        protected boolean enumeratedType = false;
+        protected EnumDefinition enumeratedType;
         protected Class fieldClass;
 
         protected int     id;
@@ -515,23 +523,12 @@ public class ProtoLoader {
             this.type = type;
         }
 
-        public String getMap()
-        {
-            return this.map;
-        }
-
-        public void setMap( String map )
-        {
-            this.map = map;
-        }
-
-
-        public boolean isEnumeratedType()
+        public EnumDefinition getEnumeratedType()
         {
             return this.enumeratedType;
         }
 
-        public void setEnumeratedType( boolean enumeratedType )
+        public void setEnumeratedType( EnumDefinition enumeratedType )
         {
             this.enumeratedType = enumeratedType;
         }

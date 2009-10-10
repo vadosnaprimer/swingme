@@ -50,17 +50,18 @@ message TestObject {
 	required int32 id                = 1204; 
 	required string  name            = 1205;
 	required int32   age             = 1206;
-
+        required Type myType      = 1207;
 	optional Object body     = 1208;
-	repeated string legs    = 1209; 
+	repeated string legs    = 1209;
+        optional bytes image = 1;
 }
-
 
 message Login {
     required string username = 1;
     required string password = 2;
     optional Type type = 3;
     repeated TestObject tests = 4;
+    optional bytes image = 5;
 }
 
 enum Type {

@@ -16,6 +16,15 @@ public class TestObject extends Test {
     private String[] legs;
     private byte[] image;
     private Object[] objects;
+    private String myType;
+
+    public String getMyType() {
+        return myType;
+    }
+
+    public void setMyType(String myType) {
+        this.myType = myType;
+    }
 
     public Object[] getObjects() {
         return objects;
@@ -124,22 +133,24 @@ public class TestObject extends Test {
         if (this.objects != other.objects && (this.objects == null || !Arrays.equals(this.objects,other.objects))) {
             return false;
         }
+        if ((this.myType == null) ? (other.myType != null) : !this.myType.equals(other.myType)) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 41 * hash + (this.name != null ? this.name.hashCode() : 0);
-        hash = 41 * hash + this.age;
-        hash = 41 * hash + (this.numbers != null ? this.numbers.hashCode() : 0);
-        hash = 41 * hash + (this.body != null ? this.body.hashCode() : 0);
-        hash = 41 * hash + (this.legs != null ? Arrays.hashCode(this.legs) : 0);
-        hash = 41 * hash + (this.image != null ? Arrays.hashCode(this.image) : 0);
-        hash = 41 * hash + (this.objects != null ? Arrays.hashCode(this.objects) : 0);
+        hash = 97 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 97 * hash + this.age;
+        hash = 97 * hash + (this.numbers != null ? this.numbers.hashCode() : 0);
+        hash = 97 * hash + (this.body != null ? this.body.hashCode() : 0);
+        hash = 97 * hash + (this.legs != null ? Arrays.hashCode(legs) : 0);
+        hash = 97 * hash + (this.image != null ?  Arrays.hashCode(image) : 0);
+        hash = 97 * hash + (this.objects != null ?  Arrays.hashCode(objects) : 0);
+        hash = 97 * hash + (this.myType != null ? this.myType.hashCode() : 0);
         return hash;
     }
-
-    
 
 }

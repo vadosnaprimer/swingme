@@ -29,7 +29,7 @@ public class BinAccess extends BinUtil {
         }
     }
     protected void saveTestObject(DataOutputStream out,TestObject object) throws IOException {
-        out.writeInt(8);
+        out.writeInt(9);
         out.writeInt( TYPE_BYTE);
         out.writeByte( object.getAge() );
         writeObject(out, object.getBody() );
@@ -37,6 +37,7 @@ public class BinAccess extends BinUtil {
         out.writeInt( object.getId() );
         writeObject(out, object.getImage() );
         writeObject(out, object.getLegs() );
+        writeObject(out, object.getMyType() );
         writeObject(out, object.getName() );
         writeObject(out, object.getNumbers() );
         writeObject(out, object.getObjects() );
@@ -79,12 +80,15 @@ public class BinAccess extends BinUtil {
             object.setLegs(array);
         }
         if (size>5) {
-            object.setName( (String)readObject(in) );
+            object.setMyType( (String)readObject(in) );
         }
         if (size>6) {
-            object.setNumbers( (Vector)readObject(in) );
+            object.setName( (String)readObject(in) );
         }
         if (size>7) {
+            object.setNumbers( (Vector)readObject(in) );
+        }
+        if (size>8) {
             Object[] objects = (Object[])readObject(in);
             Object[] array=null;
             if (objects!=null) {
@@ -93,8 +97,8 @@ public class BinAccess extends BinUtil {
             }
             object.setObjects(array);
         }
-        if (size>8) {
-            skipUnknownObjects(in,size - 8);
+        if (size>9) {
+            skipUnknownObjects(in,size - 9);
         }
         return object;
     }

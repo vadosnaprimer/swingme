@@ -35,6 +35,9 @@ public class XMLAccess extends XMLUtil {
         if (object.getImage()!=null) {
             serializer.attribute(null,"image", new String( org.bouncycastle.util.encoders.Base64.encode( object.getImage() ) ) );
         }
+        if (object.getMyType()!=null) {
+            serializer.attribute(null,"myType", object.getMyType() );
+        }
         serializer.attribute(null,"age", String.valueOf( object.getAge() ) );
         saveTest(serializer, object);
         serializer.startTag(null,"objects");
@@ -76,6 +79,9 @@ public class XMLAccess extends XMLUtil {
             }
             else if ("image".equals(key)) {
                 object.setImage( org.bouncycastle.util.encoders.Base64.decode(value) );
+            }
+            else if ("myType".equals(key)) {
+                object.setMyType(value);
             }
             else if ("age".equals(key)) {
                 object.setAge( Byte.parseByte(value) );

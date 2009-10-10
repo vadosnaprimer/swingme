@@ -18,8 +18,6 @@ import net.yura.mobile.gen.BinAccess;
 
 import net.yura.mobile.gen.XMLAccess;
 import net.yura.mobile.io.ProtoUtil;
-import net.yura.mobile.io.proto.ProtoInputStream;
-import net.yura.mobile.io.proto.ProtoOutputStream;
 import net.yura.tools.mobilegen.model.Test;
 import net.yura.tools.mobilegen.model.TestObject;
 import org.kxml2.io.KXmlParser;
