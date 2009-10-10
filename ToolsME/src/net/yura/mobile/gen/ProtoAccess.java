@@ -6,9 +6,10 @@ import java.io.IOException;
 import net.yura.mobile.io.ProtoUtil;
 import net.yura.mobile.io.proto.CodedOutputStream;
 import net.yura.mobile.io.proto.CodedInputStream;
+import net.yura.mobile.io.proto.WireFormat;
 /**
- * THIS FILE IS GENERATED, DO NOT EDIT
- */
+* THIS FILE IS GENERATED, DO NOT EDIT
+*/
 public class ProtoAccess extends ProtoUtil {
     public static final int TYPE_BOB=10000;
     public static final int TYPE_TEST=10001;
@@ -64,13 +65,13 @@ public class ProtoAccess extends ProtoUtil {
     protected int getObjectTypeEnum(Object obj) {
         if (obj instanceof Hashtable) {
             Hashtable table = (Hashtable)obj;
-            if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null) {
+            if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null            ) {
                 return TYPE_BOB;
             }
-            if (table.size() == 4 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null) {
+            if (table.size() == 4 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null            ) {
                 return TYPE_LOGIN;
             }
-            if (table.size() == 2 && table.get("type")!=null && table.get("body")!=null) {
+            if (table.size() == 1 && table.get("body")!=null            ) {
                 return TYPE_MESSAGE;
             }
         }
@@ -81,5 +82,148 @@ public class ProtoAccess extends ProtoUtil {
             return TYPE_TEST_OBJECT;
         }
         return super.getObjectTypeEnum(obj);
+    }
+    private int computeMessageSize(Hashtable object) {
+        int size=0;
+        return size;
+    }
+    private int computeLoginSize(Hashtable object) {
+        int size=0;
+        return size;
+    }
+    private int computeBobSize(Hashtable object) {
+        int size=0;
+        return size;
+    }
+    private int computeTestSize(Test object) {
+        int size=0;
+        size = size + CodedOutputStream.computeInt32Size(1201, object.getId() );
+        return size;
+    }
+    private int computeTestObjectSize(TestObject object) {
+        int size=0;
+        size = size + CodedOutputStream.computeInt32Size(1204, object.getId() );
+        size = size + CodedOutputStream.computeStringSize(1205, object.getName() );
+        size = size + CodedOutputStream.computeInt32Size(1206, object.getAge() );
+        if (object.getBody()!=null) {
+            int s = computeObjectSize(object.getBody() );
+            size = size + CodedOutputStream.computeBytesSize(1208, s);
+        }
+        String[] array = object.getLegs();
+        for (int c=0;c<array.length;c++) {
+            String obj = array[c];
+            int s = computeString[]Size(object.getLegs() );
+            size = size + CodedOutputStream.computeBytesSize(1209, s);
+        }
+        return size;
+    }
+    private void encodeMessage(CodedOutputStream out, Hashtable object) throws IOException {
+    }
+    private void encodeLogin(CodedOutputStream out, Hashtable object) throws IOException {
+    }
+    private void encodeBob(CodedOutputStream out, Hashtable object) throws IOException {
+    }
+    private void encodeTest(CodedOutputStream out, Test object) throws IOException {
+        out.writeInt32(1201, object.getId() );
+    }
+    private void encodeTestObject(CodedOutputStream out, TestObject object) throws IOException {
+        out.writeInt32(1204, object.getId() );
+        out.writeString(1205, object.getName() );
+        out.writeInt32(1206, object.getAge() );
+        if (object.getBody()!=null) {
+            writeObject( out, 1208, object.getBody() );
+        }
+        String[] array = object.getLegs();
+        for (int c=0;c<array.length;c++) {
+            String obj = array[c];
+            writeString[]( out, 1209, object.getLegs() );
+        }
+    }
+    private Hashtable decodeMessage(CodedInputStream in2) {
+        Hashtable object = new Hashtable();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            int wireType = WireFormat.getTagWireType(tag);
+            if (fieldNo == 1) {
+            }
+        }
+        return object;
+    }
+    private Hashtable decodeLogin(CodedInputStream in2) {
+        Hashtable object = new Hashtable();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            int wireType = WireFormat.getTagWireType(tag);
+            if (fieldNo == 1) {
+            }
+            if (fieldNo == 2) {
+            }
+            if (fieldNo == 3) {
+            }
+            if (fieldNo == 4) {
+            }
+        }
+        return object;
+    }
+    private Hashtable decodeBob(CodedInputStream in2) {
+        Hashtable object = new Hashtable();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            int wireType = WireFormat.getTagWireType(tag);
+            if (fieldNo == 1) {
+            }
+            if (fieldNo == 2) {
+            }
+            if (fieldNo == 3) {
+            }
+        }
+        return object;
+    }
+    private Test decodeTest(CodedInputStream in2) {
+        Test object = new Test();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            int wireType = WireFormat.getTagWireType(tag);
+            if (fieldNo == 1201) {
+                object.setId( in2.readInt32() );
+            }
+        }
+        return object;
+    }
+    private TestObject decodeTestObject(CodedInputStream in2) {
+        TestObject object = new TestObject();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            int wireType = WireFormat.getTagWireType(tag);
+            if (fieldNo == 1204) {
+                object.setId( in2.readInt32() );
+            }
+            if (fieldNo == 1205) {
+                object.setName( in2.readString() );
+            }
+            if (fieldNo == 1206) {
+                object.setAge( in2.readInt32() );
+            }
+            if (fieldNo == 1208) {
+                int size = in2.readBytesSize();
+                int lim = in2.pushLimit(size);
+                object.setBody( decodeAnonymousObject(in2);
+                vector.addElement(obj);
+                in2.popLimit(lim);
+            }
+            if (fieldNo == 1209) {
+                int size = in2.readBytesSize();
+                int lim = in2.pushLimit(size);
+                object.setLegs( decodeString[](in2) );
+                vector.addElement(obj);
+                in2.popLimit(lim);
+            }
+        }
+        return object;
     }
 }

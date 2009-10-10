@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import net.yura.tools.mobilegen.ProtoLoader.EnumDefinition;
+import net.yura.tools.mobilegen.ProtoLoader.FieldDefinition;
 import net.yura.tools.mobilegen.ProtoLoader.MessageDefinition;
 
 /**
@@ -58,7 +59,27 @@ tmp.append( this.outputPackage.replace( "." , File.separator ) );
 tmp.append( File.separator );
 tmp.append( this.outputClass );
 tmp.append( ".java" );
-PrintStream ps = new PrintStream( new File( tmp.toString() ) );
+PrintStream ps = new PrintStream( new File( tmp.toString() ) ) {
+
+    private int indent=0;
+
+    @Override
+    public void println(String string) {
+
+        if (string.indexOf('}') >=0 && string.indexOf('{') <0 ) {
+            indent--;
+        }
+
+        super.println( "                                ".substring(0, indent*4) + string.trim() );
+
+        if (string.indexOf('{') >=0 && string.indexOf('}') <0) {
+            indent++;
+        }
+
+        
+    }
+
+};
 
 
 ps.println("package net.yura.mobile.gen;");
@@ -73,6 +94,7 @@ ps.println("import java.io.IOException;");
 ps.println("import net.yura.mobile.io.ProtoUtil;");
 ps.println("import net.yura.mobile.io.proto.CodedOutputStream;");
 ps.println("import net.yura.mobile.io.proto.CodedInputStream;");
+ps.println("import net.yura.mobile.io.proto.WireFormat;");
 
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
@@ -108,68 +130,196 @@ ps.println("    }");
 
 printEnummethod(ps);
 
-/*
-ps.println("    protected void writeObject(DataOutputStream out, Object object) throws IOException {");
+Collection<MessageDefinition> messages = messageDefs.values();
 
-n=0;
-for (Class c:classes) {
 
-String className = c.getSimpleName();
+// #############################################################################
+// ############################## compute ######################################
+// #############################################################################
 
-ps.println("        "+ ((n==0)?"":"else ") +"if (object instanceof "+className+") {");
-ps.println("            out.writeInt(TYPE_"+className.toUpperCase()+");");
-ps.println("            save"+className+"(out,("+className+")object);");
-ps.println("        }");
+for (MessageDefinition message:messages) {
 
-n++;
+ps.println("    private int compute"+message.getName()+"Size("+message.getImplementation().getSimpleName()+" object) {");
+ps.println("        int size=0;");
+
+printSaveComputeMethod(ps,message,true);
+
+ps.println("        return size;");
+ps.println("    }");
+
 }
 
+// #############################################################################
+// ############################### encode ######################################
+// #############################################################################
 
-ps.println("        else {");
-ps.println("            super.writeObject(out, object);");
-ps.println("        }");
+for (MessageDefinition message:messages) {
+
+ps.println("    private void encode"+message.getName()+"(CodedOutputStream out, "+message.getImplementation().getSimpleName()+" object) throws IOException {");
+
+printSaveComputeMethod(ps,message,false);
 
 ps.println("    }");
 
-for (Class c:classes) {
-printSaveMethod(ps,c);
 }
 
-ps.println("    protected Object readObject(DataInputStream in,int type,int size) throws IOException {");
+// #############################################################################
 
-ps.println("        switch (type) {");
+printLoadMethods(ps);
+
+    }
 
 
-n=0;
-for (Class c:classes) {
 
-String className = c.getSimpleName();
+    public void printSaveComputeMethod(PrintStream ps,MessageDefinition message,boolean calc) {
 
-ps.println("            case TYPE_"+className.toUpperCase()+": return read"+className+"(in,size);");
+Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
+for (ProtoLoader.FieldDefinition field:fields) {
+    int fieldId = field.getID();
 
-n++;
+    if (message.getImplementation() != Hashtable.class) {
+
+        if (field.repeated) {
+            if (field.getImplementation() == Vector.class) {
+ps.println("        Vector vector = object.get"+field.getName()+"();");
+ps.println("        for (int c=0;c<vector.size();c++) {");
+ps.println("            Object obj = vector.elementAt(c);");
+            }
+            else { // must be a array
+ps.println("        "+field.getImplementation().getComponentType().getSimpleName()+"[] array = object.get"+firstUp(field.getName())+"();");
+ps.println("        for (int c=0;c<array.length;c++) {");
+ps.println("            "+field.getImplementation().getComponentType().getSimpleName()+" obj = array[c];");
+            }
+            if (field.packed) {
+printSaveCalcField(ps,field,calc);
+            }
+            else {
+printSaveCalcField(ps,field,calc);
+            }
+ps.println("        }");
+        }
+        else {
+            if (field.required) {
+printSaveCalcField(ps,field,calc);
+            }
+            else { // options
+ps.println("        if (object.get"+firstUp(field.getName())+"()!=null) {");
+printSaveCalcField(ps,field,calc);
+ps.println("        }");
+            }
+        }
+    }
+    else { // hashtable
+
+
+    }
 }
 
-ps.println("            default: return super.readObject(in,type,size);");
+
+    }
+
+    private void printSaveCalcField(PrintStream ps, FieldDefinition field,boolean calc) {
+
+        if (calc) {
+
+Class param = field.getImplementation();
+if (param.isPrimitive() || param == String.class) {
+ps.println("        size = size + CodedOutputStream.compute"+firstUp(field.getType())+"Size("+field.getID()+", object.get"+firstUp(field.getName())+"() );");
+}
+else {
+ps.println("         int s = compute"+param.getSimpleName()+"Size(object.get"+firstUp(field.getName())+"() );");
+ps.println("         size = size + CodedOutputStream.computeBytesSize("+field.getID()+", s);");
+}
+        }
+        else {
+
+Class param = field.getImplementation();
+if (param.isPrimitive() || param == String.class) {
+ps.println("        out.write"+firstUp(field.getType())+"("+field.getID()+", object.get"+firstUp(field.getName())+"() );");
+}
+else {
+ps.println("        write"+param.getSimpleName()+"( out, "+field.getID()+", object.get"+firstUp(field.getName())+"() );");
+}
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public void printLoadMethods(PrintStream ps) {
+
+        Collection<MessageDefinition> messages = messageDefs.values();
+
+for (MessageDefinition message:messages) {
+
+ps.println("    private "+message.getImplementation().getSimpleName()+" decode"+message.getName()+"(CodedInputStream in2) {");
+
+
+ps.println("        "+message.getImplementation().getSimpleName()+" object = new "+message.getImplementation().getSimpleName()+"();");
+
+ps.println("        while (!in2.isAtEnd()) {");
+ps.println("            int tag = in2.readTag();");
+ps.println("            int fieldNo = WireFormat.getTagFieldNumber(tag);");
+ps.println("            int wireType = WireFormat.getTagWireType(tag);");
+    //System.out.println("read field "+fieldNo );
+    //System.out.println("wire type "+wireType );
+
+Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
+
+for (ProtoLoader.FieldDefinition field:fields) {
+
+ps.println("            if (fieldNo == "+field.getID()+") {");
+
+if (message.getImplementation() != Hashtable.class) {
+System.out.println(message+" "+field);
+    if (field.getImplementation().isPrimitive() || field.getImplementation() == String.class) {
+    ps.println("                object.set"+firstUp(field.getName())+"( in2.read"+firstUp(field.getType())+"() );");
+    }
+    else {
+    ps.println("                int size = in2.readBytesSize();");
+    ps.println("                int lim = in2.pushLimit(size);");
+                    //System.out.println("object size "+size);
+    if (field.getImplementation() == Object.class) {
+    ps.println("                object.set"+firstUp(field.getName())+"( decodeAnonymousObject(in2);");
+    }
+    else {
+    ps.println("                object.set"+firstUp(field.getName())+"( decode"+field.getImplementation().getSimpleName()+"(in2) );");
+    }
+    ps.println("                vector.addElement(obj);");
+    ps.println("                in2.popLimit(lim);");
+    }
+}
+else {
+
+    // todo readding into hashtable
+}
+ps.println("            }");
+}
+
+
 ps.println("        }");
 
+ps.println("        return object;");
 ps.println("    }");
 
-for (Class c:classes) {
-printLoadMethod(ps,c);
 }
 
-
-//        saveToFile(new File("output.java"), stringbuilder.toString());
-*/
     }
 
-    private MessageDefinition getMessageFromEnum(String key) {
-        String name = key.substring(5).replaceAll("\\_", ""); // remove the "TYPE_"
-        MessageDefinition md = messageDefs.get(name);
-        if (md==null) throw new RuntimeException("no message found for type "+key);
-        return md;
-    }
+
+
+
 
     private void printEnummethod(PrintStream ps) {
 
@@ -295,217 +445,17 @@ ps.println("    }");
         }
     }
 
-/*
-    public static void printSaveMethod(PrintStream ps,Class theclass) {
-
-String className = theclass.getSimpleName();
-
-ps.println("    protected void save"+className+"(DataOutputStream out,"+className+" object) throws IOException {");
-
-ArrayList<Method> simpleMethods = getMethods(theclass,false);
-
-ps.println("        out.writeInt("+simpleMethods.size()+");");
-
-for (Method m: simpleMethods) {
 
 
-Class param = m.getReturnType();
-
-//if (param == String.class) {
-//ps.println("        {");
-//ps.println("            String string = object."+m.getName()+"();");
-//ps.println("            if (string!=null) {");
-//ps.println("                out.writeInt( TYPE_STRING);");
-//ps.println("                out.writeUTF( string );");
-//ps.println("            }");
-//ps.println("            else {");
-//ps.println("                out.writeInt( TYPE_NULL);");
-//ps.println("            }");
-//ps.println("        }");
-//}
-if (param == int.class) {
-ps.println("        out.writeInt( TYPE_INTEGER);");
-ps.println("        out.writeInt( object."+m.getName()+"() );");
-}
-else if (param == double.class) {
-ps.println("        out.writeInt( TYPE_DOUBLE);");
-ps.println("        out.writeDouble( object."+m.getName()+"() );");
-}
-else if (param == float.class) {
-ps.println("        out.writeInt( TYPE_FLOAT);");
-ps.println("        out.writeFloat( object."+m.getName()+"() );");
-}
-else if (param == boolean.class) {
-ps.println("        out.writeInt( TYPE_BOOLEAN);");
-ps.println("        out.writeBoolean( object."+m.getName()+"() );");
-}
-else if (param == short.class) {
-ps.println("        out.writeInt( TYPE_SHORT);");
-ps.println("        out.writeShort( object."+m.getName()+"() );");
-}
-else if (param == long.class) {
-ps.println("        out.writeInt( TYPE_LONG);");
-ps.println("        out.writeLong( object."+m.getName()+"() );");
-}
-else if (param == char.class) {
-ps.println("        out.writeInt( TYPE_CHAR);");
-ps.println("        out.writeChar( object."+m.getName()+"() );");
-}
-else if (param == byte.class) {
-ps.println("        out.writeInt( TYPE_BYTE);");
-ps.println("        out.writeByte( object."+m.getName()+"() );");
-}
-//
-//else if (param == Vector.class) {
-//ps.println("        {");
-//ps.println("            Vector vector = object."+m.getName()+"();");
-//ps.println("            if (vector!=null) {");
-//ps.println("                out.writeInt( TYPE_VECTOR);");
-//ps.println("                writeVector( out, vector );");
-//ps.println("            }");
-//ps.println("            else {");
-//ps.println("                out.writeInt( TYPE_NULL);");
-//ps.println("            }");
-//ps.println("        }");
-//}
-//else if (param == Hashtable.class) {
-//ps.println("        {");
-//ps.println("            Hashtable hashtable = object."+m.getName()+"();");
-//ps.println("            if (hashtable!=null) {");
-//ps.println("                out.writeInt( TYPE_HASHTABLE);");
-//ps.println("                writeHashtable( out, hashtable );");
-//ps.println("            }");
-//ps.println("            else {");
-//ps.println("                out.writeInt( TYPE_NULL);");
-//ps.println("            }");
-//ps.println("        }");
-//}
-//else if (param == byte[].class) {
-//ps.println("        {");
-//ps.println("            byte[] bytes = object."+m.getName()+"();");
-//ps.println("            if (bytes!=null) {");
-//ps.println("                out.writeInt( TYPE_BYTE_ARRAY);");
-//ps.println("                writeBytes( out, bytes );");
-//ps.println("            }");
-//ps.println("            else {");
-//ps.println("                out.writeInt( TYPE_NULL);");
-//ps.println("            }");
-//ps.println("        }");
-//}
-//else if (param.isArray()) {
-//ps.println("        {");
-//ps.println("            Object[] array = object."+m.getName()+"();");
-//ps.println("            if (array!=null) {");
-//ps.println("                out.writeInt( TYPE_ARRAY);");
-//ps.println("                writeArray( out, array );");
-//ps.println("            }");
-//ps.println("            else {");
-//ps.println("                out.writeInt( TYPE_NULL);");
-//ps.println("            }");
-//ps.println("        }");
-//}
-else {
-ps.println("        writeObject(out, object."+m.getName()+"() );");
-}
-
-}
-
-ps.println("    }");
-
+    private String firstUp(String type) {
+        return Character.toUpperCase( type.charAt(0) ) + type.substring(1);
     }
 
-    public static void printLoadMethod(PrintStream ps,Class theclass) {
-
-String className = theclass.getSimpleName();
-
-ps.println("    protected "+className+" read"+className+"(DataInputStream in,int size) throws IOException {");
-
-ps.println("        "+className+" object = new "+className+"();");
-
-ArrayList<Method> methods = getMethods(theclass,true);
-int n = 0;
-for (Method m: methods) {
-Class param = m.getParameterTypes()[0];
-
-ps.println("        if (size>"+n+") {");
-
-//if (param == String.class) {
-//ps.println("        if (checkType(in.readInt() , TYPE_STRING)) {");
-//ps.println("            object."+m.getName()+"( in.readUTF() );");
-//ps.println("        }");
-//}
-if (param == int.class) {
-ps.println("            checkType(in.readInt() , TYPE_INTEGER);");
-ps.println("            object."+m.getName()+"( in.readInt() );");
-}
-else if (param == double.class) {
-ps.println("            checkType(in.readInt() , TYPE_DOUBLE);");
-ps.println("            object."+m.getName()+"( in.readDouble() );");
-}
-else if (param == float.class) {
-ps.println("            checkType(in.readInt() , TYPE_FLOAT);");
-ps.println("            object."+m.getName()+"( in.readFloat() );");
-}
-else if (param == boolean.class) {
-ps.println("            checkType(in.readInt() , TYPE_BOOLEAN);");
-ps.println("            object."+m.getName()+"( in.readBoolean() );");
-}
-else if (param == short.class) {
-ps.println("            checkType(in.readInt() , TYPE_SHORT);");
-ps.println("            object."+m.getName()+"( in.readShort() );");
-}
-else if (param == long.class) {
-ps.println("            checkType(in.readInt() , TYPE_LONG);");
-ps.println("            object."+m.getName()+"( in.readLong() );");
-}
-else if (param == char.class) {
-ps.println("            checkType(in.readInt() , TYPE_CHAR);");
-ps.println("            object."+m.getName()+"( in.readChar() );");
-}
-else if (param == byte.class) {
-ps.println("            checkType(in.readInt() , TYPE_BYTE);");
-ps.println("            object."+m.getName()+"( in.readByte() );");
-}
-
-//else if (param == Vector.class) {
-//ps.println("        if (checkType(in.readInt() , TYPE_VECTOR)) {");
-//ps.println("            object."+m.getName()+"( readVector(in) );");
-//ps.println("        }");
-//}
-//else if (param == Hashtable.class) {
-//ps.println("        if (checkType(in.readInt() , TYPE_HASHTABLE)) {");
-//ps.println("            object."+m.getName()+"( readHashtable(in) );");
-//ps.println("        }");
-//}
-//else if (param == byte[].class) {
-//ps.println("        if (checkType(in.readInt() , TYPE_BYTE_ARRAY)) {");
-//ps.println("            object."+m.getName()+"( readBytes(in) );");
-//ps.println("        }");
-//}
-else if (param != byte[].class && param.isArray()) {
-ps.println("            Object[] objects = (Object[])readObject(in);");
-ps.println("            "+param.getComponentType().getSimpleName()+"[] array=null;");
-ps.println("            if (objects!=null) {");
-ps.println("                array = new "+param.getComponentType().getSimpleName()+"[objects.length];");
-ps.println("                System.arraycopy(objects,0,array,0,objects.length);");
-ps.println("            }");
-ps.println("            object."+m.getName()+"(array);");
-}
-else {
-ps.println("            object."+m.getName()+"( ("+param.getSimpleName()+")readObject(in) );");
-}
-ps.println("        }");
-n++;
-}
-
-ps.println("        if (size>"+n+") {");
-ps.println("            skipUnknownObjects(in,size - "+methods.size()+");");
-ps.println("        }");
-
-ps.println("        return object;");
-ps.println("    }");
-
-
+    private MessageDefinition getMessageFromEnum(String key) {
+        String name = key.substring(5).replaceAll("\\_", ""); // remove the "TYPE_"
+        MessageDefinition md = messageDefs.get(name);
+        if (md==null) throw new RuntimeException("no message found for type "+key);
+        return md;
     }
-*/
+
 }

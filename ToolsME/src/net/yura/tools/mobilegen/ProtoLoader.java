@@ -158,14 +158,12 @@ public class ProtoLoader {
 
             // Attempt to get a class definition
 
-            try
-            {
+            try {
                 System.out.println( "Looking for class " + this.objectPackage + "." + name);
                 Class c = Class.forName( this.objectPackage + "." + name );
                 md.setImplementation(c);
             }
-            catch( ClassNotFoundException cnfe )
-            {
+            catch( ClassNotFoundException cnfe ) {
                 //cnfe.printStackTrace();
                 System.out.println( "Warning - Unable to find class " + this.objectPackage + "." + name);
                 md.setImplementation(Hashtable.class);
@@ -386,7 +384,7 @@ public class ProtoLoader {
         {
             this.fields = fields;
         }
-        public Vector getFields()
+        public Vector<FieldDefinition> getFields()
         {
             return this.fields;
         }
@@ -405,6 +403,12 @@ public class ProtoLoader {
         {
             this.messageClass = messageClass;
         }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
     }
 
     class EnumDefinition {
@@ -540,6 +544,11 @@ public class ProtoLoader {
         public void setImplementation( Class fieldClass )
         {
             this.fieldClass = fieldClass;
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
 
     }

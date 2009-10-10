@@ -51,7 +51,7 @@ message TestObject {
 	required string  name            = 1205;
 	required int32   age             = 1206;
 
-	repeated Object body     = 1208;
+	optional Object body     = 1208;
 	repeated string legs    = 1209; 
 }
 
@@ -103,6 +103,5 @@ message String {
 }
 
 message Message {
-    required MessageType type = 1;
-    optional Object body = 2;
+    optional Object body = 1;
 }
