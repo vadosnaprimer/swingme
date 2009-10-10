@@ -338,7 +338,10 @@ for (ProtoLoader.FieldDefinition field:fields) {
 
 ps.println("                case "+field.getID()+": {");
 
-    if (isPrimitive(field.getType())) {
+    if (field.getEnumeratedType() !=null) {
+        ps.println("String value = get"+field.getType()+"String( in2.readInt32() );");
+    }
+    else if (isPrimitive(field.getType())) {
         if ("string".equals(field.getType()) || "bytes".equals(field.getType())) {
             ps.println("        "+primitiveToJavaType(field.getType())+" value = in2.read"+firstUp(field.getType())+"();");
         }
@@ -382,6 +385,21 @@ ps.println("            }");
 
 ps.println("        }");
 
+        for (ProtoLoader.FieldDefinition field:fields) {
+            if (field.getRepeated()) {
+                if (message.getImplementation() == Hashtable.class) {
+                    ps.println("object.put(\""+field.getName()+"\","+field.getName()+"Vector);");
+                }
+                else if (field.getImplementation().isArray()) {
+                    ps.println(""+field.getImplementation().getComponentType().getSimpleName()+"[] "+field.getName()+"Array = new "+field.getImplementation().getComponentType().getSimpleName()+"["+field.getName()+"Vector.size()];");
+                    ps.println(""+field.getName()+"Vector.copyInto("+field.getName()+"Array);");
+                    ps.println("object.set"+firstUp(field.getName())+"("+field.getName()+"Array);");
+                }
+                else {
+                    ps.println("object.set"+firstUp(field.getName())+"("+field.getName()+"Vector);");
+                }
+            }
+        }
 
     }
 

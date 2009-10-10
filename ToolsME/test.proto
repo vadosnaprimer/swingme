@@ -59,7 +59,7 @@ message TestObject {
 message Login {
     required string username = 1;
     required string password = 2;
-    optional Type type = 3;
+    repeated Type type = 3;
     repeated TestObject tests = 4;
     optional bytes image = 5;
     repeated int32 inty = 6;

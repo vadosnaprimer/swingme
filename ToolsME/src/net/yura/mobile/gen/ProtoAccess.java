@@ -97,9 +97,12 @@ public class ProtoAccess extends ProtoUtil {
         size = size + CodedOutputStream.computeStringSize(1, usernameValue );
         String passwordValue = (String)object.get("password");
         size = size + CodedOutputStream.computeStringSize(2, passwordValue );
-        String typeValue = (String)object.get("type");
-        if (typeValue!=null) {
-            size = size + CodedOutputStream.computeInt32Size(3, getTypeEnum(typeValue) );
+        Vector typeVector = (Vector)object.get("type");
+        if (typeVector!=null) {
+            for (int c=0;c<typeVector.size();c++) {
+                String typeValue = (String)typeVector.elementAt(c);
+                size = size + CodedOutputStream.computeInt32Size(3, getTypeEnum(typeValue) );
+            }
         }
         Vector testsVector = (Vector)object.get("tests");
         if (testsVector!=null) {
@@ -197,9 +200,12 @@ public class ProtoAccess extends ProtoUtil {
         out.writeString(1, usernameValue );
         String passwordValue = (String)object.get("password");
         out.writeString(2, passwordValue );
-        String typeValue = (String)object.get("type");
-        if (typeValue!=null) {
-            out.writeInt32(3, getTypeEnum(typeValue) );
+        Vector typeVector = (Vector)object.get("type");
+        if (typeVector!=null) {
+            for (int c=0;c<typeVector.size();c++) {
+                String typeValue = (String)typeVector.elementAt(c);
+                out.writeInt32(3, getTypeEnum(typeValue) );
+            }
         }
         Vector testsVector = (Vector)object.get("tests");
         if (testsVector!=null) {
@@ -304,6 +310,7 @@ public class ProtoAccess extends ProtoUtil {
     }
     private Hashtable decodeLogin(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
+        Vector typeVector = new Vector();
         Vector testsVector = new Vector();
         Vector intyVector = new Vector();
         while (!in2.isAtEnd()) {
@@ -322,11 +329,8 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 3: {
-                    int size = in2.readBytesSize();
-                    int lim = in2.pushLimit(size);
-                    Type value = decodeType(in2);
-                    in2.popLimit(lim);
-                    object.put("type",value);
+                    String value = getTypeString( in2.readInt32() );
+                    typeVector.addElement( value );
                     break;
                 }
                 case 4: {
@@ -350,6 +354,9 @@ public class ProtoAccess extends ProtoUtil {
                 default: // TODO skip unknown fields
             }
         }
+        object.put("type",typeVector);
+        object.put("tests",testsVector);
+        object.put("inty",intyVector);
         return object;
     }
     private Hashtable decodeBob(CodedInputStream in2) throws IOException {
@@ -389,6 +396,9 @@ public class ProtoAccess extends ProtoUtil {
                 default: // TODO skip unknown fields
             }
         }
+        object.put("vec1",vec1Vector);
+        object.put("vec2",vec2Vector);
+        object.put("vec3",vec3Vector);
         return object;
     }
     private Test decodeTest(CodedInputStream in2) throws IOException {
@@ -432,10 +442,7 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 1207: {
-                    int size = in2.readBytesSize();
-                    int lim = in2.pushLimit(size);
-                    Type value = decodeType(in2);
-                    in2.popLimit(lim);
+                    String value = getTypeString( in2.readInt32() );
                     object.setMyType(value);
                     break;
                 }
@@ -460,6 +467,9 @@ public class ProtoAccess extends ProtoUtil {
                 default: // TODO skip unknown fields
             }
         }
+        String[] legsArray = new String[legsVector.size()];
+        legsVector.copyInto(legsArray);
+        object.setLegs(legsArray);
         return object;
     }
 }
