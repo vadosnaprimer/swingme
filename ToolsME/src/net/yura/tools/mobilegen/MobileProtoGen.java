@@ -107,58 +107,68 @@ Hashtable<String,MessageDefinition> messageDefs;
 
     public void printBody(PrintStream ps) {
 
+        EnumDefinition edef = enumDefs.get("ObjectType");
 
-EnumDefinition edef = enumDefs.get("ObjectType");
+        Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+        for (Map.Entry<String,Integer> enu:set) {
+            int num = enu.getValue();
+            if (num >= 20) {
+                ps.println("public static final int "+enu.getKey()+"="+num+";");
+            }
+        }
 
-Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
-    if (num >= 20) {
-ps.println("    public static final int "+enu.getKey()+"="+num+";");
-    }
-}
+        ps.println("public ProtoAccess() { }"); // empty constructor
 
-ps.println("    public ProtoAccess() { }");
+        printEnummethod(ps);
 
-
-printEnummethod(ps);
-
-Collection<MessageDefinition> messages = messageDefs.values();
+        Collection<MessageDefinition> messages = messageDefs.values();
 
 
 // #############################################################################
 // ############################## compute ######################################
 // #############################################################################
 
-for (MessageDefinition message:messages) {
+        for (MessageDefinition message:messages) {
 
-ps.println("    private int compute"+message.getName()+"Size("+message.getImplementation().getSimpleName()+" object) {");
-ps.println("        int size=0;");
+            ps.println("private int compute"+message.getName()+"Size("+message.getImplementation().getSimpleName()+" object) {");
+            ps.println("    int size=0;");
 
-printSaveComputeMethod(ps,message,true);
+            printSaveComputeMethod(ps,message,true);
 
-ps.println("        return size;");
-ps.println("    }");
+            ps.println("    return size;");
+            ps.println("}");
 
-}
+        }
 
 // #############################################################################
 // ############################### encode ######################################
 // #############################################################################
 
-for (MessageDefinition message:messages) {
+        for (MessageDefinition message:messages) {
 
-ps.println("    private void encode"+message.getName()+"(CodedOutputStream out, "+message.getImplementation().getSimpleName()+" object) throws IOException {");
+            ps.println("private void encode"+message.getName()+"(CodedOutputStream out, "+message.getImplementation().getSimpleName()+" object) throws IOException {");
 
-printSaveComputeMethod(ps,message,false);
+            printSaveComputeMethod(ps,message,false);
 
-ps.println("    }");
+            ps.println("}");
 
-}
+        }
 
 // #############################################################################
+// ################################# decode ####################################
+// #############################################################################
 
-printLoadMethods(ps);
+        for (MessageDefinition message:messages) {
+
+            ps.println("private "+message.getImplementation().getSimpleName()+" decode"+message.getName()+"(CodedInputStream in2) throws IOException {");
+            ps.println("    "+message.getImplementation().getSimpleName()+" object = new "+message.getImplementation().getSimpleName()+"();");
+
+            printLoadMethod(ps,message);
+
+            ps.println("    return object;");
+            ps.println("}");
+
+        }
 
     }
 
@@ -199,16 +209,18 @@ ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+fi
                 else {
 ps.println("        Vector "+field.getName()+"Vector = object.get"+field.getName()+"();");
                 }
-ps.println("        for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
+ps.println("        if ("+field.getName()+"Vector!=null) {");
+ps.println("            for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
 ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector.elementAt(c);");
             }
             else { // must be a array
-ps.println("        "+type+"[] array = object.get"+firstUp(field.getName())+"();");
-ps.println("        for (int c=0;c<array.length;c++) {");
-ps.println("            "+type+" "+field.getName()+"Value = array[c];");
+ps.println("        "+type+"[] "+field.getName()+"Array = object.get"+firstUp(field.getName())+"();");
+ps.println("        if ("+field.getName()+"Array!=null) {");
+ps.println("            for (int c=0;c<"+field.getName()+"Array.length;c++) {");
+ps.println("            "+type+" "+field.getName()+"Value = "+field.getName()+"Array[c];");
             }
-                        printSaveCalcField(ps,field,message,calc);
-
+                            printSaveCalcField(ps,field,message,calc);
+ps.println("            }");
 ps.println("        }");
         }
         else {
@@ -229,7 +241,7 @@ ps.println("        }");
 
     private void printSaveCalcField(PrintStream ps, FieldDefinition field,MessageDefinition message,boolean calc) {
 
-        boolean optional = !field.repeated && !field.required;
+        boolean optional = !field.required && !field.repeated;
 
         if (optional) {
             ps.println("if ("+field.getName()+"Value!=null) {");
@@ -301,16 +313,10 @@ ps.println("        }");
 
 
 
-    public void printLoadMethods(PrintStream ps) {
-
-        Collection<MessageDefinition> messages = messageDefs.values();
-
-for (MessageDefinition message:messages) {
-
-ps.println("    private "+message.getImplementation().getSimpleName()+" decode"+message.getName()+"(CodedInputStream in2) throws IOException {");
+    public void printLoadMethod(PrintStream ps,MessageDefinition message) {
 
 
-ps.println("        "+message.getImplementation().getSimpleName()+" object = new "+message.getImplementation().getSimpleName()+"();");
+
 
 ps.println("        while (!in2.isAtEnd()) {");
 ps.println("            int tag = in2.readTag();");
@@ -327,10 +333,20 @@ for (ProtoLoader.FieldDefinition field:fields) {
 
 ps.println("                case "+field.getID()+": {");
 
-if (message.getImplementation() != Hashtable.class) {
+
 System.out.println(message+" "+field);
-    if (field.getImplementation().isPrimitive() || field.getImplementation() == String.class) {
-    ps.println("                object.set"+firstUp(field.getName())+"( ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"() );");
+    if (isPrimitive(field.getType())) {
+        if (message.getImplementation() == Hashtable.class) {
+            if ("string".equals(field.getType()) || "bytes".equals(field.getType())) {
+                ps.println("    object.put(\""+field.getName()+"\", in2.read"+firstUp(field.getType())+"() );");
+            }
+            else {
+                ps.println("    object.put(\""+field.getName()+"\", new "+primitiveToJavaType(field.getType())+"(in2.read"+firstUp(field.getType())+"() ) );");
+            }
+        }
+        else {
+            ps.println("        object.set"+firstUp(field.getName())+"( ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"() );");
+        }
     }
     else {
     ps.println("                int size = in2.readBytesSize();");
@@ -340,27 +356,20 @@ System.out.println(message+" "+field);
     ps.println("                object.set"+firstUp(field.getName())+"( decodeAnonymousObject(in2);");
     }
     else {
-    ps.println("                object.set"+firstUp(field.getName())+"( decode"+field.getImplementation().getSimpleName()+"(in2) );");
+    ps.println("                object.set"+firstUp(field.getName())+"( decode"+field.getType()+"(in2) );");
     }
     ps.println("                vector.addElement(obj);");
     ps.println("                in2.popLimit(lim);");
     }
-}
-else {
 
-    // todo readding into hashtable
-}
 ps.println("                    break;");
 ps.println("                }");
 }
+ps.println("                default: // TODO skip unknown fields");
 ps.println("            }");
 
 ps.println("        }");
 
-ps.println("        return object;");
-ps.println("    }");
-
-}
 
     }
 

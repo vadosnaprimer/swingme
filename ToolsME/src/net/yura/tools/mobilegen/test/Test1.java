@@ -60,7 +60,7 @@ public class Test1 {
 
     public static void main(String... args) throws Exception {
 
-/*
+
         ReadWrite kxml = new ReadWrite() {
             XMLAccess xml = new XMLAccess();
             @Override
@@ -127,7 +127,7 @@ public class Test1 {
         };
         doTest(kxml2);
 
-
+/*
         ReadWrite proto = new ReadWrite() {
             ProtoAccess bin = new ProtoAccess();
             @Override
@@ -153,7 +153,7 @@ public class Test1 {
                 return bin.load(is);
             }
         };
-*/
+
 
 
 
@@ -191,7 +191,7 @@ public class Test1 {
 
         doTest(proto2);
  
-
+*/
     }
 
 
@@ -201,14 +201,14 @@ public class Test1 {
         final Vector objects = new Vector();
         objects.add(getTestObject2());
         //objects.add( Test2.getTest1() );
-        /*
+        //*
         objects.add(getTestObject4());
         objects.add(getTestObject3());
         objects.add(getTestObject4());
         objects.add(getTestObject3());
         objects.add(getTestObject4());
         objects.add(getTestObject3());
-*/
+//*/
         Thread a = new Thread() {
             @Override
             public void run() {
@@ -225,7 +225,7 @@ public class Test1 {
         };
         a.start();
 
-        Thread.sleep(3000);
+        //Thread.sleep(3000);
 
         System.out.println();
 

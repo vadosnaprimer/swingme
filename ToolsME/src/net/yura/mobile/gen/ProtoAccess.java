@@ -102,10 +102,12 @@ public class ProtoAccess extends ProtoUtil {
             size = size + CodedOutputStream.computeInt32Size(3, getTypeEnum(typeValue) );
         }
         Vector testsVector = (Vector)object.get("tests");
-        for (int c=0;c<testsVector.size();c++) {
-            TestObject testsValue = (TestObject)testsVector.elementAt(c);
-            int s = computeTestObjectSize( testsValue );
-            size = size + CodedOutputStream.computeBytesSize(4, s);
+        if (testsVector!=null) {
+            for (int c=0;c<testsVector.size();c++) {
+                TestObject testsValue = (TestObject)testsVector.elementAt(c);
+                int s = computeTestObjectSize( testsValue );
+                size = size + CodedOutputStream.computeBytesSize(4, s);
+            }
         }
         byte[] imageValue = (byte[])object.get("image");
         if (imageValue!=null) {
@@ -116,22 +118,28 @@ public class ProtoAccess extends ProtoUtil {
     private int computeBobSize(Hashtable object) {
         int size=0;
         Vector vec1Vector = (Vector)object.get("vec1");
-        for (int c=0;c<vec1Vector.size();c++) {
-            Vector vec1Value = (Vector)vec1Vector.elementAt(c);
-            int s = computeVectorSize( vec1Value );
-            size = size + CodedOutputStream.computeBytesSize(1, s);
+        if (vec1Vector!=null) {
+            for (int c=0;c<vec1Vector.size();c++) {
+                Vector vec1Value = (Vector)vec1Vector.elementAt(c);
+                int s = computeVectorSize( vec1Value );
+                size = size + CodedOutputStream.computeBytesSize(1, s);
+            }
         }
         Vector vec2Vector = (Vector)object.get("vec2");
-        for (int c=0;c<vec2Vector.size();c++) {
-            Vector vec2Value = (Vector)vec2Vector.elementAt(c);
-            int s = computeVectorSize( vec2Value );
-            size = size + CodedOutputStream.computeBytesSize(2, s);
+        if (vec2Vector!=null) {
+            for (int c=0;c<vec2Vector.size();c++) {
+                Vector vec2Value = (Vector)vec2Vector.elementAt(c);
+                int s = computeVectorSize( vec2Value );
+                size = size + CodedOutputStream.computeBytesSize(2, s);
+            }
         }
         Vector vec3Vector = (Vector)object.get("vec3");
-        for (int c=0;c<vec3Vector.size();c++) {
-            Vector vec3Value = (Vector)vec3Vector.elementAt(c);
-            int s = computeVectorSize( vec3Value );
-            size = size + CodedOutputStream.computeBytesSize(3, s);
+        if (vec3Vector!=null) {
+            for (int c=0;c<vec3Vector.size();c++) {
+                Vector vec3Value = (Vector)vec3Vector.elementAt(c);
+                int s = computeVectorSize( vec3Value );
+                size = size + CodedOutputStream.computeBytesSize(3, s);
+            }
         }
         return size;
     }
@@ -156,10 +164,12 @@ public class ProtoAccess extends ProtoUtil {
             int s = computeAnonymousObjectSize( bodyValue );
             size = size + CodedOutputStream.computeBytesSize(1208, s);
         }
-        String[] array = object.getLegs();
-        for (int c=0;c<array.length;c++) {
-            String legsValue = array[c];
-            size = size + CodedOutputStream.computeStringSize(1209, legsValue );
+        String[] legsArray = object.getLegs();
+        if (legsArray!=null) {
+            for (int c=0;c<legsArray.length;c++) {
+                String legsValue = legsArray[c];
+                size = size + CodedOutputStream.computeStringSize(1209, legsValue );
+            }
         }
         byte[] imageValue = object.getImage();
         if (imageValue!=null) {
@@ -185,11 +195,13 @@ public class ProtoAccess extends ProtoUtil {
             out.writeInt32(3, getTypeEnum(typeValue) );
         }
         Vector testsVector = (Vector)object.get("tests");
-        for (int c=0;c<testsVector.size();c++) {
-            TestObject testsValue = (TestObject)testsVector.elementAt(c);
-            int s = computeTestObjectSize( testsValue );
-            out.writeBytes(4,s);
-            encodeTestObject( out, testsValue );
+        if (testsVector!=null) {
+            for (int c=0;c<testsVector.size();c++) {
+                TestObject testsValue = (TestObject)testsVector.elementAt(c);
+                int s = computeTestObjectSize( testsValue );
+                out.writeBytes(4,s);
+                encodeTestObject( out, testsValue );
+            }
         }
         byte[] imageValue = (byte[])object.get("image");
         if (imageValue!=null) {
@@ -198,25 +210,31 @@ public class ProtoAccess extends ProtoUtil {
     }
     private void encodeBob(CodedOutputStream out, Hashtable object) throws IOException {
         Vector vec1Vector = (Vector)object.get("vec1");
-        for (int c=0;c<vec1Vector.size();c++) {
-            Vector vec1Value = (Vector)vec1Vector.elementAt(c);
-            int s = computeVectorSize( vec1Value );
-            out.writeBytes(1,s);
-            encodeVector( out, vec1Value );
+        if (vec1Vector!=null) {
+            for (int c=0;c<vec1Vector.size();c++) {
+                Vector vec1Value = (Vector)vec1Vector.elementAt(c);
+                int s = computeVectorSize( vec1Value );
+                out.writeBytes(1,s);
+                encodeVector( out, vec1Value );
+            }
         }
         Vector vec2Vector = (Vector)object.get("vec2");
-        for (int c=0;c<vec2Vector.size();c++) {
-            Vector vec2Value = (Vector)vec2Vector.elementAt(c);
-            int s = computeVectorSize( vec2Value );
-            out.writeBytes(2,s);
-            encodeVector( out, vec2Value );
+        if (vec2Vector!=null) {
+            for (int c=0;c<vec2Vector.size();c++) {
+                Vector vec2Value = (Vector)vec2Vector.elementAt(c);
+                int s = computeVectorSize( vec2Value );
+                out.writeBytes(2,s);
+                encodeVector( out, vec2Value );
+            }
         }
         Vector vec3Vector = (Vector)object.get("vec3");
-        for (int c=0;c<vec3Vector.size();c++) {
-            Vector vec3Value = (Vector)vec3Vector.elementAt(c);
-            int s = computeVectorSize( vec3Value );
-            out.writeBytes(3,s);
-            encodeVector( out, vec3Value );
+        if (vec3Vector!=null) {
+            for (int c=0;c<vec3Vector.size();c++) {
+                Vector vec3Value = (Vector)vec3Vector.elementAt(c);
+                int s = computeVectorSize( vec3Value );
+                out.writeBytes(3,s);
+                encodeVector( out, vec3Value );
+            }
         }
     }
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
@@ -238,10 +256,12 @@ public class ProtoAccess extends ProtoUtil {
             out.writeBytes(1208,s);
             encodeAnonymousObject( out, bodyValue );
         }
-        String[] array = object.getLegs();
-        for (int c=0;c<array.length;c++) {
-            String legsValue = array[c];
-            out.writeString(1209, legsValue );
+        String[] legsArray = object.getLegs();
+        if (legsArray!=null) {
+            for (int c=0;c<legsArray.length;c++) {
+                String legsValue = legsArray[c];
+                out.writeString(1209, legsValue );
+            }
         }
         byte[] imageValue = object.getImage();
         if (imageValue!=null) {
@@ -256,8 +276,14 @@ public class ProtoAccess extends ProtoUtil {
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setBody( decodeObject(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
+                default: // TODO skip unknown fields
             }
         }
         return object;
@@ -270,20 +296,34 @@ public class ProtoAccess extends ProtoUtil {
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
+                    object.put("username", in2.readString() );
                     break;
                 }
                 case 2: {
+                    object.put("password", in2.readString() );
                     break;
                 }
                 case 3: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setType( decodeType(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
                 case 4: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setTests( decodeTestObject(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
                 case 5: {
+                    object.put("image", in2.readBytes() );
                     break;
                 }
+                default: // TODO skip unknown fields
             }
         }
         return object;
@@ -296,14 +336,30 @@ public class ProtoAccess extends ProtoUtil {
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setVec1( decodeVector(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
                 case 2: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setVec2( decodeVector(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
                 case 3: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setVec3( decodeVector(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
+                default: // TODO skip unknown fields
             }
         }
         return object;
@@ -319,6 +375,7 @@ public class ProtoAccess extends ProtoUtil {
                     object.setId( (int)in2.readInt32() );
                     break;
                 }
+                default: // TODO skip unknown fields
             }
         }
         return object;
@@ -343,7 +400,11 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 1207: {
-                    object.setMyType( (String)in2.readType() );
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setMyType( decodeType(in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
                     break;
                 }
                 case 1208: {
@@ -355,21 +416,14 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 1209: {
-                    int size = in2.readBytesSize();
-                    int lim = in2.pushLimit(size);
-                    object.setLegs( decodeString[](in2) );
-                    vector.addElement(obj);
-                    in2.popLimit(lim);
+                    object.setLegs( (String[])in2.readString() );
                     break;
                 }
                 case 1: {
-                    int size = in2.readBytesSize();
-                    int lim = in2.pushLimit(size);
-                    object.setImage( decodebyte[](in2) );
-                    vector.addElement(obj);
-                    in2.popLimit(lim);
+                    object.setImage( (byte[])in2.readBytes() );
                     break;
                 }
+                default: // TODO skip unknown fields
             }
         }
         return object;
