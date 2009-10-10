@@ -60,25 +60,19 @@ tmp.append( File.separator );
 tmp.append( this.outputClass );
 tmp.append( ".java" );
 PrintStream ps = new PrintStream( new File( tmp.toString() ) ) {
-
     private int indent=0;
-
     @Override
     public void println(String string) {
-
-        if (string.indexOf('}') >=0 && string.indexOf('{') <0 ) {
+        int open = string.indexOf('{');
+        int close = string.indexOf('}');
+        if (close >=0 && (open<0 || close<open)) {
             indent--;
         }
-
         super.println( "                                ".substring(0, indent*4) + string.trim() );
-
-        if (string.indexOf('{') >=0 && string.indexOf('}') <0) {
+        if (open >=0 &&(close<0 || open>close)) {
             indent++;
         }
-
-        
     }
-
 };
 
 
@@ -124,8 +118,7 @@ ps.println("    public static final int "+enu.getKey()+"="+num+";");
     }
 }
 
-ps.println("    public ProtoAccess() {");
-ps.println("    }");
+ps.println("    public ProtoAccess() { }");
 
 
 printEnummethod(ps);
@@ -277,9 +270,11 @@ ps.println("            int wireType = WireFormat.getTagWireType(tag);");
 
 Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
 
+ps.println("            switch(fieldNo) {");
+
 for (ProtoLoader.FieldDefinition field:fields) {
 
-ps.println("            if (fieldNo == "+field.getID()+") {");
+ps.println("                case "+field.getID()+": {");
 
 if (message.getImplementation() != Hashtable.class) {
 System.out.println(message+" "+field);
@@ -304,9 +299,10 @@ else {
 
     // todo readding into hashtable
 }
-ps.println("            }");
+ps.println("                    break;");
+ps.println("                }");
 }
-
+ps.println("            }");
 
 ps.println("        }");
 
@@ -318,6 +314,21 @@ ps.println("    }");
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 

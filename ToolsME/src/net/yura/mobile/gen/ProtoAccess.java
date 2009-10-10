@@ -16,8 +16,7 @@ public class ProtoAccess extends ProtoUtil {
     public static final int TYPE_LOGIN=22;
     public static final int TYPE_MESSAGE=20;
     public static final int TYPE_TEST_OBJECT=10003;
-    public ProtoAccess() {
-    }
+    public ProtoAccess() { }
     private int getTypeEnum(String enu) {
         if ("BOBA".equals(enu)) return 1;
         if ("FRED".equals(enu)) return 2;
@@ -145,7 +144,10 @@ public class ProtoAccess extends ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
-            if (fieldNo == 1) {
+            switch(fieldNo) {
+                case 1: {
+                    break;
+                }
             }
         }
         return object;
@@ -156,13 +158,19 @@ public class ProtoAccess extends ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
-            if (fieldNo == 1) {
-            }
-            if (fieldNo == 2) {
-            }
-            if (fieldNo == 3) {
-            }
-            if (fieldNo == 4) {
+            switch(fieldNo) {
+                case 1: {
+                    break;
+                }
+                case 2: {
+                    break;
+                }
+                case 3: {
+                    break;
+                }
+                case 4: {
+                    break;
+                }
             }
         }
         return object;
@@ -173,11 +181,16 @@ public class ProtoAccess extends ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
-            if (fieldNo == 1) {
-            }
-            if (fieldNo == 2) {
-            }
-            if (fieldNo == 3) {
+            switch(fieldNo) {
+                case 1: {
+                    break;
+                }
+                case 2: {
+                    break;
+                }
+                case 3: {
+                    break;
+                }
             }
         }
         return object;
@@ -188,8 +201,11 @@ public class ProtoAccess extends ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
-            if (fieldNo == 1201) {
-                object.setId( in2.readInt32() );
+            switch(fieldNo) {
+                case 1201: {
+                    object.setId( in2.readInt32() );
+                    break;
+                }
             }
         }
         return object;
@@ -200,28 +216,35 @@ public class ProtoAccess extends ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
-            if (fieldNo == 1204) {
-                object.setId( in2.readInt32() );
-            }
-            if (fieldNo == 1205) {
-                object.setName( in2.readString() );
-            }
-            if (fieldNo == 1206) {
-                object.setAge( in2.readInt32() );
-            }
-            if (fieldNo == 1208) {
-                int size = in2.readBytesSize();
-                int lim = in2.pushLimit(size);
-                object.setBody( decodeAnonymousObject(in2);
-                vector.addElement(obj);
-                in2.popLimit(lim);
-            }
-            if (fieldNo == 1209) {
-                int size = in2.readBytesSize();
-                int lim = in2.pushLimit(size);
-                object.setLegs( decodeString[](in2) );
-                vector.addElement(obj);
-                in2.popLimit(lim);
+            switch(fieldNo) {
+                case 1204: {
+                    object.setId( in2.readInt32() );
+                    break;
+                }
+                case 1205: {
+                    object.setName( in2.readString() );
+                    break;
+                }
+                case 1206: {
+                    object.setAge( in2.readInt32() );
+                    break;
+                }
+                case 1208: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setBody( decodeAnonymousObject(in2);
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
+                    break;
+                }
+                case 1209: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    object.setLegs( decodeString[](in2) );
+                    vector.addElement(obj);
+                    in2.popLimit(lim);
+                    break;
+                }
             }
         }
         return object;
