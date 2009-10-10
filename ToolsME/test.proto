@@ -62,6 +62,7 @@ message Login {
     optional Type type = 3;
     repeated TestObject tests = 4;
     optional bytes image = 5;
+    repeated int32 inty = 6;
 }
 
 enum Type {

@@ -67,7 +67,7 @@ public class ProtoAccess extends ProtoUtil {
             if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null) {
                 return TYPE_BOB;
             }
-            if (table.size() == 5 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null) {
+            if (table.size() == 6 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null && table.get("inty")!=null) {
                 return TYPE_LOGIN;
             }
             if (table.size() == 1 && table.get("body")!=null) {
@@ -112,6 +112,13 @@ public class ProtoAccess extends ProtoUtil {
         byte[] imageValue = (byte[])object.get("image");
         if (imageValue!=null) {
             size = size + CodedOutputStream.computeBytesSize(5, imageValue );
+        }
+        Vector intyVector = (Vector)object.get("inty");
+        if (intyVector!=null) {
+            for (int c=0;c<intyVector.size();c++) {
+                Integer intyValue = (Integer)intyVector.elementAt(c);
+                size = size + CodedOutputStream.computeInt32Size(6, intyValue );
+            }
         }
         return size;
     }
@@ -207,6 +214,13 @@ public class ProtoAccess extends ProtoUtil {
         if (imageValue!=null) {
             out.writeBytes(5, imageValue );
         }
+        Vector intyVector = (Vector)object.get("inty");
+        if (intyVector!=null) {
+            for (int c=0;c<intyVector.size();c++) {
+                Integer intyValue = (Integer)intyVector.elementAt(c);
+                out.writeInt32(6, intyValue );
+            }
+        }
     }
     private void encodeBob(CodedOutputStream out, Hashtable object) throws IOException {
         Vector vec1Vector = (Vector)object.get("vec1");
@@ -278,9 +292,9 @@ public class ProtoAccess extends ProtoUtil {
                 case 1: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setBody( decodeObject(in2) );
-                    vector.addElement(obj);
+                    Object value = decodeAnonymousObject(in2);
                     in2.popLimit(lim);
+                    object.put("body",value);
                     break;
                 }
                 default: // TODO skip unknown fields
@@ -290,37 +304,47 @@ public class ProtoAccess extends ProtoUtil {
     }
     private Hashtable decodeLogin(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
+        Vector testsVector = new Vector();
+        Vector intyVector = new Vector();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
-                    object.put("username", in2.readString() );
+                    String value = in2.readString();
+                    object.put("username",value);
                     break;
                 }
                 case 2: {
-                    object.put("password", in2.readString() );
+                    String value = in2.readString();
+                    object.put("password",value);
                     break;
                 }
                 case 3: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setType( decodeType(in2) );
-                    vector.addElement(obj);
+                    Type value = decodeType(in2);
                     in2.popLimit(lim);
+                    object.put("type",value);
                     break;
                 }
                 case 4: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setTests( decodeTestObject(in2) );
-                    vector.addElement(obj);
+                    TestObject value = decodeTestObject(in2);
                     in2.popLimit(lim);
+                    testsVector.addElement( value );
                     break;
                 }
                 case 5: {
-                    object.put("image", in2.readBytes() );
+                    byte[] value = in2.readBytes();
+                    object.put("image",value);
+                    break;
+                }
+                case 6: {
+                    Integer value = new Integer(in2.readInt32() );
+                    intyVector.addElement( value );
                     break;
                 }
                 default: // TODO skip unknown fields
@@ -330,6 +354,9 @@ public class ProtoAccess extends ProtoUtil {
     }
     private Hashtable decodeBob(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
+        Vector vec1Vector = new Vector();
+        Vector vec2Vector = new Vector();
+        Vector vec3Vector = new Vector();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
@@ -338,25 +365,25 @@ public class ProtoAccess extends ProtoUtil {
                 case 1: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setVec1( decodeVector(in2) );
-                    vector.addElement(obj);
+                    Vector value = decodeVector(in2);
                     in2.popLimit(lim);
+                    vec1Vector.addElement( value );
                     break;
                 }
                 case 2: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setVec2( decodeVector(in2) );
-                    vector.addElement(obj);
+                    Vector value = decodeVector(in2);
                     in2.popLimit(lim);
+                    vec2Vector.addElement( value );
                     break;
                 }
                 case 3: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setVec3( decodeVector(in2) );
-                    vector.addElement(obj);
+                    Vector value = decodeVector(in2);
                     in2.popLimit(lim);
+                    vec3Vector.addElement( value );
                     break;
                 }
                 default: // TODO skip unknown fields
@@ -372,7 +399,8 @@ public class ProtoAccess extends ProtoUtil {
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1201: {
-                    object.setId( (int)in2.readInt32() );
+                    int value = (int)in2.readInt32();
+                    object.setId(value);
                     break;
                 }
                 default: // TODO skip unknown fields
@@ -382,45 +410,51 @@ public class ProtoAccess extends ProtoUtil {
     }
     private TestObject decodeTestObject(CodedInputStream in2) throws IOException {
         TestObject object = new TestObject();
+        Vector legsVector = new Vector();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1204: {
-                    object.setId( (int)in2.readInt32() );
+                    int value = (int)in2.readInt32();
+                    object.setId(value);
                     break;
                 }
                 case 1205: {
-                    object.setName( (String)in2.readString() );
+                    String value = in2.readString();
+                    object.setName(value);
                     break;
                 }
                 case 1206: {
-                    object.setAge( (byte)in2.readInt32() );
+                    byte value = (byte)in2.readInt32();
+                    object.setAge(value);
                     break;
                 }
                 case 1207: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setMyType( decodeType(in2) );
-                    vector.addElement(obj);
+                    Type value = decodeType(in2);
                     in2.popLimit(lim);
+                    object.setMyType(value);
                     break;
                 }
                 case 1208: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    object.setBody( decodeAnonymousObject(in2);
-                    vector.addElement(obj);
+                    Object value = decodeAnonymousObject(in2);
                     in2.popLimit(lim);
+                    object.setBody(value);
                     break;
                 }
                 case 1209: {
-                    object.setLegs( (String[])in2.readString() );
+                    String value = in2.readString();
+                    legsVector.addElement( value );
                     break;
                 }
                 case 1: {
-                    object.setImage( (byte[])in2.readBytes() );
+                    byte[] value = in2.readBytes();
+                    object.setImage(value);
                     break;
                 }
                 default: // TODO skip unknown fields

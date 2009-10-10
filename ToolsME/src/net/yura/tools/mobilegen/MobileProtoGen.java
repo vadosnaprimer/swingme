@@ -315,7 +315,13 @@ ps.println("        }");
 
     public void printLoadMethod(PrintStream ps,MessageDefinition message) {
 
+        Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
 
+        for (ProtoLoader.FieldDefinition field:fields) {
+            if (field.getRepeated()) {
+                ps.println("Vector "+field.getName()+"Vector = new Vector();");
+            }
+        }
 
 
 ps.println("        while (!in2.isAtEnd()) {");
@@ -325,7 +331,6 @@ ps.println("            int wireType = WireFormat.getTagWireType(tag);");
     //System.out.println("read field "+fieldNo );
     //System.out.println("wire type "+wireType );
 
-Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
 
 ps.println("            switch(fieldNo) {");
 
@@ -333,33 +338,40 @@ for (ProtoLoader.FieldDefinition field:fields) {
 
 ps.println("                case "+field.getID()+": {");
 
-
-System.out.println(message+" "+field);
     if (isPrimitive(field.getType())) {
-        if (message.getImplementation() == Hashtable.class) {
-            if ("string".equals(field.getType()) || "bytes".equals(field.getType())) {
-                ps.println("    object.put(\""+field.getName()+"\", in2.read"+firstUp(field.getType())+"() );");
-            }
-            else {
-                ps.println("    object.put(\""+field.getName()+"\", new "+primitiveToJavaType(field.getType())+"(in2.read"+firstUp(field.getType())+"() ) );");
-            }
+        if ("string".equals(field.getType()) || "bytes".equals(field.getType())) {
+            ps.println("        "+primitiveToJavaType(field.getType())+" value = in2.read"+firstUp(field.getType())+"();");
         }
         else {
-            ps.println("        object.set"+firstUp(field.getName())+"( ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"() );");
+            if (field.getRepeated()) {
+                ps.println("    "+primitiveToJavaType(field.getType())+" value = new "+primitiveToJavaType(field.getType())+"(in2.read"+firstUp(field.getType())+"() );");
+            }
+            else {
+                ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"();");
+            }
         }
     }
     else {
-    ps.println("                int size = in2.readBytesSize();");
-    ps.println("                int lim = in2.pushLimit(size);");
-                    //System.out.println("object size "+size);
-    if (field.getImplementation() == Object.class) {
-    ps.println("                object.set"+firstUp(field.getName())+"( decodeAnonymousObject(in2);");
+        ps.println("            int size = in2.readBytesSize();");
+        ps.println("            int lim = in2.pushLimit(size);");
+                        //System.out.println("object size "+size);
+        if ("Object".equals(field.getType())) {
+            ps.println("        "+field.getType()+" value = decodeAnonymousObject(in2);");
+        }
+        else {
+            ps.println("        "+field.getType()+" value = decode"+field.getType()+"(in2);");
+        }
+        ps.println("            in2.popLimit(lim);");
+    }
+
+    if (field.getRepeated()) {
+        ps.println("            "+field.getName()+"Vector.addElement( value );");
+    }
+    else if (message.getImplementation() == Hashtable.class) {
+        ps.println("            object.put(\""+field.getName()+"\",value);");
     }
     else {
-    ps.println("                object.set"+firstUp(field.getName())+"( decode"+field.getType()+"(in2) );");
-    }
-    ps.println("                vector.addElement(obj);");
-    ps.println("                in2.popLimit(lim);");
+        ps.println("            object.set"+firstUp(field.getName())+"(value);");
     }
 
 ps.println("                    break;");
