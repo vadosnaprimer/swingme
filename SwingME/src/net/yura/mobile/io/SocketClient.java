@@ -113,12 +113,16 @@ System.out.println("sending object: "+object);
 
     public final void run() {
 
+        Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
+
         running = true;
 
         Object task;
 
         while (running) {
             try {
+                Thread.yield();
+
                 task = read(in);
             }
             catch(Exception ex) {
@@ -136,6 +140,9 @@ System.out.println("sending object: "+object);
 //#debug
 System.out.println("got object: "+task);
             try {
+
+                Thread.yield();
+
                 handleObject( task );
             }
             catch (Exception x) {
