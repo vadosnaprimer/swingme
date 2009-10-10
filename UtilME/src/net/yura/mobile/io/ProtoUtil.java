@@ -264,14 +264,14 @@ public class ProtoUtil {
         int size2 = CodedOutputStream.computeBytesSize(OBJECT_VALUE, computeObjectSize(obj,type) );
         return size1+size2;
     }
-    private void encodeAnonymousObject(CodedOutputStream out, Object object) throws IOException {
+    protected void encodeAnonymousObject(CodedOutputStream out, Object object) throws IOException {
         int type = getObjectTypeEnum(object);
         out.writeInt32(OBJECT_TYPE, type );
         out.writeBytes(OBJECT_VALUE, computeObjectSize(object,type) );
         encodeObject(out,object,type);
     }
 
-    private int computeVectorSize(Vector vector) {
+    protected int computeVectorSize(Vector vector) {
         int size=0;
         for (int c=0;c<vector.size();c++) {
             int s = computeAnonymousObjectSize( vector.elementAt(c) );
@@ -313,7 +313,7 @@ public class ProtoUtil {
 
     }
 
-    private void encodeVector(CodedOutputStream out, Vector vector) throws IOException {
+    protected void encodeVector(CodedOutputStream out, Vector vector) throws IOException {
         for (int c=0;c<vector.size();c++) {
             Object obj = vector.elementAt(c);
             out.writeBytes(VECTOR_ELEMENT, computeAnonymousObjectSize(obj));
