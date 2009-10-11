@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Vector;
 import net.yura.mobile.gen.BinAccess;
 
+import net.yura.mobile.gen.ProtoAccess;
 import net.yura.mobile.gen.XMLAccess;
 import net.yura.mobile.io.ProtoUtil;
 import net.yura.tools.mobilegen.model.Test;
@@ -92,7 +93,7 @@ public class Test1 {
 
         doTest(ybin);
 
-
+/*
         ReadWrite kxml2 = new ReadWrite() {
             XMLAccess xml = new XMLAccess() {
                 // THIS WILL FAIL
@@ -127,7 +128,8 @@ public class Test1 {
         };
         doTest(kxml2);
 
-/*
+
+        // HAHAHA this really would never even begin to work!
         ReadWrite proto = new ReadWrite() {
             ProtoAccess bin = new ProtoAccess();
             @Override
@@ -140,29 +142,12 @@ public class Test1 {
             }
         };
         doTest(proto);
+*/
 
 
         ReadWrite proto2 = new ReadWrite() {
-            ProtoUtil bin = new ProtoUtil();
-            @Override
-            void save(Object o) throws Exception {
-                bin.save(os, o);
-            }
-            @Override
-            Object read() throws Exception {
-                return bin.load(is);
-            }
-        };
-
-
-
-
-
-        ReadWrite proto2 = new ReadWrite() {
-            ProtoUtil bin = new ProtoUtil();
-
+            ProtoAccess bin = new ProtoAccess();
             int size;
-
             @Override
             void save(Object o) throws Exception {
 
@@ -190,25 +175,25 @@ public class Test1 {
 
 
         doTest(proto2);
- 
-*/
+        doTest(proto2);
+
     }
 
 
-
+    static Object o1=getTestObject3();
     public static void doTest(final ReadWrite util) throws Exception {
 
         final Vector objects = new Vector();
-        objects.add(getTestObject2());
+        objects.add(o1);
         //objects.add( Test2.getTest1() );
-        //*
+/*
         objects.add(getTestObject4());
         objects.add(getTestObject3());
         objects.add(getTestObject4());
         objects.add(getTestObject3());
         objects.add(getTestObject4());
         objects.add(getTestObject3());
-//*/
+*/
         Thread a = new Thread() {
             @Override
             public void run() {
@@ -225,14 +210,14 @@ public class Test1 {
         };
         a.start();
 
-        //Thread.sleep(3000);
+        Thread.sleep(1000);
 
         System.out.println();
 
         XMLAccess kxml = new XMLAccess();
 
         for (Object obj:objects) {
-            Object o1 = util.read();
+            o1 = util.read();
             System.out.print("equals=" +obj.equals(o1) +" "+o1);
             kxml.save(System.out, o1);
             System.out.println();

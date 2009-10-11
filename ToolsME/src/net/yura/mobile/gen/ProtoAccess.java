@@ -74,10 +74,10 @@ public class ProtoAccess extends ProtoUtil {
                 return TYPE_MESSAGE;
             }
         }
-        if (obj instanceof Test) {
+        if (obj.getClass() == Test.class) {
             return TYPE_TEST;
         }
-        if (obj instanceof TestObject) {
+        if (obj.getClass() == TestObject.class) {
             return TYPE_TEST_OBJECT;
         }
         return super.getObjectTypeEnum(obj);
@@ -164,11 +164,15 @@ public class ProtoAccess extends ProtoUtil {
         int idValue = object.getId();
         size = size + CodedOutputStream.computeInt32Size(1204, idValue );
         String nameValue = object.getName();
-        size = size + CodedOutputStream.computeStringSize(1205, nameValue );
+        if (nameValue!=null) {
+            size = size + CodedOutputStream.computeStringSize(1205, nameValue );
+        }
         byte ageValue = object.getAge();
         size = size + CodedOutputStream.computeInt32Size(1206, ageValue );
         String myTypeValue = object.getMyType();
-        size = size + CodedOutputStream.computeInt32Size(1207, getTypeEnum(myTypeValue) );
+        if (myTypeValue!=null) {
+            size = size + CodedOutputStream.computeInt32Size(1207, getTypeEnum(myTypeValue) );
+        }
         Object bodyValue = object.getBody();
         if (bodyValue!=null) {
             int s = computeAnonymousObjectSize( bodyValue );
@@ -265,11 +269,15 @@ public class ProtoAccess extends ProtoUtil {
         int idValue = object.getId();
         out.writeInt32(1204, idValue );
         String nameValue = object.getName();
-        out.writeString(1205, nameValue );
+        if (nameValue!=null) {
+            out.writeString(1205, nameValue );
+        }
         byte ageValue = object.getAge();
         out.writeInt32(1206, ageValue );
         String myTypeValue = object.getMyType();
-        out.writeInt32(1207, getTypeEnum(myTypeValue) );
+        if (myTypeValue!=null) {
+            out.writeInt32(1207, getTypeEnum(myTypeValue) );
+        }
         Object bodyValue = object.getBody();
         if (bodyValue!=null) {
             int s = computeAnonymousObjectSize( bodyValue );
@@ -293,7 +301,6 @@ public class ProtoAccess extends ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
                     int size = in2.readBytesSize();
@@ -303,7 +310,10 @@ public class ProtoAccess extends ProtoUtil {
                     object.put("body",value);
                     break;
                 }
-                default: // TODO skip unknown fields
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
             }
         }
         return object;
@@ -316,7 +326,6 @@ public class ProtoAccess extends ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
                     String value = in2.readString();
@@ -351,7 +360,10 @@ public class ProtoAccess extends ProtoUtil {
                     intyVector.addElement( value );
                     break;
                 }
-                default: // TODO skip unknown fields
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
             }
         }
         object.put("type",typeVector);
@@ -367,7 +379,6 @@ public class ProtoAccess extends ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1: {
                     int size = in2.readBytesSize();
@@ -393,7 +404,10 @@ public class ProtoAccess extends ProtoUtil {
                     vec3Vector.addElement( value );
                     break;
                 }
-                default: // TODO skip unknown fields
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
             }
         }
         object.put("vec1",vec1Vector);
@@ -406,14 +420,16 @@ public class ProtoAccess extends ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1201: {
                     int value = (int)in2.readInt32();
                     object.setId(value);
                     break;
                 }
-                default: // TODO skip unknown fields
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
             }
         }
         return object;
@@ -424,7 +440,6 @@ public class ProtoAccess extends ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
             switch(fieldNo) {
                 case 1204: {
                     int value = (int)in2.readInt32();
@@ -464,7 +479,10 @@ public class ProtoAccess extends ProtoUtil {
                     object.setImage(value);
                     break;
                 }
-                default: // TODO skip unknown fields
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
             }
         }
         String[] legsArray = new String[legsVector.size()];

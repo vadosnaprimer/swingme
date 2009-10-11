@@ -40,4 +40,9 @@ public class Test {
         return hash;
     }
 
+    @Override
+    public String toString() {
+        return "Test:" + id;
+    }
+
 }

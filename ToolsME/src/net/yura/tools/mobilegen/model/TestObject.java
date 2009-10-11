@@ -104,6 +104,11 @@ public class TestObject extends Test {
     }
 
     @Override
+    public String toString() {
+        return "TestObject:"+name+","+age;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;

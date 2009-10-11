@@ -48,9 +48,9 @@ message Test {
 
 message TestObject {
 	required int32 id                = 1204; 
-	required string  name            = 1205;
+	optional string  name            = 1205;
 	required int32   age             = 1206;
-        required Type myType      = 1207;
+        optional Type myType      = 1207;
 	optional Object body     = 1208;
 	repeated string legs    = 1209;
         optional bytes image = 1;

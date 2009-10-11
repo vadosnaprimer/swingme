@@ -327,7 +327,7 @@ ps.println("        }");
 ps.println("        while (!in2.isAtEnd()) {");
 ps.println("            int tag = in2.readTag();");
 ps.println("            int fieldNo = WireFormat.getTagFieldNumber(tag);");
-ps.println("            int wireType = WireFormat.getTagWireType(tag);");
+//ps.println("            int wireType = WireFormat.getTagWireType(tag);");
     //System.out.println("read field "+fieldNo );
     //System.out.println("wire type "+wireType );
 
@@ -380,7 +380,10 @@ ps.println("                case "+field.getID()+": {");
 ps.println("                    break;");
 ps.println("                }");
 }
-ps.println("                default: // TODO skip unknown fields");
+ps.println("                default: {");
+ps.println("                    in2.skipField(tag);");
+ps.println("                    break;");
+ps.println("                }");
 ps.println("            }");
 
 ps.println("        }");
@@ -510,7 +513,7 @@ ps.println("        }");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() != Hashtable.class) {
-ps.println("        if (obj instanceof "+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+") {");
+ps.println("        if (obj.getClass() == "+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+".class) {");
 ps.println("            return "+enu.getKey()+";");
 ps.println("        }");
     }
