@@ -43,6 +43,7 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TabbedPane;
+import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
@@ -66,6 +67,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
+import net.yura.mobile.gui.components.TextPane.TextStyle;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
 
@@ -83,31 +85,31 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Menu menu;
         private Menu mainMenu;
         private Panel tableTest;
-        
+
         private Icon image;
         private TextArea infoLabel,viewText,loadPanel;
 	private Vector images;
 	private Frame mainWindow;
-	
+
         private SynthLookAndFeel synth;
         private MetalLookAndFeel metal;
 
         Frame xuldialog;
-        
+
 	public MainPane(MyMidlet a) {
 		super(a,0,null);
 	}
 
 	public void initialize() {
-		
+
                 metal = new MetalLookAndFeel();
                 //setLookAndFeel( metal );
                 setLookAndFeel( new NimbusLookAndFeel() );
 
                 mainWindow = new Frame();
-                
+
 		mainWindow.setMaximum(true);
-                
+
 		//mainWindow.setActionListener(this);
 
                 try {
@@ -115,38 +117,38 @@ public class MainPane extends DesktopPane implements ActionListener {
                 }catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                
+
                 mainWindow.setMenuBar(new MenuBar());
                 mainWindow.setUndecorated(true);
                 mainWindow.setVisible(true);
 		actionPerformed("mainmenu");
 
 	}
-	
+
         private void addMainMenuButton(String a,String b) {
-            
+
             Button infoButton = new Button(a);
             infoButton.setActionCommand(b);
             infoButton.addActionListener(this);
             mainmenu.add(infoButton);
         }
-        
+
 	public void actionPerformed(String actionCommand) {
 
 		if ("exit".equals(actionCommand)) {
-			
+
 			exit();
-			
+
 		}
 		else if ("mainmenu".equals(actionCommand)) {
-			
+
 			if (mainmenu==null) {
-			
+
 				mainmenu = new Panel( new FlowLayout(Graphics.VCENTER) );
-				
+
 				Label helloWorld = new Label("Test App Menu");
 				mainmenu.add(helloWorld);
-				
+
                                 addMainMenuButton("Info","info");
 				addMainMenuButton("Load","loadpanel");
 				addMainMenuButton("View Text","viewText");
@@ -163,8 +165,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("XUL generate","xulTest2");
                                 addMainMenuButton("XUL demodialog","xulTest3");
                                 addMainMenuButton("File Chooser","fileChooser");
+                                addMainMenuButton("Text Pane","textPane");
 
-                                
+
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
                                 addMenuItem(mainMenu,"metalTheme", "Metal Theme");
@@ -180,7 +183,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			}
 
 			addToScrollPane(mainmenu, mainMenu, makeButton("Exit","exit") );
-			
+
 		}
                 else if ("aether1".equals(actionCommand)) {
                     setupNewLookAndFeel( new NimbusLookAndFeel() );
@@ -204,13 +207,13 @@ public class MainPane extends DesktopPane implements ActionListener {
                     setupNewLookAndFeel( red );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
-                    
+
                     if (metal==null) {
                         metal = new MetalLookAndFeel();
                     }
                     setupNewLookAndFeel(metal);
 
-                    
+
                 }
                 else if ("synthTheme1".equals(actionCommand)) {
                     loadSynthSkin("/synthdemo/synthDemo.xml");
@@ -244,7 +247,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                     }
 
 
-                    
+
                     // Test that pack method works too
                     //test1.pack();
 
@@ -275,7 +278,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                     test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
                     test1.setVisible(true);
-                    
+
                 }
                 else if ("xulTest".equals(actionCommand)) {
 
@@ -360,13 +363,13 @@ System.out.println("open file browser");
                     xuldialog.setVisible(true);
                 }
                 else if ("info".equals(actionCommand)) {
-			
+
 			if (info==null) {
-			
+
                                 infoLabel = new TextArea("...",Graphics.HCENTER);
                                 //infoLabel.setSize(getWidth(),infoLabel.getHeight());
                                 infoLabel.setFocusable(false);
-                                
+
 				info = new Panel( new BorderLayout() ) {
                                         { focusable=true; }
                                   	public void processMouseEvent(int type, int x, int y,KeyEvent keys) {
@@ -380,7 +383,7 @@ System.out.println("open file browser");
                                             }
                                             infoLabel.repaint();
 
-                                        }  
+                                        }
                                     	public boolean processKeyEvent(KeyEvent keypad) {
 
                                             int code1 = keypad.getJustPressedKey();
@@ -391,7 +394,7 @@ System.out.println("open file browser");
                                                 infoLabel.setText("keyEvent: "+code +"\nKeyText: "+keypad.getKeyText(code));
                                                 if (code>0) {
                                                     infoLabel.append("\nchar: "+(char)code);
-                                                    
+
                                                     char inputChar = keypad.getKeyChar(code,KeyEvent.getChars( (char)code, TextField.ANY ), false);
                                                     if (inputChar!=0) {
                                                         infoLabel.append("\ninput char: "+ inputChar );
@@ -422,20 +425,20 @@ System.out.println("open file browser");
                                             return true;
                                         }
                                 };
-                                
+
                                 info.add( new Label("Info for keys and pointer"),Graphics.TOP );
 
                                 info.add(infoLabel);
 
 			}
-			
+
 			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
-			
+
 		}
                 else if ("componentTest".equals(actionCommand)) {
-			
+
 			if (componentTest==null) {
-			
+
 				componentTest = new Panel( new FlowLayout(Graphics.VCENTER) );
 
                                 Menu testMain = new Menu("Menu");
@@ -466,7 +469,7 @@ System.out.println("open file browser");
 
                                 componentTest.add( new CheckBox("a CheckBox") );
                                 componentTest.add( new RadioButton("a RadioButton") );
-                                
+
                                 Vector items = new Vector();
                                 items.addElement("One");
                                 items.addElement(new Option("2","Two",image));
@@ -479,48 +482,48 @@ System.out.println("open file browser");
                                 componentTest.add( new ComboBox(items) );
                                 componentTest.add( disabledCombo );
                                 componentTest.add( new Spinner(items, false));
-                                
+
                                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more than 1 line");
                                 longText.setFocusable(false);
 				longText.setLineWrap(true);
                                 componentTest.add( longText );
-                                
+
                                 Panel email = new Panel( new FlowLayout() );
                                 TextField t1 = new TextField();
                                 TextField t2 = new TextField();
                                 t1.setPreferredWidth(0.35);
                                 t2.setPreferredWidth(0.35);
-                                
+
                                 email.add(t1);
                                 email.add(new Label("@"));
                                 email.add(t2);
-                                
+
                                 componentTest.add(email);
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
-                                
+
                                 menu = new Menu("Menu");
                                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                                 menu.add(new Button("bob"));
-                                
+
                                 Menu menu2 = new Menu("Sub");
                                 //menu2.addActionListener(this);
                                 menu2.add(new Button("fred"));
                                 addMenuItem(menu2,"action","item (will close menu)");
                                 menu.add(menu2);
-                                
+
 			}
-			
+
 			addToScrollPane(componentTest, menu, makeButton("Back","mainmenu") );
-			
+
 		}
                 else if ("componentTest2".equals(actionCommand)) {
-			
+
 			if (componentTest2==null) {
                             componentTest2 = new Panel( new BorderLayout() );
-                            
+
                             Panel component1 = new Panel(new GridLayout(0,1,0));
                             Panel component2 = new Panel(new GridLayout(0,1));
-                            
+
                             component1.add( new Label("any") );
                             component2.add( new TextField(javax.microedition.lcdui.TextField.ANY) );
                             component1.add( new Label("email") );
@@ -542,27 +545,27 @@ System.out.println("open file browser");
 
                             componentTest2.add(component1,Graphics.LEFT);
                             componentTest2.add(component2);
-                            
+
                         }
                         addToScrollPane(componentTest2, makeButton("Back","mainmenu"), null );
                 }
 		else if ("loadpanel".equals(actionCommand)) {
-			
+
 			if (loadPanel==null) {
-				
+
 				loadPanel = new TextArea();
                                 loadPanel.setFocusable(false);
 				loadPanel.setLineWrap(true);
 				images = new Vector();
 
 			}
-			
+
 			addToScrollPane(loadPanel, makeButton("Load","load") , makeButton("Back","mainmenu") );
 		}
 		else if ("viewText".equals(actionCommand)) {
-			
+
 			if (viewText==null) {
-				
+
 
 StringBuffer buf = new StringBuffer();
 
@@ -614,7 +617,7 @@ for (int c=0;c<4;c++) {
 			tmp.setBorder( new EmptyBorder(10,10,10,10) );
 			Panel p = new Panel( new BorderLayout() );
 			p.add(tmp);
-                        
+
                         CheckBox edit = new CheckBox("Edit");
                         edit.setActionCommand("open_text_edit");
                         edit.addActionListener(this);
@@ -624,14 +627,14 @@ for (int c=0;c<4;c++) {
 
 		}
                 else if ("open_text_edit".equals(actionCommand)) {
-                    
+
                     viewText.setFocusable( !viewText.isFocusable() );
                     mainWindow.repaint();
                     // TODO mainWindow.setupFocusedComponent();
-                    
+
                 }
                 else if ("load".equals(actionCommand)) {
-			
+
 			Image testImage;
 			String message;
 			try {
@@ -648,15 +651,15 @@ for (int c=0;c<4;c++) {
                         mainWindow.repaint();
 		}
                 else if ("borderTest".equals(actionCommand)) {
-			
+
 			if (border==null) {
-				
+
 				border = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 Label test1 = new Label("CompoundBorder test");
                                 test1.setBorder( new CompoundBorder(
                                         new BevelBorder(4,0x00FF0000,0x0000FFFF),
                                         new CompoundBorder(
-                                            new LineBorder( 0x0000FF00, 0x00FFFFFF,4,true), 
+                                            new LineBorder( 0x0000FF00, 0x00FFFFFF,4,true),
                                             new LineBorder(0x000000FF, 3))) );
                                 border.add(test1);
 
@@ -669,7 +672,7 @@ for (int c=0;c<4;c++) {
                                     ex.printStackTrace();
                                 }
                                 border.add(test2);
-                                
+
                                 Panel menuTest = new Panel(new FlowLayout(Graphics.VCENTER,0));
                                 try {
                                     menuTest.setBorder(MatteBorder.load("/skin2.skin"));
@@ -682,31 +685,31 @@ for (int c=0;c<4;c++) {
                                 menuTest.add(new Button("menu TEST item 3"));
                                 menuTest.add(new Button("menu TEST item 4"));
                                 border.add(menuTest);
-                                
+
                                 menuTest = new Panel(new FlowLayout(Graphics.VCENTER,0));
                                 menuTest.setBorder(new MatteBorder(10,20,30,40,image));
                                 menuTest.add(new Button("MatteBorderTest"));
                                 border.add(menuTest);
 			}
-			
+
 			addToScrollPane(border, null , makeButton("Back","mainmenu") );
 		}
                 else if ("tabTest".equals(actionCommand)) {
-			
+
 			if (tabPanel==null) {
-				
+
                                 final TabbedPane tabbedPane = new TabbedPane();
-                                
+
                                 Panel tab1 = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 tab1.setName("Tab 1");
                                 tab1.setBackground(0x00FF0000);
                                 tab1.add( new Label("This is tab ONE") );
-                                
+
                                 final RadioButton top = new RadioButton("Top",true);
                                 final RadioButton bottom = new RadioButton("Bottom");
                                 final RadioButton right = new RadioButton("Right");
                                 final RadioButton left = new RadioButton("Left");
-                                
+
                                 ActionListener tabSwap = new ActionListener() {
                                     public void actionPerformed(String actionCommand) {
                                         if (top.getText().equals(actionCommand)) {
@@ -725,23 +728,23 @@ for (int c=0;c<4;c++) {
                                         tabPanel.getParent().repaint();
                                     }
                                 };
-                                
+
                                 ButtonGroup group = new ButtonGroup();
                                 group.add(top);
                                 group.add(bottom);
                                 group.add(right);
                                 group.add(left);
-                                
+
                                 top.addActionListener(tabSwap);
                                 bottom.addActionListener(tabSwap);
                                 right.addActionListener(tabSwap);
                                 left.addActionListener(tabSwap);
-                                
+
                                 tab1.add(top);
                                 tab1.add(bottom);
                                 tab1.add(right);
                                 tab1.add(left);
-                                
+
                                 Panel tab2 = new Panel( new FlowLayout() );
                                 tab2.setBackground(0x0000FF00);
 
@@ -754,9 +757,9 @@ for (int c=0;c<4;c++) {
                                 Panel tab3 = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 List l3 = new List( new DefaultListCellRenderer() );
                                 tab3.setBackground(0x000000FF);
-                                
+
                                 Vector anotherlist = new Vector();
-                                
+
                                 for (int c=0;c<20;c++) {
                                     anotherlist.addElement("A REALLY LONG LIST ITEM, that will need things like side scrolling "+c);
                                 }
@@ -764,7 +767,7 @@ for (int c=0;c<4;c++) {
                                 l3.setFixedCellHeight(15);
                                 tab3.add(new Label("a lable for the list"));
                                 tab3.add(l3);
-                                
+
                                 Panel tab4 = new Panel( new BorderLayout() );
                                 tab4.add(new Label("Tab 4 title"),Graphics.TOP);
                                 tab4.add(new ScrollPane(new List(anotherlist,new DefaultListCellRenderer(),false)));
@@ -773,22 +776,22 @@ for (int c=0;c<4;c++) {
                                 tabbedPane.addTab("TAB 2", image, tab2,"i am a tooltip");
                                 tabbedPane.addTab("eee", new ScrollPane(tab3));
                                 tabbedPane.addTab(null,image,tab4);
-                                
+
                                 tabPanel = tabbedPane;
-                                
+
 			}
-			
+
 			addToContentPane(tabPanel, null , makeButton("Back","mainmenu") );
 		}
                 else if ("tableTest".equals(actionCommand)) {
-                    
+
                     if (tableTest==null) {
-                        
+
                         Vector options = new Vector();
                         options.addElement(new Option("yes","Happy",null,":-)"));
                         options.addElement(new Option("no","Sad"));
                         options.addElement(new Option("ok","OK"));
-                        
+
                         Vector rows = new Vector();
                             Vector row1 = new Vector();
                             row1.addElement("YURA");
@@ -796,28 +799,28 @@ for (int c=0;c<4;c++) {
                             row1.addElement(new Boolean(false));
                             row1.addElement(options.elementAt(0));
                         rows.addElement(row1);
-                            
+
                             Vector row2 = new Vector();
                             row2.addElement("bob");
                             row2.addElement(new Integer(25));
                             row2.addElement(new Boolean(true));
                             row2.addElement(options.elementAt(1));
                         rows.addElement(row2);
-                        
+
                             Vector row3 = new Vector();
                             row3.addElement("fred");
                             row3.addElement(new Integer(30));
                             row3.addElement(new Boolean(false));
                             row3.addElement(options.elementAt(2));
                         rows.addElement(row3);
-                        
+
                             Vector row4 = new Vector();
                             row4.addElement( "thingy");
                             row4.addElement(new Integer(30));
                             row4.addElement(new Boolean(true));
                             row4.addElement(new Option("ok","OK"));
                         rows.addElement(row4);
-                        
+
                         // copy pasty from DefaultListCellRenderer
                         class MyCheckBox extends CheckBox implements ListCellRenderer {
 
@@ -825,9 +828,9 @@ for (int c=0;c<4;c++) {
                             //private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
                             //protected Border normal,selected,focusedAndSelected;
                             private int state;
-                            
+
                             public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                                
+
                                 setSelected( value instanceof Boolean?((Boolean)value).booleanValue() : false );
 
                                 // a checkbox can be TICKED, but this is NOT the same as the cell being selected
@@ -879,7 +882,7 @@ for (int c=0;c<4;c++) {
 //                            public String getName() {
 //                                return "ListRenderer";
 //                            }
-                            
+
 //                            public void updateUI() {
 //                                    super.updateUI();
 //                                    Style st = DesktopPane.getDefaultTheme(this);
@@ -902,45 +905,45 @@ for (int c=0;c<4;c++) {
                             numbers.addElement(new Integer(c));
                         }
 
-                        
+
                         Table table = new Table(rows,null) {
                             public boolean isCellEditable(int rowIndex, int columnIndex) {
                                 return (rowIndex!=3);
                             }
                         };
-                        
+
                         table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
                         table.setDefaultRenderer(Boolean.class, new MyCheckBox() );
-                        
+
                         table.setDefaultEditor(Integer.class, new DefaultCellEditor( new Spinner(numbers,false) ) );
                         table.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
                         table.setDefaultEditor(Option.class, new DefaultCellEditor(new ComboBox(options)) );
-                        
+
                         // testing clip
 //                        table.setColumnWidth(0, 100);
 //                        table.setColumnWidth(1, 100);
 //                        table.setColumnWidth(2, 100);
 //                        table.setColumnWidth(3, 100);
 //                        table.setRowHeight(100);
-                        
+
                         tableTest = new Panel( new BorderLayout() );
-                        
+
                         Panel top = new Panel(new FlowLayout());
                         top.add(new Label("Table!"));
                         top.add(new Button("button"));
-                        
+
                         tableTest.add(top,Graphics.TOP);
                         tableTest.add(new ScrollPane(table));
 		    }
-                    
+
                     addToScrollPane(tableTest, null , makeButton("Back","mainmenu") );
-                    
+
                 }
 		else if ("throwerror".equals(actionCommand)) {
 			throw new RuntimeException("some bad error happened!");
 		}
                 else if ("optionPaneTest".equals(actionCommand)) {
-                    
+
                     OptionPane.showMessageDialog(null,new Object[] {
                         "Hello, whats your name?",
                         //new TextArea("bob the builder"),
@@ -952,11 +955,85 @@ for (int c=0;c<4;c++) {
                     FileChooser chooser = new FileChooser();
                     chooser.showDialog(this, "fileSelected", "Select File", "Select");
                 }
+                else if ("textPane".equals(actionCommand)) {
+
+                    String text = "Lorem ipsum dolor sit amet, consectetur " +
+                    "adipiscing elit. Nam nunc lacus, dapibus id tincidunt in, " +
+                    "malesuada consequat diam. \nQuisque fermentum risus eu velit " +
+                    "tincidunt viverra. Morbi nec dictum tellus. Morbi dui lectus, " +
+                    "congue in cursus eget, dapibus sed sapien. \nPellentesque habitant " +
+                    "morbi tristique senectus et netus et malesuada fames ac turpis " +
+                    "egestas. Vestibulum consectetur sem quis tellus" +
+                    "adipiscing elit. \nNam nunc lacus, dapibus id tincidunt in, " +
+                    "malesuada consequat diam. \nQuisque \nfermentum risus eu velit " +
+                    "tincidunt viverra. Morbi nec dictum tellus. Morbi dui lectus, " +
+                    "congue in cursus eget, dapibus sed sapien. Pellentesque habitant " +
+                    "morbi tristique senectus et netus et malesuada fames ac turpis " +
+                    "egestas. Vestibulum consectetur sem quis tellus01234";
+                    TextPane textPane = new TextPane();
+                    textPane.setText(text);
+
+
+                    TextStyle bold = new TextStyle();
+                    bold.setBold(true);
+
+                    TextStyle italic = new TextStyle();
+                    italic.setItalic(true);
+
+                    TextStyle underline = new TextStyle();
+                    underline.setUnderline(true);
+                    underline.setForeground(0x0000FF);
+
+                    TextStyle blue = new TextStyle();
+                    blue.setForeground(0x0000FF);
+
+                    TextStyle alignRight = new TextStyle();
+                    alignRight.setAlignment(TextStyle.ALIGN_RIGHT);
+                    alignRight.setForeground(0xFF0000);
+
+                    TextStyle alignCenter = new TextStyle();
+                    alignCenter.setAlignment(TextStyle.ALIGN_CENTER);
+                    alignCenter.setForeground(0x00FF00);
+
+
+                    textPane.setParagraphAttributes(0, 0, alignRight);
+
+                    textPane.setCharacterAttributes(0, 5, bold);         //Bold
+                    textPane.setCharacterAttributes(5, 7, italic);       //Italic
+                    textPane.setCharacterAttributes(15, 100, underline); // Underline
+                    textPane.setCharacterAttributes(50, 10, bold);   // Underline + Bold
+                    textPane.setCharacterAttributes(70, 10, italic); // Underline + Italic
+
+                    textPane.setCharacterAttributes(90, 10, italic);
+                    textPane.setCharacterAttributes(90, 10, bold);  // Underline + Italic + Bold
+
+                    textPane.setParagraphAttributes(125, 0, alignCenter);
+
+                    textPane.setCharacterAttributes(130, 10, blue);  // blue
+
+                    try {
+                        TextStyle iconStyle = new TextStyle();
+                        iconStyle.setIcon(new Icon("/skin1.png"));
+
+                        textPane.setCharacterAttributes(251, 2, iconStyle);  // Icon
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    textPane.setCharacterAttributes(text.length() - 3, 10, bold);  // Bold
+
+                    ScrollPane tmp = new ScrollPane( textPane );
+                    tmp.setBorder( new EmptyBorder(10,10,10,10) );
+                    Panel p = new Panel( new BorderLayout() );
+                    p.add(tmp);
+                    addToContentPane(p, null, makeButton("Back","mainmenu"));
+                }
 		else {
-			
+
 			System.out.println("Unknown Command: "+actionCommand);
 		}
-		
+
 	}
 
         private Button makeButton(String label,String action) {
@@ -984,16 +1061,16 @@ for (int c=0;c<4;c++) {
 
 	private ScrollPane scroll;
 	private void addToScrollPane(Component a,Button b,Button c) {
-		
+
 		if (scroll==null) {
-			
+
 			scroll = new ScrollPane();
                         //Label label = new Label("yura.net Mobile");
                         //label.setHorizontalAlignment(Graphics.HCENTER);
                         //mainWindow.add(label,Graphics.TOP);
                         //mainWindow.add(scroll);
                         //mainWindow.add(new Label(""),Graphics.BOTTOM);
-                        
+
 		}
                	scroll.removeAll();
 		scroll.add(a);
@@ -1062,11 +1139,11 @@ for (int c=0;c<4;c++) {
         infoLabel=null;
         viewText=null;
         loadPanel=null;
-        
+
         // not these as we have these open now
         //mainMenu=null;
         //mainmenu=null;
-        
+
         updateComponentTreeUI(mainWindow);
         mainWindow.revalidate();
         mainWindow.repaint();
