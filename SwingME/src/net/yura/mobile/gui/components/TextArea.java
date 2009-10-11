@@ -288,7 +288,7 @@ public class TextArea extends TextComponent {
 
             if (lines==null) return;
 
-            // todo? mayeb use display text
+            // todo? maybe use display text
             String text = getText();
             
             int startPos=-1;
@@ -458,29 +458,26 @@ public class TextArea extends TextComponent {
 
     public void workoutMinimumSize() {
 
-	if (wrap) {
+        if (wrap) {
 
-		// scrollpane will handel out size
-		// we assume that the scrollPane size is already setup and correct
-		// this saves lots of un-needed calls to getLines
-		if (parent instanceof ScrollPane) {
-			width = ((ScrollPane)parent).getViewPortWidth();
-		}
-		else {
-
-                    if (preferredPercentWidth!=-1) {
-                        width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredPercentWidth);
-                    }
-                    else if (width==0) {
-                        // make a guess at the width
-                        // to work out the height
-                        // width will be reset back to 0
-                        width = (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
-                        // this guess here is the root of all problems
-                        // as we need to make a guess, even though we have no idea
-                    }
-		}
-	}
+        // scrollPane will handle out size
+        // we assume that the scrollPane size is already setup and correct
+        // this saves lots of unneeded calls to getLines
+        if (parent instanceof ScrollPane) {
+            width = ((ScrollPane)parent).getViewPortWidth();
+        }
+        else if (preferredPercentWidth!=-1) {
+            width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredPercentWidth);
+        }
+        else if (width==0) {
+            // make a guess at the width
+            // to work out the height
+            // width will be reset back to 0
+            width = (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
+            // this guess here is the root of all problems
+            // as we need to make a guess, even though we have no idea
+        }
+    }
 
 	// ALWAYS setup the height in this method!
 	int w = wrap?width:Integer.MAX_VALUE;
@@ -543,10 +540,13 @@ public class TextArea extends TextComponent {
         return searchStringCharOffset(text, font,xPixelOffset);
     }
 
+    public int[] getLines(String str,Font f,int startPos,int w) {
+        return getLines(str, f, startPos, w, w);
+    }
 	/**
 	 * If w == Integer.MAX_VALUE, then it wont wrap on words
 	 */
-        public int[] getLines(String str,Font f,int startPos,int w) {
+        public int[] getLines(String str,Font f,int startPos,int startW, int w) {
 
 //#debug
 System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.length());
@@ -583,8 +583,8 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                         }
                         int currentLineLength = (w==Integer.MAX_VALUE)?-1:getStringWidth(f,str.substring(lineStart, end));
 
-                        if (currentLineLength > w && lineStart==wordStart) {
-                               
+                        if (currentLineLength > startW && lineStart==wordStart) {
+
                                 // start to remove 1 char at a time,
                                 // and checking if we can fit the string into the width
 
@@ -592,13 +592,13 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
 
                                 // this is bad, this means the width of 1 letter is still too wide
                                 // so we must add this letter anyway
-                                int c = lineStart + (a<1 ? 1 : a);
+                                int c = lineStart + ((a<1 && startW >= w) ? 1 : a);
 
                                 parts.addElement(new Integer(c));
                                 wordStart = c;
                                 lineStart = c;
                         }
-                        else if (currentLineLength > w) {
+                        else if (currentLineLength > startW) {
                              // here wordStart is the start of the OLD line
                              // e.g. "Bob the builder"
                              // if builder goes over the width, then the wordStart is on the letter 'b'
@@ -620,6 +620,9 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                             wordStart = end+1;
                         }
 
+                        if (startW != w && parts.size() > 0) {
+                            startW = w;
+                        }
 		}
 
                 int[] array = new int[parts.size()];
