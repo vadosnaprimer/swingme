@@ -37,6 +37,11 @@ public class TextPane extends Component {
     private Vector lineFragments = new Vector();
     private int lastLineX;
 
+    public TextPane() {
+        super();
+        focusable = false;
+    }
+
     protected String getDefaultName() {
         return "TextPane";
     }
