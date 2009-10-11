@@ -160,6 +160,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Window Test","windowTest1");
                                 addMainMenuButton("Option Pane Test","optionPaneTest");
                                 addMainMenuButton("Table Test","tableTest");
+                                addMainMenuButton("Scroll Test","scrollTest1");
                                 addMainMenuButton("XUL mobile demo","xulTest");
                                 addMainMenuButton("XUL tabbedpane","xulTest1");
                                 addMainMenuButton("XUL generate","xulTest2");
@@ -516,6 +517,28 @@ System.out.println("open file browser");
 			addToScrollPane(componentTest, menu, makeButton("Back","mainmenu") );
 
 		}
+                else if ("scrollTest1".equals(actionCommand)) {
+
+                        Panel scrollTest = new Panel(new FlowLayout(Graphics.VCENTER));
+
+                        String s  = "sdfg\n\n\n\n\n\n\n\n\n\na\n\nb\n\n\n\n\n\nc\n\n\n\n\n\n\nsgfsdf";
+
+                        TextArea[] areas = new TextArea[5];
+                        for (int c=0;c<areas.length;c++) {
+                            areas[c] = new TextArea();
+                            areas[c].setFocusable(false);
+                            areas[c].setLineWrap(true);
+                            areas[c].setText(s);
+                        }
+
+                        scrollTest.add(areas[0]);
+                        scrollTest.add(new Button("BOB1") );
+                        scrollTest.add(areas[1]);
+                        scrollTest.add(new Button("BOB2") );
+                        scrollTest.add(areas[2]);
+
+			addToScrollPane(scrollTest, menu, makeButton("Back","mainmenu") );
+                }
                 else if ("componentTest2".equals(actionCommand)) {
 
 			if (componentTest2==null) {
