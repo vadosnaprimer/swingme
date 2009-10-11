@@ -359,7 +359,7 @@ public class Panel extends Component {
             }
             else if (getWindow().getFocusOwner()!=null) {
 
-                breakOutAction(null, direction, scrolltothere,true);
+                breakOutAction(null, direction, scrolltothere && !scrolled,true);
 
             }
 
