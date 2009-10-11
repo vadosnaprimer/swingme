@@ -95,16 +95,20 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#setListData(java.util.Vector) JList.setListData
      */
     public void setListData(Vector a) {
-
         items = a;
-        if (a == null || current >= a.size()){
+        contentsChanged();
+    }
+
+    /**
+     * @see javax.swing.event.ListDataListener#contentsChanged(javax.swing.event.ListDataEvent) ListDataListener.contentsChanged
+     */
+    public void contentsChanged() {
+        if (items == null || current >= items.size()){
             setSelectedIndex(-1);
         }
-
-        if (isFocusOwner() && current==-1 && a.size() > 0) {
+        else if (current==-1 && items.size() > 0 && isFocusOwner()) {
             setSelectedIndex(0);
         }
-
     }
 
     /**
@@ -115,6 +119,9 @@ public class List extends Component implements ActionListener {
         setSelectedIndex( indexOf(a) );
     }
 
+    /**
+     * not swing
+     */
     public Vector getItems() {
         return items;
     }
@@ -468,7 +475,9 @@ public class List extends Component implements ActionListener {
 
     public boolean processKeyEvent(KeyEvent keypad) {
 
-        if (current<0) { return false; }
+        int size = getSize();
+
+        if (size==0) { return false; }
 
         if (keypad.justPressedKey(KeyEvent.KEY_EDIT) || keypad.justPressedKey('#')) {
             addMode = selected == null || !isSelectedIndex(current);
@@ -476,8 +485,6 @@ public class List extends Component implements ActionListener {
 
         int next = current+1;
         int prev = current-1;
-
-        int size = getSize();
 
         if (loop) {
             if (next>=size) { next = (size==0)?-1:0; }
@@ -512,7 +519,7 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.DOWN)) {
 
-            if (!horizontal && next!=-1) {
+            if (!horizontal && next>-1) {
                 selectNewKey(next,keypad);
                 return true;
             }
@@ -532,7 +539,7 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.UP)) {
 
-            if (!horizontal && prev!=-1) {
+            if (!horizontal && prev>-1) {
                 selectNewKey(prev,keypad);
                 return true;
             }
@@ -551,7 +558,7 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.RIGHT)) {
 
-            if (horizontal && next!=-1) {
+            if (horizontal && next>-1) {
                 selectNewKey(next,keypad);
                 return true;
             }
@@ -573,7 +580,7 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.LEFT)) {
 
-            if (horizontal && prev!=-1) {
+            if (horizontal && prev>-1) {
                 selectNewKey(prev,keypad);
                 return true;
             }
@@ -818,9 +825,8 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.DefaultListModel#addElement(java.lang.Object) DefaultListModel.addElement
      */
     public void addElement(Object a) {
-
         items.addElement(a);
-
+        contentsChanged();
     }
 
     /**
@@ -842,7 +848,7 @@ public class List extends Component implements ActionListener {
      */
     public void removeAllElements() {
         items.removeAllElements();
-        current = -1;
+        contentsChanged();
     }
 
     /**
@@ -850,7 +856,6 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.DefaultListModel#removeElementAt(int) DefaultListModel#removeElementAt
      */
     public void removeElementAt(int i) {
-
         items.removeElementAt(i);
         if (current == i) {
             current = -1;
@@ -858,7 +863,6 @@ public class List extends Component implements ActionListener {
         else if (current > i) {
             current--;
         }
-
     }
 
     // ##################################################

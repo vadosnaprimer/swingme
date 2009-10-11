@@ -94,7 +94,6 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
     public void setSize(int w, int h) {
-
         super.setSize(w, h);
 
         switch (mode) {
@@ -106,8 +105,8 @@ public class ScrollPane extends Panel implements Runnable {
         }
 
         // Size of the scroll changed, we need to reset the component location
-        getComponent().setLocation(getViewPortX(), getViewPortY());
-
+        // this is NOT how Swing does it, need to find a better method!
+        //getComponent().setLocation(getViewPortX(), getViewPortY());
     }
 
     public int getBarThickness() {

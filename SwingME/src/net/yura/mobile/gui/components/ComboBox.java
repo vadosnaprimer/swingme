@@ -221,6 +221,10 @@ public class ComboBox extends Button implements ActionListener{
 		return list.getItems();
 	}
 
+        public int getItemCount() {
+            return list.getSize();
+        }
+
 	public void setItems(Vector items) {
 		createList();
 		list.setListData(items);
