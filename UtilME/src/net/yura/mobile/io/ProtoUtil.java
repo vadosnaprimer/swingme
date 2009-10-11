@@ -49,7 +49,7 @@ public class ProtoUtil {
         return obj;
     }
 
-    private Object decodeAnonymousObject(CodedInputStream in2) throws IOException {
+    protected Object decodeAnonymousObject(CodedInputStream in2) throws IOException {
 
         int type=-1;
         Object obj=null;
@@ -57,28 +57,33 @@ public class ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
+//            int wireType = WireFormat.getTagWireType(tag);
     //System.out.println("read field "+fieldNo );
     //System.out.println("wire type "+wireType );
 
-            if (fieldNo == OBJECT_TYPE) {
-                type = in2.readInt32();
-                //System.out.println("object type "+type);
-            }
-            else if (fieldNo == OBJECT_VALUE) {
-                if (type==-1) {
-                    throw new IOException("fuck, fields in wrong order to be able to decode");
+            switch (fieldNo) {
+                case OBJECT_TYPE: {
+                    type = in2.readInt32();
+                    //System.out.println("object type "+type);
+                    break;
                 }
-
-                int size = in2.readBytesSize();
-                int lim = in2.pushLimit(size);
-                //System.out.println("object size "+size);
-                obj = decodeObject(in2,type);
-                //System.out.println("object "+obj);
-                in2.popLimit(lim);
-
+                case OBJECT_VALUE: {
+                    if (type==-1) {
+                        throw new IOException("fuck, fields in wrong order to be able to decode");
+                    }
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    //System.out.println("object size "+size);
+                    obj = decodeObject(in2,type);
+                    //System.out.println("object "+obj);
+                    in2.popLimit(lim);
+                    break;
+                }
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
             }
-
         }
         return obj;
     }
@@ -101,12 +106,15 @@ public class ProtoUtil {
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
+//            int wireType = WireFormat.getTagWireType(tag);
     //System.out.println("read field "+fieldNo );
     //System.out.println("wire type "+wireType );
 
             if (fieldNo == DEFAULT_FIELD) {
                 simple = readSimple(in2,type);
+            }
+            else {
+                in2.skipField(tag);
             }
         }
         return simple;
@@ -131,25 +139,26 @@ public class ProtoUtil {
         }
     }
 
-    private Vector decodeVector(CodedInputStream in2) throws IOException {
+    protected Vector decodeVector(CodedInputStream in2) throws IOException {
         Vector vector = new Vector();
 
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
-            int wireType = WireFormat.getTagWireType(tag);
+//            int wireType = WireFormat.getTagWireType(tag);
     //System.out.println("read field "+fieldNo );
     //System.out.println("wire type "+wireType );
 
             if (fieldNo == VECTOR_ELEMENT) {
-
                 int size = in2.readBytesSize();
                 int lim = in2.pushLimit(size);
                 //System.out.println("object size "+size);
                 Object obj = decodeAnonymousObject(in2);
                 vector.addElement(obj);
                 in2.popLimit(lim);
-
+            }
+            else {
+                in2.skipField(tag);
             }
 
         }
@@ -163,7 +172,7 @@ public class ProtoUtil {
         while (!in2.isAtEnd()) {
             final int tag = in2.readTag();
             final int fieldNo = WireFormat.getTagFieldNumber(tag);
-            final int wireType = WireFormat.getTagWireType(tag);
+//            final int wireType = WireFormat.getTagWireType(tag);
     //System.out.println("read field "+fieldNo );
     //System.out.println("wire type "+wireType );
 
@@ -178,27 +187,33 @@ public class ProtoUtil {
                 while (!in2.isAtEnd()) {
                     final int tag2 = in2.readTag();
                     final int fieldNo2 = WireFormat.getTagFieldNumber(tag2);
-                    final int wireType2 = WireFormat.getTagWireType(tag2);
+//                    final int wireType2 = WireFormat.getTagWireType(tag2);
             //System.out.println("read field "+fieldNo2 );
             //System.out.println("wire type "+wireType2 );
 
-                    if (fieldNo2 == HASHTABLE_KEY) {
-
-                        int size2 = in2.readBytesSize();
-                        int lim2 = in2.pushLimit(size2);
-                        //System.out.println("object size "+size2);
-                        key = decodeAnonymousObject(in2);
-                        in2.popLimit(lim2);
-
+                    switch(fieldNo2) {
+                        case HASHTABLE_KEY: {
+                            int size2 = in2.readBytesSize();
+                            int lim2 = in2.pushLimit(size2);
+                            //System.out.println("object size "+size2);
+                            key = decodeAnonymousObject(in2);
+                            in2.popLimit(lim2);
+                            break;
+                        }
+                        case HASHTABLE_VALUE: {
+                            int size2 = in2.readBytesSize();
+                            int lim2 = in2.pushLimit(size2);
+                            //System.out.println("object size "+size2);
+                            value = decodeAnonymousObject(in2);
+                            in2.popLimit(lim2);
+                            break;
+                        }
+                        default: {
+                            in2.skipField(tag2);
+                            break;
+                        }
                     }
-                    else if (fieldNo2 == HASHTABLE_VALUE) {
 
-                        int size2 = in2.readBytesSize();
-                        int lim2 = in2.pushLimit(size2);
-                        //System.out.println("object size "+size2);
-                        value = decodeAnonymousObject(in2);
-                        in2.popLimit(lim2);
-                    }
                 }
 
                 hashtable.put(key, value);
@@ -206,7 +221,9 @@ public class ProtoUtil {
                 in2.popLimit(lim);
 
             }
-
+            else {
+                in2.skipField(tag);
+            }
         }
 
         return hashtable;
