@@ -351,16 +351,15 @@ public class Panel extends Component {
                 scrolled = ((ScrollPane)this).getComponent().scrollUpDown(direction);
             }
 
-            //if (parent!=null) {
-            if (!(parent instanceof Window)) {
-                    if (!scrolled) {
-                        parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
-                    }
-            }
-            else if (getWindow().getFocusOwner()!=null) {
-
-                breakOutAction(null, direction, scrolltothere && !scrolled,true);
-
+            if (!scrolled) {
+                if (!(parent instanceof Window)) {
+                    // passes onto parent
+                    parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
+                }
+                else if (getWindow().getFocusOwner()!=null) {
+                    // done for loop to first/last component
+                    breakOutAction(null, direction, scrolltothere,true);
+                }
             }
 
         }
