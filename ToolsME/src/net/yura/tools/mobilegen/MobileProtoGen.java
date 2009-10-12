@@ -2,9 +2,12 @@ package net.yura.tools.mobilegen;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -121,8 +124,9 @@ Hashtable<String,MessageDefinition> messageDefs;
 
         printEnummethod(ps);
 
-        Collection<MessageDefinition> messages = messageDefs.values();
-
+        List<MessageDefinition> messages = new ArrayList<MessageDefinition>( messageDefs.values() );
+        Collections.sort(messages, new ClassComparator());
+        System.out.println( messages );
 
 // #############################################################################
 // ############################## compute ######################################
@@ -510,14 +514,28 @@ ps.println("            }");
 
 ps.println("        }");
 
+List<MessageDefinition> messages = new ArrayList<MessageDefinition>();
+Hashtable<MessageDefinition,String> messageNames = new Hashtable<MessageDefinition,String>();
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
-    if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() != Hashtable.class) {
-ps.println("        if (obj.getClass() == "+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+".class) {");
-ps.println("            return "+enu.getKey()+";");
-ps.println("        }");
+    if (num >= 20) {
+        String messageName = enu.getKey();
+        MessageDefinition message = getMessageFromEnum(messageName);
+        if(message.getImplementation() != Hashtable.class) {
+            messages.add(message);
+            messageNames.put(message, messageName);
+        }
     }
 }
+
+Collections.sort(messages,new ClassComparator());
+
+for (MessageDefinition message:messages) {
+ps.println("        if (obj instanceof "+message.getImplementation().getSimpleName()+") {");
+ps.println("            return "+messageNames.get(message)+";");
+ps.println("        }");
+}
+
 
 ps.println("        return super.getObjectTypeEnum(obj);");
 

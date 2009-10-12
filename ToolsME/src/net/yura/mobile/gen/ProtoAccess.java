@@ -74,11 +74,11 @@ public class ProtoAccess extends ProtoUtil {
                 return TYPE_MESSAGE;
             }
         }
-        if (obj.getClass() == Test.class) {
-            return TYPE_TEST;
-        }
-        if (obj.getClass() == TestObject.class) {
+        if (obj instanceof TestObject) {
             return TYPE_TEST_OBJECT;
+        }
+        if (obj instanceof Test) {
+            return TYPE_TEST;
         }
         return super.getObjectTypeEnum(obj);
     }
@@ -153,12 +153,6 @@ public class ProtoAccess extends ProtoUtil {
         }
         return size;
     }
-    private int computeTestSize(Test object) {
-        int size=0;
-        int idValue = object.getId();
-        size = size + CodedOutputStream.computeInt32Size(1201, idValue );
-        return size;
-    }
     private int computeTestObjectSize(TestObject object) {
         int size=0;
         int idValue = object.getId();
@@ -189,6 +183,12 @@ public class ProtoAccess extends ProtoUtil {
         if (imageValue!=null) {
             size = size + CodedOutputStream.computeBytesSize(1, imageValue );
         }
+        return size;
+    }
+    private int computeTestSize(Test object) {
+        int size=0;
+        int idValue = object.getId();
+        size = size + CodedOutputStream.computeInt32Size(1201, idValue );
         return size;
     }
     private void encodeMessage(CodedOutputStream out, Hashtable object) throws IOException {
@@ -261,10 +261,6 @@ public class ProtoAccess extends ProtoUtil {
             }
         }
     }
-    private void encodeTest(CodedOutputStream out, Test object) throws IOException {
-        int idValue = object.getId();
-        out.writeInt32(1201, idValue );
-    }
     private void encodeTestObject(CodedOutputStream out, TestObject object) throws IOException {
         int idValue = object.getId();
         out.writeInt32(1204, idValue );
@@ -295,6 +291,10 @@ public class ProtoAccess extends ProtoUtil {
         if (imageValue!=null) {
             out.writeBytes(1, imageValue );
         }
+    }
+    private void encodeTest(CodedOutputStream out, Test object) throws IOException {
+        int idValue = object.getId();
+        out.writeInt32(1201, idValue );
     }
     private Hashtable decodeMessage(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
@@ -415,25 +415,6 @@ public class ProtoAccess extends ProtoUtil {
         object.put("vec3",vec3Vector);
         return object;
     }
-    private Test decodeTest(CodedInputStream in2) throws IOException {
-        Test object = new Test();
-        while (!in2.isAtEnd()) {
-            int tag = in2.readTag();
-            int fieldNo = WireFormat.getTagFieldNumber(tag);
-            switch(fieldNo) {
-                case 1201: {
-                    int value = (int)in2.readInt32();
-                    object.setId(value);
-                    break;
-                }
-                default: {
-                    in2.skipField(tag);
-                    break;
-                }
-            }
-        }
-        return object;
-    }
     private TestObject decodeTestObject(CodedInputStream in2) throws IOException {
         TestObject object = new TestObject();
         Vector legsVector = new Vector();
@@ -488,6 +469,25 @@ public class ProtoAccess extends ProtoUtil {
         String[] legsArray = new String[legsVector.size()];
         legsVector.copyInto(legsArray);
         object.setLegs(legsArray);
+        return object;
+    }
+    private Test decodeTest(CodedInputStream in2) throws IOException {
+        Test object = new Test();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            switch(fieldNo) {
+                case 1201: {
+                    int value = (int)in2.readInt32();
+                    object.setId(value);
+                    break;
+                }
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
+            }
+        }
         return object;
     }
 }

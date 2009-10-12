@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.tools.ant.Task;
@@ -66,9 +67,14 @@ public abstract class BaseGen extends Task {
         String line = null;
 
         while ((line = reader.readLine()) != null) {
-            String klassName = line;
-            classes.add( Class.forName(klassName) );
+            line = line.trim();
+            if (!"".equals(line)) {
+                String className = line;
+                classes.add( Class.forName(className) );
+            }
         }
+
+        Collections.sort(classes, new ClassComparator());
 
         return classes;
     }
