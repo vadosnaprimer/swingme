@@ -17,13 +17,13 @@ public class ProtoAccess extends ProtoUtil {
     public static final int TYPE_MESSAGE=20;
     public static final int TYPE_TEST_OBJECT=10003;
     public ProtoAccess() { }
-    private int getTypeEnum(String enu) {
+    public static int getTypeEnum(String enu) {
         if ("BOBA".equals(enu)) return 1;
         if ("FRED".equals(enu)) return 2;
         if ("LALA".equals(enu)) return 3;
         return -1;
     }
-    private String getTypeString(int i) {
+    public static String getTypeString(int i) {
         switch (i) {
             case 1: return "BOBA";
             case 2: return "FRED";

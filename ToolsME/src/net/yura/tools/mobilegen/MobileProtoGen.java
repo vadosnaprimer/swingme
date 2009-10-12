@@ -544,7 +544,7 @@ ps.println("    }");
             }
             else {
 
-ps.println("    private int get"+name+"Enum(String enu) {");
+ps.println("    public static int get"+name+"Enum(String enu) {");
 
 for (Map.Entry<String,Integer> enu:set) {
 ps.println("        if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue()+";");
@@ -552,7 +552,7 @@ ps.println("        if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue(
 
 ps.println("        return -1;");
 ps.println("    }");
-ps.println("    private String get"+name+"String(int i) {");
+ps.println("    public static String get"+name+"String(int i) {");
 ps.println("        switch (i) {");
 
 for (Map.Entry<String,Integer> enu:set) {
