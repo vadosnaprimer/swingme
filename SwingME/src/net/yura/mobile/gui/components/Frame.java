@@ -117,7 +117,9 @@ public class Frame extends Window {
                 if (mbar!=null) {
                     super.remove(mbar);
                 }
-                super.add(menuBar);
+                if (menuBar != null) {
+                    super.add(menuBar);
+                }
             }
 
         }
