@@ -135,7 +135,7 @@ public class TitleBar extends Panel implements ActionListener {
 
             Frame owner = (Frame)getWindow();
 
-            if (!owner.getMaximum()) {
+            if (!owner.isMaximum()) {
 
                 owner.setLocation(owner.getX()+(x-oldX),owner.getY()+(y-oldY));
                 DesktopPane.getDesktopPane().fullRepaint();

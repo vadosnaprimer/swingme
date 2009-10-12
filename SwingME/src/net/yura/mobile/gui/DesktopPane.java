@@ -1110,7 +1110,7 @@ public class DesktopPane extends Canvas implements Runnable {
             // it may cause it to stop being painted at all, as it may bcome totally off the screen
 
             if (window!=null) {
-                if (window instanceof Frame && ((Frame)window).getMaximum()) {
+                if (window instanceof Frame && ((Frame)window).isMaximum()) {
                     ((Frame)window).setMaximum(true);
                 }
                 //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());

@@ -56,6 +56,9 @@ public class Frame extends Window {
             setTitle(name);
         }
 
+        /**
+         * @see javax.swing.JInternalFrame#setClosable(boolean) JInternalFrame.setClosable
+         */
         public void setClosable(boolean b) {
             TitleBar title = getTitleBar();
             if (title!=null) {
@@ -63,6 +66,9 @@ public class Frame extends Window {
             }
         }
 
+        /**
+         * @see javax.swing.JInternalFrame#setMaximizable(boolean) JInternalFrame.setMaximizable
+         */
         public void setMaximizable(boolean b) {
             TitleBar title = getTitleBar();
             if (title!=null) {
@@ -108,7 +114,8 @@ public class Frame extends Window {
         }
 
         /**
-         * @see javax.swing.JFrame#setJMenuBar(javax.swing.JMenuBar)
+         * @see javax.swing.JFrame#setJMenuBar(javax.swing.JMenuBar) JFrame.setJMenuBar
+         * @see java.awt.Frame#setMenuBar(java.awt.MenuBar) Frame.setMenuBar
          */
         public void setMenuBar(MenuBar menuBar) {
 
@@ -140,6 +147,7 @@ public class Frame extends Window {
         }
         /**
          * @see javax.swing.JFrame#getJMenuBar() JFrame.getJMenuBar
+         * @see java.awt.Frame#getMenuBar() Frame.getMenuBar
          */
         public MenuBar getMenuBar() {
             Vector components = getComponents();
@@ -280,7 +288,7 @@ public class Frame extends Window {
         }
 
         /**
-         * @param a true to maxemise the window
+         * @param a true to maximize the window
          * @see javax.swing.JInternalFrame#setMaximum(boolean) JInternalFrame.setMaximum
          */
         public void setMaximum(boolean a) {
@@ -292,7 +300,10 @@ public class Frame extends Window {
             }
             // TODO else???
         }
-        public boolean getMaximum() {
+        /**
+         * @see javax.swing.JInternalFrame#isMaximum() JInternalFrame.isMaximum
+         */
+        public boolean isMaximum() {
             return isMaximum;
         }
 }
