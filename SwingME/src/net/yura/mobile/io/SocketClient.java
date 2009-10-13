@@ -13,7 +13,6 @@ import net.yura.mobile.util.QueueProcessorThread;
  * @author Yura Mamyrin
  */
 public abstract class SocketClient implements Runnable {
-
     public final static int DISCONNECTED = 1;
     public final static int CONNECTED = 2;
     public final static int CONNECTING = 3;
@@ -24,9 +23,10 @@ public abstract class SocketClient implements Runnable {
     private Vector offlineBox = new Vector();
 
     private boolean running;
-    private OutputStream out;
     private SocketConnection sc=null;
-    private InputStream in=null;
+
+    protected OutputStream out = null;
+    protected InputStream in = null;
 
     private String server;
 
@@ -167,10 +167,9 @@ System.out.println("got object: "+task);
         }
     }
 
-    public void exit() throws Exception {
+    public void disconnect() {
 
         // TODO make sure everything is saved!!!!!
-
         running = false;
         writeThread.kill();
     }
