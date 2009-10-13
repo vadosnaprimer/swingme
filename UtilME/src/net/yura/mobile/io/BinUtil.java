@@ -140,7 +140,7 @@ public class BinUtil {
 
     }
 
-    public Object readObject(DataInputStream in2) throws IOException {
+    protected Object readObject(DataInputStream in2) throws IOException {
 
         int type = in2.readInt();
 

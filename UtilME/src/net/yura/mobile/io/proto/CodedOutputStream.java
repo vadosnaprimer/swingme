@@ -797,7 +797,7 @@ public final class CodedOutputStream {
   private void refreshBuffer() throws IOException {
     if (output == null) {
       // We're writing to a single buffer.
-      throw new OutOfSpaceException();
+      throw new IOException();
     }
 
     // Since we have an output stream, this is our buffer
@@ -848,7 +848,7 @@ public final class CodedOutputStream {
    * If you create a CodedOutputStream around a simple flat array, you must
    * not attempt to write more bytes than the array has space.  Otherwise,
    * this exception will be thrown.
-   */
+
   public static class OutOfSpaceException extends IOException {
     private static final long serialVersionUID = -6947486886997889499L;
 
@@ -857,6 +857,7 @@ public final class CodedOutputStream {
             "out of space.");
     }
   }
+*/
 
   /** Write a single byte. */
   public void writeRawByte(final byte value) throws IOException {
