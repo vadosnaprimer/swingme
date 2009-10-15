@@ -46,6 +46,11 @@ message Test {
 // repeated required bytes object is how we represent java.lang.Object i.e. a placeholder for any object.
 // repeated required string legs is a String[]
 
+enum OtherThingsType {
+    stuff = 0;
+    thing = 1;
+}
+
 message TestObject {
 	required int32 id                = 1204; 
 	optional string  name            = 1205;
@@ -54,11 +59,12 @@ message TestObject {
 	optional Object body     = 1208;
 	repeated string legs    = 1209;
         optional bytes image = 1;
-    repeated string arms = 2;
-    required Hashtable organs = 3;
-    required bool isAlive = 4;
-    required int32 heads = 5;
-    required int64 lastUpdated = 6;
+        repeated string arms = 2;
+        required Hashtable organs = 3;
+        required bool isAlive = 4;
+        required int32 heads = 5;
+        required int64 lastUpdated = 6;
+        required OtherThingsType things = 7;
 }
 
 message Login {

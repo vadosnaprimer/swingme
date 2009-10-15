@@ -23,6 +23,15 @@ public class TestObject extends Test {
     private boolean isAlive;
     private int heads;
     private long lastUpdated;
+    private int things;
+
+    public int getThings() {
+        return things;
+    }
+
+    public void setThings(int things) {
+        this.things = things;
+    }
 
     public String getMyType() {
         return myType;
