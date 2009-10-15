@@ -230,8 +230,8 @@ public class ProtoAccess extends ProtoUtil {
         Vector armsVector = object.getArms();
         if (armsVector!=null) {
             for (int c=0;c<armsVector.size();c++) {
-                String armsValue = (String)armsVector.elementAt(c);
-                size = size + CodedOutputStream.computeStringSize(2, armsValue );
+                Hashtable armsValue = (Hashtable)armsVector.elementAt(c);
+                size = size + CodedOutputStream.computeBytesSize(2, computeClientLoginSuccessSize( armsValue ));
             }
         }
         Hashtable organsValue = object.getOrgans();
@@ -379,8 +379,9 @@ public class ProtoAccess extends ProtoUtil {
         Vector armsVector = object.getArms();
         if (armsVector!=null) {
             for (int c=0;c<armsVector.size();c++) {
-                String armsValue = (String)armsVector.elementAt(c);
-                out.writeString(2, armsValue );
+                Hashtable armsValue = (Hashtable)armsVector.elementAt(c);
+                out.writeBytes(2,computeClientLoginSuccessSize( armsValue ));
+                encodeClientLoginSuccess( out, armsValue );
             }
         }
         Hashtable organsValue = object.getOrgans();
@@ -649,7 +650,10 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 2: {
-                    String value = in2.readString();
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Hashtable value = decodeClientLoginSuccess(in2);
+                    in2.popLimit(lim);
                     armsVector.addElement( value );
                     break;
                 }

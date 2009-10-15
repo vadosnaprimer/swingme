@@ -211,7 +211,13 @@ for (ProtoLoader.FieldDefinition field:fields) {
                     type = primitiveToJavaType(field.getType());
                 }
                 else {
-                    type = field.getType();
+                    MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                    if (mesDef!=null) {
+                        type = mesDef.getImplementation().getSimpleName();
+                    }
+                    else {
+                        type = "Hashtable";
+                    }
                 }
             }
             else {

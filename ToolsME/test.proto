@@ -60,7 +60,7 @@ message TestObject {
 	optional Object body     = 1208;
 	repeated string legs    = 1209;
         optional bytes image = 1;
-        repeated string arms = 2;
+        repeated ClientLoginSuccess arms = 2;
         required Hashtable organs = 3;
         optional bool isAlive = 4;
         required int32 heads = 5;
