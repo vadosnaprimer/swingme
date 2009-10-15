@@ -245,6 +245,15 @@ public class ProtoLoader {
 
         FieldDefinition fd = new FieldDefinition( name );
 
+        fd.setRequired(required);
+        fd.setRepeated(repeated);
+        fd.setType(type);
+
+        EnumDefinition enu = this.enumDefs.get( type );
+        if (enu!=null) {
+            fd.setEnumeratedType(enu);
+        }
+
         Class messageClass = md.getImplementation();
         Class returnType   = null;
         if ( messageClass != Hashtable.class )
@@ -256,8 +265,21 @@ public class ProtoLoader {
 
                 java.lang.reflect.Method method = messageClass.getMethod( methodName , (Class [])null );
 
-                if ( method != null )
+                if ( method != null ) {
                     returnType = method.getReturnType();
+
+                    // if we use a primative to represent this in our model
+                    // then we dont need to know its a enum!
+                    if (enu!=null) {
+                        if (returnType.isArray()) {
+                            returnType = returnType.getComponentType();
+                        }
+                        if (returnType.isPrimitive()) {
+                            fd.setType("int32");
+                            fd.setEnumeratedType(null);
+                        }
+                    }
+                }
 
                 //if ( returnType != null )
                 //{
@@ -275,16 +297,6 @@ public class ProtoLoader {
             {
                 se.printStackTrace();
             }
-        }
-
-        fd.setRequired(required);
-        fd.setRepeated(repeated);
-        fd.setType(type);
-
-
-        EnumDefinition enu = this.enumDefs.get( type );
-        if (enu!=null) {
-            fd.setEnumeratedType(enu);
         }
 
         //fd.setMap( javaType );

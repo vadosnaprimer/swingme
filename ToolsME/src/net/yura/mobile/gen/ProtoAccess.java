@@ -31,6 +31,18 @@ public class ProtoAccess extends ProtoUtil {
             default: return "unknown "+i;
         }
     }
+    public static int getOtherThingsTypeEnum(String enu) {
+        if ("thing".equals(enu)) return 1;
+        if ("stuff".equals(enu)) return 0;
+        return -1;
+    }
+    public static String getOtherThingsTypeString(int i) {
+        switch (i) {
+            case 1: return "thing";
+            case 0: return "stuff";
+            default: return "unknown "+i;
+        }
+    }
     protected Object decodeObject(CodedInputStream in2,int type) throws IOException {
         switch (type) {
             case TYPE_BOB: return decodeBob(in2);
@@ -183,6 +195,24 @@ public class ProtoAccess extends ProtoUtil {
         if (imageValue!=null) {
             size = size + CodedOutputStream.computeBytesSize(1, imageValue );
         }
+        Vector armsVector = object.getArms();
+        if (armsVector!=null) {
+            for (int c=0;c<armsVector.size();c++) {
+                String armsValue = (String)armsVector.elementAt(c);
+                size = size + CodedOutputStream.computeStringSize(2, armsValue );
+            }
+        }
+        Hashtable organsValue = object.getOrgans();
+        int s = computeHashtableSize( organsValue );
+        size = size + CodedOutputStream.computeBytesSize(3, s);
+        boolean isAliveValue = object.getIsAlive();
+        size = size + CodedOutputStream.computeBoolSize(4, isAliveValue );
+        int headsValue = object.getHeads();
+        size = size + CodedOutputStream.computeInt32Size(5, headsValue );
+        long lastUpdatedValue = object.getLastUpdated();
+        size = size + CodedOutputStream.computeInt64Size(6, lastUpdatedValue );
+        int thingsValue = object.getThings();
+        size = size + CodedOutputStream.computeInt32Size(7, thingsValue );
         return size;
     }
     private int computeTestSize(Test object) {
@@ -291,6 +321,25 @@ public class ProtoAccess extends ProtoUtil {
         if (imageValue!=null) {
             out.writeBytes(1, imageValue );
         }
+        Vector armsVector = object.getArms();
+        if (armsVector!=null) {
+            for (int c=0;c<armsVector.size();c++) {
+                String armsValue = (String)armsVector.elementAt(c);
+                out.writeString(2, armsValue );
+            }
+        }
+        Hashtable organsValue = object.getOrgans();
+        int s = computeHashtableSize( organsValue );
+        out.writeBytes(3,s);
+        encodeHashtable( out, organsValue );
+        boolean isAliveValue = object.getIsAlive();
+        out.writeBool(4, isAliveValue );
+        int headsValue = object.getHeads();
+        out.writeInt32(5, headsValue );
+        long lastUpdatedValue = object.getLastUpdated();
+        out.writeInt64(6, lastUpdatedValue );
+        int thingsValue = object.getThings();
+        out.writeInt32(7, thingsValue );
     }
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
         int idValue = object.getId();
@@ -418,6 +467,7 @@ public class ProtoAccess extends ProtoUtil {
     private TestObject decodeTestObject(CodedInputStream in2) throws IOException {
         TestObject object = new TestObject();
         Vector legsVector = new Vector();
+        Vector armsVector = new Vector();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
@@ -460,6 +510,39 @@ public class ProtoAccess extends ProtoUtil {
                     object.setImage(value);
                     break;
                 }
+                case 2: {
+                    String value = in2.readString();
+                    armsVector.addElement( value );
+                    break;
+                }
+                case 3: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Hashtable value = decodeHashtable(in2);
+                    in2.popLimit(lim);
+                    object.setOrgans(value);
+                    break;
+                }
+                case 4: {
+                    boolean value = (boolean)in2.readBool();
+                    object.setIsAlive(value);
+                    break;
+                }
+                case 5: {
+                    int value = (int)in2.readInt32();
+                    object.setHeads(value);
+                    break;
+                }
+                case 6: {
+                    long value = (long)in2.readInt64();
+                    object.setLastUpdated(value);
+                    break;
+                }
+                case 7: {
+                    int value = (int)in2.readInt32();
+                    object.setThings(value);
+                    break;
+                }
                 default: {
                     in2.skipField(tag);
                     break;
@@ -469,6 +552,7 @@ public class ProtoAccess extends ProtoUtil {
         String[] legsArray = new String[legsVector.size()];
         legsVector.copyInto(legsArray);
         object.setLegs(legsArray);
+        object.setArms(armsVector);
         return object;
     }
     private Test decodeTest(CodedInputStream in2) throws IOException {

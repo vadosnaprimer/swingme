@@ -184,11 +184,12 @@ Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
 for (ProtoLoader.FieldDefinition field:fields) {
 
         final String type;
-        if (field.getEnumeratedType()!=null) {
-            type = "String";
-        }
-        else if (message.getImplementation() == Hashtable.class) {
-            if (isPrimitive(field.getType())) {
+        
+        if (message.getImplementation() == Hashtable.class) {
+            if (field.getEnumeratedType()!=null) {
+                type = "String";
+            }
+            else if (isPrimitive(field.getType())) {
                 type = primitiveToJavaType(field.getType());
             }
             else {
@@ -196,8 +197,16 @@ for (ProtoLoader.FieldDefinition field:fields) {
             }
         }
         else {
-            if (field.repeated && field.getImplementation().isArray()) {
-                type = field.getImplementation().getComponentType().getSimpleName();
+            if (field.repeated) {
+                if (field.getImplementation().isArray()) {
+                    type = field.getImplementation().getComponentType().getSimpleName();
+                }
+                else if (isPrimitive(field.getType())) { // vector
+                    type = primitiveToJavaType(field.getType());
+                }
+                else {
+                    type = field.getType();
+                }
             }
             else {
                 type = field.getImplementation().getSimpleName();
@@ -211,7 +220,7 @@ for (ProtoLoader.FieldDefinition field:fields) {
 ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+field.getName()+"\");");
                 }
                 else {
-ps.println("        Vector "+field.getName()+"Vector = object.get"+field.getName()+"();");
+ps.println("        Vector "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
                 }
 ps.println("        if ("+field.getName()+"Vector!=null) {");
 ps.println("            for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
@@ -251,15 +260,11 @@ ps.println("        }");
             ps.println("if ("+field.getName()+"Value!=null) {");
         }
 
-        final String thing;
-        final String type;
+        String thing = field.getName()+"Value";
+        String type = field.getType();
         if (field.getEnumeratedType()!=null) {
-            thing = "get"+field.getType()+"Enum("+field.getName()+"Value)";
+            thing = "get"+field.getType()+"Enum("+thing+")";
             type = "int32";
-        }
-        else {
-            thing = field.getName()+"Value";
-            type = field.getType();
         }
 
         if (calc) {

@@ -29,18 +29,28 @@ public class BinAccess extends BinUtil {
         }
     }
     protected void saveTestObject(DataOutputStream out,TestObject object) throws IOException {
-        out.writeInt(9);
+        out.writeInt(15);
         out.writeInt( TYPE_BYTE);
         out.writeByte( object.getAge() );
+        writeObject(out, object.getArms() );
         writeObject(out, object.getBody() );
+        out.writeInt( TYPE_INTEGER);
+        out.writeInt( object.getHeads() );
         out.writeInt( TYPE_INTEGER);
         out.writeInt( object.getId() );
         writeObject(out, object.getImage() );
+        out.writeInt( TYPE_BOOLEAN);
+        out.writeBoolean( object.getIsAlive() );
+        out.writeInt( TYPE_LONG);
+        out.writeLong( object.getLastUpdated() );
         writeObject(out, object.getLegs() );
         writeObject(out, object.getMyType() );
         writeObject(out, object.getName() );
         writeObject(out, object.getNumbers() );
         writeObject(out, object.getObjects() );
+        writeObject(out, object.getOrgans() );
+        out.writeInt( TYPE_INTEGER);
+        out.writeInt( object.getThings() );
     }
     protected void saveTest(DataOutputStream out,Test object) throws IOException {
         out.writeInt(1);
@@ -61,16 +71,31 @@ public class BinAccess extends BinUtil {
             object.setAge( in.readByte() );
         }
         if (size>1) {
-            object.setBody( (Object)readObject(in) );
+            object.setArms( (Vector)readObject(in) );
         }
         if (size>2) {
+            object.setBody( (Object)readObject(in) );
+        }
+        if (size>3) {
+            checkType(in.readInt() , TYPE_INTEGER);
+            object.setHeads( in.readInt() );
+        }
+        if (size>4) {
             checkType(in.readInt() , TYPE_INTEGER);
             object.setId( in.readInt() );
         }
-        if (size>3) {
+        if (size>5) {
             object.setImage( (byte[])readObject(in) );
         }
-        if (size>4) {
+        if (size>6) {
+            checkType(in.readInt() , TYPE_BOOLEAN);
+            object.setIsAlive( in.readBoolean() );
+        }
+        if (size>7) {
+            checkType(in.readInt() , TYPE_LONG);
+            object.setLastUpdated( in.readLong() );
+        }
+        if (size>8) {
             Object[] objects = (Object[])readObject(in);
             String[] array=null;
             if (objects!=null) {
@@ -79,16 +104,16 @@ public class BinAccess extends BinUtil {
             }
             object.setLegs(array);
         }
-        if (size>5) {
+        if (size>9) {
             object.setMyType( (String)readObject(in) );
         }
-        if (size>6) {
+        if (size>10) {
             object.setName( (String)readObject(in) );
         }
-        if (size>7) {
+        if (size>11) {
             object.setNumbers( (Vector)readObject(in) );
         }
-        if (size>8) {
+        if (size>12) {
             Object[] objects = (Object[])readObject(in);
             Object[] array=null;
             if (objects!=null) {
@@ -97,8 +122,15 @@ public class BinAccess extends BinUtil {
             }
             object.setObjects(array);
         }
-        if (size>9) {
-            skipUnknownObjects(in,size - 9);
+        if (size>13) {
+            object.setOrgans( (Hashtable)readObject(in) );
+        }
+        if (size>14) {
+            checkType(in.readInt() , TYPE_INTEGER);
+            object.setThings( in.readInt() );
+        }
+        if (size>15) {
+            skipUnknownObjects(in,size - 15);
         }
         return object;
     }
