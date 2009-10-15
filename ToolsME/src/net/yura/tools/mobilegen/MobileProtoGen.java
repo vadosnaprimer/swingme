@@ -269,9 +269,23 @@ ps.println("        }");
 
         String thing = field.getName()+"Value";
         String type = field.getType();
+        if (message.getImplementation() == Hashtable.class && !"string".equals(type) && !"bytes".equals(type) && isPrimitive(type) ) {
+            thing = thing+"."+getPrimativeFromJavaType( primitiveToJavaType(type) ) +"Value()";
+        }
+
         if (field.getEnumeratedType()!=null) {
             thing = "get"+field.getType()+"Enum("+thing+")";
             type = "int32";
+        }
+
+        String s = null;
+        if ( !isPrimitive(type) ) {
+                if ( "Object".equals(type) ) {
+                    s = "computeAnonymousObjectSize( "+thing+" )";
+                }
+                else {
+                    s = "compute"+type+"Size( "+thing+" )";
+                }
         }
 
         if (calc) {
@@ -279,13 +293,6 @@ ps.println("        }");
                 ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+thing+" );");
             }
             else {
-                final String s;
-                if ( "Object".equals(type) ) {
-                    s = "computeAnonymousObjectSize( "+thing+" )";
-                }
-                else {
-                    s = "compute"+type+"Size( "+thing+" )";
-                }
                 ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", "+s+");");
             }
         }
@@ -294,14 +301,6 @@ ps.println("        }");
                 ps.println("        out.write"+firstUp(type)+"("+field.getID()+", "+thing+" );");
             }
             else {
-                final String s;
-                if ( "Object".equals(type) ) {
-                    s = "computeAnonymousObjectSize( "+thing+" )";
-                }
-                else {
-                    s = "compute"+type+"Size( "+thing+" )";
-                }
-
                 ps.println("out.writeBytes("+field.getID()+","+s+");");
                 if ( "Object".equals(type) ) {
                     ps.println("encodeAnonymousObject( out, "+thing+" );");
@@ -673,5 +672,35 @@ ps.println("    }");
 
         throw new RuntimeException();
 
+    }
+
+    private String getPrimativeFromJavaType(String javaType) {
+
+        if (
+            javaType.equals( "Integer"    )
+            )
+            return "int";
+
+        if (
+            javaType.equals( "Long"    )
+            )
+            return "long";
+
+        if (
+            javaType.equals( "Double"   )
+            )
+            return "double";
+
+        if (
+            javaType.equals( "Float"    )
+            )
+            return "float";
+
+        if (
+            javaType.equals( "Boolean"     )
+            )
+            return "boolean";
+
+        throw new RuntimeException();
     }
 }

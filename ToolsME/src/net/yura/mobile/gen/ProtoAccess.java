@@ -117,9 +117,9 @@ public class ProtoAccess extends ProtoUtil {
         Hashtable login2Value = (Hashtable)object.get("login2");
         size = size + CodedOutputStream.computeBytesSize(7, computeLoginSize( login2Value ));
         Integer newPeopleValue = (Integer)object.get("newPeople");
-        size = size + CodedOutputStream.computeInt32Size(4, newPeopleValue );
+        size = size + CodedOutputStream.computeInt32Size(4, newPeopleValue.intValue() );
         Integer newMessagesValue = (Integer)object.get("newMessages");
-        size = size + CodedOutputStream.computeInt32Size(5, newMessagesValue );
+        size = size + CodedOutputStream.computeInt32Size(5, newMessagesValue.intValue() );
         return size;
     }
     private int computeAlbumSize(Hashtable object) {
@@ -164,13 +164,13 @@ public class ProtoAccess extends ProtoUtil {
         if (intyVector!=null) {
             for (int c=0;c<intyVector.size();c++) {
                 Integer intyValue = (Integer)intyVector.elementAt(c);
-                size = size + CodedOutputStream.computeInt32Size(6, intyValue );
+                size = size + CodedOutputStream.computeInt32Size(6, intyValue.intValue() );
             }
         }
         Integer intxValue = (Integer)object.get("intx");
-        size = size + CodedOutputStream.computeInt32Size(7, intxValue );
+        size = size + CodedOutputStream.computeInt32Size(7, intxValue.intValue() );
         Boolean intzValue = (Boolean)object.get("intz");
-        size = size + CodedOutputStream.computeBoolSize(8, intzValue );
+        size = size + CodedOutputStream.computeBoolSize(8, intzValue.booleanValue() );
         return size;
     }
     private int computeBobSize(Hashtable object) {
@@ -270,9 +270,9 @@ public class ProtoAccess extends ProtoUtil {
         out.writeBytes(7,computeLoginSize( login2Value ));
         encodeLogin( out, login2Value );
         Integer newPeopleValue = (Integer)object.get("newPeople");
-        out.writeInt32(4, newPeopleValue );
+        out.writeInt32(4, newPeopleValue.intValue() );
         Integer newMessagesValue = (Integer)object.get("newMessages");
-        out.writeInt32(5, newMessagesValue );
+        out.writeInt32(5, newMessagesValue.intValue() );
     }
     private void encodeAlbum(CodedOutputStream out, Hashtable object) throws IOException {
         String someStringValue = (String)object.get("someString");
@@ -313,13 +313,13 @@ public class ProtoAccess extends ProtoUtil {
         if (intyVector!=null) {
             for (int c=0;c<intyVector.size();c++) {
                 Integer intyValue = (Integer)intyVector.elementAt(c);
-                out.writeInt32(6, intyValue );
+                out.writeInt32(6, intyValue.intValue() );
             }
         }
         Integer intxValue = (Integer)object.get("intx");
-        out.writeInt32(7, intxValue );
+        out.writeInt32(7, intxValue.intValue() );
         Boolean intzValue = (Boolean)object.get("intz");
-        out.writeBool(8, intzValue );
+        out.writeBool(8, intzValue.booleanValue() );
     }
     private void encodeBob(CodedOutputStream out, Hashtable object) throws IOException {
         Vector vec1Vector = (Vector)object.get("vec1");
