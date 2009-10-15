@@ -166,7 +166,7 @@ public class ProtoUtil {
         return vector;
     }
 
-    private Hashtable decodeHashtable(CodedInputStream in2) throws IOException {
+    protected Hashtable decodeHashtable(CodedInputStream in2) throws IOException {
         Hashtable hashtable = new Hashtable();
 
         while (!in2.isAtEnd()) {
@@ -307,7 +307,7 @@ public class ProtoUtil {
     }
 
 
-    private int computeHashtableSize(Hashtable hashtable) {
+    protected int computeHashtableSize(Hashtable hashtable) {
 
         int totalSize = 0;
 
@@ -345,7 +345,7 @@ public class ProtoUtil {
         }
     }
 
-    private void encodeHashtable(CodedOutputStream out, Hashtable vector) throws IOException {
+    protected void encodeHashtable(CodedOutputStream out, Hashtable vector) throws IOException {
         Enumeration enu = vector.keys();
         while (enu.hasMoreElements()) {
             Object key = enu.nextElement();
