@@ -120,3 +120,14 @@ message String {
 message Message {
     optional Object body = 1;
 }
+
+message Album {
+    required string someString = 1;
+}
+
+message ClientLoginSuccess {
+    required string sessionId = 1;
+    repeated Album albums = 3;
+    required int32 newPeople = 4;
+    required int32 newMessages = 5;
+}
