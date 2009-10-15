@@ -254,7 +254,8 @@ ps.println("        }");
 
     private void printSaveCalcField(PrintStream ps, FieldDefinition field,MessageDefinition message,boolean calc) {
 
-        boolean optional = !field.required && !field.repeated;
+        boolean optional = !field.required && !field.repeated &&
+                (message.getImplementation() == Hashtable.class || !field.getImplementation().isPrimitive());
 
         if (optional) {
             ps.println("if ("+field.getName()+"Value!=null) {");
