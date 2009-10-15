@@ -355,7 +355,7 @@ ps.println("                case "+field.getID()+": {");
             ps.println("        "+primitiveToJavaType(field.getType())+" value = in2.read"+firstUp(field.getType())+"();");
         }
         else {
-            if (field.getRepeated()) {
+            if (field.getRepeated() || message.getImplementation() == Hashtable.class) {
                 ps.println("    "+primitiveToJavaType(field.getType())+" value = new "+primitiveToJavaType(field.getType())+"(in2.read"+firstUp(field.getType())+"() );");
             }
             else {

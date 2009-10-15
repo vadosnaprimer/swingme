@@ -74,6 +74,8 @@ message Login {
     repeated TestObject tests = 4;
     optional bytes image = 5;
     repeated int32 inty = 6;
+    required int32 intx = 7;
+    required bool intz = 8;
 }
 
 enum Type {

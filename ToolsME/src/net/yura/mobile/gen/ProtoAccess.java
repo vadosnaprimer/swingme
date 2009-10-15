@@ -79,7 +79,7 @@ public class ProtoAccess extends ProtoUtil {
             if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null) {
                 return TYPE_BOB;
             }
-            if (table.size() == 6 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null && table.get("inty")!=null) {
+            if (table.size() == 8 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null && table.get("inty")!=null && table.get("intx")!=null && table.get("intz")!=null) {
                 return TYPE_LOGIN;
             }
             if (table.size() == 1 && table.get("body")!=null) {
@@ -135,6 +135,10 @@ public class ProtoAccess extends ProtoUtil {
                 size = size + CodedOutputStream.computeInt32Size(6, intyValue );
             }
         }
+        Integer intxValue = (Integer)object.get("intx");
+        size = size + CodedOutputStream.computeInt32Size(7, intxValue );
+        Boolean intzValue = (Boolean)object.get("intz");
+        size = size + CodedOutputStream.computeBoolSize(8, intzValue );
         return size;
     }
     private int computeBobSize(Hashtable object) {
@@ -261,6 +265,10 @@ public class ProtoAccess extends ProtoUtil {
                 out.writeInt32(6, intyValue );
             }
         }
+        Integer intxValue = (Integer)object.get("intx");
+        out.writeInt32(7, intxValue );
+        Boolean intzValue = (Boolean)object.get("intz");
+        out.writeBool(8, intzValue );
     }
     private void encodeBob(CodedOutputStream out, Hashtable object) throws IOException {
         Vector vec1Vector = (Vector)object.get("vec1");
@@ -407,6 +415,16 @@ public class ProtoAccess extends ProtoUtil {
                 case 6: {
                     Integer value = new Integer(in2.readInt32() );
                     intyVector.addElement( value );
+                    break;
+                }
+                case 7: {
+                    Integer value = new Integer(in2.readInt32() );
+                    object.put("intx",value);
+                    break;
+                }
+                case 8: {
+                    Boolean value = new Boolean(in2.readBool() );
+                    object.put("intz",value);
                     break;
                 }
                 default: {
