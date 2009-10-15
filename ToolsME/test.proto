@@ -26,6 +26,7 @@ enum ObjectType {
     TYPE_TEST                               = 10001;
 
     TYPE_TEST_OBJECT                        = 10003;
+    TYPE_CLIENT_LOGIN_SUCCESS = 23;
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -128,6 +129,8 @@ message Album {
 message ClientLoginSuccess {
     required string sessionId = 1;
     repeated Album albums = 3;
+    required Login login = 6;
+    required Login login2 = 7;
     required int32 newPeople = 4;
     required int32 newMessages = 5;
 }

@@ -193,7 +193,13 @@ for (ProtoLoader.FieldDefinition field:fields) {
                 type = primitiveToJavaType(field.getType());
             }
             else {
-                type = field.getType();
+                MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                if (mesDef!=null) {
+                    type = mesDef.getImplementation().getSimpleName();
+                }
+                else {
+                    type = field.getType();
+                }
             }
         }
         else {
@@ -273,13 +279,14 @@ ps.println("        }");
                 ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+thing+" );");
             }
             else {
+                final String s;
                 if ( "Object".equals(type) ) {
-                    ps.println("int s = computeAnonymousObjectSize( "+thing+" );");
+                    s = "computeAnonymousObjectSize( "+thing+" )";
                 }
                 else {
-                    ps.println("int s = compute"+type+"Size( "+thing+" );");
+                    s = "compute"+type+"Size( "+thing+" )";
                 }
-                ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", s);");
+                ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", "+s+");");
             }
         }
         else {
@@ -287,14 +294,15 @@ ps.println("        }");
                 ps.println("        out.write"+firstUp(type)+"("+field.getID()+", "+thing+" );");
             }
             else {
+                final String s;
                 if ( "Object".equals(type) ) {
-                    ps.println("int s = computeAnonymousObjectSize( "+thing+" );");
+                    s = "computeAnonymousObjectSize( "+thing+" )";
                 }
                 else {
-                    ps.println("int s = compute"+type+"Size( "+thing+" );");
+                    s = "compute"+type+"Size( "+thing+" )";
                 }
 
-                ps.println("out.writeBytes("+field.getID()+",s);");
+                ps.println("out.writeBytes("+field.getID()+","+s+");");
                 if ( "Object".equals(type) ) {
                     ps.println("encodeAnonymousObject( out, "+thing+" );");
                 }
@@ -372,7 +380,18 @@ ps.println("                case "+field.getID()+": {");
             ps.println("        "+field.getType()+" value = decodeAnonymousObject(in2);");
         }
         else {
-            ps.println("        "+field.getType()+" value = decode"+field.getType()+"(in2);");
+
+                final String type;
+                MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                if (mesDef!=null) {
+                    type = mesDef.getImplementation().getSimpleName();
+                }
+                else {
+                    type = field.getType();
+                }
+
+
+            ps.println("        "+type+" value = decode"+field.getType()+"(in2);");
         }
         ps.println("            in2.popLimit(lim);");
     }

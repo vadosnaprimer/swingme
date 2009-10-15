@@ -14,6 +14,7 @@ public class ProtoAccess extends ProtoUtil {
     public static final int TYPE_BOB=10000;
     public static final int TYPE_TEST=10001;
     public static final int TYPE_LOGIN=22;
+    public static final int TYPE_CLIENT_LOGIN_SUCCESS=23;
     public static final int TYPE_MESSAGE=20;
     public static final int TYPE_TEST_OBJECT=10003;
     public ProtoAccess() { }
@@ -48,6 +49,7 @@ public class ProtoAccess extends ProtoUtil {
             case TYPE_BOB: return decodeBob(in2);
             case TYPE_TEST: return decodeTest(in2);
             case TYPE_LOGIN: return decodeLogin(in2);
+            case TYPE_CLIENT_LOGIN_SUCCESS: return decodeClientLoginSuccess(in2);
             case TYPE_MESSAGE: return decodeMessage(in2);
             case TYPE_TEST_OBJECT: return decodeTestObject(in2);
             default: return super.decodeObject(in2, type);
@@ -58,6 +60,7 @@ public class ProtoAccess extends ProtoUtil {
             case TYPE_BOB: return computeBobSize( (Hashtable)obj );
             case TYPE_TEST: return computeTestSize( (Test)obj );
             case TYPE_LOGIN: return computeLoginSize( (Hashtable)obj );
+            case TYPE_CLIENT_LOGIN_SUCCESS: return computeClientLoginSuccessSize( (Hashtable)obj );
             case TYPE_MESSAGE: return computeMessageSize( (Hashtable)obj );
             case TYPE_TEST_OBJECT: return computeTestObjectSize( (TestObject)obj );
             default: return super.computeObjectSize(obj,type);
@@ -68,6 +71,7 @@ public class ProtoAccess extends ProtoUtil {
             case TYPE_BOB: encodeBob( out, (Hashtable)obj ); break;
             case TYPE_TEST: encodeTest( out, (Test)obj ); break;
             case TYPE_LOGIN: encodeLogin( out, (Hashtable)obj ); break;
+            case TYPE_CLIENT_LOGIN_SUCCESS: encodeClientLoginSuccess( out, (Hashtable)obj ); break;
             case TYPE_MESSAGE: encodeMessage( out, (Hashtable)obj ); break;
             case TYPE_TEST_OBJECT: encodeTestObject( out, (TestObject)obj ); break;
             default: super.encodeObject(out,obj,type); break;
@@ -82,6 +86,9 @@ public class ProtoAccess extends ProtoUtil {
             if (table.size() == 8 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null && table.get("inty")!=null && table.get("intx")!=null && table.get("intz")!=null) {
                 return TYPE_LOGIN;
             }
+            if (table.size() == 6 && table.get("sessionId")!=null && table.get("albums")!=null && table.get("login")!=null && table.get("login2")!=null && table.get("newPeople")!=null && table.get("newMessages")!=null) {
+                return TYPE_CLIENT_LOGIN_SUCCESS;
+            }
             if (table.size() == 1 && table.get("body")!=null) {
                 return TYPE_MESSAGE;
             }
@@ -94,12 +101,38 @@ public class ProtoAccess extends ProtoUtil {
         }
         return super.getObjectTypeEnum(obj);
     }
+    private int computeClientLoginSuccessSize(Hashtable object) {
+        int size=0;
+        String sessionIdValue = (String)object.get("sessionId");
+        size = size + CodedOutputStream.computeStringSize(1, sessionIdValue );
+        Vector albumsVector = (Vector)object.get("albums");
+        if (albumsVector!=null) {
+            for (int c=0;c<albumsVector.size();c++) {
+                Hashtable albumsValue = (Hashtable)albumsVector.elementAt(c);
+                size = size + CodedOutputStream.computeBytesSize(3, computeAlbumSize( albumsValue ));
+            }
+        }
+        Hashtable loginValue = (Hashtable)object.get("login");
+        size = size + CodedOutputStream.computeBytesSize(6, computeLoginSize( loginValue ));
+        Hashtable login2Value = (Hashtable)object.get("login2");
+        size = size + CodedOutputStream.computeBytesSize(7, computeLoginSize( login2Value ));
+        Integer newPeopleValue = (Integer)object.get("newPeople");
+        size = size + CodedOutputStream.computeInt32Size(4, newPeopleValue );
+        Integer newMessagesValue = (Integer)object.get("newMessages");
+        size = size + CodedOutputStream.computeInt32Size(5, newMessagesValue );
+        return size;
+    }
+    private int computeAlbumSize(Hashtable object) {
+        int size=0;
+        String someStringValue = (String)object.get("someString");
+        size = size + CodedOutputStream.computeStringSize(1, someStringValue );
+        return size;
+    }
     private int computeMessageSize(Hashtable object) {
         int size=0;
         Object bodyValue = (Object)object.get("body");
         if (bodyValue!=null) {
-            int s = computeAnonymousObjectSize( bodyValue );
-            size = size + CodedOutputStream.computeBytesSize(1, s);
+            size = size + CodedOutputStream.computeBytesSize(1, computeAnonymousObjectSize( bodyValue ));
         }
         return size;
     }
@@ -120,8 +153,7 @@ public class ProtoAccess extends ProtoUtil {
         if (testsVector!=null) {
             for (int c=0;c<testsVector.size();c++) {
                 TestObject testsValue = (TestObject)testsVector.elementAt(c);
-                int s = computeTestObjectSize( testsValue );
-                size = size + CodedOutputStream.computeBytesSize(4, s);
+                size = size + CodedOutputStream.computeBytesSize(4, computeTestObjectSize( testsValue ));
             }
         }
         byte[] imageValue = (byte[])object.get("image");
@@ -147,24 +179,21 @@ public class ProtoAccess extends ProtoUtil {
         if (vec1Vector!=null) {
             for (int c=0;c<vec1Vector.size();c++) {
                 Vector vec1Value = (Vector)vec1Vector.elementAt(c);
-                int s = computeVectorSize( vec1Value );
-                size = size + CodedOutputStream.computeBytesSize(1, s);
+                size = size + CodedOutputStream.computeBytesSize(1, computeVectorSize( vec1Value ));
             }
         }
         Vector vec2Vector = (Vector)object.get("vec2");
         if (vec2Vector!=null) {
             for (int c=0;c<vec2Vector.size();c++) {
                 Vector vec2Value = (Vector)vec2Vector.elementAt(c);
-                int s = computeVectorSize( vec2Value );
-                size = size + CodedOutputStream.computeBytesSize(2, s);
+                size = size + CodedOutputStream.computeBytesSize(2, computeVectorSize( vec2Value ));
             }
         }
         Vector vec3Vector = (Vector)object.get("vec3");
         if (vec3Vector!=null) {
             for (int c=0;c<vec3Vector.size();c++) {
                 Vector vec3Value = (Vector)vec3Vector.elementAt(c);
-                int s = computeVectorSize( vec3Value );
-                size = size + CodedOutputStream.computeBytesSize(3, s);
+                size = size + CodedOutputStream.computeBytesSize(3, computeVectorSize( vec3Value ));
             }
         }
         return size;
@@ -185,8 +214,7 @@ public class ProtoAccess extends ProtoUtil {
         }
         Object bodyValue = object.getBody();
         if (bodyValue!=null) {
-            int s = computeAnonymousObjectSize( bodyValue );
-            size = size + CodedOutputStream.computeBytesSize(1208, s);
+            size = size + CodedOutputStream.computeBytesSize(1208, computeAnonymousObjectSize( bodyValue ));
         }
         String[] legsArray = object.getLegs();
         if (legsArray!=null) {
@@ -207,8 +235,7 @@ public class ProtoAccess extends ProtoUtil {
             }
         }
         Hashtable organsValue = object.getOrgans();
-        int s = computeHashtableSize( organsValue );
-        size = size + CodedOutputStream.computeBytesSize(3, s);
+        size = size + CodedOutputStream.computeBytesSize(3, computeHashtableSize( organsValue ));
         boolean isAliveValue = object.getIsAlive();
         size = size + CodedOutputStream.computeBoolSize(4, isAliveValue );
         int headsValue = object.getHeads();
@@ -225,11 +252,36 @@ public class ProtoAccess extends ProtoUtil {
         size = size + CodedOutputStream.computeInt32Size(1201, idValue );
         return size;
     }
+    private void encodeClientLoginSuccess(CodedOutputStream out, Hashtable object) throws IOException {
+        String sessionIdValue = (String)object.get("sessionId");
+        out.writeString(1, sessionIdValue );
+        Vector albumsVector = (Vector)object.get("albums");
+        if (albumsVector!=null) {
+            for (int c=0;c<albumsVector.size();c++) {
+                Hashtable albumsValue = (Hashtable)albumsVector.elementAt(c);
+                out.writeBytes(3,computeAlbumSize( albumsValue ));
+                encodeAlbum( out, albumsValue );
+            }
+        }
+        Hashtable loginValue = (Hashtable)object.get("login");
+        out.writeBytes(6,computeLoginSize( loginValue ));
+        encodeLogin( out, loginValue );
+        Hashtable login2Value = (Hashtable)object.get("login2");
+        out.writeBytes(7,computeLoginSize( login2Value ));
+        encodeLogin( out, login2Value );
+        Integer newPeopleValue = (Integer)object.get("newPeople");
+        out.writeInt32(4, newPeopleValue );
+        Integer newMessagesValue = (Integer)object.get("newMessages");
+        out.writeInt32(5, newMessagesValue );
+    }
+    private void encodeAlbum(CodedOutputStream out, Hashtable object) throws IOException {
+        String someStringValue = (String)object.get("someString");
+        out.writeString(1, someStringValue );
+    }
     private void encodeMessage(CodedOutputStream out, Hashtable object) throws IOException {
         Object bodyValue = (Object)object.get("body");
         if (bodyValue!=null) {
-            int s = computeAnonymousObjectSize( bodyValue );
-            out.writeBytes(1,s);
+            out.writeBytes(1,computeAnonymousObjectSize( bodyValue ));
             encodeAnonymousObject( out, bodyValue );
         }
     }
@@ -249,8 +301,7 @@ public class ProtoAccess extends ProtoUtil {
         if (testsVector!=null) {
             for (int c=0;c<testsVector.size();c++) {
                 TestObject testsValue = (TestObject)testsVector.elementAt(c);
-                int s = computeTestObjectSize( testsValue );
-                out.writeBytes(4,s);
+                out.writeBytes(4,computeTestObjectSize( testsValue ));
                 encodeTestObject( out, testsValue );
             }
         }
@@ -275,8 +326,7 @@ public class ProtoAccess extends ProtoUtil {
         if (vec1Vector!=null) {
             for (int c=0;c<vec1Vector.size();c++) {
                 Vector vec1Value = (Vector)vec1Vector.elementAt(c);
-                int s = computeVectorSize( vec1Value );
-                out.writeBytes(1,s);
+                out.writeBytes(1,computeVectorSize( vec1Value ));
                 encodeVector( out, vec1Value );
             }
         }
@@ -284,8 +334,7 @@ public class ProtoAccess extends ProtoUtil {
         if (vec2Vector!=null) {
             for (int c=0;c<vec2Vector.size();c++) {
                 Vector vec2Value = (Vector)vec2Vector.elementAt(c);
-                int s = computeVectorSize( vec2Value );
-                out.writeBytes(2,s);
+                out.writeBytes(2,computeVectorSize( vec2Value ));
                 encodeVector( out, vec2Value );
             }
         }
@@ -293,8 +342,7 @@ public class ProtoAccess extends ProtoUtil {
         if (vec3Vector!=null) {
             for (int c=0;c<vec3Vector.size();c++) {
                 Vector vec3Value = (Vector)vec3Vector.elementAt(c);
-                int s = computeVectorSize( vec3Value );
-                out.writeBytes(3,s);
+                out.writeBytes(3,computeVectorSize( vec3Value ));
                 encodeVector( out, vec3Value );
             }
         }
@@ -314,8 +362,7 @@ public class ProtoAccess extends ProtoUtil {
         }
         Object bodyValue = object.getBody();
         if (bodyValue!=null) {
-            int s = computeAnonymousObjectSize( bodyValue );
-            out.writeBytes(1208,s);
+            out.writeBytes(1208,computeAnonymousObjectSize( bodyValue ));
             encodeAnonymousObject( out, bodyValue );
         }
         String[] legsArray = object.getLegs();
@@ -337,8 +384,7 @@ public class ProtoAccess extends ProtoUtil {
             }
         }
         Hashtable organsValue = object.getOrgans();
-        int s = computeHashtableSize( organsValue );
-        out.writeBytes(3,s);
+        out.writeBytes(3,computeHashtableSize( organsValue ));
         encodeHashtable( out, organsValue );
         boolean isAliveValue = object.getIsAlive();
         out.writeBool(4, isAliveValue );
@@ -352,6 +398,80 @@ public class ProtoAccess extends ProtoUtil {
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
         int idValue = object.getId();
         out.writeInt32(1201, idValue );
+    }
+    private Hashtable decodeClientLoginSuccess(CodedInputStream in2) throws IOException {
+        Hashtable object = new Hashtable();
+        Vector albumsVector = new Vector();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            switch(fieldNo) {
+                case 1: {
+                    String value = in2.readString();
+                    object.put("sessionId",value);
+                    break;
+                }
+                case 3: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Hashtable value = decodeAlbum(in2);
+                    in2.popLimit(lim);
+                    albumsVector.addElement( value );
+                    break;
+                }
+                case 6: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Hashtable value = decodeLogin(in2);
+                    in2.popLimit(lim);
+                    object.put("login",value);
+                    break;
+                }
+                case 7: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Hashtable value = decodeLogin(in2);
+                    in2.popLimit(lim);
+                    object.put("login2",value);
+                    break;
+                }
+                case 4: {
+                    Integer value = new Integer(in2.readInt32() );
+                    object.put("newPeople",value);
+                    break;
+                }
+                case 5: {
+                    Integer value = new Integer(in2.readInt32() );
+                    object.put("newMessages",value);
+                    break;
+                }
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
+            }
+        }
+        object.put("albums",albumsVector);
+        return object;
+    }
+    private Hashtable decodeAlbum(CodedInputStream in2) throws IOException {
+        Hashtable object = new Hashtable();
+        while (!in2.isAtEnd()) {
+            int tag = in2.readTag();
+            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            switch(fieldNo) {
+                case 1: {
+                    String value = in2.readString();
+                    object.put("someString",value);
+                    break;
+                }
+                default: {
+                    in2.skipField(tag);
+                    break;
+                }
+            }
+        }
+        return object;
     }
     private Hashtable decodeMessage(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();

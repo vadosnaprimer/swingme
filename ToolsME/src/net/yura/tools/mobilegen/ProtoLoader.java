@@ -256,10 +256,8 @@ public class ProtoLoader {
 
         Class messageClass = md.getImplementation();
         Class returnType   = null;
-        if ( messageClass != Hashtable.class )
-        {
-            try
-            {
+        if ( messageClass != Hashtable.class ) {
+            try {
 
                 String methodName = "get" + name.substring(0,1).toUpperCase() + name.substring(1);
 
@@ -288,13 +286,11 @@ public class ProtoLoader {
 
                 fd.setImplementation(returnType);
             }
-            catch( NoSuchMethodException nsme )
-            {
+            catch( NoSuchMethodException nsme ) {
                 nsme.printStackTrace();
                 // We have no idea what the return type is. so we will be setting it to null
             }
-            catch( SecurityException se )
-            {
+            catch( SecurityException se ) {
                 se.printStackTrace();
             }
         }
