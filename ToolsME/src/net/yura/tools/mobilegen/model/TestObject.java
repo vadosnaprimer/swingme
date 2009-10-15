@@ -1,6 +1,7 @@
 package net.yura.tools.mobilegen.model;
 
 import java.util.Arrays;
+import java.util.Hashtable;
 import java.util.Vector;
 
 /**
@@ -17,6 +18,11 @@ public class TestObject extends Test {
     private byte[] image;
     private Object[] objects;
     private String myType;
+    private Vector arms;
+    private Hashtable organs;
+    private boolean isAlive;
+    private int heads;
+    private long lastUpdated;
 
     public String getMyType() {
         return myType;
@@ -142,6 +148,46 @@ public class TestObject extends Test {
             return false;
         }
         return true;
+    }
+
+    public Vector getArms() {
+        return arms;
+    }
+
+    public void setArms(Vector arms) {
+        this.arms = arms;
+    }
+
+    public int getHeads() {
+        return heads;
+    }
+
+    public void setHeads(int heads) {
+        this.heads = heads;
+    }
+
+    public boolean getIsAlive() {
+        return isAlive;
+    }
+
+    public void setIsAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public Hashtable getOrgans() {
+        return organs;
+    }
+
+    public void setOrgans(Hashtable organs) {
+        this.organs = organs;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
     }
 
     @Override

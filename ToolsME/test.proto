@@ -54,6 +54,11 @@ message TestObject {
 	optional Object body     = 1208;
 	repeated string legs    = 1209;
         optional bytes image = 1;
+    repeated string arms;
+    required Hashtable organs;
+    required bool isAlive;
+    required int32 heads;
+    required int64 lastUpdated;
 }
 
 message Login {
