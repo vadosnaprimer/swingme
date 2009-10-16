@@ -992,16 +992,16 @@ for (int c=0;c<4;c++) {
                     "tincidunt viverra. Morbi nec dictum tellus. Morbi dui lectus, " +
                     "congue in cursus eget, dapibus sed sapien. Pellentesque habitant " +
                     "morbi tristique senectus et netus et malesuada fames ac turpis " +
-                    "egestas. Vestibulum consectetur sem quis tellus01234";
+                    "egestas. Vestibulum consectetur           sem         quis tellus01234";
                     TextPane textPane = new TextPane();
                     textPane.setText(text);
-
 
                     TextStyle bold = new TextStyle();
                     bold.setBold(true);
 
                     TextStyle italic = new TextStyle();
                     italic.setItalic(true);
+                    italic.setAlignment(TextStyle.ALIGN_RIGHT);
 
                     TextStyle underline = new TextStyle();
                     underline.setUnderline(true);
@@ -1018,38 +1018,42 @@ for (int c=0;c<4;c++) {
                     alignCenter.setAlignment(TextStyle.ALIGN_CENTER);
                     alignCenter.setForeground(0x00FF00);
 
-
-                    textPane.setParagraphAttributes(0, 0, alignRight);
-
-                    textPane.setCharacterAttributes(0, 5, bold);         //Bold
-                    textPane.setCharacterAttributes(5, 7, italic);       //Italic
-                    textPane.setCharacterAttributes(15, 100, underline); // Underline
-                    textPane.setCharacterAttributes(50, 10, bold);   // Underline + Bold
-                    textPane.setCharacterAttributes(70, 10, italic); // Underline + Italic
-
-                    textPane.setCharacterAttributes(90, 10, italic);
-                    textPane.setCharacterAttributes(90, 10, bold);  // Underline + Italic + Bold
-
-                    textPane.setParagraphAttributes(125, 0, alignCenter);
-
-                    textPane.setCharacterAttributes(130, 10, blue);  // blue
-
+                    TextStyle iconStyle = null;
                     try {
-                        TextStyle iconStyle = new TextStyle();
+                        iconStyle = new TextStyle();
                         iconStyle.setIcon(new Icon("/skin1.png"));
-
-                        textPane.setCharacterAttributes(251, 2, iconStyle);  // Icon
                     }
                     catch (Exception e) {
                         e.printStackTrace();
                     }
 
+
+                    textPane.setCharacterAttributes(0, 5, bold);         //Bold
+                    textPane.setCharacterAttributes(3, 7, italic);       //Italic
+                    textPane.setCharacterAttributes(70, 10, italic); // Underline + Italic
+                    textPane.setCharacterAttributes(50, 10, bold);   // Underline + Bold
+                    textPane.setCharacterAttributes(15, 100, underline); // Underline
+
+                    textPane.setCharacterAttributes(90, 10, italic);
+                    textPane.setCharacterAttributes(90, 10, bold);  // Underline + Italic + Bold
+
+                    textPane.setCharacterAttributes(130, 10, blue);  // blue
+
+                    textPane.setParagraphAttributes(0, 0, alignRight);
+                    textPane.setParagraphAttributes(125, 0, alignCenter);
+                    textPane.setParagraphAttributes(text.length() - 1, 0, underline);
+
+                    textPane.setCharacterAttributes(251, 2, iconStyle);  // Icon
                     textPane.setCharacterAttributes(text.length() - 3, 10, bold);  // Bold
 
                     ScrollPane tmp = new ScrollPane( textPane );
-                    tmp.setBorder( new EmptyBorder(10,10,10,10) );
+                    tmp.setBorder( new EmptyBorder(10,10,10,0) );
                     Panel p = new Panel( new BorderLayout() );
                     p.add(tmp);
+
+                    p.setBackground(0xFFFFFF);
+                    textPane.setBackground(0xFFFFFF);
+
                     addToContentPane(p, null, makeButton("Back","mainmenu"));
                 }
 		else {
