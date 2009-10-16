@@ -377,9 +377,25 @@ public class XULLoader {
             ComboBox combobox = new ComboBox(new Vector());
 
             readButton(parser,combobox,listener);
-            // TODO add spacific stuff for checkbox
 
-            return readUIObject(parser, combobox,listener);
+            int selectedIndex = -1;
+
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("selected".equals(key)) {
+                    selectedIndex = Integer.parseInt(value);
+                }
+            }
+
+            GridBagConstraints constraints = readUIObject(parser, combobox,listener);
+
+            if (combobox.getItemCount() > selectedIndex) {
+                combobox.setSelectedIndex(selectedIndex);
+            }
+
+            return constraints;
         }
         else if (name.equals("list")) {
             final List list = new List();
@@ -509,7 +525,7 @@ public class XULLoader {
             return panel;
     }
 
-    private void readButton(KXmlParser parser, Button button,ActionListener listener) {
+    protected void readButton(KXmlParser parser, Button button,ActionListener listener) {
 
             int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
