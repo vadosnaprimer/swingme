@@ -53,8 +53,6 @@ public class TextPane extends Component {
         // TODO: Use binary search to find the first fragment with a visible y
         // TODO: Stop paint if y is no longer visible... Take care that in the same
         //       line, some y may be visible and others not...
-        // TODO: get font, foreground/background color, etc from the style
-
 
         int numLineFrags = lineFragments.size();
         for (int i = 0; i < numLineFrags; i++) {
@@ -65,7 +63,8 @@ public class TextPane extends Component {
             if (icon == null) {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
-                g.setColor(style.getForeground()); // TODO: Color
+                // TODO: Background Color
+                g.setColor(style.getForeground());
                 g.setFont(style.getFont());
 
                 g.drawString(str, lineFrag.x, lineFrag.y);
@@ -81,7 +80,7 @@ public class TextPane extends Component {
         // we assume that the scrollPane size is already setup and correct
         // this saves lots of unneeded calls to getLines
         if (parent instanceof ScrollPane) {
-                width = ((ScrollPane)parent).getViewPortWidth();
+            width = ((ScrollPane)parent).getViewPortWidth();
         }
         else if (width==0) {
             // make a guess at the width
@@ -92,18 +91,14 @@ public class TextPane extends Component {
             // as we need to make a guess, even though we have no idea
         }
 
-        doLayout();
-
-        //TODO: Calculate the height, using the width as parameter
-        //TODO: Needs to do the layout to figure out the height
-        height = 600;
+        height = doLayout();
     }
 
     // Overwrites Component.setSize()
     public void setSize(int w, int h) {
         super.setSize(w, h);
 
-        doLayout();
+        height = doLayout();
     }
 
     // from JEditorPane
@@ -128,6 +123,7 @@ public class TextPane extends Component {
         }
     }
 
+    // from DefaultStyledDocument
     public void setParagraphAttributes(int offset, int length, TextStyle style) {
         if (offset >= 0 && length >= 0 && text != null && offset < text.length()) {
 
@@ -152,77 +148,98 @@ public class TextPane extends Component {
 
             // Note: Swing copies the style, instead of keeping the reference
             Element elem = new Element(style, lowerLfIdx, higherLfIdx);
+            elem.isParagraph = true;
 
-            // TODO: Should use a different vector, otherwise paragraph
-            // styles will be mixed with Character styles
-            // TODO: When applying the style, first apply the paragraph
-            // (including color, font, etc, etc) and then character style
             insertSortedElement(sortedElemsList, elem);
         }
     }
 
 
 
-    private void doLayout() {
+    private int doLayout() {
 
         lineFragments.removeAllElements();
 
         if (text == null || text.length() == 0 || width <= 0) {
-            return;
+            return 0;
         }
 
         // Reset last line coordinates
         lastLineX = 0;
 
-        Vector currentElemSortedStack = new Vector();
-        Element currentElem = null;;
+        Vector elemStyleSortedStack = new Vector();
         int startFragIdx = 0;
-        int nextStartFragIdx = 0;
 
         int numElems = sortedElemsList.size();
-        for (int i = 0; i < numElems + 1; i++) {
+        for (int i = 0; i < numElems; i++) {
 
-            if (i < numElems) {
-                currentElem = (Element) sortedElemsList.elementAt(i);
+            // 1 - Find a open Element. If more than one starts at the same
+            // place, add them to the Element Style stack
+            Element currentElem = (Element) sortedElemsList.elementAt(i);
+            int nextStartFragIdx = currentElem.startOffset;
 
-                if (currentElem.startOffset == startFragIdx) {
-                    currentElemSortedStack.addElement(currentElem);
-                    continue;
-                }
+            if (nextStartFragIdx == startFragIdx) {
+                elemStyleSortedStack.addElement(currentElem);
+                continue;
             }
 
-            // If there is no more Elements, we set the end of the text as
-            // the start of the next one
-            nextStartFragIdx = (i < numElems) ? currentElem.startOffset : text.length();
+            // 2 - Does any of the stack elements closes?
+            startFragIdx = addClosingLineFragments(elemStyleSortedStack, startFragIdx, nextStartFragIdx);
 
-            // Does any of the stack elements ends?
-            for (int j = currentElemSortedStack.size() - 1; j >= 0 ; j--) {
-                //TODO: Assuming that they are ending in FIFO order. OK only for html
+            // 3 - Finally, add the segment from the last closed one, to the one that just starts
+            startFragIdx = addLineFragments(elemStyleSortedStack, startFragIdx, nextStartFragIdx);
 
-                Element elem = (Element) currentElemSortedStack.elementAt(j);
-                if (elem.endOffset <= nextStartFragIdx) {
-
-                    startFragIdx = addLineFragments(currentElemSortedStack, startFragIdx, elem.endOffset);
-                    currentElemSortedStack.removeElementAt(j);
-                }
-            }
-
-            if (startFragIdx < nextStartFragIdx) {
-                startFragIdx = addLineFragments(currentElemSortedStack, startFragIdx, nextStartFragIdx);
-            }
-
-            // TODO: This sort may need to be done on currentElem.endOffset field...
-            // (instead of startOffset) -> we may need a insertSortedByStartOffset() and
-            // a insertSortedByEndOffset()
-            insertSortedElement(currentElemSortedStack, currentElem);
+            // Update the current list of style elements
+            insertSortedElement(elemStyleSortedStack, currentElem);
         }
 
-        layoutVerticaly();
+        // 4 - Finally, finish anything that is still on the style stack
+        addLineFragments(elemStyleSortedStack, startFragIdx, text.length());
+
+        return layoutVerticaly();
+    }
+
+    private int addClosingLineFragments(Vector elemStyleSortedStack, int startFragIdx, int nextStartFragIdx) {
+        int nClosesFound;
+        do {
+            nClosesFound = 0;
+            int smallerEndOffset = nextStartFragIdx;
+            int smallerEndOffsetIdx = -1;
+
+            // Find the one that closes with the smaller end offset
+            for (int j = elemStyleSortedStack.size() - 1; j >= 0 ; j--) {
+                Element elem = (Element) elemStyleSortedStack.elementAt(j);
+                int elemEndOffset = elem.endOffset;
+
+                if (elemEndOffset <= nextStartFragIdx) {
+                    nClosesFound++;
+                }
+
+                if (elemEndOffset <= smallerEndOffset) {
+                    smallerEndOffset = elemEndOffset;
+                    smallerEndOffsetIdx = j;
+                }
+            }
+
+            // If some Element closes, add the line fragments
+            if (nClosesFound > 0) {
+                startFragIdx = addLineFragments(elemStyleSortedStack, startFragIdx, smallerEndOffset);
+                elemStyleSortedStack.removeElementAt(smallerEndOffsetIdx);
+            }
+
+            // Repeat if more that one closes.
+        } while (nClosesFound > 1);
+
+        return startFragIdx;
     }
 
     private int addLineFragments(Vector currentElemStack, int startIndex, int endIndex) {
-        TextStyle style = new TextStyle();
-        calculateStyle(style, currentElemStack);
+
+        if (startIndex >= endIndex) {
+            return startIndex;
+        }
+
+        TextStyle style = getCombinedStyle(currentElemStack);;
 
         // TODO BUG: If there a "word" is broken at the middle, that entire
         // word may end up split between to lines, instead of moving all to a new line
@@ -266,16 +283,23 @@ public class TextPane extends Component {
                     lastLineX = 0;
 
                 } else {
+                    if (j < lines.length) {
+                        // We can safely trim, since there will be more lines
+                        lastLineText = trimStringRightSide(lastLineText);
+                    }
+
                     int fragW = f.getWidth(lastLineText);
 
                     if (fragW > 0) {
                         // Note: First fragments on a line have negative width
-                        LineFragment lineFrag = new LineFragment((lastLineX == 0) ? -fragW : fragW, fragH, style, startFragIdx, endFragIdx);
+                        LineFragment lineFrag = new LineFragment((lastLineX == 0) ? -fragW : fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
                         lineFragments.addElement(lineFrag);
                     }
 
                     lastLineX = (j == lines.length) ? lastLineX + fragW : 0;
                 }
+            } else {
+                // TODO: trim the previous element
             }
 
             startFragIdx = endFragIdx;
@@ -310,7 +334,7 @@ public class TextPane extends Component {
         }
     }
 
-    private void layoutVerticaly() {
+    private int layoutVerticaly() {
         int padding = 2;  // TODO: Spacing
         int lineY = -padding;
         int lineH = 0;
@@ -356,6 +380,8 @@ public class TextPane extends Component {
                 lineW += lineFrag.x;
             }
         }
+
+        return lineY;
     }
 
     private int getParagraphLeftPadding(TextStyle style, int lineW) {
@@ -364,28 +390,44 @@ public class TextPane extends Component {
                (align == TextStyle.ALIGN_RIGHT)? (width - lineW) : 0;
     }
 
-    private void calculateStyle(TextStyle defAttr, Vector elemList) {
-        setDefaultStyle(defAttr);
+    private String trimStringRightSide(String str) {
+        // Note: May need a faster version
+        return ("-" + str).trim().substring(1);
+    }
+
+    /**
+     * Takes a list of Elements and uses its styles to produce the "merged"
+     * result.
+     */
+    private TextStyle getCombinedStyle(Vector elemList) {
+        TextStyle paragStyle = new TextStyle();
+        TextStyle charsStyle = new TextStyle();
+
+        // Set default paragraph style
+        paragStyle.setBackground(getBackground());
+        paragStyle.setForeground(getCurrentForeground());
+        paragStyle.setAlignment(TextStyle.ALIGN_LEFT);
 
         for (int i = 0; i < elemList.size(); i++) {
             Element elem = (Element) elemList.elementAt(i);
-            defAttr.addAttributes(elem.style); // Combine styles
+
+            // Combine styles
+            TextStyle s = (elem.isParagraph) ? paragStyle : charsStyle;
+            s.addAttributes(elem.style);
         }
+
+        // Paragraphs cannot have an icon style
+        paragStyle.setIcon(null);
+
+        // Merge paragraph and character style. Paragraph style has less
+        // priority, but alignment cannot be overloaded
+        int align = paragStyle.getAlignment();
+        paragStyle.addAttributes(charsStyle);
+        paragStyle.setAlignment(align);     // restore alignment if overloaded
+
+        return paragStyle;
     }
 
-
-
-    private void setDefaultStyle(TextStyle def) {
-
-        // Set default attribute to some sensible values.
-        def.setAlignment(-1);
-        def.setBackground(getBackground());
-        def.setForeground(getCurrentForeground());
-        def.setBold(false);
-        def.setItalic(false);
-        def.setItalic(false);
-        def.setIcon(null);
-    }
 
     // TODO: ChatTextArea needs TextArea to make getLines() an instance method,
     // instead of static method... For now we create an object of TextArea so
@@ -396,66 +438,32 @@ public class TextPane extends Component {
         return ta.getLines(str, f, 0, w - startX, w);
     }
 
+    /**
+     * Inserts the element inside the vector, sorted in growing order by
+     * element startOffeset. If there is already an element with the same
+     * startOffeset, it will add it with the highest index as possible.
+     * @param v Vector used to insert the new element. Vector must be empty or
+     * sorted.
+     * @param elem New element to insert.
+     */
     private void insertSortedElement(Vector v, Element elem) {
-
-        /* TODO:
-         * Needs to Insert sorted, but also put it at the beginning of any
-         * element that is equal -> Latest inserted elements have higher priority (instead of random)
-         * FOR NOW: Assume the user is already inserting in sorted order (true for a html like parser)
-         */
-        v.addElement(elem);
-
-/*
-        int elemStartOff = elem.startOffset;
         int low = 0;
         int high = v.size();
 
         while (low < high) {
-            int middle = (low + high) / 2;
-            int middleStartOff = ((Element) v.elementAt(middle)).startOffset;
+            int midle = (low + high) / 2;
+            Element midElem = (Element) v.elementAt(midle);
 
-            if (middleStartOff > elemStartOff) {
-                high = middle;
-            } else if (middleStartOff < elemStartOff) {
-                low = middle + 1;
-            } else { // They are equal
-                low = middle;
-                break;
+            // Note: Search progresses even if found an element of same value
+            if (elem.startOffset < midElem.startOffset) {
+                high = midle; // repeat search for bottom half.
             }
-        }
-
-        while (low > 0) {
-            int middleStartOff = ((Element) v.elementAt(low)).startOffset;
-
-            if (middleStartOff != elemStartOff) {
-                break;
+            else {
+                low = midle + 1; // Repeat search for top half.
             }
-
-            low--;
         }
 
         v.insertElementAt(elem, low);
-*/
-        /*
-        int middle = low;
-        int lastMidle = high;
-
-        while (lastMidle != middle) {
-            lastMidle = middle;
-            middle = (high - low) / 2;
-            Element elem = (Element) v.elementAt(middle);
-
-            // Note: Don't check for == to make sure we get the first of the
-            // list if there are more than one with the same offset
-            if (elem.startOffset > offset) {
-                high = middle;
-            } else {
-                low = middle;
-            }
-        }
-
-        return low or high;
-        */
     }
 
     // Methods we want
@@ -473,7 +481,7 @@ public class TextPane extends Component {
     */
     static public class TextStyle {
 
-        private int alignment = -1; // default is ALIGN_LEFT (0)
+        private int alignment = -1;
         private byte textStyle; // Bitmap of Bold, Italic, Underline, etc
         private int backgroundColor = -1;
         private int foregroundColor = -1;
@@ -623,6 +631,7 @@ public class TextPane extends Component {
      * @see javax.swing.text.Element
      */
      static private class Element {
+         boolean isParagraph;
          private TextStyle style;
          private int startOffset;
          private int endOffset;
@@ -653,8 +662,4 @@ public class TextPane extends Component {
          }
      }
 }
-
-
-
-
 
