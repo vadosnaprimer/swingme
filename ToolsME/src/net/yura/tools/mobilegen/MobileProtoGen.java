@@ -359,7 +359,7 @@ ps.println("            switch(fieldNo) {");
 
 for (ProtoLoader.FieldDefinition field:fields) {
 
-ps.println("                case "+field.getID()+": {");
+    ps.println("            case "+field.getID()+": {");
 
     if (field.getEnumeratedType() !=null) {
         ps.println("String value = get"+field.getType()+"String( in2.readInt32() );");
@@ -411,8 +411,8 @@ ps.println("                case "+field.getID()+": {");
         ps.println("            object.set"+firstUp(field.getName())+"(value);");
     }
 
-ps.println("                    break;");
-ps.println("                }");
+    ps.println("                break;");
+    ps.println("            }");
 }
 ps.println("                default: {");
 ps.println("                    in2.skipField(tag);");
@@ -510,7 +510,7 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-ps.println("            case "+enu.getKey()+": encode"+getMessageFromEnum(enu.getKey()).getName()+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
+        ps.println("    case "+enu.getKey()+": encode"+getMessageFromEnum(enu.getKey()).getName()+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
     }
 }
 
@@ -528,19 +528,22 @@ for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() == Hashtable.class) {
 
-String line ="";
-Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
-for (ProtoLoader.FieldDefinition field:fields) {
-line = line +" && table.get(\""+field.getName()+"\")!=null";
-}
+        int fc2 = getMessageFromEnum(enu.getKey()).getFields().size();
+        String line ="";
+        int fieldsCount=0;
+        Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
+        for (ProtoLoader.FieldDefinition field:fields) {
+            if (field.required || field.repeated) {
+                line = line +" && table.get(\""+field.getName()+"\")!=null";
+                fieldsCount++;
+            }
+        }
+        ps.println("    if (table.size() "+(fc2==fieldsCount?"== "+fc2:">= "+fieldsCount+" && table.size() <= "+fc2)+line+") {");
 
-ps.println("            if (table.size() == "+getMessageFromEnum(enu.getKey()).getFields().size()+line+") {");
-
-ps.println("                return "+enu.getKey()+";");
-ps.println("            }");
+        ps.println("        return "+enu.getKey()+";");
+        ps.println("    }");
     }
 }
-
 
 ps.println("        }");
 
@@ -561,11 +564,10 @@ for (Map.Entry<String,Integer> enu:set) {
 Collections.sort(messages,new ClassComparator());
 
 for (MessageDefinition message:messages) {
-ps.println("        if (obj instanceof "+message.getImplementation().getSimpleName()+") {");
-ps.println("            return "+messageNames.get(message)+";");
-ps.println("        }");
+    ps.println("    if (obj instanceof "+message.getImplementation().getSimpleName()+") {");
+    ps.println("        return "+messageNames.get(message)+";");
+    ps.println("    }");
 }
-
 
 ps.println("        return super.getObjectTypeEnum(obj);");
 
@@ -577,7 +579,7 @@ ps.println("    }");
 ps.println("    public static int get"+name+"Enum(String enu) {");
 
 for (Map.Entry<String,Integer> enu:set) {
-ps.println("        if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue()+";");
+    ps.println("    if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue()+";");
 }
 
 ps.println("        return -1;");
@@ -586,7 +588,7 @@ ps.println("    public static String get"+name+"String(int i) {");
 ps.println("        switch (i) {");
 
 for (Map.Entry<String,Integer> enu:set) {
-ps.println("            case "+enu.getValue()+": return \""+enu.getKey()+"\";");
+    ps.println("        case "+enu.getValue()+": return \""+enu.getKey()+"\";");
 }
 
 ps.println("            default: return \"unknown \"+i;");

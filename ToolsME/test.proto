@@ -119,7 +119,7 @@ message String {
 }
 
 message Message {
-    optional Object body = 1;
+    required Object body = 1;
 }
 
 message Album {

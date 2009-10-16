@@ -83,7 +83,7 @@ public class ProtoAccess extends ProtoUtil {
             if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null) {
                 return TYPE_BOB;
             }
-            if (table.size() == 8 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("image")!=null && table.get("inty")!=null && table.get("intx")!=null && table.get("intz")!=null) {
+            if (table.size() >= 7 && table.size() <= 8 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("inty")!=null && table.get("intx")!=null && table.get("intz")!=null) {
                 return TYPE_LOGIN;
             }
             if (table.size() == 6 && table.get("sessionId")!=null && table.get("albums")!=null && table.get("login")!=null && table.get("login2")!=null && table.get("newPeople")!=null && table.get("newMessages")!=null) {
@@ -131,9 +131,7 @@ public class ProtoAccess extends ProtoUtil {
     private int computeMessageSize(Hashtable object) {
         int size=0;
         Object bodyValue = (Object)object.get("body");
-        if (bodyValue!=null) {
-            size = size + CodedOutputStream.computeBytesSize(1, computeAnonymousObjectSize( bodyValue ));
-        }
+        size = size + CodedOutputStream.computeBytesSize(1, computeAnonymousObjectSize( bodyValue ));
         return size;
     }
     private int computeLoginSize(Hashtable object) {
@@ -280,10 +278,8 @@ public class ProtoAccess extends ProtoUtil {
     }
     private void encodeMessage(CodedOutputStream out, Hashtable object) throws IOException {
         Object bodyValue = (Object)object.get("body");
-        if (bodyValue!=null) {
-            out.writeBytes(1,computeAnonymousObjectSize( bodyValue ));
-            encodeAnonymousObject( out, bodyValue );
-        }
+        out.writeBytes(1,computeAnonymousObjectSize( bodyValue ));
+        encodeAnonymousObject( out, bodyValue );
     }
     private void encodeLogin(CodedOutputStream out, Hashtable object) throws IOException {
         String usernameValue = (String)object.get("username");
