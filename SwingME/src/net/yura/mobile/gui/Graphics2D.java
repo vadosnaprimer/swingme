@@ -87,7 +87,7 @@ public class Graphics2D {
                         convertTrans(x2,y2),
                         convertTrans(y2,x2),
                         convertTrans(x3,y3),
-                        convertTrans(y2,x3));
+                        convertTrans(y3,x3));
 
         }
 

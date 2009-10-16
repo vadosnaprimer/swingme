@@ -374,6 +374,10 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
             public Object getSelectedValue() {
                 return getValueAt(getSelectedRow(), getSelectedColumn());
             }
+            public int getSelectedIndex() {
+                return getSelectedRow() * getColumnCount() + getSelectedColumn();
+
+            }
             
             public Vector getItems() {
                 return dataVector;
