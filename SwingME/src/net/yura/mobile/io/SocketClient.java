@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 import javax.microedition.io.Connector;
+import javax.microedition.io.Connection;
 import javax.microedition.io.SocketConnection;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.util.QueueProcessorThread;
@@ -23,7 +24,7 @@ public abstract class SocketClient implements Runnable {
     private Vector offlineBox = new Vector();
 
     private boolean running;
-    private SocketConnection sc=null;
+    protected Connection conn=null;
 
     protected OutputStream out = null;
     protected InputStream in = null;
@@ -32,6 +33,17 @@ public abstract class SocketClient implements Runnable {
 
     public SocketClient(String server) {
         this.server = server;
+    }
+    protected Connection openConnection() throws IOException {
+        return Connector.open("socket://" + server);
+    }
+    protected InputStream getInputStream() throws IOException {
+        SocketConnection sc = (SocketConnection) conn;
+        return sc.openInputStream();
+    }
+    protected OutputStream getOutputStream() throws IOException {
+        SocketConnection sc = (SocketConnection) conn;
+        return sc.openOutputStream();
     }
 
     public void addToOutbox(Object obj) {
@@ -48,9 +60,9 @@ public abstract class SocketClient implements Runnable {
                             updateState(CONNECTING);
 
                             try {
-                                sc = (SocketConnection) Connector.open("socket://"+server);
-                                out = sc.openOutputStream();
-                                in = sc.openInputStream();
+                                conn = openConnection();
+                                out = getOutputStream();
+                                in = getInputStream();
                             }
                             catch (IOException x) {
                                 updateState(DISCONNECTED);
@@ -157,10 +169,10 @@ System.out.println("got object: "+task);
 
         NativeUtil.close(out);
         NativeUtil.close(in);
-        NativeUtil.close(sc);
+        NativeUtil.close(conn);
         out = null;
         in= null;
-        sc=null;
+        conn=null;
 
         if(running) {
             disconnected();
