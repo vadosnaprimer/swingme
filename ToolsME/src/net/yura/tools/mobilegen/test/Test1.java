@@ -18,6 +18,7 @@ import net.yura.mobile.gen.BinAccess;
 
 import net.yura.mobile.gen.ProtoAccess;
 import net.yura.mobile.gen.XMLAccess;
+import net.yura.mobile.io.JSONUtil;
 import net.yura.mobile.io.ProtoUtil;
 import net.yura.tools.mobilegen.model.Test;
 import net.yura.tools.mobilegen.model.TestObject;
@@ -93,6 +94,22 @@ public class Test1 {
 
         doTest(ybin);
 
+
+        ReadWrite json = new ReadWrite() {
+            JSONUtil json = new JSONUtil();
+            @Override
+            void save(Object o) throws Exception {
+                json.save(os,  o);
+            }
+            @Override
+            Object read() throws Exception {
+                return json.load(is);
+            }
+        };
+
+        doTest(json);
+
+
 /*
         ReadWrite kxml2 = new ReadWrite() {
             XMLAccess xml = new XMLAccess() {
@@ -144,7 +161,7 @@ public class Test1 {
         doTest(proto);
 */
 
-
+/*
         ReadWrite proto2 = new ReadWrite() {
             ProtoAccess bin = new ProtoAccess();
             int size;
@@ -176,7 +193,7 @@ public class Test1 {
 
         doTest(proto2);
         doTest(proto2);
-
+*/
     }
 
 
@@ -184,8 +201,9 @@ public class Test1 {
     public static void doTest(final ReadWrite util) throws Exception {
 
         final Vector objects = new Vector();
-        objects.add(o1);
-        //objects.add( Test2.getTest1() );
+        objects.add( getTestObject2() );
+        //objects.add(o1);
+//        objects.add( Test2.getTest1() );
 /*
         objects.add(getTestObject4());
         objects.add(getTestObject3());
@@ -254,7 +272,7 @@ public class Test1 {
         table.put(new Double(123), new Double(456));
         table.put("KeyExample","ValueExample");
 
-        bob.add(table);
+        //bob.add(table);
         return bob;
     }
 

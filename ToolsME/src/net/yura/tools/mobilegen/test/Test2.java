@@ -83,13 +83,13 @@ System.out.println("equals="+b.equals(obj)+" getting string: "+sout.getValue() )
             prefix.setObjectType(ObjectType.TYPE_VECTOR);
         }
         else if (message instanceof Bob) {
-            prefix.setObjectType(ObjectType.BOB);
+            prefix.setObjectType(ObjectType.TYPE_BOB);
         }
         else if (message instanceof Test) {
-            prefix.setObjectType(ObjectType.TEST);
+            prefix.setObjectType(ObjectType.TYPE_TEST);
         }
         else if (message instanceof TestObject) {
-            prefix.setObjectType(ObjectType.TEST_OBJECT);
+            prefix.setObjectType(ObjectType.TYPE_TEST_OBJECT);
         }
         else if (message instanceof net.yura.server.gen.TestProtos.String) {
             prefix.setObjectType(ObjectType.TYPE_STRING);
@@ -113,13 +113,13 @@ System.out.println("equals="+b.equals(obj)+" getting string: "+sout.getValue() )
         if (type == ObjectType.TYPE_VECTOR) {
             message = Vector.parseFrom(bytes);
         }
-        else if (type == ObjectType.BOB) {
+        else if (type == ObjectType.TYPE_BOB) {
             message = Bob.parseFrom(bytes);
         }
-        else if (type == ObjectType.TEST) {
+        else if (type == ObjectType.TYPE_TEST) {
             message = Test.parseFrom(bytes);
         }
-        else if (type == ObjectType.TEST_OBJECT) {
+        else if (type == ObjectType.TYPE_TEST_OBJECT) {
             message = TestObject.parseFrom(bytes);
         }
         else if (type == ObjectType.TYPE_STRING) {
