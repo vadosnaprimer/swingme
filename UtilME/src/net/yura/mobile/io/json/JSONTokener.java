@@ -99,6 +99,7 @@ public class JSONTokener {
     }
 
 
+
     /**
      * Determine if the source string still contains characters that next()
      * can consume.
@@ -209,6 +210,92 @@ public class JSONTokener {
         }
     }
 
+    public void startObject() throws IOException {
+        if (nextClean() != '{') {
+                throw syntaxError("A JSONObject text must begin with '{'");
+        }
+    }
+
+
+    /**
+     * @return null if the object is over and there is no more key
+     */
+    public String nextKey() throws IOException {
+
+        String key;
+
+        int c = nextClean();
+        switch (c) {
+            case 0:
+                throw syntaxError("A JSONObject text must end with '}'");
+            case '}':
+                return null;
+            default:
+                back();
+                key = nextString();
+        }
+
+        /*
+         * The key is followed by ':'. We will also tolerate '=' or '=>'.
+         */
+
+        c = nextClean();
+        if (c == '=') {
+            if (next() != '>') {
+                back();
+            }
+        }
+        else if (c != ':') {
+            throw syntaxError("Expected a ':' after a key");
+        }
+
+        return key;
+    }
+
+    /**
+     * @return true for end of object, false for no end
+     */
+    public boolean endObject() throws IOException {
+
+        char next = nextClean();
+
+        /*
+         * Pairs are separated by ','. We will also tolerate ';'.
+         */
+        switch (next) {
+            case ';':
+            case ',':
+                if (nextClean() == '}') {
+                    return true;
+                }
+                back();
+                return false;
+            case '}':
+                return true;
+            default:
+                throw syntaxError("Expected a ',' or '}' got:" + next);
+        }
+
+    }
+
+    public String nextSimple() throws IOException {
+
+        char c = nextClean();
+
+        StringBuffer sb = new StringBuffer();
+        while (c >= ' ' && ",:]}/\\\"[{;=#".indexOf(c) < 0) {
+            sb.append(c);
+            c = next();
+        }
+        back();
+
+        String value = sb.toString().trim();
+        if (value.equals("")) {
+            throw syntaxError("Missing value");
+        }
+
+        return value;
+    }
 
     /**
      * Return the characters up to the next close quote character.

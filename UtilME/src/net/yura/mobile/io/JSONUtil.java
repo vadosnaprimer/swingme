@@ -47,7 +47,7 @@ public class JSONUtil {
             saveVector(serializer, (Vector)object);
         }
         else if (object instanceof Object[]) {
-            serializer.key(XMLUtil.TAG_VECTOR);
+            serializer.key(XMLUtil.TAG_ARRAY);
             saveArray(serializer, (Object[])object);
         }
         else {
@@ -95,60 +95,17 @@ public class JSONUtil {
 
     private Object readObject(JSONTokener x) throws IOException {
 
-        char c;
-        String key;
+        x.startObject();
 
-        if (x.nextClean() != '{') {
-            throw x.syntaxError("A JSONObject text must begin with '{'");
-        }
-        //for (;;) {
-            c = x.nextClean();
-            switch (c) {
-            case 0:
-                throw x.syntaxError("A JSONObject text must end with '}'");
-            case '}':
-                throw new IOException(); // TODO ???
-            default:
-                x.back();
-                key = x.nextString();
-            }
+        String key = x.nextKey();
 
-            /*
-             * The key is followed by ':'. We will also tolerate '=' or '=>'.
-             */
+        Object object = readObject(x, key);
 
-            c = x.nextClean();
-            if (c == '=') {
-                if (x.next() != '>') {
-                    x.back();
-                }
-            } else if (c != ':') {
-                throw x.syntaxError("Expected a ':' after a key");
-            }
-
-            Object object = readObject(x, key);
-
-
-            /*
-             * Pairs are separated by ','. We will also tolerate ';'.
-             */
-
-            switch (x.nextClean()) {
-            case ';':
-            case ',':
-                if (x.nextClean() == '}') {
-                    return object;
-                }
-                x.back();
-                break;
-            case '}':
-                return object;
-            default:
-                throw x.syntaxError("Expected a ',' or '}'");
-            }
-
-        //}
+        if (!x.endObject()) {
             throw new IOException();
+        }
+
+        return object;
 
     }
 
@@ -171,19 +128,7 @@ public class JSONUtil {
         }
         else {
 
-            char c = tokener.nextClean();
-
-            StringBuffer sb = new StringBuffer();
-            while (c >= ' ' && ",:]}/\\\"[{;=#".indexOf(c) < 0) {
-                sb.append(c);
-                c = tokener.next();
-            }
-            tokener.back();
-
-            String value = sb.toString().trim();
-            if (value.equals("")) {
-                throw tokener.syntaxError("Missing value");
-            }
+            String value = tokener.nextSimple();
 
             if (XMLUtil.TAG_INTEGER.equals(name)) {
                 return Integer.valueOf( value );
@@ -225,7 +170,7 @@ public class JSONUtil {
 
     private void saveHashtable(JSONWriter serializer, Hashtable hashtable) throws IOException {
 
-        boolean keyObject = true;
+        boolean keyObject = false;
 
         Enumeration enu = hashtable.keys();
         while (enu.hasMoreElements()) {
@@ -251,6 +196,7 @@ public class JSONUtil {
             serializer.endArray();
         }
         else {
+            serializer.object();
 
             enu = hashtable.keys();
             while (enu.hasMoreElements()) {
@@ -260,6 +206,8 @@ public class JSONUtil {
                 saveObject(serializer, obj);
 
             }
+
+            serializer.endObject();
         }
 
     }
@@ -314,8 +262,24 @@ public class JSONUtil {
 
     }
 
-    private Object readHashtable(JSONTokener tokener) throws IOException {
-        throw new IOException();
+    private Hashtable readHashtable(JSONTokener x) throws IOException {
+        Hashtable hashtable = new Hashtable();
+        if (x.nextClean() == '[') {
+            // we will use array of key,value
+
+        }
+        else {
+            x.back(); // as we read the first char to check for type we need to go back
+            x.startObject();
+
+            for (boolean end=false;!end;end = x.endObject()) {
+                String key = x.nextKey();
+                Object obj = readObject(x);
+                hashtable.put(key, obj);
+            }
+
+        }
+        return hashtable;
     }
 
 }
