@@ -233,7 +233,9 @@ public class ProtoAccess extends ProtoUtil {
             }
         }
         Hashtable organsValue = object.getOrgans();
-        size = size + CodedOutputStream.computeBytesSize(3, computeHashtableSize( organsValue ));
+        if (organsValue!=null) {
+            size = size + CodedOutputStream.computeBytesSize(3, computeHashtableSize( organsValue ));
+        }
         boolean isAliveValue = object.getIsAlive();
         size = size + CodedOutputStream.computeBoolSize(4, isAliveValue );
         int headsValue = object.getHeads();
@@ -242,6 +244,10 @@ public class ProtoAccess extends ProtoUtil {
         size = size + CodedOutputStream.computeInt64Size(6, lastUpdatedValue );
         int thingsValue = object.getThings();
         size = size + CodedOutputStream.computeInt32Size(7, thingsValue );
+        Test andOneInsideValue = object.getAndOneInside();
+        if (andOneInsideValue!=null) {
+            size = size + CodedOutputStream.computeBytesSize(8, computeTestSize( andOneInsideValue ));
+        }
         return size;
     }
     private int computeTestSize(Test object) {
@@ -381,8 +387,10 @@ public class ProtoAccess extends ProtoUtil {
             }
         }
         Hashtable organsValue = object.getOrgans();
-        out.writeBytes(3,computeHashtableSize( organsValue ));
-        encodeHashtable( out, organsValue );
+        if (organsValue!=null) {
+            out.writeBytes(3,computeHashtableSize( organsValue ));
+            encodeHashtable( out, organsValue );
+        }
         boolean isAliveValue = object.getIsAlive();
         out.writeBool(4, isAliveValue );
         int headsValue = object.getHeads();
@@ -391,6 +399,11 @@ public class ProtoAccess extends ProtoUtil {
         out.writeInt64(6, lastUpdatedValue );
         int thingsValue = object.getThings();
         out.writeInt32(7, thingsValue );
+        Test andOneInsideValue = object.getAndOneInside();
+        if (andOneInsideValue!=null) {
+            out.writeBytes(8,computeTestSize( andOneInsideValue ));
+            encodeTest( out, andOneInsideValue );
+        }
     }
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
         int idValue = object.getId();
@@ -679,6 +692,14 @@ public class ProtoAccess extends ProtoUtil {
                 case 7: {
                     int value = (int)in2.readInt32();
                     object.setThings(value);
+                    break;
+                }
+                case 8: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Test value = decodeTest(in2);
+                    in2.popLimit(lim);
+                    object.setAndOneInside(value);
                     break;
                 }
                 default: {

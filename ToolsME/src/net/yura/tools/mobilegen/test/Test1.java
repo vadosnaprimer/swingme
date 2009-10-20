@@ -4,6 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,6 +18,7 @@ import java.util.Map;
 import java.util.Vector;
 import net.yura.mobile.gen.BinAccess;
 
+import net.yura.mobile.gen.JSONAccess;
 import net.yura.mobile.gen.ProtoAccess;
 import net.yura.mobile.gen.XMLAccess;
 import net.yura.mobile.io.JSONUtil;
@@ -54,7 +57,7 @@ public class Test1 {
         abstract Object read() throws Exception;
 
         private void writeDone() throws IOException {
-            os.flush();
+            os.close(); //flush();
 //            is = new ByteArrayInputStream( ((ByteArrayOutputStream)os).toByteArray() );
         }
     }
@@ -96,7 +99,7 @@ public class Test1 {
 
 
         ReadWrite json = new ReadWrite() {
-            JSONUtil json = new JSONUtil();
+            JSONAccess json = new JSONAccess();
             @Override
             void save(Object o) throws Exception {
                 json.save(os,  o);
@@ -109,6 +112,26 @@ public class Test1 {
 
         doTest(json);
 
+
+        ReadWrite proto = new ReadWrite() {
+            ProtoAccess proto = new ProtoAccess();
+            @Override
+            void save(Object o) throws Exception {
+                int size = proto.computeAnonymousObjectSize(o);
+                DataOutputStream dout = new DataOutputStream(os);
+                dout.writeInt(size);
+                dout.flush();
+                proto.save(os,  o);
+            }
+            @Override
+            Object read() throws Exception {
+                DataInputStream din = new DataInputStream(is);
+                int size = din.readInt();
+                return proto.load(is,size);
+            }
+        };
+
+        doTest(proto);
 
 /*
         ReadWrite kxml2 = new ReadWrite() {
@@ -202,16 +225,18 @@ public class Test1 {
 
         final Vector objects = new Vector();
         objects.add( getTestObject2() );
+        objects.add( getTestObject1() );
+        objects.add( getTestObject2() );
         //objects.add(o1);
 //        objects.add( Test2.getTest1() );
-/*
+
         objects.add(getTestObject4());
         objects.add(getTestObject3());
         objects.add(getTestObject4());
         objects.add(getTestObject3());
         objects.add(getTestObject4());
         objects.add(getTestObject3());
-*/
+
         Thread a = new Thread() {
             @Override
             public void run() {
@@ -232,23 +257,30 @@ public class Test1 {
 
         System.out.println();
 
-        XMLAccess kxml = new XMLAccess();
+        //XMLAccess kxml = new XMLAccess();
+        JSONAccess kxml = new JSONAccess();
 
         for (Object obj:objects) {
             o1 = util.read();
-            System.out.print("equals=" +obj.equals(o1) +" "+o1);
+            System.out.println("equals=" +obj.equals(o1) +" "+o1);
             kxml.save(System.out, o1);
             System.out.println();
         }
 
     }
 
-    public static Object getTestObject1() {
+    public static Object getTestObject0() {
 
         return "bob the builder";
 
     }
 
+    public static Object getTestObject1() {
+        Vector v = new Vector();
+        v.add("hello");
+        v.add(5);
+        return v;
+    }
 
     public static Object getTestObject2() {
 
@@ -269,10 +301,17 @@ public class Test1 {
         //bob.add( new Object[] {"bob","the","builder","no",new Short( (short)5 ) } );
 
         Hashtable table = new Hashtable();
-        table.put(new Double(123), new Double(456));
         table.put("KeyExample","ValueExample");
+        table.put("hello1", new Boolean(false));
+        table.put("hello2", new Float(5));
 
-        //bob.add(table);
+        Hashtable hash2 = new Hashtable();
+        hash2.put(new Double(123), new Double(456));
+        hash2.put(new Boolean(true), new Boolean(false));
+        hash2.put(new Vector(), new Hashtable());
+
+        bob.add(table);
+        bob.add(hash2);
         return bob;
     }
 
@@ -284,6 +323,7 @@ public class Test1 {
         TestObject to1 = new TestObject();
 
         to1.setImage( new byte[] {1,2,3,4,5,6,7,8,9,0,} );
+        to1.setAndOneInside(new Test(5));
 
         to1.setAge( (byte)22 );
         to1.setName("lala");

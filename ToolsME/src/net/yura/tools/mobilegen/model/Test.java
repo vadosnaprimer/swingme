@@ -10,6 +10,12 @@ public class Test {
 
     private int id;
 
+    public Test() { }
+
+    public Test(int i) {
+        id = i;
+    }
+
     public int getId() {
         return id;
     }

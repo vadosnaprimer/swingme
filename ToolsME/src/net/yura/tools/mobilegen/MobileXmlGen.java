@@ -397,7 +397,7 @@ ps.println("    }");
 
         return result;
     }
-    private static String paramName(Method m) {
+    public static String paramName(Method m) {
         String n = m.getName();
         return Character.toLowerCase( n.charAt(3) ) + n.substring(4);
     }

@@ -24,6 +24,15 @@ public class TestObject extends Test {
     private int heads;
     private long lastUpdated;
     private int things;
+    private Test andOneInside;
+
+    public Test getAndOneInside() {
+        return andOneInside;
+    }
+
+    public void setAndOneInside(Test andOneInside) {
+        this.andOneInside = andOneInside;
+    }
 
     public int getThings() {
         return things;
