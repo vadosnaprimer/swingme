@@ -42,10 +42,12 @@ public class ProtoUtil {
 
     public Object load(InputStream in,int size) throws IOException {
         CodedInputStream in2 = CodedInputStream.newInstance(in);
+        in2.setSizeLimit(size);
 
         int lim = in2.pushLimit(size);
         Object obj = decodeAnonymousObject(in2);
         in2.popLimit(lim);
+
         return obj;
     }
 

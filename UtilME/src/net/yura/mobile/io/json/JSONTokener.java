@@ -276,6 +276,19 @@ public class JSONTokener {
         return key;
     }
 
+    public boolean nextNull() throws IOException {
+        char next = nextClean();
+        back();
+        if (next == 'n' || next == 'N') {
+            String nullString = nextSimple();
+            if ("null".equalsIgnoreCase(nullString)) {
+                return true;
+            }
+            throw new IOException();
+        }
+        return false;
+    }
+
     /**
      * @return true for end of object, false for no end
      */

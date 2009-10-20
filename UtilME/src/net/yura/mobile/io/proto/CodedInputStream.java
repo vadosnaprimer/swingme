@@ -490,7 +490,7 @@ public final class CodedInputStream {
 
   private static final int DEFAULT_RECURSION_LIMIT = 64;
   private static final int DEFAULT_SIZE_LIMIT = 64 << 20;  // 64MB
-  private static final int BUFFER_SIZE = 2048; // Default value = 4096
+  private static final int BUFFER_SIZE = 1024; // j2me = 2048; // Default value = 4096
 
   private CodedInputStream(final byte[] buffer, final int off, final int len) {
     this.buffer = buffer;
@@ -647,7 +647,10 @@ public final class CodedInputStream {
     totalBytesRetired += bufferSize;
 
     bufferPos = 0;
-    bufferSize = (input == null) ? -1 : input.read(buffer);
+
+    // changed by yura, so stop if overreading
+    int readAllowed = sizeLimit - totalBytesRetired;
+    bufferSize = (input == null) ? -1 : input.read(buffer, 0,buffer.length <readAllowed ?buffer.length : readAllowed);
     if (bufferSize == 0 || bufferSize < -1) {
       throw new IllegalStateException(
           "InputStream#read(byte[]) returned invalid result: " + bufferSize +
