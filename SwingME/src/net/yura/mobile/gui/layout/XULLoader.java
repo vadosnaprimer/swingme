@@ -391,7 +391,7 @@ public class XULLoader {
 
             GridBagConstraints constraints = readUIObject(parser, combobox,listener);
 
-            if (combobox.getItemCount() > selectedIndex) {
+            if (combobox.getItemCount() > selectedIndex && selectedIndex != -1) {
                 combobox.setSelectedIndex(selectedIndex);
             }
 
