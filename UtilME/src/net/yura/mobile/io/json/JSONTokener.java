@@ -98,6 +98,30 @@ public class JSONTokener {
         return -1;
     }
 
+    public void startArray() throws IOException {
+        if (nextClean() != '[') {
+            throw syntaxError("A JSONArray text must start with '['");
+        }
+    }
+
+    public boolean endArray() throws IOException {
+
+            switch (nextClean()) {
+                case ';':
+                case ',':
+                    if (nextClean() == ']') {
+                        return true;
+                    }
+                    back();
+                    return false;
+                case ']':
+                    return true;
+                default:
+                    throw syntaxError("Expected a ',' or ']'");
+            }
+
+    }
+
 
 
     /**
