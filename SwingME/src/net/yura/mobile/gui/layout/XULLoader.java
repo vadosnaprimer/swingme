@@ -559,7 +559,7 @@ public class XULLoader {
             readLabel(parser, button);
     }
 
-    private void readLabel(KXmlParser parser, Label label) {
+    public void readLabel(KXmlParser parser, Label label) {
             String labelText = null;
             boolean i18n = false;
 
