@@ -250,6 +250,9 @@ public class JSONAccess extends JSONUtil {
             else if ("things".equals(key)) {
                 object.setThings( Integer.parseInt(tokener.nextSimple()) );
             }
+            else {
+                throw new IOException("unknown field: "+key);
+            }
         }
         return object;
     }
@@ -260,6 +263,9 @@ public class JSONAccess extends JSONUtil {
             String key = tokener.nextKey();
             if ("id".equals(key)) {
                 object.setId( Integer.parseInt(tokener.nextSimple()) );
+            }
+            else {
+                throw new IOException("unknown field: "+key);
             }
         }
         return object;

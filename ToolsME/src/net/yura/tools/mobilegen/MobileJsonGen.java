@@ -358,6 +358,10 @@ ps.println("                }");
 ps.println("            }");
 n++;
 }
+ps.println("            else {");
+ps.println("                throw new IOException(\"unknown field: \"+key); // TODO skip unknown fields");
+ps.println("            }");
+
 ps.println("        }");
 
 ps.println("        return object;");
