@@ -11,7 +11,6 @@ import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
-import javax.microedition.io.StreamConnection;
 import javax.microedition.lcdui.Image;
 
 public class NativeUtil {
@@ -527,9 +526,6 @@ public class NativeUtil {
                 }
                 else {
                     throw new RuntimeException();
-                }
-                else if (fc instanceof StreamConnection) {
-                    ((StreamConnection)fc).close();
                 }
             }
             catch(IOException ioe) {}
