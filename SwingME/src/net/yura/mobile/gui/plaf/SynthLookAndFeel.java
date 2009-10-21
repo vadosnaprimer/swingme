@@ -35,7 +35,17 @@ import org.kxml2.io.KXmlParser;
 public class SynthLookAndFeel extends LookAndFeel {
 
     private Style defaultStyle;
-    
+
+    protected Image getImage( String path ) {
+        Image image = null;
+        try {
+            image = Image.createImage(path);
+        } catch ( Exception e ) {
+
+        }
+        return image;
+    }
+
     /**
      * @param input
      * @throws java.lang.Exception
@@ -149,7 +159,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String paintCenter = parser.getAttributeValue(null, "paintCenter");
 
                                     try {
-                                        Icon activeimage = new Icon(path);
+                                        Icon activeimage = new Icon( getImage( path ) );
                                         String[] split = StringUtil.split(sourceInsets, ' ');
                                         border = new MatteBorder(activeimage,
                                                 insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
@@ -263,11 +273,11 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 try {
                                     Icon newImage;
                                     if (x!=null && y!=null && width!=null && height!=null) {
-                                        Image image = Image.createImage(Image.createImage(path), Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
+                                        Image image = Image.createImage(getImage( path ), Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
                                         newImage = new Icon(image);
                                     }
                                     else {
-                                        newImage = new Icon(path);
+                                        newImage = new Icon( getImage( path ) );
                                     }
                                     params.put(id, newImage);
                                 }
