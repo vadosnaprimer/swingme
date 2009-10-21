@@ -61,11 +61,12 @@ message TestObject {
 	repeated string legs    = 1209;
         optional bytes image = 1;
         repeated ClientLoginSuccess arms = 2;
-        required Hashtable organs = 3;
+        optional Hashtable organs = 3;
         optional bool isAlive = 4;
         required int32 heads = 5;
-        required int64 lastUpdated = 6;
+        required int64 last_updated = 6;
         required OtherThingsType things = 7;
+        optional Test and_one_inside = 8;
 }
 
 message Login {

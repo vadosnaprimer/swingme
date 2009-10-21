@@ -56,7 +56,10 @@
             generatedFile="${basedir}/src/net/yura/mobile/gen/BinAccess.java"
             classNamesFile="${basedir}/generate.properties"/>
 
-
+        <taskdef classname="net.yura.tools.mobilegen.MobileJsonGen" classpath="./dist/${ant.project.name}.jar" name="gen-json"/>
+        <gen-json
+            generatedFile="${basedir}/src/net/yura/mobile/gen/JSONAccess.java"
+            classNamesFile="${basedir}/generate.properties"/>
 
         <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpath="./dist/${ant.project.name}.jar" name="gen-proto"/>
         <gen-proto
