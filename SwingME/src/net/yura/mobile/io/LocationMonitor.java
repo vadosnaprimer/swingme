@@ -12,6 +12,7 @@ package net.yura.mobile.io;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Hashtable;
+
 /**
  *
  * @author AP
@@ -132,4 +133,28 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
         link.addToOutbox(new ServiceLink.Task("PutOptionWiFiPush", new Boolean(b)));
     }
    
+    public javax.microedition.location.Coordinates getGPS() throws javax.microedition.location.LocationException, InterruptedException {
+
+            // Set criteria for selecting a location provider:
+            // accurate to 500 meters horizontally
+            javax.microedition.location.Criteria cr= new javax.microedition.location.Criteria();
+            cr.setHorizontalAccuracy(500);
+
+            // Get an instance of the provider
+            javax.microedition.location.LocationProvider lp = javax.microedition.location.LocationProvider.getInstance(cr);
+
+            // Request the location, setting a 5 minute timeout
+            javax.microedition.location.Location l = lp.getLocation(60*5);
+            javax.microedition.location.Coordinates c = l.getQualifiedCoordinates();
+
+            if(c != null ) {
+              // Use coordinate information
+              double lat = c.getLatitude();
+              double lng = c.getLongitude();
+
+              System.out.println("lat:"+lat+" lng:"+lng);
+            }
+
+            return c;
+    }
 }

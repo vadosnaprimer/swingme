@@ -7,10 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
-import javax.microedition.io.SocketConnection;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.lcdui.Image;
 
@@ -516,8 +516,8 @@ public class NativeUtil {
     public static void close(Object fc) {
         if( fc != null ) {
             try {
-                if (fc instanceof FileConnection) {
-                    ((FileConnection)fc).close();
+                if (fc instanceof Connection) {
+                    ((Connection)fc).close();
                 }
                 else if (fc instanceof InputStream) {
                     ((InputStream)fc).close();
@@ -525,8 +525,8 @@ public class NativeUtil {
                 else if (fc instanceof OutputStream) {
                     ((OutputStream)fc).close();
                 }
-                else if (fc instanceof SocketConnection) {
-                    ((SocketConnection)fc).close();
+                else {
+                    throw new RuntimeException();
                 }
                 else if (fc instanceof StreamConnection) {
                     ((StreamConnection)fc).close();

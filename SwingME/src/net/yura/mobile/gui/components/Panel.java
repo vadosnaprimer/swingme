@@ -269,38 +269,47 @@ public class Panel extends Component {
 
     }
 
-    // BREAK OUT!!!
-    // find next component in this panel
-
-    protected void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
-
-        boolean right = (direction == Canvas.RIGHT) || (direction == Canvas.DOWN);
-
-        int index = components.indexOf(component);
+    private int getNext(int index,boolean right) {
         int next = (index==components.size()-1)?(-1):(index+1);
         int prev = (index==-1)?( components.size()-1 ): (   (index==0)?(-1):(index-1)   );
 
-        Component newone=null;
-
         if (right && next!=-1) {
-
-            newone = (Component)components.elementAt(next);
-
+            return next;
         }
         else if (!right && prev!=-1) {
-
-             newone = (Component)components.elementAt(prev);
-
+             return prev;
         }
+        return -1;
+    }
 
-        if (newone!=null) {
+    private Component getComponentAt(int index) {
+        if (index==-1) return null;
+        return (Component)components.elementAt(index);
+    }
+
+    // BREAK OUT!!!
+    // find next component in this panel
+
+    protected void breakOutAction(Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
+        int index = components.indexOf(component);
+        boolean right = (direction == Canvas.RIGHT) || (direction == Canvas.DOWN);
+
+        index = getNext( index ,right);
+        Component newone = getComponentAt(index);
+
+        while (newone!=null) {
 
             if (newone.isFocusable()) {
 
                 boolean requestFocus = false;
 
                 if (getWindow().getFocusOwner() == null) {
-                    breakOutAction(newone,direction,scrolltothere,forceFocus);
+                    if (newone.isComponentVisible()) {
+                        requestFocus = true;
+                    }
+                    else {
+                        breakOutAction(newone,direction,scrolltothere,forceFocus);
+                    }
                 }
                 else if (scrolltothere) {
                     requestFocus = scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus);
@@ -309,7 +318,7 @@ public class Panel extends Component {
                 if (requestFocus || newone.isComponentVisible()) {
                     newone.requestFocusInWindow();
                 }
-
+                return;
             }
             else if (newone instanceof Panel) {
 
@@ -320,49 +329,56 @@ public class Panel extends Component {
                                 // here we do NOT pass scrolltothere onto the child panel
                                 // unless we have NOTHING active, then pass it on to children
                                 // dont scroll if we go to a child, only scroll if we hit a parent
+                return;
             }
-            else if (newone!=component) {// this is just a check so it cant go into a infinite loop
 
-                breakOutAction(newone,direction,scrolltothere,forceFocus);
+            component = newone;
+            index = getNext( index ,right);
+            newone = getComponentAt(index);
 
-                // this is not a very good place to do this
-                // DO NOT REMOVE THESE COMMENTS
-                // it shows how this used to be done, and is useful to know
-//                if ( scrollTo(newone) ) {
+
+//            else if (newone!=component) {// this is just a check so it cant go into a infinite loop
 //
-//                    if (newone instanceof Panel) {
-//                        ((Panel)newone).breakOutAction(null,right,scrolltothere);
-//                    }
-//                    else {
-//                        owner.setActiveComponent(newone);
-//                    }
-//                }
-
-            }
-
-        }
-        else {
-            boolean scrolled=false;
-            // scroll at least in that direction
-            // this will only be comming from a child
-            // only scroll in the direction if the child is NONE-selectable
-            // as if it IS selectable, it should handel its own moving around and scrolling
-            if (scrolltothere && this instanceof ScrollPane && !component.isFocusable()) {
-                scrolled = ((ScrollPane)this).getComponent().scrollUpDown(direction);
-            }
-
-            if (!scrolled) {
-                if (!(parent instanceof Window)) {
-                    // passes onto parent
-                    parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
-                }
-                else if (getWindow().getFocusOwner()!=null) {
-                    // done for loop to first/last component
-                    breakOutAction(null, direction, scrolltothere,true);
-                }
-            }
+//                breakOutAction(newone,direction,scrolltothere,forceFocus);
+//
+////                this is not a very good place to do this
+////                DO NOT REMOVE THESE COMMENTS
+////                it shows how this used to be done, and is useful to know
+////                if ( scrollTo(newone) ) {
+////
+////                    if (newone instanceof Panel) {
+////                        ((Panel)newone).breakOutAction(null,right,scrolltothere);
+////                    }
+////                    else {
+////                        owner.setActiveComponent(newone);
+////                    }
+////                }
+//
+//            }
 
         }
+
+
+        boolean scrolled=false;
+        // scroll at least in that direction
+        // this will only be comming from a child
+        // only scroll in the direction if the child is NONE-selectable
+        // as if it IS selectable, it should handel its own moving around and scrolling
+        if (scrolltothere && this instanceof ScrollPane && !component.isFocusable()) {
+            scrolled = ((ScrollPane)this).getComponent().scrollUpDown(direction);
+        }
+
+        if (!scrolled) {
+            if (!(parent instanceof Window)) {
+                // passes onto parent
+                parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
+            }
+            else if (getWindow().getFocusOwner()!=null) {
+                // done for loop to first/last component
+                breakOutAction(null, direction, scrolltothere,true);
+            }
+        }
+
 
     }
 

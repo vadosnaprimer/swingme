@@ -11,8 +11,9 @@
     <available file="../vauchacha" type="dir" property="vauchacha"/>
     <available file="../AgentClient" type="dir" property="AgentClient"/>
     <available file="../BadooMobile" type="dir" property="BadooMobile"/>
+    <available file="../iPhoneRace" type="dir" property="iPhoneRace"/>
 
-    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5"/>
+    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6"/>
 
     <target name="d1" if="SwingMETest">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
@@ -28,6 +29,9 @@
     </target>
     <target name="d5" if="BadooMobile">
         <copy file="${deployment.jar}" todir="../BadooMobile/lib"/>
+    </target>
+    <target name="d6" if="iPhoneRace">
+        <copy file="${deployment.jar}" todir="../iPhoneRace/lib"/>
     </target>
 
     <!--
