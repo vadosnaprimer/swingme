@@ -259,7 +259,7 @@ public class ProtoLoader {
         if ( messageClass != Hashtable.class ) {
             try {
 
-                String methodName = "get" + name.substring(0,1).toUpperCase() + name.substring(1);
+                String methodName = "get" + MobileProtoGen.firstUp(name);
 
                 java.lang.reflect.Method method = messageClass.getMethod( methodName , (Class [])null );
 

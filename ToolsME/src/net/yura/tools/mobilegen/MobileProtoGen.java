@@ -602,7 +602,11 @@ ps.println("    }");
 
 
 
-    private String firstUp(String type) {
+    public static String firstUp(String type) {
+        int i;
+        while ((i=type.indexOf('_'))>=0) {
+            type = type.substring(0, i)+Character.toUpperCase(type.charAt(i+1))+type.substring(i+2);
+        }
         return Character.toUpperCase( type.charAt(0) ) + type.substring(1);
     }
 

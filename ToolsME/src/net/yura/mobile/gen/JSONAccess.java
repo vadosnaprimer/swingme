@@ -251,7 +251,7 @@ public class JSONAccess extends JSONUtil {
                 object.setThings( Integer.parseInt(tokener.nextSimple()) );
             }
             else {
-                throw new IOException("unknown field: "+key);
+                throw new IOException("unknown field: "+key); // TODO skip unknown fields
             }
         }
         return object;
@@ -265,7 +265,7 @@ public class JSONAccess extends JSONUtil {
                 object.setId( Integer.parseInt(tokener.nextSimple()) );
             }
             else {
-                throw new IOException("unknown field: "+key);
+                throw new IOException("unknown field: "+key); // TODO skip unknown fields
             }
         }
         return object;

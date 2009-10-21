@@ -240,13 +240,13 @@ public class ProtoAccess extends ProtoUtil {
         size = size + CodedOutputStream.computeBoolSize(4, isAliveValue );
         int headsValue = object.getHeads();
         size = size + CodedOutputStream.computeInt32Size(5, headsValue );
-        long lastUpdatedValue = object.getLastUpdated();
-        size = size + CodedOutputStream.computeInt64Size(6, lastUpdatedValue );
+        long last_updatedValue = object.getLastUpdated();
+        size = size + CodedOutputStream.computeInt64Size(6, last_updatedValue );
         int thingsValue = object.getThings();
         size = size + CodedOutputStream.computeInt32Size(7, thingsValue );
-        Test andOneInsideValue = object.getAndOneInside();
-        if (andOneInsideValue!=null) {
-            size = size + CodedOutputStream.computeBytesSize(8, computeTestSize( andOneInsideValue ));
+        Test and_one_insideValue = object.getAndOneInside();
+        if (and_one_insideValue!=null) {
+            size = size + CodedOutputStream.computeBytesSize(8, computeTestSize( and_one_insideValue ));
         }
         return size;
     }
@@ -395,14 +395,14 @@ public class ProtoAccess extends ProtoUtil {
         out.writeBool(4, isAliveValue );
         int headsValue = object.getHeads();
         out.writeInt32(5, headsValue );
-        long lastUpdatedValue = object.getLastUpdated();
-        out.writeInt64(6, lastUpdatedValue );
+        long last_updatedValue = object.getLastUpdated();
+        out.writeInt64(6, last_updatedValue );
         int thingsValue = object.getThings();
         out.writeInt32(7, thingsValue );
-        Test andOneInsideValue = object.getAndOneInside();
-        if (andOneInsideValue!=null) {
-            out.writeBytes(8,computeTestSize( andOneInsideValue ));
-            encodeTest( out, andOneInsideValue );
+        Test and_one_insideValue = object.getAndOneInside();
+        if (and_one_insideValue!=null) {
+            out.writeBytes(8,computeTestSize( and_one_insideValue ));
+            encodeTest( out, and_one_insideValue );
         }
     }
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
