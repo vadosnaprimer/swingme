@@ -269,24 +269,6 @@ public class Panel extends Component {
 
     }
 
-    private int getNext(int index,boolean right) {
-        int next = (index==components.size()-1)?(-1):(index+1);
-        int prev = (index==-1)?( components.size()-1 ): (   (index==0)?(-1):(index-1)   );
-
-        if (right && next!=-1) {
-            return next;
-        }
-        else if (!right && prev!=-1) {
-             return prev;
-        }
-        return -1;
-    }
-
-    private Component getComponentAt(int index) {
-        if (index==-1) return null;
-        return (Component)components.elementAt(index);
-    }
-
     // BREAK OUT!!!
     // find next component in this panel
 
@@ -294,35 +276,36 @@ public class Panel extends Component {
         int index = components.indexOf(component);
         boolean right = (direction == Canvas.RIGHT) || (direction == Canvas.DOWN);
 
-        index = getNext( index ,right);
-        Component newone = getComponentAt(index);
+        while (true) {
 
-        while (newone!=null) {
+            index =  right? ((index==components.size()-1)?(-1):(index+1)) : ((index==-1)?( components.size()-1 ): (   (index==0)?(-1):(index-1)   ));
+            if (index == -1) break;
+            component = (Component)components.elementAt(index);
 
-            if (newone.isFocusable()) {
+            if (component.isFocusable()) {
 
                 boolean requestFocus = false;
 
                 if (getWindow().getFocusOwner() == null) {
-                    if (newone.isComponentVisible()) {
+                    if (component.isComponentVisible()) {
                         requestFocus = true;
                     }
                     else {
-                        breakOutAction(newone,direction,scrolltothere,forceFocus);
+                        breakOutAction(component,direction,scrolltothere,forceFocus);
                     }
                 }
                 else if (scrolltothere) {
-                    requestFocus = scrollRectToVisible( newone.getXWithBorder(),newone.getYWithBorder(),newone.getWidthWithBorder(),newone.getHeightWithBorder() , !forceFocus);
+                    requestFocus = scrollRectToVisible( component.getXWithBorder(),component.getYWithBorder(),component.getWidthWithBorder(),component.getHeightWithBorder() , !forceFocus);
                 }
 
-                if (requestFocus || newone.isComponentVisible()) {
-                    newone.requestFocusInWindow();
+                if (requestFocus || component.isComponentVisible()) {
+                    component.requestFocusInWindow();
                 }
                 return;
             }
-            else if (newone instanceof Panel) {
+            else if (component instanceof Panel) {
 
-                ((Panel)newone).breakOutAction(null,direction,scrolltothere,forceFocus);
+                ((Panel)component).breakOutAction(null,direction,scrolltothere,forceFocus);
                                 // && DesktopPane.getDesktopPane().getFocusedComponent()==null
                                 // ^ this hack was here, but it broke things like TextField test scrolling
 
@@ -331,10 +314,6 @@ public class Panel extends Component {
                                 // dont scroll if we go to a child, only scroll if we hit a parent
                 return;
             }
-
-            component = newone;
-            index = getNext( index ,right);
-            newone = getComponentAt(index);
 
 
 //            else if (newone!=component) {// this is just a check so it cant go into a infinite loop
