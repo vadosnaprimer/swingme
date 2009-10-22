@@ -418,4 +418,31 @@ public class ProtoUtil {
 
     }
 
+    public static boolean hashtableIsMessage(Hashtable hash,String[] required,String[] optional) {
+        if (hash.size() < required.length || hash.size() > (required.length + optional.length)) {
+            return false;
+        }
+        int found = 0;
+        Enumeration enu = hash.keys();
+        while (enu.hasMoreElements()) {
+            Object key = enu.nextElement();
+            if (canBeFoundIn(key,required)) {
+                found ++;
+            }
+            else if (!canBeFoundIn(key,optional)) {
+                return false;
+            }
+        }
+        return (required.length == found);
+    }
+
+    private static boolean canBeFoundIn(Object key,Object[] array) {
+        for (int c=0;c<array.length;c++) {
+            if (array[c].equals(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
