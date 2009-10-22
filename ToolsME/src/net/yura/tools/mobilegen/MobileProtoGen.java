@@ -66,13 +66,15 @@ PrintStream ps = new PrintStream( new File( tmp.toString() ) ) {
     private int indent=0;
     @Override
     public void println(String string) {
+        int lo = string.lastIndexOf('{');
+        int lc = string.lastIndexOf('}');
         int open = string.indexOf('{');
         int close = string.indexOf('}');
         if (close >=0 && (open<0 || close<open)) {
             indent--;
         }
         super.println( "                                ".substring(0, indent*4) + string.trim() );
-        if (open >=0 &&(close<0 || open>close)) {
+        if (lo >=0 &&(lc<0 || lo>lc)) {
             indent++;
         }
     }
@@ -528,17 +530,20 @@ for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() == Hashtable.class) {
 
-        int fc2 = getMessageFromEnum(enu.getKey()).getFields().size();
-        String line ="";
-        int fieldsCount=0;
+        String line1 ="";
+        String line2 ="";
         Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
         for (ProtoLoader.FieldDefinition field:fields) {
             if (field.required || field.repeated) {
-                line = line +" && table.get(\""+field.getName()+"\")!=null";
-                fieldsCount++;
+                line1 = line1 +"\""+field.getName()+"\",";
+            }
+            else {
+                line2 = line2 +"\""+field.getName()+"\",";
             }
         }
-        ps.println("    if (table.size() "+(fc2==fieldsCount?"== "+fc2:">= "+fieldsCount+" && table.size() <= "+fc2)+line+") {");
+        if (line1.endsWith(",")) line1 = line1.substring(0, line1.length() - 1);
+        if (line2.endsWith(",")) line2 = line2.substring(0, line2.length() - 1);
+        ps.println("    if (hashtableIsMessage(table,new String[] {"+line1+"},new String[] {"+line2+"})) {");
 
         ps.println("        return "+enu.getKey()+";");
         ps.println("    }");

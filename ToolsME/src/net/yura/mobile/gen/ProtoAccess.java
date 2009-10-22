@@ -80,16 +80,16 @@ public class ProtoAccess extends ProtoUtil {
     protected int getObjectTypeEnum(Object obj) {
         if (obj instanceof Hashtable) {
             Hashtable table = (Hashtable)obj;
-            if (table.size() == 3 && table.get("vec1")!=null && table.get("vec2")!=null && table.get("vec3")!=null) {
+            if (hashtableIsMessage(table,new String[] {"vec1","vec2","vec3"},new String[] {})) {
                 return TYPE_BOB;
             }
-            if (table.size() >= 7 && table.size() <= 8 && table.get("username")!=null && table.get("password")!=null && table.get("type")!=null && table.get("tests")!=null && table.get("inty")!=null && table.get("intx")!=null && table.get("intz")!=null) {
+            if (hashtableIsMessage(table,new String[] {"username","password","type","tests","inty","intx","intz"},new String[] {"image"})) {
                 return TYPE_LOGIN;
             }
-            if (table.size() == 6 && table.get("sessionId")!=null && table.get("albums")!=null && table.get("login")!=null && table.get("login2")!=null && table.get("newPeople")!=null && table.get("newMessages")!=null) {
+            if (hashtableIsMessage(table,new String[] {"sessionId","albums","login","login2","newPeople","newMessages"},new String[] {})) {
                 return TYPE_CLIENT_LOGIN_SUCCESS;
             }
-            if (table.size() == 1 && table.get("body")!=null) {
+            if (hashtableIsMessage(table,new String[] {"body"},new String[] {})) {
                 return TYPE_MESSAGE;
             }
         }
