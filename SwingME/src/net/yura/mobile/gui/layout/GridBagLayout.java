@@ -48,6 +48,9 @@ public class GridBagLayout implements Layout {
     public int getColumns() {
         return columns;
     }
+    public int getGap() {
+        return gap;
+    }
 
     private static int getSum(int[] values, int from, int length, int gap, boolean last) {
             if (length <= 0) {
