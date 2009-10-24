@@ -17,11 +17,13 @@
 
 package net.yura.mobile.gui;
 
+import net.yura.mobile.gui.components.Component;
+
 /**
  * @author Yura Mamyrin
  */
 public interface ChangeListener {
 
-    	void changeEvent(int num);
+    	void changeEvent(Component source, int num);
     
 }

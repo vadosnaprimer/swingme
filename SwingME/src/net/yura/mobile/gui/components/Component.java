@@ -358,7 +358,7 @@ public abstract class Component {
          */
 	public void focusLost() {
             if (focusListener!=null) {
-                focusListener.changeEvent(FOCUS_LOST);
+                focusListener.changeEvent(this,FOCUS_LOST);
             }
         }
 
@@ -368,7 +368,7 @@ public abstract class Component {
 	public void focusGained() {
 
             if (focusListener!=null) {
-                focusListener.changeEvent(FOCUS_GAINED);
+                focusListener.changeEvent(this,FOCUS_GAINED);
             }
 
             // default focusGained action, make me visible

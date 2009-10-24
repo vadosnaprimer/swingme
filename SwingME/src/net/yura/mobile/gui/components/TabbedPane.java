@@ -241,7 +241,7 @@ System.out.println("bob "+tabContent.getPreferredWidth()+" "+tabContent.getPrefe
 
         }
 
-    public void changeEvent(int num) {
+    public void changeEvent(Component source, int num) {
 
         Component thetabtoAdd = (Component)tabs.elementAt(num);
 

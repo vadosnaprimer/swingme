@@ -671,7 +671,7 @@ public class List extends Component implements ActionListener {
             }
 
             if (chl!=null && old!=current) {
-                chl.changeEvent(a);
+                chl.changeEvent(this,a);
             }
             // TODO as scroll to always does a repaint
             // we dont need it here

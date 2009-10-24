@@ -295,7 +295,7 @@ public class Spinner extends Label {
             }
 
             if (chl!=null && old!=index) {
-                chl.changeEvent(index);
+                chl.changeEvent(this,index);
             }
 
 	    repaint();
