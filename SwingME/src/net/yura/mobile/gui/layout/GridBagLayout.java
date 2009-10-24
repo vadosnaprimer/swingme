@@ -84,12 +84,12 @@ public class GridBagLayout implements Layout {
             int x = 0;
             int y = 0;
             int nextsize = 0;
-            for (int compi=0; compi < count; compi++) {
-                Component subComponent = (Component) components.elementAt(compi);
-                GridBagConstraints subConstraint = (GridBagConstraints) constraints.get(subComponent);
+            for (int compi=0; compi < components.size(); compi++) {
+                    Component subComponent = (Component) components.elementAt(compi);
                     if (!subComponent.isVisible() ) {
                             continue;
                     }
+                    GridBagConstraints subConstraint = (GridBagConstraints) constraints.get(subComponent);
                     int colspan = ((columns != 0) && (columns < count)) ? Math.min(
                                     subConstraint.colSpan, columns) : 1;
                     int rowspan = (columns != 1) ? subConstraint.rowSpan : 1;
@@ -301,19 +301,19 @@ public class GridBagLayout implements Layout {
                 }
 
 
-                for (int compi=0; compi < component.getComponentCount(); compi++) {
+                for (int i=0,compi=0; compi < component.getComponentCount(); compi++) {
                     Component subComponent = (Component) components.elementAt(compi);
                     GridBagConstraints subConstraint = (GridBagConstraints) constraints.get(subComponent);
                         if (!subComponent.isVisible()) {
                                 continue;
                         }
                         int ix = areax + left
-                                        + getSum(grid[0], 0, grid[4][compi], gap, true);
+                                        + getSum(grid[0], 0, grid[4][i], gap, true);
                         int iy = areay + top
-                                        + getSum(grid[1], 0, grid[5][compi], gap, true);
-                        int iwidth = getSum(grid[0], grid[4][compi], grid[6][compi], gap,
+                                        + getSum(grid[1], 0, grid[5][i], gap, true);
+                        int iwidth = getSum(grid[0], grid[4][i], grid[6][i], gap,
                                         false);
-                        int iheight = getSum(grid[1], grid[5][compi], grid[7][compi], gap,
+                        int iheight = getSum(grid[1], grid[5][i], grid[7][i], gap,
                                         false);
                         String halign = subConstraint.getHalign();//getString(comp, "halign", "fill");
                         String valign = subConstraint.getValign();//getString(comp, "valign", "fill");
@@ -343,6 +343,7 @@ public class GridBagLayout implements Layout {
 //                        System.out.println("Setting "+subComponent.getName()+" = "+iwidth);
                         subComponent.setBoundsWithBorder(ix, iy, iwidth, iheight);
                         //doLayout(comp);
+                        i++;
                 }
         }
     }

@@ -415,7 +415,7 @@ public class XULLoader {
         }
         else if (name.equals("textfield")) {
             TextField textfield = new TextField();
-            //textfield.setPreferredWidth(0);
+            textfield.setPreferredWidth(0);
 
             readTextComponent(parser,textfield);
 
@@ -423,6 +423,7 @@ public class XULLoader {
         }
         else if (name.equals("passwordfield")) {
             TextField textfield = new TextField(TextField.PASSWORD);
+            textfield.setPreferredWidth(0);
 
             readTextComponent(parser,textfield);
 
