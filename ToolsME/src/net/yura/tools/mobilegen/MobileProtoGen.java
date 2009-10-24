@@ -534,7 +534,7 @@ for (Map.Entry<String,Integer> enu:set) {
         String line2 ="";
         Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
         for (ProtoLoader.FieldDefinition field:fields) {
-            if (field.required || field.repeated) {
+            if (field.required) { //  || field.repeated (we dont need a null vector)
                 line1 = line1 +"\""+field.getName()+"\",";
             }
             else {
