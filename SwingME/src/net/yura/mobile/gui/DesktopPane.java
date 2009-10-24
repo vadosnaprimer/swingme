@@ -25,6 +25,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
@@ -275,7 +276,11 @@ public class DesktopPane extends Canvas implements Runnable {
                            (maxSize <= 208) ? 5 : 7;
         }
 
-        Component c = new MenuItemRenderer().getListCellRendererComponent(null, new Button("test") , 0, false, false);
+        MenuItemRenderer m = new MenuItemRenderer();
+        m.setName("SoftkeyRenderer");
+        softkeyRenderer = m;
+
+        Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test") , 0, false, false);
         c.workoutSize();
         menuHeight = c.getHeightWithBorder();
 
@@ -283,6 +288,14 @@ public class DesktopPane extends Canvas implements Runnable {
         indicator = new ToolTip();
         //currentWindow.setSize(getWidth(),getHeight());
 
+    }
+
+    private ListCellRenderer softkeyRenderer;
+    public ListCellRenderer getSoftkeyRenderer() {
+        return softkeyRenderer;
+    }
+    public int getMenuHeight() {
+        return menuHeight;
     }
 
     // #####################################################################
@@ -1140,10 +1153,6 @@ public class DesktopPane extends Canvas implements Runnable {
         //System.out.println("hideNotify");
         keypad.clear();
 
-    }
-
-    public int getMenuHeight() {
-        return menuHeight;
     }
 
     public boolean isSideSoftKeys() {

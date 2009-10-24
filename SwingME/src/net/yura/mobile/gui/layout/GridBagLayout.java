@@ -45,6 +45,10 @@ public class GridBagLayout implements Layout {
         this.right = right;
     }
 
+    public int getColumns() {
+        return columns;
+    }
+
     private static int getSum(int[] values, int from, int length, int gap, boolean last) {
             if (length <= 0) {
                     return 0;

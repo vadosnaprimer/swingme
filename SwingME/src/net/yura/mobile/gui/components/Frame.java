@@ -248,11 +248,10 @@ public class Frame extends Window {
 
             }
 
-            int mh = DesktopPane.getDesktopPane().getMenuHeight();
             Panel contentPane = getContentPane();
             if (contentPane!=null && contentPane.isVisible()) {
                                                                           // leave a gap under content pane for soft key
-                contentPane.setBoundsWithBorder(0, h, width, height - h - (isMaximum && !DesktopPane.me4se?mh:0) );
+                contentPane.setBoundsWithBorder(0, h, width, height - h - (isMaximum && !DesktopPane.me4se? DesktopPane.getDesktopPane().getMenuHeight() :0) );
             }
 
             super.doLayout();

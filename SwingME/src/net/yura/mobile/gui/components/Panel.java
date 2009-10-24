@@ -59,9 +59,13 @@ public class Panel extends Component {
      * @see java.awt.Container#setLayout(java.awt.LayoutManager) Container.setLayout
      */
     public void setLayout(Layout lt) {
-
         layout = lt;
-
+    }
+    /**
+     * @see java.awt.Container#getLayout() Container.getLayout
+     */
+    public Layout getLayout() {
+        return layout;
     }
 
     public Hashtable getConstraints() {

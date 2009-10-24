@@ -43,7 +43,6 @@ public class Window extends Panel {
 
         private boolean closeOnFocusLost;
 
-        private ListCellRenderer softkeyRenderer;
         private Vector softkeys;
 
         private ActionListener windowListener;
@@ -340,12 +339,6 @@ public class Window extends Panel {
 
     public Component getRendererComponentOnScreen(Button button){
 
-            if (softkeyRenderer==null) {
-                MenuItemRenderer m = new MenuItemRenderer();
-                m.setName("SoftkeyRenderer");
-                softkeyRenderer = m;
-            }
-
             boolean sideSoftKeys = DesktopPane.getDesktopPane().isSideSoftKeys();
 
             int mnemonic = button.getMnemonic();
@@ -355,7 +348,7 @@ public class Window extends Panel {
 
     //System.out.println("Screen height: "+desktopHeight);
 
-            Component component = softkeyRenderer.getListCellRendererComponent(null,button,0,false,false);
+            Component component = DesktopPane.getDesktopPane().getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
 
             component.workoutSize();
             int componentWidth = component.getWidthWithBorder();
