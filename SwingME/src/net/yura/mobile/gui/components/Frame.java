@@ -86,7 +86,7 @@ public class Frame extends Window {
         public void setUndecorated(boolean un) {
             TitleBar tb = getTitleBar();
             if (tb==null && !un) {
-                super.add(new TitleBar("", null, false, false, false, false, false));
+                super.add(new TitleBar());
             }
             else if (tb!=null && un) {
                 super.remove(tb);

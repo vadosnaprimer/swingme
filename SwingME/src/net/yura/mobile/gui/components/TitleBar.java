@@ -32,32 +32,29 @@ import net.yura.mobile.gui.layout.GridLayout;
  */
 public class TitleBar extends Panel implements ActionListener {
 
+    public static int align = Graphics.LEFT; // Graphics.HCENTER;
+
     private static String[] icons = new String[] {"#","+","_","[]","X"};
     private static String[] commands = new String[] {"resize","move",Frame.CMD_MIN,Frame.CMD_MAX,Frame.CMD_CLOSE};
 
     private Label title;
     private Panel buttonPanel;
     
-    public TitleBar(String title,Icon icon,boolean resize,boolean move,boolean hide,boolean max,boolean close) {
+    public TitleBar() {
         super(new BorderLayout());
         setName("TitleBar");
         
         buttonPanel = new Panel( new GridLayout(1,0,2) );
 
-        setButtonVisable(commands[0],resize);
-        setButtonVisable(commands[1],move);
-        setButtonVisable(commands[2],hide);
-        setButtonVisable(commands[3],max);
-        setButtonVisable(commands[4],close);
-
-
         // always want it to take the style of this instead
         buttonPanel.setName("WindowControlPanel");
         
-        this.title = new Label( title,icon );
-        this.title.setName("TitleBarLabel");
+        title = new Label();
+        title.setName("TitleBarLabel");
+
+        title.setHorizontalAlignment(align);
         
-        add(this.title);
+        add(title);
         add(buttonPanel,Graphics.RIGHT);
 
     }
