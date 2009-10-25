@@ -94,7 +94,7 @@ public class Table extends Panel {
     // the current editor has finished editing
     public void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
         
-        boolean done = (component==editorComp)?moveSelection(direction): false;
+        boolean done = (editorComp!=null && component==editorComp)?moveSelection(direction): false;
         
         if (!done) {
             super.breakOutAction(component, direction, scrolltothere,forceFocus);
@@ -135,7 +135,9 @@ public class Table extends Panel {
     
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
         super.processMouseEvent(type, x, y, keys);
-        
+
+        if (!focusable) return;
+
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED ) {
             
                 int x1 = 0,y1 = 0;
@@ -207,7 +209,7 @@ public class Table extends Panel {
     }
      
     public boolean processKeyEvent(KeyEvent event) {
-        
+
         int key = event.getIsDownKey();
         int action = event.getKeyAction(key);
         

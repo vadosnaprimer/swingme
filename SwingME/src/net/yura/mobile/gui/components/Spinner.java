@@ -77,6 +77,8 @@ public class Spinner extends Label {
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
 
+            if (!focusable) return;
+
             if (type == DesktopPane.PRESSED) {
                 int offset=0;
 //                if (nonSelectedImage != null) {
