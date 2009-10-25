@@ -295,7 +295,7 @@ public abstract class Component {
             return b==null?empty:b;
         }
 
-        private int getCurrentBackground() {
+        public int getCurrentBackground() {
             if (background != -1) {
                 return background;
             }
@@ -304,7 +304,7 @@ public abstract class Component {
             }
         }
 
-        private Border getCurrentBorder() {
+        public Border getCurrentBorder() {
                 if (border != null) {
                     return border;
 		}
