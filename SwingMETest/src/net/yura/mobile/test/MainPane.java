@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.bluetooth.UUID;
 import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -70,6 +71,12 @@ import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
+import net.yura.mobile.io.LocationMonitor;
+import net.yura.mobile.io.ClipboardManager;
+import net.yura.mobile.io.BTService;
+import net.yura.mobile.io.ServiceLink.Task;
+import net.yura.mobile.io.ServiceLink.TaskHandler;
+import net.yura.mobile.io.BTDiscovery;
 
 /**
  * @author Yura Mamyrin
@@ -96,6 +103,125 @@ public class MainPane extends DesktopPane implements ActionListener {
 
         Frame xuldialog;
 
+        class MyLocationMonitor extends LocationMonitor {
+            public void handleTask(Task task) {
+                String strMethod = task.getMethod();
+                if ("GetCellIdError".equals(strMethod)) {
+                    infoLabel.setText("GetCellIdError");
+                }
+                if ("PutCellId".equals(strMethod)) {
+                    Hashtable hashtable = (Hashtable) task.getObject();
+                    java.util.Enumeration e = hashtable.keys();
+                    infoLabel.setText("");
+                    while (e.hasMoreElements())
+                    {
+                        String key = (String) e.nextElement();
+                        Integer value = (Integer) hashtable.get(key);
+                        infoLabel.append(strMethod);
+                        infoLabel.append("\n");
+                        infoLabel.append(key);
+                        infoLabel.append("\n");
+                        infoLabel.append(Integer.toString(value.intValue()));
+                        infoLabel.append("\n");
+                    }
+                }
+                if ("GetWiFiSsListError".equals(strMethod)) {
+                    infoLabel.setText("GetWiFiSsListError");
+                }
+                if ("PutWiFiSsList".equals(strMethod)) {
+                    Hashtable hashtable = (Hashtable) task.getObject();
+                    java.util.Enumeration e = hashtable.keys();
+                    infoLabel.setText("");
+                    while (e.hasMoreElements())
+                    {
+                        String key = (String) e.nextElement();
+                        Integer value = (Integer) hashtable.get(key);
+                        infoLabel.append(strMethod);
+                        infoLabel.append("\n");
+                        infoLabel.append(key);
+                        infoLabel.append("\n");
+                        infoLabel.append(Integer.toString(value.intValue()));
+                        infoLabel.append("\n");
+                    }
+                }
+
+            }
+        }
+        private MyLocationMonitor locationMonitor;
+
+        class MyClipboardManager extends ClipboardManager {
+            public void handleTask(Task task) {
+                String strMethod = task.getMethod();
+                if ("GetClipboardTextError".equals(strMethod)) {
+                    infoLabel.setText("GetClipboardTextError");
+                }
+                if ("PutClipboardText".equals(strMethod)) {
+                    infoLabel.setText("");
+                    infoLabel.append((String) task.getObject());
+                    infoLabel.append("\n");
+                }
+            }
+        }
+
+        class MyBluetoothServer extends BTService {
+            public boolean registerServer(UUID aUuid, String name) {
+                if (super.registerServer(aUuid, name)) {
+                    registerForTask("BTClientToServer", this);
+                    return true;
+                }
+                return false;
+            }
+            public void send() {
+                  addToOutbox(new Task("BTServerToClient", null));
+                  infoLabel.append("Message Sent");
+            }
+            public void handleTask(Task task) {
+                infoLabel.append(task.getMethod());
+            }
+        }
+
+        MyBluetoothServer btServer;
+
+        class MyBluetoothClient extends BTService {
+            public boolean registerClient(UUID aUuid) {
+                if (super.registerClient(aUuid)) {
+                    registerForTask("BTServerToClient", this);
+                    return true;
+                }
+                return false;
+            }
+            public void send() {
+                  addToOutbox(new Task("BTClientToServer", null));
+                  infoLabel.append("Message Sent");
+            }
+            public void handleTask(Task task) {
+                infoLabel.append(task.getMethod());
+            }
+        }
+
+        MyBluetoothClient btClient;
+
+        private MyClipboardManager clipboardManager;
+
+        class MyBTDiscovery extends BTDiscovery {
+            public void handleMyId(String name, String address) {
+                    infoLabel.setText("\nMy Name: " + name);
+                    infoLabel.append("\nMy Address: " + address);
+            }
+            public void handleRemoteId(String name, String address) {
+                    infoLabel.append("\nRemote Name: " + name);
+                    infoLabel.append("\nRemote Address: " + address);
+            }
+            public void handleInquiryCompleted() {
+                    infoLabel.append("\nDone");
+            }
+            public void handleException(Exception ex) {
+                    infoLabel.append("\n" + ex.getMessage());
+            }
+        }
+
+        private MyBTDiscovery btDiscovery;
+        
 	public MainPane(MyMidlet a) {
 		super(a,0,null);
 	}
@@ -166,9 +292,20 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("XUL generate","xulTest2");
                                 addMainMenuButton("XUL demodialog","xulTest3");
                                 addMainMenuButton("File Chooser","fileChooser");
+                                addMainMenuButton("Connect To Service","serviceConnect");
+                                addMainMenuButton("Get Cell Id","cellIdTest");
+                                addMainMenuButton("Poll Cell Id","pollIdTest");
+                                addMainMenuButton("Get Wifi","getWifiTest");
+                                addMainMenuButton("Poll Wifi","pollWifiTest");
+                                addMainMenuButton("Get Clipboard","GetClipboardTest");
+                                addMainMenuButton("Put XYZ to Clipboard","PutClipboardTest");
+                                addMainMenuButton("Close Connection","serviceDisconnect");
+                                addMainMenuButton("Open Bluetooth Server","BTServer");
+                                addMainMenuButton("Open Bluetooth Client","BTClient");
+                                addMainMenuButton("Bluetooth Server Send","BTServerSend");
+                                addMainMenuButton("Bluetooth Client Send","BTClientSend");
+                                addMainMenuButton("Start Bluetooth Discovery","BTDiscovery");
                                 addMainMenuButton("Text Pane","textPane");
-
-
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
                                 addMenuItem(mainMenu,"metalTheme", "Metal Theme");
@@ -978,6 +1115,200 @@ for (int c=0;c<4;c++) {
                     FileChooser chooser = new FileChooser();
                     chooser.showDialog(this, "fileSelected", "Select File", "Select");
                 }
+                else if ("serviceConnect".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        if (locationMonitor == null)
+                            locationMonitor = new MyLocationMonitor();
+
+                        infoLabel = new TextArea("Service Connect\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+                        infoLabel.append("\nDone\n");
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("cellIdTest".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (locationMonitor == null)
+                            locationMonitor = new MyLocationMonitor();
+
+
+                        infoLabel = new TextArea("Get Cell Id\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        locationMonitor.getCellId();
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("pollIdTest".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (locationMonitor == null)
+                            locationMonitor = new MyLocationMonitor();
+
+
+                        infoLabel = new TextArea("Poll Cell Id\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        locationMonitor.setNotifyForCellId(true);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("getWifiTest".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (locationMonitor == null)
+                            locationMonitor = new MyLocationMonitor();
+
+                        infoLabel = new TextArea("Get Wifi List\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        locationMonitor.getWifiList();
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("pollWifiTest".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (locationMonitor == null)
+                            locationMonitor = new MyLocationMonitor();
+
+                        infoLabel = new TextArea("Poll Wifi List\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        locationMonitor.setNotifyForWifiList(true);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("GetClipboardTest".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (clipboardManager == null)
+                            clipboardManager = new MyClipboardManager();
+
+                        infoLabel = new TextArea("Get Clipboard\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        clipboardManager.getClipboard();
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("PutClipboardTest".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (clipboardManager == null)
+                            clipboardManager = new MyClipboardManager();
+
+                        infoLabel = new TextArea("Put Clipboard\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        clipboardManager.putClipboard("XYZ");
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("serviceDisconnect".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        locationMonitor = null;
+
+                        infoLabel = new TextArea("Service Disconnect\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+                        infoLabel.append("\nDone\n");
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                }
+                else if ("BTServer".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        infoLabel = new TextArea("Bluetooth Server Starting\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                        javax.bluetooth.UUID uuid = new javax.bluetooth.UUID("D6F7CD62B97111DE8F1720ED55D89593", false);
+                        if (btServer == null) {
+                            btServer = new MyBluetoothServer();
+                            btServer.registerServer(uuid, "Badoo");
+                        }
+
+                }
+                else if ("BTServerSend".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        infoLabel = new TextArea("Bluetooth Server Send\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                        if (btServer != null) {
+                            btServer.send();
+                        } else {
+                            infoLabel.append("\nNo Server");
+                        }
+
+                }
+                else if ("BTClient".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        infoLabel = new TextArea("Bluetooth Client Starting\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                        javax.bluetooth.UUID uuid = new javax.bluetooth.UUID("D6F7CD62B97111DE8F1720ED55D89593", false);
+                        if (btClient == null) {
+                            btClient = new MyBluetoothClient();
+                            btClient.registerClient(uuid);
+                        }
+
+                }
+                else if ("BTClientSend".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        infoLabel = new TextArea("Bluetooth Client Send\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                        if (btClient != null) {
+                            btClient.send();
+                        } else {
+                            infoLabel.append("\nNo Client");
+                        }
+
+                }
+                else if ("BTDiscovery".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        infoLabel = new TextArea("Bluetooth Discovery Starting\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        info.add(infoLabel);
+     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+                        if (btDiscovery == null)
+                            btDiscovery = new MyBTDiscovery();
+                        infoLabel.append("\nAbout to start");
+                        if (!btDiscovery.start(javax.bluetooth.DiscoveryAgent.GIAC))
+                            infoLabel.append("\nNot Supported");
+                        else
+                            infoLabel.append("\nStarting");
+
+                }
                 else if ("textPane".equals(actionCommand)) {
 
                     String text = "Lorem ipsum dolor sit amet, consectetur " +
@@ -1087,7 +1418,8 @@ for (int c=0;c<4;c++) {
         }
 
 	private ScrollPane scroll;
-	private void addToScrollPane(Component a,Button b,Button c) {
+
+        private void addToScrollPane(Component a,Button b,Button c) {
 
 		if (scroll==null) {
 
