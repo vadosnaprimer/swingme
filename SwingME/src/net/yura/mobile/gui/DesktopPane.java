@@ -14,7 +14,6 @@
  *  You should have received a copy of the GNU Lesser General Public License
  *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
  */
-
 package net.yura.mobile.gui;
 
 import java.lang.ref.WeakReference;
@@ -58,7 +57,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public static Style getDefaultTheme(Component comp) {
         Style style = desktop.theme.getStyle(comp.getName());
-        if (style==null) {
+        if (style == null) {
             style = desktop.theme.getStyle("");
         }
         return style;
@@ -71,43 +70,39 @@ public class DesktopPane extends Canvas implements Runnable {
     public static void updateComponentTreeUI(Component com) {
 
         if (com instanceof Panel) {
-            Vector v = ((Panel)com).getComponents();
-            for (int c=0;c<v.size();c++) {
-                updateComponentTreeUI( (Component)v.elementAt(c) );
+            Vector v = ((Panel) com).getComponents();
+            for (int c = 0; c < v.size(); c++) {
+                updateComponentTreeUI((Component) v.elementAt(c));
             }
         }
         com.updateUI();
 
     }
-
     public static final boolean debug = false;
     public static final boolean me4se;
+
+
     static {
         boolean init = false;
         try {
             Class.forName("org.me4se.MIDletRunner");
             init = true;
+        } catch (ClassNotFoundException ex) {
         }
-        catch(ClassNotFoundException ex) { }
         me4se = init;
     }
 
     // object variables
-
     protected Midlet midlet;
-
     private LookAndFeel theme;
     public int defaultSpace;
     private int menuHeight;
-
     private Vector windows = new Vector();
     private Window currentWindow;
     private ToolTip tooltip;
     private ToolTip indicator;
-
     private final Vector repaintComponent = new Vector();
     private final Vector revalidateComponents = new Vector();
-
     private Thread animationThread;
 
     // the nextAnimatedComponent can be == to animatedComponent
@@ -115,18 +110,15 @@ public class DesktopPane extends Canvas implements Runnable {
     // it will start the animation off again
     private Component currentAnimatedComponent;
     private Component nextAnimatedComponent;
-
     private Image splash;
     private int background;
     private Image fade;
-
     private boolean paintdone;
     private boolean fullrepaint;
     private boolean killflag;
     private boolean wideScreen;
     private boolean sideSoftKeys;
     private byte[] message;
-
 
     /**
      * nothing should ever call serviceRepaints()
@@ -135,8 +127,8 @@ public class DesktopPane extends Canvas implements Runnable {
      * @param back the background color
      * @param sph the splash screen image
      */
-    public DesktopPane(Midlet m,int back,Image sph) {
-        desktop=this;
+    public DesktopPane(Midlet m, int back, Image sph) {
+        desktop = this;
 
         background = back;
         splash = sph;
@@ -161,7 +153,7 @@ public class DesktopPane extends Canvas implements Runnable {
         Display.getDisplay(m).setCurrent(this);
         repaint();
         // TODO: (Yura) Can we really comment this?
-        
+
         // TODO me4se needs to be here, or keyboard events dont come in
         // WHY WHY WHY??!!! this is very strange
         if (me4se) {
@@ -178,11 +170,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
             midlet.initialize(this);
-        }
-        catch(Throwable th) {
+        } catch (Throwable th) {
             //#debug
             th.printStackTrace();
-            log( "Error in initialize: " + th.toString() );
+            log("Error in initialize: " + th.toString());
         }
 
         // Set thread to maximum priority (smother animations and text input)
@@ -190,17 +181,18 @@ public class DesktopPane extends Canvas implements Runnable {
 
         while (true) {
 
-            if (killflag) { return; }
+            if (killflag) {
+                return;
+            }
 
             synchronized (this) {
                 currentAnimatedComponent = nextAnimatedComponent;
                 nextAnimatedComponent = null;
 
-                if (currentAnimatedComponent==null) {
+                if (currentAnimatedComponent == null) {
                     try {
                         wait();
-                    }
-                    catch (InterruptedException e) {
+                    } catch (InterruptedException e) {
                         //#debug
                         e.printStackTrace();
                     }
@@ -210,15 +202,13 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 try {
                     currentAnimatedComponent.animate();
-                }
-                catch (InterruptedException e) {
+                } catch (InterruptedException e) {
                     //#debug
                     System.out.println("InterruptedException during animation");
-                }
-                catch(Throwable th) {
+                } catch (Throwable th) {
                     //#debug
                     th.printStackTrace();
-                    log( "Error in animation: " + th.toString() );
+                    log("Error in animation: " + th.toString());
                 }
             }
         }
@@ -244,8 +234,9 @@ public class DesktopPane extends Canvas implements Runnable {
         notify();
     }
     // called by destroyApp
+
     void kill() {
-        killflag=true;
+        killflag = true;
 
         animateComponent(null);
     }
@@ -261,39 +252,39 @@ public class DesktopPane extends Canvas implements Runnable {
         // TODO find better way to do this
         // HACK to clear the background colors on subcomponents
         Style clear = new Style();
-        theme.setStyleFor("WindowControlPanel",clear);
-        theme.setStyleFor("TabList",clear);
+        theme.setStyleFor("WindowControlPanel", clear);
+        theme.setStyleFor("TabList", clear);
 
-        Style clear2 = new Style( theme.getStyle("ScrollPane") );
+        Style clear2 = new Style(theme.getStyle("ScrollPane"));
         clear2.addBackground(-1, Style.ALL);
-        theme.setStyleFor("TabScroll",clear2);
+        theme.setStyleFor("TabScroll", clear2);
 
-        if (defaultSpace==0) {
+        if (defaultSpace == 0) {
 
-            int maxSize = Math.max(getWidth(),getHeight());
+            int maxSize = Math.max(getWidth(), getHeight());
 
-            defaultSpace = (maxSize <= 128) ? 3 :
-                           (maxSize <= 208) ? 5 : 7;
+            defaultSpace = (maxSize <= 128) ? 3 : (maxSize <= 208) ? 5 : 7;
         }
 
         MenuItemRenderer m = new MenuItemRenderer();
         m.setName("SoftkeyRenderer");
         softkeyRenderer = m;
 
-        Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test") , 0, false, false);
+        Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test"), 0, false, false);
         c.workoutSize();
         menuHeight = c.getHeightWithBorder();
 
         tooltip = new ToolTip();
         indicator = new ToolTip();
-        //currentWindow.setSize(getWidth(),getHeight());
+    //currentWindow.setSize(getWidth(),getHeight());
 
     }
-
     private ListCellRenderer softkeyRenderer;
+
     public ListCellRenderer getSoftkeyRenderer() {
         return softkeyRenderer;
     }
+
     public int getMenuHeight() {
         return menuHeight;
     }
@@ -308,8 +299,8 @@ public class DesktopPane extends Canvas implements Runnable {
     //public void serviceRepaints() {
     // cant do this
     //}
-
     private Graphics2D graphics;
+
     /**
      * @param gtmp The Graphics object
      */
@@ -321,16 +312,15 @@ public class DesktopPane extends Canvas implements Runnable {
 
         if (!paintdone) {
 
-            if (background!=-1) {
+            if (background != -1) {
                 gtmp.setColor(background);
                 gtmp.fillRect(0, 0, getWidth(), getHeight());
             }
 
-            if (splash!=null) {
-                gtmp.drawImage(splash, (getWidth()-splash.getWidth())/2, (getHeight()-splash.getHeight())/2, Graphics.TOP | Graphics.LEFT);
+            if (splash != null) {
+                gtmp.drawImage(splash, (getWidth() - splash.getWidth()) / 2, (getHeight() - splash.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
                 splash = null;
-            }
-            else if (background!=-1) {
+            } else if (background != -1) {
                 gtmp.setColor(0x00FF0000);
                 gtmp.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
             }
@@ -339,7 +329,7 @@ public class DesktopPane extends Canvas implements Runnable {
             oldh = getHeight();
 
             // Initialize wideScreen for the first time
-            wideScreen = (oldw>oldh);
+            wideScreen = (oldw > oldh);
 
             animationThread = new Thread(this);
             animationThread.start();
@@ -353,9 +343,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
-            synchronized(revalidateComponents) {
-                for (int c=0;c<revalidateComponents.size();c++) {
-                    Panel panel = (Panel)revalidateComponents.elementAt(c);
+            synchronized (revalidateComponents) {
+                for (int c = 0; c < revalidateComponents.size(); c++) {
+                    Panel panel = (Panel) revalidateComponents.elementAt(c);
                     panel.validate();
                 }
                 revalidateComponents.removeAllElements();
@@ -367,18 +357,18 @@ public class DesktopPane extends Canvas implements Runnable {
             boolean doFullRepaint = fullrepaint;
             fullrepaint = false;
 
-            synchronized(repaintComponent) {
+            synchronized (repaintComponent) {
 
                 if (!doFullRepaint && !repaintComponent.isEmpty()) {
-                    for (int c=0;c<repaintComponent.size();c++) {
-                        if ( ((Component)repaintComponent.elementAt(c)).getWindow() !=currentWindow ) {
+                    for (int c = 0; c < repaintComponent.size(); c++) {
+                        if (((Component) repaintComponent.elementAt(c)).getWindow() != currentWindow) {
                             doFullRepaint = true;
                             break;
                         }
                     }
                     if (!doFullRepaint) {
-                        for (int c=0;c<repaintComponent.size();c++) {
-                            paintComponent(graphics,(Component)repaintComponent.elementAt(c));
+                        for (int c = 0; c < repaintComponent.size(); c++) {
+                            paintComponent(graphics, (Component) repaintComponent.elementAt(c));
                         }
                     }
                 }
@@ -389,10 +379,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
             if (doFullRepaint) {
                 paintFirst(graphics);
-                for (int c=0;c<windows.size();c++) {
-                    paintComponent(graphics,(Window)windows.elementAt(c));
+                for (int c = 0; c < windows.size(); c++) {
+                    paintComponent(graphics, (Window) windows.elementAt(c));
 
-                    if (c==(windows.size()-2) && fade!=null) {
+                    if (c == (windows.size() - 2) && fade != null) {
                         for (int x = 0; x < getWidth(); x += fade.getWidth()) {
                             for (int y = 0; y < getHeight(); y += fade.getHeight()) {
                                 graphics.drawImage(fade, x, y, Graphics.TOP | Graphics.LEFT);
@@ -404,45 +394,44 @@ public class DesktopPane extends Canvas implements Runnable {
             }
 
             //                if (!windows.isEmpty()) {
-                //                    drawSoftkeys(graphics);
-                //                }
+            //                    drawSoftkeys(graphics);
+            //                }
 
             if (tooltip.isShowing()) {
-                paintComponent(graphics,tooltip);
+                paintComponent(graphics, tooltip);
             }
-            if (indicator.getText()!=null && !me4se) {
-                paintComponent(graphics,indicator);
+            if (indicator.getText() != null && !me4se) {
+                paintComponent(graphics, indicator);
             }
 
             paintLast(graphics);
 
             //#mdebug
-            if (mem!=null) {
+            if (mem != null) {
 
                 javax.microedition.lcdui.Font font = gtmp.getFont();
 
                 gtmp.setColor(0x00FFFFFF);
-                gtmp.fillRect((getWidth() -(font.stringWidth(mem)+10))/2 , 0, font.stringWidth(mem)+10, font.getHeight()+10 );
+                gtmp.fillRect((getWidth() - (font.stringWidth(mem) + 10)) / 2, 0, font.stringWidth(mem) + 10, font.getHeight() + 10);
                 gtmp.setColor(0x00000000);
-                gtmp.drawString(mem, (getWidth() -(font.stringWidth(mem)+10))/2 +5,5, Graphics.TOP | Graphics.LEFT );
+                gtmp.drawString(mem, (getWidth() - (font.stringWidth(mem) + 10)) / 2 + 5, 5, Graphics.TOP | Graphics.LEFT);
             }
             //#enddebug
 
-            if (message!=null) {
+            if (message != null) {
                 String m = new String(message);
                 javax.microedition.lcdui.Font font = gtmp.getFont();
 
                 gtmp.setColor(0x00000000);
-                gtmp.fillRect((getWidth() -(font.stringWidth(m)+10))/2 , (getHeight() -(font.getHeight()+10))/2 , font.stringWidth(m)+10, font.getHeight()+10 );
+                gtmp.fillRect((getWidth() - (font.stringWidth(m) + 10)) / 2, (getHeight() - (font.getHeight() + 10)) / 2, font.stringWidth(m) + 10, font.getHeight() + 10);
                 gtmp.setColor(0x00FF0000);
-                gtmp.drawString(m, (getWidth() -(font.stringWidth(m)+10))/2 +5,(getHeight() -(font.getHeight()+10))/2 +5, Graphics.TOP | Graphics.LEFT );
+                gtmp.drawString(m, (getWidth() - (font.stringWidth(m) + 10)) / 2 + 5, (getHeight() - (font.getHeight() + 10)) / 2 + 5, Graphics.TOP | Graphics.LEFT);
             }
 
-        }
-        catch(Throwable th) {
+        } catch (Throwable th) {
             //#debug
             th.printStackTrace();
-            log( "Error in paint: " + th.toString() );
+            log("Error in paint: " + th.toString());
         }
 
     }
@@ -451,15 +440,17 @@ public class DesktopPane extends Canvas implements Runnable {
         fade = a;
     }
 
-    public void paintFirst(Graphics2D g) { }
-    public void paintLast(Graphics2D g) { }
+    public void paintFirst(Graphics2D g) {
+    }
 
+    public void paintLast(Graphics2D g) {
+    }
 
-    private void paintComponent(Graphics2D g,Component com) {
+    private void paintComponent(Graphics2D g, Component com) {
 
-        int[] a=g.getClip();
+        int[] a = g.getClip();
 
-        if (com.getParent()!=null) {
+        if (com.getParent() != null) {
             com.getParent().clip(g);
         }
 
@@ -473,11 +464,8 @@ public class DesktopPane extends Canvas implements Runnable {
         g.setClip(a);
     }
 
-
-
     // #####################################################################
     // Different ways of caling repaint
-
     /**
      * this method should NOT normally be called
      * is it called when repaint() is called on a window,
@@ -489,14 +477,14 @@ public class DesktopPane extends Canvas implements Runnable {
         //#debug
         System.out.println("FULL REPAINT!!! this method should NOT normally be called");
 
-        fullrepaint=true;
+        fullrepaint = true;
 
         repaint();
     }
 
     public void revalidateComponent(Component rc) {
 
-        addToComponentVector(rc,revalidateComponents);
+        addToComponentVector(rc, revalidateComponents);
 
     }
 
@@ -506,17 +494,17 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void repaintComponent(Component rc) {
 
-        addToComponentVector(rc,repaintComponent);
+        addToComponentVector(rc, repaintComponent);
 
         repaint();
     }
 
-    private void addToComponentVector(Component rc,Vector vec) {
+    private void addToComponentVector(Component rc, Vector vec) {
         // System.out.println("someone asking for repaint "+rc);
 
         boolean found = false;
 
-        synchronized(vec) {
+        synchronized (vec) {
 
             // If we find the parent on the list, we don't need to add this one
             Component c1 = rc;
@@ -538,11 +526,9 @@ public class DesktopPane extends Canvas implements Runnable {
                     Component c2 = (Component) vec.elementAt(i);
 
                     // A component is children of rc, if one of its ancestors is rc
-                    while (c2 != null)
-                    {
+                    while (c2 != null) {
                         c2 = c2.getParent(); // recurse
-                        if (c2 == rc)
-                        {
+                        if (c2 == rc) {
                             // Found a children, remove it
                             vec.removeElementAt(i);
                             i--;
@@ -566,48 +552,45 @@ public class DesktopPane extends Canvas implements Runnable {
     // #####################################################################
     // action handeling
     // #####################################################################
-
-
     private void passKeyEvent(KeyEvent keyevent) {
 
         try {
 
             //#mdebug
-            if(keyevent.isDownKey(Canvas.KEY_STAR)){
-                mem = (Runtime.getRuntime().freeMemory() >> 10) +"K/" +(Runtime.getRuntime().totalMemory() >> 10)+"K";
+            if (keyevent.isDownKey(Canvas.KEY_STAR)) {
+                mem = (Runtime.getRuntime().freeMemory() >> 10) + "K/" + (Runtime.getRuntime().totalMemory() >> 10) + "K";
                 fullRepaint();
-            }
-            else {
+            } else {
                 mem = null;
             }
             //#enddebug
 
+
             if (keyevent.isDownKey(57) && keyevent.isDownKey(56) && keyevent.isDownKey(55) && keyevent.isDownKey(50)) {
-                message = new byte[] {121,117,114,97,46,110,101,116};
+//              message = new byte[] {121,117,114,97,46,110,101,116};
+                message = new byte[]{74, 111, 110, 97, 116, 104, 97, 110};
                 fullRepaint();
-            }
-            else if (keyevent.isDownKey(52) && keyevent.isDownKey(50) && keyevent.isDownKey(54) && keyevent.isDownKey(51)) {
-                message = new byte[] {84,72,69,32,71,65,77,69};
+            } else if (keyevent.isDownKey(52) && keyevent.isDownKey(50) && keyevent.isDownKey(54) && keyevent.isDownKey(51)) {
+//              message = new byte[] {84,72,69,32,71,65,77,69};
+                message = new byte[]{74, 111, 110, 97, 116, 104, 97, 110};
                 fullRepaint();
-            }
-            else {
+            } else {
                 message = null;
             }
 
-            if (currentWindow!=null) {
+            if (currentWindow != null) {
 
-                Button mneonicButton=null;
-                if (keyevent.getJustPressedKey()!=0) {
+                Button mneonicButton = null;
+                if (keyevent.getJustPressedKey() != 0) {
                     mneonicButton = currentWindow.findMneonicButton(keyevent.getJustPressedKey());
                 }
                 Component focusedComponent = currentWindow.getFocusOwner();
 
-                if (mneonicButton!=null) {
+                if (mneonicButton != null) {
 
                     mneonicButton.fireActionPerformed();
 
-                }
-                else if (focusedComponent!=null) {
+                } else if (focusedComponent != null) {
 
                     boolean consumed = focusedComponent.processKeyEvent(keyevent);
 
@@ -619,17 +602,15 @@ public class DesktopPane extends Canvas implements Runnable {
                     // keyevent.getKeyAction(keyevent.getIsDownKey())
                     // if another key was pressed first!
 
-                    if (!consumed && keyevent.getJustReleasedKey()==0 && ( // dont want to fire anything on release
-                            keyevent.isDownAction(Canvas.RIGHT)||
+                    if (!consumed && keyevent.getJustReleasedKey() == 0 && ( // dont want to fire anything on release
+                            keyevent.isDownAction(Canvas.RIGHT) ||
                             keyevent.isDownAction(Canvas.DOWN) ||
-                            keyevent.isDownAction(Canvas.LEFT)||
-                            keyevent.isDownAction(Canvas.UP)
-                    )) {
+                            keyevent.isDownAction(Canvas.LEFT) ||
+                            keyevent.isDownAction(Canvas.UP))) {
 
-                        focusedComponent.transferFocus( keyevent.getKeyAction(keyevent.getIsDownKey()) );
+                        focusedComponent.transferFocus(keyevent.getKeyAction(keyevent.getIsDownKey()));
 
-                    }
-                    else if (!consumed ) {//&& keyListener!=null) {
+                    } else if (!consumed) {//&& keyListener!=null) {
 
                         boolean c = currentWindow.processKeyEvent(keypad);
                         if (!c) {
@@ -637,22 +618,16 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
 
-                }
-                // sometimes keyevents come in on S40 b4 anything has been setup,
+                } // sometimes keyevents come in on S40 b4 anything has been setup,
                 // such as the fire key being released after you start the app
                 else { //  if (keyListener!=null) {
 
-                    if (
-
-                            keyevent.isDownAction(Canvas.RIGHT)||
+                    if (keyevent.isDownAction(Canvas.RIGHT) ||
                             keyevent.isDownAction(Canvas.DOWN) ||
-                            keyevent.isDownAction(Canvas.LEFT)||
-                            keyevent.isDownAction(Canvas.UP)
-
-                    ) {
-                        currentWindow.passScrollUpDown( keyevent.getKeyAction(keyevent.getIsDownKey()) );
-                    }
-                    else {
+                            keyevent.isDownAction(Canvas.LEFT) ||
+                            keyevent.isDownAction(Canvas.UP)) {
+                        currentWindow.passScrollUpDown(keyevent.getKeyAction(keyevent.getIsDownKey()));
+                    } else {
                         boolean c = currentWindow.processKeyEvent(keypad);
                         if (!c) {
                             keyEvent(keyevent);
@@ -662,19 +637,17 @@ public class DesktopPane extends Canvas implements Runnable {
             }
 
 
-        }
-        catch(Throwable th) {
+        } catch (Throwable th) {
             //#debug
             th.printStackTrace();
-            log( "Error in KeyEvent: " + th.toString() );
+            log("Error in KeyEvent: " + th.toString());
         }
 
         showHideToolTip(
-                keyevent.justReleasedAction(Canvas.RIGHT)||
+                keyevent.justReleasedAction(Canvas.RIGHT) ||
                 keyevent.justReleasedAction(Canvas.DOWN) ||
-                keyevent.justReleasedAction(Canvas.LEFT)||
-                keyevent.justReleasedAction(Canvas.UP)
-        );
+                keyevent.justReleasedAction(Canvas.LEFT) ||
+                keyevent.justReleasedAction(Canvas.UP));
 
 
     }
@@ -684,45 +657,41 @@ public class DesktopPane extends Canvas implements Runnable {
         Component focusedComponent;
 
         // if a tooltip should be setup
-        if (show && currentWindow!=null && (focusedComponent = currentWindow.getFocusOwner()) !=null && focusedComponent.getToolTipText()!=null) {
+        if (show && currentWindow != null && (focusedComponent = currentWindow.getFocusOwner()) != null && focusedComponent.getToolTipText() != null) {
 
-            tooltip.setText( focusedComponent.getToolTipText() );
+            tooltip.setText(focusedComponent.getToolTipText());
             tooltip.workoutSize();
             int x = focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen();
             int y = focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen();
             int w = tooltip.getWidthWithBorder();
             int h = tooltip.getHeightWithBorder();
             Border offset = tooltip.getBorder();
-            int top = offset==null?0:offset.getTop();
-            int left = offset==null?0:offset.getLeft();
+            int top = offset == null ? 0 : offset.getTop();
+            int left = offset == null ? 0 : offset.getLeft();
 
-            if (x-left < 0) {
-                x=left;
-            }
-            else if (x-left+w > getWidth()) {
-                x = getWidth()-w+left;
-            }
-
-            if (y-top <0) {
-                y=top;
-            }
-            else if (y-top+h > getHeight()) {
-                y = getHeight()-h+top;
+            if (x - left < 0) {
+                x = left;
+            } else if (x - left + w > getWidth()) {
+                x = getWidth() - w + left;
             }
 
-            tooltip.setLocation( x,y );
+            if (y - top < 0) {
+                y = top;
+            } else if (y - top + h > getHeight()) {
+                y = getHeight() - h + top;
+            }
+
+            tooltip.setLocation(x, y);
             animateComponent(tooltip);
 
-        }
-        else if (tooltip!=null) {
+        } else if (tooltip != null) {
             // this will never be null unless this method is called
             // before the midlet is initialised, and this can happen
 
             // if there is a tooltip up or ready to go up,
             // then kill it!
             synchronized (this) {
-                if ((tooltip.isWaiting() && nextAnimatedComponent==null)
-                     || nextAnimatedComponent == tooltip) {
+                if ((tooltip.isWaiting() && nextAnimatedComponent == null) || nextAnimatedComponent == tooltip) {
                     animateComponent(null);
                 }
             }
@@ -737,10 +706,9 @@ public class DesktopPane extends Canvas implements Runnable {
         int w = indicator.getWidthWithBorder();
         int h = indicator.getHeightWithBorder();
         if (sideSoftKeys) {
-            indicator.setBoundsWithBorder(0, getHeight()-h,w,h);
-        }
-        else {
-            indicator.setBoundsWithBorder(getWidth()-w, 0,w,h);
+            indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
+        } else {
+            indicator.setBoundsWithBorder(getWidth() - w, 0, w, h);
         }
 
         // as we dont know what size it was
@@ -751,12 +719,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
     // if no command listener is used key events fall though to this method
     // used for adding global shortcut keys
-    public void keyEvent(KeyEvent kypd) { }
+    public void keyEvent(KeyEvent kypd) {
+    }
 
     // #####################################################################
     // normal desktop calls
     // #####################################################################
-
     /**
      * @param w The window to add
      * @see java.awt.Container#add(java.awt.Component) Container.add
@@ -778,29 +746,29 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see javax.swing.JDesktopPane#setSelectedFrame(javax.swing.JInternalFrame) JDesktopPane.setSelectedFrame
      */
     public void setSelectedFrame(Window w) {
-        if (windows.contains(w) || w==null) {
+        if (windows.contains(w) || w == null) {
 
             if (currentWindow == w) {
                 return;
             }
 
-            if (currentWindow!=null) {
+            if (currentWindow != null) {
                 Component focusedComponent = currentWindow.getFocusOwner();
-                if (focusedComponent!=null) {
+                if (focusedComponent != null) {
                     focusedComponent.focusLost();
                 }
             }
 
             currentWindow = w;
 
-            if (currentWindow!=null) {
+            if (currentWindow != null) {
 
                 Component focusedComponent = w.getMostRecentFocusOwner();
 
                 windows.removeElement(w);
                 windows.addElement(w);
 
-                if (focusedComponent!=null) {
+                if (focusedComponent != null) {
                     focusedComponent.focusGained();
                 }
             }
@@ -812,12 +780,11 @@ public class DesktopPane extends Canvas implements Runnable {
             pointerComponent = null;
 
             fullRepaint();
-        }
-        //#mdebug
+        } //#mdebug
         else {
-            throw new RuntimeException("cant setSelected, this window is not visible: "+w);
+            throw new RuntimeException("cant setSelected, this window is not visible: " + w);
         }
-        //#enddebug
+//    //#enddebug
     }
 
     /**
@@ -830,20 +797,19 @@ public class DesktopPane extends Canvas implements Runnable {
 
             windows.removeElement(w);
 
-            if (w==currentWindow) {
+            if (w == currentWindow) {
 
-                setSelectedFrame( windows.isEmpty()?null:(Window)windows.lastElement() );
+                setSelectedFrame(windows.isEmpty() ? null : (Window) windows.lastElement());
 
             }
 
             fullRepaint();
 
-        }
-        //#mdebug
+        } //#mdebug
         else {
-            throw new RuntimeException("cant remove, this window is not visible: " +w);
+            throw new RuntimeException("cant remove, this window is not visible: " + w);
         }
-        //#enddebug
+//    //#enddebug
 
     }
 
@@ -866,7 +832,6 @@ public class DesktopPane extends Canvas implements Runnable {
     // #####################################################################
     // platform Requests
     // #####################################################################
-
     public static Midlet getMidlet() {
         return desktop.midlet;
     }
@@ -875,10 +840,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
             // TODO remove spaces from number
-            getMidlet().platformRequest( "tel:" + number );
-        }
-        catch (ConnectionNotFoundException e) {
-            log("can not call: "+number+" "+e.toString());
+            getMidlet().platformRequest("tel:" + number);
+        } catch (ConnectionNotFoundException e) {
+            log("can not call: " + number + " " + e.toString());
             //#debug
             e.printStackTrace();
         }
@@ -888,22 +852,20 @@ public class DesktopPane extends Canvas implements Runnable {
     public static void openURL(String url) {
 
         try {
-            getMidlet().platformRequest( url );
-        }
-        catch (ConnectionNotFoundException e) {
-            log("can not open url: "+url+" "+e.toString());
+            getMidlet().platformRequest(url);
+        } catch (ConnectionNotFoundException e) {
+            log("can not open url: " + url + " " + e.toString());
             //#debug
             e.printStackTrace();
         }
 
     }
 
-    public static void vibration(int duration){
+    public static void vibration(int duration) {
         try {
-            Display.getDisplay( getMidlet() ).vibrate(duration);
-        }
-        catch(Exception e){
-            log("can not vibration "+e.toString());
+            Display.getDisplay(getMidlet()).vibrate(duration);
+        } catch (Exception e) {
+            log("can not vibration " + e.toString());
             //#debug
             e.printStackTrace();
         }
@@ -912,8 +874,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public static void exit() {
         try {
             getMidlet().destroyApp(true);
-        }
-        catch(Exception ex) {
+        } catch (Exception ex) {
             // as you called this yourself, you should not be throwing here
             throw new RuntimeException();
         }
@@ -921,7 +882,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
     public static void hide() {
 
-        Display.getDisplay( getMidlet() ).setCurrent(null);
+        Display.getDisplay(getMidlet()).setCurrent(null);
 
     }
 
@@ -940,7 +901,7 @@ public class DesktopPane extends Canvas implements Runnable {
         //#mdebug
 
         try {
-            if (desktop.debugwindow==null) {
+            if (desktop.debugwindow == null) {
 
                 desktop.debugwindow = new Frame("Debug");
                 desktop.debugwindow.setName("Dialog");
@@ -957,7 +918,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
                 //menubar.add(close);
                 //desktop.debugwindow.setMenuBar(menubar);
-                Panel p = new Panel( new FlowLayout());
+                Panel p = new Panel(new FlowLayout());
                 p.add(close);
 
                 // This is not needed, but just in case something
@@ -967,26 +928,24 @@ public class DesktopPane extends Canvas implements Runnable {
                 desktop.text.setBackground(0x00FFFFFF);
                 //desktop.debugwindow.setBackground(0x00FFFFFF);
 
-                desktop.debugwindow.getContentPane().add( new ScrollPane(desktop.text) );
+                desktop.debugwindow.getContentPane().add(new ScrollPane(desktop.text));
                 desktop.debugwindow.getContentPane().add(p, Graphics.BOTTOM);
 
-                desktop.debugwindow.setBounds(10, 10, desktop.getWidth()-20, desktop.getHeight()/2);
+                desktop.debugwindow.setBounds(10, 10, desktop.getWidth() - 20, desktop.getHeight() / 2);
             }
 
-            desktop.text.append(s+"\n");
+            desktop.text.append(s + "\n");
 
             if (!desktop.debugwindow.isVisible()) {
                 desktop.debugwindow.setVisible(true);
-            }
-            else {
+            } else {
                 desktop.debugwindow.repaint();
             }
-        }
-        catch (Throwable th) {
-            System.out.println("unable to log: "+s);
+        } catch (Throwable th) {
+            System.out.println("unable to log: " + s);
             th.printStackTrace();
         }
-        //#enddebug
+    //#enddebug
     }
 
     // #####################################################################
@@ -1002,12 +961,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
         passKeyEvent(keypad);
 
-        // TODO: add this
-        // if (vendor == Samsung) {
-        //   if (keyCode == KeyEvent.KEY_SOFTKEY1 || KeyEvent == Keypad.KEY_SOFTKEY2) {
-        //           keyReleased(keyCode);
-        //   }
-        // }
+    // TODO: add this
+    // if (vendor == Samsung) {
+    //   if (keyCode == KeyEvent.KEY_SOFTKEY1 || KeyEvent == Keypad.KEY_SOFTKEY2) {
+    //           keyReleased(keyCode);
+    //   }
+    // }
 
     }
 
@@ -1025,40 +984,36 @@ public class DesktopPane extends Canvas implements Runnable {
 
         passKeyEvent(keypad);
     }
-
-
     // #####################################################################
     // pointer commands
     // #####################################################################
-
     public static final int DRAGGED = 0;
     public static final int PRESSED = 1;
     public static final int RELEASED = 2;
     private Component pointerComponent;
 
     public void pointerDragged(int x, int y) {
-        pointerEvent(DRAGGED,x,y);
+        pointerEvent(DRAGGED, x, y);
     }
 
     public void pointerPressed(int x, int y) {
-        pointerEvent(PRESSED,x,y);
+        pointerEvent(PRESSED, x, y);
     }
 
     public void pointerReleased(int x, int y) {
-        pointerEvent(RELEASED,x,y);
+        pointerEvent(RELEASED, x, y);
     }
 
-
-    private void pointerEvent(int type, int x, int y){
+    private void pointerEvent(int type, int x, int y) {
 
         try {
 
             if (type == PRESSED) {
-                pointerComponent = currentWindow.getComponentAt( x - currentWindow.getX(), y - currentWindow.getY());
+                pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
 
             }
 
-            if (pointerComponent!=null) {
+            if (pointerComponent != null) {
                 pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
             }
 
@@ -1066,11 +1021,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 pointerComponent = null;
             }
 
-        }
-        catch(Throwable th) {
+        } catch (Throwable th) {
             //#debug
             th.printStackTrace();
-            log( "Exception in pointerEvent: " + th.toString() );
+            log("Exception in pointerEvent: " + th.toString());
         }
 
         showHideToolTip(type == PRESSED);
@@ -1080,12 +1034,11 @@ public class DesktopPane extends Canvas implements Runnable {
     // #####################################################################
     // other events from the canvas
     // #####################################################################
-
-    private int oldw,oldh;
+    private int oldw,  oldh;
 
     protected void sizeChanged(int w, int h) {
         //#debug
-        System.out.println("sizeChanged!! " +paintdone+" w="+w+" h="+h);
+        System.out.println("sizeChanged!! " + paintdone + " w=" + w + " h=" + h);
 
         sizeChangedImpl();
         fullRepaint();
@@ -1094,43 +1047,45 @@ public class DesktopPane extends Canvas implements Runnable {
     private void sizeChangedImpl() {
 
         // Until we don't do the initial setup, ignore this.
-        if (!paintdone) return;
+        if (!paintdone) {
+            return;
+        }
 
         int w = super.getWidth();
         int h = super.getHeight();
 
-        if (oldw==w && oldh==h) {
+        if (oldw == w && oldh == h) {
             // Noting to do. Just return;
             return;
         }
 
         boolean old = wideScreen;
-        wideScreen = (w>h);
+        wideScreen = (w > h);
 
         // this means we NEED to flip from 1 orientation to another
-        if (old!=wideScreen && oldw==h && oldh==w) {
+        if (old != wideScreen && oldw == h && oldh == w) {
             sideSoftKeys = wideScreen;
         }
 
         Vector win = Window.getAllWindows();
 
-        for (int c=0;c<win.size();c++) {
-            Window window = (Window)((WeakReference)win.elementAt(c)).get();
+        for (int c = 0; c < win.size(); c++) {
+            Window window = (Window) ((WeakReference) win.elementAt(c)).get();
 
             // TODO RESIZE better
 
             // when the scren switches from 1 resolution to another, and the 'hidden' menubar is not repositioned,
             // it may cause it to stop being painted at all, as it may bcome totally off the screen
 
-            if (window!=null) {
-                if (window instanceof Frame && ((Frame)window).isMaximum()) {
-                    ((Frame)window).setMaximum(true);
+            if (window != null) {
+                if (window instanceof Frame && ((Frame) window).isMaximum()) {
+                    ((Frame) window).setMaximum(true);
                 }
-                //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
+            //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
             }
         }
-        oldw=w;
-        oldh=h;
+        oldw = w;
+        oldh = h;
 
     }
 
@@ -1148,6 +1103,7 @@ public class DesktopPane extends Canvas implements Runnable {
         fullRepaint();
 
     }
+
     protected void hideNotify() {
 
         //System.out.println("hideNotify");
@@ -1158,5 +1114,4 @@ public class DesktopPane extends Canvas implements Runnable {
     public boolean isSideSoftKeys() {
         return sideSoftKeys;
     }
-
 }
