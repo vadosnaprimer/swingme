@@ -285,7 +285,11 @@ public class Panel extends Component {
             index =  right? ((index==components.size()-1)?(-1):(index+1)) : ((index==-1)?( components.size()-1 ): (   (index==0)?(-1):(index-1)   ));
             if (index == -1) break;
             component = (Component)components.elementAt(index);
-
+            
+            if (!component.isVisible()) {
+                continue;
+            }
+            
             if (component.isFocusable()) {
 
                 boolean requestFocus = false;
