@@ -303,6 +303,7 @@ public class KeyEvent {
 
             switch (keyCode) {
                 case 8: return KEY_CLEAR;
+                case 127: return KEY_DELETE;
                 case 13: return '\n'; // 10
 
                 // Sony-Ericsson phones - Volume keys
