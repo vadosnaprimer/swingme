@@ -30,12 +30,19 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 
 //        private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
 //	protected Border normal,selected,focusedAndSelected;
-    private int state;
+    //private int state;
+    private Component component;
 	
         /**
          * @see javax.swing.DefaultListCellRenderer#DefaultListCellRenderer() DefaultListCellRenderer.DefaultListCellRenderer
          */
         public DefaultListCellRenderer() {
+            component = new Label();
+            component.setName("ListRenderer");
+        }
+
+        public DefaultListCellRenderer(Component c) {
+            component = c;
         }
 
 	/**
@@ -43,7 +50,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
          */
 	public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-                setValue(value);
+                component.setValue(value);
 
                 if ("".equals(getText())) {
                     setText(" ");
@@ -53,7 +60,7 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 //                setBackground(isSelected?colorSelected:colorNormal);
 //                setForeground(isSelected?foregroundSelected:foregroundNormal);
 
-                state=Style.ALL;
+                int state=Style.ALL;
                 if ( list!=null ) {
                     if (list.isFocusable()) {
                         //state |= Style.ENABLED;
@@ -69,33 +76,8 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
                     state |= Style.SELECTED;
                 }
 
-		return this;
-	}
-        // max width!
-        public int getMaxWidth() {
-            return 10000;
-        }
-        
-        public String getDefaultName() {
-            return "ListRenderer";
-        }
+                component.setState(state);
 
-        public int getCurrentState() {
-            return state;
-        }
-        
-//        public void updateUI() {
-//                super.updateUI();
-//                Style st = DesktopPane.getDefaultTheme(this);
-//                normal = st.getBorder( Style.ENABLED );
-//                focusedAndSelected = st.getBorder( Style.FOCUSED | Style.SELECTED);
-//                selected = st.getBorder( Style.SELECTED );
-//
-//                colorNormal = st.getBackground( Style.ALL );
-//                colorSelected = st.getBackground( Style.SELECTED );
-//
-//                foregroundNormal = st.getForeground( Style.ALL );
-//                foregroundSelected = st.getForeground( Style.SELECTED );
-//        }
-	
+		return component;
+	}
 }

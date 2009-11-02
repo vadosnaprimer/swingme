@@ -105,7 +105,7 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
         }
 
     }
-    public int getCurrentState() {
+    public int getState() {
             return state;
     }
 

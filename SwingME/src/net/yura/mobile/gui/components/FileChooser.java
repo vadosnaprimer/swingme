@@ -567,7 +567,7 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
                 return getTableCellEditorComponent(null, value, isSelected, 0, 0);
             }
 
-        public int getCurrentState() {
+        public int getState() {
             return state;
         }
 

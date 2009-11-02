@@ -77,7 +77,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
         return this;
     }
 
-    public int getCurrentState() {
+    public int getState() {
         return state;
     }
 

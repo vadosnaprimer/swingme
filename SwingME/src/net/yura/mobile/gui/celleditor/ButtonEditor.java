@@ -64,9 +64,9 @@ public class ButtonEditor extends Button implements ListCellRenderer, TableCellE
             return this;
         }
 
-        public int getCurrentState() {
+        public int getState() {
             if (parent!=null) {
-                return super.getCurrentState();
+                return super.getState();
             }
             return state;
         }

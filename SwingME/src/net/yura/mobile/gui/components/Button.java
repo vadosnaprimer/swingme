@@ -336,8 +336,8 @@ public class Button extends Label implements ActionListener {
             return "Button";
         }
 
-        public int getCurrentState() {
-            int result = super.getCurrentState();
+        public int getState() {
+            int result = super.getState();
             if (selected) {
                 result |= Style.SELECTED;
             }
@@ -367,20 +367,5 @@ public class Button extends Label implements ActionListener {
             if (!isVisible()) return posY;
             return super.getYOnScreen();
         }
-//        public void updateUI() {
-//                super.updateUI();
-//
-//                Style st = DesktopPane.getDefaultTheme(this);
-//
-//                selectedBorder = st.getBorder( Style.SELECTED );
-//                activeBorder = st.getBorder( Style.FOCUSED );
-//                selectedFocusedBorder = st.getBorder( Style.SELECTED | Style.FOCUSED );
-//                disabledBorder = st.getBorder( Style.DISABLED );
-//
-//		activeForeground = st.getForeground(Style.FOCUSED);
-//                selectedFocusedForeground = st.getForeground(Style.SELECTED | Style.FOCUSED);
-//                disabledForeground = st.getForeground(Style.DISABLED);
-//                selectedForeground =  st.getForeground(Style.SELECTED);
-//
-//        }
+
 }

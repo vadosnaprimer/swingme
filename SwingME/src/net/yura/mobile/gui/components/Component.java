@@ -295,7 +295,7 @@ public abstract class Component {
             return b==null?empty:b;
         }
 
-        public int getCurrentBackground() {
+        public final int getCurrentBackground() {
             if (background != -1) {
                 return background;
             }
@@ -304,7 +304,7 @@ public abstract class Component {
             }
         }
 
-        public Border getCurrentBorder() {
+        public final Border getCurrentBorder() {
                 if (border != null) {
                     return border;
 		}
@@ -313,7 +313,7 @@ public abstract class Component {
                 }
         }
 
-        public int getCurrentForeground() {
+        public final int getCurrentForeground() {
 		if (foreground!=-1) {
                     return foreground;
 		}
@@ -711,7 +711,20 @@ public abstract class Component {
             return 5;
         }
 
-        public int getCurrentState() {
+        public void setValue(Object obj) {
+            // used by renderer
+        }
+
+        public void setState(int state) {
+            this.state = state;
+        }
+
+        int state;
+        public final int getCurrentState() {
+            return state==-1?getState():state;
+        }
+
+        public int getState() {
             int result=Style.ALL;
 
             if (focusable) {
