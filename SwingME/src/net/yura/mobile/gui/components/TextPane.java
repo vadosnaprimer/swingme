@@ -32,7 +32,7 @@ import net.yura.mobile.gui.Icon;
  */
 public class TextPane extends Component {
 
-    private String text;
+    private String text="";
     private Vector sortedElemsList = new Vector();
     private Vector lineFragments = new Vector();
     private int lastLineX;
