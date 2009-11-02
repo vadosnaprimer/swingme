@@ -719,7 +719,7 @@ public abstract class Component {
             this.state = state;
         }
 
-        int state;
+        int state=-1;
         public final int getCurrentState() {
             return state==-1?getState():state;
         }

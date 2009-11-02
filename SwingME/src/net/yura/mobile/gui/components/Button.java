@@ -368,4 +368,13 @@ public class Button extends Label implements ActionListener {
             return super.getYOnScreen();
         }
 
+        public void setValue(Object obj) {
+            if (obj instanceof Boolean) {
+                setSelected( ((Boolean)obj).booleanValue() );
+            }
+            else {
+                super.setValue(obj);
+            }
+        }
+
 }
