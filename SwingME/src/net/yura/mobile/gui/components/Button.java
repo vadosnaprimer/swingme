@@ -376,5 +376,8 @@ public class Button extends Label implements ActionListener {
                 super.setValue(obj);
             }
         }
+        public Object getValue() {
+            return new Boolean(isSelected());
+        }
 
 }

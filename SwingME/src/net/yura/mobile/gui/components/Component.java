@@ -712,7 +712,9 @@ public abstract class Component {
         }
 
         public void setValue(Object obj) {
-            // used by renderer
+        }
+        public Object getValue() {
+            return null;
         }
 
         public void setState(int state) {

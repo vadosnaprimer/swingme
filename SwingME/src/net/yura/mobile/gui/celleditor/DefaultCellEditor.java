@@ -17,12 +17,8 @@
 
 package net.yura.mobile.gui.celleditor;
 
-import net.yura.mobile.gui.components.CheckBox;
-import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.Table;
-import net.yura.mobile.gui.components.TextField;
 
 /**
  * @author Yura Mamyrin
@@ -32,51 +28,17 @@ public class DefaultCellEditor implements TableCellEditor {
 
     private Component component;
     
-    public DefaultCellEditor(CheckBox checkBox) {
-        component = checkBox;
-    }
-    public DefaultCellEditor(ComboBox comboBox) {
-        component = comboBox;
-    }
-    public DefaultCellEditor(Spinner spinner) {
-        component = spinner;
-    }
-    public DefaultCellEditor(TextField textField) {
-        component = textField;
+    public DefaultCellEditor(Component c) {
+        component = c;
     }
     
     public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
-        
-        if (component instanceof CheckBox) {
-            ((CheckBox)component).setSelected( value instanceof Boolean?((Boolean)value).booleanValue() : false );
-        }
-        else if (component instanceof Spinner) {
-            ((Spinner)component).setValue(value);
-        }
-        else if (component instanceof ComboBox) {
-             ((ComboBox)component).setSelectedItem(value);
-        }
-        else if (component instanceof TextField) {
-            ((TextField)component).setText(String.valueOf(value));
-        }
-        
+        component.setValue(value);
         return component;
     }
     
     public Object getCellEditorValue() {
-        if (component instanceof CheckBox) {
-            return new Boolean( ((CheckBox)component).isSelected() );
-        }
-        else if (component instanceof Spinner) {
-            return ((Spinner)component).getValue();
-        }
-        else if (component instanceof ComboBox) {
-             return ((ComboBox)component).getSelectedItem();
-        }
-        else if (component instanceof TextField) {
-            return ((TextField)component).getText();
-        }
-        return null;
+        return component.getValue();
     }
     
 }

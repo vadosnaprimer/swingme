@@ -703,6 +703,11 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         }
 
-
+        public void setValue(Object obj) {
+            setText( String.valueOf(obj) );
+        }
+        public Object getValue() {
+            return getText();
+        }
 
 }

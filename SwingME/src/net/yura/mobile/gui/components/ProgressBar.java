@@ -112,8 +112,8 @@ public class ProgressBar extends Component {
     /**
      * @see javax.swing.JProgressBar#getValue() JProgressBar.getValue
      */
-    public int getValue() {
-        return loading;
+    public Object getValue() {
+        return new Integer(loading);
     }
     
     /**

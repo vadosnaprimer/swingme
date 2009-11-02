@@ -311,4 +311,12 @@ public class ComboBox extends Button implements ActionListener{
 		createList();
 		scroll.setMode(m);
 	}
+
+        public void setValue(Object obj) {
+            setSelectedItem(obj);
+        }
+        public Object getValue() {
+            return getSelectedItem();
+        }
+
 }
