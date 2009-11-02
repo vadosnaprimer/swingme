@@ -18,6 +18,7 @@
 package net.yura.mobile.test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -69,6 +70,7 @@ import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
+import net.yura.mobile.gui.layout.XHTMLLoader;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.io.LocationMonitor;
@@ -658,7 +660,7 @@ System.out.println("open file browser");
 
                         Panel scrollTest = new Panel(new FlowLayout(Graphics.VCENTER));
 
-                        String s  = "sdfg\n\n\n\n\n\n\n\n\n\na\n\nb\n\n\n\n\n\nc\n\n\n\n\n\n\nsgfsdf";
+                        String s  = "sdfg\n\n\n\n\n\n\n\n\n\na\n\nb\n\n\n\n\n\nc\n\n\n\na\n\nb\n\n\n\n\n\nc\n\n\n\na\n\nb\n\n\n\n\n\nc\n\n\n\na\n\nb\n\n\n\n\n\nc\n\n\n\n\n\n\nsgfsdf";
 
                         TextArea[] areas = new TextArea[5];
                         for (int c=0;c<areas.length;c++) {
@@ -730,13 +732,15 @@ System.out.println("open file browser");
 StringBuffer buf = new StringBuffer();
 
 
-/*
+
 InputStream inputStreamTxt=null;
 try {
-	inputStreamTxt = this.getClass().getResourceAsStream("/SynthME.dtd");
-	int c ;
-	while ((c = inputStreamTxt.read()) != -1)
-	{buf.append((char)c);}
+	inputStreamTxt = this.getClass().getResourceAsStream("/xhtmltest.xhtml"); // xhtmltest // "/test2.xhtml"
+        XHTMLLoader loader = new XHTMLLoader();
+        //loader.gotResult(inputStreamTxt);
+	//int c ;
+	//while ((c = inputStreamTxt.read()) != -1)
+	//{buf.append((char)c);}
 }
 catch(Exception ex) {
 	ex.printStackTrace();
@@ -750,7 +754,7 @@ finally {
 	catch(Exception ex) { }
     }
 }
-*/
+
 //* wrap testing
 for (int c=0;c<4;c++) {
 	buf.append("sdfdsfsdf sdfjk hdsfjk s diw k s d f j k s dfjksdh skjdf sdjkf sdhfjkskd fskjdf hsdjkf hsdjkf sdjkf hskjd fhsdf\n");
@@ -981,85 +985,6 @@ for (int c=0;c<4;c++) {
                             row4.addElement(new Option("ok","OK"));
                         rows.addElement(row4);
 
-                        // copy pasty from DefaultListCellRenderer
-                        class MyCheckBox extends CheckBox implements ListCellRenderer {
-
-                            //private boolean sel,foc;
-                            //private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
-                            //protected Border normal,selected,focusedAndSelected;
-                            private int state;
-
-                            public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-
-                                setSelected( value instanceof Boolean?((Boolean)value).booleanValue() : false );
-
-                                // a checkbox can be TICKED, but this is NOT the same as the cell being selected
-                                // so this isSelected is in ref to the cell in the table and not if the box is ticked or not
-//                                sel = isSelected;
-//                                foc = cellHasFocus;
-//
-//                                //setBorder(cellHasFocus?focusedAndSelected:(isSelected?selected:normal));
-//                                setBackground(isSelected?colorSelected:colorNormal);
-//                                setForeground(isSelected?foregroundSelected:foregroundNormal);
-
-                                state=Style.ALL;
-                                if ( list!=null ) {
-                                    if (list.isFocusable()) {
-                                        //state |= Style.ENABLED;
-                                    }
-                                    else {
-                                        state |= Style.DISABLED;
-                                    }
-                                }
-                                if (cellHasFocus) {
-                                    state |= Style.FOCUSED;
-                                }
-                                if (isSelected) {
-                                    state |= Style.SELECTED;
-                                }
-
-
-                                return this;
-                            }
-
-                            public int getCurrentState() {
-                                return state;
-                            }
-//                            protected void paintBorder(Graphics2D g) {
-//
-//                                if (foc && activeBorder!=null) {
-//                                    activeBorder.paintBorder(this, g, width, height);
-//                                }
-//                                else if (sel && selectedBorder!=null) {
-//                                    selectedBorder.paintBorder(this, g, width, height);
-//                                }
-//                                else if (border!=null) {
-//                                    border.paintBorder(this, g, width, height);
-//                                }
-//
-//                            }
-
-//                            public String getName() {
-//                                return "ListRenderer";
-//                            }
-
-//                            public void updateUI() {
-//                                    super.updateUI();
-//                                    Style st = DesktopPane.getDefaultTheme(this);
-//
-//                                    border = st.getBorder( Style.ENABLED );
-//                                    activeBorder = st.getBorder( Style.FOCUSED | Style.SELECTED);
-//                                    selectedBorder = st.getBorder( Style.SELECTED );
-//
-//                                    colorNormal = st.getBackground( Style.ALL );
-//                                    colorSelected = st.getBackground( Style.SELECTED );
-//
-//                                    foregroundNormal = st.getForeground( Style.ALL );
-//                                    foregroundSelected = st.getForeground( Style.SELECTED );
-//                            }
-
-                        }
-
                         Vector numbers = new Vector();
                         for (int c=0;c<100;c++) {
                             numbers.addElement(new Integer(c));
@@ -1073,7 +998,7 @@ for (int c=0;c<4;c++) {
                         };
 
                         table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
-                        table.setDefaultRenderer(Boolean.class, new MyCheckBox() );
+                        table.setDefaultRenderer(Boolean.class, new DefaultListCellRenderer( new CheckBox() ) );
 
                         table.setDefaultEditor(Integer.class, new DefaultCellEditor( new Spinner(numbers,false) ) );
                         table.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
