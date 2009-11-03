@@ -19,51 +19,30 @@ package net.yura.mobile.gui.cellrenderer;
 
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
-import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
  * @see javax.swing.DefaultListCellRenderer
  */
-public class DefaultListCellRenderer implements ListCellRenderer {
+public class DefaultListCellRenderer extends Label implements ListCellRenderer {
 
-//        private int colorNormal,colorSelected,foregroundNormal,foregroundSelected;
-//	protected Border normal,selected,focusedAndSelected;
-    //private int state;
-        protected Component component;
-	
         /**
          * @see javax.swing.DefaultListCellRenderer#DefaultListCellRenderer() DefaultListCellRenderer.DefaultListCellRenderer
          */
         public DefaultListCellRenderer() {
-            component = new Label();
-            component.setName("ListRenderer");
-        }
-
-        public DefaultListCellRenderer(Component c) {
-            component = c;
+            setName("ListRenderer");
         }
 
 	/**
          * @see javax.swing.DefaultListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) DefaultListCellRenderer.getListCellRendererComponent
          */
 	public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-
-                component.setValue(value);
-
-                int state=Style.ALL;
-                if ( list!=null && !list.isFocusable()) {
-                    state |= Style.DISABLED;
-                }
-                if (cellHasFocus) {
-                    state |= Style.FOCUSED;
-                }
-                if (isSelected) {
-                    state |= Style.SELECTED;
-                }
-
-                component.setState(state);
-
-		return component;
+            setValue(value);
+            setupState(list, isSelected, cellHasFocus);
+            return this;
 	}
+
+        public int getMaxWidth() {
+            return 1000;
+        }
 }

@@ -86,17 +86,17 @@ public class Label extends Component {
                 setIcon(icon);
         }
 
-    public void setPadding(int padding) {
-        this.padding = padding;
-    }
+        public void setPadding(int padding) {
+            this.padding = padding;
+        }
 
-    /**
-     * @return The padding of the label
-     * @see javax.swing.JComponent#getInsets() JComponent.getInsets
-     */
-    public int getPadding() {
-        return padding;
-    }
+        /**
+         * @return The padding of the label
+         * @see javax.swing.JComponent#getInsets() JComponent.getInsets
+         */
+        public int getPadding() {
+            return padding;
+        }
 
 	public void workoutMinimumSize() {
 		
@@ -403,21 +403,20 @@ public class Label extends Component {
 
         }
 
-    public void updateUI() {
-        super.updateUI();
-        font = theme.getFont(Style.ALL);
-    }
+        public void updateUI() {
+            super.updateUI();
+            font = theme.getFont(Style.ALL);
+        }
 
-    private int getIconWidth() {
-        return icon!=null?icon.getIconWidth():0;
-    }
+        private int getIconWidth() {
+            return icon!=null?icon.getIconWidth():0;
+        }
 
+        private int getIconHeight() {
+            return icon!=null?icon.getIconHeight():0;
+        }
 
-    private int getIconHeight() {
-        return icon!=null?icon.getIconHeight():0;
-    }
-
-    protected String getDefaultName() {
-        return "Label";
-    }
+        protected String getDefaultName() {
+            return "Label";
+        }
 }

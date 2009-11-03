@@ -21,8 +21,8 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
-import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.Layout;
 import net.yura.mobile.util.Option;
@@ -38,6 +38,7 @@ public class TabbedPane extends Panel implements ChangeListener {
         private Panel tabBar;
         private Panel tabContent;
         private int tabPosition;
+        private Label tabLabel;
 
         /**
          * @see javax.swing.JTabbedPane#JTabbedPane() JTabbedPane.JTabbedPane
@@ -54,7 +55,9 @@ public class TabbedPane extends Panel implements ChangeListener {
             Layout l = new BorderLayout();
             setLayout(l);
             setName("TabbedPane");
-            tabList = new List( new DefaultTabRenderer() );
+            tabLabel = new Label();
+            tabLabel.setPadding(1);
+            tabList = new List( new DefaultCellEditor(tabLabel) );
             tabs = new Vector();
 
             tabList.addChangeListener(this);
@@ -78,16 +81,26 @@ public class TabbedPane extends Panel implements ChangeListener {
         public void setTabPlacement(int a) {
 
             tabPosition = a;
-
             tabList.setLayoutOrientation( (a==Graphics.TOP || a==Graphics.BOTTOM) );
 
-            ListCellRenderer lcr = tabList.getCellRenderer();
-            if (lcr instanceof DefaultTabRenderer) {
-                ((DefaultTabRenderer)lcr).setTabPlacement(a);
+            String n = "TabRenderer";
+            switch(a) {
+                case Graphics.TOP:
+                    n=n+"Top";
+                    break;
+                case Graphics.BOTTOM:
+                    n=n+"Bottom";
+                    break;
+                case Graphics.RIGHT:
+                    n=n+"Right";
+                    break;
+                case Graphics.LEFT:
+                    n=n+"Left";
+                    break;
             }
+            tabLabel.setName(n);
 
             tabBar.setName("Tab" + (a==Graphics.TOP?"Top":(a==Graphics.LEFT?"Left":(a==Graphics.RIGHT?"Right":"Bottom"))) );
-
             tabContent.setName("TabContent" + (a==Graphics.TOP?"Bottom":(a==Graphics.LEFT?"Right":(a==Graphics.RIGHT?"Left":"Top"))) );
 
             super.removeAll();

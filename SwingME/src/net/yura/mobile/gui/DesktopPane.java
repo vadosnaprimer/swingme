@@ -137,6 +137,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         midlet = m;
 
+        keypad = new KeyEvent(this);
+
         //      // check if we want to be in debug mode
         //      String s;
         //      if ((s = midlet.getAppProperty("Debug-Mode")) != null && ( s.toUpperCase().equals("OFF") || s.toUpperCase().equals("NO") || s.toUpperCase().equals("FALSE") || s.toUpperCase().equals("F") ) ) {
@@ -953,7 +955,7 @@ public class DesktopPane extends Canvas implements Runnable {
     // #####################################################################
 
     // we reuse this keyevent for all keyevents
-    private KeyEvent keypad = new KeyEvent(this);
+    private KeyEvent keypad;
 
     public void keyPressed(int keyCode) {
 

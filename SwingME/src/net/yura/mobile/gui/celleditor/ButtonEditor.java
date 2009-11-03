@@ -20,60 +20,30 @@ package net.yura.mobile.gui.celleditor;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Table;
-import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
  */
 public class ButtonEditor extends Button implements ListCellRenderer, TableCellEditor {
 
-        private int state;
         private Object obj;
         private String label;
 
         public ButtonEditor(String s) {
             super(s);
-
             label = s;
         }
 
-        public Component getListCellRendererComponent(Component list, Object arg1, int arg2, boolean isSelected, boolean cellHasFocus) {
-
+        public Component getListCellRendererComponent(Component component, Object arg1, int arg2, boolean isSelected, boolean cellHasFocus) {
             if (label==null) {
                 setValue(arg1);
             }
-
-            state=Style.ALL;
-            if ( list!=null ) {
-                if (list.isFocusable()) {
-                    //state |= Style.ENABLED;
-                }
-                else {
-                    state |= Style.DISABLED;
-                }
-            }
-            if (cellHasFocus) {
-                state |= Style.FOCUSED;
-            }
-//            if (isSelected) {
-//                state |= Style.SELECTED;
-//            }
-
+            setupState(component,false,cellHasFocus);
             return this;
         }
 
-        public int getState() {
-            if (parent!=null) {
-                return super.getState();
-            }
-            return state;
-        }
-
-
         public Component getTableCellEditorComponent(Table arg0, Object arg1, boolean arg2, int arg3, int arg4) {
-
             if (label==null) {
                 setValue(arg1);
             }
@@ -84,5 +54,4 @@ public class ButtonEditor extends Button implements ListCellRenderer, TableCellE
         public Object getCellEditorValue() {
             return obj;
         }
-
 }

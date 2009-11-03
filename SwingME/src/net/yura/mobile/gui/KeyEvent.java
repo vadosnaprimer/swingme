@@ -25,9 +25,9 @@ import javax.microedition.lcdui.Canvas;
  */
 public class KeyEvent {
 
-    public static final boolean useSoftKeyClear = false;
+        public static boolean useSoftKeyClear = false;
 
-     // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
+         // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
 
 	public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value
 	public static final int KEY_SOFTKEY2 = -7;	//Default Softkey right value
@@ -182,54 +182,54 @@ public class KeyEvent {
         }
 
 	public KeyEvent(Canvas c) {
-
 		canvas = c;
-
+                String useSoftKeyClearString = DesktopPane.getMidlet().getAppProperty("useSoftKeyClear");
+                useSoftKeyClear = (useSoftKeyClearString!=null && useSoftKeyClearString.equalsIgnoreCase("true"));
 	}
 
-    public int getJustPressedKey() {
-        return justPressedKey;
-    }
+        public int getJustPressedKey() {
+            return justPressedKey;
+        }
 
-    public int getJustReleasedKey() {
-        return justReleasedKey;
-    }
-    /*
-     * This is a bad method as it only returns the FIRST key that is down!
-     * it should though return the most recent of the down keys
-     */
-    public int getIsDownKey() {
-           int res = 0;
-           for (int c=0;c<isDownKeys.length;c++) {
-                if (isDownKeys[c] != 0) {
-                    res = isDownKeys[c];
-                    if (isDownKeys[c] > 0)
-                    {
-                        // Give priority to positive values (ascii).
-                        break;
+        public int getJustReleasedKey() {
+            return justReleasedKey;
+        }
+        /*
+         * This is a bad method as it only returns the FIRST key that is down!
+         * it should though return the most recent of the down keys
+         */
+        public int getIsDownKey() {
+               int res = 0;
+               for (int c=0;c<isDownKeys.length;c++) {
+                    if (isDownKeys[c] != 0) {
+                        res = isDownKeys[c];
+                        if (isDownKeys[c] > 0)
+                        {
+                            // Give priority to positive values (ascii).
+                            break;
+                        }
                     }
-                }
-           }
-           return res;
-    }
+               }
+               return res;
+        }
 
-    // on nokia emulators can throw when the key does not exist on the phone
-    public String getKeyText(int keyCode) {
-        try {
-            return canvas.getKeyName(keyCode);
+        // on nokia emulators can throw when the key does not exist on the phone
+        public String getKeyText(int keyCode) {
+            try {
+                return canvas.getKeyName(keyCode);
+            }
+            catch(Throwable ex) {
+                return ex.getMessage();
+            }
         }
-        catch(Throwable ex) {
-            return ex.getMessage();
+        public int getKeyAction(int code) {
+            try {
+                return canvas.getGameAction(code);
+            }
+            catch(Throwable ex) {
+                return 0;
+            }
         }
-    }
-    public int getKeyAction(int code) {
-        try {
-            return canvas.getGameAction(code);
-        }
-        catch(Throwable ex) {
-            return 0;
-        }
-    }
 
         public boolean isDownAction(int action) {
             for (int c=0;c<isDownKeys.length;c++) {
@@ -247,9 +247,6 @@ public class KeyEvent {
         public boolean justReleasedAction(int action) {
             return justReleasedKey!=0 && getKeyAction(justReleasedKey) == action;
         }
-
-
-
 
         public boolean isDownKey(int key) {
             for (int c=0;c<isDownKeys.length;c++) {
@@ -270,7 +267,7 @@ public class KeyEvent {
 
 	public void keyPressed(int keyCode) {
 
-            keyCode = check(keyCode);
+                keyCode = check(keyCode);
 
                 // count up if the same key is being pressed
                 if (justReleasedKey==keyCode) {
@@ -287,7 +284,7 @@ public class KeyEvent {
 
 	public void keyReleased(int keyCode) {
 
-            keyCode = check(keyCode);
+                keyCode = check(keyCode);
 
                 // reset to 0 if we were holding the key down
                 if (pos<0) {

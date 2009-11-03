@@ -729,18 +729,30 @@ public abstract class Component {
         public int getState() {
             int result=Style.ALL;
 
-            if (focusable) {
-                //result |= Style.ENABLED;
-            }
-            else {
+            if (!focusable) {
                 result |= Style.DISABLED;
             }
-
             if (isFocusOwner()) {
                 result |= Style.FOCUSED;
             }
 
             return result;
+        }
+
+        /**
+         * use this if this component is a renderer
+         */
+        public void setupState(Component component, boolean isSelected, boolean cellHasFocus) {
+                state=Style.ALL;
+                if ( component!=null && !component.isFocusable()) {
+                    state |= Style.DISABLED;
+                }
+                if (cellHasFocus) {
+                    state |= Style.FOCUSED;
+                }
+                if (isSelected) {
+                    state |= Style.SELECTED;
+                }
         }
 
 }

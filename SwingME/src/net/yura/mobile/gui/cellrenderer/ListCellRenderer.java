@@ -18,7 +18,6 @@
 package net.yura.mobile.gui.cellrenderer;
 
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.List;
 
 /**
  * @author Yura Mamyrin
@@ -35,6 +34,6 @@ public interface ListCellRenderer {
      * @return A component whose paint() method will render the specified value
      * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) ListCellRenderer.getListCellRendererComponent
      */
-	 Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus);
+    Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus);
 	
 }

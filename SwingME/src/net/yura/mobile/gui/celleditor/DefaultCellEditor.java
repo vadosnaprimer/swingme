@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.celleditor;
 
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Table;
 
@@ -24,7 +25,7 @@ import net.yura.mobile.gui.components.Table;
  * @author Yura Mamyrin
  * @see javax.swing.DefaultCellEditor
  */
-public class DefaultCellEditor implements TableCellEditor {
+public class DefaultCellEditor implements TableCellEditor,ListCellRenderer {
 
     private Component component;
     
@@ -39,6 +40,12 @@ public class DefaultCellEditor implements TableCellEditor {
     
     public Object getCellEditorValue() {
         return component.getValue();
+    }
+
+    public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        component.setValue(value);
+        component.setupState(list, isSelected, cellHasFocus);
+        return component;
     }
     
 }
