@@ -152,17 +152,25 @@ public class RadioButton extends Button {
 	}
 
 	protected void paintIcon(Graphics2D g, int x, int y) {
-		if (isSelected() && !focusable && disabledSelectedImage != null) {
+
+                int cState = getCurrentState();
+
+		if (isSelected() && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
 			disabledSelectedImage.paintIcon(this, g, x, y);
-		} else if(isFocusOwner() && isSelected()&& focusedSelectedImage!=null){
+		}
+                else if(isSelected() && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
 			focusedSelectedImage.paintIcon(this, g, x, y);
-		} else if (isSelected() && selectedImage!=null) {
+		}
+                else if (isSelected() && selectedImage!=null) {
 			selectedImage.paintIcon(this, g, x, y);
-		} else if (!focusable && disabledImage != null) {
+		}
+                else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {
 			disabledImage.paintIcon(this, g, x, y);
-		} else if (isFocusOwner() && focusedImage!=null) {
+		}
+                else if ((cState&Style.FOCUSED)!=0 && focusedImage!=null) {
 			focusedImage.paintIcon(this, g, x, y);
-		} else {
+		}
+                else {
 			super.paintIcon(g, x, y);
 		}
 	}

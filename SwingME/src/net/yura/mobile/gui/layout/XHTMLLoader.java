@@ -87,9 +87,11 @@ System.out.println( ((TextPane)rootTag.inlineText).getText() );
 
     final static TextStyle bold = new TextStyle();
     final static TextStyle italic = new TextStyle();
+    final static TextStyle underline = new TextStyle();
     static {
         bold.setBold(true);
         italic.setItalic(true);
+        underline.setUnderline(true);
     }
 
     class TagHandler {
@@ -188,16 +190,15 @@ System.out.println("START: "+startTag);
             else if ("i".equals(startTag)) {
                 startFormat(italic);
             }
+            else if ("u".equals(startTag)) {
+                startFormat(underline);
+            }
             else if ("br".equals(startTag)) {
-                if (inlineText instanceof TextComponent) {
-                    TextComponent inlineText = (TextComponent)this.inlineText;
-                    inlineText.setText( inlineText.getText()+"\n" );
-                }
-                //#mdebug
-                else if (inlineText instanceof TextPane) { // should be TextComponent
+                if (inlineText instanceof TextPane) { // should be TextComponent
                     TextPane inlineText = (TextPane)this.inlineText;
                     inlineText.setText( inlineText.getText()+"\n" );
                 }
+                //#mdebug
                 else {
                     System.out.println("strange place for br tag, br can not go here");
                 }
@@ -215,7 +216,14 @@ System.out.println("START: "+startTag);
                 rows = new Vector();
             }
             else if ("tr".equals(startTag)) { // row
-                parent.row++;
+                if (parent!=null && parent.rows!=null) {
+                    parent.row++;
+                }
+                //#mdebug
+                else {
+                    System.out.println("strange place for tr tag, tr can not go here");
+                }
+                //#enddebug
             }
             else if ("th".equals(startTag) || "td".equals(startTag)) { // col
                 String colspan = parser.getAttributeValue(null,"colspan");
@@ -223,27 +231,34 @@ System.out.println("START: "+startTag);
                 int colspani = colspan==null?1:Integer.parseInt(colspan);
                 int rowspani = rowspan==null?1:Integer.parseInt(rowspan);
 
-                if (parent!=null && parent.parent != null) {
+                if (parent!=null && parent.parent != null && parent.parent.rows!=null) {
                     for (int a=0;a<rowspani;a++) {
                         parent.parent.addToRow(a,colspani);
                     }
                 }
+                //#mdebug
+                else {
+                    System.out.println("strange place for th/td tag, th/td can not go here");
+                }
+                //#enddebug
             }
+            //#mdebug
             else {
                 System.out.println("unknwon start: "+startTag);
             }
-
+            //#enddebug
         }
 
 
         public void processEndElement(KXmlParser parser) {
             String endTag = parser.getName();
-            if (inlineText instanceof TextPane) {
-                TextPane inlineText = (TextPane)this.inlineText;
-                if (style!=null) {
+            if (style!=null) {
+                if (inlineText instanceof TextPane) {
+                    TextPane inlineText = (TextPane)this.inlineText;
                     int boldend = inlineText.getText().length();
                     inlineText.setCharacterAttributes(styleStart, boldend-styleStart, bold);
                 }
+                return;
             }
 
 
@@ -257,9 +272,11 @@ System.out.println("START: "+startTag);
                 }
                 System.out.println("bigget "+rows+" "+biggest);
             }
+            //#mdebug
             else {
                 System.out.println("unknown end: "+endTag);
             }
+            //#enddebug
         }
 
         private void processText(KXmlParser parser) {
@@ -269,15 +286,11 @@ System.out.println("START: "+startTag);
             //string = StringUtil.replaceAll(string, "  ", " ");
             //string = StringUtil.trimStart(string);
             System.out.println("    text: \""+string+"\"");
-            if (inlineText instanceof TextComponent) {
-                TextComponent inlineText = (TextComponent)this.inlineText;
-                inlineText.setText( inlineText.getText()+string );
-            }
-            //#mdebug
-            else if (inlineText instanceof TextPane) { // should be TextComponent
+            if (inlineText instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)this.inlineText;
                 inlineText.setText( inlineText.getText()+string );
             }
+            //#mdebug
             else {
                 System.out.println("strange place for text");
             }
@@ -286,15 +299,11 @@ System.out.println("START: "+startTag);
         
         private void processRef(KXmlParser parser) {
             System.out.println("ref: "+parser.getName());
-            if (inlineText instanceof TextComponent) {
-                TextComponent inlineText = (TextComponent)this.inlineText;
-                inlineText.setText( inlineText.getText()+parser.getName() );
-            }
-            //#mdebug
-            else if (inlineText instanceof TextPane) { // should be TextComponent
+            if (inlineText instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)this.inlineText;
                 inlineText.setText( inlineText.getText()+parser.getName() );
             }
+            //#mdebug
             else {
                 System.out.println("strange place for ref");
             }
