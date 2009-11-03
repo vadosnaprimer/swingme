@@ -27,7 +27,7 @@ import net.yura.mobile.gui.components.Table;
  */
 public class DefaultCellEditor implements TableCellEditor,ListCellRenderer {
 
-    private Component component;
+    protected Component component;
     
     public DefaultCellEditor(Component c) {
         component = c;
