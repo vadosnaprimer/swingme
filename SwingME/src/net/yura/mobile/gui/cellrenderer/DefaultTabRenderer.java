@@ -45,7 +45,7 @@ public class DefaultTabRenderer extends Label implements ListCellRenderer {
         setTabPlacement(a);
     }
     
-    public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
         setValue(value);
 

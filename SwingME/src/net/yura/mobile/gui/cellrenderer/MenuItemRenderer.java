@@ -39,7 +39,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
      * if its just a normal commandButton we will draw it,
      * otehrwise we will use the Button to draw
      */
-    public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         if (value==null) return null;
 
 

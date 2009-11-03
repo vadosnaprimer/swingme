@@ -379,7 +379,7 @@ public class Table extends Panel {
         ListCellRenderer renderer = getCellRenderer(r,c);
 
         boolean sel = editingRow==r && editingColumn==c;
-        Component comp = renderer.getListCellRendererComponent(null, object, r, sel ,sel && isFocusOwner() );
+        Component comp = renderer.getListCellRendererComponent(this, object, r, sel ,sel && isFocusOwner() );
 
         return comp;
         

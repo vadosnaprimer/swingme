@@ -39,7 +39,7 @@ public class ButtonEditor extends Button implements ListCellRenderer, TableCellE
             label = s;
         }
 
-        public Component getListCellRendererComponent(List list, Object arg1, int arg2, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(Component list, Object arg1, int arg2, boolean isSelected, boolean cellHasFocus) {
 
             if (label==null) {
                 setValue(arg1);

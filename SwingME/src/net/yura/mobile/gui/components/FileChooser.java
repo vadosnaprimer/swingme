@@ -544,16 +544,11 @@ public class FileChooser extends Frame implements Runnable,ActionListener {
                 }
             }
 
-            public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
                 state=Style.ALL;
-                if ( list!=null ) {
-                    if (list.isFocusable()) {
-                        //state |= Style.ENABLED;
-                    }
-                    else {
-                        state |= Style.DISABLED;
-                    }
+                if ( list!=null && !list.isFocusable()) {
+                    state |= Style.DISABLED;
                 }
                 if (cellHasFocus) {
                     state |= Style.FOCUSED;
