@@ -53,8 +53,6 @@ import net.yura.mobile.gui.border.BevelBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
-import net.yura.mobile.gui.cellrenderer.DefaultTabRenderer;
-import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
@@ -62,7 +60,6 @@ import net.yura.mobile.gui.layout.GridLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
-import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
@@ -726,18 +723,18 @@ System.out.println("open file browser");
 		}
 		else if ("viewText".equals(actionCommand)) {
 
-			if (viewText==null) {
+			//if (viewText==null) {
 
 
 StringBuffer buf = new StringBuffer();
 
-
+XHTMLLoader loader = null;
 
 InputStream inputStreamTxt=null;
 try {
 	inputStreamTxt = this.getClass().getResourceAsStream("/xhtmltest.xhtml"); // xhtmltest // "/test2.xhtml"
-        XHTMLLoader loader = new XHTMLLoader();
-        //loader.gotResult(inputStreamTxt);
+        loader = new XHTMLLoader();
+        loader.gotResult(inputStreamTxt);
 	//int c ;
 	//while ((c = inputStreamTxt.read()) != -1)
 	//{buf.append((char)c);}
@@ -767,7 +764,7 @@ for (int c=0;c<4;c++) {
 
 				//viewText.setLineWrap(true); // this is the BAD order to do this
 							    // as it needs to work out the size twice
-			}
+			//}
 
 /* THIS wont work, but it wont work in Swing either!!
 
@@ -787,7 +784,10 @@ for (int c=0;c<4;c++) {
                         edit.addActionListener(this);
                         edit.setSelected( viewText.isFocusable() );
 
-			addToContentPane(p, makeButton("Back","mainmenu") , edit );
+                        Component xhtml = loader.getRoot();
+
+			//addToContentPane(p, makeButton("Back","mainmenu") , edit );
+                        addToContentPane(xhtml, makeButton("Back","mainmenu") , edit );
 
 		}
                 else if ("open_text_edit".equals(actionCommand)) {
@@ -997,8 +997,8 @@ for (int c=0;c<4;c++) {
                             }
                         };
 
-                        table.setDefaultRenderer(Integer.class, new DefaultTabRenderer(Graphics.TOP));
-                        table.setDefaultRenderer(Boolean.class, new DefaultListCellRenderer( new CheckBox() ) );
+                        table.setDefaultRenderer(Integer.class, new DefaultCellEditor( new Spinner(numbers,false) ));
+                        table.setDefaultRenderer(Boolean.class, new DefaultCellEditor( new CheckBox() ) );
 
                         table.setDefaultEditor(Integer.class, new DefaultCellEditor( new Spinner(numbers,false) ) );
                         table.setDefaultEditor(Boolean.class, new DefaultCellEditor(new CheckBox()) );
