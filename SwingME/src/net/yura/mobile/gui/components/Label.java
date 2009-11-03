@@ -419,4 +419,9 @@ public class Label extends Component {
         protected String getDefaultName() {
             return "Label";
         }
+
+	public String toString() {
+            return super.toString() +"("+ getText()+")";
+        }
+
 }

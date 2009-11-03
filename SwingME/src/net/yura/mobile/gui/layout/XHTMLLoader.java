@@ -3,12 +3,14 @@ package net.yura.mobile.gui.layout;
 import java.io.InputStream;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
@@ -21,19 +23,18 @@ import org.kxml2.io.KXmlParser;
  */
 public class XHTMLLoader {
 
-    TagHandler rootTag;
+    Panel root;
     TagHandler currentTag;
 
     public void gotResult(InputStream resultsStream) {
 
         try {
 
-                rootTag = new TagHandler();
-                rootTag.panel = new Panel(new FlowLayout(Graphics.VCENTER));
-                rootTag.inlineText = new TextPane();
-                rootTag.panel.add(rootTag.inlineText);
+                root = new Panel(new FlowLayout(Graphics.VCENTER));
+                panel = root;
+                newInlineSection();
 
-                currentTag = rootTag;
+                currentTag = new TagHandler();
 
 
             KXmlParser parser = new KXmlParser();
@@ -59,8 +60,6 @@ public class XHTMLLoader {
 //            }
             if(eventType == KXmlParser.START_TAG) {
                 TagHandler tag = new TagHandler();
-                tag.panel = currentTag.panel;
-                tag.inlineText = currentTag.inlineText;
                 tag.setParant(currentTag);
                 currentTag = tag;
                 currentTag.processStartElement(parser);
@@ -81,8 +80,7 @@ public class XHTMLLoader {
     }
 
     public Component getRoot() {
-System.out.println( ((TextPane)rootTag.inlineText).getText() );
-        return rootTag.panel;
+        return root;
     }
 
     final static TextStyle bold = new TextStyle();
@@ -94,6 +92,17 @@ System.out.println( ((TextPane)rootTag.inlineText).getText() );
         underline.setUnderline(true);
     }
 
+    Panel panel;
+    Component inlineText;
+
+
+    private void newInlineSection() {
+            inlineText = new TextPane();
+            inlineText.setBorder( new LineBorder(0x00FF0000) );
+            panel.add(inlineText);
+    }
+
+
     class TagHandler {
 
         TagHandler parent;
@@ -101,8 +110,7 @@ System.out.println( ((TextPane)rootTag.inlineText).getText() );
         int row=-1;
         Vector rows;
 
-        Panel panel;
-        Component inlineText;
+
 
         TextStyle style;
         int styleStart;
@@ -128,20 +136,23 @@ System.out.println("START: "+startTag);
                         size = Integer.parseInt(value);
                     }
                 }
+                final Component c;
                 if (size == 1) {
-                    inlineText = new ComboBox();
+                    c = new ComboBox();
                 }
                 else {
-                    inlineText = new List();
+                    c = new List();
                 }
+                insertComponent(c);
+                inlineText = c;
             }
             else if ("option".equals(startTag)) {
                 if (inlineText instanceof ComboBox) {
-                    ComboBox inlineText = (ComboBox)this.inlineText;
+                    ComboBox inlineText = (ComboBox)XHTMLLoader.this.inlineText;
                     inlineText.getItems().addElement( new Option() );
                 }
                 else if (inlineText instanceof List) {
-                    List inlineText = (List)this.inlineText;
+                    List inlineText = (List)XHTMLLoader.this.inlineText;
                     inlineText.getItems().addElement( new Option() );
                 }
                 //#mdebug
@@ -182,6 +193,8 @@ System.out.println("START: "+startTag);
                             ((TextComponent)comp).setText(text);
                         }
                     }
+                    insertComponent(comp);
+                    newInlineSection();
                 }
             }
             else if ("b".equals(startTag)) {
@@ -195,7 +208,7 @@ System.out.println("START: "+startTag);
             }
             else if ("br".equals(startTag)) {
                 if (inlineText instanceof TextPane) { // should be TextComponent
-                    TextPane inlineText = (TextPane)this.inlineText;
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                     inlineText.setText( inlineText.getText()+"\n" );
                 }
                 //#mdebug
@@ -206,14 +219,28 @@ System.out.println("START: "+startTag);
             }
             else if ("ul".equals(startTag) || "ol".equals(startTag)) { // lists
 
+                Panel list = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
+                insertComponent(list);
+                panel = list;
+                inlineText = null;
             }
             else if ("li".equals(startTag)) { // list items
-
+                Label l = new Label("*");
+                l.setVerticalAlignment(Graphics.TOP);
+                panel.add(l, new GridBagConstraints());
+                Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                panel.add(p, new GridBagConstraints());
+                panel = p;
+                newInlineSection();
             }
             else if ("table".equals(startTag)) {
                 // new blocking tag
-                panel = new Panel(new GridBagLayout(000, 2, 2, 2, 2, 2));
+                Panel p = new Panel(new GridBagLayout(000, 2, 2, 2, 2, 2));
                 rows = new Vector();
+
+                
+                insertComponent(p);
+
             }
             else if ("tr".equals(startTag)) { // row
                 if (parent!=null && parent.rows!=null) {
@@ -249,12 +276,21 @@ System.out.println("START: "+startTag);
             //#enddebug
         }
 
+        private void insertComponent(Component c) {
+            // clear all formatting
+            panel.add(c);
+        }
+
+        private void endPanel() {
+            // clear all formatting
+            panel = panel.getParent();
+        }
 
         public void processEndElement(KXmlParser parser) {
             String endTag = parser.getName();
             if (style!=null) {
                 if (inlineText instanceof TextPane) {
-                    TextPane inlineText = (TextPane)this.inlineText;
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                     int boldend = inlineText.getText().length();
                     inlineText.setCharacterAttributes(styleStart, boldend-styleStart, bold);
                 }
@@ -271,6 +307,14 @@ System.out.println("START: "+startTag);
                     }
                 }
                 System.out.println("bigget "+rows+" "+biggest);
+                endPanel();
+            }
+            else if ("li".equals(endTag)) {
+                endPanel();
+            }
+            else if ("ul".equals(endTag) || "ol".equals(endTag)) {
+                endPanel();
+                newInlineSection();
             }
             //#mdebug
             else {
@@ -287,7 +331,7 @@ System.out.println("START: "+startTag);
             //string = StringUtil.trimStart(string);
             System.out.println("    text: \""+string+"\"");
             if (inlineText instanceof TextPane) { // should be TextComponent
-                TextPane inlineText = (TextPane)this.inlineText;
+                TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                 inlineText.setText( inlineText.getText()+string );
             }
             //#mdebug
@@ -300,7 +344,7 @@ System.out.println("START: "+startTag);
         private void processRef(KXmlParser parser) {
             System.out.println("ref: "+parser.getName());
             if (inlineText instanceof TextPane) { // should be TextComponent
-                TextPane inlineText = (TextPane)this.inlineText;
+                TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                 inlineText.setText( inlineText.getText()+parser.getName() );
             }
             //#mdebug
@@ -313,7 +357,7 @@ System.out.println("START: "+startTag);
 
         private void startFormat(TextStyle st) {
             if (inlineText instanceof TextPane) {
-                TextPane inlineText = (TextPane)this.inlineText;
+                TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                 styleStart = inlineText.getText().length();
                 style = st;
             }

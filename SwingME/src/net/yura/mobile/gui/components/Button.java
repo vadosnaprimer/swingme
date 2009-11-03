@@ -329,9 +329,6 @@ public class Button extends Label implements ActionListener {
 		this.useSelectButton = useSelectButton;
 	}
 
-	public String toString() {
-            return super.toString() +"("+ getText()+")";
-        }
         public String getDefaultName() {
             return "Button";
         }
