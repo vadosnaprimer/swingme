@@ -45,6 +45,7 @@ import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TabbedPane;
+import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
@@ -96,7 +97,6 @@ public class XULLoader {
         p.insert(comp, constr, index);
 
         comp.setName( old.getName() );
-
         components.put(name, comp);
     }
 
@@ -318,11 +318,6 @@ public class XULLoader {
 
             return readUIObject(parser, progress,listener);
         }
-        else if (name.equals("slider")) {
-            Label slider = new Label("slider");
-
-            return readUIObject(parser, slider,listener);
-        }
         else if (name.equals("spinbox")) {
             Spinner spinner = new Spinner();
 
@@ -478,11 +473,16 @@ public class XULLoader {
             parser.skipSubTree();
             return op;
         }
-        else {
+        else if (name.equals("table")) {
+            Table table = new Table();
+            return readUIObject(parser, table,listener);
+        }
+        else { // if (name.equals("slider")) {
             //#debug
             System.out.println("unknown object found: "+name);
-            //return super.readObject(parser);
-            return null;
+
+            Label slider = new Label("unknown item: "+name);
+            return readUIObject(parser, slider,listener);
         }
 
     }
