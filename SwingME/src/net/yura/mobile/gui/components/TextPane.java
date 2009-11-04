@@ -194,6 +194,7 @@ public class TextPane extends Component {
         }
 
         // 4 - Finally, finish anything that is still on the style stack
+        startFragIdx = addClosingLineFragments(elemStyleSortedStack, startFragIdx, text.length());
         addLineFragments(elemStyleSortedStack, startFragIdx, text.length());
 
         return layoutVerticaly();
