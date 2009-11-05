@@ -16,6 +16,7 @@ import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
 import net.yura.mobile.util.Option;
+import net.yura.mobile.util.StringUtil;
 import org.kxml2.io.KXmlParser;
 
 /**
@@ -228,9 +229,9 @@ System.out.println("START: "+startTag);
                 Label l = new Label("*");
                 l.setVerticalAlignment(Graphics.TOP);
                 panel.add(l, new GridBagConstraints());
-                Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                panel.add(p, new GridBagConstraints());
-                panel = p;
+                    Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                    panel.add(p, new GridBagConstraints());
+                    panel = p;
                 newInlineSection();
             }
             else if ("table".equals(startTag)) {
@@ -240,6 +241,8 @@ System.out.println("START: "+startTag);
 
                 
                 insertComponent(p);
+
+                panel = p;
 
             }
             else if ("tr".equals(startTag)) { // row
@@ -268,6 +271,19 @@ System.out.println("START: "+startTag);
                     System.out.println("strange place for th/td tag, th/td can not go here");
                 }
                 //#enddebug
+
+                    Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                    p.setBorder( new LineBorder(0x000000FF) );
+                    GridBagConstraints c = new GridBagConstraints();
+                    c.colSpan = colspani;
+                    c.rowSpan = rowspani;
+                    //c.weightx = 1;
+                    //c.weighty = 1;
+                    panel.add(p, c);
+                    panel = p;
+
+                newInlineSection();
+
             }
             //#mdebug
             else {
@@ -292,6 +308,7 @@ System.out.println("START: "+startTag);
                 if (inlineText instanceof TextPane) {
                     TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                     int boldend = inlineText.getText().length();
+System.out.println("bob" + (boldend-styleStart));
                     inlineText.setCharacterAttributes(styleStart, boldend-styleStart, bold);
                 }
                 return;
@@ -306,7 +323,12 @@ System.out.println("START: "+startTag);
                         biggest = row.intValue();
                     }
                 }
+                GridBagLayout layout = (GridBagLayout)panel.getLayout();
+                layout.columns = biggest;
                 System.out.println("bigget "+rows+" "+biggest);
+                endPanel();
+            }
+            else if ("th".equals(endTag) || "td".equals(endTag)) {
                 endPanel();
             }
             else if ("li".equals(endTag)) {
@@ -325,7 +347,7 @@ System.out.println("START: "+startTag);
 
         private void processText(KXmlParser parser) {
             String string = parser.getText();
-            //string = StringUtil.replaceAll(string, "\n", " ");
+            string = StringUtil.replaceAll(string, "\n", " ");
             //string = StringUtil.replaceAll(string, "\t", " ");
             //string = StringUtil.replaceAll(string, "  ", " ");
             //string = StringUtil.trimStart(string);

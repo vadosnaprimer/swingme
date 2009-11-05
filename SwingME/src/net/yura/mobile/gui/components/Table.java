@@ -27,6 +27,7 @@ import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.celleditor.TableCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -64,13 +65,18 @@ public class Table extends Panel {
      * @see javax.swing.JTable#editorComp JTable.editorComp
      */
     protected Component editorComp;
-    
+
+    int intercellSpacing=1;
+
+    /**
+     * @see javax.swing.JTable#JTable()
+     */
     public Table() {
 
         setName("Table");
         
         colWidths = new Vector();
-        rowHeight = 20; // default value
+        rowHeight = (int) (theme.getFont(Style.ALL).getHeight() * 1.5); // default value
         
         renderers = new Hashtable();
         editors = new Hashtable();
@@ -82,7 +88,10 @@ public class Table extends Panel {
         setDefaultRenderer(Object.class, new DefaultListCellRenderer());
         setDefaultEditor(Object.class, new DefaultCellEditor( new TextField() ));
     }
-    
+
+    /**
+     * @see javax.swing.JTable#JTable(java.util.Vector, java.util.Vector) JTable.JTable
+     */
     public Table(Vector data, Vector names) {
         this();
         
@@ -164,7 +173,12 @@ public class Table extends Panel {
                     editCellAt(currentRow,currentCol);
                     
                     // dont pass clicks onto textComponents
-                    if (editorComp!=null) { //  && !(editorComp instanceof TextComponent)
+                    if (editorComp!=null &&
+                            x>= editorComp.getXWithBorder() &&
+                            y>=editorComp.getYWithBorder() &&
+                            x< (editorComp.getXWithBorder()+editorComp.getWidthWithBorder()) &&
+                            y< (editorComp.getYWithBorder()+editorComp.getHeightWithBorder())
+                            ) { //  && !(editorComp instanceof TextComponent)
                         // now pass on the event onto the component
                         DesktopPane.getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
                     }
@@ -315,6 +329,7 @@ public class Table extends Panel {
     
     public void paintComponent(Graphics2D g) {
         int x=0,y=0;
+        int his = intercellSpacing/2;
 
         int cols = getColumnCount();
         int rowc = getRowCount();
@@ -335,9 +350,7 @@ public class Table extends Panel {
 
                       int currentColWidth = getColumnWidth(c);
 
-                      if (x < g.getClipX()+g.getClipWidth() &&
-                            x + currentColWidth > g.getClipX()
-                      ) {
+                      if (x < g.getClipX()+g.getClipWidth() && x + currentColWidth > g.getClipX() ) {
                           good2 = true;
 
                           if (!editOpen || editingRow!=r || editingColumn!=c) {
@@ -345,7 +358,7 @@ public class Table extends Panel {
                                 Component comp = getComponentFor(r,c);
                                 if (comp!=null) {
 
-                                    comp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight);
+                                    comp.setBoundsWithBorder(x+his, y+his, currentColWidth-intercellSpacing, currentRowHeight-intercellSpacing);
 
                                     int xoff=comp.getX();
                                     int yoff=comp.getY();
@@ -426,7 +439,7 @@ public class Table extends Panel {
             int y=getCellY(editingRow);
             int currentRowHeight=getRowHeight(editingRow);
             int currentColWidth=getColumnWidth(editingColumn);
-            editorComp.setBoundsWithBorder(x, y, currentColWidth, currentRowHeight );
+            editorComp.setBoundsWithBorder(x+intercellSpacing/2, y+intercellSpacing/2, currentColWidth-intercellSpacing, currentRowHeight-intercellSpacing );
         }
     }
 
@@ -572,12 +585,26 @@ public class Table extends Panel {
 //        }
 
     }
-    
+
+    /**
+     * @see javax.swing.JTable#getRowHeight() JTable.getRowHeight
+     */
     public int getRowHeight(int row) {
         return rowHeight;
     }
 
-
+    /**
+     * @see javax.swing.JTable#setIntercellSpacing(java.awt.Dimension) JTable.setIntercellSpacing
+     */
+    public void setIntercellSpacing(int w) {
+        intercellSpacing = w;
+    }
+    /**
+     * @see javax.swing.JTable#getIntercellSpacing() JTable.getIntercellSpacing
+     */
+    public int getIntercellSpacing() {
+        return intercellSpacing;
+    }
 
     // #########################################################################
     // ############################# TableModel ################################

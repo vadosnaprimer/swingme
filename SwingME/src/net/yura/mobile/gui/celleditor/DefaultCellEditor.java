@@ -28,7 +28,12 @@ import net.yura.mobile.gui.components.Table;
 public class DefaultCellEditor implements TableCellEditor,ListCellRenderer {
 
     protected Component component;
-    
+
+    /**
+     * @see javax.swing.DefaultCellEditor#DefaultCellEditor(javax.swing.JCheckBox) DefaultCellEditor.DefaultCellEditor
+     * @see javax.swing.DefaultCellEditor#DefaultCellEditor(javax.swing.JComboBox) DefaultCellEditor.DefaultCellEditor
+     * @see javax.swing.DefaultCellEditor#DefaultCellEditor(javax.swing.JTextField) DefaultCellEditor.DefaultCellEditor
+     */
     public DefaultCellEditor(Component c) {
         component = c;
     }
