@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
@@ -110,8 +111,12 @@ public class ComboBox extends Button implements ActionListener{
                     dropDown = new Window();
                     dropDown.setCloseOnFocusLost(true);
                     dropDown.setName("Menu");
+                    scroll = new ScrollPane();
                     dropDown.add(scroll);
+                    dropDown.addWindowListener(this);
                 }
+                scroll.removeAll();
+                scroll.add(list);
 
                 //list.workoutSize();
                 //scroll.setPreferredSize(list.getWidth(), list.getHeight());
@@ -132,16 +137,11 @@ public class ComboBox extends Button implements ActionListener{
         }
 	
 	private void createList() {
-		if (list==null) {
-                    setModel(new List());
-		}
-
-                if (scroll==null) {
-                    scroll = new ScrollPane(list);
-                }
-
-                // TODO use a window, and set the windows name to "Menu"
-                // do this when doing tooltips
+            if (list==null) {
+                List l = new List();
+                l.setFixedCellHeight( DefaultListCellRenderer.setPrototypeCellValue("hello", l.getCellRenderer()) );
+                setModel(l);
+            }
 	}
 
         /**
@@ -151,6 +151,14 @@ public class ComboBox extends Button implements ActionListener{
         public void setModel(List list) {
             this.list = list;
             list.addActionListener(this);
+            list.setActionCommand("listSelect");
+        }
+
+        /**
+         * @see javax.swing.plaf.basic.ComboPopup#getList() ComboPopup.getList
+         */
+        public List getList() {
+            return list;
         }
 
 	public void paintComponent(Graphics2D g) {
@@ -240,16 +248,19 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
 	public void actionPerformed(String actionCommand) {
-
+            dropDown.setVisible(false);
+            if ("listSelect".equals(actionCommand)) {
                 setSelectedIndex( list.getSelectedIndex() );
-
-                //setValue( list.getSelectedValue() );
-
-                dropDown.setVisible(false);
-		
 		super.fireActionPerformed();
-		
-		repaint();
+            }
+            else if (Frame.CMD_CLOSE.equals(actionCommand)) {
+                setSelected(false);
+            }
+            //#mdebug
+            else {
+                throw new RuntimeException();
+            }
+            //#enddebug
 	}
 
         /**

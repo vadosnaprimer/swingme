@@ -45,4 +45,17 @@ public class DefaultListCellRenderer extends Label implements ListCellRenderer {
         public int getMaxWidth() {
             return 1000;
         }
+
+        /**
+         * maybe should be in list, but is used in a few places
+         * @see javax.swing.JList#setPrototypeCellValue(java.lang.Object) JList.setPrototypeCellValue
+         */
+        public static int setPrototypeCellValue(Object prototypeCellValue,ListCellRenderer renderer)  {
+
+            Component c = renderer.getListCellRendererComponent(null, prototypeCellValue, 0, false, false);
+            c.workoutSize();
+            return c.getHeightWithBorder();
+
+        }
+
 }

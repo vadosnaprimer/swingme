@@ -341,7 +341,7 @@ public class Spinner extends Label {
 //		this.normalBorder = borderColor;
 //                super.setBorder(borderColor);
 //	}
-		
+	//#mdebug
 	/**
 	 * This throws an IllegalArgumentException and you should use the 
 	 * setIndex method instead
@@ -349,6 +349,7 @@ public class Spinner extends Label {
 	public void setText(String a) {
 		throw new IllegalArgumentException();
 	}
+        //#enddebug
         public String getDefaultName() {
             return "Spinner";
         }

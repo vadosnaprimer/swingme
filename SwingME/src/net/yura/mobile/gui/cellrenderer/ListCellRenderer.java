@@ -35,5 +35,5 @@ public interface ListCellRenderer {
      * @see javax.swing.ListCellRenderer#getListCellRendererComponent(javax.swing.JList, java.lang.Object, int, boolean, boolean) ListCellRenderer.getListCellRendererComponent
      */
     Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus);
-	
+
 }

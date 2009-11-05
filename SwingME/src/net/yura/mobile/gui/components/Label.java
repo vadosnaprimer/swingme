@@ -58,7 +58,12 @@ public class Label extends Component {
 	public Label(String text) {
 
 		focusable = false;
-		if (text!=null) { setText(text); }
+
+                // swing will set a empty string as the value if you pass in null to the constructor
+                // but if u call setText(null) then the text will be null, (getText() will return null)
+                // but it will still display as a empty string)
+                // in J2SE Swing this does NOT call setText(), so here it does not either!
+		string = text==null?"":text;
                 
                 alignment = Graphics.VCENTER | Graphics.LEFT;
 
@@ -264,9 +269,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setText(java.lang.String) JLabel.setText
          */
 	public void setText(String a) {
-            
 		string = a;
-		
 	}
         
         /**
@@ -274,9 +277,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#getText() JLabel.getText
          */
         public String getText() {
-		
 		return string;
-		
 	}
         
         /**
@@ -359,14 +360,14 @@ public class Label extends Component {
             String drawString=null;
             Icon image=null;
             String tip=null;
-            
+
             if (obj instanceof Option) {
                 Option option = ((Option)obj);
                 drawString = option.getValue();
                 image = option.getIcon();
                 tip = option.getToolTip();
             }
-            else {
+            else if (obj!=null) {
                 drawString = String.valueOf(obj);
             }
             
@@ -380,6 +381,7 @@ public class Label extends Component {
 //                }
 //            }
 
+            // caling setText causes thing like spinner that throw in the setText to stop working
             string = drawString; // dont want to recalc everything twice
             setIcon(image);
             setToolTipText(tip);
