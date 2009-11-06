@@ -221,7 +221,10 @@ public class MatteBorder extends EmptyBorder {
                 }
                 
                 else if (back) {
-                    ImageUtil.fillArea(g,image,imageRight,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
+                    //#mdebug
+                    System.out.println("filling background with tiled image!");
+                    //#enddebug
+                    ImageUtil.fillArea(g,image,imageLeft,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
                             leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff,
                             Sprite.TRANS_NONE); // centre
                 }
