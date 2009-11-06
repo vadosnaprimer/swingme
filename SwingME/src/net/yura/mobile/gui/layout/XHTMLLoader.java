@@ -122,11 +122,25 @@ public class XHTMLLoader {
 
 System.out.println("START: "+startTag);
 
-            if ("html".equals(startTag)) {
-
+            if ("b".equals(startTag)) {
+                startFormat(bold);
             }
-            else if ("body".equals(startTag)) {
-
+            else if ("i".equals(startTag)) {
+                startFormat(italic);
+            }
+            else if ("u".equals(startTag)) {
+                startFormat(underline);
+            }
+            else if ("br".equals(startTag)) {
+                if (inlineText instanceof TextPane) { // should be TextComponent
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+                    inlineText.setText( inlineText.getText()+"\n" );
+                }
+                //#mdebug
+                else {
+                    System.out.println("strange place for br tag, br can not go here");
+                }
+                //#enddebug
             }
             else if ("select".equals(startTag)) {
                 int size = 1;
@@ -148,13 +162,33 @@ System.out.println("START: "+startTag);
                 inlineText = c;
             }
             else if ("option".equals(startTag)) {
+
+                boolean selected=false;
+                for (int c=0;c<count;c++) {
+                    String key = parser.getAttributeName(c).toLowerCase();
+                    //String value = parser.getAttributeValue(c);
+                    if ("selected".equals(key)) {
+                        selected = true;
+                    }
+                }
+
                 if (inlineText instanceof ComboBox) {
                     ComboBox inlineText = (ComboBox)XHTMLLoader.this.inlineText;
                     inlineText.getItems().addElement( new Option() );
+                    if (selected || inlineText.getItemCount()==1) {
+                        // TODO this does not work
+                        // can only do this at the END of option
+                        inlineText.setSelectedIndex( inlineText.getItemCount()-1 );
+                    }
                 }
                 else if (inlineText instanceof List) {
                     List inlineText = (List)XHTMLLoader.this.inlineText;
-                    inlineText.getItems().addElement( new Option() );
+                    inlineText.addElement( new Option() );
+                    if (selected) {
+                        Vector selectedValues = inlineText.getSelectedValues();
+                        selectedValues.addElement( inlineText.getElementAt( inlineText.getSize()-1 ) );
+                        inlineText.setSelectedValues(selectedValues);
+                    }
                 }
                 //#mdebug
                 else {
@@ -195,28 +229,17 @@ System.out.println("START: "+startTag);
                         }
                     }
                     insertComponent(comp);
-                    newInlineSection();
                 }
             }
-            else if ("b".equals(startTag)) {
-                startFormat(bold);
+            else if ("button".equals(startTag)) {
+                Button b = new Button();
+                insertComponent(b);
+                inlineText = b;
             }
-            else if ("i".equals(startTag)) {
-                startFormat(italic);
-            }
-            else if ("u".equals(startTag)) {
-                startFormat(underline);
-            }
-            else if ("br".equals(startTag)) {
-                if (inlineText instanceof TextPane) { // should be TextComponent
-                    TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
-                    inlineText.setText( inlineText.getText()+"\n" );
-                }
-                //#mdebug
-                else {
-                    System.out.println("strange place for br tag, br can not go here");
-                }
-                //#enddebug
+            else if ("textarea".equals(startTag)) {
+                TextArea b = new TextArea();
+                insertComponent(b);
+                inlineText = b;
             }
             else if ("ul".equals(startTag) || "ol".equals(startTag)) { // lists
 
@@ -239,7 +262,6 @@ System.out.println("START: "+startTag);
                 Panel p = new Panel(new GridBagLayout(000, 2, 2, 2, 2, 2));
                 rows = new Vector();
 
-                
                 insertComponent(p);
 
                 panel = p;
@@ -286,10 +308,32 @@ System.out.println("START: "+startTag);
 
             }
             //#mdebug
+            else if ("p".equals(startTag)) {
+                // do nothing
+            }
+            else if ("title".equals(startTag)) {
+                // do nothing
+            }
+            else if ("html".equals(startTag)) {
+                // do nothing
+            }
+            else if ("head".equals(startTag)) {
+                // do nothing
+            }
+            else if ("body".equals(startTag)) {
+                // do nothing
+            }
             else {
                 System.out.println("unknwon start: "+startTag);
             }
             //#enddebug
+        }
+
+        private void addTextToLastOption(Vector items,String text) {
+            if (items.size() == 0) return; // ignore this text if we are not in a option
+            Option option = (Option)items.elementAt( items.size()-1 );
+            String current = option.getValue();
+            option.setValue(current==null?text:current+text);
         }
 
         private void insertComponent(Component c) {
@@ -308,14 +352,31 @@ System.out.println("START: "+startTag);
                 if (inlineText instanceof TextPane) {
                     TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
                     int boldend = inlineText.getText().length();
-System.out.println("bob" + (boldend-styleStart));
                     inlineText.setCharacterAttributes(styleStart, boldend-styleStart, bold);
                 }
                 return;
             }
 
-
-            if ("table".equals(endTag)) {
+            if ("select".equals(endTag)) {
+                newInlineSection();
+            }
+            else if ("input".equals(endTag)) {
+                newInlineSection();
+            }
+            else if ("button".equals(endTag)) {
+                newInlineSection();
+            }
+            else if ("textarea".equals(endTag)) {
+                newInlineSection();
+            }
+            else if ("tr".equals(endTag)) {
+                // TODO set marker for end of row, we will need to insert a empty panl
+                // at this marker if the row does not have enough elements to fill it up
+            }
+            else if ("th".equals(endTag) || "td".equals(endTag)) {
+                endPanel();
+            }
+            else if ("table".equals(endTag)) {
                 int biggest = 0;
                 for (int a=0;a<rows.size();a++) {
                     Integer row = (Integer)rows.elementAt(a);
@@ -327,9 +388,7 @@ System.out.println("bob" + (boldend-styleStart));
                 layout.columns = biggest;
                 System.out.println("bigget "+rows+" "+biggest);
                 endPanel();
-            }
-            else if ("th".equals(endTag) || "td".equals(endTag)) {
-                endPanel();
+                newInlineSection();
             }
             else if ("li".equals(endTag)) {
                 endPanel();
@@ -339,6 +398,27 @@ System.out.println("bob" + (boldend-styleStart));
                 newInlineSection();
             }
             //#mdebug
+            else if ("p".equals(endTag)) {
+                // do nothing
+            }
+            else if ("html".equals(endTag)) {
+                // do nothing
+            }
+            else if ("head".equals(endTag)) {
+                // do nothing
+            }
+            else if ("title".equals(endTag)) {
+                // do nothing
+            }
+            else if ("body".equals(endTag)) {
+                // do nothing
+            }
+            else if ("option".equals(endTag)) {
+                // do nothing
+            }
+            else if ("br".equals(endTag)) {
+                // do nothing
+            }
             else {
                 System.out.println("unknown end: "+endTag);
             }
@@ -354,6 +434,22 @@ System.out.println("bob" + (boldend-styleStart));
             System.out.println("    text: \""+string+"\"");
             if (inlineText instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+                inlineText.setText( inlineText.getText()+string );
+            }
+            else if (inlineText instanceof ComboBox) {
+                ComboBox inlineText = (ComboBox)XHTMLLoader.this.inlineText;
+                addTextToLastOption( inlineText.getItems(),string );
+            }
+            else if (inlineText instanceof List) {
+                List inlineText = (List)XHTMLLoader.this.inlineText;
+                addTextToLastOption(inlineText.getItems(), string);
+            }
+            else if (inlineText instanceof Button) {
+                Button inlineText = (Button)XHTMLLoader.this.inlineText;
+                inlineText.setText( inlineText.getText()+string );
+            }
+            else if (inlineText instanceof TextArea) {
+                TextArea inlineText = (TextArea)XHTMLLoader.this.inlineText;
                 inlineText.setText( inlineText.getText()+string );
             }
             //#mdebug

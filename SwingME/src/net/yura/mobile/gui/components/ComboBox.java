@@ -226,10 +226,12 @@ public class ComboBox extends Button implements ActionListener{
          * return the vector, can not be a true representation of the model
          */
 	public Vector getItems() {
-		return list.getItems();
+            createList();
+            return list.getItems();
 	}
 
         public int getItemCount() {
+            createList();
             return list.getSize();
         }
 
