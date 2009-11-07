@@ -32,6 +32,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
+import net.yura.mobile.gui.components.Camera;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
@@ -220,7 +221,7 @@ public class MainPane extends DesktopPane implements ActionListener {
         }
 
         private MyBTDiscovery btDiscovery;
-        
+
 	public MainPane(MyMidlet a) {
 		super(a,0,null);
 	}
@@ -305,6 +306,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Bluetooth Client Send","BTClientSend");
                                 addMainMenuButton("Start Bluetooth Discovery","BTDiscovery");
                                 addMainMenuButton("Text Pane","textPane");
+                                addMainMenuButton("Test Camera","testCamera");
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
                                 addMenuItem(mainMenu,"metalTheme", "Metal Theme");
@@ -1309,6 +1311,36 @@ for (int c=0;c<4;c++) {
 
                     p.setBackground(0xFFFFFF);
                     textPane.setBackground(0xFFFFFF);
+
+                    addToContentPane(p, null, makeButton("Back","mainmenu"));
+                }
+                else if ("testCamera".equals(actionCommand)) {
+
+                    Camera cameraPanel = new Camera();
+                    addToContentPane(cameraPanel, makeButton("Capture","cameraCapture"), makeButton("Back","mainmenu"));
+                    mainWindow.revalidate();
+                }
+                else if ("cameraCapture".equals(actionCommand)) {
+                    System.out.println("cameraCapture");
+                    Camera cameraPanel = (Camera) getSelectedFrame().getMostRecentFocusOwner();
+                    cameraPanel.setActionListener(this);
+                    cameraPanel.setActionCommand("cameraCaptureDone");
+                    cameraPanel.capture();
+                }
+                else if ("cameraCaptureDone".equals(actionCommand)) {
+                    System.out.println("cameraCaptureDone");
+                    Camera cameraPanel = (Camera) getSelectedFrame().getMostRecentFocusOwner();
+                    byte[] imgData = cameraPanel.getSnapshotData();
+
+                    Label l;
+                    if (imgData == null) {
+                        l = new Label("Camera Capture Failed!");
+                    } else {
+                        Image img = Image.createImage(imgData, 0, imgData.length);
+                        l = new Label(new Icon(img));
+                    }
+                    Panel p = new Panel();
+                    p.add(l);
 
                     addToContentPane(p, null, makeButton("Back","mainmenu"));
                 }
