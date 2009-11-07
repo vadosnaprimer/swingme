@@ -5,11 +5,13 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
@@ -31,12 +33,8 @@ public class XHTMLLoader {
 
         try {
 
-                root = new Panel(new FlowLayout(Graphics.VCENTER));
-                panel = root;
-                newInlineSection();
-
-                currentTag = new TagHandler();
-
+                root = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                inlineText = root;
 
             KXmlParser parser = new KXmlParser();
             parser.setInput(resultsStream, null);
@@ -93,15 +91,46 @@ public class XHTMLLoader {
         underline.setUnderline(true);
     }
 
-    Panel panel;
+//    Panel panel;
     Component inlineText;
 
 
-    private void newInlineSection() {
-            inlineText = new TextPane();
-            inlineText.setBorder( new LineBorder(0x00FF0000) );
-            panel.add(inlineText);
+    private void startInlineSection() {
+        TextPane it = new TextPane();
+        it.setBorder( new LineBorder(0x00FF0000) );
+        ((Panel)inlineText).add(it);
+        inlineText = it;
     }
+    private void endInlineSection() {
+        // clear all formatting
+        TextPane text = ((TextPane)inlineText);
+        inlineText = text.getParent();
+        if ("".equals(text.getText().trim())) {
+            ((Panel)inlineText).remove(text);
+        }
+    }
+    private void insertComponent(Component c) {
+        // if we are able to insert a component into a TextPane
+        // then we would not need to end the TextPane here
+        // and we would not need to start it again after its finished
+        endInlineSection(); // end current inline Text
+        ((Panel)inlineText).add(c);
+        inlineText = c;
+    }
+    private void endComponent() {
+        inlineText = inlineText.getParent();
+        startInlineSection();
+    }
+    private void insertPanel(Panel p,Object con) {
+        ((Panel)inlineText).add(p,con);
+        inlineText = p;
+        startInlineSection();
+    }
+    private void endPanel() {
+        endInlineSection();
+        inlineText = ((Panel)inlineText).getParent();
+    }
+
 
 
     class TagHandler {
@@ -110,8 +139,6 @@ public class XHTMLLoader {
 
         int row=-1;
         Vector rows;
-
-
 
         TextStyle style;
         int styleStart;
@@ -122,7 +149,10 @@ public class XHTMLLoader {
 
 System.out.println("START: "+startTag);
 
-            if ("b".equals(startTag)) {
+            if ("body".equals(startTag)) {
+                startInlineSection();
+            }
+            else if ("b".equals(startTag)) {
                 startFormat(bold);
             }
             else if ("i".equals(startTag)) {
@@ -159,7 +189,7 @@ System.out.println("START: "+startTag);
                     c = new List();
                 }
                 insertComponent(c);
-                inlineText = c;
+
             }
             else if ("option".equals(startTag)) {
 
@@ -210,6 +240,12 @@ System.out.println("START: "+startTag);
                         else if ("text".equals(value)) {
                             theClass = TextField.class;
                         }
+                        else if ("checkbox".equals(value)) {
+                            theClass = CheckBox.class;
+                        }
+                        else if ("radio".equals(value)) {
+                            theClass = RadioButton.class;
+                        }
                     }
                     else if ("name".equals(key)) {
 
@@ -232,40 +268,21 @@ System.out.println("START: "+startTag);
                 }
             }
             else if ("button".equals(startTag)) {
-                Button b = new Button();
-                insertComponent(b);
-                inlineText = b;
+                insertComponent( new Button() );
             }
             else if ("textarea".equals(startTag)) {
-                TextArea b = new TextArea();
-                insertComponent(b);
-                inlineText = b;
+                insertComponent( new TextArea() );
             }
             else if ("ul".equals(startTag) || "ol".equals(startTag)) { // lists
-
-                Panel list = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
-                insertComponent(list);
-                panel = list;
-                inlineText = null;
+                insertComponent( new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0)) );
             }
             else if ("li".equals(startTag)) { // list items
                 Label l = new Label("*");
                 l.setVerticalAlignment(Graphics.TOP);
-                panel.add(l, new GridBagConstraints());
-                    Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                    panel.add(p, new GridBagConstraints());
-                    panel = p;
-                newInlineSection();
-            }
-            else if ("table".equals(startTag)) {
-                // new blocking tag
-                Panel p = new Panel(new GridBagLayout(000, 2, 2, 2, 2, 2));
-                rows = new Vector();
+                // we did insertComponent with a panel, so now we know we have a panel here
+                ((Panel)inlineText).add(l, new GridBagConstraints());
 
-                insertComponent(p);
-
-                panel = p;
-
+                insertPanel(new Panel(new FlowLayout(Graphics.VCENTER,0)), new GridBagConstraints());
             }
             else if ("tr".equals(startTag)) { // row
                 if (parent!=null && parent.rows!=null) {
@@ -276,6 +293,10 @@ System.out.println("START: "+startTag);
                     System.out.println("strange place for tr tag, tr can not go here");
                 }
                 //#enddebug
+            }
+            else if ("table".equals(startTag)) {
+                rows = new Vector();
+                insertComponent(new Panel(new GridBagLayout(000, 2, 2, 2, 2, 2)) );
             }
             else if ("th".equals(startTag) || "td".equals(startTag)) { // col
                 String colspan = parser.getAttributeValue(null,"colspan");
@@ -294,17 +315,14 @@ System.out.println("START: "+startTag);
                 }
                 //#enddebug
 
-                    Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                    p.setBorder( new LineBorder(0x000000FF) );
-                    GridBagConstraints c = new GridBagConstraints();
-                    c.colSpan = colspani;
-                    c.rowSpan = rowspani;
-                    //c.weightx = 1;
-                    //c.weighty = 1;
-                    panel.add(p, c);
-                    panel = p;
-
-                newInlineSection();
+                Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
+                p.setBorder( new LineBorder(0x000000FF) );
+                GridBagConstraints c = new GridBagConstraints();
+                c.colSpan = colspani;
+                c.rowSpan = rowspani;
+                //c.weightx = 1;
+                //c.weighty = 1;
+                insertPanel(p, c);
 
             }
             //#mdebug
@@ -320,9 +338,6 @@ System.out.println("START: "+startTag);
             else if ("head".equals(startTag)) {
                 // do nothing
             }
-            else if ("body".equals(startTag)) {
-                // do nothing
-            }
             else {
                 System.out.println("unknwon start: "+startTag);
             }
@@ -331,19 +346,9 @@ System.out.println("START: "+startTag);
 
         private void addTextToLastOption(Vector items,String text) {
             if (items.size() == 0) return; // ignore this text if we are not in a option
-            Option option = (Option)items.elementAt( items.size()-1 );
+            Option option = (Option)items.lastElement();
             String current = option.getValue();
             option.setValue(current==null?text:current+text);
-        }
-
-        private void insertComponent(Component c) {
-            // clear all formatting
-            panel.add(c);
-        }
-
-        private void endPanel() {
-            // clear all formatting
-            panel = panel.getParent();
         }
 
         public void processEndElement(KXmlParser parser) {
@@ -357,17 +362,20 @@ System.out.println("START: "+startTag);
                 return;
             }
 
-            if ("select".equals(endTag)) {
-                newInlineSection();
+            if ("body".equals(endTag)) {
+                endInlineSection();
+            }
+            else if ("select".equals(endTag)) {
+                endComponent();
             }
             else if ("input".equals(endTag)) {
-                newInlineSection();
+                endComponent();
             }
             else if ("button".equals(endTag)) {
-                newInlineSection();
+                endComponent();
             }
             else if ("textarea".equals(endTag)) {
-                newInlineSection();
+                endComponent();
             }
             else if ("tr".equals(endTag)) {
                 // TODO set marker for end of row, we will need to insert a empty panl
@@ -384,18 +392,16 @@ System.out.println("START: "+startTag);
                         biggest = row.intValue();
                     }
                 }
-                GridBagLayout layout = (GridBagLayout)panel.getLayout();
+                GridBagLayout layout = (GridBagLayout)((Panel)inlineText).getLayout();
                 layout.columns = biggest;
                 System.out.println("bigget "+rows+" "+biggest);
-                endPanel();
-                newInlineSection();
+                endComponent();
             }
             else if ("li".equals(endTag)) {
                 endPanel();
             }
             else if ("ul".equals(endTag) || "ol".equals(endTag)) {
-                endPanel();
-                newInlineSection();
+                endComponent();
             }
             //#mdebug
             else if ("p".equals(endTag)) {
@@ -408,9 +414,6 @@ System.out.println("START: "+startTag);
                 // do nothing
             }
             else if ("title".equals(endTag)) {
-                // do nothing
-            }
-            else if ("body".equals(endTag)) {
                 // do nothing
             }
             else if ("option".equals(endTag)) {

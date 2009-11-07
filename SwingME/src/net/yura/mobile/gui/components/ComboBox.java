@@ -54,7 +54,6 @@ public class ComboBox extends Button implements ActionListener{
          */
 	public ComboBox(Vector vec){
 		this();
-		
 		setItems(vec);
 	}
 
@@ -66,7 +65,6 @@ public class ComboBox extends Button implements ActionListener{
             createList();
             list.setLoop(b);
         }
-
 
 	public void workoutMinimumSize() {
 		if (list!=null) {
@@ -301,6 +299,10 @@ public class ComboBox extends Button implements ActionListener{
                 }
                 else {
                     super.setValue( list.getElementAt(i) );
+                }
+                String t = getText();
+                if (t==null || "".equals(t)) {
+                    super.setText(" ");
                 }
 	}
 	
