@@ -59,6 +59,7 @@ import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.layout.GridLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
@@ -75,7 +76,6 @@ import net.yura.mobile.io.LocationMonitor;
 import net.yura.mobile.io.ClipboardManager;
 import net.yura.mobile.io.BTService;
 import net.yura.mobile.io.ServiceLink.Task;
-import net.yura.mobile.io.ServiceLink.TaskHandler;
 import net.yura.mobile.io.BTDiscovery;
 
 /**
@@ -1264,6 +1264,9 @@ for (int c=0;c<4;c++) {
                     TextStyle underline = new TextStyle();
                     underline.setUnderline(true);
                     underline.setForeground(0x0000FF);
+
+                    underline.addForeground(0xFF0000, Style.FOCUSED);
+                    underline.setAction("SomeAction");
 
                     TextStyle blue = new TextStyle();
                     blue.setForeground(0x0000FF);
