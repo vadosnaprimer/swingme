@@ -18,13 +18,17 @@ package net.yura.mobile.gui.components;
 
 import java.util.Vector;
 
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
+import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -35,11 +39,13 @@ public class TextPane extends Component {
     private String text="";
     private Vector sortedElemsList = new Vector();
     private Vector lineFragments = new Vector();
+    private Vector focusableElems = new Vector();
     private int lastLineX;
+    private int focusComponentIdx = -1;
+    private ActionListener actionListener;
 
     public TextPane() {
         super();
-        focusable = false;
     }
 
     protected String getDefaultName() {
@@ -54,6 +60,8 @@ public class TextPane extends Component {
         // TODO: Stop paint if y is no longer visible... Take care that in the same
         //       line, some y may be visible and others not...
 
+        TextStyle focusElem = getFocusElementStyle();
+
         int numLineFrags = lineFragments.size();
         for (int i = 0; i < numLineFrags; i++) {
             LineFragment lineFrag = (LineFragment) lineFragments.elementAt(i);
@@ -63,8 +71,10 @@ public class TextPane extends Component {
             if (icon == null) {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
+                int state = (style == focusElem) ? Style.FOCUSED : Style.ALL;
+
                 // TODO: Background Color
-                g.setColor(style.getForeground());
+                g.setColor(style.getForeground(state));
                 g.setFont(style.getFont());
 
                 g.drawString(str, lineFrag.x, lineFrag.y);
@@ -154,11 +164,56 @@ public class TextPane extends Component {
         }
     }
 
+    public void setActionListener(ActionListener l) {
+        this.actionListener = l;
+    }
 
+    public boolean processKeyEvent(KeyEvent event) {
+
+        int key = event.getIsDownKey();
+        int action = event.getKeyAction(key);
+
+        if (actionListener != null && action == Canvas.FIRE) {
+            TextStyle style = getFocusElementStyle();
+            if (style != null) {
+                System.out.println("Action = " + style.getAction());
+                actionListener.actionPerformed(style.getAction());
+                return true;
+            }
+        }
+
+        int next = focusComponentIdx;
+
+        next = (action == Canvas.DOWN || action == Canvas.RIGHT) ? next + 1 :
+               (action == Canvas.UP || action == Canvas.LEFT) ? next - 1 : next;
+
+        next = (next < -1) ? -1 :
+               (next > focusableElems.size()) ? focusableElems.size() : next;
+
+        if (next != focusComponentIdx) {
+            focusComponentIdx = next;
+
+            System.out.println("KEY PRESSED: " + focusComponentIdx);
+
+            // TODO: Need to scroll, to make focusable element visible.
+
+            repaint();
+            return true;
+        }
+
+        return false;
+    }
+
+    private TextStyle getFocusElementStyle() {
+        int idx = focusComponentIdx;
+        return (idx < 0 || idx >= focusableElems.size()) ?
+                null : (TextStyle) focusableElems.elementAt(idx);
+    }
 
     private int doLayout() {
 
         lineFragments.removeAllElements();
+        focusableElems.removeAllElements();
 
         if (text == null || text.length() == 0 || width <= 0) {
             return 0;
@@ -240,7 +295,8 @@ public class TextPane extends Component {
             return startIndex;
         }
 
-        TextStyle style = getCombinedStyle(currentElemStack);;
+        TextStyle style = getCombinedStyle(currentElemStack);
+        int nOldFragments = lineFragments.size();
 
         // TODO BUG: If there a "word" is broken at the middle, that entire
         // word may end up split between to lines, instead of moving all to a new line
@@ -251,6 +307,11 @@ public class TextPane extends Component {
         }
         else {
             addLineImageFragments(style);
+        }
+
+        // Check if a Focusable Line Fragment was added
+        if (style.getAction() != null && nOldFragments != lineFragments.size()) {
+            focusableElems.addElement(style);
         }
 
         return endIndex;
@@ -480,13 +541,12 @@ public class TextPane extends Component {
    /**
     * @see javax.TextStyle.text.AttributeSet
     */
-    static public class TextStyle {
+    static public class TextStyle extends Style {
 
         private int alignment = -1;
         private byte textStyle; // Bitmap of Bold, Italic, Underline, etc
-        private int backgroundColor = -1;
-        private int foregroundColor = -1;
         private Icon icon;
+        private String action;
 
 
         /**
@@ -524,19 +584,19 @@ public class TextPane extends Component {
         }
 
         public int getBackground() {
-            return backgroundColor;
+            return getBackground(ALL);
         }
 
         public void setBackground(int c) {
-            backgroundColor = c;
+            addBackground(c, ALL);
         }
 
         public int getForeground() {
-            return foregroundColor;
+            return getForeground(ALL);;
         }
 
         public void setForeground(int c) {
-            foregroundColor = c;
+            addForeground(c, ALL);
         }
 
         private boolean isBitSet(byte b, int pos) {
@@ -580,8 +640,19 @@ public class TextPane extends Component {
             this.icon = icon;
         }
 
+        public String getAction() {
+            return action;
+        }
+
+        public void setAction(String action) {
+            this.action = action;
+        }
+
         // From MutableAttributeSet
         public void addAttributes(TextStyle attributes) {
+
+            putAll(attributes);
+
             // Merge all text style bits
             textStyle |= attributes.textStyle;
 
@@ -590,12 +661,8 @@ public class TextPane extends Component {
                 alignment = attributes.alignment;
             }
 
-            if (attributes.backgroundColor != -1) {
-                backgroundColor = attributes.backgroundColor;
-            }
-
-            if (attributes.foregroundColor != -1) {
-                foregroundColor = attributes.foregroundColor;
+            if (attributes.action != null) {
+                action = attributes.action;
             }
 
             if (attributes.icon != null) {
