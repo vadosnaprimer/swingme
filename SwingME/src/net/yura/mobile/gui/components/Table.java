@@ -66,7 +66,7 @@ public class Table extends Panel {
      */
     protected Component editorComp;
 
-    int intercellSpacing=1;
+    private int intercellSpacing=1;
 
     /**
      * @see javax.swing.JTable#JTable()

@@ -49,6 +49,7 @@ import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
+import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.io.UTF8InputStreamReader;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.Properties;
@@ -84,7 +85,7 @@ public class XULLoader {
     private Hashtable components = new Hashtable();
     private Hashtable groups = new Hashtable();
     private Component root;
-    private Properties properties;
+    private Properties i18nProperties;
     
     public void swapComponent(String name,Component comp) {
         Component old = find(name);
@@ -115,14 +116,36 @@ public class XULLoader {
     }
 
     public void load(Reader reader,ActionListener listener,Properties properties) throws Exception {
-        this.properties = properties;
+        this.i18nProperties = properties;
         load(reader,listener);
+    }
+
+    /**
+     * read this:<a href="http://thinlet.sourceforge.net/properties.html">Thinlet Properties</a>
+     */
+    public static Hashtable getProperties(String value) {
+        String[] cProperties = StringUtil.split(value, ';');
+        Hashtable properties = new Hashtable(cProperties.length);
+        if( 0 < cProperties.length ) {
+            for( int x=0; x<cProperties.length; x++ ) {
+                String[] property = StringUtil.split(cProperties[x], '=');
+                if( 2 == property.length ) {
+                    properties.put(property[0], property[1]);
+                }
+                //#mdebug
+                else {
+                    System.out.println("property does not have a key and value");
+                }
+                //#enddebug
+            }
+        }
+        return properties;
     }
 
     private String getPropertyText(String key,boolean i18n) {
         if (i18n) {
-            if (properties != null) {
-                String translated = properties.getProperty(key);
+            if (i18nProperties != null) {
+                String translated = i18nProperties.getProperty(key);
                 if (translated != null) {
                     return translated;
                 }
@@ -397,12 +420,18 @@ public class XULLoader {
 
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
-
                 String key = parser.getAttributeName(c);
                 String value = parser.getAttributeValue(c);
                 if ("action".equals(key)) {
                     list.setActionCommand(value);
                     list.addActionListener(listener);
+                }
+                else if("property".equals(key)) {
+                    Hashtable properties = getProperties(value);
+                    String fixedCellHeight = (String)properties.get("fixedCellHeight");
+                    if (fixedCellHeight!=null) {
+                        list.setFixedCellHeight( Integer.parseInt(fixedCellHeight) );
+                    }
                 }
             }
 
@@ -432,18 +461,38 @@ public class XULLoader {
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("textarea")) {
-            TextArea textarea = new TextArea();
 
-            String wrap = parser.getAttributeValue(null, "wrap");
-            if ("true".equals(wrap)) {
-                textarea.setLineWrap(true);
-            }
-            String editable = parser.getAttributeValue(null, "editable");
-            if ("false".equals(editable)) {
-                textarea.setFocusable(false);
+            Class theclass = TextArea.class;
+            boolean wrap = false;
+            boolean focusable = true;
+
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if("property".equals(key)) {
+                    Hashtable properties = getProperties(value);
+                    String plafname = (String)properties.get("plafname");
+                    if ("TextPane".equals(plafname)) {
+                        theclass = TextPane.class;
+                    }
+                }
+                else if ("wrap".equals(key)) {
+                    wrap = "true".equals(value);
+                }
+                else if ("editable".equals(key)) {
+                    focusable = "true".equals(value);
+                }
             }
 
-            readTextComponent(parser,textarea);
+            Component textarea = (Component)theclass.newInstance();
+
+            if (textarea instanceof TextArea) {
+                TextArea textarea2 = (TextArea)textarea;
+                textarea2.setLineWrap(wrap);
+                textarea2.setFocusable(focusable);
+                readTextComponent(parser,textarea2);
+            }
 
             return readUIObject(parser, textarea,listener);
         }
@@ -494,7 +543,6 @@ public class XULLoader {
             boolean scrollable = false;
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
-
                 String key = parser.getAttributeName(c);
                 String value = parser.getAttributeValue(c);
                 if ("border".equals(key)) {
@@ -659,6 +707,17 @@ public class XULLoader {
                 else if ("i18n".equals(key)) {
                     i18n = ("true".equals(value));
                 }
+                else if("property".equals(key)) {
+                    Hashtable properties = getProperties(value);
+                    String constraint = (String)properties.get("constraint");
+                    if (constraint!=null) {
+                        text.setConstraints( Integer.parseInt(constraint) );
+                    }
+                    String maxsize = (String)properties.get("maxsize");
+                    if (maxsize!=null) {
+                        text.setMaxSize( Integer.parseInt(maxsize) );
+                    }
+                }
             }
 
             if (textLabel != null) {
@@ -697,7 +756,6 @@ public class XULLoader {
     }
 
     public GridBagConstraints readUIObject(KXmlParser parser,Component comp,ActionListener listener) throws Exception {
-
 
         GridBagConstraints uiobject = new GridBagConstraints();
         uiobject.component = comp;
@@ -747,42 +805,10 @@ public class XULLoader {
                 comp.setVisible( "true".equals(value) );
             }
             else if("property".equals(key)) {
-                // @see http://thinlet.sourceforge.net/properties.html
-                String[] cProperties = StringUtil.split(value, ';');
-                if( 0 < cProperties.length ) {
-                    for( int x=0; x<cProperties.length; x++ ) {
-                        String[] property = StringUtil.split(cProperties[x], '=');
-                        if( 2 == property.length ) {
-                            if( "plafname".equals(property[0]) ) {
-                                comp.setName( property[1] );
-                            }
-                            else if( "constraint".equals( property[0] ) ) {
-                                if( comp instanceof TextComponent ) {
-                                    ((TextComponent)comp).setConstraints( Integer.parseInt(property[1]) );
-                                }
-                            }
-                            else if( "maxsize".equals( property[0] ) ) {
-                                if( comp instanceof TextComponent ) {
-                                    ((TextComponent)comp).setMaxSize( Integer.parseInt(property[1]) );
-                                }
-                            }
-                            else if( "fixedCellHeight".equals( property[0] ) ) {
-                                if (comp instanceof List) {
-                                    ((List)comp).setFixedCellHeight( Integer.parseInt(property[1]) );
-                                }
-                            }
-                            //#mdebug
-                            else {
-                                System.out.println( "XULLoader.GridBagConstraints() - property key does not exist: " + property[0]);
-                            }
-                            //#enddebug
-                       }
-                       //#mdebug
-                       else {
-                            System.out.println("property does not have a key and value");
-                       }
-                       //#enddebug
-                    }
+                Hashtable properties = getProperties(value);
+                String plafname = (String)properties.get("plafname");
+                if (plafname!=null) {
+                    comp.setName( plafname );
                 }
             }
 

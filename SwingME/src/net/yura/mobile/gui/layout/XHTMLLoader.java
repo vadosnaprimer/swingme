@@ -28,13 +28,14 @@ public class XHTMLLoader {
 
     Panel root;
     TagHandler currentTag;
+    Component currentComponent;
 
     public void gotResult(InputStream resultsStream) {
 
         try {
 
                 root = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                inlineText = root;
+                currentComponent = root;
 
             KXmlParser parser = new KXmlParser();
             parser.setInput(resultsStream, null);
@@ -91,22 +92,18 @@ public class XHTMLLoader {
         underline.setUnderline(true);
     }
 
-//    Panel panel;
-    Component inlineText;
-
-
     private void startInlineSection() {
         TextPane it = new TextPane();
         it.setBorder( new LineBorder(0x00FF0000) );
-        ((Panel)inlineText).add(it);
-        inlineText = it;
+        ((Panel)currentComponent).add(it);
+        currentComponent = it;
     }
     private void endInlineSection() {
         // clear all formatting
-        TextPane text = ((TextPane)inlineText);
-        inlineText = text.getParent();
+        TextPane text = ((TextPane)currentComponent);
+        currentComponent = text.getParent();
         if ("".equals(text.getText().trim())) {
-            ((Panel)inlineText).remove(text);
+            ((Panel)currentComponent).remove(text);
         }
     }
     private void insertComponent(Component c) {
@@ -114,21 +111,21 @@ public class XHTMLLoader {
         // then we would not need to end the TextPane here
         // and we would not need to start it again after its finished
         endInlineSection(); // end current inline Text
-        ((Panel)inlineText).add(c);
-        inlineText = c;
+        ((Panel)currentComponent).add(c);
+        currentComponent = c;
     }
     private void endComponent() {
-        inlineText = inlineText.getParent();
+        currentComponent = currentComponent.getParent();
         startInlineSection();
     }
     private void insertPanel(Panel p,Object con) {
-        ((Panel)inlineText).add(p,con);
-        inlineText = p;
+        ((Panel)currentComponent).add(p,con);
+        currentComponent = p;
         startInlineSection();
     }
     private void endPanel() {
         endInlineSection();
-        inlineText = ((Panel)inlineText).getParent();
+        currentComponent = ((Panel)currentComponent).getParent();
     }
 
 
@@ -162,8 +159,8 @@ System.out.println("START: "+startTag);
                 startFormat(underline);
             }
             else if ("br".equals(startTag)) {
-                if (inlineText instanceof TextPane) { // should be TextComponent
-                    TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+                if (currentComponent instanceof TextPane) { // should be TextComponent
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                     inlineText.setText( inlineText.getText()+"\n" );
                 }
                 //#mdebug
@@ -202,8 +199,8 @@ System.out.println("START: "+startTag);
                     }
                 }
 
-                if (inlineText instanceof ComboBox) {
-                    ComboBox inlineText = (ComboBox)XHTMLLoader.this.inlineText;
+                if (currentComponent instanceof ComboBox) {
+                    ComboBox inlineText = (ComboBox)XHTMLLoader.this.currentComponent;
                     inlineText.getItems().addElement( new Option() );
                     if (selected || inlineText.getItemCount()==1) {
                         // TODO this does not work
@@ -211,8 +208,8 @@ System.out.println("START: "+startTag);
                         inlineText.setSelectedIndex( inlineText.getItemCount()-1 );
                     }
                 }
-                else if (inlineText instanceof List) {
-                    List inlineText = (List)XHTMLLoader.this.inlineText;
+                else if (currentComponent instanceof List) {
+                    List inlineText = (List)XHTMLLoader.this.currentComponent;
                     inlineText.addElement( new Option() );
                     if (selected) {
                         Vector selectedValues = inlineText.getSelectedValues();
@@ -229,6 +226,7 @@ System.out.println("START: "+startTag);
             else if ("input".equals(startTag)) {
                 Class theClass = null;
                 String text = null;
+                int constraints = TextComponent.ANY;
                 for (int c=0;c<count;c++) {
                     String key = parser.getAttributeName(c).toLowerCase();
                     String value = parser.getAttributeValue(c);
@@ -246,6 +244,13 @@ System.out.println("START: "+startTag);
                         else if ("radio".equals(value)) {
                             theClass = RadioButton.class;
                         }
+                        else if ("password".equals(value)) {
+                            theClass = TextField.class;
+                            constraints = TextComponent.PASSWORD;
+                        }
+                        else {
+                            theClass = TextField.class;
+                        }
                     }
                     else if ("name".equals(key)) {
 
@@ -262,6 +267,7 @@ System.out.println("START: "+startTag);
                         }
                         else if (comp instanceof TextComponent) {
                             ((TextComponent)comp).setText(text);
+                            ((TextComponent)comp).setConstraints(constraints);
                         }
                     }
                     insertComponent(comp);
@@ -280,7 +286,7 @@ System.out.println("START: "+startTag);
                 Label l = new Label("*");
                 l.setVerticalAlignment(Graphics.TOP);
                 // we did insertComponent with a panel, so now we know we have a panel here
-                ((Panel)inlineText).add(l, new GridBagConstraints());
+                ((Panel)currentComponent).add(l, new GridBagConstraints());
 
                 insertPanel(new Panel(new FlowLayout(Graphics.VCENTER,0)), new GridBagConstraints());
             }
@@ -354,8 +360,8 @@ System.out.println("START: "+startTag);
         public void processEndElement(KXmlParser parser) {
             String endTag = parser.getName();
             if (style!=null) {
-                if (inlineText instanceof TextPane) {
-                    TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+                if (currentComponent instanceof TextPane) {
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                     int boldend = inlineText.getText().length();
                     inlineText.setCharacterAttributes(styleStart, boldend-styleStart, bold);
                 }
@@ -392,7 +398,7 @@ System.out.println("START: "+startTag);
                         biggest = row.intValue();
                     }
                 }
-                GridBagLayout layout = (GridBagLayout)((Panel)inlineText).getLayout();
+                GridBagLayout layout = (GridBagLayout)((Panel)currentComponent).getLayout();
                 layout.columns = biggest;
                 System.out.println("bigget "+rows+" "+biggest);
                 endComponent();
@@ -435,24 +441,24 @@ System.out.println("START: "+startTag);
             //string = StringUtil.replaceAll(string, "  ", " ");
             //string = StringUtil.trimStart(string);
             System.out.println("    text: \""+string+"\"");
-            if (inlineText instanceof TextPane) { // should be TextComponent
-                TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+            if (currentComponent instanceof TextPane) { // should be TextComponent
+                TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                 inlineText.setText( inlineText.getText()+string );
             }
-            else if (inlineText instanceof ComboBox) {
-                ComboBox inlineText = (ComboBox)XHTMLLoader.this.inlineText;
+            else if (currentComponent instanceof ComboBox) {
+                ComboBox inlineText = (ComboBox)XHTMLLoader.this.currentComponent;
                 addTextToLastOption( inlineText.getItems(),string );
             }
-            else if (inlineText instanceof List) {
-                List inlineText = (List)XHTMLLoader.this.inlineText;
+            else if (currentComponent instanceof List) {
+                List inlineText = (List)XHTMLLoader.this.currentComponent;
                 addTextToLastOption(inlineText.getItems(), string);
             }
-            else if (inlineText instanceof Button) {
-                Button inlineText = (Button)XHTMLLoader.this.inlineText;
+            else if (currentComponent instanceof Button) {
+                Button inlineText = (Button)XHTMLLoader.this.currentComponent;
                 inlineText.setText( inlineText.getText()+string );
             }
-            else if (inlineText instanceof TextArea) {
-                TextArea inlineText = (TextArea)XHTMLLoader.this.inlineText;
+            else if (currentComponent instanceof TextArea) {
+                TextArea inlineText = (TextArea)XHTMLLoader.this.currentComponent;
                 inlineText.setText( inlineText.getText()+string );
             }
             //#mdebug
@@ -464,8 +470,8 @@ System.out.println("START: "+startTag);
         
         private void processRef(KXmlParser parser) {
             System.out.println("ref: "+parser.getName());
-            if (inlineText instanceof TextPane) { // should be TextComponent
-                TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+            if (currentComponent instanceof TextPane) { // should be TextComponent
+                TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                 inlineText.setText( inlineText.getText()+parser.getName() );
             }
             //#mdebug
@@ -477,8 +483,8 @@ System.out.println("START: "+startTag);
 
 
         private void startFormat(TextStyle st) {
-            if (inlineText instanceof TextPane) {
-                TextPane inlineText = (TextPane)XHTMLLoader.this.inlineText;
+            if (currentComponent instanceof TextPane) {
+                TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                 styleStart = inlineText.getText().length();
                 style = st;
             }
