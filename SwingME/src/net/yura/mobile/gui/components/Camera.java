@@ -73,8 +73,8 @@ public class Camera extends Component implements Runnable, PlayerListener
 
 System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
 
-        g.setColor(0x0000FF);
-        g.fillRect(0, 0, getWidth(), getHeight());
+//        g.setColor(0x0000FF);
+//        g.fillRect(0, 0, getWidth(), getHeight());
 
         if (cameraThread == null) {
             cameraThread = new Thread(this);
@@ -194,7 +194,7 @@ System.out.println(".2");
         System.out.println("playerUpdate: " + event);
 
         if (PlayerListener.CLOSED.equals(event)) {
-            DesktopPane.getDesktopPane().repaint();
+            DesktopPane.getDesktopPane().fullRepaint();
         }
     }
 
