@@ -158,6 +158,17 @@ System.out.println("START: "+startTag);
             else if ("u".equals(startTag)) {
                 startFormat(underline);
             }
+            else if ("a".equals(startTag)) {
+                TextStyle linkStyle = new TextStyle();
+                for (int c=0;c<count;c++) {
+                    String key = parser.getAttributeName(c).toLowerCase();
+                    String value = parser.getAttributeValue(c);
+                    if ("href".equals(key)) {
+                        linkStyle.setAction(value);
+                        startFormat(linkStyle);
+                    }
+                }
+            }
             else if ("br".equals(startTag)) {
                 if (currentComponent instanceof TextPane) { // should be TextComponent
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
@@ -280,7 +291,9 @@ System.out.println("START: "+startTag);
                 insertComponent( new TextArea() );
             }
             else if ("ul".equals(startTag) || "ol".equals(startTag)) { // lists
-                insertComponent( new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0)) );
+                Panel p = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
+                p.setBorder( new LineBorder(0x0000FF00) );
+                insertComponent( p );
             }
             else if ("li".equals(startTag)) { // list items
                 Label l = new Label("*");

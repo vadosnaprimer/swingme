@@ -23,6 +23,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 
 /**
  * @author Yura Mamyrin
@@ -56,6 +57,10 @@ public class Menu extends Button {
         public Menu(String string) {
             this();
             setText(string);
+        }
+
+        public void setMenuRenderer(ListCellRenderer renderer) {
+            menuItems.setCellRenderer(renderer);
         }
 
         public void fireActionPerformed() {
