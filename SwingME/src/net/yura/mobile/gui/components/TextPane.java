@@ -592,7 +592,7 @@ public class TextPane extends Component {
         }
 
         public int getForeground() {
-            return getForeground(ALL);;
+            return getForeground(ALL);
         }
 
         public void setForeground(int c) {
