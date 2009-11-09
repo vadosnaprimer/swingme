@@ -69,6 +69,7 @@ import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
+import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.XHTMLLoader;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.util.Option;
@@ -1318,7 +1319,6 @@ for (int c=0;c<4;c++) {
                     addToContentPane(p, null, makeButton("Back","mainmenu"));
                 }
                 else if ("testCamera".equals(actionCommand)) {
-
                     Camera cameraPanel = new Camera();
                     addToContentPane(cameraPanel, makeButton("Capture","cameraCapture"), makeButton("Back","mainmenu"));
                     mainWindow.revalidate();
@@ -1335,21 +1335,23 @@ for (int c=0;c<4;c++) {
                     Camera cameraPanel = (Camera) getSelectedFrame().getMostRecentFocusOwner();
                     byte[] imgData = cameraPanel.getSnapshotData();
 
-                    Label l;
+                    Label l, d = null;
                     if (imgData == null) {
                         l = new Label("Camera Capture Failed!");
                     } else {
                         Image img = Image.createImage(imgData, 0, imgData.length);
+                        d = new Label("Dimensions -  h:"+new Integer(img.getHeight()).toString()+ ", w:" + (new Integer(img.getWidth()).toString()));
                         l = new Label(new Icon(img));
                     }
                     Panel p = new Panel();
+                    p.setLayout(new BoxLayout(3));
+                    p.add(d);
                     p.add(l);
-
+                    
                     addToContentPane(p, null, makeButton("Back","mainmenu"));
                 }
 		else {
-
-			System.out.println("Unknown Command: "+actionCommand);
+                    System.out.println("Unknown Command: "+actionCommand);
 		}
 
 	}
