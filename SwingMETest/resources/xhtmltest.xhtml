@@ -11,6 +11,34 @@
 <input type="button" value="hello"/>
 dfghdfghfdh
 
+
+<br/>
+
+<input class="input" type="checkbox" title="Select what colors you like" name="chk0" id="chk0_0" value="red"/><label for="chk0_0">&nbsp;red</label>
+<input class="input" type="checkbox" title="Select what colors you like" name="chk1" id="chk1_1" value="green"/><label for="chk1_1">&nbsp;green</label>
+
+<br/>
+
+<input class="input" type="radio" title="Choose from one of the options" name="radAge" id="radAge4_0" value="Under30"/><label for="radAge4_0">&nbsp;Under 30</label>
+<input class="input" type="radio" title="Choose from one of the options" name="radAge" id="radAge4_1" value="Over30"/><label for="radAge4_1">&nbsp;Over 30</label>
+
+
+<table border="1">
+  <tr>
+    <th rowspan="2">Month</th>
+    <th>Savings</th>
+    <th>Profit</th>
+  </tr>
+  <tr>
+    <td colspan="2">$100</td>
+  </tr>
+  <tr>
+    <td>Feb</td>
+    <td>$100</td>
+    <td>$1</td>
+  </tr>
+</table>
+
         <ul>
             <li>one</li>
             <li>two <input type="button" value="hi"/>
@@ -44,22 +72,29 @@ dfghdfghfdh
     <td>$1</td>
   </tr>
 </table>
+-->
         
         <h2>     heading two</h2>
         <h3>  &nbsp;   heading three</h3>
         <h4>  &#160;   heading four</h4>
         <p>Please <i> </i><b>Choose</b> a Day:
             <select name="day">
-                <option selected="selected">Monday</option>
-                <option>Tuesday</option>
+                <option>Monday</option>
+                <option selected="selected">Tuesday</option>
                 <option>Wednesday</option>
             </select>
+
+            <select name="day" size="2">
+                <option>Monday</option>
+                <option selected="selected">Tuesday</option>
+                <option selected="selected">Wednesday</option>
+            </select>
+
             <br /><br />
             <textarea id="comments" name="comments" rows="3" cols="20">type here</textarea>
             <button name="action" value="send" type="submit">Send</button>
         </p>
 
-        
--->
+
     </body>
 </html>
