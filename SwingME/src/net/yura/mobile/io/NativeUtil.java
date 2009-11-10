@@ -12,6 +12,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Image;
+import net.yura.mobile.util.ImageUtil;
 
 public class NativeUtil {
 
@@ -643,7 +644,17 @@ public class NativeUtil {
     }
 
 
-
+    public static InputStream getInputStreamFromFileConnector(final String fileName){
+        InputStream is = null;
+        try {
+            is = ((FileConnection)Connector.open(fileName,Connector.READ)).openDataInputStream();
+        } catch (Exception ex) {
+            //#debug
+            ex.printStackTrace();
+            return null;
+        }
+        return is;
+    }
 
 
     public static Image getThumbnailFromFile(final String fileName) {
@@ -685,6 +696,7 @@ public class NativeUtil {
 
         dis.read();            //SOI marker:ff
         dis.read();            //SOI marker:d8
+
         while (dis.read() == 0xFF)  //APP1 marker: FF
         {
             int marker = dis.read();    //APP1 marker: E1
@@ -720,7 +732,6 @@ public class NativeUtil {
             }
         }
         dis.close();
-        
         return thumbData;
     }
 
