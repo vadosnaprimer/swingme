@@ -138,14 +138,18 @@ System.out.println(".2");
                     if (player == null) {
                         Thread.yield();
                         init();
+
+                        // WORK-AROUND: Some SE phones, will rotate the view                        // finder if init video is called with player state                        // bigger than realise (i.e. prefetch())                        player = Manager.createPlayer(playerLocator);
                         player = Manager.createPlayer(playerLocator);
-                        player.prefetch();
+                        player.realize();
                         player.addPlayerListener(this);
 
                         videoCtrl = initVideoControl(player);
 
                         player.start();
 
+                        // WORK-AROUND: some SE phones don't display the view
+                        // finder, if there is no "Canvas transition"
                         Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
                     }
 
@@ -160,16 +164,6 @@ System.out.println(".2");
                     }
 
                     uiLock.wait(2500);
-
-//System.out.println("ASK PAINT");
-//                    repaint();
-//                    Canvas playerCanvas = DesktopPane.getDesktopPane();
-//                    playerCanvas.repaint();
-//                    playerCanvas.serviceRepaints();
-//
-//                    Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
-//
-//System.out.println("ASK PAINT2");
                 }
             }
         }
@@ -241,7 +235,7 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             if ("image".equals(contentTypes[i])) {
                 playerLocator = "capture://image";
                 snapshotEncoding += "&width=320&height=240";
-//                break;
+                break;
             }
         }
     }
@@ -256,8 +250,6 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             Canvas playerCanvas = DesktopPane.getDesktopPane();
 
             videoCtrl.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, playerCanvas);
-            videoCtrl.setVisible(false);
-            videoCtrl.setDisplayFullScreen(false);
             videoCtrl.setDisplayLocation(getXOnScreen(), getYOnScreen());
             videoCtrl.setDisplaySize(getWidth(), getHeight());
 
