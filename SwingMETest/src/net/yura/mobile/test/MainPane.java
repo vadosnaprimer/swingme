@@ -21,12 +21,13 @@ import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import javax.microedition.lcdui.Font;
+//import javax.microedition.lcdui.Font;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
@@ -51,7 +52,6 @@ import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
-import net.yura.mobile.gui.layout.XULLoader;
 
 
 /**
@@ -60,17 +60,12 @@ import net.yura.mobile.gui.layout.XULLoader;
 public class MainPane extends DesktopPane implements ActionListener {
 
 	private Panel mainmenu;
-        private Panel componentTest;
-        private Panel componentTest2;
         private Panel info;
         private Panel border;
-        private Panel tabPanel;
-        private Menu menu;
         private Menu mainMenu;
-        private Panel tableTest;
 
-        private Icon image;
-        private TextArea infoLabel,viewText,loadPanel;
+        public Icon image;
+        private TextArea infoLabel,loadPanel;
 	private Vector images;
 	private Frame mainWindow;
 
@@ -99,7 +94,10 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                 metal = new MetalLookAndFeel();
                 //setLookAndFeel( metal );
-                setLookAndFeel( new NimbusLookAndFeel() );
+//                Hashtable settings = new Hashtable();
+//                settings.put("font", new Font("/font/test_0.png", "/font/test.fnt"));
+//                settings.put("Button.foreground", new Integer(0x00ff0000));
+                setLookAndFeel( new NimbusLookAndFeel(16) );
 
                 mainWindow = new Frame();
 
@@ -146,7 +144,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
         public abstract static class Section extends Panel implements ActionListener {
 
-            MainPane mainPane;
+            protected MainPane mainPane;
 
             public Section() {
                 super( new FlowLayout( Graphics.VCENTER ) );
@@ -175,19 +173,23 @@ public class MainPane extends DesktopPane implements ActionListener {
                 add(infoButton);
             }
 
-            public void addToScrollPane(Panel p) {
+            public void addToScrollPane(Component p,Button b) {
+                mainPane.addToScrollPane(p, b, makeButton("Back","openSection")) ;
 
-                Button button = new Button("Back");
-                button.setActionCommand("openSection");
-                button.addActionListener(this);
-
-                mainPane.addToScrollPane(p, null , button) ;
-
+            }
+            public void addToContentPane(Component p,Button b) {
+                mainPane.addToContentPane(p, b, makeButton("Back","openSection")) ;
             }
 
             public abstract void createTests();
             public abstract void openTest(String id);
-
+            
+            public Button makeButton(String label,String action) {
+                Button button = new Button(label);
+                button.setActionCommand(action);
+                button.addActionListener(this);
+                return button;
+            }
         }
 
 	public void actionPerformed(String actionCommand) {
@@ -206,26 +208,24 @@ public class MainPane extends DesktopPane implements ActionListener {
 				Label helloWorld = new Label("Test App Menu");
 				mainmenu.add(helloWorld);
 
-                                addSection("Component",new ComponentTest());
-                                addSection("Text",new TextTest());
-                                addSection("Layout",new LayoutTest());
-                                addMainMenuButton("Border Test","borderTest");
-                                addSection("ServiceLink",new ServiceLinkTest());
-                                addSection("BlueTooth",new BlueToothTest());
+                                // add test sections
 
                                 addMainMenuButton("Info","info");
-				addMainMenuButton("Load","loadpanel");
-				addMainMenuButton("Error","throwerror");
 
+                                addSection("Component Test",new ComponentTest());
+                                addSection("Text Test",new TextTest());
+                                addSection("Layout Test",new LayoutTest());
 
+                                addMainMenuButton("Border Test","borderTest");
+                                addMainMenuButton("Font Test","fontTest");
 
+                                addSection("ServiceLink Test",new ServiceLinkTest());
+                                addSection("BlueTooth Test",new BlueToothTest());
 
-                                
+				addMainMenuButton("Load Images","loadpanel");
+				addMainMenuButton("Throw Error","throwerror");
 
-
-                                                               
-
-                                
+                                // add theme swap test
                                 
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
@@ -254,16 +254,16 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("aetherGreen".equals(actionCommand)) {
                     Hashtable styles = new Hashtable();
                     styles.put("nimbusBase", new Integer(0x00358c33));
-                    NimbusLookAndFeel green = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
-                    setupNewLookAndFeel( green );
+                    //NimbusLookAndFeel green = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
+                    //setupNewLookAndFeel( green );
                 }
                 else if ("aetherCharcoal".equals(actionCommand)) {
                     Hashtable styles = new Hashtable();
                     styles.put("nimbusBase", new Integer(0x00666666));
                     styles.put("nimbusGreyBlue", new Integer(0x00999999));
                     styles.put("control", new Integer(0x00bbbbbb));
-                    NimbusLookAndFeel red = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
-                    setupNewLookAndFeel( red );
+                    //NimbusLookAndFeel red = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
+                    //setupNewLookAndFeel( red );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
 
@@ -288,56 +288,6 @@ public class MainPane extends DesktopPane implements ActionListener {
                 }
                 else if ("synthTheme5".equals(actionCommand)) {
                     loadSynthSkin("/lg/synthLG.xml");
-                }
-                else if ("windowTest1".equals(actionCommand)) {
-
-                    Frame test1 = new Frame("Window Title");
-                    test1.setIconImage(image);
-                    //test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
-
-                    //test1.add(new Label("LALAL TEST 1"));
-                    //test1.setBackground(0x00FFFFFF);
-
-                    try {
-                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
-                        test1.add( loader.getRoot() );
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-
-
-
-                    // Test that pack method works too
-                    //test1.pack();
-
-                    //MenuBar bar = new MenuBar();
-
-                    Menu foo = new Menu("foo");
-                    foo.setMnemonic(KeyEvent.KEY_SOFTKEY1);
-                    foo.add( new Button("hehehehe :)") );
-                    //bar.add(foo);
-
-                Button close = new Button("Close");
-                close.setActionCommand(Frame.CMD_CLOSE);
-                // hack to avoid having to make a new action listoner
-                close.addActionListener(test1.getTitleBar());
-                close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
-
-                Panel p = new Panel( new FlowLayout() );
-                p.add(foo);
-                p.add(close);
-
-                    test1.add(p,Graphics.BOTTOM);
-
-                    test1.setMaximizable(false);
-                    test1.setClosable(false);
-
-                    test1.setClosable(true);
-                    test1.setMaximizable(true);
-
-                    test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
-                    test1.setVisible(true);
-
                 }
 
                 else if ("info".equals(actionCommand)) {
@@ -489,12 +439,22 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 			addToScrollPane(border, null , makeButton("Back","mainmenu") );
 		}
+                else if ("fontTest".equals(actionCommand)) {
+                    Font font = new Font("/font/test_0.png", "/font/test.fnt");
 
+                    Panel p = new Panel( new FlowLayout( Graphics.VCENTER ) );
+
+                    Button l1 = new Button("Font Test");
+                    l1.setFont(font);
+
+                    p.add(l1);
+
+
+                    addToScrollPane(p, null, makeButton("Back","mainmenu") );
+                }
 		else if ("throwerror".equals(actionCommand)) {
 			throw new RuntimeException("some bad error happened!");
 		}
-
-
 		else {
                     System.out.println("Unknown Command: "+actionCommand);
 		}
@@ -503,7 +463,6 @@ public class MainPane extends DesktopPane implements ActionListener {
 
         private Button makeButton(String label,String action) {
             Button button = new Button(label);
-            //System.out.println(action+" -> "+this);
             button.setActionCommand(action);
             button.addActionListener(this);
             return button;
@@ -595,16 +554,6 @@ public class MainPane extends DesktopPane implements ActionListener {
     private void setupNewLookAndFeel(LookAndFeel theme) {
         setLookAndFeel(theme);
 
-        componentTest=null;
-        componentTest2=null;
-        info=null;
-        border=null;
-        tabPanel=null;
-        menu=null;
-        tableTest=null;
-        infoLabel=null;
-        viewText=null;
-        loadPanel=null;
 
         // not these as we have these open now
         //mainMenu=null;

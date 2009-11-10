@@ -5,6 +5,11 @@
 
 package net.yura.mobile.test;
 
+import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.OptionPane;
+import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.test.MainPane.Section;
 
 /**
@@ -12,6 +17,8 @@ import net.yura.mobile.test.MainPane.Section;
  * @author Administrator
  */
 public class LayoutTest  extends Section {
+
+    private Frame xuldialog;
 
     public void createTests() {
 
@@ -22,13 +29,9 @@ public class LayoutTest  extends Section {
                                 addTest("XUL demodialog","xulTest3");
     }
 
-    public void openTest(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+    public void openTest(String actionCommand) {
 
-/*
-
-                else if ("xulTest".equals(actionCommand)) {
+                if ("xulTest".equals(actionCommand)) {
 
                     Panel panel = null;
 
@@ -42,7 +45,7 @@ public class LayoutTest  extends Section {
                         ex.printStackTrace();
                     }
 
-                    addToScrollPane(panel, null, makeButton("Back","mainmenu") );
+                    addToScrollPane(panel, null );
                 }
                 else if ("xulTest1".equals(actionCommand)) {
 
@@ -58,7 +61,7 @@ public class LayoutTest  extends Section {
                         ex.printStackTrace();
                     }
 
-                    addToScrollPane(panel, null, makeButton("Back","mainmenu") );
+                    addToScrollPane(panel, null );
                 }
                 else if ("xulTest2".equals(actionCommand)) {
 
@@ -110,5 +113,5 @@ System.out.println("open file browser");
                     xuldialog.pack();
                     xuldialog.setVisible(true);
                 }
-*/
+    }
 }

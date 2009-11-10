@@ -36,8 +36,9 @@ public class TextTest extends Section {
     public void createTests() {
                                 // text
                                 addTest("TextField Test","componentTest2");
-                                addTest("Text Pane","textPane");
 				addTest("View Text","viewText");
+                                addTest("Text Pane","textPane");
+                                addTest("View XHTML","viewXHTML");
     }
 
     public void openTest(String actionCommand) {
@@ -73,8 +74,10 @@ public class TextTest extends Section {
                             componentTest2.add(component2);
 
                         }
-                        addToScrollPane(componentTest2);
+                        addToScrollPane(componentTest2,null);
                 }
+
+
 		else if ("viewText".equals(actionCommand)) {
 
 			//if (viewText==null) {
@@ -82,29 +85,6 @@ public class TextTest extends Section {
 
 StringBuffer buf = new StringBuffer();
 
-XHTMLLoader loader = null;
-
-InputStream inputStreamTxt=null;
-try {
-	inputStreamTxt = this.getClass().getResourceAsStream("/xhtmltest.xhtml"); // xhtmltest // "/test2.xhtml"
-        loader = new XHTMLLoader();
-        loader.gotResult(inputStreamTxt);
-	//int c ;
-	//while ((c = inputStreamTxt.read()) != -1)
-	//{buf.append((char)c);}
-}
-catch(Exception ex) {
-	ex.printStackTrace();
-	buf.append(ex.toString());
-}
-finally {
-    if (inputStreamTxt!=null) {
-	try {
-		inputStreamTxt.close();
-	}
-	catch(Exception ex) { }
-    }
-}
 
 //* wrap testing
 for (int c=0;c<4;c++) {
@@ -138,14 +118,9 @@ for (int c=0;c<4;c++) {
                         edit.addActionListener(this);
                         edit.setSelected( viewText.isFocusable() );
 
-                        Component xhtml = loader.getRoot();
-                        System.out.println("obre "+xhtml);
-
-			//addToContentPane(p, makeButton("Back","mainmenu") , edit );
-                        //addToScrollPane( xhtml );
+			addToContentPane(p, edit );
 
 		}
-
                 else if ("open_text_edit".equals(actionCommand)) {
 
                     viewText.setFocusable( !viewText.isFocusable() );
@@ -153,7 +128,54 @@ for (int c=0;c<4;c++) {
                     // TODO mainWindow.setupFocusedComponent();
 
                 }
+		else if ("viewXHTML".equals(actionCommand)) {
 
+			//if (viewText==null) {
+
+
+XHTMLLoader loader = null;
+
+InputStream inputStreamTxt=null;
+try {
+	inputStreamTxt = this.getClass().getResourceAsStream("/xhtmltest.xhtml"); // xhtmltest // "/test2.xhtml"
+        loader = new XHTMLLoader();
+        loader.gotResult(inputStreamTxt);
+	//int c ;
+	//while ((c = inputStreamTxt.read()) != -1)
+	//{buf.append((char)c);}
+}
+catch(Exception ex) {
+	ex.printStackTrace();
+}
+finally {
+    if (inputStreamTxt!=null) {
+	try {
+		inputStreamTxt.close();
+	}
+	catch(Exception ex) { }
+    }
+}
+
+
+				//viewText.setLineWrap(true); // this is the BAD order to do this
+							    // as it needs to work out the size twice
+			//}
+
+/* THIS wont work, but it wont work in Swing either!!
+
+			viewText.setBorder( new EmptyBorder(10,10,10,10) );
+			Panel p = new Panel( new BorderLayout() );
+			p.add(viewText);
+			p.add(new Label("Label"),Graphics.TOP);
+*/
+
+                        Component xhtml = loader.getRoot();
+                        System.out.println("obre "+xhtml);
+
+			//addToContentPane(p, makeButton("Back","mainmenu") , edit );
+                        addToScrollPane( xhtml ,null);
+
+		}
                 else if ("textPane".equals(actionCommand)) {
 
                     String text = "Lorem ipsum dolor sit amet, consectetur " +
@@ -233,7 +255,7 @@ for (int c=0;c<4;c++) {
                     p.setBackground(0xFFFFFF);
                     textPane.setBackground(0xFFFFFF);
 
-                    //addToContentPane(p);
+                    addToContentPane(p,null);
                 }
 
     }

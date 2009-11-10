@@ -97,7 +97,7 @@ public class BlueToothTest extends Section {
                         infoLabel = new TextArea("Bluetooth Server Starting\n",Graphics.LEFT);
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
-     			addToScrollPane(info);
+     			addToScrollPane(info,null);
                         javax.bluetooth.UUID uuid = new javax.bluetooth.UUID("D6F7CD62B97111DE8F1720ED55D89593", false);
                         if (btServer == null) {
                             btServer = new MyBluetoothServer();
@@ -113,7 +113,7 @@ public class BlueToothTest extends Section {
                         infoLabel = new TextArea("Bluetooth Server Send\n",Graphics.LEFT);
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
-     			addToScrollPane(info);
+     			addToScrollPane(info,null);
                         if (btServer != null) {
                             btServer.send();
                         } else {
@@ -129,7 +129,7 @@ public class BlueToothTest extends Section {
                         infoLabel = new TextArea("Bluetooth Client Starting\n",Graphics.LEFT);
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
-     			addToScrollPane(info);
+     			addToScrollPane(info,null);
                         javax.bluetooth.UUID uuid = new javax.bluetooth.UUID("D6F7CD62B97111DE8F1720ED55D89593", false);
                         if (btClient == null) {
                             btClient = new MyBluetoothClient();
@@ -145,7 +145,7 @@ public class BlueToothTest extends Section {
                         infoLabel = new TextArea("Bluetooth Client Send\n",Graphics.LEFT);
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
-     			addToScrollPane(info);
+     			addToScrollPane(info,null);
                         if (btClient != null) {
                             btClient.send();
                         } else {
@@ -161,7 +161,7 @@ public class BlueToothTest extends Section {
                         infoLabel = new TextArea("Bluetooth Discovery Starting\n",Graphics.LEFT);
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
-     			addToScrollPane(info);
+     			addToScrollPane(info,null);
                         if (btDiscovery == null)
                             btDiscovery = new MyBTDiscovery();
                         infoLabel.append("\nAbout to start");

@@ -5,13 +5,51 @@
 
 package net.yura.mobile.test;
 
+import java.util.Vector;
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
+import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.ButtonGroup;
+import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.celleditor.DefaultCellEditor;
+import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
+import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.Camera;
+import net.yura.mobile.gui.components.CheckBox;
+import net.yura.mobile.gui.components.ComboBox;
+import net.yura.mobile.gui.components.FileChooser;
+import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.Label;
+import net.yura.mobile.gui.components.List;
+import net.yura.mobile.gui.components.Menu;
+import net.yura.mobile.gui.components.OptionPane;
+import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.RadioButton;
+import net.yura.mobile.gui.components.ScrollPane;
+import net.yura.mobile.gui.components.Spinner;
+import net.yura.mobile.gui.components.TabbedPane;
+import net.yura.mobile.gui.components.Table;
+import net.yura.mobile.gui.components.TextArea;
+import net.yura.mobile.gui.components.TextField;
+import net.yura.mobile.gui.layout.BorderLayout;
+import net.yura.mobile.gui.layout.BoxLayout;
+import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.test.MainPane.Section;
+import net.yura.mobile.util.Option;
 
 /**
  *
  * @author Administrator
  */
 public class ComponentTest  extends Section{
+
+    private Panel componentTest;
+    private Camera cameraPanel;
+    private Panel tableTest;
+    private Menu testMain;
+    private Panel tabPanel;
 
     public void createTests() {
             addTest("Component Test","componentTest");
@@ -24,33 +62,30 @@ public class ComponentTest  extends Section{
             addTest("Test Camera","testCamera");
     }
 
-    public void openTest(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-/*
+    public void openTest(String actionCommand) {
 
-                else if ("componentTest".equals(actionCommand)) {
+                if ("componentTest".equals(actionCommand)) {
 
 			if (componentTest==null) {
 
 				componentTest = new Panel( new FlowLayout(Graphics.VCENTER) );
 
-                                Menu testMain = new Menu("Menu");
+                                testMain = new Menu("Menu");
 
-                                addMenuItem(testMain,"t1","test 1");
-                                addMenuItem(testMain,"t2","test 2");
-                                addMenuItem(testMain,"t3","test 3");
+                                testMain.add(new Button("test 1"));
+                                testMain.add(new Button("test 2"));
+                                testMain.add(new Button("test 3"));
 
                                 Menu testMain2 = new Menu("sub Menu");
 
-                                addMenuItem(testMain2,"t1","test 4");
-                                addMenuItem(testMain2,"t2","test 5");
-                                addMenuItem(testMain2,"t3","test 6");
+                                testMain2.add(new Button("test 4"));
+                                testMain2.add(new Button("test 5"));
+                                testMain2.add(new Button("test 6"));
 
                                 testMain.add(testMain2);
 
 				componentTest.add( new Label("a Label") );
-                                if (image!=null) { componentTest.add( new Label( image ) ); }
+                                if (mainPane.image!=null) { componentTest.add( new Label( mainPane.image ) ); }
                                 Button b = new Button("a Button");
                                 b.setToolTipText("A ToolTip for a button");
 				componentTest.add( b );
@@ -68,9 +103,9 @@ public class ComponentTest  extends Section{
                                 items.addElement(null);
                                 items.addElement("");
                                 items.addElement("One");
-                                items.addElement(new Option("2","Two",image));
+                                items.addElement(new Option("2","Two",mainPane.image));
                                 items.addElement(new Option("3","Three option"));
-                                items.addElement(new Option("4",null,image,"(no text)"));
+                                items.addElement(new Option("4",null,mainPane.image,"(no text)"));
 
                                 ComboBox disabledCombo = new ComboBox(items);
                                 disabledCombo.setFocusable(false);
@@ -97,21 +132,73 @@ public class ComponentTest  extends Section{
                                 componentTest.add(email);
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
 
-                                menu = new Menu("Menu");
+                                Menu menu = new Menu("Menu");
                                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                                 menu.add(new Button("bob"));
 
                                 Menu menu2 = new Menu("Sub");
                                 //menu2.addActionListener(this);
                                 menu2.add(new Button("fred"));
-                                addMenuItem(menu2,"action","item (will close menu)");
+                                menu2.add(new Button("item 2"));
                                 menu.add(menu2);
 
 			}
 
-			addToScrollPane(componentTest, menu, makeButton("Back","mainmenu") );
+			addToScrollPane(componentTest, testMain );
 
 		}
+
+               else if ("windowTest1".equals(actionCommand)) {
+
+                    Frame test1 = new Frame("Window Title");
+                    test1.setIconImage(mainPane.image);
+                    //test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
+
+                    //test1.add(new Label("LALAL TEST 1"));
+                    //test1.setBackground(0x00FFFFFF);
+
+                    try {
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
+                        test1.add( loader.getRoot() );
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+
+
+                    // Test that pack method works too
+                    //test1.pack();
+
+                    //MenuBar bar = new MenuBar();
+
+                    Menu foo = new Menu("foo");
+                    foo.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                    foo.add( new Button("hehehehe :)") );
+                    //bar.add(foo);
+
+                Button close = new Button("Close");
+                close.setActionCommand(Frame.CMD_CLOSE);
+                // hack to avoid having to make a new action listoner
+                close.addActionListener(test1.getTitleBar());
+                close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+
+                Panel p = new Panel( new FlowLayout() );
+                p.add(foo);
+                p.add(close);
+
+                    test1.add(p,Graphics.BOTTOM);
+
+                    test1.setMaximizable(false);
+                    test1.setClosable(false);
+
+                    test1.setClosable(true);
+                    test1.setMaximizable(true);
+
+                    test1.setBounds(10, 10, getWidth()-20, getHeight()/2);
+                    test1.setVisible(true);
+
+                }
+
                 else if ("scrollTest1".equals(actionCommand)) {
 
                         Panel scrollTest = new Panel(new FlowLayout(Graphics.VCENTER));
@@ -132,7 +219,7 @@ public class ComponentTest  extends Section{
                         scrollTest.add(new Button("BOB2") );
                         scrollTest.add(areas[2]);
 
-			addToScrollPane(scrollTest, menu, makeButton("Back","mainmenu") );
+			addToScrollPane(scrollTest,null);
                 }
                 else if ("tabTest".equals(actionCommand)) {
 
@@ -213,15 +300,15 @@ public class ComponentTest  extends Section{
                                 tab4.add(new ScrollPane(new List(anotherlist,new DefaultListCellRenderer(),false)));
 
                                 tabbedPane.add(tab1);
-                                tabbedPane.addTab("TAB 2", image, tab2,"i am a tooltip");
+                                tabbedPane.addTab("TAB 2", mainPane.image, tab2,"i am a tooltip");
                                 tabbedPane.addTab("eee", new ScrollPane(tab3));
-                                tabbedPane.addTab(null,image,tab4);
+                                tabbedPane.addTab(null,mainPane.image,tab4);
 
                                 tabPanel = tabbedPane;
 
 			}
 
-			addToContentPane(tabPanel, null , makeButton("Back","mainmenu") );
+			addToContentPane(tabPanel, null  );
 		}
                 else if ("tableTest".equals(actionCommand)) {
 
@@ -299,7 +386,7 @@ public class ComponentTest  extends Section{
                         //table.setIntercellSpacing(5);
 		    }
 
-                    addToScrollPane(tableTest, null , makeButton("Back","mainmenu") );
+                    addToScrollPane(tableTest, null );
 
                 }
                 else if ("optionPaneTest".equals(actionCommand)) {
@@ -317,20 +404,17 @@ public class ComponentTest  extends Section{
                 }
 
                 else if ("testCamera".equals(actionCommand)) {
-                    Camera cameraPanel = new Camera();
-                    addToContentPane(cameraPanel, makeButton("Capture","cameraCapture"), makeButton("Back","mainmenu"));
-                    mainWindow.revalidate();
+                    cameraPanel = new Camera();
+                    addToContentPane(cameraPanel, makeButton("Capture","cameraCapture") );
                 }
                 else if ("cameraCapture".equals(actionCommand)) {
-                    System.out.println("cameraCapture");
-                    Camera cameraPanel = (Camera) getSelectedFrame().getMostRecentFocusOwner();
+
                     cameraPanel.setActionListener(this);
                     cameraPanel.setActionCommand("cameraCaptureDone");
                     cameraPanel.capture();
                 }
                 else if ("cameraCaptureDone".equals(actionCommand)) {
-                    System.out.println("cameraCaptureDone");
-                    Camera cameraPanel = (Camera) getSelectedFrame().getMostRecentFocusOwner();
+
                     byte[] imgData = cameraPanel.getSnapshotData();
 
                     Label l, d = null;
@@ -346,7 +430,7 @@ public class ComponentTest  extends Section{
                     p.add(d);
                     p.add(l);
 
-                    addToContentPane(p, null, makeButton("Back","mainmenu"));
+                    addToContentPane(p,null);
                 }
-                */
+    }
 }
