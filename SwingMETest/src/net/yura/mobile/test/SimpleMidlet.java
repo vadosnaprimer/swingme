@@ -26,7 +26,6 @@ import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
-import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 

@@ -15,7 +15,7 @@
 		<mkdir dir="build"/>
 		<mkdir dir="dist"/>
 
-		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="lib/midletrunner.jar:lib/SwingME.jar"/>
+		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="lib/midletrunner.jar:lib/opt.jar:lib/SwingME.jar"/>
 		<copy todir="build">
 			<fileset dir="resources" includes="**/*.*"/>
 		</copy>
