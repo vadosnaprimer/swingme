@@ -40,14 +40,20 @@ public class Font {
 	private int spaceWidth;
 	private byte characterWidth[];
 	private int characterHeight[];
-	private Image characterImage;
+
 	private int characterSpacing;
+
+	private Hashtable imageTable;
+        
+        
+	private int[] colors;
+        private Image characterImage[];
+        
+//	private int color;
+
+	private boolean numbermode;
 	private Hashtable kerning = new Hashtable();
 	private javax.microedition.lcdui.Font systemFont = null;
-	private Hashtable imageTable;
-	private int[] colors;
-	private int color;
-	private boolean numbermode;
 
 	public Font() {
 		this(javax.microedition.lcdui.Font.getDefaultFont());
@@ -73,10 +79,16 @@ public class Font {
 			InputStream is = getClass().getResourceAsStream(descriptor);
 			DataInputStream dis = new DataInputStream(is);
 
-			Image image = Image.createImage(getClass().getResourceAsStream(imagePath));
+                        this.colors = colors;
+                        characterImage = new Image[colors.length];
+                        for (int c=0;c<colors.length;c++) {
 
-			// Set loaded character set images as default
-			characterImage = image;
+                            Image image = Image.createImage(getClass().getResourceAsStream(imagePaths[c]));
+
+                            // Set loaded character set images as default
+                            characterImage[c] = image;
+
+                        }
 
 			// header
 			dis.skipBytes(4);
@@ -139,7 +151,7 @@ public class Font {
 			// for any ofther color we need to use the imageUtil.changeColor method to recolor
 
 
-			color = 0;
+			//color = 0;
 
 			// Kerning
 			if (dis.available() > 0) {
@@ -218,6 +230,7 @@ public class Font {
 
 			imageTable = new Hashtable();
 
+                        characterImage = new Image[colors.length];
 			for (int c=0;c<colorsText.length;c++) {
 
 				String imageName = baseDir + newfont.getProperty("image."+colorsText[c]);
@@ -230,14 +243,15 @@ public class Font {
 
 				colors[c] = Integer.parseInt(colorsText[c],16);
 
-				imageTable.put( new Integer(colors[c])	, fontimage);
+                                characterImage[c] = fontimage;
+				//imageTable.put( new Integer(colors[c])	, fontimage);
 
 			}
 
 			String numbermodeString = newfont.getProperty("numbermode");
 			numbermode = "T".equals(numbermodeString);
 
-			construct( (Image) imageTable.get( new Integer(colors[0]) ), offsetsint);
+			construct( characterImage[0], offsetsint);
 
 			setSpaceWidth( Integer.parseInt( newfont.getProperty("space") ) );
 			setCharacterSpacing( Integer.parseInt( newfont.getProperty("spacing") ) );
@@ -256,7 +270,7 @@ public class Font {
 		int i, x, y, cutoff, numCharacters;
 
 		// Set the charIndex data imagePath.
-		characterImage = image;
+		//characterImage = image;
 
 		// Set the widths array.
 		characterWidth = widths;
@@ -270,12 +284,11 @@ public class Font {
                 offsetY = new int[numCharacters];
 
 		x = y = 0;
-		cutoff = characterImage.getWidth();
+		cutoff = image.getWidth();
 
-		for(i = 0; i < numCharacters; i++)
-		{
-			if((x + characterWidth[i]) > cutoff)
-			{
+		for(i = 0; i < numCharacters; i++) {
+
+			if((x + characterWidth[i]) > cutoff) {
 				x = 0;
 				y++;
 			}
@@ -290,7 +303,12 @@ public class Font {
 		}
 
 		// Get the rowHeight
-		height = characterImage.getHeight() / (y + 1);
+		height = image.getHeight() / (y + 1);
+
+                characterHeight = new int[numCharacters];
+                for(i = 0; i < numCharacters; i++) {
+                    characterHeight[i] = height;
+                }
 
 		// Go back through and calculate the true Y positions and set rowHeight.
 		for(i = 0; i < numCharacters; i++)
@@ -313,41 +331,16 @@ public class Font {
 		}
 	}
 
-	/*        private Image colorize(Image original, int newColor) {
-	int[] rgba = new int[original.getWidth()*original.getHeight()];
-	original.getRGB(rgba, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
+	private Image colorize(Image original, int newColor) {
+            int[] rgba = new int[original.getWidth()*original.getHeight()];
+            original.getRGB(rgba, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
 
-	for (int i=0; i< rgba.length;i++) {
-	int alpha = ((rgba[i] >> 24) & 0xFF);
-	rgba[i] = (newColor | (alpha << 24));
-	}
+            for (int i=0; i< rgba.length;i++) {
+                int alpha = ((rgba[i] >> 24) & 0xFF);
+                rgba[i] = (newColor | (alpha << 24));
+            }
 
-	Image coloured = Image.createRGBImage(rgba, original.getWidth(), original.getHeight(), true);
-
-	return coloured;
-	}
-	 */
-	private void setColor(int a) {
-
-		if (imageTable != null) {
-
-			Image glyphs[] = (Image[]) imageTable.get(new Integer(a));
-
-			if (glyphs != null) {
-				color = a;
-			} else {
-
-				// initialise new chars
-				glyphs = new Image[characters.size()];
-//				for (int i = 0; i < characters.size(); i++) {
-//					glyphs[i] = null;
-//				}
-
-				imageTable.put(new Integer(a), glyphs);
-				color = a;
-
-			}
-		}
+            return Image.createRGBImage(rgba, original.getWidth(), original.getHeight(), true);
 	}
 
 	/**
@@ -510,20 +503,44 @@ public class Font {
 		}
 	}
 
-	private Image getGlyph(int index) {
-		Image glyphs[] = (Image[]) imageTable.get(new Integer(color));
-		if (glyphs[index] == null) {
-			if (color == 0) {
-				glyphs[index] = Image.createImage(characterImage, startX[index], startY[index], characterWidth[index], characterHeight[index], Sprite.TRANS_NONE);
-			} else {
-				int colorTemp = color;
-				color = 0;
-				Image glyph = getGlyph(index);
-				color = colorTemp;
-				Image coloured = ImageUtil.imageColor(glyph, color);
+	private Image getGlyph(int index,int color) {
+		Image[] glyphs = (Image[]) imageTable.get(new Integer(color));
 
-				glyphs[index] = coloured;
-			}
+                if (glyphs == null ) {
+                        glyphs = new Image[characters.size()];
+                        imageTable.put(new Integer(color), glyphs);
+                }
+
+		if (glyphs[index] == null) {
+
+                        // find if we have this color already
+                        for (int c=0;c<colors.length;c++) {
+                            if (color == colors[c]) {
+
+                                System.out.println( " "+characterImage[c]+" "+ startX[index]+" "+  startY[index]+" "+  characterWidth[index]+" "+  characterHeight[index] );
+                                // hack to stop the thing crashing, this should be taken out
+                                if (characterWidth[index]==0) {
+                                    glyphs[index] = Image.createImage(1, 1);
+                                    return glyphs[index];
+                                }
+                                glyphs[index] = Image.createImage(characterImage[c], startX[index], startY[index], characterWidth[index], characterHeight[index], Sprite.TRANS_NONE);
+                                return glyphs[index];
+                            }
+                        }
+
+                        int defaultColor = colors[0];
+                        Image glyph = getGlyph(index,defaultColor);
+
+                        Image coloured;
+                        if (defaultColor==0x00000000) {
+                            coloured = colorize(glyph, color);
+                        }
+                        else {
+                            coloured = ImageUtil.imageColor(glyph, color);
+                        }
+
+                        glyphs[index] = coloured;
+
 		}
 		return glyphs[index];
 	}
@@ -561,7 +578,7 @@ public class Font {
 			return getWidth(s);
 		} else {
 
-			setColor(g.getColor());
+                        int color = g.getColor();
 
 			if (numbermode) {
 
@@ -648,7 +665,7 @@ public class Font {
 					}
 
 					// Draw character
-					Image glyph = getGlyph(charIndex);
+					Image glyph = getGlyph(charIndex,color);
 
 					int thisx;
 					if (i > 0) {
@@ -725,8 +742,9 @@ public class Font {
 		int clipW = g.getClipWidth();
 		int clipH = g.getClipHeight();
 
-		g.clipRect(x, y, characterWidth[a], characterImage.getHeight());
-		g.drawImage(characterImage, x - startX[a], y, Graphics.TOP | Graphics.LEFT);
+                // TODO
+		//g.clipRect(x, y, characterWidth[a], characterImage.getHeight());
+		//g.drawImage(characterImage, x - startX[a], y, Graphics.TOP | Graphics.LEFT);
 		x += characterWidth[a] + characterSpacing;
 
 		g.setClip(clipX, clipY, clipW, clipH);
