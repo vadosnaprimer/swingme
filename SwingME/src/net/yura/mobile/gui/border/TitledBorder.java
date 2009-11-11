@@ -73,7 +73,7 @@ public class TitledBorder implements Border {
 
         g.setFont(titleFont);
         g.setColor(titleColor);
-        g.drawString(title, leftOffset, -getTop() + (getTop() - titleFont.getHeight())/2 );
+        g.drawString(title, LEFT_OFFSET+1, -getTop() + (getTop() - titleFont.getHeight())/2 );
 
     }
 
