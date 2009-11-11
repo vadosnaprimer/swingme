@@ -460,7 +460,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                         if (is != null) {
                             try {
                                 img = Image.createImage(is);
-                                img = ImageUtil.scaleDownImage(img, thumbSize, thumbSize);
+                                img = ImageUtil.scaleImage(img, thumbSize, thumbSize);
                             } catch (IOException ex) {
                                 ex.printStackTrace();
                             }
