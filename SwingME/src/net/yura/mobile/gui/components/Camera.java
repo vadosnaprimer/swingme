@@ -30,8 +30,9 @@ import javax.microedition.media.control.VideoControl;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.StringUtil;
 
 
@@ -41,13 +42,16 @@ import net.yura.mobile.util.StringUtil;
 public class Camera extends Component implements Runnable, PlayerListener
 {
 
+    private Font font;
+    private String waitingMessage = "";
+    private int waitingMessageLength;
     private String snapshotEncoding;
     private String snapshotFileExt;
     private String playerLocator;
     private Thread cameraThread;
     private byte[] photoData;
     private boolean requestCapture;
-    private Object uiLock = new Object();
+    private final Object uiLock = new Object();
 
     private ActionListener actionListener;
     private String actionCommand;
@@ -57,6 +61,8 @@ public class Camera extends Component implements Runnable, PlayerListener
         System.out.println("CameraPanel() constructor");
 
         focusable = true;
+
+        font = theme.getFont(Style.ALL);
     }
 
 
@@ -75,11 +81,20 @@ System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
 
 //        g.setColor(0x0000FF);
 //        g.fillRect(0, 0, getWidth(), getHeight());
+        int msgPosX = (getWidth() / 2) - (waitingMessageLength / 2);
+        int msgPosY = (getHeight() / 2) - (font.getHeight() / 2);
+        g.setColor(foreground);
+        g.drawString(waitingMessage, msgPosX, msgPosY);
 
         if (cameraThread == null) {
             cameraThread = new Thread(this);
             cameraThread.start();
         }
+    }
+
+    public void setWaitingMessage (String message){
+        waitingMessage = message;
+        waitingMessageLength =  font.getWidth(waitingMessage);
     }
 
     public void focusLost() {
@@ -326,5 +341,17 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             Canvas playerCanvas = DesktopPane.getDesktopPane();
             Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
         }
+    }
+
+    public static boolean isCameraSupported(){
+        return System.getProperty("video.snapshot.encodings") != null;
+    }
+
+    public static boolean isCameraSupported(int minHight, int minWidth, int maxHeight, int maxWidth){
+        if(isCameraSupported()){
+            return true;
+           // to implement -> if the phone supports the resolution in the given range
+        }
+        return false;
     }
 }
