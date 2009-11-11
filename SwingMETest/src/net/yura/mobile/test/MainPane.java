@@ -119,19 +119,12 @@ public class MainPane extends DesktopPane implements ActionListener {
 	}
 
         private Section addSection(String a,Section section) {
-            try {
-                section.mainPane = this;
 
-                Button infoButton = new Button(a);
-                infoButton.setActionCommand("openSection");
-                infoButton.addActionListener(section);
+            section.mainPane = this;
 
-                mainmenu.add(infoButton);
-                return section;
-            }
-            catch (Exception ex) {
-                throw new RuntimeException();
-            }
+            mainmenu.add( section.makeButton(a, "openSection") );
+            return section;
+
         }
 
         private void addMainMenuButton(String a,String b) {
@@ -232,13 +225,13 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMenuItem(mainMenu,"metalTheme", "Metal Theme");
                                 addMenuItem(mainMenu,"aether1", "Nimbus Default Theme");
                                 addMenuItem(mainMenu,"aetherGreen", "Nimbus Green Theme");
+                                addMenuItem(mainMenu,"aether2", "Nimbus Red Theme");
                                 addMenuItem(mainMenu,"aetherCharcoal", "Nimbus Charcoal Theme");
-                                addMenuItem(mainMenu,"aether2", "Nimbus .Net Theme");
-                                addMenuItem(mainMenu,"synthTheme1", "Synth Theme 1");
-                                addMenuItem(mainMenu,"synthTheme2", "Synth Theme 2");
-                                addMenuItem(mainMenu,"synthTheme3", "Synth Theme 3");
-                                addMenuItem(mainMenu,"synthTheme4", "Synth Theme 4");
-                                addMenuItem(mainMenu,"synthTheme5", "Synth Theme 5");
+                                addMenuItem(mainMenu,"synthTheme1", "Synth J2SE Demo");
+                                addMenuItem(mainMenu,"synthTheme2", "Synth iPhone");
+                                addMenuItem(mainMenu,"synthTheme3", "Synth Visto");
+                                addMenuItem(mainMenu,"synthTheme4", "Synth Telus");
+                                addMenuItem(mainMenu,"synthTheme5", "Synth LG");
 			}
 
 			addToScrollPane(mainmenu, mainMenu, makeButton("Exit","exit") );
@@ -248,22 +241,24 @@ public class MainPane extends DesktopPane implements ActionListener {
                     setupNewLookAndFeel( new NimbusLookAndFeel() );
                 }
                 else if ("aether2".equals(actionCommand)) {
-                    System.out.println("not setup yet....");
-                    //setupNewLookAndFeel( new NimbusLookAndFeel("net") );
+                    Hashtable styles = new Hashtable();
+                    styles.put("nimbusBase", new Integer(0x008c3533));
+                    NimbusLookAndFeel red = new NimbusLookAndFeel(javax.microedition.lcdui.Font.SIZE_MEDIUM,styles);
+                    setupNewLookAndFeel( red );
                 }
                 else if ("aetherGreen".equals(actionCommand)) {
                     Hashtable styles = new Hashtable();
                     styles.put("nimbusBase", new Integer(0x00358c33));
-                    //NimbusLookAndFeel green = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
-                    //setupNewLookAndFeel( green );
+                    NimbusLookAndFeel green = new NimbusLookAndFeel(javax.microedition.lcdui.Font.SIZE_MEDIUM,styles);
+                    setupNewLookAndFeel( green );
                 }
                 else if ("aetherCharcoal".equals(actionCommand)) {
                     Hashtable styles = new Hashtable();
                     styles.put("nimbusBase", new Integer(0x00666666));
                     styles.put("nimbusGreyBlue", new Integer(0x00999999));
                     styles.put("control", new Integer(0x00bbbbbb));
-                    //NimbusLookAndFeel red = new NimbusLookAndFeel(Font.SIZE_MEDIUM,styles);
-                    //setupNewLookAndFeel( red );
+                    NimbusLookAndFeel charcoal = new NimbusLookAndFeel(javax.microedition.lcdui.Font.SIZE_MEDIUM,styles);
+                    setupNewLookAndFeel( charcoal );
                 }
                 else if ("metalTheme".equals(actionCommand)) {
 
@@ -554,10 +549,9 @@ public class MainPane extends DesktopPane implements ActionListener {
     private void setupNewLookAndFeel(LookAndFeel theme) {
         setLookAndFeel(theme);
 
-
-        // not these as we have these open now
-        //mainMenu=null;
-        //mainmenu=null;
+        mainmenu=null;
+        mainMenu=null;
+        actionPerformed("mainmenu");
 
         updateComponentTreeUI(mainWindow);
         mainWindow.revalidate();

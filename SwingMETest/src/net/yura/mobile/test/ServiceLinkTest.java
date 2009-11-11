@@ -5,8 +5,14 @@
 
 package net.yura.mobile.test;
 
+import java.util.Hashtable;
+import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.TextArea;
+import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.io.ClipboardManager;
 import net.yura.mobile.io.LocationMonitor;
+import net.yura.mobile.io.ServiceLink.Task;
 import net.yura.mobile.test.MainPane.Section;
 
 /**
@@ -15,23 +21,9 @@ import net.yura.mobile.test.MainPane.Section;
  */
 public class ServiceLinkTest  extends Section {
 
-    public void createTests() {
-                                // service link
-                                addTest("Connect To Service","serviceConnect");
-                                addTest("Get Cell Id","cellIdTest");
-                                addTest("Poll Cell Id","pollIdTest");
-                                addTest("Get Wifi","getWifiTest");
-                                addTest("Poll Wifi","pollWifiTest");
-                                addTest("Get Clipboard","GetClipboardTest");
-                                addTest("Put XYZ to Clipboard","PutClipboardTest");
-                                addTest("Close Connection","serviceDisconnect");
-    }
+    private TextArea infoLabel;
+    private Panel info;
 
-    public void openTest(String id) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    /*
         private MyClipboardManager clipboardManager;
         private MyLocationMonitor locationMonitor;
         class MyClipboardManager extends ClipboardManager {
@@ -91,7 +83,23 @@ public class ServiceLinkTest  extends Section {
 
             }
         }
-                else if ("serviceConnect".equals(actionCommand)) {
+
+
+    public void createTests() {
+                                // service link
+                                addTest("Connect To Service","serviceConnect");
+                                addTest("Get Cell Id","cellIdTest");
+                                addTest("Poll Cell Id","pollIdTest");
+                                addTest("Get Wifi","getWifiTest");
+                                addTest("Poll Wifi","pollWifiTest");
+                                addTest("Get Clipboard","GetClipboardTest");
+                                addTest("Put XYZ to Clipboard","PutClipboardTest");
+                                addTest("Close Connection","serviceDisconnect");
+    }
+
+    public void openTest(String actionCommand) {
+
+                if ("serviceConnect".equals(actionCommand)) {
 			if (info==null) {
                             info = new Panel( new BorderLayout() );
                         }
@@ -102,7 +110,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
                         infoLabel.append("\nDone\n");
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("cellIdTest".equals(actionCommand)) {
 			if (info==null) {
@@ -117,7 +125,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         locationMonitor.getCellId();
                         info.add(infoLabel);
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("pollIdTest".equals(actionCommand)) {
 			if (info==null) {
@@ -132,7 +140,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         locationMonitor.setNotifyForCellId(true);
                         info.add(infoLabel);
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("getWifiTest".equals(actionCommand)) {
 			if (info==null) {
@@ -146,7 +154,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         locationMonitor.getWifiList();
                         info.add(infoLabel);
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("pollWifiTest".equals(actionCommand)) {
 			if (info==null) {
@@ -160,7 +168,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         locationMonitor.setNotifyForWifiList(true);
                         info.add(infoLabel);
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("GetClipboardTest".equals(actionCommand)) {
 			if (info==null) {
@@ -174,7 +182,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         clipboardManager.getClipboard();
                         info.add(infoLabel);
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("PutClipboardTest".equals(actionCommand)) {
 			if (info==null) {
@@ -188,7 +196,7 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         clipboardManager.putClipboard("XYZ");
                         info.add(infoLabel);
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
                 else if ("serviceDisconnect".equals(actionCommand)) {
 			if (info==null) {
@@ -201,7 +209,8 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
                         infoLabel.append("\nDone\n");
-     			addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+     			addToScrollPane(info, null );
                 }
-*/
+    }
+
 }
