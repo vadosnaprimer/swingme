@@ -50,6 +50,7 @@ import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.border.TitledBorder;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
 
@@ -406,7 +407,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
                                 Label test2 = new Label("ImageBorder test");
                                 try {
-                                    test2.setBorder(MatteBorder.load("/skin1.skin"));
+                                    test2.setBorder(new TitledBorder(MatteBorder.load("/skin1.skin"), "Title", test2.getFont()));
                                 }
                                 catch(Exception ex){
                                     ex.printStackTrace();

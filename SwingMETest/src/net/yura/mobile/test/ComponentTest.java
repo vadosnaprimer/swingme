@@ -48,7 +48,7 @@ public class ComponentTest  extends Section{
     private Panel componentTest;
     private Camera cameraPanel;
     private Panel tableTest;
-    private Menu testMain;
+    private Menu menu;
     private Panel tabPanel;
 
     public void createTests() {
@@ -70,7 +70,7 @@ public class ComponentTest  extends Section{
 
 				componentTest = new Panel( new FlowLayout(Graphics.VCENTER) );
 
-                                testMain = new Menu("Menu");
+                                Menu testMain = new Menu("Menu");
 
                                 testMain.add(new Button("test 1"));
                                 testMain.add(new Button("test 2"));
@@ -132,7 +132,7 @@ public class ComponentTest  extends Section{
                                 componentTest.add(email);
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
 
-                                Menu menu = new Menu("Menu");
+                                menu = new Menu("Menu");
                                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                                 menu.add(new Button("bob"));
 
@@ -144,7 +144,7 @@ public class ComponentTest  extends Section{
 
 			}
 
-			addToScrollPane(componentTest, testMain );
+			addToScrollPane(componentTest, menu );
 
 		}
 
