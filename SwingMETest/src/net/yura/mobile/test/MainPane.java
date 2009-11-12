@@ -437,8 +437,18 @@ public class MainPane extends DesktopPane implements ActionListener {
 		}
 
                 else if ("fontTest".equals(actionCommand)) {
-                    Font font = new Font(new int[] {0x00FFFFFF },new String[] { "/font/test_0.png" }, "/font/test.fnt");
-                    Font font2 = new Font("/basicfont/font1-med.font");
+                    Font testfont = new Font(new int[] {0x00FFFFFF },new String[] { "/font/test.png" }, "/font/test.fnt");
+                    Font calibri = new Font(new int[] {0x00000000 },new String[] { "/font/calibri.png" }, "/font/calibri.fnt");
+
+                    Font font1_small = new Font("/basicfont/font1-small.font");
+                    Font font1_med = new Font("/basicfont/font1-med.font");
+                    Font font1_large = new Font("/basicfont/font1-large.font");
+
+                    Font font2_small = new Font("/basicfont/font2-small.font");
+                    Font font2_med = new Font("/basicfont/font2-med.font");
+                    Font font2_large = new Font("/basicfont/font2-large.font");
+
+                    Font treasure = new Font("/basicfont/treasure.font");
 
                     Panel p = new Panel( new FlowLayout( Graphics.VCENTER ) );
 
@@ -448,21 +458,28 @@ public class MainPane extends DesktopPane implements ActionListener {
                     Button l4 = new Button("|||||||");
                     Button l5 = new Button("TTttTTtt");
                     Button l6 = new Button("FFffFFff");
-                    l1.setFont(font);
-                    l2.setFont(font2);
-                    l3.setFont(font2);
-                    l4.setFont(font);
-                    l5.setFont(font);
-                    l6.setFont(font);
+                    Button l7 = new Button("TTttTTtt");
+                    Button l8 = new Button("FFffFFff");
+                    l1.setFont(testfont);
+                    l2.setFont(calibri);
+                    l3.setFont(font1_small);
+                    l4.setFont(font1_med);
+                    l5.setFont(font1_large);
+                    l6.setFont(font2_small);
+                    l7.setFont(font2_med);
+                    l8.setFont(font2_large);
+
                     p.add(l1);
                     p.add(l2);
                     p.add(l3);
                     p.add(l4);
                     p.add(l5);
                     p.add(l6);
+                    p.add(l7);
+                    p.add(l8);
 
 		    TextArea t = new TextArea("/|\\/|\\/|\\/|\\\n|||||||||\nWwWwWwWwW\n~~~~~~~~~\n_-_-_-_-_\n||||||||||");
-		    t.setFont(font);
+		    t.setFont(treasure);
 		    p.add(t);
                     addToScrollPane(p, null, makeButton("Back","mainmenu") );
                 }
