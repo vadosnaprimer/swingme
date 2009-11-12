@@ -437,51 +437,80 @@ public class MainPane extends DesktopPane implements ActionListener {
 		}
 
                 else if ("fontTest".equals(actionCommand)) {
-                    Font testfont = new Font(new int[] {0x00FFFFFF },new String[] { "/font/test.png" }, "/font/test.fnt");
-                    Font calibri = new Font(new int[] {0x00000000 },new String[] { "/font/calibri.png" }, "/font/calibri.fnt");
+                    Panel panel = new Panel( new FlowLayout( Graphics.VCENTER ) );
 
-                    Font font1_small = new Font("/basicfont/font1-small.font");
-                    Font font1_med = new Font("/basicfont/font1-med.font");
-                    Font font1_large = new Font("/basicfont/font1-large.font");
+		    
 
-                    Font font2_small = new Font("/basicfont/font2-small.font");
-                    Font font2_med = new Font("/basicfont/font2-med.font");
-                    Font font2_large = new Font("/basicfont/font2-large.font");
+		    String[] labels = {
+			    "abcdefgh",
+			    "ijklmnopqr",
+			    "stuvwxyz",
+			    "ABCDEFGH",
+			    "IJKLMNOPQR",
+			    "STUVWXYZ",
+			    "!$#|@/\\\"':;!_-",
 
+		    };
+
+		    Font[] fonts = {
+			new Font(new int[] {0x00FFFFFF },new String[] { "/font/test.png" }, "/font/test.fnt"),
+			new Font(new int[] {0x00000000 },new String[] { "/font/calibri.png" }, "/font/calibri.fnt"),
+
+			new Font("/basicfont/font1-small.font"),
+			new Font("/basicfont/font1-med.font"),
+			new Font("/basicfont/font1-large.font"),
+
+			new Font("/basicfont/font2-small.font"),
+			new Font("/basicfont/font2-med.font"),
+			new Font("/basicfont/font2-large.font"),
+
+			new Font("/basicfont/treasure.font"),
+		    };
+
+		    int colors[] = {
+
+			    0x00000000,
+			    0x00FFFFFF,
+			    0x00FF0000,
+			    0x0000FF00,
+			    0x000000FF
+
+		    };
+
+     		    for(int l = 0; l < labels.length; l++) {
+			Label label = new Label(labels[l]);
+			panel.add(label);
+
+		    }
+
+		    for(int f = 0; f < fonts.length; f++ ) {
+
+			panel.add(new Label("Font " + f));
+			
+			int color = 0;
+
+			for(int l = 0; l < labels.length; l++) {
+
+				if(color == colors.length)
+					color = 0;
+
+				    Button button = new Button(labels[l]);
+				    button.setFont(fonts[f]);
+				    button.setForeground(colors[color]);
+				    panel.add(button);
+				
+				    
+				color++;
+			}
+		    }
+		    
                     Font treasure = new Font("/basicfont/treasure.font");
 
-                    Panel p = new Panel( new FlowLayout( Graphics.VCENTER ) );
-
-                    Button l1 = new Button("Font Test");
-                    Button l2 = new Button(" s p a c e d ");
-                    Button l3 = new Button("///\\\\\\///\\\\\\");
-                    Button l4 = new Button("|||||||");
-                    Button l5 = new Button("TTttTTtt");
-                    Button l6 = new Button("FFffFFff");
-                    Button l7 = new Button("TTttTTtt");
-                    Button l8 = new Button("FFffFFff");
-                    l1.setFont(testfont);
-                    l2.setFont(calibri);
-                    l3.setFont(font1_small);
-                    l4.setFont(font1_med);
-                    l5.setFont(font1_large);
-                    l6.setFont(font2_small);
-                    l7.setFont(font2_med);
-                    l8.setFont(font2_large);
-
-                    p.add(l1);
-                    p.add(l2);
-                    p.add(l3);
-                    p.add(l4);
-                    p.add(l5);
-                    p.add(l6);
-                    p.add(l7);
-                    p.add(l8);
-
 		    TextArea t = new TextArea("/|\\/|\\/|\\/|\\\n|||||||||\nWwWwWwWwW\n~~~~~~~~~\n_-_-_-_-_\n||||||||||");
+		    t.setForeground(0x00FF00FF);
 		    t.setFont(treasure);
-		    p.add(t);
-                    addToScrollPane(p, null, makeButton("Back","mainmenu") );
+		    panel.add(t);
+                    addToScrollPane(panel, null, makeButton("Back","mainmenu") );
                 }
 		else if ("throwerror".equals(actionCommand)) {
 			throw new RuntimeException("some bad error happened!");
