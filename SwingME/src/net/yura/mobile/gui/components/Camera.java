@@ -42,6 +42,8 @@ import net.yura.mobile.util.StringUtil;
 public class Camera extends Component implements Runnable, PlayerListener
 {
 
+    private int defaultCaptureHeight = 480;
+    private int defaultCaptureWidth = 640;
     private Font font;
     private String waitingMessage = "";
     private int waitingMessageLength;
@@ -52,6 +54,9 @@ public class Camera extends Component implements Runnable, PlayerListener
     private byte[] photoData;
     private boolean requestCapture;
     private final Object uiLock = new Object();
+    private boolean running = true;
+    VideoControl videoCtrl = null;
+    Player player = null;
 
     private ActionListener actionListener;
     private String actionCommand;
@@ -86,7 +91,7 @@ System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
         g.setColor(foreground);
         g.drawString(waitingMessage, msgPosX, msgPosY);
 
-        if (cameraThread == null) {
+        if (cameraThread == null && running) {
             cameraThread = new Thread(this);
             cameraThread.start();
         }
@@ -97,15 +102,39 @@ System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
         waitingMessageLength =  font.getWidth(waitingMessage);
     }
 
+    public void focusGained() {
+        running = true;
+        super.focusGained();
+    }
+
+
+
     public void focusLost() {
         super.focusLost();
 System.out.println(">> focusLost()");
         cameraThread = null;
+        running = false;
         synchronized (uiLock) {
             uiLock.notifyAll();
         }
-
 System.out.println("focusLost2");
+    }
+
+    public void close() {
+        if (!running) {
+            return;
+        }
+        cameraThread = null;
+        running = false;
+        closePlayer();
+        synchronized (uiLock) {
+            uiLock.notifyAll();
+            try {
+                uiLock.wait(5000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     public void setActionListener(ActionListener l) {
@@ -134,11 +163,15 @@ System.out.println("focusLost2");
         return snapshotFileExt;
     }
 
+    public void setDefaultCaptureResolution(int width, int height) {
+        defaultCaptureHeight = height;
+        defaultCaptureWidth = width;
+    }
+
     // Player Thread
     public void run() {
 
-        VideoControl videoCtrl = null;
-        Player player = null;
+       
 
         try {
             while (true) {
@@ -172,7 +205,18 @@ System.out.println(".2");
                         requestCapture = false;
 
                         if (videoCtrl != null) {
-                            photoData = videoCtrl.getSnapshot(snapshotEncoding);
+                            photoData = null;
+                            // some devices will not return the supported size even though its supported
+                            if (snapshotEncoding.indexOf("width") < 0) {
+                                try {
+                                    photoData = videoCtrl.getSnapshot(snapshotEncoding + "&width=" + defaultCaptureWidth + "&height=" + defaultCaptureHeight);
+                                } catch (Throwable t) {
+                                    t.printStackTrace();
+                                }
+                            }
+                            if (photoData == null) {
+                                photoData = videoCtrl.getSnapshot(snapshotEncoding);
+                            }
                         }
 
                         actionListener.actionPerformed(actionCommand);
@@ -186,6 +230,11 @@ System.out.println(".2");
             e.printStackTrace();
         }
 
+        closePlayer();
+        System.out.println("Camera Thread GONE.");
+    }
+
+    private synchronized void closePlayer(){
         if (videoCtrl !=null) {
             videoCtrl.setVisible(false);
         }
@@ -194,8 +243,6 @@ System.out.println(".2");
             player.close();
             player = null;
         }
-
-        System.out.println("Camera Thread GONE.");
     }
 
     // From PlayerListener Interface
@@ -203,6 +250,9 @@ System.out.println(".2");
         System.out.println("playerUpdate: " + event);
 
         if (PlayerListener.CLOSED.equals(event)) {
+            synchronized(uiLock){
+                uiLock.notifyAll();
+            }
             DesktopPane.getDesktopPane().fullRepaint();
         }
     }
@@ -249,7 +299,6 @@ System.out.println(".2");
 System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             if ("image".equals(contentTypes[i])) {
                 playerLocator = "capture://image";
-                snapshotEncoding += "&width=320&height=240";
                 break;
             }
         }
@@ -276,7 +325,7 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
         return videoCtrl;
     }
 
-    private static String getHighestResolutionEncoding(String format, String[] supportedEncs) {
+    private String getHighestResolutionEncoding(String format, String[] supportedEncs) {
 
         String highestResEncoding = "";
         int prevHighResWidth  = 0;
@@ -289,8 +338,8 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             int encodingHeight = getEncodingParameterInteger(encoding, "height");
             String encodingType = getEncodingParamString(encoding, "encoding") .toLowerCase();
 
-            if ( encodingWidth  >= prevHighResWidth  &&
-                 encodingHeight >= prevHighResHeight &&
+            if ( encodingWidth  >= prevHighResWidth  && encodingWidth <= defaultCaptureWidth &&
+                 encodingHeight >= prevHighResHeight && encodingHeight <= defaultCaptureHeight &&
                  ( encodingType.equals(format           ) ||    // encoding=png      , encoding=PNG
                    encodingType.equals("image/" + format))) { // encoding=image/png, encoding=IMAGE/PNG
 
@@ -345,13 +394,5 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
 
     public static boolean isCameraSupported(){
         return System.getProperty("video.snapshot.encodings") != null;
-    }
-
-    public static boolean isCameraSupported(int minHight, int minWidth, int maxHeight, int maxWidth){
-        if(isCameraSupported()){
-            return true;
-           // to implement -> if the phone supports the resolution in the given range
-        }
-        return false;
     }
 }
