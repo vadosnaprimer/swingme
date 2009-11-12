@@ -19,6 +19,7 @@ package net.yura.mobile.gui.plaf;
 
 import java.io.InputStream;
 import java.util.Hashtable;
+import java.util.Vector;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Font;
@@ -37,13 +38,41 @@ public class SynthLookAndFeel extends LookAndFeel {
     private Style defaultStyle;
 
     protected Image getImage( String path ) {
-        Image image = null;
         try {
-            image = Image.createImage(path);
-        } catch ( Exception e ) {
-
+            return Image.createImage(path);
         }
-        return image;
+        catch (Exception ex) {
+            //#mdebug
+            ex.printStackTrace();
+            System.out.println("can not load image: "+path);
+            //#enddebug
+            return null;
+        }
+    }
+    protected InputStream getResourceAsStream(String path) {
+        try {
+            return getClass().getResourceAsStream(path);
+        }
+        catch (Exception ex) {
+            //#mdebug
+            ex.printStackTrace();
+            System.out.println("can not load resource: "+path);
+            //#enddebug
+            return null;
+        }
+    }
+    protected int parseInt(String value,int base) {
+
+        if (value.startsWith("#")) {
+            base=16;
+            value=value.substring(1);
+        }
+        else if (value.startsWith("0x")) {
+            base=16;
+            value=value.substring(2);
+        }
+
+        return Integer.parseInt(value, base);
     }
 
     /**
@@ -158,8 +187,9 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String sourceInsets = parser.getAttributeValue(null, "sourceInsets");
                                     String paintCenter = parser.getAttributeValue(null, "paintCenter");
 
-                                    try {
-                                        Icon activeimage = new Icon( getImage( path ) );
+                                    Image img = getImage( path );
+                                    if (img!=null) {
+                                        Icon activeimage = new Icon( img );
                                         String[] split = StringUtil.split(sourceInsets, ' ');
                                         border = new MatteBorder(activeimage,
                                                 insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
@@ -168,12 +198,6 @@ public class SynthLookAndFeel extends LookAndFeel {
                                                 , borderfill);
                                         newStyle.addBorder(border, st);
                                     }
-                                    catch(Exception ex) {
-                                        //#mdebug
-                                        ex.printStackTrace();
-                                        System.out.println("can not load imagePainter: "+path);
-                                        //#enddebug
-                                    }
                                 }
                                 else if ("property".equals(name2)) {
                                     String type = parser.getAttributeValue(null, "type");
@@ -181,27 +205,16 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String value = parser.getAttributeValue(null, "value");
 
                                     if ("integer".equals(type)) {
-                                        int base=10;
-                                        if (value.startsWith("#")) {
-                                            base=16;
-                                            value=value.substring(1);
-                                        }
-                                        else if (value.startsWith("0x")) {
-                                            base=16;
-                                            value=value.substring(2);
-                                        }
-                                        newStyle.addProperty(Integer.valueOf(value,base), key, st);
+                                        int i = parseInt(value, 10);
+                                        newStyle.addProperty(new Integer(i), key, st);
                                     }
                                     else if (type==null || "idref".equals(type)) {
-                                        try {
-                                            newStyle.addProperty(params.get(value), key, st);
+
+                                        Object obj = params.get(value);
+                                        if (obj!=null) {
+                                            newStyle.addProperty(obj, key, st);
                                         }
-                                        catch(Exception ex) {
-                                            //#mdebug
-                                            ex.printStackTrace();
-                                            System.out.println("property null: "+key);
-                                            //#enddebug
-                                        }
+
                                     }
 
                                 }
@@ -211,10 +224,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String id = parser.getAttributeValue(null, "id");
                                     int color = -1;
                                     if (cvalue!=null) {
-                                        if (cvalue.charAt(0)=='#') {
-                                            cvalue = cvalue.substring(1);
-                                        }
-                                        color = Integer.parseInt(cvalue, 16);
+                                        color = parseInt(cvalue, 16);
                                     }
                                     if (type!=null) {
                                         if ("BACKGROUND".equals(type)) {
@@ -270,24 +280,13 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 String height = parser.getAttributeValue(null, "height");
                                 String id = parser.getAttributeValue(null, "id");
 
-                                try {
-                                    Icon newImage;
+                                Image newImage = getImage( path );
+                                if (newImage!=null) {
                                     if (x!=null && y!=null && width!=null && height!=null) {
-                                        Image image = Image.createImage(getImage( path ), Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
-                                        newImage = new Icon(image);
+                                        newImage = Image.createImage( newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
                                     }
-                                    else {
-                                        newImage = new Icon( getImage( path ) );
-                                    }
-                                    params.put(id, newImage);
+                                    params.put(id, new Icon(newImage) );
                                 }
-                                catch(Exception ex) {
-                                    //#mdebug
-                                    ex.printStackTrace();
-                                    System.out.println("can not load imageIcon: "+path);
-                                    //#enddebug
-                                }
-
 
                         }
                         else if ("opaque".equals(name)) {
@@ -346,6 +345,9 @@ public class SynthLookAndFeel extends LookAndFeel {
                 String fontSize = parser.getAttributeValue(null, "size");
                 String fontStyle = parser.getAttributeValue(null, "style");
                 String fontId = parser.getAttributeValue(null, "id");
+
+                String path = parser.getAttributeValue(null, "path");
+
                 int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
                 int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
                 int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
@@ -381,28 +383,56 @@ public class SynthLookAndFeel extends LookAndFeel {
                     fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
                 }
 
+                Vector colors = new Vector();
+                Vector images = new Vector();
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     String name = parser.getName();
                     // TODO, load bitmap font settings here
-                    
+
+                    if ("fontImage".equals(name)) {
+                        String imagePath = parser.getAttributeValue(null, "path");
+                        String imageColor = parser.getAttributeValue(null, "color");
+
+                        Image img = getImage(imagePath);
+                        if (img !=null) {
+                            int color = 0; // default to black
+                            if (imageColor!=null) {
+                                color = parseInt(imageColor, 16);
+                            }
+                            colors.addElement(new Integer(color));
+                            images.addElement(img);
+                        }
+                    }
+
                     //#debug
                     System.out.println("oooo: "+name);
                     
                     parser.skipSubTree();
                 }
 
+                Font font = null;
+                if (path!=null) {
+                    InputStream in = getResourceAsStream(path);
+                    if (in!=null) {
+                        int[] colorsArray = new int[colors.size()];
+                        for (int c=0;c<colorsArray.length;c++) {
+                            colorsArray[c] = ((Integer)colors.elementAt(c)).intValue();
+                        }
+                        Image[] imagesArray = new Image[images.size()];
+                        images.copyInto(imagesArray);
+                        font = Font.getFont(in,imagesArray,colorsArray);
+                    }
+                }
 
-
-                Font font = new Font(javax.microedition.lcdui.Font.getFont(fname, fstyle, fsize));
+                if (font!=null) {
+                    font = new Font(fname, fstyle, fsize);
+                }
 
                 if (fontId!=null) {
                     params.put(fontId, font);
                 }
 
-
-
                 return font;
-
 
         }
         

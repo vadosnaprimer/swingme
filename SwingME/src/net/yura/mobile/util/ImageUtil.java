@@ -83,25 +83,39 @@ public class ImageUtil {
 
     }
 
-    public static final void imageColor(int ai[], int i) {
-        int j = (i & 0xff0000) >> 16;
-        int k = (i & 0xff00) >> 8;
-        int l = (i & 0xff) >> 0;
-        for(int i1 = 0; i1 < ai.length; i1++)
-        {
-            int j1 = (ai[i1] & 0xff000000) >> 24;
-            int k1 = (ai[i1] & 0xff) >> 0;
-            ai[i1] = j1 << 24 | (k1 * j) / 255 << 16 | (k1 * k) / 255 << 8 | (k1 * l) / 255;
+    public static final void imageColor(int pixels[], int color) {
+        int r = (color & 0xff0000) >> 16;
+        int g = (color & 0xff00) >> 8;
+        int b = (color & 0xff) >> 0;
+        for(int i = 0; i < pixels.length; i++) {
+            int alpha = (pixels[i] & 0xff000000) >> 24;
+            int blue = (pixels[i] & 0xff) >> 0;
+            pixels[i] = alpha << 24 | (blue * r) / 255 << 16 | (blue * g) / 255 << 8 | (blue * b) / 255;
         }
 
     }
 
+    /**
+     * replaces all values of the blue channel with a color
+     */
     public static final Image imageColor(Image image, int i) {
 
         int ai[] = new int[image.getWidth() * image.getHeight()];
         image.getRGB(ai, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
         imageColor(ai, i);
         return Image.createRGBImage(ai, image.getWidth(), image.getHeight(), true);
+    }
+
+    public static Image colorize(Image original, int newColor) {
+        int[] rgba = new int[original.getWidth()*original.getHeight()];
+        original.getRGB(rgba, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
+
+        for (int i=0; i< rgba.length;i++) {
+            int alpha = ((rgba[i] >> 24) & 0xFF);
+            rgba[i] = (newColor | (alpha << 24));
+        }
+
+        return Image.createRGBImage(rgba, original.getWidth(), original.getHeight(), true);
     }
 
     public static Image scaleImage(Image img, int newW, int newH) {
@@ -114,7 +128,7 @@ public class ImageUtil {
             // Do nothing. Converting with 3D API failed. Use sampling.
         }
 
-        return null;
+        return img;
     }
 
     private static Image scaleImage3D(Image img, int newW, int newH) {

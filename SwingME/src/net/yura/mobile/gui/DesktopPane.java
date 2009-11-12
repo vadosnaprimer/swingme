@@ -924,7 +924,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 // This is not needed, but just in case something
                 // has gone wrong with the theme, we set some defaults
-                desktop.text.setFont(new Font());
+                desktop.text.setFont( Font.getDefaultSystemFont() );
                 desktop.text.setForeground(0x00000000);
                 desktop.text.setBackground(0x00FFFFFF);
                 //desktop.debugwindow.setBackground(0x00FFFFFF);

@@ -28,206 +28,236 @@ import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
 
+/**
+ * @see java.awt.Font
+ */
 public class Font {
 
 	private Hashtable characters; // maps unicode chars to their index
 	private int height;
+        private int characterSpacing;
+       
+
 	private int startX[];
 	private int startY[];
+        private byte characterWidth[];
+	private byte characterHeight[];
+
+
 	private int offsetX[];
 	private int offsetY[];
 	private int advance[];
 	private int spaceWidth;
-	private byte characterWidth[];
-	private int characterHeight[];
 
-	private int characterSpacing;
 
-	private Hashtable imageTable;
-        
-        
-	private int[] colors;
-        private Image characterImage[];
-        
-//	private int color;
+
+	private int[] colors = new int[1]; // the colors of the source images
+        private Image characterImage[]; // source images
+	private Hashtable imageTable; // stores arrays of glyph images for each color
+
 
 	private boolean numbermode;
 	private Hashtable kerning = new Hashtable();
 	private javax.microedition.lcdui.Font systemFont = null;
 
-	public Font() {
-		this(javax.microedition.lcdui.Font.getDefaultFont());
+        /**
+         * make new default font
+         */
+	private Font() {
+            
 	}
 
-	public Font(javax.microedition.lcdui.Font f) {
+        /**
+         * @see java.awt.Font#Font(java.lang.String, int, int)
+         */
+        public Font(int fname, int fstyle, int fsize) {
+            setSystemFont( javax.microedition.lcdui.Font.getFont(fname, fstyle, fsize) );
+        }
 
-		setSystemFont(f);
-
-		// not sure if this is needed
-		colors = new int[2];
-		colors[0] = 0x00000000;
-		colors[1] = 0x000000FF;
+	/**
+	 * Sets the system font.
+	 * @param systemFont - javax.microedition.lcdui.Font object
+	 */
+	private void setSystemFont(javax.microedition.lcdui.Font systemFont) {
+		this.systemFont = systemFont;
+		height = getHeight();
 	}
+
+        // #####################################################################
+        // #####################################################################
+        // #####################################################################
+
+        public static Font getDefaultSystemFont() {
+            Font f = new Font();
+            f.setSystemFont(javax.microedition.lcdui.Font.getDefaultFont());
+            return f;
+        }
 
 	/**
 	 * BMFont format
 	 */
-	public Font(int[] colors, String[] imagePaths, String descriptor) {
-		//System.out.println("FONT: Reading font: "+imagePath);
+	public static Font getFont(String descriptor, String[] imagePaths, int[] colors) {
+
 		try {
 
-			InputStream is = getClass().getResourceAsStream(descriptor);
-			DataInputStream dis = new DataInputStream(is);
+                    InputStream is = Font.class.getResourceAsStream(descriptor);
 
-                        this.colors = colors;
-                        characterImage = new Image[colors.length];
-                        for (int c=0;c<colors.length;c++) {
+                    Image[] characterImage = new Image[imagePaths.length];
+                    for (int c=0;c<imagePaths.length;c++) {
 
-                            Image image = Image.createImage(getClass().getResourceAsStream(imagePaths[c]));
+                        Image image = Image.createImage( Font.class.getResourceAsStream(imagePaths[c]));
 
-                            // Set loaded character set images as default
-                            characterImage[c] = image;
+                        // Set loaded character set images as default
+                        characterImage[c] = image;
+                    }
 
-                        }
-
-			// header
-			dis.skipBytes(4);
-
-			// block: info
-			//System.out.println("FONT: Reading info");
-			dis.skipBytes(1);
-			int size = getLong(dis);
-			dis.skipBytes(size);
-
-			// block: common
-			//System.out.println("FONT: Reading common");
-			dis.skipBytes(1);
-			size = getLong(dis);
-			height = getShortUnsigned(dis);
-			dis.skipBytes(size - 2);
-
-			// block: page
-			//System.out.println("FONT: Reading pages");
-			dis.skipBytes(1);
-			size = getLong(dis);
-			dis.skipBytes(size);
-
-			// block: chars
-			//System.out.println("FONT: Reading chars");
-			characters = new Hashtable();
-
-			dis.skipBytes(1);
-			int chars = getLong(dis) / 20;
-
-			startX = new int[chars];
-			startY = new int[chars];
-			characterWidth = new byte[chars];
-			characterHeight = new int[chars];
-			offsetX = new int[chars];
-			offsetY = new int[chars];
-			advance = new int[chars];
-			Image glyphs[] = new Image[chars];
-
-			for (int i = 0; i < chars; i++) {
-				int id = getLong(dis);
-				Character key = new Character((char) id);
-				characters.put(key, new Integer(i));
-
-				startX[i] = getShortUnsigned(dis);
-				startY[i] = getShortUnsigned(dis);
-				characterWidth[i] = (byte) getShortUnsigned(dis);
-				characterHeight[i] = getShortUnsigned(dis);
-				offsetX[i] = getShortSigned(dis);
-				offsetY[i] = getShortSigned(dis);
-				advance[i] = getShortSigned(dis);
-				glyphs[i] = null;
-				int page = dis.readByte();
-				int channel = dis.readByte();
-			}
-
-			imageTable = new Hashtable();
-			imageTable.put(new Integer(0), glyphs);
-			// if base color is 0x00000000 then we must use the colorize method to recolor
-			// for any ofther color we need to use the imageUtil.changeColor method to recolor
-
-
-			//color = 0;
-
-			// Kerning
-			if (dis.available() > 0) {
-				dis.skipBytes(1);
-				dis.skipBytes(4);
-				//System.out.println("FONT: Starting kerning reading");
-				while (dis.available() > 0) {
-					int first = getLong(dis);
-					int second = getLong(dis);
-					int amount = getShortSigned(dis);
-					kerning.put(first + "-" + second, new Integer(amount));
-					System.out.println("FONT: Kerning for "+first+"-"+second+" = "+amount);
-				}
-			} else {
-				//System.out.println("FONT: No kerning info available");
-			}
-		} catch (IOException ex) {
-			ex.printStackTrace();
+                    return getFont(is, characterImage, colors);
+		}
+                catch (IOException ex) {
+                    //#debug
+                    ex.printStackTrace();
+                    throw new RuntimeException();
 		}
 	}
 
-	public int getShortUnsigned(DataInputStream dis) {
-		try {
-			byte b0 = dis.readByte();
-			byte b1 = dis.readByte();
-			return (((((int) b1) << 8) & 0xff00) | (((int) b0) & 0xff)) & 0xffff;
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return 0;
+
+        public static Font getFont(InputStream is, Image[] imagesArray, int[] colorsArray) throws IOException {
+
+            Font f = new Font();
+
+            DataInputStream dis = new DataInputStream(is);
+
+            // header
+            dis.skipBytes(4);
+
+            // block: info
+            //System.out.println("FONT: Reading info");
+            dis.skipBytes(1);
+            int size = getLong(dis);
+            dis.skipBytes(size);
+
+            // block: common
+            //System.out.println("FONT: Reading common");
+            dis.skipBytes(1);
+            size = getLong(dis);
+            f.height = getShortUnsigned(dis);
+            dis.skipBytes(size - 2);
+
+            // block: page
+            //System.out.println("FONT: Reading pages");
+            dis.skipBytes(1);
+            size = getLong(dis);
+            dis.skipBytes(size);
+
+            // block: chars
+            //System.out.println("FONT: Reading chars");
+            f.characters = new Hashtable();
+
+            dis.skipBytes(1);
+            int chars = getLong(dis) / 20;
+
+            f.startX = new int[chars];
+            f.startY = new int[chars];
+            f.characterWidth = new byte[chars];
+            f.characterHeight = new byte[chars];
+            f.offsetX = new int[chars];
+            f.offsetY = new int[chars];
+            f.advance = new int[chars];
+            Image glyphs[] = new Image[chars];
+
+            for (int i = 0; i < chars; i++) {
+                    int id = getLong(dis);
+                    Character key = new Character((char) id);
+                    f.characters.put(key, new Integer(i));
+
+                    f.startX[i] = getShortUnsigned(dis);
+                    f.startY[i] = getShortUnsigned(dis);
+                    f.characterWidth[i] = (byte)getShortUnsigned(dis);
+                    f.characterHeight[i] = (byte)getShortUnsigned(dis);
+                    f.offsetX[i] = getShortSigned(dis);
+                    f.offsetY[i] = getShortSigned(dis);
+                    f.advance[i] = getShortSigned(dis);
+                    glyphs[i] = null;
+                    int page = dis.readByte();
+                    int channel = dis.readByte();
+            }
+
+            f.imageTable = new Hashtable();
+            f.imageTable.put(new Integer(0), glyphs);
+            // if base color is 0x00000000 then we must use the colorize method to recolor
+            // for any ofther color we need to use the imageUtil.changeColor method to recolor
+
+
+            //color = 0;
+
+            // Kerning
+            if (dis.available() > 0) {
+                    dis.skipBytes(1);
+                    dis.skipBytes(4);
+                    //System.out.println("FONT: Starting kerning reading");
+                    while (dis.available() > 0) {
+                            int first = getLong(dis);
+                            int second = getLong(dis);
+                            int amount = getShortSigned(dis);
+                            f.kerning.put(first + "-" + second, new Integer(amount));
+                            System.out.println("FONT: Kerning for "+first+"-"+second+" = "+amount);
+                    }
+            }
+            else {
+                    //System.out.println("FONT: No kerning info available");
+            }
+
+            return f;
+            
+        }
+
+	public static int getShortUnsigned(DataInputStream dis) throws IOException {
+            byte b0 = dis.readByte();
+            byte b1 = dis.readByte();
+            return (((((int) b1) << 8) & 0xff00) | (((int) b0) & 0xff)) & 0xffff;
 	}
 
-	public int getShortSigned(DataInputStream dis) {
-		try {
-			byte b0 = dis.readByte();
-			byte b1 = dis.readByte();
-			return (((((int) b1) << 8)) | (((int) b0)));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return 0;
+	public static int getShortSigned(DataInputStream dis) throws IOException {
+            byte b0 = dis.readByte();
+            byte b1 = dis.readByte();
+            return (((((int) b1) << 8)) | (((int) b0)));
 	}
 
-	public int getLong(DataInputStream dis) {
-		int short0 = getShortUnsigned(dis);
-		int short1 = getShortUnsigned(dis);
-		return (short0 | (short1 << 16));
+	public static int getLong(DataInputStream dis) throws IOException {
+            int short0 = getShortUnsigned(dis);
+            int short1 = getShortUnsigned(dis);
+            return (short0 | (short1 << 16));
 	}
 
-	public Font(String name) {
+	public static Font getFont(String name) {
 
 		try {
+
+                        Font f = new Font();
 
 			Properties newfont = new Properties();
 
-			newfont.load( getClass().getResourceAsStream(name) );
+			newfont.load( Font.class.getResourceAsStream(name) );
 			String baseDir = name.substring(0, name.lastIndexOf('/') + 1);
 
 			String[] offsetsText = StringUtil.split(newfont.getProperty("offsets"), ',');
 			byte[] offsetsint = new byte[offsetsText.length];
 
-                        characters = new Hashtable();
+                        f.characters = new Hashtable();
 
 
 
 			{ // Fill the characters table. skip missing glyphs where offsets are 0
 				int charIndex = 0;
 				int charCode = 32; // Only supporting Latin char set
-				
+
 				for (int c =0;c<offsetsText.length;c++) {
 
 					offsetsint[c] = Byte.parseByte(offsetsText[c]);
 					Character key = new Character((char)charCode);
 
 					if(offsetsint[c] > 0) {
-						characters.put(key, new Integer(charIndex));
+						f.characters.put(key, new Integer(charIndex));
 						charIndex++;
 					}
 
@@ -238,11 +268,11 @@ public class Font {
 
 
 			String[] colorsText = StringUtil.split(newfont.getProperty("colors"), ',');
-			colors = new int[colorsText.length];
+			f.colors = new int[colorsText.length];
 
-			imageTable = new Hashtable();
+			f.imageTable = new Hashtable();
 
-                        characterImage = new Image[colors.length];
+                        f.characterImage = new Image[f.colors.length];
 			for (int c=0;c<colorsText.length;c++) {
 
 				String imageName = baseDir + newfont.getProperty("image."+colorsText[c]);
@@ -253,116 +283,97 @@ public class Font {
 
 				Image fontimage = Image.createImage(imageName);
 
-				colors[c] = Integer.parseInt(colorsText[c],16);
+				f.colors[c] = Integer.parseInt(colorsText[c],16);
 
-                                characterImage[c] = fontimage;
+                                f.characterImage[c] = fontimage;
 				//imageTable.put( new Integer(colors[c])	, fontimage);
 
 			}
 
 			String numbermodeString = newfont.getProperty("numbermode");
-			numbermode = "T".equals(numbermodeString);
+			f.numbermode = "T".equals(numbermodeString);
 
-			construct( characterImage[0], offsetsint);
+			Image image = f.characterImage[0];
 
-			setSpaceWidth( Integer.parseInt( newfont.getProperty("space") ) );
-			setCharacterSpacing( Integer.parseInt( newfont.getProperty("spacing") ) );
+                        int i, x, y, cutoff, numCharacters;
 
+                        // Set the charIndex data imagePath.
+                        //characterImage = image;
+
+                        // Set the widths array.
+                        f.characterWidth = offsetsint;
+                        numCharacters = offsetsint.length;
+
+                        // Calculate the start positions.
+                        f.startX = new int[numCharacters];
+                        f.startY = new int[numCharacters];
+                        f.advance = new int[numCharacters];
+                        f.offsetX = new int[numCharacters];
+                        f.offsetY = new int[numCharacters];
+
+                        x = y = 0;
+                        cutoff = image.getWidth();
+
+                        for(i = 0; i < numCharacters; i++) {
+
+                                if((x + f.characterWidth[i]) > cutoff) {
+                                        x = 0;
+                                        y++;
+                                }
+
+                                f.startX[i] = x;	// x position in font imagePath.
+                                f.startY[i] = y;	// y (row) in font imagePath.
+                                f.advance[i] = f.characterWidth[i];
+                                f.offsetX[i] = 0;
+                                f.offsetY[i] = 0;
+
+                                x += f.characterWidth[i];
+                        }
+
+                        // Get the rowHeight
+                        f.height = image.getHeight() / (y + 1);
+
+                        f.characterHeight = new byte[numCharacters];
+                        for(i = 0; i < numCharacters; i++) {
+                            f.characterHeight[i] = (byte)f.height;
+                        }
+
+                        // Go back through and calculate the true Y positions and set rowHeight.
+                        for(i = 0; i < numCharacters; i++)
+                        {
+                                f.startY[i] *= f.height;
+                        }
+
+                        // Set the default charIndex spacing.
+                        f.characterSpacing = 1;
+
+
+                        if (f.numbermode) {
+                                // we don't need this
+                                f.startY = null;
+                        }
+                        else {
+                                // Set the default space width.
+                                // we don't really use this anyway as its set in the .font file
+                                f.spaceWidth = f.characterWidth['o' - 32];
+                        }
+
+			f.setSpaceWidth( Integer.parseInt( newfont.getProperty("space") ) );
+			f.setCharacterSpacing( Integer.parseInt( newfont.getProperty("spacing") ) );
+
+                        return f;
 		}
 		catch (IOException ex) {
-
-			ex.printStackTrace();
-			throw new RuntimeException("unable to load font: "+name);
+                    //#debug
+                    ex.printStackTrace();
+                    throw new RuntimeException("unable to load font: "+name);
 		}
-
 
 	}
-	private void construct(Image image, byte widths[]) {
 
-		int i, x, y, cutoff, numCharacters;
-
-		// Set the charIndex data imagePath.
-		//characterImage = image;
-
-		// Set the widths array.
-		characterWidth = widths;
-		numCharacters = widths.length;
-
-		// Calculate the start positions.
-		startX = new int[numCharacters];
-		startY = new int[numCharacters];
-                advance = new int[numCharacters];
-                offsetX = new int[numCharacters];
-                offsetY = new int[numCharacters];
-
-		x = y = 0;
-		cutoff = image.getWidth();
-
-		for(i = 0; i < numCharacters; i++) {
-
-			if((x + characterWidth[i]) > cutoff) {
-				x = 0;
-				y++;
-			}
-
-			startX[i] = x;	// x position in font imagePath.
-			startY[i] = y;	// y (row) in font imagePath.
-                        advance[i] = characterWidth[i];
-                        offsetX[i] = 0;
-                        offsetY[i] = 0;
-
-			x += characterWidth[i];
-		}
-
-		// Get the rowHeight
-		height = image.getHeight() / (y + 1);
-
-                characterHeight = new int[numCharacters];
-                for(i = 0; i < numCharacters; i++) {
-                    characterHeight[i] = height;
-                }
-
-		// Go back through and calculate the true Y positions and set rowHeight.
-		for(i = 0; i < numCharacters; i++)
-		{
-			startY[i] *= height;
-		}
-
-		// Set the default charIndex spacing.
-		characterSpacing = 1;
-
-
-		if (numbermode) {
-			// we don't need this
-			startY = null;
-		}
-		else {
-			// Set the default space width.
-			// we don't really use this anyway as its set in the .font file
-			spaceWidth = characterWidth['o' - 32];
-		}
-	}
-
-	private Image colorize(Image original, int newColor) {
-            int[] rgba = new int[original.getWidth()*original.getHeight()];
-            original.getRGB(rgba, 0, original.getWidth(), 0, 0, original.getWidth(), original.getHeight());
-
-            for (int i=0; i< rgba.length;i++) {
-                int alpha = ((rgba[i] >> 24) & 0xFF);
-                rgba[i] = (newColor | (alpha << 24));
-            }
-
-            return Image.createRGBImage(rgba, original.getWidth(), original.getHeight(), true);
-	}
-
-	/**
-	 * Sets the system font.
-	 * @param systemFont - javax.microedition.lcdui.Font object
-	 */
-	public void setSystemFont(javax.microedition.lcdui.Font systemFont) {
-		this.systemFont = systemFont;
-		height = getHeight();
-	}
+        // #####################################################################
+        // #####################################################################
+        // #####################################################################
 
 	public void setCharacterSpacing(int spacing) {
 		characterSpacing = spacing;
@@ -382,34 +393,29 @@ public class Font {
 		
 		if (systemFont != null) {
 			return systemFont.charWidth(c);
-		} else if (numbermode) {
+		}
+                else if (numbermode) {
 
 			if (c == '-') {
-
 				return characterWidth[POSITION_MINUS];
-			} else if (c == ':') {
-
+			}
+                        else if (c == ':') {
 				return characterWidth[POSITION_TIME];
-
-			} else if (c == '.') {
-
+			}
+                        else if (c == '.') {
 				return characterWidth[POSITION_DOT];
-			} else {
-
+			}
+                        else {
 				// it must be a number then if its none of these!!
 				return characterWidth[Integer.parseInt(String.valueOf(c))];
-
 			}
-
-		} else {
-
+		}
+                else {
 			int p = getCharIndex(c);
-
 			if(p > -1)
 				return characterWidth[getCharIndex(c)];
 			// else glyph not fudge-packed
-				return 0;
-			
+				return 0; // TODO return width of system font char
 		}
 	}
 
@@ -560,7 +566,7 @@ public class Font {
 
 			
                         if (defaultColor==0x00000000) {
-                            coloured = colorize(glyph, color);
+                            coloured = ImageUtil.colorize(glyph, color);
                         }
                         else {
                             coloured = ImageUtil.imageColor(glyph, color);

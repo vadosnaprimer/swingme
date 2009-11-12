@@ -75,7 +75,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("nimbusSelection",getDerivedColor("nimbusBase",-0.010750473f,-0.04875779f,-0.007843137f,0));
 
         // Misc.
-        setUIDefault("font", new Font(javax.microedition.lcdui.Font.getFont(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, size)));
+        setUIDefault("font", new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, size));
 
         // Command button defaults
         //int color1 = getDerivedColor("nimbusBase", 0.03f, -0.58f, 0.07f, 0).intValue();

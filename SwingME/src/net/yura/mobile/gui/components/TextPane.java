@@ -16,6 +16,7 @@
  */
 package net.yura.mobile.gui.components;
 
+import java.io.ByteArrayInputStream;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
@@ -28,6 +29,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.layout.XHTMLLoader;
 import net.yura.mobile.gui.plaf.Style;
 
 /**
@@ -118,7 +120,13 @@ public class TextPane extends Component {
 
     // from JEditorPane
     public void setText(String text) {
-        this.text = text;
+        if (text.startsWith("<html>")) {
+            XHTMLLoader loader = new XHTMLLoader();
+            loader.gotResult( this, text );
+        }
+        else {
+            this.text = text;
+        }
     }
 
     // from DefaultStyledDocument
@@ -688,7 +696,7 @@ public class TextPane extends Component {
 
             // TODO: Font should take care of all this details... and use bitmaps if needed
             // TODO: creating a new Object every time...
-            return new Font(javax.microedition.lcdui.Font.getFont(face, style, size));
+            return new Font(face, style, size);
         }
     } // End Style class
 

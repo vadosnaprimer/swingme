@@ -1,5 +1,6 @@
 package net.yura.mobile.gui.layout;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
@@ -34,11 +35,32 @@ public class XHTMLLoader {
 
         try {
 
-                root = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                currentComponent = root;
+            root = new Panel(new FlowLayout(Graphics.VCENTER,0));
+            currentComponent = root;
+
 
             KXmlParser parser = new KXmlParser();
             parser.setInput(resultsStream, null);
+            parser.nextTag(); // the START_DOCUMENT event
+
+
+            startInlineSection();
+
+            read(parser);
+
+            endInlineSection();
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void gotResult(TextPane pane,String string) {
+
+        currentComponent = pane;
+        try {
+            KXmlParser parser = new KXmlParser();
+            parser.setInput(new ByteArrayInputStream( string.getBytes() ), null);
             parser.nextTag(); // the START_DOCUMENT event
 
             read(parser);
@@ -146,10 +168,7 @@ public class XHTMLLoader {
 
 System.out.println("START: "+startTag);
 
-            if ("body".equals(startTag)) {
-                startInlineSection();
-            }
-            else if ("b".equals(startTag)) {
+            if ("b".equals(startTag)) {
                 startFormat(bold);
             }
             else if ("i".equals(startTag)) {
@@ -345,6 +364,9 @@ System.out.println("START: "+startTag);
 
             }
             //#mdebug
+            else if ("body".equals(startTag)) {
+
+            }
             else if ("p".equals(startTag)) {
                 // do nothing
             }
@@ -381,10 +403,8 @@ System.out.println("START: "+startTag);
                 return;
             }
 
-            if ("body".equals(endTag)) {
-                endInlineSection();
-            }
-            else if ("select".equals(endTag)) {
+
+            if ("select".equals(endTag)) {
                 endComponent();
             }
             else if ("input".equals(endTag)) {
@@ -423,6 +443,9 @@ System.out.println("START: "+startTag);
                 endComponent();
             }
             //#mdebug
+            else if ("body".equals(endTag)) {
+                
+            }
             else if ("p".equals(endTag)) {
                 // do nothing
             }
