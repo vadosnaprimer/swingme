@@ -435,17 +435,35 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 			addToScrollPane(border, null , makeButton("Back","mainmenu") );
 		}
+
                 else if ("fontTest".equals(actionCommand)) {
-                    Font font = new Font("/font/test_0.png", "/font/test.fnt");
+                    Font font = new Font(new int[] {0x00FFFFFF },new String[] { "/font/test_0.png" }, "/font/test.fnt");
+                    Font font2 = new Font("/basicfont/font1-med.font");
 
                     Panel p = new Panel( new FlowLayout( Graphics.VCENTER ) );
 
                     Button l1 = new Button("Font Test");
+                    Button l2 = new Button(" s p a c e d ");
+                    Button l3 = new Button("///\\\\\\///\\\\\\");
+                    Button l4 = new Button("|||||||");
+                    Button l5 = new Button("TTttTTtt");
+                    Button l6 = new Button("FFffFFff");
                     l1.setFont(font);
-
+                    l2.setFont(font2);
+                    l3.setFont(font2);
+                    l4.setFont(font);
+                    l5.setFont(font);
+                    l6.setFont(font);
                     p.add(l1);
+                    p.add(l2);
+                    p.add(l3);
+                    p.add(l4);
+                    p.add(l5);
+                    p.add(l6);
 
-
+		    TextArea t = new TextArea("/|\\/|\\/|\\/|\\\n|||||||||\nWwWwWwWwW\n~~~~~~~~~\n_-_-_-_-_\n||||||||||");
+		    t.setFont(font);
+		    p.add(t);
                     addToScrollPane(p, null, makeButton("Back","mainmenu") );
                 }
 		else if ("throwerror".equals(actionCommand)) {
