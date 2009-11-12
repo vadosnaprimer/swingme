@@ -493,6 +493,9 @@ public class XULLoader {
                 textarea2.setFocusable(focusable);
                 readTextComponent(parser,textarea2);
             }
+            else if (textarea instanceof TextPane) {
+                ((TextPane)textarea).setActionListener(listener);
+            }
 
             return readUIObject(parser, textarea,listener);
         }
