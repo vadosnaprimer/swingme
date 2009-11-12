@@ -14,6 +14,7 @@ import net.yura.mobile.io.ClipboardManager;
 import net.yura.mobile.io.LocationMonitor;
 import net.yura.mobile.io.ServiceLink.Task;
 import net.yura.mobile.test.MainPane.Section;
+import net.yura.mobile.io.ContactManager;
 
 /**
  *
@@ -26,6 +27,8 @@ public class ServiceLinkTest  extends Section {
 
         private MyClipboardManager clipboardManager;
         private MyLocationMonitor locationMonitor;
+        private MyContactManager contactManager;
+
         class MyClipboardManager extends ClipboardManager {
             public void handleTask(Task task) {
                 String strMethod = task.getMethod();
@@ -35,6 +38,17 @@ public class ServiceLinkTest  extends Section {
                 if ("PutClipboardText".equals(strMethod)) {
                     infoLabel.setText("");
                     infoLabel.append((String) task.getObject());
+                    infoLabel.append("\n");
+                }
+            }
+        }
+        class MyContactManager extends ContactManager {
+            public void handleTask(Task task) {
+                String strMethod = task.getMethod();
+                if ("PutContactCount".equals(strMethod)) {
+                    infoLabel.setText("");
+                    Integer value = (Integer) task.getObject();
+                    infoLabel.append(Integer.toString(value.intValue()));
                     infoLabel.append("\n");
                 }
             }
@@ -95,6 +109,7 @@ public class ServiceLinkTest  extends Section {
                                 addTest("Get Clipboard","GetClipboardTest");
                                 addTest("Put XYZ to Clipboard","PutClipboardTest");
                                 addTest("Close Connection","serviceDisconnect");
+                                addTest("Count Contacts","countContacts");
     }
 
     public void openTest(String actionCommand) {
@@ -209,6 +224,20 @@ public class ServiceLinkTest  extends Section {
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
                         infoLabel.append("\nDone\n");
+     			addToScrollPane(info, null );
+                }
+                else if ("countContacts".equals(actionCommand)) {
+			if (info==null) {
+                            info = new Panel( new BorderLayout() );
+                        }
+                        info.removeAll();
+                        if (contactManager == null) {
+                            contactManager = new MyContactManager();
+                        }
+                        infoLabel = new TextArea("Count Contacts\n",Graphics.LEFT);
+                        infoLabel.setFocusable(false);
+                        contactManager.getContactCount();
+                        info.add(infoLabel);
      			addToScrollPane(info, null );
                 }
     }
