@@ -414,9 +414,7 @@ public class ComponentTest  extends Section{
                     cameraPanel.capture();
                 }
                 else if ("cameraCaptureDone".equals(actionCommand)) {
-                    System.out.println("-----------");
                     cameraPanel.close();
-                    System.out.println("--000000000000000");
                     byte[] imgData = cameraPanel.getSnapshotData();
 
                     Label l, d = null;
