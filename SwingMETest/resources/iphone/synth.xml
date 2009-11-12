@@ -6,6 +6,14 @@
     <style id="global">
       <state>
         <font name="PROPORTIONAL" size="MEDIUM"/>
+
+        <font path="/font/calibri.fnt">
+            <fontImage path="/font/calibri.png" color="0x00000000"/>
+            <fontImage path="/font/calibri.png" color="0x00FFFFFF"/>
+        </font>
+
+        <font path="/basicfont/font2-med.font"/>
+        
         <color type="FOREGROUND" value="#52425c"/>
       </state>
     </style>

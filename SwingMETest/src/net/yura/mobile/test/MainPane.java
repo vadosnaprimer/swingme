@@ -453,18 +453,18 @@ public class MainPane extends DesktopPane implements ActionListener {
 		    };
 
 		    Font[] fonts = {
-			new Font(new int[] {0x00FFFFFF },new String[] { "/font/test.png" }, "/font/test.fnt"),
-			new Font(new int[] {0x00000000 },new String[] { "/font/calibri.png" }, "/font/calibri.fnt"),
+			Font.getFont("/font/test.fnt",new String[] { "/font/test.png" }, new int[] {0x00FFFFFF }),
+			Font.getFont("/font/calibri.fnt", new String[] { "/font/calibri.png" },new int[] {0x00000000 } ),
 
-			new Font("/basicfont/font1-small.font"),
-			new Font("/basicfont/font1-med.font"),
-			new Font("/basicfont/font1-large.font"),
+			Font.getFont("/basicfont/font1-small.font"),
+			Font.getFont("/basicfont/font1-med.font"),
+			Font.getFont("/basicfont/font1-large.font"),
 
-			new Font("/basicfont/font2-small.font"),
-			new Font("/basicfont/font2-med.font"),
-			new Font("/basicfont/font2-large.font"),
+			Font.getFont("/basicfont/font2-small.font"),
+			Font.getFont("/basicfont/font2-med.font"),
+			Font.getFont("/basicfont/font2-large.font"),
 
-			new Font("/basicfont/treasure.font"),
+			Font.getFont("/basicfont/treasure.font"),
 		    };
 
 		    int colors[] = {
@@ -504,7 +504,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 			}
 		    }
 		    
-                    Font treasure = new Font("/basicfont/treasure.font");
+                    Font treasure = Font.getFont("/basicfont/treasure.font");
 
 		    TextArea t = new TextArea("/|\\/|\\/|\\/|\\\n|||||||||\nWwWwWwWwW\n~~~~~~~~~\n_-_-_-_-_\n||||||||||");
 		    t.setForeground(0x00FF00FF);
