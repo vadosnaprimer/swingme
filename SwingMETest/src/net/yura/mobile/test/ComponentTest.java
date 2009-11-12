@@ -414,7 +414,9 @@ public class ComponentTest  extends Section{
                     cameraPanel.capture();
                 }
                 else if ("cameraCaptureDone".equals(actionCommand)) {
-
+                    System.out.println("-----------");
+                    cameraPanel.close();
+                    System.out.println("--000000000000000");
                     byte[] imgData = cameraPanel.getSnapshotData();
 
                     Label l, d = null;
@@ -422,11 +424,13 @@ public class ComponentTest  extends Section{
                         l = new Label("Camera Capture Failed!");
                     } else {
                         Image img = Image.createImage(imgData, 0, imgData.length);
-                        d = new Label("Dimensions -  h:"+new Integer(img.getHeight()).toString()+ ", w:" + (new Integer(img.getWidth()).toString()));
+                        imgData = null;
+                        System.gc();
+                        d = new Label("H:"+img.getHeight()+ ", W:" + img.getWidth());
                         l = new Label(new Icon(img));
                     }
                     Panel p = new Panel();
-                    p.setLayout(new BoxLayout(3));
+                    p.setLayout(new BoxLayout(Graphics.VCENTER));
                     p.add(d);
                     p.add(l);
 
