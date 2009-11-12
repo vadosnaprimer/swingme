@@ -215,15 +215,27 @@ public class Font {
 
                         characters = new Hashtable();
 
-                        int charCode = 33; // Only supporting Latin char set
-			for (int c=0;c<offsetsText.length;c++) {
 
-				offsetsint[c] = Byte.parseByte(offsetsText[c]);
-                                Character key = new Character((char)charCode);
-                                characters.put(key, new Integer(c));
-                                charCode++;
 
+			{ // Fill the characters table. skip missing glyphs where offsets are 0
+				int charIndex = 0;
+				int charCode = 32; // Only supporting Latin char set
+				
+				for (int c =0;c<offsetsText.length;c++) {
+
+					offsetsint[c] = Byte.parseByte(offsetsText[c]);
+					Character key = new Character((char)charCode);
+
+					if(offsetsint[c] > 0) {
+						characters.put(key, new Integer(charIndex));
+						charIndex++;
+					}
+
+					charCode++;
+
+				}
 			}
+
 
 			String[] colorsText = StringUtil.split(newfont.getProperty("colors"), ',');
 			colors = new int[colorsText.length];
@@ -367,7 +379,7 @@ public class Font {
 	 * @return The width of the requested charIndex when rendered using this font.
 	 */
 	public int getWidth(char c) {
-
+		
 		if (systemFont != null) {
 			return systemFont.charWidth(c);
 		} else if (numbermode) {
@@ -391,23 +403,30 @@ public class Font {
 
 		} else {
 
-			int width = characterWidth[getCharPosition(c)];
+			int p = getCharIndex(c);
 
-			//if (width == 0) {
-			//	return 20;//spaceWidth;
-			//}
-
-			return width;
+			if(p > -1)
+				return characterWidth[getCharIndex(c)];
+			// else glyph not fudge-packed
+				return 0;
+			
 		}
 	}
 
-	private int getCharPosition(char ch) {
+	private int getCharIndex(char ch) {
+		/**
+		 * Gets the array index of this char for the various glyph arrays:
+		 * advance[], characterWidth[], characterHeight[], offsetX[], offsetY[],
+		 */
+
 		Character key = new Character(ch);
 		Object index = characters.get(key);
+
 		if (index != null) {
 			return ((Integer) index).intValue();
 		}
-		return 0;
+
+		return -1; // Shizer!
 	}
 
 	public int getHeight() {
@@ -453,41 +472,46 @@ public class Font {
 			for (i = (s.length() - 1); i >= 0; i--) {
 				character = s.charAt(i);
 
-				int charIndex = getCharPosition(character);
+				int charIndex = getCharIndex(character);
 				int w = 0;
-				//System.out.println("FONT: get kergning for: "+prevCharacter+"-"+charIndex);
 
-				int k = 0;
+				if(charIndex > - 1) {
 
-				Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
-				if (kerningModifier != null) {
-					k = w = kerningModifier.intValue();
+					//System.out.println("FONT: get kergning for: "+prevCharacter+"-"+charIndex);
 
-				}
+					Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
+					if (kerningModifier != null) {
+						w = kerningModifier.intValue();
 
-				if (character == ' ' && i == (s.length() - 1)) { // Last space
+					}
 
-					w = getWidth(character) + advance[charIndex];
+					if (character == ' ' && i == (s.length() - 1)) { // Last space
 
-				} else if (i == (s.length() - 1)) { // Last char
+						w = getWidth(character) + advance[charIndex];
 
-					w = getWidth(character) + offsetX[charIndex];
+					} else if (i == (s.length() - 1)) { // Last char
 
-				} else if (i == 0) { // First char
+						w = getWidth(character) + offsetX[charIndex];
 
-					// If the first char has POSITIVE offset:
-					// - It will effectively REDUCE total width
-					// - Thus it is SUBTRACTED here
-					// - NEGATIVE offsets produce the opposite effect
+					} else if (i == 0) { // First char
 
-					w = advance[charIndex] + characterSpacing - offsetX[charIndex];
+						// If the first char has POSITIVE offset:
+						// - It will effectively REDUCE total width
+						// - Thus it is SUBTRACTED here
+						// - NEGATIVE offsets produce the opposite effect
 
-				} else { // All other chars
+						w = advance[charIndex] + characterSpacing - offsetX[charIndex];
 
-					// In the middle of the text:
-					// - We don't care about offset
-					w = advance[charIndex] + characterSpacing;
+					} else { // All other chars
 
+						// In the middle of the text:
+						// - We don't care about offset
+						w = advance[charIndex] + characterSpacing;
+
+					}
+				} else { // Mirror system font substitution from drawString
+
+					w = javax.microedition.lcdui.Font.getDefaultFont().charWidth(character);
 				}
 
 				prevCharacter = charIndex;
@@ -504,15 +528,16 @@ public class Font {
 	}
 
 	private Image getGlyph(int index,int color) {
+
 		Image[] glyphs = (Image[]) imageTable.get(new Integer(color));
 
-                if (glyphs == null ) {
+		
+                if (glyphs == null ) { // color not found?
                         glyphs = new Image[characters.size()];
                         imageTable.put(new Integer(color), glyphs);
                 }
 
 		if (glyphs[index] == null) {
-
                         // find if we have this color already
                         for (int c=0;c<colors.length;c++) {
                             if (color == colors[c]) {
@@ -527,11 +552,13 @@ public class Font {
                                 return glyphs[index];
                             }
                         }
-
+			
                         int defaultColor = colors[0];
-                        Image glyph = getGlyph(index,defaultColor);
 
+                        Image glyph = getGlyph(index,defaultColor);
                         Image coloured;
+
+			
                         if (defaultColor==0x00000000) {
                             coloured = colorize(glyph, color);
                         }
@@ -542,6 +569,7 @@ public class Font {
                         glyphs[index] = coloured;
 
 		}
+
 		return glyphs[index];
 	}
 
@@ -565,9 +593,10 @@ public class Font {
 
 	public int drawString(Graphics g, String s, int x, int y, int alignment) {
 
+		System.out.println("drawString: " + s);
 
 		if (systemFont != null) {
-
+			// TODO: refactor with missing-glyph code
 			javax.microedition.lcdui.Font f = g.getFont();
 
 			g.setFont(systemFont);
@@ -655,38 +684,57 @@ public class Font {
 				// Render each charIndex of the string.
 				for (i = 0; i < length; i++) {
 					character = s.charAt(i);
+					
+					
+					charIndex = getCharIndex(character);
 
-					charIndex = getCharPosition(character);
+					if(charIndex > -1) {
+						// Kerning
+						Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
+						if (kerningModifier != null) {
+							x += kerningModifier.intValue();
+						}
 
-					// Kerning
-					Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
-					if (kerningModifier != null) {
-						x += kerningModifier.intValue();
+						// Draw character
+						Image glyph = getGlyph(charIndex,color);
+
+						int thisx;
+						if (i > 0) {
+							thisx = x + offsetX[charIndex];
+						}
+						else {
+							thisx = x;
+							x -= offsetX[charIndex];
+						}
+
+						//#mdebug
+						if (DesktopPane.debug) {
+							g.setColor(r.nextInt());
+							g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());
+							g.setColor(color);
+						}
+						//#enddebug
+
+						g.drawImage(glyph, thisx, y + offsetY[charIndex], Graphics.TOP | Graphics.LEFT);
+						//System.out.println("yOff:" + offsetY[charIndex] + ' ' + character);
+						// Advance drawing position.
+						x += advance[charIndex] + characterSpacing;
+
+					} else { // Substitute system font for missing glyphs
+
+						// Swap fonts
+						systemFont = javax.microedition.lcdui.Font.getDefaultFont();
+						javax.microedition.lcdui.Font savedFont = g.getFont();
+						
+						g.setFont(systemFont);
+						g.drawChar(character, x, y, alignment);
+						x += getWidth(character); // Do advance
+
+						// Revert fonts
+						systemFont = null;
+						g.setFont(savedFont);
 					}
-
-					// Draw character
-					Image glyph = getGlyph(charIndex,color);
-
-					int thisx;
-					if (i > 0) {
-						thisx = x + offsetX[charIndex];
-					} else {
-						thisx = x;
-						x -= offsetX[charIndex];
-					}
-
-					//#mdebug
-					if (DesktopPane.debug) {
-						g.setColor(r.nextInt());
-						g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());
-					}
-					//#enddebug
-
-					g.drawImage(glyph, thisx, y + offsetY[charIndex], Graphics.TOP | Graphics.LEFT);
-					//System.out.println("yOff:" + offsetY[charIndex] + ' ' + character);
-					// Advance drawing position.
-					x += advance[charIndex] + characterSpacing;
-
+					
 					prevCharacter = charIndex;
 				}
 
