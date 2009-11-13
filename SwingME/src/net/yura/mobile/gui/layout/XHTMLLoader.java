@@ -108,10 +108,12 @@ public class XHTMLLoader {
     final static TextStyle bold = new TextStyle();
     final static TextStyle italic = new TextStyle();
     final static TextStyle underline = new TextStyle();
+    final static TextStyle center = new TextStyle();
     static {
         bold.setBold(true);
         italic.setItalic(true);
         underline.setUnderline(true);
+        center.setAlignment( Graphics.HCENTER );
     }
 
     private void startInlineSection() {
@@ -176,6 +178,9 @@ System.out.println("START: "+startTag);
             }
             else if ("u".equals(startTag)) {
                 startFormat(underline);
+            }
+            else if ("center".equals(startTag)) {
+                startFormat(center);
             }
             else if ("a".equals(startTag)) {
                 TextStyle linkStyle = new TextStyle();
