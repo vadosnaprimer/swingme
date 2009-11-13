@@ -120,10 +120,10 @@ public class Font {
 		}
 	}
 
-
         public static Font getFont(InputStream is, Image[] imagesArray, int[] colorsArray) throws IOException {
-
+		
             Font f = new Font();
+	    f.characterImage = imagesArray;
 
             DataInputStream dis = new DataInputStream(is);
 
@@ -230,7 +230,7 @@ public class Font {
 	}
 
 	public static Font getFont(String name) {
-
+		
 		try {
 
                         Font f = new Font();
@@ -533,7 +533,7 @@ public class Font {
 		}
 	}
 
-	private Image getGlyph(int index,int color) {
+	private Image getGlyph(int index, int color) {
 
 		Image[] glyphs = (Image[]) imageTable.get(new Integer(color));
 
@@ -548,13 +548,27 @@ public class Font {
                         for (int c=0;c<colors.length;c++) {
                             if (color == colors[c]) {
 
-                                System.out.println( " "+characterImage[c]+" "+ startX[index]+" "+  startY[index]+" "+  characterWidth[index]+" "+  characterHeight[index] );
+//				System.err.println("characterHeight = " + characterHeight[index]);
+//				System.err.println("characterWidth = " + characterWidth[index]);
+//				System.err.println("startY = " + startY[index]);
+//				System.err.println("startX = " + startX[index]);
+//				System.err.println("characterImage = " + characterImage[c]);
+
                                 // hack to stop the thing crashing, this should be taken out
                                 if (characterWidth[index]==0) {
                                     glyphs[index] = Image.createImage(1, 1);
                                     return glyphs[index];
                                 }
-                                glyphs[index] = Image.createImage(characterImage[c], startX[index], startY[index], characterWidth[index], characterHeight[index], Sprite.TRANS_NONE);
+
+                                glyphs[index] = Image.createImage(
+					characterImage[c],
+					startX[index],
+					startY[index],
+					characterWidth[index],
+					characterHeight[index],
+					Sprite.TRANS_NONE
+					);
+				
                                 return glyphs[index];
                             }
                         }
@@ -599,7 +613,6 @@ public class Font {
 
 	public int drawString(Graphics g, String s, int x, int y, int alignment) {
 
-		System.out.println("drawString: " + s);
 
 		if (systemFont != null) {
 			// TODO: refactor with missing-glyph code
@@ -691,9 +704,8 @@ public class Font {
 				for (i = 0; i < length; i++) {
 					character = s.charAt(i);
 					
-					
 					charIndex = getCharIndex(character);
-
+					
 					if(charIndex > -1) {
 						// Kerning
 						Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
