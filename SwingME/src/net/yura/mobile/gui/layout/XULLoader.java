@@ -464,7 +464,6 @@ public class XULLoader {
 
             Class theclass = TextArea.class;
             boolean wrap = false;
-            boolean focusable = true;
 
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -480,22 +479,18 @@ public class XULLoader {
                 else if ("wrap".equals(key)) {
                     wrap = "true".equals(value);
                 }
-                else if ("editable".equals(key)) {
-                    focusable = "true".equals(value);
-                }
+
             }
 
             Component textarea = (Component)theclass.newInstance();
 
             if (textarea instanceof TextArea) {
-                TextArea textarea2 = (TextArea)textarea;
-                textarea2.setLineWrap(wrap);
-                textarea2.setFocusable(focusable);
-                readTextComponent(parser,textarea2);
+                ((TextArea)textarea).setLineWrap(wrap);
             }
             else if (textarea instanceof TextPane) {
                 ((TextPane)textarea).setActionListener(listener);
             }
+            readTextComponent(parser,textarea);
 
             return readUIObject(parser, textarea,listener);
         }
@@ -696,7 +691,7 @@ public class XULLoader {
 
     }
 
-    private void readTextComponent(KXmlParser parser, TextComponent text) {
+    private void readTextComponent(KXmlParser parser, Component text) {
             String textLabel = null;
             boolean i18n = false;
 
@@ -714,17 +709,29 @@ public class XULLoader {
                     Hashtable properties = getProperties(value);
                     String constraint = (String)properties.get("constraint");
                     if (constraint!=null) {
-                        text.setConstraints( Integer.parseInt(constraint) );
+                        if (text instanceof TextComponent) {
+                            ((TextComponent)text).setConstraints( Integer.parseInt(constraint) );
+                        }
                     }
                     String maxsize = (String)properties.get("maxsize");
                     if (maxsize!=null) {
-                        text.setMaxSize( Integer.parseInt(maxsize) );
+                        if (text instanceof TextComponent) {
+                            ((TextComponent)text).setMaxSize( Integer.parseInt(maxsize) );
+                        }
                     }
+                }
+                else if ("editable".equals(key)) {
+                    text.setFocusable( "true".equals(value) );
                 }
             }
 
             if (textLabel != null) {
-                text.setText( getPropertyText(textLabel,i18n) );
+                if (text instanceof TextComponent) {
+                    ((TextComponent)text).setText( getPropertyText(textLabel,i18n) );
+                }
+                else if (text instanceof TextPane) { // TODO temp for now
+                    ((TextPane)text).setText( getPropertyText(textLabel,i18n) );
+                }
             }
     }
 
