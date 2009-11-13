@@ -402,8 +402,13 @@ System.out.println("START: "+startTag);
             if (style!=null) {
                 if (currentComponent instanceof TextPane) {
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                    int boldend = inlineText.getText().length();
-                    inlineText.setCharacterAttributes(styleStart, boldend-styleStart, bold);
+                    int styleEnd = inlineText.getText().length();
+                    if (style.getAlignment() == -1) {
+                        inlineText.setCharacterAttributes(styleStart, styleEnd-styleStart, style);
+                    }
+                    else {
+                        inlineText.setParagraphAttributes(styleStart, styleEnd-styleStart, style);
+                    }
                 }
                 return;
             }
