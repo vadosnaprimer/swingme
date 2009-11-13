@@ -348,6 +348,9 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                 String path = parser.getAttributeValue(null, "path");
 
+//#debug
+System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style: "+fontStyle+", id: "+fontId);
+
                 int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
                 int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
                 int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
@@ -424,7 +427,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                     }
                 }
 
-                if (font!=null) {
+                if (font==null) {
                     font = new Font(fname, fstyle, fsize);
                 }
 
