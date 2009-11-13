@@ -16,7 +16,6 @@
  */
 package net.yura.mobile.gui.components;
 
-import java.io.ByteArrayInputStream;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
@@ -195,8 +194,8 @@ public class TextPane extends Component {
         next = (action == Canvas.DOWN || action == Canvas.RIGHT) ? next + 1 :
                (action == Canvas.UP || action == Canvas.LEFT) ? next - 1 : next;
 
-        next = (next < -1) ? -1 :
-               (next > focusableElems.size()) ? focusableElems.size() : next;
+        next = (next < 0) ? 0 :
+               (next >= focusableElems.size()) ? focusableElems.size() - 1 : next;
 
         if (next != focusComponentIdx) {
             focusComponentIdx = next;
@@ -214,7 +213,7 @@ public class TextPane extends Component {
 
     private TextStyle getFocusElementStyle() {
         int idx = focusComponentIdx;
-        return (idx < 0 || idx >= focusableElems.size()) ?
+        return (idx < 0 || idx >= focusableElems.size() || !isFocusOwner()) ?
                 null : (TextStyle) focusableElems.elementAt(idx);
     }
 
