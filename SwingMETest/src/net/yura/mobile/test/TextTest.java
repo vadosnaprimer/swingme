@@ -38,6 +38,7 @@ public class TextTest extends Section {
                                 addTest("TextField Test","componentTest2");
 				addTest("View Text","viewText");
                                 addTest("Text Pane","textPane");
+                                addTest("HTML Text","HTMLtest");
                                 addTest("View XHTML","viewXHTML");
     }
 
@@ -126,6 +127,17 @@ for (int c=0;c<4;c++) {
                     viewText.setFocusable( !viewText.isFocusable() );
                     viewText.repaint();
                     // TODO mainWindow.setupFocusedComponent();
+
+                }
+                else if ("HTMLtest".equals(actionCommand)) {
+
+
+                    TextPane html = new TextPane();
+                    html.setActionListener(this);
+
+                    html.setText("<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a></center></html>");
+
+                    addToScrollPane( html ,null);
 
                 }
 		else if ("viewXHTML".equals(actionCommand)) {
@@ -256,6 +268,10 @@ finally {
                     textPane.setBackground(0xFFFFFF);
 
                     addToContentPane(p,null);
+                }
+                else {
+
+                    System.out.println("unknown command "+actionCommand);
                 }
 
     }
