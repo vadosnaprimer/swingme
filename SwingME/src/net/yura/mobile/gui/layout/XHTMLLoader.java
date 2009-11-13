@@ -18,6 +18,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.StringUtil;
 import org.kxml2.io.KXmlParser;
@@ -184,6 +185,11 @@ System.out.println("START: "+startTag);
             }
             else if ("a".equals(startTag)) {
                 TextStyle linkStyle = new TextStyle();
+
+                linkStyle.setUnderline(true);
+                linkStyle.setForeground(0x0000FF);
+                linkStyle.addForeground(0xFF0000, Style.FOCUSED);
+
                 for (int c=0;c<count;c++) {
                     String key = parser.getAttributeName(c).toLowerCase();
                     String value = parser.getAttributeValue(c);

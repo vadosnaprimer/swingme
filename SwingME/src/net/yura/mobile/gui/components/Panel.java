@@ -410,6 +410,9 @@ public class Panel extends Component {
     public Component getComponentAt(int x, int y) {
         for(int i = 0; i < components.size(); i++){
             Component component = (Component)components.elementAt(i);
+            if (!component.isVisible()) {
+                continue;
+            }
             int x1 = component.getXWithBorder();
             int y1 = component.getYWithBorder();
             int x2 = x1 + component.getWidthWithBorder();
