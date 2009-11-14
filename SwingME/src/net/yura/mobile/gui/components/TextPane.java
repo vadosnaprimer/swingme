@@ -42,7 +42,7 @@ public class TextPane extends Component {
     private Vector lineFragments = new Vector();
     private Vector focusableElems = new Vector();
     private int lastLineX;
-    private int focusComponentIdx = -1;
+    private int focusComponentIdx;
     private ActionListener actionListener;
 
     public TextPane() {
@@ -55,7 +55,6 @@ public class TextPane extends Component {
 
     // Overwrites Component.paintComponent()
     public void paintComponent(Graphics2D g) {
-
 
         // TODO: Use binary search to find the first fragment with a visible y
         // TODO: Stop paint if y is no longer visible... Take care that in the same
@@ -175,18 +174,33 @@ public class TextPane extends Component {
         this.actionListener = l;
     }
 
+    public void focusLost() {
+        super.focusLost();
+
+        if (focusableElems.size() > 0) {
+            repaint();
+        }
+    }
+
+    public void focusGained() {
+        super.focusGained();
+
+        if (focusableElems.size() > 0) {
+            repaint();
+        }
+    }
+
     public boolean processKeyEvent(KeyEvent event) {
 
         int key = event.getIsDownKey();
         int action = event.getKeyAction(key);
 
-        if (actionListener != null && action == Canvas.FIRE) {
+        if (action == Canvas.FIRE) {
             TextStyle style = getFocusElementStyle();
-            if (style != null) {
-                System.out.println("Action = " + style.getAction());
+            if (style != null && actionListener != null) {
                 actionListener.actionPerformed(style.getAction());
-                return true;
             }
+            return true;
         }
 
         int next = focusComponentIdx;
@@ -198,17 +212,47 @@ public class TextPane extends Component {
                (next >= focusableElems.size()) ? focusableElems.size() - 1 : next;
 
         if (next != focusComponentIdx) {
+
+            // TODO: If not visible, return false.
+
             focusComponentIdx = next;
 
             System.out.println("KEY PRESSED: " + focusComponentIdx);
 
             // TODO: Need to scroll, to make focusable element visible.
-
             repaint();
             return true;
         }
 
         return false;
+    }
+
+    public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+        super.processMouseEvent(type, x, y, keys);
+
+        if (type == DesktopPane.PRESSED && isFocusOwner()) {
+
+            for (int i = 0; i < lineFragments.size(); i++) {
+                LineFragment frag = (LineFragment) lineFragments.elementAt(i);
+                String action = frag.style.getAction();
+                if (action != null) {
+                    if (x >= frag.x && x <= frag.x + frag.w &&
+                        y >= frag.y && y <= frag.y + frag.h) {
+
+                        int focusIdx = focusableElems.indexOf(frag.style);
+                        if (focusIdx != focusComponentIdx) {
+                            focusComponentIdx = focusIdx;
+                            repaint();
+                        }
+
+                        if (actionListener != null) {
+                            actionListener.actionPerformed(action);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     private TextStyle getFocusElementStyle() {
@@ -347,7 +391,7 @@ public class TextPane extends Component {
 
                 if ("\n".equals(lastLineText)) {
                     if (lastLineX <= 0) {
-                        lineFragments.addElement(new LineFragment(0, 0, style, 0, 0));
+                        lineFragments.addElement(new LineFragment(0, 0, 0, 0, style, 0, 0));
                     }
                     lastLineX = 0;
 
@@ -361,7 +405,7 @@ public class TextPane extends Component {
 
                     if (fragW > 0) {
                         // Note: First fragments on a line have negative width
-                        LineFragment lineFrag = new LineFragment((lastLineX == 0) ? -fragW : fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
+                        LineFragment lineFrag = new LineFragment(lastLineX, 0, fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
                         lineFragments.addElement(lineFrag);
                     }
 
@@ -390,8 +434,7 @@ public class TextPane extends Component {
                 lastLineX = 0;
             }
 
-            // Note: First fragments on a line have negative width
-            LineFragment lineFrag = new LineFragment((lastLineX == 0) ? -imgW : imgW, imgH, style, 0, 0);
+            LineFragment lineFrag = new LineFragment(lastLineX, 0, imgW, imgH, style, 0, 0);
             lineFragments.addElement(lineFrag);
 
             lastLineX += imgW;
@@ -420,7 +463,6 @@ public class TextPane extends Component {
 
             if (lineFrag.x <= 0 || i == numFrags) {
 
-                lineFrag.x = -lineFrag.x;
                 // Now that we know the height of the entire line, calculate
                 // the baseline
                 int lineX = 0;
@@ -428,9 +470,9 @@ public class TextPane extends Component {
                 for (int j = startLineFragIdx; j < i; j++) {
                     LineFragment frag = (LineFragment) lineFragments.elementAt(j);
                     int leftPadding = getParagraphLeftPadding(frag.style, lineW);
-                    int fragW = frag.x;
+                    int fragW = frag.w;
 
-                    frag.y = lineY + (lineH - frag.y);
+                    frag.y = lineY + (lineH - frag.h);
                     frag.x = lineX + leftPadding;
 
                     lineX += fragW;
@@ -440,13 +482,13 @@ public class TextPane extends Component {
                 lineY += lineH + padding;
 
                 startLineFragIdx = i;
-                lineH = lineFrag.y;
-                lineW = lineFrag.x;
+                lineH = lineFrag.h;
+                lineW = lineFrag.w;
             }
             else {
                 // Note: lineFrag.y holds the fragment height
-                lineH = Math.max(lineH, lineFrag.y);
-                lineW += lineFrag.x;
+                lineH = Math.max(lineH, lineFrag.h);
+                lineW += lineFrag.w;
             }
         }
 
@@ -722,15 +764,16 @@ public class TextPane extends Component {
      // Inner class
      static private class LineFragment {
 
-         int x;
-         int y;
+         int x, y, w, h;
          TextStyle style;
          int startOffset;
          int endOffset;
 
-         public LineFragment(int x, int y, TextStyle style, int startOffset, int endOffset) {
+         public LineFragment(int x, int y, int w, int h, TextStyle style, int startOffset, int endOffset) {
              this.x = x;
              this.y = y;
+             this.w = w;
+             this.h = h;
              this.style = style;
              this.startOffset = startOffset;
              this.endOffset = endOffset;
