@@ -9,6 +9,7 @@ import java.io.InputStream;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.EmptyBorder;
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
@@ -259,15 +260,21 @@ finally {
                     textPane.setCharacterAttributes(251, 2, iconStyle);  // Icon
                     textPane.setCharacterAttributes(text.length() - 3, 10, bold);  // Bold
 
-                    ScrollPane tmp = new ScrollPane( textPane );
-                    tmp.setBorder( new EmptyBorder(10,10,10,0) );
                     Panel p = new Panel( new BorderLayout() );
-                    p.add(tmp);
+
+                    p.add(new Button("Button TOP"), Graphics.TOP);
+                    p.add(textPane);
+                    p.add(new Button("Button BOTTOM"), Graphics.BOTTOM);
 
                     p.setBackground(0xFFFFFF);
                     textPane.setBackground(0xFFFFFF);
 
-                    addToContentPane(p,null);
+                    ScrollPane tmp = new ScrollPane( p );
+                    tmp.setBorder( new EmptyBorder(10,10,10,0) );
+                    Panel p2 = new Panel( new BorderLayout() );
+                    p2.add(tmp);
+
+                    addToContentPane(p2,null);
                 }
                 else {
 
@@ -276,5 +283,5 @@ finally {
 
     }
 
-                
+
 }

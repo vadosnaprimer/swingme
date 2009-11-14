@@ -293,6 +293,7 @@ public class ComponentTest  extends Section{
                                 l3.setListData(anotherlist);
                                 l3.setFixedCellHeight(15);
                                 tab3.add(new Label("a lable for the list"));
+                                tab3.add(new Button("button") );
                                 tab3.add(l3);
 
                                 Panel tab4 = new Panel( new BorderLayout() );
