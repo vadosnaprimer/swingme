@@ -667,7 +667,18 @@ public class List extends Component implements ActionListener {
                 scrollRectToVisible( c.getXWithBorder(), -posY, c.getWidthWithBorder(), 1,false);
             }
             else {
-                scrollRectToVisible( -posX, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
+                //calc x in relation to the viewport
+                int x = posX;
+                Panel p = parent;
+                while (p!=null) {
+                    if (p instanceof ScrollPane) {
+                        break;
+                    }
+                    x+=p.posX;
+                    p = p.parent;
+                } // TODO take into accountthe viewPortX
+
+                scrollRectToVisible( -x, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
             }
 
             if (chl!=null && old!=current) {
