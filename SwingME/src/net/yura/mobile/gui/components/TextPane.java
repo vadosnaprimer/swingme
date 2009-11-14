@@ -176,18 +176,12 @@ public class TextPane extends Component {
 
     public void focusLost() {
         super.focusLost();
-
-        if (focusableElems.size() > 0) {
-            repaint();
-        }
+        repaint();
     }
 
     public void focusGained() {
         super.focusGained();
-
-        if (focusableElems.size() > 0) {
-            repaint();
-        }
+        repaint();
     }
 
     public boolean processKeyEvent(KeyEvent event) {
@@ -213,9 +207,9 @@ public class TextPane extends Component {
 
         if (next != focusComponentIdx) {
 
-            // TODO: If not visible, return false.
-
-            focusComponentIdx = next;
+            if (makeVisible(next)) {
+                focusComponentIdx = next;
+            }
 
             System.out.println("KEY PRESSED: " + focusComponentIdx);
 
@@ -225,6 +219,29 @@ public class TextPane extends Component {
         }
 
         return false;
+    }
+
+    private boolean makeVisible(int styleIdx) {
+        int MAX = Integer.MAX_VALUE;
+        int blockX = MAX, blockY = MAX;
+        int blockW = 0, blockH = 0;
+
+        TextStyle style = (TextStyle) focusableElems.elementAt(styleIdx);
+        for (int i = 0; i < lineFragments.size(); i++) {
+            LineFragment frag = (LineFragment) lineFragments.elementAt(i);
+            if (frag.style == style) {
+                blockX = Math.min(blockX, frag.x);
+                blockY = Math.min(blockY, frag.y);
+                blockW = Math.max(blockW, frag.x + frag.w);
+                blockH = Math.max(blockH, frag.y + frag.h);
+            } else if (blockX < MAX) {
+                // If we find a block (blockX will become less that MAX), we
+                // want to stop search as soon that blocks ends...
+                break;
+            }
+        }
+
+        return scrollRectToVisible(blockX, blockY, blockW, blockH, true);
     }
 
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
@@ -241,6 +258,7 @@ public class TextPane extends Component {
 
                         int focusIdx = focusableElems.indexOf(frag.style);
                         if (focusIdx != focusComponentIdx) {
+                            makeVisible(focusIdx);
                             focusComponentIdx = focusIdx;
                             repaint();
                         }
@@ -302,6 +320,8 @@ public class TextPane extends Component {
         // 4 - Finally, finish anything that is still on the style stack
         startFragIdx = addClosingLineFragments(elemStyleSortedStack, startFragIdx, text.length());
         addLineFragments(elemStyleSortedStack, startFragIdx, text.length());
+
+        focusable = (focusableElems.size() > 0);
 
         return layoutVerticaly();
     }
