@@ -222,9 +222,6 @@ public class TextPane extends Component {
                 focusComponentIdx = next;
             }
 
-            System.out.println("KEY PRESSED: " + focusComponentIdx);
-
-            // TODO: Need to scroll, to make focusable element visible.
             repaint();
             return true;
         }
@@ -480,11 +477,16 @@ public class TextPane extends Component {
 
     private int layoutVerticaly() {
         int padding = 2;  // TODO: Spacing
+        int numFrags = lineFragments.size();
+
+        if (numFrags == 0) {
+            return padding;
+        }
+
         int lineY = -padding;
         int lineH = 0;
         int lineW = 0;
         int startLineFragIdx = 0;
-        int numFrags = lineFragments.size();
 
         LineFragment lineFrag = null;
 
