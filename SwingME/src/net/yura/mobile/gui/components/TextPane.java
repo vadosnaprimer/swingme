@@ -45,10 +45,6 @@ public class TextPane extends Component {
     private int focusComponentIdx;
     private ActionListener actionListener;
 
-    public TextPane() {
-        super();
-    }
-
     protected String getDefaultName() {
         return "TextPane";
     }
@@ -61,19 +57,32 @@ public class TextPane extends Component {
         //       line, some y may be visible and others not...
 
         TextStyle focusElem = getFocusElementStyle();
+        int bgColor = getCurrentBackground();
+        int topClipY = g.getClipY();
+        int bottomClipY = topClipY + g.getClipHeight();
 
         int numLineFrags = lineFragments.size();
         for (int i = 0; i < numLineFrags; i++) {
             LineFragment lineFrag = (LineFragment) lineFragments.elementAt(i);
+            if (lineFrag.y + lineFrag.h < topClipY ||
+                lineFrag.y > bottomClipY) {
+                continue;
+            }
+
             TextStyle style = lineFrag.style;
             Icon icon = style.getIcon();
+
+            int state = (style == focusElem) ? Style.FOCUSED : Style.ALL;
+            int bgStyleColor = style.getBackground(state);
+
+            if (bgColor != bgStyleColor) {
+                g.setColor(bgStyleColor);
+                g.fillRect(lineFrag.x, lineFrag.y, lineFrag.w, lineFrag.h);
+            }
 
             if (icon == null) {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
-                int state = (style == focusElem) ? Style.FOCUSED : Style.ALL;
-
-                // TODO: Background Color
                 g.setColor(style.getForeground(state));
                 g.setFont(style.getFont());
 
