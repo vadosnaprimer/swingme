@@ -181,6 +181,8 @@ public class TextPane extends Component {
 
     public void focusGained() {
         super.focusGained();
+
+        makeVisible(focusComponentIdx, false);
         repaint();
     }
 
@@ -207,7 +209,7 @@ public class TextPane extends Component {
 
         if (next != focusComponentIdx) {
 
-            if (makeVisible(next)) {
+            if (makeVisible(next, true)) {
                 focusComponentIdx = next;
             }
 
@@ -221,27 +223,27 @@ public class TextPane extends Component {
         return false;
     }
 
-    private boolean makeVisible(int styleIdx) {
+    private boolean makeVisible(int styleIdx, boolean smart) {
         int MAX = Integer.MAX_VALUE;
-        int blockX = MAX, blockY = MAX;
-        int blockW = 0, blockH = 0;
+        int leftX = MAX, rightX = 0;
+        int topY = MAX, bottomY = 0;
 
         TextStyle style = (TextStyle) focusableElems.elementAt(styleIdx);
         for (int i = 0; i < lineFragments.size(); i++) {
             LineFragment frag = (LineFragment) lineFragments.elementAt(i);
             if (frag.style == style) {
-                blockX = Math.min(blockX, frag.x);
-                blockY = Math.min(blockY, frag.y);
-                blockW = Math.max(blockW, frag.x + frag.w);
-                blockH = Math.max(blockH, frag.y + frag.h);
-            } else if (blockX < MAX) {
+                leftX = Math.min(leftX, frag.x);
+                rightX = Math.max(rightX, frag.x + frag.w);
+                topY = Math.min(topY, frag.y);
+                bottomY = Math.max(bottomY, frag.y + frag.h);
+            } else if (leftX < MAX) {
                 // If we find a block (blockX will become less that MAX), we
                 // want to stop search as soon that blocks ends...
                 break;
             }
         }
 
-        return scrollRectToVisible(blockX, blockY, blockW, blockH, true);
+        return scrollRectToVisible(leftX, topY, rightX - leftX, bottomY - topY, smart);
     }
 
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
@@ -257,8 +259,9 @@ public class TextPane extends Component {
                         y >= frag.y && y <= frag.y + frag.h) {
 
                         int focusIdx = focusableElems.indexOf(frag.style);
+                        makeVisible(focusIdx, false);
+
                         if (focusIdx != focusComponentIdx) {
-                            makeVisible(focusIdx);
                             focusComponentIdx = focusIdx;
                             repaint();
                         }
