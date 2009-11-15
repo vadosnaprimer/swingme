@@ -219,6 +219,7 @@ finally {
                     underline.setForeground(0x0000FF);
 
                     underline.addForeground(0xFF0000, Style.FOCUSED);
+                    underline.addBackground(0x0000FF, Style.FOCUSED);
                     underline.setAction("SomeAction");
 
                     TextStyle blue = new TextStyle();
