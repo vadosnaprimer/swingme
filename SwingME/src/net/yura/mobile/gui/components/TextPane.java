@@ -84,7 +84,7 @@ public class TextPane extends Component {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
                 g.setColor(style.getForeground(state));
-                g.setFont(style.getFont());
+                g.setFont(style.getFont(state));
 
                 g.drawString(str, lineFrag.x, lineFrag.y);
             } else {
@@ -399,7 +399,7 @@ public class TextPane extends Component {
 
     private void addLineTextFragments(String elemText, TextStyle style, int startIndex) {
 
-        Font f = style.getFont();
+        Font f = style.getFont(Style.ALL);
 
         int fragH = f.getHeight();
 
@@ -753,7 +753,12 @@ public class TextPane extends Component {
             }
         }
 
-        public Font getFont() {
+        public Font getFont(int state) {
+
+            Font f = super.getFont(state);
+            if (f != null) {
+                return f;
+            }
 
             int face = javax.microedition.lcdui.Font.FACE_SYSTEM;
             int style = javax.microedition.lcdui.Font.STYLE_PLAIN;
