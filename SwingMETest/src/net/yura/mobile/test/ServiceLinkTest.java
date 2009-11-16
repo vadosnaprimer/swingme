@@ -63,16 +63,15 @@ public class ServiceLinkTest  extends Section {
                     Hashtable hashtable = (Hashtable) task.getObject();
                     java.util.Enumeration e = hashtable.keys();
                     infoLabel.setText("");
+                    infoLabel.append(strMethod);
                     while (e.hasMoreElements())
                     {
                         String key = (String) e.nextElement();
                         Integer value = (Integer) hashtable.get(key);
-                        infoLabel.append(strMethod);
                         infoLabel.append("\n");
                         infoLabel.append(key);
-                        infoLabel.append("\n");
+                        infoLabel.append(" = ");
                         infoLabel.append(Integer.toString(value.intValue()));
-                        infoLabel.append("\n");
                     }
                 }
                 if ("GetWiFiSsListError".equals(strMethod)) {
