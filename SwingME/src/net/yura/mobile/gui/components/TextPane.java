@@ -28,6 +28,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.XHTMLLoader;
 import net.yura.mobile.gui.plaf.Style;
 
@@ -74,6 +75,13 @@ public class TextPane extends Component {
 
             int state = (style == focusElem) ? Style.FOCUSED : Style.ALL;
             int bgStyleColor = style.getBackground(state);
+
+            Border boder = style.getBorder(state);
+            if (boder != null) {
+                g.translate(lineFrag.x, lineFrag.y);
+                boder.paintBorder(this, g, lineFrag.w, lineFrag.h);
+                g.translate(-lineFrag.x, -lineFrag.y);
+            }
 
             if (bgColor != bgStyleColor) {
                 g.setColor(bgStyleColor);
@@ -401,10 +409,12 @@ public class TextPane extends Component {
 
         Font f = style.getFont(Style.ALL);
 
-        int fragH = f.getHeight();
+        int borderH = getBorderHeight(style);
+        int borderW = getBorderWidth(style);
+        int fragH = f.getHeight() + borderH;
 
         // Break the lines using the Element style
-        int[] lines = getLines(elemText, f, lastLineX, width);
+        int[] lines = getLines(elemText, f, lastLineX, width - borderW);
 
         int startFragIdx = startIndex;
 
@@ -433,6 +443,7 @@ public class TextPane extends Component {
                     int fragW = f.getWidth(lastLineText);
 
                     if (fragW > 0) {
+                        fragW += borderW;
                         // Note: First fragments on a line have negative width
                         LineFragment lineFrag = new LineFragment(lastLineX, 0, fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
                         lineFragments.addElement(lineFrag);
@@ -448,13 +459,23 @@ public class TextPane extends Component {
         }
     }
 
+    private int getBorderWidth(TextStyle style) {
+        Border b = style.getBorder(Style.ALL);
+        return (b == null) ? 0 : (b.getLeft() + b.getRight());
+    }
+
+    private int getBorderHeight(TextStyle style) {
+        Border b = style.getBorder(Style.ALL);
+        return (b == null) ? 0 : (b.getTop() + b.getBottom());
+    }
+
     private void addLineImageFragments(TextStyle style) {
         Icon icon = style.getIcon();
         Image img = icon.getImage();
 
         if (img != null) {
-            int imgW = img.getWidth();
-            int imgH = img.getHeight();
+            int imgW = img.getWidth() + getBorderWidth(style);
+            int imgH = img.getHeight() + getBorderHeight(style);
             img = null; // Allow GC to collect
 
             // Can the image be added to last line?
@@ -476,13 +497,13 @@ public class TextPane extends Component {
     }
 
     private int layoutVerticaly() {
-        int padding = 2;  // TODO: Spacing
         int numFrags = lineFragments.size();
 
         if (numFrags == 0) {
-            return padding;
+            return 0;
         }
 
+        int padding = 2;  // TODO: Spacing
         int lineY = -padding;
         int lineH = 0;
         int lineW = 0;
@@ -508,6 +529,14 @@ public class TextPane extends Component {
 
                     frag.y = lineY + (lineH - frag.h);
                     frag.x = lineX + leftPadding;
+
+                    Border b = frag.style.getBorder(Style.ALL);
+                    if (b != null) {
+                        frag.y += b.getTop();
+                        frag.x += b.getLeft();
+                        frag.h -= b.getTop() + b.getBottom();
+                        frag.w -= b.getLeft() + b.getRight();
+                    }
 
                     lineX += fragW;
                 }
