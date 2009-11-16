@@ -9,6 +9,7 @@ import java.io.InputStream;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.EmptyBorder;
+import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
@@ -219,7 +220,9 @@ finally {
                     underline.setForeground(0x0000FF);
 
                     underline.addForeground(0xFF0000, Style.FOCUSED);
-                    underline.addBackground(0x0000FF, Style.FOCUSED);
+                    underline.addBackground(0xFFFF00, Style.FOCUSED);
+                    underline.addBorder(new LineBorder(0x000000,3), Style.ALL);
+                    underline.addBorder(new LineBorder(0x0000FF,3), Style.FOCUSED);
                     underline.setAction("SomeAction");
 
                     TextStyle blue = new TextStyle();
