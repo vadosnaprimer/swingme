@@ -65,6 +65,51 @@ public class SystemUtil {
         
     }
 
+    public static boolean equals(Object obj1, Object obj2) {
+        if (obj1 ==null && obj2 == null) return true;
+        if (obj1==null || obj2 == null) return false;
+
+        if (obj1 instanceof Hashtable && obj2 instanceof Hashtable) {
+            Hashtable hash1 = (Hashtable) obj1;
+            Hashtable hash2 = (Hashtable) obj2;
+            if (hash1.size() != hash2.size())
+                return false;
+            Enumeration enum1 = hash1.keys();
+            while (enum1.hasMoreElements())
+            {
+                   Object objKey1 = (String) enum1.nextElement();
+                   Object objValue1 = hash1.get(objKey1);
+                   if (!hash2.containsKey(objKey1))
+                       return false;
+                   Object objValue2 = hash2.get(objKey1);
+                   if (!objValue1.equals(objValue2))
+                       return false;
+            }
+        }
+        else if (obj1 instanceof Vector && obj2 instanceof Vector) {
+            Vector vector1 = (Vector) obj1;
+            Vector vector2 = (Vector) obj2;
+            if (vector1.size() != vector2.size())
+                return false;
+            for (int i = 0; i < vector1.size(); i++) {
+                if (!vector1.elementAt(i).equals(vector2.elementAt(i)))
+                    return false;
+            }
+        }
+        else if (obj1 instanceof Object[] && obj2 instanceof Object[]) {
+            Object[] objArray1 = (Object[])obj1;
+            Object[] objArray2 = (Object[])obj2;
+            if (objArray1.length != objArray2.length) return false;
+            for (int i = 0; i < objArray1.length; i++) {
+                if (!SystemUtil.equals(objArray1[i], objArray2[i]))
+                    return false;
+            }
+        }
+        else {
+            return obj1.equals(obj2);
+        }
+        return true;
+    }
 
 
     /**
