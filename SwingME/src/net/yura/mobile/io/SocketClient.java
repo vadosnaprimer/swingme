@@ -158,7 +158,7 @@ System.out.println("got object: "+task);
                 handleObject( task );
             }
             catch (Exception x) {
-                DesktopPane.log("CAN NOT HANDLE! "+ task );
+                DesktopPane.log("CAN NOT HANDLE! " + x.getMessage() + " Task: " + task );
                 x.printStackTrace();
             }
 
