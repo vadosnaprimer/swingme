@@ -115,7 +115,7 @@ public class Font {
 		}
                 catch (IOException ex) {
                     //#debug
-                    ex.printStackTrace();
+//#                     ex.printStackTrace();
                     throw new RuntimeException();
 		}
 	}
@@ -200,7 +200,7 @@ public class Font {
                             int second = getLong(dis);
                             int amount = getShortSigned(dis);
                             f.kerning.put(first + "-" + second, new Integer(amount));
-                            System.out.println("FONT: Kerning for "+first+"-"+second+" = "+amount);
+                            //System.out.println("FONT: Kerning for "+first+"-"+second+" = "+amount);
                     }
             }
             else {
@@ -365,7 +365,7 @@ public class Font {
 		}
 		catch (IOException ex) {
                     //#debug
-                    ex.printStackTrace();
+//#                     ex.printStackTrace();
                     throw new RuntimeException("unable to load font: "+name);
 		}
 
@@ -726,11 +726,11 @@ public class Font {
 						}
 
 						//#mdebug
-						if (DesktopPane.debug) {
-							g.setColor(r.nextInt());
-							g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());
-							g.setColor(color);
-						}
+//# 						if (DesktopPane.debug) {
+//# 							g.setColor(r.nextInt());
+//# 							g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());
+//# 							g.setColor(color);
+//# 						}
 						//#enddebug
 
 						g.drawImage(glyph, thisx, y + offsetY[charIndex], Graphics.TOP | Graphics.LEFT);
@@ -761,7 +761,7 @@ public class Font {
 		}
 	}
 	//#debug
-	Random r = new Random();
+//# 	Random r = new Random();
 	private static int POSITION_DOT = 10;
 	private static int POSITION_CURRENCY = 11;
 	private static int POSITION_MINUS = 12;
