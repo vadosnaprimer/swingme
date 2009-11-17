@@ -113,29 +113,37 @@ public class Table extends Panel {
     }
     
     private boolean moveSelection(int d) {
-
+	// TODO: is editable
         if (d == Canvas.DOWN) {
             if (editingRow < (getRowCount()-1)) {
-                setSelectedCell(editingRow+1,editingColumn);
-                return true;
+		if(isCellEditable(editingRow+1,editingColumn)) {
+			setSelectedCell(editingRow+1,editingColumn);
+			return true;
+		}
             }
         }
         else if (d == Canvas.UP) {
             if (editingRow > 0) {
-                setSelectedCell(editingRow-1,editingColumn);
-                return true;
+		if(isCellEditable(editingRow-1,editingColumn)) {
+			setSelectedCell(editingRow-1,editingColumn);
+			return true;
+		}
             }
         }
         else if (d == Canvas.RIGHT) {
             if (editingColumn < (getColumnCount()-1)) {
-                setSelectedCell(editingRow,editingColumn+1);
-                return true;
+		if(isCellEditable(editingRow,editingColumn+1)) {
+			setSelectedCell(editingRow,editingColumn+1);
+			return true;
+		}
             }
         }
         else if (d == Canvas.LEFT) {
             if (editingColumn >0) {
-                setSelectedCell(editingRow,editingColumn-1);
-                return true;
+		if(isCellEditable(editingRow,editingColumn-1)) {
+			setSelectedCell(editingRow,editingColumn-1);
+			return true;
+		}
             }
         }
 
@@ -171,7 +179,8 @@ public class Table extends Panel {
                 
                 //if (editingColumn == currentCol && editingRow == currentRow)
                 if (type == DesktopPane.PRESSED) {
-                    editCellAt(currentRow,currentCol);
+                    if(isCellEditable(currentRow, currentCol))
+			    editCellAt(currentRow,currentCol);
                     
                     // dont pass clicks onto textComponents
                     if (editorComp!=null &&
@@ -185,14 +194,22 @@ public class Table extends Panel {
                     }
                     //editorComp.pointerEvent(type, x, y);
                 }
-                else {
+                else
+		if(isCellEditable(currentRow, currentCol)){
+
                     setSelectedCell(currentRow,currentCol);
                 }
             
         }
         
     }
-    
+
+    /**
+     * Selects/focuses a cell by given row/col
+     * - Does not check if cell is allowed to be selected
+     * @param pRow
+     * @param pCol
+     */
     public void setSelectedCell(int pRow, int pCol) {
         removeEditor();
         editingRow = pRow;
@@ -387,7 +404,7 @@ public class Table extends Panel {
     }
     
     private Component getComponentFor(int r,int c) {
-        
+	    
         Object object = getValueAt(r, c);
 
         ListCellRenderer renderer = getCellRenderer(r,c);
