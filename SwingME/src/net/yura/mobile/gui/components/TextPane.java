@@ -104,28 +104,40 @@ public class TextPane extends Component {
 
     // Overwrites Component.workoutMinimumSize()
     public void workoutMinimumSize() {
-        // we assume that the scrollPane size is already setup and correct
-        // this saves lots of unneeded calls to getLines
-        if (parent instanceof ScrollPane) {
-            width = ((ScrollPane)parent).getViewPortWidth();
+        width = 10;
+        if (lineFragments.isEmpty()) {
+            height = 10;
         }
-        else if (width==0) {
-            // make a guess at the width
-            // to work out the height
-            // width will be reset back to 0
-            width = 10; // (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
-            // this guess here is the root of all problems
-            // as we need to make a guess, even though we have no idea
+        else {
+            height = layoutVerticaly();
         }
-
-        height = doLayout();
     }
 
+    int widthUsed=-1;
     // Overwrites Component.setSize()
     public void setSize(int w, int h) {
         super.setSize(w, h);
 
-        height = doLayout();
+        if (width != widthUsed) {
+            int oldh = height;
+            height = doLayout();
+
+            if (oldh != height) {
+                                Panel p = parent;
+                                if (p==null) return;
+                                while (!(p instanceof ScrollPane)) {
+                                    Panel pp = p.parent;
+                                    if (pp==null) {
+                                        break;
+                                    }
+                                    else {
+                                        p=pp;
+                                    }
+                                }
+                                p.revalidate();
+                                p.repaint();
+            }
+        }
     }
 
     // from JEditorPane
@@ -297,6 +309,8 @@ public class TextPane extends Component {
     }
 
     private int doLayout() {
+
+        widthUsed = width;
 
         lineFragments.removeAllElements();
         focusableElems.removeAllElements();
