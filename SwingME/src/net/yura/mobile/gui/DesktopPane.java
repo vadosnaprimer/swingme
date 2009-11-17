@@ -38,6 +38,7 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.util.SystemUtil;
 
 /**
  * @author Yura Mamyrin
@@ -345,11 +346,21 @@ public class DesktopPane extends Canvas implements Runnable {
         try {
 
             synchronized (revalidateComponents) {
-                for (int c = 0; c < revalidateComponents.size(); c++) {
-                    Panel panel = (Panel) revalidateComponents.elementAt(c);
-                    panel.validate();
-                }
-                revalidateComponents.removeAllElements();
+                //while (!revalidateComponents.isEmpty()) {
+                    validating = 1;
+                    for (int c = 0; c < revalidateComponents.size(); c++) {
+                        Panel panel = (Panel) revalidateComponents.elementAt(c);
+                        panel.validate();
+                    }
+                    revalidateComponents.removeAllElements();
+                    validating = 2;
+                    for (int c = 0; c < revalidate.size(); c++) {
+                        Panel panel = (Panel) revalidate.elementAt(c);
+                        panel.validate();
+                    }
+                    revalidate.removeAllElements();
+                    validating = 0;
+                //}
             }
 
             graphics.setGraphics(gtmp);
@@ -483,10 +494,26 @@ public class DesktopPane extends Canvas implements Runnable {
         repaint();
     }
 
+    private int validating=0;
+    private final Vector revalidate = new Vector();
     public void revalidateComponent(Component rc) {
-
-        addToComponentVector(rc, revalidateComponents);
-
+        if (validating==0) {
+            addToComponentVector(rc, revalidateComponents);
+        }
+        else if (validating==1) {
+            addToComponentVector(rc, revalidate);
+        }
+        //#mdebug
+        else {
+            System.out.println("asking for revalidate 3rd time: "+rc);
+            //try {
+            //    throw new Exception();
+            //}
+            //catch(Exception ex) {
+            //    ex.printStackTrace();
+            //}
+        }
+        //#enddebug
     }
 
     /**
@@ -561,21 +588,22 @@ public class DesktopPane extends Canvas implements Runnable {
             if (keyevent.isDownKey(Canvas.KEY_STAR)) {
                 mem = (Runtime.getRuntime().freeMemory() >> 10) + "K/" + (Runtime.getRuntime().totalMemory() >> 10) + "K";
                 fullRepaint();
-            } else {
+            }
+            else {
                 mem = null;
             }
             //#enddebug
 
 
             if (keyevent.isDownKey(57) && keyevent.isDownKey(56) && keyevent.isDownKey(55) && keyevent.isDownKey(50)) {
-//              message = new byte[] {121,117,114,97,46,110,101,116};
-                message = new byte[]{74, 111, 110, 97, 116, 104, 97, 110};
+                message = new byte[] {121,117,114,97,46,110,101,116};
                 fullRepaint();
-            } else if (keyevent.isDownKey(52) && keyevent.isDownKey(50) && keyevent.isDownKey(54) && keyevent.isDownKey(51)) {
-//              message = new byte[] {84,72,69,32,71,65,77,69};
-                message = new byte[]{74, 111, 110, 97, 116, 104, 97, 110};
+            }
+            else if (keyevent.isDownKey(52) && keyevent.isDownKey(50) && keyevent.isDownKey(54) && keyevent.isDownKey(51)) {
+                message = new byte[] {84,72,69,32,71,65,77,69};
                 fullRepaint();
-            } else {
+            }
+            else {
                 message = null;
             }
 
@@ -708,7 +736,8 @@ public class DesktopPane extends Canvas implements Runnable {
         int h = indicator.getHeightWithBorder();
         if (sideSoftKeys) {
             indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
-        } else {
+        }
+        else {
             indicator.setBoundsWithBorder(getWidth() - w, 0, w, h);
         }
 
@@ -781,11 +810,12 @@ public class DesktopPane extends Canvas implements Runnable {
             pointerComponent = null;
 
             fullRepaint();
-        } //#mdebug
+        }
+        //#mdebug
         else {
             throw new RuntimeException("cant setSelected, this window is not visible: " + w);
         }
-//    //#enddebug
+        //#enddebug
     }
 
     /**

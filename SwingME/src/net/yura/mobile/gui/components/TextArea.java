@@ -70,7 +70,7 @@ public class TextArea extends TextComponent {
 
             align = alignment;
             
-            preferredPercentWidth = 0.9;
+            //preferredPercentWidth = 0.9;
             
             //width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
 	}
@@ -95,11 +95,16 @@ public class TextArea extends TextComponent {
 		// so that if its in a scrollPane it knows if it should have the scrollbars
 		// and so then so we know the correct width to wrap text at
 
-
-		//workoutSize();
-                // removed, used should call revalidate!
-
+		lines = null;
+                widthUsed = -1;
 	}
+
+        /**
+         * @see javax.swing.JTextArea#getLineWrap() JTextArea.getLineWrap
+         */
+        public boolean getLineWrap() {
+            return wrap;
+        }
         
 	/**
 	 * @param g The Graphics object
@@ -136,7 +141,7 @@ public class TextArea extends TextComponent {
                 int i, startLine, endLine, lineHeight;
                 
 		// Set alignment to top, with correct left/center/right alignment.
-		int alignment = Graphics.TOP | (align & (Graphics.LEFT | Graphics.HCENTER | Graphics.RIGHT));
+		//int alignment = Graphics.TOP | (align & (Graphics.LEFT | Graphics.HCENTER | Graphics.RIGHT));
 
 		// Calculate which lines are vertically within the current clipping rectangle.
 		lineHeight = font.getHeight() + lineSpacing;
@@ -303,16 +308,13 @@ public class TextArea extends TextComponent {
             // if startPos is 0 or more, then this means we can use
             // the existing array, upto and including startPos
             
-            int w = wrap?width:Integer.MAX_VALUE;
-
-            int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos],w);
-
+            int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos], wrap?width:Integer.MAX_VALUE );
             int[] l3 = new int[ startPos+1 + l2.length];
 
             System.arraycopy(lines, 0, l3, 0, startPos+1);
             System.arraycopy(l2, 0, l3, startPos+1, l2.length);
 
-            setupHeight(l3,w,true);
+            setupHeight(l3);
 
         }
         
@@ -422,23 +424,62 @@ public class TextArea extends TextComponent {
 
         }
 
-    private void setupHeight(int[] l,int w,boolean relayout) {
-//        System.out.println("Setting up height");
-//        System.out.println("Font: "+font);
-//        System.out.println("Lines: "+l);
-        lines = l;
-        widthUsed = w;
+
+    public void workoutMinimumSize() {
+        if (wrap) {
+            if (getPreferredWidth()!=-1) {
+                // this method can be used to determin the size of a dialog suring a pack
+                // so here we need to give a reasonale responce
+                width = getPreferredWidth();
+                if (width != widthUsed) {
+                    lines = getLines(getText(),font,0,width);
+                    widthUsed = width;
+                }
+                height = getMinHeight();
+            }
+            else  {
+                width = 10;
+                if (lines==null) {
+                    height = 10;
+                }
+                else {
+                    height = getMinHeight();
+                }
+            }
+        }
+        else {
+            if (lines == null) {
+                lines = getLines(getText(),font,0,Integer.MAX_VALUE);
+            }
+
+            width = getMinWidth();
+            height = getMinHeight();
+	}
+
+    }
+
+    public void setSize(int wi,int h) {
+        super.setSize(wi, h);
+
+        if (wrap && widthUsed!=width) {
+            setupHeight( getLines(getText(),font,0,width) );
+        }
+    }
+
+
+    private void setupHeight(int[] ln) {
         int oldh = height;
-        height = ((lines.length+1) * font.getHeight()) + (lines.length * lineSpacing);
 
-	// we have just changed out height
-	// if we are in a scrollPane we should tell it, so it can adjust
-	if (relayout && oldh!=height && parent!=null) {
+        lines = ln;
+        widthUsed = width;
 
-            //parent.doLayout();
-            //parent.repaint();
+        height = getMinHeight();
 
+        if (oldh != height ||
+                // we may need to make the TextArea wider or thinner
+                (!wrap && getMinWidth() != width)) {
             Panel p = parent;
+            if (p==null) return;
             while (!(p instanceof ScrollPane)) {
                 Panel pp = p.parent;
                 if (pp==null) {
@@ -448,84 +489,29 @@ public class TextArea extends TextComponent {
                     p=pp;
                 }
             }
-
             p.revalidate();
             p.repaint();
-
-	}
-
-    }
-
-    public void workoutMinimumSize() {
-
-        if (wrap) {
-
-        // scrollPane will handle out size
-        // we assume that the scrollPane size is already setup and correct
-        // this saves lots of unneeded calls to getLines
-        if (parent instanceof ScrollPane) {
-            width = ((ScrollPane)parent).getViewPortWidth();
-        }
-        else if (preferredPercentWidth!=-1) {
-            width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredPercentWidth);
-        }
-        else if (width==0) {
-            // make a guess at the width
-            // to work out the height
-            // width will be reset back to 0
-            width = (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
-            // this guess here is the root of all problems
-            // as we need to make a guess, even though we have no idea
         }
     }
 
-	// ALWAYS setup the height in this method!
-	int w = wrap?width:Integer.MAX_VALUE;
-        setupHeight((w!=widthUsed)?getLines(getText(),font,0,w):lines,w,false);
-
-	if (!wrap) {
-
-		width=0;
-		String text = getDisplayString();
-
-		int beginIndex = 0;
-		for(int i = 0; i <= lines.length; i++) {
-
-                    int lastIndex = (i==lines.length)?text.length():lines[i];
-
-                    w = getStringWidth(font, text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) )
-                            +1; // this adds 1 extra pixel, so the carret can be
-                                // displayed at the end of the line
-
-		    if (width<w) {
-			width = w;
-		    }
-
-                    beginIndex = lastIndex;
-		}
-
-
-	}
-        else {
-            // if we have no preferredWidth
-            // reset back to 0, just in case the layout DOES not resize it
-            if (preferredPercentWidth==-1) {
-                width = 0;
+    private int getMinWidth() {
+            int width1=0;
+            String text = getDisplayString();
+            int beginIndex = 0;
+            for(int i = 0; i <= lines.length; i++) {
+                int lastIndex = (i==lines.length)?text.length():lines[i];
+                int w1 = getStringWidth(font, text.substring(beginIndex, (i!=lines.length)?lastIndex-1:lastIndex) )
+                        +1; // this adds 1 extra pixel, so the carret can be
+                            // displayed at the end of the line
+                if (width1<w1) {
+                    width1 = w1;
+                }
+                beginIndex = lastIndex;
             }
-        }
+            return width1;
     }
-
-    public void setSize(int wi,int h) {
-        int oldw = width;
-        super.setSize(wi, h);
-
-        if (wrap && oldw!=width) {
-            int w = wrap?width:Integer.MAX_VALUE;
-            setupHeight((w!=widthUsed)?getLines(getText(),font,0,w):lines,w,false);
-            // here we can NOT redolayout, as if we do that it will call workoutsize again
-            // reset it to a small size, then call setSize again with a big size and that will
-            // see the size as changed and it will get stuck in a loop
-        }
+    private int getMinHeight() {
+        return ((lines.length+1) * font.getHeight()) + (lines.length * lineSpacing);
     }
 
     public String getDefaultName() {

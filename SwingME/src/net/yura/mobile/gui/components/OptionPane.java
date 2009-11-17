@@ -30,6 +30,7 @@ import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.GridBagConstraints;
 import net.yura.mobile.gui.layout.GridBagLayout;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.util.Option;
 
 /**
  * @author Yura Mamyrin
@@ -124,6 +125,7 @@ public class OptionPane extends Frame implements ActionListener {
         content.removeAll();
         scroll.getComponent().setLocation(0, 0);
         GridBagConstraints constraints = new GridBagConstraints();
+        constraints.weightx = 1;
         
         if (newMessage instanceof Object[]) {
             Object[] objects = (Object[])newMessage;
@@ -146,14 +148,48 @@ public class OptionPane extends Frame implements ActionListener {
     
     private Component getComponentFromObject(Object object) {
         if (object instanceof Component) {
-            return (Component)object;
+            Component component = (Component)object;
+            if (component instanceof TextField && component.getPreferredWidth() == -1) {
+                component.setPreferredSize(DesktopPane.getDesktopPane().getWidth()/2, component.getPreferredHeight());
+            }
+            return component;
         }
         if (object instanceof Icon) {
             return new Label((Icon)object);
         }
+
+
+        int space = DesktopPane.getDesktopPane().getWidth() - 12 - scroll.getBarThickness(); // padding
+        if (DesktopPane.me4se) {
+            icon.workoutSize();
+            space = space - icon.getWidthWithBorder();
+        }
+
+
+        String txt = String.valueOf(object);
+        if (txt.startsWith("<html>")) {
+            TextPane tp = new TextPane();
+            tp.setText(txt);
+            tp.setPreferredSize(space, -1);
+            return tp;
+        }
+
         Label tmp = new Label();
         tmp.setValue(object);
-        return tmp;
+
+
+
+        tmp.workoutSize();
+        if (tmp.getWidthWithBorder() < space) {
+            return tmp;
+        }
+
+        TextArea tmp2 = new TextArea(); // TODO change to TextPane and centered text
+        tmp2.setLineWrap(true);
+        tmp2.setFocusable(false);
+        tmp2.setText(txt);
+        tmp2.setPreferredSize( space, -1 );
+        return tmp2;
     }
     
     public void setMessageType(int messageType) {
@@ -246,13 +282,14 @@ public class OptionPane extends Frame implements ActionListener {
             myself = new OptionPane();
             myself.factory = true;
         }
-        myself.setMessage(message);
+
         myself.setTitle(title);
         myself.setActionListener(parent);
         myself.setMessageType(messageType);
         if (icon!=null) {
             myself.setIcon(icon);
         }
+        myself.setMessage(message);
 
         if (options==null) {
             switch (optionType) {

@@ -23,6 +23,9 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.TextArea;
+import net.yura.mobile.gui.components.TextComponent;
+import net.yura.mobile.gui.components.TextPane;
 
 
 /**
@@ -77,11 +80,28 @@ public class FlowLayout implements Layout {
                 
                     int offset = (width - fullwidth)/2 + padding;
 
+                    int num = 0;
+                    for (int c=0;c<components.size();c++) {
+                        Component comp = (Component)components.elementAt(c);
+                        if (comp.isVisible()) {
+                            num++;
+                        }
+                    }
+
                     for (int c=0;c<components.size();c++) {
 
                             Component comp = (Component)components.elementAt(c);
                             if (comp.isVisible()) {
-                                comp.setBoundsWithBorder(offset , (height-comp.getHeightWithBorder())/2, comp.getWidthWithBorder(), comp.getHeightWithBorder() );
+
+                                int cwidth;
+                                if (comp instanceof TextComponent) {
+                                    cwidth = width / num;
+                                }
+                                else {
+                                    cwidth = comp.getWidthWithBorder();
+                                }
+
+                                comp.setBoundsWithBorder(offset , (height-comp.getHeightWithBorder())/2, cwidth, comp.getHeightWithBorder() );
                                 offset = offset + comp.getWidthWithBorder() + padding;
                             }
                     }
@@ -95,8 +115,24 @@ public class FlowLayout implements Layout {
 			
 			Component comp = (Component)components.elementAt(c);
                         if (comp.isVisible()) {
+
                             int cheight = comp.getHeightWithBorder();
-                            int cwidth = comp.getWidthWithBorder();
+                            int cwidth;
+
+                            // TODO would rather not ref these classes, as TextPane is very big
+                            if (comp instanceof TextArea || comp instanceof TextPane) {
+                                cwidth = width - (2*padding);
+                            }
+                            else if (comp instanceof TextComponent) {
+                                cwidth = (int)(width * 0.6);
+                            }
+                            else {
+                                cwidth = comp.getWidthWithBorder();
+                                // we want to streach small pansl
+                                if (comp instanceof Panel && cwidth < width) {
+                                    cwidth = width;
+                                }
+                            }
 
                             int offset = (width - cwidth)/2;
 

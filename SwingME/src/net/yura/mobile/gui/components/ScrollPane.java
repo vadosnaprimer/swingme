@@ -329,15 +329,19 @@ public class ScrollPane extends Panel implements Runnable {
 
             // TODO this hack is only for MODE_SCROLLBARS
 
+            Component comp = getComponent();
+
             // if we have no lower scroll bar AND the width of the component is less then or equal to the width of the scrollpane
-            if ( getComponent().getWidth() <= (width-getViewPortX())) {
+            if ( comp.getWidth() <= (width-getViewPortX())) {
 
-                getComponent().setSize(viewWidth, getComponent().getHeight());
+                comp.setSize(viewWidth, getComponent().getHeight());
 
+                // TODO, as we have made the panelthinner, it may now want to be LONGER
+                // but how do we find this out?????
             }
 
-            if (getComponent().getHeight() <viewHeight) {
-                getComponent().setSize(getComponent().getWidth(), viewHeight);
+            if (comp.getHeight() <viewHeight) {
+                comp.setSize(getComponent().getWidth(), viewHeight);
             }
 
             super.doLayout();

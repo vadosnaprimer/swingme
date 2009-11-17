@@ -119,6 +119,7 @@ public class XHTMLLoader {
 
     private void startInlineSection() {
         TextPane it = new TextPane();
+        //TextArea it = new TextArea(); it.setLineWrap(true);
         it.setBorder( new LineBorder(0x00FF0000) );
         ((Panel)currentComponent).add(it);
         currentComponent = it;
@@ -126,6 +127,7 @@ public class XHTMLLoader {
     private void endInlineSection() {
         // clear all formatting
         TextPane text = ((TextPane)currentComponent);
+        //TextArea text = ((TextArea)currentComponent);
         currentComponent = text.getParent();
         if ("".equals(text.getText().trim())) {
             ((Panel)currentComponent).remove(text);
@@ -143,7 +145,8 @@ public class XHTMLLoader {
         currentComponent = currentComponent.getParent();
         startInlineSection();
     }
-    private void insertPanel(Panel p,Object con) {
+    private void insertPanel(Panel p,GridBagConstraints con) {
+        con.weightx = 1;
         ((Panel)currentComponent).add(p,con);
         currentComponent = p;
         startInlineSection();

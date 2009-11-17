@@ -113,7 +113,7 @@ public class TextPane extends Component {
             // make a guess at the width
             // to work out the height
             // width will be reset back to 0
-            width = (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
+            width = 10; // (int)(DesktopPane.getDesktopPane().getWidth()* 0.9 );
             // this guess here is the root of all problems
             // as we need to make a guess, even though we have no idea
         }

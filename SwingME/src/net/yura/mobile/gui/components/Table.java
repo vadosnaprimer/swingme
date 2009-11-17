@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
@@ -448,6 +449,14 @@ public class Table extends Panel {
      */
     public void setDefaultEditor(Class columnClass, TableCellEditor editor) {
         editors.put(columnClass, editor);
+        //#mdebug
+        Enumeration elements = renderers.elements();
+        while (elements.hasMoreElements()) {
+            if (elements.nextElement() == editor) {
+                throw new RuntimeException("can not use the same instance for editor and renderer");
+            }
+        }
+        //#enddebug
     }
 
     /**
@@ -455,6 +464,14 @@ public class Table extends Panel {
      */
     public void setDefaultRenderer(Class columnClass, ListCellRenderer renderer) {
         renderers.put(columnClass, renderer);
+        //#mdebug
+        Enumeration elements = editors.elements();
+        while (elements.hasMoreElements()) {
+            if (elements.nextElement() == renderer) {
+                throw new RuntimeException("can not use the same instance for editor and renderer");
+            }
+        }
+        //#enddebug
     }
 
     /**
