@@ -8,12 +8,14 @@ package net.yura.mobile.test;
 import java.io.InputStream;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
+import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.TextArea;
@@ -21,6 +23,7 @@ import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
 import net.yura.mobile.gui.layout.BorderLayout;
+import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.GridLayout;
 import net.yura.mobile.gui.layout.XHTMLLoader;
 import net.yura.mobile.gui.plaf.Style;
@@ -38,7 +41,9 @@ public class TextTest extends Section {
     public void createTests() {
                                 // text
                                 addTest("TextField Test","componentTest2");
-				addTest("View Text","viewText");
+                                addTest("TextArea Test","textAreaTest1");
+                                addTest("TextArea Dialog","textAreaTest2");
+                                addTest("View Text","viewText");
                                 addTest("Text Pane","textPane");
                                 addTest("HTML Text","HTMLtest");
                                 addTest("View XHTML","viewXHTML");
@@ -79,8 +84,30 @@ public class TextTest extends Section {
                         }
                         addToScrollPane(componentTest2,null);
                 }
+                else if ("textAreaTest1".equals(actionCommand)) {
 
+                    Panel p1 = new Panel( new FlowLayout(Graphics.VCENTER) );
 
+                    Panel p = new Panel( new GridLayout(0, 2) );
+
+                    TextArea ta = new TextArea("edit me");
+                    ta.setLineWrap(true);
+                    p.add( ta );
+                    p.add(new Button("bob"));
+
+                    p1.add(new Button("top"));
+                    p1.add(p);
+                    p1.add(new Button("bottom"));
+
+                    addToScrollPane(p1,null);
+                }
+                else if ("textAreaTest2".equals(actionCommand)) {
+
+                    OptionPane.showMessageDialog(null, new Object[] {"short string",
+                        "Hello bob the builder this is a really" +
+                        " really long string, thats relly really long"
+                            ,new Button("hi")}, "title", OptionPane.INFORMATION_MESSAGE);
+                }
 		else if ("viewText".equals(actionCommand)) {
 
 			//if (viewText==null) {
@@ -120,15 +147,32 @@ for (int c=0;c<4;c++) {
                         edit.setActionCommand("open_text_edit");
                         edit.addActionListener(this);
                         edit.setSelected( viewText.isFocusable() );
+                        edit.setMnemonic( KeyEvent.KEY_SOFTKEY1 );
 
-			addToContentPane(p, edit );
+                        CheckBox wrap = new CheckBox("Wrap");
+                        wrap.setActionCommand("open_text_wrap");
+                        wrap.addActionListener(this);
+                        wrap.setSelected( viewText.getLineWrap() );
+
+                        Panel bottom = new Panel(new FlowLayout());
+                        bottom.add(edit);
+                        bottom.add(wrap);
+                        p.add(bottom, Graphics.BOTTOM);
+
+			addToContentPane(p, null );
 
 		}
                 else if ("open_text_edit".equals(actionCommand)) {
 
                     viewText.setFocusable( !viewText.isFocusable() );
                     viewText.repaint();
-                    // TODO mainWindow.setupFocusedComponent();
+
+                }
+                else if ("open_text_wrap".equals(actionCommand)) {
+
+                    viewText.setLineWrap( !viewText.getLineWrap() );
+                    viewText.getWindow().revalidate();
+                    viewText.getWindow().repaint();
 
                 }
                 else if ("HTMLtest".equals(actionCommand)) {

@@ -122,14 +122,15 @@ public class ComponentTest  extends Section{
                                 Panel email = new Panel( new FlowLayout() );
                                 TextField t1 = new TextField();
                                 TextField t2 = new TextField();
-                                t1.setPreferredWidth(0.35);
-                                t2.setPreferredWidth(0.35);
+                                //t1.setPreferredWidth(0.35);
+                                //t2.setPreferredWidth(0.35);
 
                                 email.add(t1);
                                 email.add(new Label("@"));
                                 email.add(t2);
 
                                 componentTest.add(email);
+                                componentTest.add(new TextField(TextField.PASSWORD));
                                 componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
 
                                 menu = new Menu("Menu");
@@ -295,6 +296,7 @@ public class ComponentTest  extends Section{
                                 tab3.add(new Label("a lable for the list"));
                                 tab3.add(new Button("button") );
                                 tab3.add(l3);
+                                tab3.add(new Button("b 2"));
 
                                 Panel tab4 = new Panel( new BorderLayout() );
                                 tab4.add(new Label("Tab 4 title"),Graphics.TOP);
@@ -393,7 +395,7 @@ public class ComponentTest  extends Section{
                 else if ("optionPaneTest".equals(actionCommand)) {
 
                     OptionPane.showMessageDialog(null,new Object[] {
-                        "Hello, whats your name?",
+                        "hi", //"Hello, whats your name?",
                         //new TextArea("bob the builder"),
                         new TextField(TextField.ANY)
                     },"Title",OptionPane.QUESTION_MESSAGE);
