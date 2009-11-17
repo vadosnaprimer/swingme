@@ -105,15 +105,11 @@ public class TextPane extends Component {
     // Overwrites Component.workoutMinimumSize()
     public void workoutMinimumSize() {
         width = 10;
-        if (lineFragments.isEmpty()) {
-            height = 10;
-        }
-        else {
-            height = layoutVerticaly();
-        }
+        height = (heightUsed > 0) ? heightUsed : 10;
     }
 
     int widthUsed=-1;
+    int heightUsed=-1;
     // Overwrites Component.setSize()
     public void setSize(int w, int h) {
         super.setSize(w, h);
@@ -121,21 +117,20 @@ public class TextPane extends Component {
         if (width != widthUsed) {
             int oldh = height;
             height = doLayout();
+            heightUsed = height;
 
             if (oldh != height) {
-                                Panel p = parent;
-                                if (p==null) return;
-                                while (!(p instanceof ScrollPane)) {
-                                    Panel pp = p.parent;
-                                    if (pp==null) {
-                                        break;
-                                    }
-                                    else {
-                                        p=pp;
-                                    }
-                                }
-                                p.revalidate();
-                                p.repaint();
+
+                Panel p = parent;
+                while (p != null) {
+                    if (p instanceof ScrollPane) {
+                        p.revalidate();
+                        p.repaint();
+                        break;
+                    }
+
+                    p = p.parent;
+                }
             }
         }
     }
