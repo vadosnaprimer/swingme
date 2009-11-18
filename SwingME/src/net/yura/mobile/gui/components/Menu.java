@@ -174,20 +174,20 @@ public class Menu extends Button {
 
                 int x = popup.getXWithBorder();
                 int y = popup.getYWithBorder();
-                int w = popup.getWidthWithBorder();
-                int h = popup.getHeightWithBorder();
+                int w = popup.getInsets().getLeft();
+                int h = popup.getInsets().getTop();
 
                 if (slide==Graphics.BOTTOM) {
-                    popup.setBoundsWithBorder(x, DesktopPane.getDesktopPane().getHeight(), w, h);
+                    popup.setLocation(w+x,h+ DesktopPane.getDesktopPane().getHeight());
                 }
                 if (slide==Graphics.TOP) {
-                    popup.setBoundsWithBorder(x, -popup.getHeightWithBorder(), w, h);
+                    popup.setLocation(w+x, h-popup.getHeightWithBorder());
                 }
                 if (slide==Graphics.RIGHT) {
-                    popup.setBoundsWithBorder(DesktopPane.getDesktopPane().getWidth(), y, w, h);
+                    popup.setLocation(w+DesktopPane.getDesktopPane().getWidth(), h+y);
                 }
                 if (slide==Graphics.LEFT) {
-                    popup.setBoundsWithBorder(-popup.getWidthWithBorder(), y, w, h);
+                    popup.setLocation(w-popup.getWidthWithBorder(), h+y);
                 }
 
                 int offsetX = popup.getX() - popup.getXWithBorder();

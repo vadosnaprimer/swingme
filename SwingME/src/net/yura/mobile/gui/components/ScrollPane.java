@@ -344,14 +344,9 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             if (ch < viewHeight) {
                 ch = viewHeight;
             }
-System.out.println("size2 "+ cw+" "+ ch);
+//System.out.println("size2 "+ cw+" "+ ch);
             comp.setSize(cw, ch);
-            try {
-                throw new Exception();
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
+
         }
 
     }

@@ -345,32 +345,15 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
-            synchronized (revalidateComponents) {
 
-                    validating = 1;
-                    for (int c = 0; c < revalidateComponents.size(); c++) {
-                        Panel panel = (Panel) revalidateComponents.elementAt(c);
-                        panel.validate();
-                    }
-                    revalidateComponents.removeAllElements();
-                    validating = 2;
-            }
-                    for (int c = 0; c < revalidate.size(); c++) {
-                        Panel panel = (Panel) revalidate.elementAt(c);
-                        panel.validate();
-                    }
-                    revalidate.removeAllElements();
+            validating = 1;
+            validateComponents(revalidateComponents);
+            validating = 2;
+            validateComponents(revalidate);
+            validating = 3;
+            validateComponents(revalidateComponents);
+            validating = 0;
 
-            synchronized (revalidateComponents) {
-
-                    validating = 3;
-                    for (int c = 0; c < revalidateComponents.size(); c++) {
-                        Panel panel = (Panel) revalidateComponents.elementAt(c);
-                        panel.validate();
-                    }
-                    revalidateComponents.removeAllElements();
-                    validating = 0;
-            }
 
             graphics.setGraphics(gtmp);
 
@@ -485,6 +468,19 @@ public class DesktopPane extends Canvas implements Runnable {
         g.setClip(a);
     }
 
+    public void validateComponents(Vector v) {
+
+            synchronized (v) {
+
+                    for (int c = 0; c < v.size(); c++) {
+                        Panel panel = (Panel) v.elementAt(c);
+                        panel.validate();
+                    }
+                    v.removeAllElements();
+
+            }
+    }
+
     // #####################################################################
     // Different ways of caling repaint
     /**
@@ -510,11 +506,12 @@ public class DesktopPane extends Canvas implements Runnable {
             addToComponentVector(rc, revalidateComponents);
         }
         else if (validating==1) {
+//#debug
 System.out.println("thats some complex layout");
             addToComponentVector(rc, revalidate);
         }
-
         else if (validating==2) {
+//#debug
 System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
             addToComponentVector(rc, revalidateComponents);
         }
