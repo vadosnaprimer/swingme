@@ -24,6 +24,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     public class J2MECellMonitor extends TimerTask {
         protected int cellPropertyIndex = -1;
+        protected int mccPropertyIndex = -1;
+        protected int mncPropertyIndex = -1;
         String[] sysPropertyNames = {
             "CellID", "Cell-ID", "CELLID", "Cell ID", "ID", "Cellid", "CellID",
             "phone.cid",
@@ -33,8 +35,16 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "com.samsung.cellid",
             "com.siemens.cellid",
             "cid"};
+        String[] mccPropertyNames = {
+            "com.sonyericsson.net.cmcc"
+        };
+        String[] mncPropertyNames = {
+            "com.sonyericsson.net.cmnc"
+        };
         public J2MECellMonitor() {
-            cellPropertyIndex = getPropertyIndex();
+            cellPropertyIndex = getPropertyIndex(sysPropertyNames);
+            mccPropertyIndex = getPropertyIndex(mccPropertyNames);
+            mncPropertyIndex = getPropertyIndex(mncPropertyNames);
         }
         public boolean isSupported() {
             return (cellPropertyIndex >= 0);
@@ -51,8 +61,14 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                 if (cellPropertyIndex >= 0) {
                     String cell = System.getProperty(sysPropertyNames[cellPropertyIndex]);
                     if (!cell.equals(j2mePreviousCell)) {
-                        Hashtable hash = new Hashtable(1);
+                        Hashtable hash = new Hashtable(3);
                         hash.put(cell, new Integer(0));
+                        if (mccPropertyIndex >= 0) {
+                            hash.put(System.getProperty(mccPropertyNames[mccPropertyIndex]), new Integer(-1));
+                        }
+                        if (mncPropertyIndex >= 0) {
+                            hash.put(System.getProperty(mncPropertyNames[mncPropertyIndex]), new Integer(-2));
+                        }
                         ServiceLink.Task task = new ServiceLink.Task("PutCellId", hash);
                         handleTask(task);
                         j2mePreviousCell = cell;
@@ -65,10 +81,10 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             }
         }
 
-        protected int getPropertyIndex() {
-            for (int index=0;index < sysPropertyNames.length;index++) {
+        protected int getPropertyIndex(String[] properties) {
+            for (int index=0;index < properties.length;index++) {
                 try {
-                    String property = System.getProperty(sysPropertyNames[index]);
+                    String property = System.getProperty(properties[index]);
                     if ((property != null) && (property.length() > 0))
                         return index;
                 }
