@@ -62,7 +62,22 @@ public class FlowLayout implements Layout {
             align = a;
             padding = p;
 	}
-	
+
+        public static int getVisibleComponents(Panel panel) {
+
+                Vector components = panel.getComponents();
+
+                int num = 0;
+                for (int c=0;c<components.size();c++) {
+                    Component comp = (Component)components.elementAt(c);
+                    if (comp.isVisible()) {
+                        num++;
+                    }
+                }
+
+                return num;
+        }
+
         /**
          * @see java.awt.FlowLayout#layoutContainer(java.awt.Container) FlowLayout.layoutContainer
          */
@@ -80,13 +95,7 @@ public class FlowLayout implements Layout {
                 
                     int offset = (width - fullwidth)/2 + padding;
 
-                    int num = 0;
-                    for (int c=0;c<components.size();c++) {
-                        Component comp = (Component)components.elementAt(c);
-                        if (comp.isVisible()) {
-                            num++;
-                        }
-                    }
+                    int num = getVisibleComponents(panel);
 
                     for (int c=0;c<components.size();c++) {
 
@@ -135,7 +144,6 @@ public class FlowLayout implements Layout {
                             }
 
                             int offset = (width - cwidth)/2;
-
                             comp.setBoundsWithBorder(offset,down, cwidth, cheight );
 
                             if (cheight!=0) {
@@ -191,13 +199,22 @@ public class FlowLayout implements Layout {
         
             if (align==Graphics.HCENTER) {
 
-                    int fullwidth=(components.size()>0)?((components.size()+1)*padding):0;
+                    int num = getVisibleComponents(panel);
+
+                    int fullwidth=(num>0)?((num+1)*padding):0;
 
                     for (int c=0;c<components.size();c++) {
 
                             Component comp = (Component)components.elementAt(c);
                             if (comp.isVisible()) {
-                                fullwidth = fullwidth + comp.getWidthWithBorder();
+
+                                if (comp instanceof TextComponent) {
+                                    fullwidth = fullwidth + (panel.getWidth() / num);
+                                }
+                                else {
+                                    fullwidth = fullwidth + comp.getWidthWithBorder();
+                                }
+                                
                             }
 
                     }

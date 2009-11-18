@@ -224,7 +224,8 @@ public class Frame extends Window {
 
             //System.out.println("size: "+w+" "+h);
 
-            setSize(w, h);
+            width = w;
+            height = h;
         }
 
         public void doLayout() {
@@ -253,8 +254,6 @@ public class Frame extends Window {
                                                                           // leave a gap under content pane for soft key
                 contentPane.setBoundsWithBorder(0, h, width, height - h - (isMaximum && !DesktopPane.me4se? DesktopPane.getDesktopPane().getMenuHeight() :0) );
             }
-
-            super.doLayout();
 
         }
 

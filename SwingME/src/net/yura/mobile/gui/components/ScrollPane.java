@@ -94,7 +94,6 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
     public void setSize(int w, int h) {
-        super.setSize(w, h);
 
         switch (mode) {
             case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
@@ -103,6 +102,8 @@ public class ScrollPane extends Panel implements Runnable {
             case MODE_NONE: barThickness = 0; break;
             default: throw new RuntimeException();
         }
+
+        super.setSize(w, h);
 
         // Size of the scroll changed, we need to reset the component location
         // this is NOT how Swing does it, need to find a better method!
@@ -313,38 +314,44 @@ public class ScrollPane extends Panel implements Runnable {
     /**
      * we have to do this here, as only here do we already know what OUR size is
      * so we can resize the content how we want
+     *
+     * scrollpane will go to the size of the content panel when workout size is called on it
+     * if we have sence been shrunk, this means we need to be able to scroll, and
+     * scrollbars are needed, this means we need to trigger the content to give me good sizes
      */
     public void doLayout() {
-
         if (getComponents().size() == 1) {
-
-            //getComponent().workoutSize();
-
-            int viewHeight=getViewPortHeight();
-            int viewWidth=getViewPortWidth(viewHeight);
-
-            // this is a hack to make it easer to code panels and not have a tiny amount of side scrolling
-            // as even though this is technically correct, it is very annoying to use this panel
-            // now panels that are the width of the scrollpane or less are set to the width of the viewPort
-
-            // TODO this hack is only for MODE_SCROLLBARS
 
             Component comp = getComponent();
 
-            // if we have no lower scroll bar AND the width of the component is less then or equal to the width of the scrollpane
-            if ( comp.getWidth() <= (width-getViewPortX())) {
-
-                comp.setSize(viewWidth, getComponent().getHeight());
-
-                // TODO, as we have made the panelthinner, it may now want to be LONGER
-                // but how do we find this out?????
+            int viewHeight=getViewPortHeight();
+            int viewWidth=getViewPortWidth(viewHeight);
+            int cw = comp.getWidth();
+            int ch = comp.getHeight();
+/* this is another solution
+            // we need to pass
+            if (mode == MODE_SCROLLBARS && ch > viewHeight && cw < viewWidth ) {
+System.out.println("size1 "+ viewWidth+" "+ ch);
+                comp.setSize( viewWidth , ch);
+                comp.workoutSize();
+                cw = comp.getWidth();
+                ch = comp.getHeight();
             }
-
-            if (comp.getHeight() <viewHeight) {
-                comp.setSize(getComponent().getWidth(), viewHeight);
+*/
+            if ( cw < viewWidth) {
+                cw = viewWidth;
             }
-
-            super.doLayout();
+            if (ch < viewHeight) {
+                ch = viewHeight;
+            }
+System.out.println("size2 "+ cw+" "+ ch);
+            comp.setSize(cw, ch);
+            try {
+                throw new Exception();
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
     }

@@ -346,7 +346,7 @@ public class DesktopPane extends Canvas implements Runnable {
         try {
 
             synchronized (revalidateComponents) {
-                //while (!revalidateComponents.isEmpty()) {
+
                     validating = 1;
                     for (int c = 0; c < revalidateComponents.size(); c++) {
                         Panel panel = (Panel) revalidateComponents.elementAt(c);
@@ -354,13 +354,22 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                     revalidateComponents.removeAllElements();
                     validating = 2;
+            }
                     for (int c = 0; c < revalidate.size(); c++) {
                         Panel panel = (Panel) revalidate.elementAt(c);
                         panel.validate();
                     }
                     revalidate.removeAllElements();
+
+            synchronized (revalidateComponents) {
+
+                    validating = 3;
+                    for (int c = 0; c < revalidateComponents.size(); c++) {
+                        Panel panel = (Panel) revalidateComponents.elementAt(c);
+                        panel.validate();
+                    }
+                    revalidateComponents.removeAllElements();
                     validating = 0;
-                //}
             }
 
             graphics.setGraphics(gtmp);
@@ -501,17 +510,25 @@ public class DesktopPane extends Canvas implements Runnable {
             addToComponentVector(rc, revalidateComponents);
         }
         else if (validating==1) {
+System.out.println("thats some complex layout");
             addToComponentVector(rc, revalidate);
+        }
+
+        else if (validating==2) {
+System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
+            addToComponentVector(rc, revalidateComponents);
         }
         //#mdebug
         else {
-            System.out.println("asking for revalidate 3rd time: "+rc);
-            //try {
-            //    throw new Exception();
-            //}
-            //catch(Exception ex) {
-            //    ex.printStackTrace();
-            //}
+            // if this happens it means that when i add a scrollbar it says it
+            // does not need one, and as soon as i remove it, it says it does
+            System.out.println("asking for revalidate 4th time: "+rc);
+            try {
+                throw new Exception();
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
         }
         //#enddebug
     }
