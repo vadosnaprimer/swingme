@@ -16,6 +16,7 @@ public class ServiceLink extends SocketClient {
     protected static int earliestSupportedMajorVersion = 1;
     protected static int earliestSupportedMinorVersion = 0;
     protected Hashtable register;
+    private int disconnectionCounter;
 
     public void setDetailedLogging(Boolean b) {
         if (isConnected()) {
@@ -80,6 +81,13 @@ public class ServiceLink extends SocketClient {
     }
 
     protected void updateState(int aState) {
+        if (aState == DISCONNECTED) {
+            disconnectionCounter++;
+            if (disconnectionCounter >= 5) {
+                // it aint gonna happen...
+                disconnect();
+            }
+        }
     }
 
     protected void write(OutputStream out, Object object) throws IOException {
