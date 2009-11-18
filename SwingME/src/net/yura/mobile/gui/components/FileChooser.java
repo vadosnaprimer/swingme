@@ -520,7 +520,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             if (gridView.isSelected()) {
                 if (img != null) {
-                    g.drawImage(img, (width - img.getWidth()) / 2, (height - img.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+                    g.drawImage(img, (width - img.getWidth()) / 2, (height - img.getHeight()) / 2);
                 }
                 if (dir) {
                     g.setFont(font);
@@ -528,7 +528,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 }
             } else {
                 if (img != null) {
-                    g.drawImage(img, (thumbSize - img.getWidth()) / 2, (height - img.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
+                    g.drawImage(img, (thumbSize - img.getWidth()) / 2, (height - img.getHeight()) / 2);
                 } else {
                     // thumbSize = 0;
                 }

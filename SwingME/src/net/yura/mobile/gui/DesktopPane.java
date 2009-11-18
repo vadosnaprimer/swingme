@@ -397,7 +397,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     if (c == (windows.size() - 2) && fade != null) {
                         for (int x = 0; x < getWidth(); x += fade.getWidth()) {
                             for (int y = 0; y < getHeight(); y += fade.getHeight()) {
-                                graphics.drawImage(fade, x, y, Graphics.TOP | Graphics.LEFT);
+                                graphics.drawImage(fade, x, y);
                             }
                         }
                     }

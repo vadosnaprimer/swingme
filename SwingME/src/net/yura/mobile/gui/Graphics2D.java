@@ -91,7 +91,7 @@ public class Graphics2D {
 
         }
 
-        public void drawRegion(Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest, int anchor) {
+        public void drawRegion(Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest) {
 
                 int x1 = convertTrans(x_dest,y_dest);
                 int y1 = convertTrans(y_dest,x_dest);
@@ -111,14 +111,26 @@ public class Graphics2D {
                         h = src.getHeight();
                 }
 
-                g.drawRegion(src, x, y, w, h, trans , x1, y1, anchor); // TODO fix anchor
+                g.drawRegion(src, x, y, w, h, trans , x1, y1, Graphics.TOP|Graphics.LEFT );
 
         }
 
-        public void drawImage(Image src, int x,int y, int anchor) {
+        /**
+         * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage
+         */
+        public void drawImage(Image src, int x,int y) {
 
-                drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), Sprite.TRANS_NONE , x, y, anchor);
+                drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), Sprite.TRANS_NONE , x, y);
 
+        }
+
+        /**
+         * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage
+         */
+        public void drawSprite(Sprite src, int x,int y) {
+            // TODO check translate!
+            src.setPosition(x, y);
+            src.paint(g);
         }
 
         private int convertTrans(int a,int b) {

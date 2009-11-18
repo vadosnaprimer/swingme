@@ -65,7 +65,7 @@ public class Icon {
      */
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
         if (image instanceof Image) {
-            g.drawImage((Image)image, x, y, Graphics.TOP | Graphics.LEFT);
+            g.drawImage((Image)image, x, y);
         }
     }
 

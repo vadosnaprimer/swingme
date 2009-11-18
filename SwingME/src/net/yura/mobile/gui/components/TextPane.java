@@ -97,7 +97,7 @@ public class TextPane extends Component {
                 g.drawString(str, lineFrag.x, lineFrag.y);
             } else {
                 Image img = icon.getImage();
-                g.drawImage(img, lineFrag.x, lineFrag.y, Graphics.TOP | Graphics.LEFT);
+                g.drawImage(img, lineFrag.x, lineFrag.y);
             }
         }
     }

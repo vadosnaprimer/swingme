@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 
@@ -32,6 +33,8 @@ public class ProgressBar extends Component {
     protected int loaded;
     protected int loading;
 
+    private Sprite sprite;
+
     /**
      * Creates a horizontal progress bar that displays a border but no progress string.
      * The initial and minimum values are 0, and the maximum is 100.
@@ -43,7 +46,22 @@ public class ProgressBar extends Component {
             loaded = 100;
     }
 
+    public ProgressBar(Sprite sp) {
+
+            sprite = sp;
+
+            loaded = sprite.getFrameSequenceLength()-1;
+
+    }
+
     public void paintComponent(Graphics2D g) {
+
+        if (sprite!=null) {
+
+            	sprite.setFrame(loading);
+		g.drawSprite(sprite, (width-sprite.getWidth())/2, (height-sprite.getHeight())/2);
+        }
+        else {
 
             g.setColor(foreground);
             
@@ -58,7 +76,7 @@ public class ProgressBar extends Component {
             else {
                 g.fillRect(0, 0, (width*loading)/loaded, height);
             }
-
+        }
     }
 
     /**
@@ -125,9 +143,16 @@ public class ProgressBar extends Component {
     }
     
     public void workoutMinimumSize() {
-        // TODO: what to put here?
-        height = 20;
-        width = 50;
+
+        if (sprite!=null) {
+            width = sprite.getWidth();
+            height = sprite.getHeight();
+        }
+        else {
+            // TODO: what to put here?
+            height = 20;
+            width = 50;
+        }
     }
 
     public String getDefaultName() {

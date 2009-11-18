@@ -55,7 +55,7 @@ public class ImageUtil {
 
         for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
             for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
-                g.drawRegion(img, src_x,  src_y, src_w, src_h, t, pos_x, pos_y,Graphics.TOP|Graphics.LEFT);
+                g.drawRegion(img, src_x,  src_y, src_w, src_h, t, pos_x, pos_y);
             }
         }
 
