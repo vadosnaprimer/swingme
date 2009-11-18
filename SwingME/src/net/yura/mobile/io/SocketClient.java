@@ -49,6 +49,9 @@ public abstract class SocketClient implements Runnable {
     public void addToOutbox(Object obj) {
 
         if (writeThread==null) {
+
+            running = true;
+
             writeThread = new QueueProcessorThread("writeThread") {
                 public void process(Object object) {
 
@@ -56,6 +59,8 @@ public abstract class SocketClient implements Runnable {
 
                         // MAKE THE CONNECTION!!
                         while (out==null || in==null) {
+
+                            if(!running) return;
 
                             updateState(CONNECTING);
 
@@ -127,8 +132,6 @@ System.out.println("sending object: "+object);
 
         Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
 
-        running = true;
-
         Object task;
 
         while (running) {
@@ -164,8 +167,6 @@ System.out.println("got object: "+task);
 
             updateState(CONNECTED);
         }
-
-
 
         NativeUtil.close(out);
         NativeUtil.close(in);
