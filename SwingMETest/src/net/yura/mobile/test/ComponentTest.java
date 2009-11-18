@@ -12,6 +12,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.BevelBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.components.Button;
@@ -128,6 +129,8 @@ public class ComponentTest  extends Section{
                                 email.add(t1);
                                 email.add(new Label("@"));
                                 email.add(t2);
+
+                                email.setBorder( new BevelBorder(1, 0x00FFFFFF, 0x00000000) );
 
                                 componentTest.add(email);
                                 componentTest.add(new TextField(TextField.PASSWORD));

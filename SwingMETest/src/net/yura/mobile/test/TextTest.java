@@ -180,10 +180,18 @@ for (int c=0;c<4;c++) {
 
                     TextPane html = new TextPane();
                     html.setActionListener(this);
-
+html.setBackground(0x00FFAAAA);
                     html.setText("<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a></center></html>");
 
-                    addToScrollPane( html ,null);
+                    Panel p = new Panel(new BorderLayout());
+
+                    TextArea ta = new TextArea("sdfgjkh sdf jlghsfdgh sfh gjdflkj ghdlf jghdjl kfhgdlf jghdkf lghdl fghdl kfgh dlfkgh dlfkghdflgk jhdlfkgh");
+                    ta.setLineWrap(true);
+
+                    p.add(html, Graphics.TOP);
+                    p.add(ta);
+
+                    addToContentPane( p ,null);
 
                 }
 		else if ("viewXHTML".equals(actionCommand)) {
@@ -310,19 +318,28 @@ finally {
 
                     Panel p = new Panel( new BorderLayout() );
 
+                    Button bx = new Button("Button BOTTOM");
+                    bx.addActionListener(this);
+                    bx.setActionCommand("revalidate");
+
                     p.add(new Button("Button TOP"), Graphics.TOP);
                     p.add(textPane);
-                    p.add(new Button("Button BOTTOM"), Graphics.BOTTOM);
+                    p.add(bx, Graphics.BOTTOM);
 
                     p.setBackground(0xFFFFFF);
                     textPane.setBackground(0xFFFFFF);
 
                     ScrollPane tmp = new ScrollPane( p );
-                    tmp.setBorder( new EmptyBorder(10,10,10,0) );
-                    Panel p2 = new Panel( new BorderLayout() );
+                    tmp.setBorder( new EmptyBorder(10,10,10,10) );
+                    p2 = new Panel( new BorderLayout() );
                     p2.add(tmp);
 
                     addToContentPane(p2,null);
+                }
+                else if ("revalidate".equals(actionCommand)) {
+
+                    p2.revalidate();
+                    p2.repaint();
                 }
                 else {
 
@@ -330,6 +347,6 @@ finally {
                 }
 
     }
-
+    private Panel p2;
 
 }
