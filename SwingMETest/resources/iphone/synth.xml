@@ -11,9 +11,9 @@
             <fontImage path="/font/calibri.png" color="0x00000000"/>
             <fontImage path="/font/calibri.png" color="0x00FFFFFF"/>
         </font>
-
+<!-- can not use old font format in synth files 
         <font path="/basicfont/font2-med.font"/>
-        
+-->
         <color type="FOREGROUND" value="#52425c"/>
       </state>
     </style>
