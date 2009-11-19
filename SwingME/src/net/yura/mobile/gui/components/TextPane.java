@@ -149,6 +149,9 @@ public class TextPane extends Component {
         else {
             this.text = text;
         }
+        lineFragments.removeAllElements();
+        widthUsed = -1;
+        heightUsed = -1;
     }
 
     // from DefaultStyledDocument
