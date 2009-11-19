@@ -432,7 +432,6 @@ public class TextPane extends Component {
         int[] lines = getLines(elemText, f, lastLineX, width - borderW);
 
         int startFragIdx = startIndex;
-        int fragW = 0;
 
         // Create a new Line Fragment per each line of text we got
         for (int j = 0; j < lines.length + 1;j++) {
@@ -448,7 +447,7 @@ public class TextPane extends Component {
                     if (lastLineX <= 0) {
                         lineFragments.addElement(new LineFragment(0, 0, 0, 0, style, 0, 0));
                     }
-                    fragW = 0;
+                    lastLineX = 0;
 
                 } else {
                     if (j < lines.length) {
@@ -456,7 +455,7 @@ public class TextPane extends Component {
                         lastLineText = trimStringRightSide(lastLineText);
                     }
 
-                    fragW = f.getWidth(lastLineText);
+                    int fragW = f.getWidth(lastLineText);
 
                     if (fragW > 0) {
                         fragW += borderW;
@@ -464,12 +463,14 @@ public class TextPane extends Component {
                         LineFragment lineFrag = new LineFragment(lastLineX, 0, fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
                         lineFragments.addElement(lineFrag);
                     }
+
+                    lastLineX = (j == lines.length) ? lastLineX + fragW : 0;
                 }
             } else {
+                lastLineX = 0;
                 // TODO: trim the previous element
             }
 
-            lastLineX = (j == lines.length) ? lastLineX + fragW : 0;
             startFragIdx = endFragIdx;
         }
     }
