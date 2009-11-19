@@ -155,7 +155,11 @@ public class Spinner extends Label {
                     }
                     
                     setIndex(index);
-                }
+            }
+            else {
+                height = getFont().getHeight() + (padding*2);
+                width = 10;
+            }
 
 	}
         

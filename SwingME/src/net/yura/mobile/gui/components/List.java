@@ -477,7 +477,12 @@ public class List extends Component implements ActionListener {
 
         int size = getSize();
 
-        if (size==0) { return false; }
+        if (size==0) {
+            if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey('\n')) {
+                return fireActionPerformed();
+            }
+            return false;
+        }
 
         if (keypad.justPressedKey(KeyEvent.KEY_EDIT) || keypad.justPressedKey('#')) {
             addMode = selected == null || !isSelectedIndex(current);

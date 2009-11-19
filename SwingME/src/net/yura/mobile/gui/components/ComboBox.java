@@ -67,39 +67,37 @@ public class ComboBox extends Button implements ActionListener{
         }
 
 	public void workoutMinimumSize() {
-		if (list!=null) {
+		if (list!=null && list.getSize()>0) {
 
-			if (list.getSize()>0){
-                                int count = 0;
-                                int hi = 0;
-                                int s = list.getSize();
-				for (int i = 0; i < s; i ++){
-					
-                                    Object obj = list.getElementAt(i);
+                    int count = 0;
+                    int hi = 0;
+                    int s = list.getSize();
+                    for (int i = 0; i < s; i ++){
 
-                                    Icon img = (obj instanceof Option)?((Option)obj).getIcon():null;
-                                    int lenW = getCombinedWidth(String.valueOf(obj),img!=null?img.getIconWidth():0);
-                                    int lenH = getCombinedHeight(img!=null?img.getIconHeight():0);
+                        Object obj = list.getElementAt(i);
 
-                                    
-				    if (count < lenW){
-                                        count = lenW;
-				    }
-                                    if (hi < lenH){
-                                        hi = lenH;
-				    }
-					
-				}
+                        Icon img = (obj instanceof Option)?((Option)obj).getIcon():null;
+                        int lenW = getCombinedWidth(String.valueOf(obj),img!=null?img.getIconWidth():0);
+                        int lenH = getCombinedHeight(img!=null?img.getIconHeight():0);
 
-				width = count + padding*2 + ((nonSelectedImage == null)?getFont().getHeight():nonSelectedImage.getIconWidth());
-				height = hi + padding*2;
-			}
-			
+
+                        if (count < lenW){
+                            count = lenW;
+                        }
+                        if (hi < lenH){
+                            hi = lenH;
+                        }
+
+                    }
+
+                    width = count + padding*2 + ((nonSelectedImage == null)?getFont().getHeight():nonSelectedImage.getIconWidth());
+                    height = hi + padding*2;
 
 		}
                 else {
                     // in case we are empty then use the normal size
-                    super.workoutMinimumSize();
+                    height = getFont().getHeight() + (padding*2);
+                    width = 10;
                 }
 	}
 
@@ -250,7 +248,10 @@ public class ComboBox extends Button implements ActionListener{
 	public void actionPerformed(String actionCommand) {
             dropDown.setVisible(false);
             if ("listSelect".equals(actionCommand)) {
-                setSelectedIndex( list.getSelectedIndex() );
+                int index = list.getSelectedIndex();
+                if (index >= 0) {
+                    setSelectedIndex( index );
+                }
 		super.fireActionPerformed();
             }
             else if (Frame.CMD_CLOSE.equals(actionCommand)) {
