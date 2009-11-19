@@ -485,9 +485,7 @@ public class TextArea extends TextComponent {
                 if (pp==null) {
                     break;
                 }
-                else {
-                    p=pp;
-                }
+                p=pp;
             }
             p.revalidate();
             p.repaint();
