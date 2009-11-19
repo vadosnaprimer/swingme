@@ -18,14 +18,21 @@ import java.util.Hashtable;
  * @author AP
  */
 public abstract class LocationMonitor implements ServiceLink.TaskHandler {
+
+    public static final String COUNTRY_CODE_TYPE = "-1";
+    public static final String NETWORK_CODE_TYPE = "-2";
+    public static final String LOCATION_AREA_CODE_TYPE = "-3";
+
     static final int j2meCellPollRateInSeconds = 3;
     boolean bJ2MECellMonitorLoop = true;
-    String j2mePreviousCell = "";
+    String j2mePreviousCell = "UNSET";
 
     public class J2MECellMonitor extends TimerTask {
         protected int cellPropertyIndex = -1;
         protected int mccPropertyIndex = -1;
         protected int mncPropertyIndex = -1;
+        protected int signalPropertyIndex = -1;
+        protected int locationAreaPropertyIndex = -1;
         String[] sysPropertyNames = {
             "CellID", "Cell-ID", "CELLID", "Cell ID", "ID", "Cellid", "CellID",
             "phone.cid",
@@ -36,15 +43,35 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "com.siemens.cellid",
             "cid"};
         String[] mccPropertyNames = {
-            "com.sonyericsson.net.cmcc"
+            "com.sonyericsson.net.cmcc",
+            "com.nokia.mid.countrycode",
+            "com.sonyericsson.net.mcc",
+            "mcc",
+            "MCC"
         };
         String[] mncPropertyNames = {
-            "com.sonyericsson.net.cmnc"
+            "com.sonyericsson.net.cmnc",
+            "com.nokia.mid.networkid",
+            "phone.mnc",
+            "mnc",
+            "MNC"
+        };
+        String[] signalPropertyNames = {
+            "com.nokia.mid.networksignal"
+        };
+        String[] locationAreaPropertyNames = {
+            "com.nokia.mid.lac",
+            "com.sonyericsson.net.lac",
+            "LAC",
+            "LocAreaCode",
+            "phone.lac"
         };
         public J2MECellMonitor() {
             cellPropertyIndex = getPropertyIndex(sysPropertyNames);
             mccPropertyIndex = getPropertyIndex(mccPropertyNames);
             mncPropertyIndex = getPropertyIndex(mncPropertyNames);
+            signalPropertyIndex = getPropertyIndex(signalPropertyNames);
+            locationAreaPropertyIndex = getPropertyIndex(locationAreaPropertyNames);
         }
         public boolean isSupported() {
             return (cellPropertyIndex >= 0);
@@ -61,13 +88,20 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                 if (cellPropertyIndex >= 0) {
                     String cell = System.getProperty(sysPropertyNames[cellPropertyIndex]);
                     if (!cell.equals(j2mePreviousCell)) {
-                        Hashtable hash = new Hashtable(3);
-                        hash.put(cell, new Integer(0));
+                        String signal = "0";
+                        if (signalPropertyIndex >= 0) {
+                            signal = System.getProperty(signalPropertyNames[signalPropertyIndex]);
+                        }
+                        Hashtable hash = new Hashtable(4);
+                        hash.put(cell, signal);
                         if (mccPropertyIndex >= 0) {
-                            hash.put(System.getProperty(mccPropertyNames[mccPropertyIndex]), new Integer(-1));
+                            hash.put(System.getProperty(mccPropertyNames[mccPropertyIndex]), COUNTRY_CODE_TYPE);
                         }
                         if (mncPropertyIndex >= 0) {
-                            hash.put(System.getProperty(mncPropertyNames[mncPropertyIndex]), new Integer(-2));
+                            hash.put(System.getProperty(mncPropertyNames[mncPropertyIndex]), NETWORK_CODE_TYPE);
+                        }
+                        if (locationAreaPropertyIndex >= 0) {
+                            hash.put(System.getProperty(locationAreaPropertyNames[locationAreaPropertyIndex]), LOCATION_AREA_CODE_TYPE);
                         }
                         ServiceLink.Task task = new ServiceLink.Task("PutCellId", hash);
                         handleTask(task);
