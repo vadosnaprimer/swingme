@@ -127,9 +127,8 @@ public class TextPane extends Component {
                         if (pp==null) {
                             break;
                         }
-                        else {
-                            p=pp;
-                        }
+
+                        p=pp;
                     }
                     p.revalidate();
                     p.repaint();
