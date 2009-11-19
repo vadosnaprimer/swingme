@@ -50,6 +50,7 @@ public class ProgressBar extends Component {
 
             sprite = sp;
 
+            wait = 50;
             loaded = sprite.getFrameSequenceLength()-1;
 
     }
