@@ -142,6 +142,7 @@ public class TextPane extends Component {
     // from JEditorPane
     public void setText(String text) {
         if (text.startsWith("<html>")) {
+            setText("");
             XHTMLLoader loader = new XHTMLLoader();
             loader.gotResult( this, text );
         }
