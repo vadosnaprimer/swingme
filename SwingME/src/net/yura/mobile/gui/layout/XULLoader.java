@@ -440,28 +440,27 @@ public class XULLoader {
         else if (name.equals("textfield")) {
             TextField textfield = new TextField();
 
-            readTextComponent(parser,textfield);
+            readTextComponent(parser,textfield,listener);
 
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("passwordfield")) {
             TextField textfield = new TextField(TextField.PASSWORD);
 
-            readTextComponent(parser,textfield);
+            readTextComponent(parser,textfield,listener);
 
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("numericfield")) {
             TextField textfield = new TextField(TextField.NUMERIC);
 
-            readTextComponent(parser,textfield);
+            readTextComponent(parser,textfield,listener);
 
             return readUIObject(parser, textfield,listener);
         }
         else if (name.equals("textarea")) {
 
             Class theclass = TextArea.class;
-            boolean wrap = false;
 
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -474,21 +473,12 @@ public class XULLoader {
                         theclass = TextPane.class;
                     }
                 }
-                else if ("wrap".equals(key)) {
-                    wrap = "true".equals(value);
-                }
 
             }
 
             Component textarea = (Component)theclass.newInstance();
-
-            if (textarea instanceof TextArea) {
-                ((TextArea)textarea).setLineWrap(wrap);
-            }
-            else if (textarea instanceof TextPane) {
-                ((TextPane)textarea).setActionListener(listener);
-            }
-            readTextComponent(parser,textarea);
+               
+            readTextComponent(parser,textarea,listener);
 
             return readUIObject(parser, textarea,listener);
         }
@@ -689,7 +679,7 @@ public class XULLoader {
 
     }
 
-    private void readTextComponent(KXmlParser parser, Component text) {
+    protected void readTextComponent(KXmlParser parser, Component text,ActionListener listener) {
             String textLabel = null;
             boolean i18n = false;
 
@@ -721,6 +711,16 @@ public class XULLoader {
                 else if ("editable".equals(key)) {
                     text.setFocusable( "true".equals(value) );
                 }
+                else if ("wrap".equals(key)) {
+                    if (text instanceof TextArea) {
+                        ((TextArea)text).setLineWrap( "true".equals(value) );
+                    }
+                }
+
+            }
+
+            if (text instanceof TextPane) {
+                ((TextPane)text).setActionListener(listener);
             }
 
             if (textLabel != null) {
