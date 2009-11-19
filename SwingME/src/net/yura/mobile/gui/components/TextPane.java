@@ -120,16 +120,19 @@ public class TextPane extends Component {
 
             if (oldh != height) {
 
-                Panel p = parent;
-                while (p != null) {
-                    if (p instanceof ScrollPane) {
-                        p.revalidate();
-                        p.repaint();
-                        break;
+                    Panel p = parent;
+                    if (p==null) return;
+                    while (!(p instanceof ScrollPane)) {
+                        Panel pp = p.parent;
+                        if (pp==null) {
+                            break;
+                        }
+                        else {
+                            p=pp;
+                        }
                     }
-
-                    p = p.parent;
-                }
+                    p.revalidate();
+                    p.repaint();
             }
         }
     }

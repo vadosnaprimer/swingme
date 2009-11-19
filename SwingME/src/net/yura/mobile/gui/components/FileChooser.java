@@ -61,6 +61,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     public FileChooser() {
 
+            int w = DesktopPane.getDesktopPane().getWidth();
+            int h = DesktopPane.getDesktopPane().getHeight();
+            thumbSize = (h > w) ? w / 3 : h / 3;
+
         //setActionListener(this);
 
         setName("Dialog");
@@ -137,7 +141,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         rb.setActionCommand(a);
         g.add(rb);
         m.add(rb);
-        rb.addActionListener(m);
+        rb.addActionListener(this);
         return rb;
     }
 
@@ -189,6 +193,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         if (gridView.isSelected()) {
             if (fileTable == null) {
+
                 fileTable = new FileGrid(DesktopPane.getDesktopPane().getWidth() / thumbSize);
                 SelectableFileRenderer editor = new SelectableFileRenderer();
                 editor.addActionListener(FileChooser.this);
@@ -197,15 +202,12 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 fileTable.setDefaultRenderer(SelectableFile.class, thumbOptionRenderer);
             }
 
-            int w = DesktopPane.getDesktopPane().getWidth();
-            int h = DesktopPane.getDesktopPane().getHeight();
-            thumbSize = (h > w) ? w / 3 : h / 3;
-
             fileTable.setRowHeight(thumbSize);
 
             fileTable.setListData(files);
             scroll.add(fileTable);
-        } else {
+        }
+        else {
             if (fileList == null) {
                 fileList = new List();
                 fileList.setCellRenderer(thumbOptionRenderer);
@@ -237,7 +239,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         if (gridView.isSelected()) {
             fileTable.setListData(files);
-        } else {
+        }
+        else {
             fileList.setListData(files);
         }
         revalidate();
@@ -249,7 +252,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         Vector dataVector;
         if (gridView.isSelected()) {
             dataVector = fileTable.getItems();
-        } else {
+        }
+        else {
             dataVector = fileList.getItems();
         }
 
@@ -276,19 +280,24 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         if ("cancel".equals(myaction)) {
             setVisible(false);
-        } else if ("mainMenu".equals(myaction)) {
+        }
+        else if ("mainMenu".equals(myaction)) {
             if (fileTable != null) {
                 fileTable.removeEditor();
             }
             doneButton.setFocusable((multiSelect && getSelectedFiles().size() > 0) || (!multiSelect && getSelectedFile() != null && (filter == NativeUtil.TYPE_FOLDER || !NativeUtil.isFileType(getSelectedFile(), NativeUtil.TYPE_FOLDER))));
-        } else if ("done".equals(myaction)) {
+        }
+        else if ("done".equals(myaction)) {
             actionListener.actionPerformed(action);
             setVisible(false);
-        } else if ("view".equals(myaction)) {
+        }
+        else if ("view".equals(myaction)) {
             setUpView();
-        } else if ("show".equals(myaction)) {
+        }
+        else if ("show".equals(myaction)) {
             new Thread(this).start();
-        } else if ("listSelect".equals(myaction)) {
+        }
+        else if ("listSelect".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileList.getSelectedValue();
             if (NativeUtil.isFileType(to.getName(), NativeUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
@@ -301,7 +310,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     actionPerformed("done");
                 }
             }
-        } else if ("tableClick".equals(myaction)) {
+        }
+        else if ("tableClick".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileTable.getSelectedValue();
             if (NativeUtil.isFileType(to.getName(), NativeUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
@@ -313,7 +323,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     actionPerformed("done");
                 }
             }
-        } else {
+        }
+        else {
             //#debug
             System.out.println("unknown action in file browser: " + myaction);
         }
