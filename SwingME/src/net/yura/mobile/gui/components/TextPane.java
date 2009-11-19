@@ -19,7 +19,6 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.ActionListener;
@@ -429,6 +428,7 @@ public class TextPane extends Component {
         int[] lines = getLines(elemText, f, lastLineX, width - borderW);
 
         int startFragIdx = startIndex;
+        int fragW = 0;
 
         // Create a new Line Fragment per each line of text we got
         for (int j = 0; j < lines.length + 1;j++) {
@@ -444,7 +444,7 @@ public class TextPane extends Component {
                     if (lastLineX <= 0) {
                         lineFragments.addElement(new LineFragment(0, 0, 0, 0, style, 0, 0));
                     }
-                    lastLineX = 0;
+                    fragW = 0;
 
                 } else {
                     if (j < lines.length) {
@@ -452,7 +452,7 @@ public class TextPane extends Component {
                         lastLineText = trimStringRightSide(lastLineText);
                     }
 
-                    int fragW = f.getWidth(lastLineText);
+                    fragW = f.getWidth(lastLineText);
 
                     if (fragW > 0) {
                         fragW += borderW;
@@ -460,13 +460,12 @@ public class TextPane extends Component {
                         LineFragment lineFrag = new LineFragment(lastLineX, 0, fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
                         lineFragments.addElement(lineFrag);
                     }
-
-                    lastLineX = (j == lines.length) ? lastLineX + fragW : 0;
                 }
             } else {
                 // TODO: trim the previous element
             }
 
+            lastLineX = (j == lines.length) ? lastLineX + fragW : 0;
             startFragIdx = endFragIdx;
         }
     }
@@ -577,8 +576,9 @@ public class TextPane extends Component {
     }
 
     private String trimStringRightSide(String str) {
-        // Note: May need a faster version
-        return ("-" + str).trim().substring(1);
+
+        int n = str.length() - 1;
+        return (n >= 0 && str.charAt(n) == ' ') ? str.substring(0, n) : str;
     }
 
     /**

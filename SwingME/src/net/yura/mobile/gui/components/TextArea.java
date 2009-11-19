@@ -41,21 +41,21 @@ import net.yura.mobile.gui.KeyEvent;
  * @see javax.swing.JTextArea
  */
 public class TextArea extends TextComponent {
-	
+
 	protected int[] lines;
         private int widthUsed=-1;
-        
+
        	private int align;
         private int lineSpacing;
 	private boolean wrap;
-        
+
         private int caretPixelOffset;
         private boolean doNotUpdateCaretPixelOffset;
-        
+
         public TextArea() {
             this("");
         }
-        
+
 	public TextArea(String text) {
             this(text,Graphics.LEFT);
 	}
@@ -69,13 +69,13 @@ public class TextArea extends TextComponent {
             super("TextArea",text, 1000, TextComponent.ANY);
 
             align = alignment;
-            
+
             //preferredPercentWidth = 0.9;
-            
+
             //width = (int)(DesktopPane.getDesktopPane().getWidth()*preferredWidth);
 	}
-	
-        
+
+
         public int getAlignment() {
 		return align;
 	}
@@ -105,17 +105,17 @@ public class TextArea extends TextComponent {
         public boolean getLineWrap() {
             return wrap;
         }
-        
+
 	/**
 	 * @param g The Graphics object
 	 */
 	public void paintComponent(Graphics2D g) {
 
                 String text = getDisplayString();
-            
+
 		int y = 0;
 		int x = 0;
-		
+
 		// Adjust the x position for horizontal alignment.
 		if((align & Graphics.HCENTER) != 0)
 		{
@@ -137,9 +137,9 @@ public class TextArea extends TextComponent {
 		}
 
                 g.setColor( getCurrentForeground() );
-                
+
                 int i, startLine, endLine, lineHeight;
-                
+
 		// Set alignment to top, with correct left/center/right alignment.
 		//int alignment = Graphics.TOP | (align & (Graphics.LEFT | Graphics.HCENTER | Graphics.RIGHT));
 
@@ -147,7 +147,7 @@ public class TextArea extends TextComponent {
 		lineHeight = font.getHeight() + lineSpacing;
 		startLine = Math.max(0, (g.getClipY() - y) / lineHeight);
 		endLine = Math.min(lines.length+1, startLine + (g.getClipHeight() / lineHeight) + 1);
-        
+
 		// Offset the starting position to skip the lines before startLine
 		y += lineHeight * startLine;
 
@@ -169,7 +169,7 @@ public class TextArea extends TextComponent {
                             if ( text.charAt(lastDrawIndex-1) =='\n') {
                                 lastDrawIndex--;
                             }
-                            
+
                         }
                     }
 
@@ -180,14 +180,14 @@ public class TextArea extends TextComponent {
                     if (showCaret && caretPosition >= beginIndex && caretPosition <= lastCaretIndex) {
 
                         int w = getStringWidth(font, text.substring(beginIndex, caretPosition) );
-                        
+
                         if((align & Graphics.HCENTER) != 0) {
                                 w = (width - getStringWidth(font,line))/2 + w;
                         }
                         else if((align & Graphics.RIGHT) != 0) {
                                 w = width - (getStringWidth(font,line)-w); // not best efficency
                         }
-                        
+
                         g.drawLine(w, y, w, y+lineHeight-1);
                     }
 
@@ -197,15 +197,15 @@ public class TextArea extends TextComponent {
                         beginIndex = lines[i];
                     }
 		}
-                
-		
+
+
 	}
 
 	/**
 	 * Set's the line spacing
 	 * @param lineSpacing spacing between lines
          * @see javax.swing.text.StyleConstants#setLineSpacing(javax.swing.text.MutableAttributeSet, float) StyleConstants.setLineSpacing
-	 */	
+	 */
 	public void setLineSpacing(int lineSpacing) {
 		this.lineSpacing = lineSpacing;
 	}
@@ -218,21 +218,21 @@ public class TextArea extends TextComponent {
 	public int getLineSpacing() {
             return lineSpacing;
 	}
-	
+
 	/**
 	 * Set's the text
 	 * @param txt The text
 
 	public void setText(String txt) {
-            
+
             int w = wrap?width:Integer.MAX_VALUE;
-            
+
             // we want to clear the lines data, in case a paint happens now
             // and there are more lines then the length of the text
             lines = new int[0];
-            
+
             super.setText(txt);
-            
+
             // todo? mayeb use display text
             setupHeight(getLines(txt,font,0,w),w,true);
             // when this is called it may trigger a revalidage of this
@@ -243,7 +243,7 @@ public class TextArea extends TextComponent {
             // when the text is set,
             // as it needs to get the text, if it needs to redo the size
             // so the text has to be set
-            
+
 	}
 	 */
 
@@ -252,9 +252,9 @@ public class TextArea extends TextComponent {
          * @see javax.swing.JTextArea#append(java.lang.String) JTextArea.append
          */
 	public void append(String a) {
-	
+
             String newtext = getText() + a;
-            
+
             if (lines==null || lines.length==0) {
                 // we dont have enough text in the box to know where to append yet
                 setText(newtext);
@@ -287,15 +287,15 @@ public class TextArea extends TextComponent {
 
 
 	}
-        
-        
+
+
         protected void changedUpdate(int offset,int length) {
 
             if (lines==null) return;
 
             // todo? maybe use display text
             String text = getText();
-            
+
             int startPos=-1;
             for (int c=0;c<(lines.length-1);c++) {
                 if (lines[c+1] >= offset
@@ -307,7 +307,7 @@ public class TextArea extends TextComponent {
             }
             // if startPos is 0 or more, then this means we can use
             // the existing array, upto and including startPos
-            
+
             int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos], wrap?width:Integer.MAX_VALUE );
             int[] l3 = new int[ startPos+1 + l2.length];
 
@@ -317,10 +317,10 @@ public class TextArea extends TextComponent {
             setupHeight(l3);
 
         }
-        
+
         public boolean processKeyEvent(KeyEvent keyEvent) {
             boolean result = super.processKeyEvent(keyEvent);
-            
+
             if (!result) {
                 if (keyEvent.isDownAction(Canvas.UP)) {
 
@@ -331,10 +331,10 @@ public class TextArea extends TextComponent {
                         gotoLine(line-1,caretPixelOffset);
                         return true;
                     }
-                    
+
                 }
                 else if (keyEvent.isDownAction(Canvas.DOWN)) {
-                    
+
                     int line = getLineOfOffset(caretPosition);
                     if (line!=lines.length) {
                         autoAccept();
@@ -342,17 +342,17 @@ public class TextArea extends TextComponent {
                         gotoLine(line+1,caretPixelOffset);
                         return true;
                     }
-                
+
                 }
             }
-            
+
             return result;
         }
-        
+
         private void gotoLine(int line,int xPixelOffset) {
-            
+
             int startOfLineOffset = line==0?0:lines[line-1];
-            
+
             String text = getText()+" ";
             text = text.substring(startOfLineOffset, line==lines.length?text.length():lines[line]);
 
@@ -363,28 +363,28 @@ public class TextArea extends TextComponent {
 
         }
 
-        
+
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
 
             if (type==DesktopPane.RELEASED) {
-            
+
                 int lineHeight = font.getHeight() + lineSpacing;
 
                 int line = y / lineHeight;
                 if (line > lines.length) { line = lines.length; }
                 else if (line < 0) { line = 0; }
-                
+
                 gotoLine(line,x);
-                
+
             }
         }
-        
+
         /**
          * @see javax.swing.JTextArea#getLineOfOffset(int) JTextArea.getLineOfOffset
          */
         public int getLineOfOffset(int offset) {
-            
+
             int line=0;
             for (int c=0;c<lines.length;c++) {
                 if (offset < lines[c]) {
@@ -393,9 +393,9 @@ public class TextArea extends TextComponent {
                 line = c+1;
             }
             return line;
-            
+
         }
-        
+
         public void setCaretPosition(int a) {
             super.setCaretPosition(a);
 
@@ -546,10 +546,10 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                 int lineEnd;
                 // go though word by word
 		while (true) {
-                    
+
                         wordEnd = (w==Integer.MAX_VALUE)?-1:str.indexOf(' ',wordStart);
                         lineEnd = str.indexOf('\n',wordStart);
-                        
+
                         // work out the end position
                         int end;
                         if (wordEnd==-1 && lineEnd==-1) {
@@ -569,12 +569,12 @@ System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.leng
                         }
                         int currentLineLength = (w==Integer.MAX_VALUE)?-1:getStringWidth(f,str.substring(lineStart, end));
 
-                        if (currentLineLength > startW && lineStart==wordStart) {
+                        if (currentLineLength > w && lineStart==wordStart) {
 
                                 // start to remove 1 char at a time,
                                 // and checking if we can fit the string into the width
 
-                                int a = getStringCharOffset( str.substring(lineStart, end), f, w );
+                                int a = getStringCharOffset( str.substring(lineStart, end), f, startW );
 
                                 // this is bad, this means the width of 1 letter is still too wide
                                 // so we must add this letter anyway
