@@ -61,16 +61,11 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     public FileChooser() {
 
-            int w = DesktopPane.getDesktopPane().getWidth();
-            int h = DesktopPane.getDesktopPane().getHeight();
-            thumbSize = (h > w) ? w / 3 : h / 3;
-
         //setActionListener(this);
 
         setName("Dialog");
         listTitle = new Label();
         //VistoPane.addTitleToWindow(this, listTitle);
-        setMaximum(true);
 
         addressBar = new Label(dir);
         scroll = new ScrollPane();
@@ -119,6 +114,34 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         files = new Vector(0);
         lastFewImages = new Vector();
         thumbOptionRenderer = new SelectableFileRenderer();
+
+    }
+
+    public void setSize(int w, int h) {
+        // called on revalidate
+
+        calcThumbSize(w,h);
+
+        super.setSize(w, h);
+    }
+
+    private void calcThumbSize(int w,int h) {
+        if (gridView.isSelected()) {
+
+            int a = (h > w) ? w : h;
+
+            thumbSize = (int)((a * 0.1) + 30);
+            // a nice way to work out the best icon size to use
+
+            fileTable.setFixedCellHeight( thumbSize );
+
+
+        }
+        else {
+
+            thumbSize = thumbOptionRenderer.getFont().getHeight();
+            fileList.setFixedCellHeight( thumbSize + 6 ); // some padding
+        }
     }
 
     public void setCurrentDirectory(String string) {
@@ -183,27 +206,28 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         doneButton.setText(approveButtonText);
 
         setUpView();
+
+
+        setMaximum(true);
+
         setVisible(true);
 
         new Thread(this).start();
     }
+
 
     private void setUpView() {
         scroll.removeAll();
 
         if (gridView.isSelected()) {
             if (fileTable == null) {
-
-                fileTable = new FileGrid(DesktopPane.getDesktopPane().getWidth() / thumbSize);
+                fileTable = new FileGrid(10);
                 SelectableFileRenderer editor = new SelectableFileRenderer();
                 editor.addActionListener(FileChooser.this);
                 editor.setActionCommand("tableClick");
                 fileTable.setDefaultEditor(SelectableFile.class, editor);
                 fileTable.setDefaultRenderer(SelectableFile.class, thumbOptionRenderer);
             }
-
-            fileTable.setRowHeight(thumbSize);
-
             fileTable.setListData(files);
             scroll.add(fileTable);
         }
@@ -214,12 +238,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 fileList.setActionCommand("listSelect");
                 fileList.addActionListener(this);
             }
-
-            thumbSize = thumbOptionRenderer.getIcon().getIconHeight();
-
             fileList.setListData(files);
             scroll.add(fileList);
         }
+        calcThumbSize(getWidth(),getHeight());
         revalidate();
         repaint();
     }
@@ -232,7 +254,18 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         for (int c = 0; c < fileNames.size(); c++) {
 
             String name = (String) fileNames.elementAt(c);
-            SelectableFile tbo = new SelectableFile(name, getImage(NativeUtil.getFileType(name)));
+
+            int id = NativeUtil.getFileType(name);
+            Image icon = null;
+            try {
+                icon = getImage(id);
+            }
+            catch (IOException ex) {
+                //#debug
+                System.out.println("can not find image for file type: "+id);
+            }
+
+            SelectableFile tbo = new SelectableFile(name, icon );
             files.addElement(tbo);
 
         }
@@ -347,10 +380,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
      */
     public static class FileGrid extends Table {
 
-        private int colCount;
+        private int colWidth;
 
-        public FileGrid(int cw) {
-            colCount = cw;
+        public FileGrid(int cellSize) {
+            setFixedCellHeight(cellSize);
         }
 
         public Object getSelectedValue() {
@@ -398,12 +431,24 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         public int getColumnCount() {
-            return colCount;
+
+            // TODO width depends on number of cols
+            // and number of cols depends on width
+            if (width == 0) {
+                return 1;
+            }
+
+            return width / colWidth;
         }
 
         public int getRowCount() {
             int c = getColumnCount();
             return (dataVector.size() + (c - 1)) / c;
+        }
+
+        private void setFixedCellHeight(int thumbSize) {
+            colWidth = thumbSize;
+            setRowHeight(thumbSize);
         }
     }
 
@@ -492,7 +537,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 }
 
                 return img;
-            } else {
+            }
+            else {
                 return defaultImage;
             }
 
@@ -537,10 +583,12 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     g.setFont(font);
                     g.drawString(name, (width - font.getWidth(name)) / 2, height - font.getHeight());
                 }
-            } else {
+            }
+            else {
                 if (img != null) {
                     g.drawImage(img, (thumbSize - img.getWidth()) / 2, (height - img.getHeight()) / 2);
-                } else {
+                }
+                else {
                     // thumbSize = 0;
                 }
                 g.setFont(font);
@@ -592,52 +640,37 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             return tbOption;
         }
     }
+
     private static Image imgDir,  imgPic,  imgAudio,  imgVid,  imgUnknown;
 
-    public static Image getImage(int ftype) {
+    public static Image getImage(int ftype) throws IOException {
         if (ftype == NativeUtil.TYPE_FOLDER) {
             if (imgDir == null) {
-                try {
                     imgDir = Image.createImage("/directory.gif");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
             return imgDir;
-        } else if (ftype == NativeUtil.TYPE_PICTURE) {
+        }
+        else if (ftype == NativeUtil.TYPE_PICTURE) {
             if (imgPic == null) {
-                try {
                     imgPic = Image.createImage("/image.gif");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
             return imgPic;
-        } else if (ftype == NativeUtil.TYPE_AUDIO) {
+        }
+        else if (ftype == NativeUtil.TYPE_AUDIO) {
             if (imgAudio == null) {
-                try {
                     imgAudio = Image.createImage("/sound.gif");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
             return imgAudio;
-        } else if (ftype == NativeUtil.TYPE_VIDEO) {
+        }
+        else if (ftype == NativeUtil.TYPE_VIDEO) {
             if (imgVid == null) {
-                try {
                     imgVid = Image.createImage("/movie.gif");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
             return imgVid;
-        } else {
+        }
+        else {
             if (imgUnknown == null) {
-                try {
                     imgUnknown = Image.createImage("/unknown.gif");
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
             }
             return imgUnknown;
         }
