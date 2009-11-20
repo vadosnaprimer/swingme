@@ -32,7 +32,7 @@ import net.yura.mobile.util.Option;
  */
 public class Label extends Component {
     
-	private static String extension = "...";
+	public static String extension = "...";
     
 	protected Font font;
 	

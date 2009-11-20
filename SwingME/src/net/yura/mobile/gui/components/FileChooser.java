@@ -130,10 +130,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             int a = (h > w) ? w : h;
 
-            thumbSize = (int)((a * 0.1) + 30);
+            thumbSize = a/10 + 30;
             // a nice way to work out the best icon size to use
 
-            fileTable.setRowHeight( thumbSize );
+            fileTable.setRowHeight( thumbSize + 5 ); // some padding
 
 
         }
@@ -272,9 +272,11 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         if (gridView.isSelected()) {
             fileTable.setListData(files);
+            fileTable.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
         }
         else {
             fileList.setListData(files);
+            fileList.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
         }
         revalidate();
         repaint();
@@ -535,14 +537,17 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                         if (is != null) {
                             try {
                                 img = Image.createImage(is);
-                                img = ImageUtil.scaleImage(img, thumbSize, thumbSize);
-                            } catch (IOException ex) {
+                            }
+                            catch (IOException ex) {
                                 ex.printStackTrace();
                             }
                         }
-                    } else {
-                        //Do sampling mb or display default blank thumbnail.
                     }
+                    //else {
+                        //Do sampling mb or display default blank thumbnail.
+                    //}
+
+                    img = ImageUtil.scaleImage(img, thumbSize, thumbSize);
 
                     currentThumbSize = thumbSize;
                     thumb = new WeakReference(img);
@@ -600,7 +605,15 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 }
                 if (dir) {
                     g.setFont(font);
-                    g.drawString(name, (width - font.getWidth(name)) / 2, height - font.getHeight());
+                    int length = font.getWidth(name);
+                    if (length < width) {
+                        g.drawString(name, (width - length) / 2, height - font.getHeight());
+                    }
+                    else {
+                        int offset = TextComponent.searchStringCharOffset(name, font, width -(padding*2) -font.getWidth(Label.extension));
+                        g.drawString(name.substring(0, offset) + Label.extension, padding, height - font.getHeight());
+                    }
+
                 }
             }
             else {

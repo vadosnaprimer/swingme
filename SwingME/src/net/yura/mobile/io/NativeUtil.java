@@ -678,12 +678,7 @@ public class NativeUtil {
             return null;
         }
         finally {
-            try {
-                if (dis!=null) {
-                    dis.close();
-                }
-            }
-            catch (Exception ex) {}
+            close(dis);
         }
 
     }
