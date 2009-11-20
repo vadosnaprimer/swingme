@@ -29,7 +29,7 @@ public abstract class SocketClient implements Runnable {
     protected OutputStream out = null;
     protected InputStream in = null;
 
-    private String server;
+    private final String server;
 
     public SocketClient(String server) {
         this.server = server;
@@ -185,6 +185,7 @@ System.out.println("got object: "+task);
         // TODO make sure everything is saved!!!!!
         running = false;
         writeThread.kill();
+        writeThread = null;
     }
 
     protected void sendOfflineInboxMessages() {
