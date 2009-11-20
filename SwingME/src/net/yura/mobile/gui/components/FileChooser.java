@@ -389,8 +389,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         public int getSelectedIndex() {
-            return getSelectedRow() * getColumnCount() + getSelectedColumn();
-
+            if (getSelectedRow() == -1 && getSelectedColumn() == -1) return -1;
+            return convertLin(getSelectedRow(), getSelectedColumn());
         }
 
         public Vector getItems() {
@@ -436,12 +436,19 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         public int getColumnCount() {
-            return widthUsed / getRowHeight(0);
+            int cc = widthUsed / getRowHeight(0);
+            return cc==0?1:cc;
         }
 
         public int getRowCount() {
             int c = getColumnCount();
             return (dataVector.size() + (c - 1)) / c;
+        }
+
+        public void setRowHeight(int h) {
+            int index = getSelectedIndex();
+            super.setRowHeight(h);
+            setSelectedIndex(index);
         }
 
         private int widthUsed = -1;
@@ -459,9 +466,13 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             super.setSize(w, h);
 
             if (width!=widthUsed) {
+
                 int oldh = height;
 
+                int index = getSelectedIndex();
                 widthUsed = width;
+                setSelectedIndex(index);
+
                 height = workoutHeight();
 
                 if (height!=oldh) {
@@ -469,6 +480,15 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     DesktopPane.mySizeChanged(this);
 
                 }
+
+            }
+        }
+        public void setSelectedIndex(int a) {
+            if (a==-1) {
+                setSelectedCell(-1,-1);
+            }
+            else {
+                setSelectedCell( a/getColumnCount(), a%getColumnCount() );
             }
         }
     }
