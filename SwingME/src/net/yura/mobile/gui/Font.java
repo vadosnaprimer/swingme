@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -32,6 +33,8 @@ import net.yura.mobile.util.StringUtil;
  * @see java.awt.Font
  */
 public class Font {
+
+        private static Vector integers;
 
 	private Hashtable characters; // maps unicode chars to their index
 	private int height;
@@ -115,7 +118,7 @@ public class Font {
 		}
                 catch (IOException ex) {
                     //#debug
-//#                     ex.printStackTrace();
+                    ex.printStackTrace();
                     throw new RuntimeException();
 		}
 	}
@@ -196,10 +199,15 @@ public class Font {
                     dis.skipBytes(4);
                     //System.out.println("FONT: Starting kerning reading");
                     while (dis.available() > 0) {
-                            int first = getLong(dis);
-                            int second = getLong(dis);
+                            char first = (char) getLong(dis);
+                            char second = (char) getLong(dis);
+                            Integer charPairIdentifier = getCharPairId(first,second);
+
                             int amount = getShortSigned(dis);
-                            f.kerning.put(first + "-" + second, new Integer(amount));
+                            
+                            Integer kerningValue = getInteger(amount);
+                            f.kerning.put(charPairIdentifier, kerningValue);
+
                             //System.out.println("FONT: Kerning for "+first+"-"+second+" = "+amount);
                     }
             }
@@ -207,6 +215,7 @@ public class Font {
                     //System.out.println("FONT: No kerning info available");
             }
 
+            integers = null;
             return f;
             
         }
@@ -228,6 +237,25 @@ public class Font {
             int short1 = getShortUnsigned(dis);
             return (short0 | (short1 << 16));
 	}
+
+        private static Integer getInteger(int integer) {
+            if (integers == null) {
+                integers = new Vector(1,1);
+            }
+            Integer lookup = new Integer(integer);
+            int index = integers.indexOf(lookup);
+            if (index > -1) {
+                return (Integer) integers.elementAt(index);
+            }
+            else {
+                integers.addElement(lookup);
+                return lookup;
+            }
+        }
+
+        private static Integer getCharPairId(char first, char second) {
+            return new Integer((first | (second << 16)));
+        }
 
 	public static Font getFont(String name) {
 		
@@ -365,7 +393,7 @@ public class Font {
 		}
 		catch (IOException ex) {
                     //#debug
-//#                     ex.printStackTrace();
+                    ex.printStackTrace();
                     throw new RuntimeException("unable to load font: "+name);
 		}
 
@@ -485,7 +513,7 @@ public class Font {
 
 					//System.out.println("FONT: get kergning for: "+prevCharacter+"-"+charIndex);
 
-					Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
+					Integer kerningModifier = (Integer) kerning.get(getCharPairId((char)prevCharacter, (char)charIndex));
 					if (kerningModifier != null) {
 						w = kerningModifier.intValue();
 
@@ -708,7 +736,7 @@ public class Font {
 					
 					if(charIndex > -1) {
 						// Kerning
-						Integer kerningModifier = (Integer) kerning.get(prevCharacter + "-" + charIndex);
+						Integer kerningModifier = (Integer) kerning.get(getCharPairId((char)prevCharacter, (char)charIndex));
 						if (kerningModifier != null) {
 							x += kerningModifier.intValue();
 						}
@@ -726,11 +754,11 @@ public class Font {
 						}
 
 						//#mdebug
-//# 						if (DesktopPane.debug) {
-//# 							g.setColor(r.nextInt());
-//# 							g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());
-//# 							g.setColor(color);
-//# 						}
+						if (DesktopPane.debug) {
+							g.setColor(r.nextInt());
+							g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());
+							g.setColor(color);
+						}
 						//#enddebug
 
 						g.drawImage(glyph, thisx, y + offsetY[charIndex], Graphics.TOP | Graphics.LEFT);
@@ -761,7 +789,7 @@ public class Font {
 		}
 	}
 	//#debug
-//# 	Random r = new Random();
+	Random r = new Random();
 	private static int POSITION_DOT = 10;
 	private static int POSITION_CURRENCY = 11;
 	private static int POSITION_MINUS = 12;
