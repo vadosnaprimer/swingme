@@ -603,14 +603,6 @@ public abstract class Component {
 
 
 
-
-	private ScrollPane scroller;
-
-	public void setScrollPanel(ScrollPane s) {
-
-		scroller = s;
-	}
-
 	/**
          * @param x X position inside CURRENT component
          * @param y Y position inside CURRENT component
@@ -622,8 +614,8 @@ public abstract class Component {
          */
 	public boolean scrollRectToVisible(int x,int y,int w,int h,boolean smart) {
 
-		if (scroller!=null) {
-			return scroller.makeVisible(x,y,w,h,smart);
+		if (parent instanceof ScrollPane) {
+			return ((ScrollPane)parent).makeVisible(x,y,w,h,smart);
 		}
 
 		if (parent!=null) {
@@ -640,8 +632,8 @@ public abstract class Component {
          */
         public boolean isRectVisible(int x,int y,int w,int h) {
 
-		if (scroller!=null) {
-			return scroller.isRectVisible(x,y,w,h);
+		if (parent instanceof ScrollPane) {
+			return ((ScrollPane)parent).isRectVisible(x,y,w,h);
 		}
 
 		if (parent!=null) {
@@ -652,10 +644,17 @@ public abstract class Component {
 		return true;
 	}
 
+        /**
+         * @return if there was a scroll happen or not
+         */
 	public boolean scrollUpDown(int d) {
 
-            int oldx = posX;
-            int oldy = posY;
+            if (parent instanceof ScrollPane) {
+
+                ScrollPane scroller = (ScrollPane)parent;
+
+                int oldx = posX;
+                int oldy = posY;
 
 		if (d==Canvas.RIGHT) {
 			scroller.makeVisible(width-1,-posY+scroller.getViewPortY(),1,1,true);
@@ -669,7 +668,13 @@ public abstract class Component {
 		else { // DOWN
 			scroller.makeVisible(-posX+scroller.getViewPortX(),height-1,1,1,true);
 		}
-            return oldx!=posX || oldy!=posY;
+                return oldx!=posX || oldy!=posY;
+            }
+            else if (parent != null) {
+                return parent.scrollUpDown(d);
+            }
+
+            return false;
 	}
 
         /**

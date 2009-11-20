@@ -135,23 +135,11 @@ public class ScrollPane extends Panel implements Runnable {
 
         a.setLocation(getViewPortX(), getViewPortY());
 
-        a.setScrollPanel(this);
-
         // TODO does it take into account the border?
     }
 
     public void add(Component component,String constraint){
         throw new RuntimeException("must use add");
-    }
-
-    public void remove(Component a){
-        super.remove(a);
-
-        //if (a instanceof Panel) {
-        //    ((Panel)a).setScrollPanel(null);
-        //}
-
-        a.setScrollPanel(null);
     }
 
     public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
