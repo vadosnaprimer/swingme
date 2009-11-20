@@ -215,7 +215,7 @@ public class Table extends Panel {
         editingRow = pRow;
         editingColumn = pCol;
 
-        if (editingRow==-1 || editingColumn==-1) { return; }
+        if (editingRow==-1 || editingColumn==-1 || width<=0 || height<=0) { return; }
 
         int x=getCellX(editingColumn);
         int y=getCellY(editingRow);
@@ -427,16 +427,9 @@ public class Table extends Panel {
         //}
 
         //width = w;
-        if (height==0) { // no prefured height
-            int h = 0;
-            int r = getRowCount();
-            for (int a=0;a<r;a++) {
-                h = h + getRowHeight(a);
-            }
-            height = h;
-        }
+        height = workoutHeight();
 
-        if (width==0) {
+        //if (width==0) {
             int w=0;
             for (int c=0;c<colWidths.size();c++) {
                  Integer i = ((Integer)colWidths.elementAt(c));
@@ -445,9 +438,21 @@ public class Table extends Panel {
                  }
             }
             width = w;
-        }
-
+        //}
         
+    }
+
+    protected int workoutHeight() {
+
+        //if (height==0) { // no prefured height
+            int h = 0;
+            int r = getRowCount();
+            for (int a=0;a<r;a++) {
+                h = h + getRowHeight(a);
+            }
+            return h;
+        //}
+
     }
     
     public void doLayout() {

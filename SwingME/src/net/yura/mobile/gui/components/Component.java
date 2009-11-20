@@ -408,7 +408,7 @@ public abstract class Component {
         /**
          * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
          */
-        public void workoutSize() {
+        public final void workoutSize() {
 
             if (preferredWidth==-1 || preferredHeight==-1) {
                 workoutMinimumSize();

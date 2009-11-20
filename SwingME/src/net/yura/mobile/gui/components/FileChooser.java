@@ -42,7 +42,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     private SelectableFileRenderer thumbOptionRenderer;
     private List fileList;
-    private FileGrid fileTable;
+    private GridList fileTable;
     private ActionListener actionListener;
     private String action;
     private String dir = NativeUtil.ROOT_PREX;
@@ -133,7 +133,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             thumbSize = (int)((a * 0.1) + 30);
             // a nice way to work out the best icon size to use
 
-            fileTable.setFixedCellHeight( thumbSize );
+            fileTable.setRowHeight( thumbSize );
 
 
         }
@@ -221,7 +221,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         if (gridView.isSelected()) {
             if (fileTable == null) {
-                fileTable = new FileGrid(10);
+                fileTable = new GridList(10);
                 SelectableFileRenderer editor = new SelectableFileRenderer();
                 editor.addActionListener(FileChooser.this);
                 editor.setActionCommand("tableClick");
@@ -374,16 +374,12 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     /**
      * Takes care of Picture Selection screen flow.
-     * 
-     * @author emarcato
-     * 
+     * @author Yura Mamyrin
      */
-    public static class FileGrid extends Table {
+    public static class GridList extends Table {
 
-        private int colWidth;
-
-        public FileGrid(int cellSize) {
-            setFixedCellHeight(cellSize);
+        public GridList(int cellSize) {
+            setRowHeight(cellSize);
         }
 
         public Object getSelectedValue() {
@@ -401,6 +397,13 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         public void setListData(Vector files) {
             dataVector = files;
+            if (files.size() > 0) {
+                setSelectedCell(0, 0);
+            }
+            else {
+                setSelectedCell(-1, -1);
+            }
+            //widthUsed = -1;
         }
 
         private int convertLin(int rowIndex, int columnIndex) {
@@ -431,14 +434,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         public int getColumnCount() {
-
-            // TODO width depends on number of cols
-            // and number of cols depends on width
-            if (width == 0) {
-                return 1;
-            }
-
-            return width / colWidth;
+            return widthUsed / getRowHeight(0);
         }
 
         public int getRowCount() {
@@ -446,9 +442,32 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             return (dataVector.size() + (c - 1)) / c;
         }
 
-        private void setFixedCellHeight(int thumbSize) {
-            colWidth = thumbSize;
-            setRowHeight(thumbSize);
+        private int widthUsed = -1;
+        public void workoutMinimumSize() {
+            if (widthUsed==-1) {
+                width = getRowHeight(0);
+                height = getRowHeight(0);
+            }
+            else {
+                width = getRowHeight(0);
+                height = workoutHeight();
+            }
+        }
+        public void setSize(int w,int h) {
+            super.setSize(w, h);
+
+            if (width!=widthUsed) {
+                int oldh = height;
+
+                widthUsed = width;
+                height = workoutHeight();
+
+                if (height!=oldh) {
+
+                    DesktopPane.mySizeChanged(this);
+
+                }
+            }
         }
     }
 
