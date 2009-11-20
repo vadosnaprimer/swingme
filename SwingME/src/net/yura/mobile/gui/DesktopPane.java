@@ -259,7 +259,9 @@ public class DesktopPane extends Canvas implements Runnable {
         theme.setStyleFor("WindowControlPanel", clear);
         theme.setStyleFor("TabList", clear);
 
-        Style clear2 = new Style(theme.getStyle("ScrollPane"));
+        Style clear2 = theme.getStyle("ScrollPane");
+        if (clear2==null) clear2 = theme.getStyle("");
+        clear2 = new Style(clear2);
         clear2.addBackground(-1, Style.ALL);
         theme.setStyleFor("TabScroll", clear2);
 
@@ -492,7 +494,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public void fullRepaint() {
         // this is here coz this method should NOT be used
         //#debug
-        System.out.println("FULL REPAINT!!! this method should NOT normally be called");
+//        System.out.println("FULL REPAINT!!! this method should NOT normally be called");
 
         fullrepaint = true;
 
