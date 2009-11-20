@@ -28,7 +28,9 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 
 /**
+ * if you would like the list to wrap the items then please use GridList
  * @author Yura Mamyrin
+ * @see FileChooser.GridList
  * @see javax.swing.JList
  */
 public class List extends Component implements ActionListener {

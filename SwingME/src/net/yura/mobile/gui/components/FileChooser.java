@@ -399,13 +399,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         public void setListData(Vector files) {
             dataVector = files;
-            if (files.size() > 0) {
-                setSelectedCell(0, 0);
-            }
-            else {
-                setSelectedCell(-1, -1);
-            }
-            //widthUsed = -1;
+            setSelectedIndex(files.size()>0?0:-1);
         }
 
         private int convertLin(int rowIndex, int columnIndex) {

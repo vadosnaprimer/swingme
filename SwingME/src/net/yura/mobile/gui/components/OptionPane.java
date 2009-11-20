@@ -30,13 +30,12 @@ import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.GridBagConstraints;
 import net.yura.mobile.gui.layout.GridBagLayout;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.util.Option;
 
 /**
  * @author Yura Mamyrin
  * @see javax.swing.JOptionPane
  */
-public class OptionPane extends Frame implements ActionListener {
+public class OptionPane extends Frame implements Runnable, ActionListener {
 
     public static final int YES_NO_OPTION = 0;
     public static final int OK_OPTION = 1;
@@ -231,7 +230,7 @@ public class OptionPane extends Frame implements ActionListener {
         this.icon.setIcon(icon);
     }
 
-    private void open() {
+    public void run() {
         
         //content.workoutSize(); // what out what the needed size is
         //System.out.println("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
@@ -311,7 +310,7 @@ public class OptionPane extends Frame implements ActionListener {
 
         myself.setInitialValue(initialValue);
         
-        myself.open();
+        DesktopPane.getDesktopPane().invokeLater(myself);
     }
 
     public static void showMessageDialog(ActionListener parent, Object message, String title, int messageType) {

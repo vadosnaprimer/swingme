@@ -366,6 +366,14 @@ public class DesktopPane extends Canvas implements Runnable {
 
 
             validating = 1;
+
+            synchronized (runners) {
+                for (int c=0;c<runners.size();c++) {
+                    ((Runnable)runners.elementAt(c)).run();
+                }
+                runners.removeAllElements();
+            }
+
             validateComponents(revalidateComponents);
             validating = 2;
             validateComponents(revalidate);
@@ -762,6 +770,17 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
         }
 
 
+    }
+
+    private final Vector runners = new Vector();
+    /**
+     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
+     */
+    public void invokeLater(Runnable runner) {
+        synchronized (runners) {
+            runners.addElement(runner);
+        }
+        repaint();
     }
 
     public void setIndicatorText(String txt) {
