@@ -26,6 +26,7 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.components.FileChooser.GridList;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
@@ -63,6 +64,22 @@ public class DesktopPane extends Canvas implements Runnable {
             style = desktop.theme.getStyle("");
         }
         return style;
+    }
+
+    public static void mySizeChanged(Component aThis) {
+
+            Panel p = aThis.getParent();
+            if (p==null) return;
+            while (!(p instanceof ScrollPane)) {
+                Panel pp = p.getParent();
+                if (pp==null) {
+                    break;
+                }
+                p=pp;
+            }
+            p.revalidate();
+            p.repaint();
+
     }
 
     /**
@@ -470,7 +487,7 @@ public class DesktopPane extends Canvas implements Runnable {
         g.setClip(a);
     }
 
-    public void validateComponents(Vector v) {
+    private void validateComponents(Vector v) {
 
             synchronized (v) {
 

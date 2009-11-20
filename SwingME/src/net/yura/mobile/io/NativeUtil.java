@@ -12,7 +12,6 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Image;
-import net.yura.mobile.util.ImageUtil;
 
 public class NativeUtil {
 

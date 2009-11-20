@@ -128,7 +128,7 @@ public class ImageUtil {
             // Do nothing. Converting with 3D API failed. Use sampling.
         }
 
-        return img;
+        return null;
     }
 
     private static Image scaleImage3D(Image img, int newW, int newH) {
