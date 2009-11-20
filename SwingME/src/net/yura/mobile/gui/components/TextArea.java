@@ -309,13 +309,18 @@ public class TextArea extends TextComponent {
             // the existing array, upto and including startPos
 
             int[] l2 = getLines(text,font,startPos==-1?0:lines[startPos], wrap?width:Integer.MAX_VALUE );
-            int[] l3 = new int[ startPos+1 + l2.length];
 
-            System.arraycopy(lines, 0, l3, 0, startPos+1);
-            System.arraycopy(l2, 0, l3, startPos+1, l2.length);
+            if (startPos == -1) {
+                setupHeight(l2);
+            }
+            else {
+                int[] l3 = new int[ startPos+1 + l2.length];
 
-            setupHeight(l3);
+                System.arraycopy(lines, 0, l3, 0, startPos+1);
+                System.arraycopy(l2, 0, l3, startPos+1, l2.length);
 
+                setupHeight(l3);
+            }
         }
 
         public boolean processKeyEvent(KeyEvent keyEvent) {

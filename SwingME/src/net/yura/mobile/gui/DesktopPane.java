@@ -563,6 +563,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
     private void addToComponentVector(Component rc, Vector vec) {
         // System.out.println("someone asking for repaint "+rc);
 
+        if (rc.getWindow() == null) return;
+
         boolean found = false;
 
         synchronized (vec) {
