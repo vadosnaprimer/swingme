@@ -498,7 +498,7 @@ System.out.println("START: "+startTag);
             System.out.println("    text: \""+string+"\"");
             if (currentComponent instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                inlineText.setText( inlineText.getText()+string );
+                inlineText.append( string );
             }
             else if (currentComponent instanceof ComboBox) {
                 ComboBox inlineText = (ComboBox)XHTMLLoader.this.currentComponent;
@@ -514,7 +514,7 @@ System.out.println("START: "+startTag);
             }
             else if (currentComponent instanceof TextArea) {
                 TextArea inlineText = (TextArea)XHTMLLoader.this.currentComponent;
-                inlineText.setText( inlineText.getText()+string );
+                inlineText.append( string );
             }
             //#mdebug
             else {

@@ -146,18 +146,37 @@ public class TextPane extends Component {
     }
 
     // from JEditorPane
-    public void setText(String text) {
-        if (text.startsWith("<html>")) {
-            setText("");
-            XHTMLLoader loader = new XHTMLLoader();
-            loader.gotResult( this, text );
-        }
-        else {
-            this.text = text;
-        }
+    public void setText(String text1) {
+
+        sortedElemsList.removeAllElements();
         lineFragments.removeAllElements();
+        focusableElems.removeAllElements();
+
         widthUsed = -1;
         heightUsed = -1;
+
+        if (text1.startsWith("<html>")) {
+            text = "";
+            XHTMLLoader loader = new XHTMLLoader();
+            loader.gotResult( this, text1 );
+        }
+        else {
+            text = text1;
+        }
+
+    }
+
+    public void append(String text1) {
+        if (text1.startsWith("<html>")) {
+            XHTMLLoader loader = new XHTMLLoader();
+            loader.gotResult( this, text1 );
+        }
+        else {
+            text = text + text1;
+        }
+
+        // TODO recalc line fragments for new text
+
     }
 
     // from DefaultStyledDocument
