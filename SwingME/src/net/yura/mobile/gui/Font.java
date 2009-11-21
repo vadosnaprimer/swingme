@@ -273,20 +273,21 @@ public class Font {
 
                         f.characters = new Hashtable();
 
-
+                        int numCharacters=0;
 
 			{ // Fill the characters table. skip missing glyphs where offsets are 0
-				int charIndex = 0;
+				//int charIndex = 0;
 				int charCode = 32; // Only supporting Latin char set
 
 				for (int c =0;c<offsetsText.length;c++) {
 
-					offsetsint[c] = Byte.parseByte(offsetsText[c]);
+					byte size = Byte.parseByte(offsetsText[c]);
 					Character key = new Character((char)charCode);
 
-					if(offsetsint[c] > 0) {
-						f.characters.put(key, new Integer(charIndex));
-						charIndex++;
+					if(size > 0) {
+						f.characters.put(key, new Integer(numCharacters));
+                                                offsetsint[numCharacters] = size;
+						numCharacters++;
 					}
 
 					charCode++;
@@ -323,14 +324,15 @@ public class Font {
 
 			Image image = f.characterImage[0];
 
-                        int i, x, y, cutoff, numCharacters;
+                        int i, x, y, cutoff;
 
                         // Set the charIndex data imagePath.
                         //characterImage = image;
 
                         // Set the widths array.
-                        f.characterWidth = offsetsint;
-                        numCharacters = offsetsint.length;
+                        f.characterWidth = new byte[numCharacters];//;
+                        System.arraycopy(offsetsint, 0, f.characterWidth, 0, numCharacters);
+                        //numCharacters = offsetsint.length;
 
                         // Calculate the start positions.
                         f.startX = new int[numCharacters];
@@ -383,7 +385,10 @@ public class Font {
                         else {
                                 // Set the default space width.
                                 // we don't really use this anyway as its set in the .font file
-                                f.spaceWidth = f.characterWidth['o' - 32];
+                                Integer id = (Integer)f.characters.get(new Character(' '));
+                                if (id!=null) {
+                                    f.spaceWidth = f.characterWidth[id.intValue()];
+                                }
                         }
 
 			f.setSpaceWidth( Integer.parseInt( newfont.getProperty("space") ) );
@@ -583,10 +588,10 @@ public class Font {
 //				System.err.println("characterImage = " + characterImage[c]);
 
                                 // hack to stop the thing crashing, this should be taken out
-                                if (characterWidth[index]==0) {
-                                    glyphs[index] = Image.createImage(1, 1);
-                                    return glyphs[index];
-                                }
+                                //if (characterWidth[index]==0) {
+                                //    glyphs[index] = Image.createImage(1, 1);
+                                //    return glyphs[index];
+                                //}
 
                                 glyphs[index] = Image.createImage(
 					characterImage[c],
