@@ -19,7 +19,6 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
-import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.StringUtil;
@@ -99,8 +98,7 @@ public class XHTMLLoader {
 
         if (skinStyle!=null) {
             TextStyle textStyle = new TextStyle();
-            textStyle.addAttributes(skinStyle);
-System.out.println("style from theme for name: "+name);
+            textStyle.putAll(skinStyle);
             return textStyle;
         }
 
@@ -267,9 +265,10 @@ System.out.println("START: "+startTag);
                     if ("href".equals(key)) {
 
                         TextStyle linkStyle = new TextStyle();
-                        linkStyle.putAll(style);
 
+                        linkStyle.putAll(style);
                         linkStyle.setAction(value);
+
                         style = linkStyle;
                     }
                 }

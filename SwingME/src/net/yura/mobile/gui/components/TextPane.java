@@ -91,7 +91,9 @@ public class TextPane extends Component {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
                 g.setColor(style.getForeground(state));
-                g.setFont(style.getFont(state));
+                Font f = style.getFont(state);
+                if (f==null) { f = theme.getFont(state); }
+                g.setFont(f);
 
                 g.drawString(str, lineFrag.x, lineFrag.y);
             } else {
@@ -445,6 +447,7 @@ public class TextPane extends Component {
     private void addLineTextFragments(String elemText, TextStyle style, int startIndex) {
 
         Font f = style.getFont(Style.ALL);
+        if (f==null) { f = theme.getFont(Style.ALL); }
 
         int borderH = getBorderHeight(style);
         int borderW = getBorderWidth(style);
@@ -626,7 +629,7 @@ public class TextPane extends Component {
 
             // Combine styles
             TextStyle s = (elem.isParagraph) ? paragStyle : charsStyle;
-            s.addAttributes(elem.style);
+            s.putAll(elem.style);
         }
 
         // Paragraphs cannot have an icon style
@@ -635,7 +638,7 @@ public class TextPane extends Component {
         // Merge paragraph and character style. Paragraph style has less
         // priority, but alignment cannot be overloaded
         int align = paragStyle.getAlignment();
-        paragStyle.addAttributes(charsStyle);
+        paragStyle.putAll(charsStyle);
         paragStyle.setAlignment(align);     // restore alignment if overloaded
 
         return paragStyle;
@@ -800,9 +803,9 @@ public class TextPane extends Component {
         }
 
         // From MutableAttributeSet
-        public void addAttributes(Style attributes) {
+        public void putAll(Style attributes) {
 
-            putAll(attributes);
+            super.putAll(attributes);
 
             if (attributes instanceof TextStyle) {
                 TextStyle a = (TextStyle)attributes;
@@ -832,6 +835,8 @@ public class TextPane extends Component {
             }
 
             int face = javax.microedition.lcdui.Font.FACE_SYSTEM;
+            int size = javax.microedition.lcdui.Font.SIZE_MEDIUM;
+
             int style = javax.microedition.lcdui.Font.STYLE_PLAIN;
             if (isBold()) {
                 style |= javax.microedition.lcdui.Font.STYLE_BOLD;
@@ -843,11 +848,11 @@ public class TextPane extends Component {
                 style |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
             }
 
-            int size = javax.microedition.lcdui.Font.SIZE_MEDIUM;
+
 
             // TODO: Font should take care of all this details... and use bitmaps if needed
             // TODO: creating a new Object every time...
-            return new Font(face, style, size);
+            return (style!=javax.microedition.lcdui.Font.STYLE_PLAIN)?new Font(face, style, size):null;
         }
     } // End Style class
 
