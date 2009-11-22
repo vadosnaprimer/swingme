@@ -298,8 +298,12 @@ public class DesktopPane extends Canvas implements Runnable {
         tooltip = new ToolTip();
         indicator = new ToolTip();
     //currentWindow.setSize(getWidth(),getHeight());
-
     }
+
+    public LookAndFeel getLookAndFeel() {
+        return theme;
+    }
+
     private ListCellRenderer softkeyRenderer;
 
     public ListCellRenderer getSoftkeyRenderer() {

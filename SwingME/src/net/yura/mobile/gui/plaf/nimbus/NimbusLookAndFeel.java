@@ -635,6 +635,9 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         Enumeration settings = uiSettings.keys();
         Enumeration values   = uiSettings.elements();
+
+        boolean somethingSet = false;
+
         while (settings.hasMoreElements()) {
 
             String key = (String) settings.nextElement();
@@ -670,6 +673,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
             }
 
             if (setting != null) {
+                somethingSet=true;
                 if (setting.indexOf("[") > -1) {
                     property = setting.substring(setting.indexOf("[")+1, setting.indexOf("]"));
                 }
@@ -739,6 +743,8 @@ public class NimbusLookAndFeel extends LookAndFeel {
 //                }
 //            }
 //        }
+
+        if (!somethingSet) return null;
 
         setStyleFor(name, style);
 

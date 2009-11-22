@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
@@ -18,6 +19,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.StringUtil;
@@ -39,11 +41,8 @@ public class XHTMLLoader {
             root = new Panel(new FlowLayout(Graphics.VCENTER,0));
             currentComponent = root;
 
-
             KXmlParser parser = new KXmlParser();
             parser.setInput(resultsStream, null);
-            parser.nextTag(); // the START_DOCUMENT event
-
 
             startInlineSection();
 
@@ -52,6 +51,7 @@ public class XHTMLLoader {
             endInlineSection();
         }
         catch(Exception ex) {
+            //#debug
             ex.printStackTrace();
         }
     }
@@ -62,32 +62,102 @@ public class XHTMLLoader {
         try {
             KXmlParser parser = new KXmlParser();
             parser.setInput(new ByteArrayInputStream( string.getBytes() ), null);
-            parser.nextTag(); // the START_DOCUMENT event
 
             read(parser);
         }
         catch(Exception ex) {
+            //#debug
             ex.printStackTrace();
         }
+    }
+
+    /**
+     * do not default
+     * @return style for this tag if found, otherwise null
+     */
+    private TextStyle getStyleForTag(KXmlParser parser) {
+
+        String name = parser.getName();
+
+/* TODO
+        final int count = parser.getAttributeCount();
+        for (int c=0;c<count;c++) {
+            String key = parser.getAttributeName(c);
+            String value = parser.getAttributeValue(c);
+            if ("class".equals(key)) {
+
+            }
+            else if ("id".equals(key)) {
+
+            }
+            else if ("style".equals(key)) {
+
+            }
+        }
+*/
+        Style skinStyle = DesktopPane.getDesktopPane().getLookAndFeel().getStyle(name);
+
+        if (skinStyle!=null) {
+            TextStyle textStyle = new TextStyle();
+            textStyle.addAttributes(skinStyle);
+System.out.println("style from theme for name: "+name);
+            return textStyle;
+        }
+
+        // css defaults
+        if ("b".equals(name)) {
+            return bold;
+        }
+        else if ("i".equals(name)) {
+            return italic;
+        }
+        else if ("u".equals(name)) {
+            return underline;
+        }
+        else if ("center".equals(name)) {
+            return center;
+        }
+        else if ("a".equals(name)) {
+            return link;
+        }
+
+        return null;
     }
 
     protected void read(KXmlParser parser) throws Exception {
 
         int eventType = parser.getEventType();
         do {
-//            if(eventType == KXmlParser.START_DOCUMENT) {
-//                System.out.println("Start document");
-//            }
-//            else if(eventType == KXmlParser.END_DOCUMENT) {
-//                System.out.println("End document");
-//            }
             if(eventType == KXmlParser.START_TAG) {
                 TagHandler tag = new TagHandler();
+
                 tag.setParant(currentTag);
+                tag.style = getStyleForTag(parser);
+
                 currentTag = tag;
                 currentTag.processStartElement(parser);
+
+                if (currentComponent instanceof TextPane) {
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
+                    currentTag.styleStart = inlineText.getText().length();
+                }
+
             }
             else if(eventType == KXmlParser.END_TAG) {
+
+                if (currentComponent instanceof TextPane) {
+                    if (currentTag.style!=null) {
+                        TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
+                        int styleEnd = inlineText.getText().length();
+                        if (currentTag.style.getAlignment() == -1) {
+                            inlineText.setCharacterAttributes(currentTag.styleStart, styleEnd-currentTag.styleStart, currentTag.style);
+                        }
+                        else {
+                            inlineText.setParagraphAttributes(currentTag.styleStart, styleEnd-currentTag.styleStart, currentTag.style);
+                        }
+                    }
+                }
+
                 currentTag.processEndElement(parser);
                 currentTag = currentTag.getParent();
             }
@@ -97,6 +167,17 @@ public class XHTMLLoader {
             else if(eventType == KXmlParser.ENTITY_REF) {
                 currentTag.processRef(parser);
             }
+            //#mdebug
+            else if(eventType == KXmlParser.START_DOCUMENT) {
+                System.out.println("Start document");
+            }
+            else if(eventType == KXmlParser.END_DOCUMENT) {
+                System.out.println("End document");
+            }
+            else {
+                System.out.println("unknown event: "+eventType);
+            }
+            //#enddebug
             eventType = parser.nextToken();
         } while (eventType != KXmlParser.END_DOCUMENT);
 
@@ -110,11 +191,16 @@ public class XHTMLLoader {
     final static TextStyle italic = new TextStyle();
     final static TextStyle underline = new TextStyle();
     final static TextStyle center = new TextStyle();
+    final static TextStyle link = new TextStyle();
     static {
         bold.setBold(true);
         italic.setItalic(true);
         underline.setUnderline(true);
         center.setAlignment( Graphics.HCENTER );
+
+        link.setUnderline(true);
+        link.setForeground(0x0000FF);
+        link.addForeground(0xFF0000, Style.FOCUSED);
     }
 
     private void startInlineSection() {
@@ -174,31 +260,17 @@ public class XHTMLLoader {
 
 System.out.println("START: "+startTag);
 
-            if ("b".equals(startTag)) {
-                startFormat(bold);
-            }
-            else if ("i".equals(startTag)) {
-                startFormat(italic);
-            }
-            else if ("u".equals(startTag)) {
-                startFormat(underline);
-            }
-            else if ("center".equals(startTag)) {
-                startFormat(center);
-            }
-            else if ("a".equals(startTag)) {
-                TextStyle linkStyle = new TextStyle();
-
-                linkStyle.setUnderline(true);
-                linkStyle.setForeground(0x0000FF);
-                linkStyle.addForeground(0xFF0000, Style.FOCUSED);
-
+            if ("a".equals(startTag)) {
                 for (int c=0;c<count;c++) {
                     String key = parser.getAttributeName(c).toLowerCase();
                     String value = parser.getAttributeValue(c);
                     if ("href".equals(key)) {
+
+                        TextStyle linkStyle = new TextStyle();
+                        linkStyle.putAll(style);
+
                         linkStyle.setAction(value);
-                        startFormat(linkStyle);
+                        style = linkStyle;
                     }
                 }
             }
@@ -378,6 +450,18 @@ System.out.println("START: "+startTag);
 
             }
             //#mdebug
+            else if ("b".equals(startTag)) {
+
+            }
+            else if ("i".equals(startTag)) {
+
+            }
+            else if ("u".equals(startTag)) {
+
+            }
+            else if ("center".equals(startTag)) {
+
+            }
             else if ("body".equals(startTag)) {
 
             }
@@ -397,6 +481,8 @@ System.out.println("START: "+startTag);
                 System.out.println("unknwon start: "+startTag);
             }
             //#enddebug
+
+            // TODO read style atribute and do things
         }
 
         private void addTextToLastOption(Vector items,String text) {
@@ -408,20 +494,6 @@ System.out.println("START: "+startTag);
 
         public void processEndElement(KXmlParser parser) {
             String endTag = parser.getName();
-            if (style!=null) {
-                if (currentComponent instanceof TextPane) {
-                    TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                    int styleEnd = inlineText.getText().length();
-                    if (style.getAlignment() == -1) {
-                        inlineText.setCharacterAttributes(styleStart, styleEnd-styleStart, style);
-                    }
-                    else {
-                        inlineText.setParagraphAttributes(styleStart, styleEnd-styleStart, style);
-                    }
-                }
-                return;
-            }
-
 
             if ("select".equals(endTag)) {
                 endComponent();
@@ -462,6 +534,21 @@ System.out.println("START: "+startTag);
                 endComponent();
             }
             //#mdebug
+            else if ("b".equals(endTag)) {
+
+            }
+            else if ("i".equals(endTag)) {
+
+            }
+            else if ("u".equals(endTag)) {
+
+            }
+            else if ("center".equals(endTag)) {
+
+            }
+            else if ("a".equals(endTag)) {
+
+            }
             else if ("body".equals(endTag)) {
                 
             }
@@ -536,19 +623,6 @@ System.out.println("START: "+startTag);
             //#enddebug
         }
 
-
-        private void startFormat(TextStyle st) {
-            if (currentComponent instanceof TextPane) {
-                TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                styleStart = inlineText.getText().length();
-                style = st;
-            }
-            //#mdebug
-            else {
-                System.out.println("strange place for format tag, formatting can not go here");
-            }
-            //#enddebug
-        }
 
         void addToRow(int a, int num) {
             int currentRow = row + a;

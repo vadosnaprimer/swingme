@@ -800,24 +800,27 @@ public class TextPane extends Component {
         }
 
         // From MutableAttributeSet
-        public void addAttributes(TextStyle attributes) {
+        public void addAttributes(Style attributes) {
 
             putAll(attributes);
 
-            // Merge all text style bits
-            textStyle |= attributes.textStyle;
+            if (attributes instanceof TextStyle) {
+                TextStyle a = (TextStyle)attributes;
+                // Merge all text style bits
+                textStyle |= a.textStyle;
 
-            // Merge (copy if set) all other attributes
-            if (attributes.alignment != -1) {
-                alignment = attributes.alignment;
-            }
+                // Merge (copy if set) all other attributes
+                if (a.alignment != -1) {
+                    alignment = a.alignment;
+                }
 
-            if (attributes.action != null) {
-                action = attributes.action;
-            }
+                if (a.action != null) {
+                    action = a.action;
+                }
 
-            if (attributes.icon != null) {
-                icon = attributes.icon;
+                if (a.icon != null) {
+                    icon = a.icon;
+                }
             }
         }
 
