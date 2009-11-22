@@ -204,7 +204,11 @@ public class XHTMLLoader {
     private void startInlineSection() {
         TextPane it = new TextPane();
         //TextArea it = new TextArea(); it.setLineWrap(true);
-        it.setBorder( new LineBorder(0x00FF0000) );
+        //#mdebug
+        if (DesktopPane.debug) {
+            it.setBorder( new LineBorder(0x00FF0000) );
+        }
+        //#enddebug
         ((Panel)currentComponent).add(it);
         currentComponent = it;
     }
@@ -396,7 +400,11 @@ System.out.println("START: "+startTag);
             }
             else if ("ul".equals(startTag) || "ol".equals(startTag)) { // lists
                 Panel p = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
-                p.setBorder( new LineBorder(0x0000FF00) );
+                //#mdebug
+                if (DesktopPane.debug) {
+                    p.setBorder( new LineBorder(0x0000FF00) );
+                }
+                //#enddebug
                 insertComponent( p );
             }
             else if ("li".equals(startTag)) { // list items
@@ -439,7 +447,11 @@ System.out.println("START: "+startTag);
                 //#enddebug
 
                 Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                p.setBorder( new LineBorder(0x000000FF) );
+                //#mdebug
+                if (DesktopPane.debug) {
+                    p.setBorder( new LineBorder(0x000000FF) );
+                }
+                //#enddebug
                 GridBagConstraints c = new GridBagConstraints();
                 c.colSpan = colspani;
                 c.rowSpan = rowspani;
