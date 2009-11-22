@@ -180,13 +180,16 @@ for (int c=0;c<4;c++) {
 
                     TextPane html = new TextPane();
                     html.setActionListener(this);
-html.setBackground(0x00FFAAAA);
-                    html.setText("<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a></center></html>");
+                    html.setBackground(0x00FFAAAA); // pink
+                    html.setText("<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a> some very very long text here, lalalala, bob the builder, ok, now i cant think of anything to write</center></html>");
 
                     Panel p = new Panel(new BorderLayout());
 
-                    TextArea ta = new TextArea("sdfgjkh sdf jlghsfdgh sfh gjdflkj ghdlf jghdjl kfhgdlf jghdkf lghdl fghdl kfgh dlfkgh dlfkghdflgk jhdlfkgh");
-                    ta.setLineWrap(true);
+                    //TextArea ta = new TextArea("START sdfgjkh sdf jlghsfdgh sfh gjdflkj ghdlf jghdjl kfhgdlf jghdkf lghdl fghdl kfgh dlfkgh dlfkghdflgk jhdlfkgh");
+                    //ta.setLineWrap(true);
+                    Label ta = new Label("READ ME!!");
+                    ta.setBackground(0x00FFFFFF);
+                    ta.setHorizontalAlignment(Graphics.HCENTER);
 
                     p.add(html, Graphics.TOP);
                     p.add(ta);

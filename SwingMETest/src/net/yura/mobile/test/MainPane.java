@@ -473,7 +473,9 @@ public class MainPane extends DesktopPane implements ActionListener {
 			    0x00FFFFFF,
 			    0x00FF0000,
 			    0x0000FF00,
-			    0x000000FF
+			    0x000000FF,
+                            0x00FF00FF,
+                            0x00FFFF00
 
 		    };
 
@@ -507,7 +509,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                     Font treasure = Font.getFont("/basicfont/treasure.font");
 
 		    TextArea t = new TextArea("/|\\/|\\/|\\/|\\\n|||||||||\nWwWwWwWwW\n~~~~~~~~~\n_-_-_-_-_\n||||||||||");
-		    t.setForeground(0x00FF00FF);
+		    t.setLineWrap(true);
 		    t.setFont(treasure);
 		    panel.add(t);
                     addToScrollPane(panel, null, makeButton("Back","mainmenu") );
