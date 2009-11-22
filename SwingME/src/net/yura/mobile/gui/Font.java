@@ -128,6 +128,8 @@ public class Font {
             Font f = new Font();
 	    f.characterImage = imagesArray;
 
+            f.colors = colorsArray;
+
             DataInputStream dis = new DataInputStream(is);
 
             // header
@@ -611,7 +613,6 @@ public class Font {
                         Image glyph = getGlyph(index,defaultColor);
                         Image coloured;
 
-			
                         if (defaultColor==0x00000000) {
                             coloured = ImageUtil.colorize(glyph, color);
                         }

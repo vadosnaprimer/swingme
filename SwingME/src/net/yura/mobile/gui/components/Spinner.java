@@ -30,6 +30,10 @@ import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.util.Option;
 
+/**
+ * @author Yura Mamyrin
+ * @see javax.swing.JSpinner
+ */
 public class Spinner extends Label {
     
 	private Icon leftSelectedIcon;
@@ -54,7 +58,10 @@ public class Spinner extends Label {
 //        private int disabledForeground;
 
         private ChangeListener chl;
-        
+
+        /**
+         * @see javax.swing.JSpinner#JSpinner() JSpinner.JSpinner
+         */
 	public Spinner() {
 		this(new Vector(), false);
 	}
