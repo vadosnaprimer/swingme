@@ -18,7 +18,6 @@
 package net.yura.mobile.gui.border;
 
 import java.util.Random;
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.DesktopPane;
@@ -197,11 +196,11 @@ public class MatteBorder extends EmptyBorder {
                 g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff);
                 g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff);
 
-                ImageUtil.fillArea(g,image,imageRight,0,imageWidth-imageRight-imageLeft,imageTop,
+                ImageUtil.fillArea(g,image,imageLeft,0,imageWidth-imageRight-imageLeft,imageTop,
                         leftDiff,-top,width-leftDiff-rightDiff,imageTop,
                         Sprite.TRANS_NONE); // top line
 
-                ImageUtil.fillArea(g,image,imageRight,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
+                ImageUtil.fillArea(g,image,imageLeft,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
                         leftDiff,height-bottomDiff,width-leftDiff-rightDiff,imageBottom,
                         Sprite.TRANS_NONE); // bottom line
 
