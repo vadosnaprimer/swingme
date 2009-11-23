@@ -83,7 +83,7 @@ public class ServiceLink extends SocketClient {
     protected void updateState(int aState) {
         if (aState == DISCONNECTED) {
             disconnectionCounter++;
-            if (disconnectionCounter >= 5) {
+            if (disconnectionCounter >= 1) {
                 // it aint gonna happen...
                 disconnect();
             }
