@@ -332,8 +332,22 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             if (ch < viewHeight) {
                 ch = viewHeight;
             }
+
 //System.out.println("size2 "+ cw+" "+ ch);
             comp.setSize(cw, ch);
+
+            if (comp.getX() > getViewPortX()) {
+                comp.setLocation(getViewPortX(), comp.getY());
+            }
+            if (comp.getY() > getViewPortY()) {
+                comp.setLocation(comp.getX(), getViewPortY());
+            }
+            if ((cw - getViewPortX() + comp.getX()) < getViewPortWidth()) {
+                comp.setLocation(-cw +getViewPortX() +getViewPortWidth(), comp.getY());
+            }
+            if ((ch - getViewPortY() + comp.getY()) < getViewPortHeight()) {
+                comp.setLocation(comp.getX(),-ch +getViewPortY() +getViewPortHeight());
+            }
 
         }
 

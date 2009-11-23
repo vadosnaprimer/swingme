@@ -849,7 +849,7 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
 
             if (currentWindow != null) {
 
-                Component focusedComponent = w.getMostRecentFocusOwner();
+                Component focusedComponent = w.getFocusOwner(); // getMostRecentFocusOwner();
 
                 windows.removeElement(w);
                 windows.addElement(w);
