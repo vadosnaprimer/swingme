@@ -104,8 +104,8 @@ public class DesktopPane extends Canvas implements Runnable {
         try {
             Class.forName("org.me4se.MIDletRunner");
             init = true;
-        } catch (ClassNotFoundException ex) {
         }
+        catch (ClassNotFoundException ex) { }
         me4se = init;
     }
 
@@ -189,7 +189,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
             midlet.initialize(this);
-        } catch (Throwable th) {
+        }
+        catch (Throwable th) {
             //#debug
             th.printStackTrace();
             log("Error in initialize: " + th.toString());
@@ -211,20 +212,22 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (currentAnimatedComponent == null) {
                     try {
                         wait();
-                    } catch (InterruptedException e) {
+                    }
+                    catch (InterruptedException e) {
                         //#debug
                         e.printStackTrace();
                     }
-
                     continue; // Go to while (true) again
                 }
 
                 try {
                     currentAnimatedComponent.animate();
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     //#debug
                     System.out.println("InterruptedException during animation");
-                } catch (Throwable th) {
+                }
+                catch (Throwable th) {
                     //#debug
                     th.printStackTrace();
                     log("Error in animation: " + th.toString());
@@ -329,8 +332,6 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     protected void paint(Graphics gtmp) {
 
-
-
         //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
         if (!paintdone) {
@@ -343,7 +344,8 @@ public class DesktopPane extends Canvas implements Runnable {
             if (splash != null) {
                 gtmp.drawImage(splash, (getWidth() - splash.getWidth()) / 2, (getHeight() - splash.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
                 splash = null;
-            } else if (background != -1) {
+            }
+            else if (background != -1) {
                 gtmp.setColor(0x00FF0000);
                 gtmp.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
             }
@@ -365,7 +367,6 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         try {
-
 
             validating = 1;
 
@@ -461,7 +462,8 @@ public class DesktopPane extends Canvas implements Runnable {
                 gtmp.drawString(m, (getWidth() - (font.stringWidth(m) + 10)) / 2 + 5, (getHeight() - (font.getHeight() + 10)) / 2 + 5, Graphics.TOP | Graphics.LEFT);
             }
 
-        } catch (Throwable th) {
+        }
+        catch (Throwable th) {
             //#debug
             th.printStackTrace();
             log("Error in paint: " + th.toString());
@@ -521,7 +523,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public void fullRepaint() {
         // this is here coz this method should NOT be used
         //#debug
-//        System.out.println("FULL REPAINT!!! this method should NOT normally be called");
+        System.out.println("FULL REPAINT!!! this method should NOT normally be called");
 
         fullrepaint = true;
 
@@ -664,7 +666,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
 
                     mneonicButton.fireActionPerformed();
 
-                } else if (focusedComponent != null) {
+                }
+                else if (focusedComponent != null) {
 
                     boolean consumed = focusedComponent.processKeyEvent(keyevent);
 
@@ -684,7 +687,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
 
                         focusedComponent.transferFocus(keyevent.getKeyAction(keyevent.getIsDownKey()));
 
-                    } else if (!consumed) {//&& keyListener!=null) {
+                    }
+                    else if (!consumed) {//&& keyListener!=null) {
 
                         boolean c = currentWindow.processKeyEvent(keypad);
                         if (!c) {
@@ -701,7 +705,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
                             keyevent.isDownAction(Canvas.LEFT) ||
                             keyevent.isDownAction(Canvas.UP)) {
                         currentWindow.passScrollUpDown(keyevent.getKeyAction(keyevent.getIsDownKey()));
-                    } else {
+                    }
+                    else {
                         boolean c = currentWindow.processKeyEvent(keypad);
                         if (!c) {
                             keyEvent(keyevent);
@@ -711,7 +716,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
             }
 
 
-        } catch (Throwable th) {
+        }
+        catch (Throwable th) {
             //#debug
             th.printStackTrace();
             log("Error in KeyEvent: " + th.toString());
@@ -745,20 +751,23 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
 
             if (x - left < 0) {
                 x = left;
-            } else if (x - left + w > getWidth()) {
+            }
+            else if (x - left + w > getWidth()) {
                 x = getWidth() - w + left;
             }
 
             if (y - top < 0) {
                 y = top;
-            } else if (y - top + h > getHeight()) {
+            }
+            else if (y - top + h > getHeight()) {
                 y = getHeight() - h + top;
             }
 
             tooltip.setLocation(x, y);
             animateComponent(tooltip);
 
-        } else if (tooltip != null) {
+        }
+        else if (tooltip != null) {
             // this will never be null unless this method is called
             // before the midlet is initialised, and this can happen
 
@@ -879,25 +888,18 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
      * @see java.awt.Container#remove(java.awt.Component) Container.remove
      */
     public void remove(Window w) {
-
         if (windows.contains(w)) {
-
             windows.removeElement(w);
-
             if (w == currentWindow) {
-
                 setSelectedFrame(windows.isEmpty() ? null : (Window) windows.lastElement());
-
             }
-
             fullRepaint();
-
-        } //#mdebug
+        }
+        //#mdebug
         else {
             throw new RuntimeException("cant remove, this window is not visible: " + w);
         }
-//    //#enddebug
-
+        //#enddebug
     }
 
     /**
@@ -924,11 +926,11 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
     }
 
     public static void call(String number) {
-
         try {
             // TODO remove spaces from number
             getMidlet().platformRequest("tel:" + number);
-        } catch (ConnectionNotFoundException e) {
+        }
+        catch (ConnectionNotFoundException e) {
             log("can not call: " + number + " " + e.toString());
             //#debug
             e.printStackTrace();
@@ -937,10 +939,10 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
     }
 
     public static void openURL(String url) {
-
         try {
             getMidlet().platformRequest(url);
-        } catch (ConnectionNotFoundException e) {
+        }
+        catch (ConnectionNotFoundException e) {
             log("can not open url: " + url + " " + e.toString());
             //#debug
             e.printStackTrace();
@@ -951,7 +953,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
     public static void vibration(int duration) {
         try {
             Display.getDisplay(getMidlet()).vibrate(duration);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             log("can not vibration " + e.toString());
             //#debug
             e.printStackTrace();
@@ -961,16 +964,15 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
     public static void exit() {
         try {
             getMidlet().destroyApp(true);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             // as you called this yourself, you should not be throwing here
             throw new RuntimeException();
         }
     }
 
     public static void hide() {
-
         Display.getDisplay(getMidlet()).setCurrent(null);
-
     }
 
     // #####################################################################
@@ -1108,7 +1110,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
                 pointerComponent = null;
             }
 
-        } catch (Throwable th) {
+        }
+        catch (Throwable th) {
             //#debug
             th.printStackTrace();
             log("Exception in pointerEvent: " + th.toString());
