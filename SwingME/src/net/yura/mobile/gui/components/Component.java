@@ -163,7 +163,9 @@ public abstract class Component {
                     Component c = w.getMostRecentFocusOwner();
                     if (!focusable && c==this) {
                         w.setFocusedComponent(null);
-                        w.getMostRecentFocusOwner();
+                        if (w.isFocused()) {
+                            w.getMostRecentFocusOwner();
+                        }
                     }
                 }
 

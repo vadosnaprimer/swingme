@@ -107,7 +107,6 @@ public class Window extends Panel {
          * @see Component#requestFocusInWindow()
          */
 	protected void setFocusedComponent(Component ac) {
-
             if (focusedComponent == ac) return;
 
             if (isFocused() && focusedComponent != null) {
@@ -117,13 +116,10 @@ public class Window extends Panel {
                 focusedComponent = null;
                 old.focusLost();
             }
-
 	    focusedComponent = ac;
-
             if (isFocused() && focusedComponent != null) {
                     focusedComponent.focusGained();
             }
-
 	}
         
         /**

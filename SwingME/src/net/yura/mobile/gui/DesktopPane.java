@@ -368,8 +368,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
-            validating = 1;
-
+            // first we need to run anthing that has been scheduled to run
             synchronized (runners) {
                 for (int c=0;c<runners.size();c++) {
                     ((Runnable)runners.elementAt(c)).run();
@@ -377,6 +376,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 runners.removeAllElements();
             }
 
+            // now we need to layout all the components
+            // we use a 3 pass system, as 3 passes is the maximum needed to layout even
+            // the most complex layout with flexable components inside scrollpanes
+            validating = 1;
             validateComponents(revalidateComponents);
             validating = 2;
             validateComponents(revalidate);
@@ -385,6 +388,26 @@ public class DesktopPane extends Canvas implements Runnable {
             validating = 0;
 
 
+            // now that we have finished laying out components
+            // we can setup the focus if a new window has opened
+            Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
+            if (newWindow!=currentWindow) {
+                if (currentWindow != null) {
+                    Component focusedComponent = currentWindow.getFocusOwner();
+                    if (focusedComponent != null) {
+                        focusedComponent.focusLost();
+                    }
+                }
+                currentWindow = newWindow;
+                if (currentWindow != null) {
+                    Component focusedComponent = newWindow.getMostRecentFocusOwner();
+                    if (focusedComponent != null) {
+                        focusedComponent.focusGained();
+                    }
+                }
+            }
+
+            // now start painting
             graphics.setGraphics(gtmp);
 
             // For thread safety, we cache fullrepaint now, and clean it
@@ -551,15 +574,24 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
             // if this happens it means that when i add a scrollbar it says it
             // does not need one, and as soon as i remove it, it says it does
             System.out.println("asking for revalidate 4th time: "+rc);
+            dumpStack();
+        }
+        //#enddebug
+    }
+
+    //#mdebug
+    /**
+     * @see java.lang.Thread#dumpStack() Thread.dumpStack
+     */
+    public static void dumpStack() {
             try {
                 throw new Exception();
             }
             catch(Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        //#enddebug
     }
+    //#enddebug
 
     /**
      * this is called when you call repaint() on a component
@@ -833,7 +865,9 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
         //#enddebug
 
         windows.addElement(w);
-        setSelectedFrame(w);
+
+        pointerComponent = null;
+        fullRepaint();
     }
 
     /**
@@ -847,33 +881,12 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
                 return;
             }
 
-            if (currentWindow != null) {
-                Component focusedComponent = currentWindow.getFocusOwner();
-                if (focusedComponent != null) {
-                    focusedComponent.focusLost();
-                }
-            }
-
-            currentWindow = w;
-
-            if (currentWindow != null) {
-
-                Component focusedComponent = w.getFocusOwner(); // getMostRecentFocusOwner();
-
+            if (w != null) {
                 windows.removeElement(w);
                 windows.addElement(w);
-
-                if (focusedComponent != null) {
-                    focusedComponent.focusGained();
-                }
             }
 
-            // we cant use repaint as soft keys may have changed and the
-            // new window may not be full screen
-            //currentWindow.repaint();
-
             pointerComponent = null;
-
             fullRepaint();
         }
         //#mdebug
@@ -890,9 +903,8 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
     public void remove(Window w) {
         if (windows.contains(w)) {
             windows.removeElement(w);
-            if (w == currentWindow) {
-                setSelectedFrame(windows.isEmpty() ? null : (Window) windows.lastElement());
-            }
+
+            pointerComponent = null;
             fullRepaint();
         }
         //#mdebug
