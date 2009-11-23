@@ -26,7 +26,6 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
-import net.yura.mobile.gui.components.FileChooser.GridList;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
@@ -39,7 +38,6 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
-import net.yura.mobile.util.SystemUtil;
 
 /**
  * @author Yura Mamyrin
@@ -1175,7 +1173,6 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
         }
         oldw = w;
         oldh = h;
-
     }
 
     // this is to fix buttons not being released properly on some phones

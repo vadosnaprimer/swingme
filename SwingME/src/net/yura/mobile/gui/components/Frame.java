@@ -285,6 +285,7 @@ public class Frame extends Window {
             System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
         }
 
+//        private int oldX,oldY,oldWidth,oldHeight;
         /**
          * @param a true to maximize the window
          * @see javax.swing.JInternalFrame#setMaximum(boolean) JInternalFrame.setMaximum
@@ -294,9 +295,32 @@ public class Frame extends Window {
             isMaximum = a;
 
             if (a) {
-                setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
+/*
+                if (width!=0 && height !=0) {
+                    oldX = posX;
+                    oldY = posY;
+                    oldWidth = width;
+                    oldHeight = height;
+                }
+*/
+                setLocation(0, 0);
+                width = DesktopPane.getDesktopPane().getWidth();
+                height = DesktopPane.getDesktopPane().getHeight();
+                // we want to use revalidate as it will make sure it
+                // happens in the correct thred
+                // so this method remains threadsafe
+                //setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
+                revalidate();
             }
-            // TODO else???
+/*
+            else { // TODO
+                setLocation(oldX, oldY);
+                width = oldWidth;
+                height = oldHeight;
+                revalidate();
+                DesktopPane.getDesktopPane().fullRepaint();
+            }
+*/
         }
         /**
          * @see javax.swing.JInternalFrame#isMaximum() JInternalFrame.isMaximum
