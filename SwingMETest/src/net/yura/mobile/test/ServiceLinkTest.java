@@ -67,11 +67,11 @@ public class ServiceLinkTest  extends Section {
                     while (e.hasMoreElements())
                     {
                         String key = (String) e.nextElement();
-                        Integer value = (Integer) hashtable.get(key);
+                        String value = (String) hashtable.get(key);
                         infoLabel.append("\n");
                         infoLabel.append(key);
                         infoLabel.append(" = ");
-                        infoLabel.append(Integer.toString(value.intValue()));
+                        infoLabel.append(value);
                     }
                 }
                 if ("GetWiFiSsListError".equals(strMethod)) {
