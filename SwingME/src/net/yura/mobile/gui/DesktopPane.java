@@ -78,6 +78,8 @@ public class DesktopPane extends Canvas implements Runnable {
         
         DesktopPane dp = getDesktopPane();
 
+        // while it chooses what array to add the component to
+        // the validating turn id can NOT be changed
         synchronized(dp.revalidateLock) {
 
             if (dp.validating==0) {
@@ -563,6 +565,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private void validateComponents(Vector v) {
 
+        // while we are going though the vector it can not be updated
             synchronized (v) {
 
                     for (int c = 0; c < v.size(); c++) {
@@ -627,6 +630,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         boolean found = false;
 
+        // we should not make any other changes to this vector while we are searching
+        // and adding to it
         synchronized (vec) {
 
             // If we find the parent on the list, we don't need to add this one
@@ -836,6 +841,7 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
      */
     public void invokeLater(Runnable runner) {
+        // while we are running the runners we can not add any new runners
         synchronized (runners) {
             runners.addElement(runner);
         }
@@ -873,7 +879,8 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see java.awt.Container#add(java.awt.Component) Container.add
      */
     public void add(Window w) {
-        synchronized (repaintComponent) { // we dont want to add half way though a repaint, as it could be using this vector
+        // we dont want to add half way though a repaint, as it could be using this vector
+        synchronized (repaintComponent) {
             //#mdebug
             if (windows.contains(w)) {
                 throw new RuntimeException("trying to set a window visible when it already is visible");
@@ -892,6 +899,7 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see javax.swing.JDesktopPane#setSelectedFrame(javax.swing.JInternalFrame) JDesktopPane.setSelectedFrame
      */
     public void setSelectedFrame(Window w) {
+        // dont want to change the windows Vector while we are painting
         synchronized (repaintComponent) {
             if (windows.contains(w) || w == null) {
 
@@ -920,6 +928,7 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see java.awt.Container#remove(java.awt.Component) Container.remove
      */
     public void remove(Window w) {
+        // dont want to change the windows Vector while we are painting
         synchronized (repaintComponent) {
             if (windows.contains(w)) {
                 windows.removeElement(w);

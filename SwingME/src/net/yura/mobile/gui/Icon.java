@@ -18,12 +18,13 @@
 package net.yura.mobile.gui;
 
 import java.io.IOException;
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.components.Component;
 
 /**
  * @author Yura Mamyrin
+ * @see javax.swing.Icon
+ * @see javax.swing.ImageIcon
  */
 public class Icon {
 
@@ -36,12 +37,19 @@ public class Icon {
         
     }
 
+    /**
+     * @see javax.swing.ImageIcon#ImageIcon(java.awt.Image) ImageIcon.ImageIcon
+     */
     public Icon(Image img) {
         image = img;
         height = img.getHeight();
         width = img.getWidth();
     }
 
+    /**
+     * @see javax.swing.ImageIcon#ImageIcon(java.lang.String) ImageIcon.ImageIcon
+     * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
+     */
     public Icon(String imageName) throws IOException {
         this( Image.createImage(imageName) );
     }
