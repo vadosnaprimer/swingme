@@ -66,18 +66,43 @@ public class DesktopPane extends Canvas implements Runnable {
 
     public static void mySizeChanged(Component aThis) {
 
-            Panel p = aThis.getParent();
-            if (p==null) return;
-            while (!(p instanceof ScrollPane)) {
-                Panel pp = p.getParent();
-                if (pp==null) {
-                    break;
-                }
-                p=pp;
+        Panel p = aThis.getParent();
+        if (p==null) return;
+        while (!(p instanceof ScrollPane)) {
+            Panel pp = p.getParent();
+            if (pp==null) {
+                break;
             }
-            p.revalidate();
-            p.repaint();
+            p=pp;
+        }
+        
+        DesktopPane dp = getDesktopPane();
 
+        synchronized(dp.revalidateLock) {
+
+            if (dp.validating==0) {
+                dp.addToComponentVector(p, dp.revalidateComponents1);
+                p.repaint();
+            }
+            else if (dp.validating==1) {
+    //#debug
+    System.out.println("thats some complex layout");
+                dp.addToComponentVector(p, dp.revalidateComponents2);
+            }
+            else if (dp.validating==2) {
+    //#debug
+    System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
+                dp.addToComponentVector(p, dp.revalidateComponents3);
+            }
+            //#mdebug
+            else {
+                // if this happens it means that when i add a scrollbar it says it
+                // does not need one, and as soon as i remove it, it says it does
+                System.out.println("asking for revalidate 4th time: "+p);
+                dumpStack();
+            }
+            //#enddebug
+        }
     }
 
     /**
@@ -119,7 +144,10 @@ public class DesktopPane extends Canvas implements Runnable {
     private ToolTip tooltip;
     private ToolTip indicator;
     private final Vector repaintComponent = new Vector();
-    private final Vector revalidateComponents = new Vector();
+    private final Vector revalidateComponents1 = new Vector();
+    private final Vector revalidateComponents2 = new Vector();
+    private final Vector revalidateComponents3 = new Vector();
+    private final Object revalidateLock = new Object();
     private Thread animationThread;
 
     // the nextAnimatedComponent can be == to animatedComponent
@@ -368,53 +396,65 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
-            // first we need to run anthing that has been scheduled to run
-            synchronized (runners) {
-                for (int c=0;c<runners.size();c++) {
-                    ((Runnable)runners.elementAt(c)).run();
-                }
-                runners.removeAllElements();
-            }
-
-            // now we need to layout all the components
-            // we use a 3 pass system, as 3 passes is the maximum needed to layout even
-            // the most complex layout with flexable components inside scrollpanes
-            validating = 1;
-            validateComponents(revalidateComponents);
-            validating = 2;
-            validateComponents(revalidate);
-            validating = 3;
-            validateComponents(revalidateComponents);
-            validating = 0;
-
-
-            // now that we have finished laying out components
-            // we can setup the focus if a new window has opened
-            Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
-            if (newWindow!=currentWindow) {
-                if (currentWindow != null) {
-                    Component focusedComponent = currentWindow.getFocusOwner();
-                    if (focusedComponent != null) {
-                        focusedComponent.focusLost();
-                    }
-                }
-                currentWindow = newWindow;
-                if (currentWindow != null) {
-                    Component focusedComponent = newWindow.getMostRecentFocusOwner();
-                    if (focusedComponent != null) {
-                        focusedComponent.focusGained();
-                    }
-                }
-            }
-
-            // now start painting
-            graphics.setGraphics(gtmp);
-
-            // For thread safety, we cache fullrepaint now, and clean it
-            boolean doFullRepaint = fullrepaint;
-            fullrepaint = false;
-
+            // if we have started revalidating, we do not want any random reval and repaint happening
+            // as if they do happen half way though, we would get a component being repainted
+            // even though it did not get revalidated
             synchronized (repaintComponent) {
+
+                // first we need to run anthing that has been scheduled to run
+                synchronized (runners) {
+                    for (int c=0;c<runners.size();c++) {
+                        ((Runnable)runners.elementAt(c)).run();
+                    }
+                    runners.removeAllElements();
+                }
+
+                // now we need to layout all the components
+                // we use a 3 pass system, as 3 passes is the maximum needed to layout even
+                // the most complex layout with flexable components inside scrollpanes
+                synchronized(revalidateLock) {
+                    validating = 1;
+                }
+                validateComponents(revalidateComponents1);
+                synchronized(revalidateLock) {
+                    validating = 2;
+                }
+                validateComponents(revalidateComponents2);
+                synchronized(revalidateLock) {
+                    validating = 3;
+                }
+                validateComponents(revalidateComponents3);
+                synchronized(revalidateLock) {
+                    validating = 0;
+                }
+
+
+                // now that we have finished laying out components
+                // we can setup the focus if a new window has opened
+                Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
+                if (newWindow!=currentWindow) {
+                    if (currentWindow != null) {
+                        Component focusedComponent = currentWindow.getFocusOwner();
+                        if (focusedComponent != null) {
+                            focusedComponent.focusLost();
+                        }
+                    }
+                    currentWindow = newWindow;
+                    if (currentWindow != null) {
+                        Component focusedComponent = newWindow.getMostRecentFocusOwner();
+                        if (focusedComponent != null) {
+                            focusedComponent.focusGained();
+                        }
+                    }
+                }
+
+                // now start painting
+                graphics.setGraphics(gtmp);
+
+                // For thread safety, we cache fullrepaint now, and clean it
+                boolean doFullRepaint = fullrepaint;
+                fullrepaint = false;
+
 
                 if (!doFullRepaint && !repaintComponent.isEmpty()) {
                     for (int c = 0; c < repaintComponent.size(); c++) {
@@ -429,39 +469,38 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
                 }
-
                 repaintComponent.removeAllElements();
 
-            }
+                if (doFullRepaint) {
+                    paintFirst(graphics);
+                    for (int c = 0; c < windows.size(); c++) {
+                        paintComponent(graphics, (Window) windows.elementAt(c));
 
-            if (doFullRepaint) {
-                paintFirst(graphics);
-                for (int c = 0; c < windows.size(); c++) {
-                    paintComponent(graphics, (Window) windows.elementAt(c));
-
-                    if (c == (windows.size() - 2) && fade != null) {
-                        for (int x = 0; x < getWidth(); x += fade.getWidth()) {
-                            for (int y = 0; y < getHeight(); y += fade.getHeight()) {
-                                graphics.drawImage(fade, x, y);
+                        if (c == (windows.size() - 2) && fade != null) {
+                            for (int x = 0; x < getWidth(); x += fade.getWidth()) {
+                                for (int y = 0; y < getHeight(); y += fade.getHeight()) {
+                                    graphics.drawImage(fade, x, y);
+                                }
                             }
                         }
+
                     }
-
                 }
-            }
 
-            //                if (!windows.isEmpty()) {
-            //                    drawSoftkeys(graphics);
-            //                }
+                //                if (!windows.isEmpty()) {
+                //                    drawSoftkeys(graphics);
+                //                }
 
-            if (tooltip.isShowing()) {
-                paintComponent(graphics, tooltip);
-            }
-            if (indicator.getText() != null && !me4se) {
-                paintComponent(graphics, indicator);
-            }
+                if (tooltip.isShowing()) {
+                    paintComponent(graphics, tooltip);
+                }
+                if (indicator.getText() != null && !me4se) {
+                    paintComponent(graphics, indicator);
+                }
 
-            paintLast(graphics);
+                paintLast(graphics);
+
+            }
 
             //#mdebug
             if (mem != null) {
@@ -554,29 +593,8 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     private int validating=0;
-    private final Vector revalidate = new Vector();
     public void revalidateComponent(Component rc) {
-        if (validating==0) {
-            addToComponentVector(rc, revalidateComponents);
-        }
-        else if (validating==1) {
-//#debug
-System.out.println("thats some complex layout");
-            addToComponentVector(rc, revalidate);
-        }
-        else if (validating==2) {
-//#debug
-System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
-            addToComponentVector(rc, revalidateComponents);
-        }
-        //#mdebug
-        else {
-            // if this happens it means that when i add a scrollbar it says it
-            // does not need one, and as soon as i remove it, it says it does
-            System.out.println("asking for revalidate 4th time: "+rc);
-            dumpStack();
-        }
-        //#enddebug
+        addToComponentVector(rc, revalidateComponents1);
     }
 
     //#mdebug
@@ -598,9 +616,7 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
      * @param rc The Component to repaint
      */
     public void repaintComponent(Component rc) {
-
         addToComponentVector(rc, repaintComponent);
-
         repaint();
     }
 
@@ -857,17 +873,18 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
      * @see java.awt.Container#add(java.awt.Component) Container.add
      */
     public void add(Window w) {
+        synchronized (repaintComponent) { // we dont want to add half way though a repaint, as it could be using this vector
+            //#mdebug
+            if (windows.contains(w)) {
+                throw new RuntimeException("trying to set a window visible when it already is visible");
+            }
+            //#enddebug
 
-        //#mdebug
-        if (windows.contains(w)) {
-            throw new RuntimeException("trying to set a window visible when it already is visible");
+            windows.addElement(w);
+
+            pointerComponent = null;
+            fullRepaint();
         }
-        //#enddebug
-
-        windows.addElement(w);
-
-        pointerComponent = null;
-        fullRepaint();
     }
 
     /**
@@ -875,25 +892,27 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
      * @see javax.swing.JDesktopPane#setSelectedFrame(javax.swing.JInternalFrame) JDesktopPane.setSelectedFrame
      */
     public void setSelectedFrame(Window w) {
-        if (windows.contains(w) || w == null) {
+        synchronized (repaintComponent) {
+            if (windows.contains(w) || w == null) {
 
-            if (currentWindow == w) {
-                return;
+                if (currentWindow == w) {
+                    return;
+                }
+
+                if (w != null) {
+                    windows.removeElement(w);
+                    windows.addElement(w);
+                }
+
+                pointerComponent = null;
+                fullRepaint();
             }
-
-            if (w != null) {
-                windows.removeElement(w);
-                windows.addElement(w);
+            //#mdebug
+            else {
+                throw new RuntimeException("cant setSelected, this window is not visible: " + w);
             }
-
-            pointerComponent = null;
-            fullRepaint();
+            //#enddebug
         }
-        //#mdebug
-        else {
-            throw new RuntimeException("cant setSelected, this window is not visible: " + w);
-        }
-        //#enddebug
     }
 
     /**
@@ -901,17 +920,19 @@ System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
      * @see java.awt.Container#remove(java.awt.Component) Container.remove
      */
     public void remove(Window w) {
-        if (windows.contains(w)) {
-            windows.removeElement(w);
+        synchronized (repaintComponent) {
+            if (windows.contains(w)) {
+                windows.removeElement(w);
 
-            pointerComponent = null;
-            fullRepaint();
+                pointerComponent = null;
+                fullRepaint();
+            }
+            //#mdebug
+            else {
+                throw new RuntimeException("cant remove, this window is not visible: " + w);
+            }
+            //#enddebug
         }
-        //#mdebug
-        else {
-            throw new RuntimeException("cant remove, this window is not visible: " + w);
-        }
-        //#enddebug
     }
 
     /**
