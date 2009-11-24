@@ -50,7 +50,7 @@ public class TextPane extends Component {
     }
 
     // Overwrites Component.paintComponent()
-    public void paintComponent(Graphics2D g) {
+    public synchronized void paintComponent(Graphics2D g) {
 
         // TODO: Use binary search to find the first fragment with a visible y
         // TODO: Stop paint if y is no longer visible... Take care that in the same
@@ -148,7 +148,12 @@ public class TextPane extends Component {
     }
 
     // from JEditorPane
-    public void setText(String text1) {
+    /**
+     * like Swing this method IS thread safe
+     * @param text1 the text to set, if the text starts with &lt;html&gt; then it will be passed as html
+     * @see javax.bluetooth.JEditorPane#setText(java.lang.String) JEditorPane.setText
+     */
+    public synchronized void setText(String text1) {
 
         sortedElemsList.removeAllElements();
         lineFragments.removeAllElements();
@@ -168,7 +173,7 @@ public class TextPane extends Component {
 
     }
 
-    public void append(String text1) {
+    public synchronized void append(String text1) {
         if (text1.startsWith("<html>")) {
             XHTMLLoader loader = new XHTMLLoader();
             loader.gotResult( this, text1 );
@@ -333,7 +338,7 @@ public class TextPane extends Component {
                 null : (TextStyle) focusableElems.elementAt(idx);
     }
 
-    private int doLayout() {
+    private synchronized int doLayout() {
 
         widthUsed = width;
 
