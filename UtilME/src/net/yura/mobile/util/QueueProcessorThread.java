@@ -26,6 +26,8 @@ public abstract class QueueProcessorThread extends Thread {
 
     public void run() {
 
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+
         runnning = true;
 
         runLoop: while (runnning) {
@@ -49,9 +51,14 @@ public abstract class QueueProcessorThread extends Thread {
                         inbox.removeElementAt(0);
                     }
 
+                    // try not to slow down the UI
+                    Thread.yield();
+                    Thread.sleep(0);
 
                     process(object);
 
+                    Thread.yield();
+                    Thread.sleep(0);
 
             }
             catch (Exception ex) {
