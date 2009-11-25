@@ -60,7 +60,7 @@ public abstract class SocketClient implements Runnable {
                         // MAKE THE CONNECTION!!
                         while (out==null || in==null) {
 
-                            if(!running) return;
+                            if(!isRunning()) return;
 
                             updateState(CONNECTING);
 
@@ -192,9 +192,7 @@ System.out.println("got object: "+task);
         in= null;
         conn=null;
 
-        if(running) {
-            disconnected();
-        }
+        disconnected();
     }
 
     public void disconnect() {
@@ -205,6 +203,11 @@ System.out.println("got object: "+task);
         writeThread = null;
     }
 
+  public Vector getOfflineBox()
+  {
+    return offlineBox;
+  }
+  
     protected void sendOfflineInboxMessages() {
 
         while (!offlineBox.isEmpty()) {
