@@ -140,8 +140,6 @@ public abstract class SocketClient implements Runnable {
 
         while (running) {
             try {
-                Thread.yield();
-
                 task = read(in);
             }
             catch(Exception ex) {
@@ -161,8 +159,13 @@ public abstract class SocketClient implements Runnable {
             try {
 
                 Thread.yield();
+                Thread.sleep(0);
 
                 handleObject( task );
+
+                Thread.yield();
+                Thread.sleep(0);
+
             }
             catch (Exception x) {
                 DesktopPane.log("CAN NOT HANDLE! " + x.getMessage() + " Task: " + task );

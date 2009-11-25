@@ -366,6 +366,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         if (!paintdone) {
 
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+
             if (background != -1) {
                 gtmp.setColor(background);
                 gtmp.fillRect(0, 0, getWidth(), getHeight());
