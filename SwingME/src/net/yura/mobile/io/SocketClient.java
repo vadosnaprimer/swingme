@@ -93,7 +93,7 @@ public abstract class SocketClient implements Runnable {
                     //Task task = (Task)object;
                     try {
 //#debug
-System.out.println("sending object: "+object);
+//# System.out.println("sending object: "+object);
                         updateState(COMMUNICATING);
 
                         write(out, object);
@@ -128,6 +128,10 @@ System.out.println("sending object: "+object);
         offlineBox.addElement(t);
     }
 
+    public Vector getOfflineBox() {
+        return offlineBox;
+    }
+
     public final void run() {
 
         Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
@@ -153,7 +157,7 @@ System.out.println("sending object: "+object);
 
             updateState(COMMUNICATING);
 //#debug
-System.out.println("got object: "+task);
+//# System.out.println("got object: "+task);
             try {
 
                 Thread.yield();
