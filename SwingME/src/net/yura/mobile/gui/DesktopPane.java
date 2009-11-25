@@ -1011,6 +1011,8 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Exception ex) {
             // as you called this yourself, you should not be throwing here
+            //#debug
+            ex.printStackTrace();
             throw new RuntimeException();
         }
     }
