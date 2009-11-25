@@ -53,6 +53,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.TitledBorder;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
+import net.yura.mobile.gui.components.TextPane;
 
 
 /**
@@ -66,7 +67,8 @@ public class MainPane extends DesktopPane implements ActionListener {
         private Menu mainMenu;
 
         public Icon image;
-        private TextArea infoLabel,loadPanel;
+        private TextPane infoLabel;
+        private TextArea loadPanel;
 	private Vector images;
 	private Frame mainWindow;
 
@@ -290,7 +292,11 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 			if (info==null) {
 
-                                infoLabel = new TextArea("...",Graphics.HCENTER);
+                                infoLabel = new TextPane();
+                                infoLabel.setText("...");
+                                final TextPane.TextStyle center = new TextPane.TextStyle();
+                                center.setAlignment(Graphics.HCENTER);
+                                infoLabel.setParagraphAttributes(0, 0, center);
                                 //infoLabel.setSize(getWidth(),infoLabel.getHeight());
                                 infoLabel.setFocusable(false);
 
@@ -305,7 +311,9 @@ public class MainPane extends DesktopPane implements ActionListener {
                                                 case DesktopPane.RELEASED: infoLabel.append("RELEASED"); break;
                                                 default: infoLabel.append("Unknown"); break;
                                             }
-                                            infoLabel.repaint();
+                                            infoLabel.setParagraphAttributes(0, infoLabel.getText().length(), center);
+                                            infoLabel.getParent().revalidate();
+                                            infoLabel.getParent().repaint();
 
                                         }
                                     	public boolean processKeyEvent(KeyEvent keypad) {
@@ -344,7 +352,10 @@ public class MainPane extends DesktopPane implements ActionListener {
                                                 if (code2!=0) { infoLabel.append("\nJustReleased"); }
                                                 if (code3!=0) { infoLabel.append("\nIsDown"); }
                                                 if (code1==0 && code3!=0) { infoLabel.append("\nHeldDown"); }
-                                                infoLabel.repaint();
+
+                                                infoLabel.setParagraphAttributes(0, infoLabel.getText().length(), center);
+                                                infoLabel.getParent().revalidate();
+                                                infoLabel.getParent().repaint();
                                             }
                                             return true;
                                         }

@@ -120,7 +120,7 @@ public class ServiceLinkTest  extends Section {
                         if (locationMonitor == null)
                             locationMonitor = new MyLocationMonitor();
 
-                        infoLabel = new TextArea("Service Connect\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Service Connect\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
                         infoLabel.append("\nDone\n");
@@ -135,7 +135,7 @@ public class ServiceLinkTest  extends Section {
                             locationMonitor = new MyLocationMonitor();
 
 
-                        infoLabel = new TextArea("Get Cell Id\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Get Cell Id\n");
                         infoLabel.setFocusable(false);
                         locationMonitor.getCellId();
                         info.add(infoLabel);
@@ -150,7 +150,7 @@ public class ServiceLinkTest  extends Section {
                             locationMonitor = new MyLocationMonitor();
 
 
-                        infoLabel = new TextArea("Poll Cell Id\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Poll Cell Id\n");
                         infoLabel.setFocusable(false);
                         locationMonitor.setNotifyForCellId(true);
                         info.add(infoLabel);
@@ -164,7 +164,7 @@ public class ServiceLinkTest  extends Section {
                         if (locationMonitor == null)
                             locationMonitor = new MyLocationMonitor();
 
-                        infoLabel = new TextArea("Get Wifi List\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Get Wifi List\n");
                         infoLabel.setFocusable(false);
                         locationMonitor.getWifiList();
                         info.add(infoLabel);
@@ -178,7 +178,7 @@ public class ServiceLinkTest  extends Section {
                         if (locationMonitor == null)
                             locationMonitor = new MyLocationMonitor();
 
-                        infoLabel = new TextArea("Poll Wifi List\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Poll Wifi List\n");
                         infoLabel.setFocusable(false);
                         locationMonitor.setNotifyForWifiList(true);
                         info.add(infoLabel);
@@ -192,7 +192,7 @@ public class ServiceLinkTest  extends Section {
                         if (clipboardManager == null)
                             clipboardManager = new MyClipboardManager();
 
-                        infoLabel = new TextArea("Get Clipboard\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Get Clipboard\n");
                         infoLabel.setFocusable(false);
                         clipboardManager.getClipboard();
                         info.add(infoLabel);
@@ -206,7 +206,7 @@ public class ServiceLinkTest  extends Section {
                         if (clipboardManager == null)
                             clipboardManager = new MyClipboardManager();
 
-                        infoLabel = new TextArea("Put Clipboard\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Put Clipboard\n");
                         infoLabel.setFocusable(false);
                         clipboardManager.putClipboard("XYZ");
                         info.add(infoLabel);
@@ -219,7 +219,7 @@ public class ServiceLinkTest  extends Section {
                         info.removeAll();
                         locationMonitor = null;
 
-                        infoLabel = new TextArea("Service Disconnect\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Service Disconnect\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
                         infoLabel.append("\nDone\n");
@@ -233,7 +233,7 @@ public class ServiceLinkTest  extends Section {
                         if (contactManager == null) {
                             contactManager = new MyContactManager();
                         }
-                        infoLabel = new TextArea("Count Contacts\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Count Contacts\n");
                         infoLabel.setFocusable(false);
                         contactManager.getContactCount();
                         info.add(infoLabel);

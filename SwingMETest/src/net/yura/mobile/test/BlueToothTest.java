@@ -94,7 +94,7 @@ public class BlueToothTest extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        infoLabel = new TextArea("Bluetooth Server Starting\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Bluetooth Server Starting\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
      			addToScrollPane(info,null);
@@ -110,7 +110,7 @@ public class BlueToothTest extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        infoLabel = new TextArea("Bluetooth Server Send\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Bluetooth Server Send\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
      			addToScrollPane(info,null);
@@ -126,7 +126,7 @@ public class BlueToothTest extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        infoLabel = new TextArea("Bluetooth Client Starting\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Bluetooth Client Starting\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
      			addToScrollPane(info,null);
@@ -142,7 +142,7 @@ public class BlueToothTest extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        infoLabel = new TextArea("Bluetooth Client Send\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Bluetooth Client Send\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
      			addToScrollPane(info,null);
@@ -158,7 +158,7 @@ public class BlueToothTest extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        infoLabel = new TextArea("Bluetooth Discovery Starting\n",Graphics.LEFT);
+                        infoLabel = new TextArea("Bluetooth Discovery Starting\n");
                         infoLabel.setFocusable(false);
                         info.add(infoLabel);
      			addToScrollPane(info,null);
