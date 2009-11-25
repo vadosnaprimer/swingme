@@ -71,13 +71,22 @@ public abstract class SocketClient implements Runnable {
                             }
                             catch (IOException x) {
                                 updateState(DISCONNECTED);
+                                //#debug
                                 x.printStackTrace();
                                 try {
                                     Thread.sleep(5000);
                                 }
                                 catch (InterruptedException ex) {
+                                    //#debug
                                     ex.printStackTrace();
                                 }
+                            }
+                            catch (SecurityException s) {
+                                //#debug
+                                s.printStackTrace();
+                                //updateState(DISCONNECTED);
+                                securityException();
+                                return;
                             }
                         }
 
@@ -93,7 +102,7 @@ public abstract class SocketClient implements Runnable {
                     //Task task = (Task)object;
                     try {
 //#debug
-//# System.out.println("sending object: "+object);
+System.out.println("sending object: "+object);
                         updateState(COMMUNICATING);
 
                         write(out, object);
@@ -110,6 +119,7 @@ public abstract class SocketClient implements Runnable {
                     }
 
                 }
+
             };
             writeThread.start();
         }
@@ -155,7 +165,7 @@ public abstract class SocketClient implements Runnable {
 
             updateState(COMMUNICATING);
 //#debug
-//# System.out.println("got object: "+task);
+System.out.println("got object: "+task);
             try {
 
                 Thread.yield();
@@ -202,6 +212,11 @@ public abstract class SocketClient implements Runnable {
                 offlineBox.removeElementAt(0);
                 addToOutbox( task );
         }
+    }
+
+    protected void securityException() {
+        //#debug
+        System.out.println("Socket connections are not allowed.");
     }
 
     protected abstract void handleObject(Object task);
