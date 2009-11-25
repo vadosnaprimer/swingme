@@ -505,7 +505,7 @@ public class List extends Component implements ActionListener {
 
         if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#') {
 
-                keyCode = keypad.getKeyChar(keyCode, keypad.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
+                keyCode = keypad.getKeyChar(keyCode, KeyEvent.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
 
                 for(int i = 0; i < getSize(); i++) {
 
@@ -723,13 +723,19 @@ public class List extends Component implements ActionListener {
         return "List";
     }
 
-
     public void updateUI() {
         super.updateUI();
+        // as this is called by the default Component constructor
+        // the renderer would not have been set the very first time it is called
         if (renderer!=null) {
-            // TODO ??? what to do here ???
-            // find out how swing does it
+            // real Swing does a check if renderer is instanceof Component
+            // and only then calls updateUI on it, this will fail on renderers that
+            // are not instances of a component, so thats why this method has been
+            // added into the interface, and can then call updateUI on its internal
+            // components or many of them if it has more then 1
+            renderer.updateUI();
         }
+        selectButton.updateUI();
     }
 
     public String getToolTipText() {

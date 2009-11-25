@@ -36,4 +36,6 @@ public interface ListCellRenderer {
      */
     Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus);
 
+    void updateUI();
+
 }

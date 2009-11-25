@@ -52,5 +52,9 @@ public class DefaultCellEditor implements TableCellEditor,ListCellRenderer {
         component.setupState(list, isSelected, cellHasFocus);
         return component;
     }
+
+    public void updateUI() {
+        component.updateUI();
+    }
     
 }
