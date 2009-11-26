@@ -37,6 +37,7 @@ import net.yura.mobile.util.ImageUtil;
 
 /**
  * @author Yura Mamyrin
+ * @see javax.swing.JFileChooser
  */
 public class FileChooser extends Frame implements Runnable, ActionListener {
 
@@ -59,6 +60,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     private RadioButton showAll,  showNew,  listView,  gridView;
     private Label addressBar;
 
+    /**
+     * @see javax.swing.JFileChooser#JFileChooser() JFileChooser.JFileChooser
+     */
     public FileChooser() {
 
         //setActionListener(this);
@@ -144,6 +148,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
     }
 
+    /**
+     * @see javax.swing.JFileChooser#setCurrentDirectory(java.io.File) JFileChooser.setCurrentDirectory
+     */
     public void setCurrentDirectory(String string) {
 
         // does not accept .. in the path
@@ -168,7 +175,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         return rb;
     }
 
-    public void setMultiSelect(boolean multiSelect) {
+    /**
+     * @see javax.swing.JFileChooser#setMultiSelectionEnabled(boolean) JFileChooser.setMultiSelectionEnabled
+     */
+    public void setMultiSelectionEnabled(boolean multiSelect) {
         this.multiSelect = multiSelect;
     }
 
@@ -188,15 +198,19 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
     }
 
-    public void setFilter(int f) {
+    /**
+     * @see javax.swing.JFileChooser#setFileFilter(javax.swing.filechooser.FileFilter) JFileChooser.setFileFilter
+     */
+    public void setFileFilter(int f) {
         filter = f;
     }
 
     /**
-     * @param al
-     * @param a
-     * @param title
-     * @param approveButtonText
+     * @param al the action listoner that will recieve the action
+     * @param a the string that will be fired on the action listoner
+     * @param title the title of the dialog
+     * @param approveButtonText the text that will be on the button to select the file
+     * @see javax.swing.JFileChooser#showDialog(java.awt.Component, java.lang.String) JFileChooser.showDialog
      */
     public void showDialog(ActionListener al, String a, String title, String approveButtonText) {
         actionListener = al;
@@ -282,6 +296,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         repaint();
     }
 
+    /**
+     * @see javax.swing.JFileChooser#getSelectedFiles() JFileChooser.getSelectedFiles
+     */
     public Vector getSelectedFiles() {
         Vector rs = new Vector();
         Vector dataVector;
@@ -301,6 +318,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         return rs;
     }
 
+    /**
+     * @see javax.swing.JFileChooser#getSelectedFile() JFileChooser.getSelectedFile
+     */
     public String getSelectedFile() {
         SelectableFile tbOpt;
         if (gridView.isSelected()) {
