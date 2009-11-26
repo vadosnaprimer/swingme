@@ -60,6 +60,7 @@ public class ComponentTest  extends Section{
             addTest("Table Test","tableTest");
             addTest("Scroll Test","scrollTest1");
             addTest("File Chooser","fileChooser");
+            addTest("Multi File Chooser","fileChooser2");
             addTest("Test Camera","testCamera");
     }
 
@@ -97,8 +98,13 @@ public class ComponentTest  extends Section{
 
                                 componentTest.add(testMain);
 
-                                componentTest.add( new CheckBox("a CheckBox") );
-                                componentTest.add( new RadioButton("a RadioButton") );
+                                CheckBox cb = new CheckBox("a CheckBox");
+                                cb.setUseSelectButton(true);
+                                componentTest.add( cb );
+
+                                RadioButton rb = new RadioButton("a RadioButton");
+                                rb.setUseSelectButton(true);
+                                componentTest.add( rb );
 
                                 Vector items = new Vector();
                                 items.addElement(null);
@@ -111,9 +117,13 @@ public class ComponentTest  extends Section{
                                 ComboBox disabledCombo = new ComboBox(items);
                                 disabledCombo.setFocusable(false);
 
+                                Spinner disabledSpinner = new Spinner(items, false);
+                                disabledSpinner.setFocusable(false);
+
                                 componentTest.add( new ComboBox(items) );
                                 componentTest.add( disabledCombo );
                                 componentTest.add( new Spinner(items, false));
+                                componentTest.add(disabledSpinner);
 
                                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more than 1 line");
                                 longText.setFocusable(false);
@@ -408,7 +418,12 @@ public class ComponentTest  extends Section{
                     FileChooser chooser = new FileChooser();
                     chooser.showDialog(this, "fileSelected", "Select File", "Select");
                 }
+                else if ("fileChooser2".equals(actionCommand)) {
 
+                    FileChooser chooser = new FileChooser();
+                    chooser.setMultiSelectionEnabled(true);
+                    chooser.showDialog(this, "fileSelected", "Select File", "Select");
+                }
                 else if ("testCamera".equals(actionCommand)) {
                     cameraPanel = new Camera();
                     addToContentPane(cameraPanel, makeButton("Capture","cameraCapture") );
