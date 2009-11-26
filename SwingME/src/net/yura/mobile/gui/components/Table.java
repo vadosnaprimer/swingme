@@ -330,7 +330,7 @@ public class Table extends Panel {
             removeAll();
             setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
             
-            if (getWindow().getFocusOwner() == editorComp) {
+            if (getWindow()!=null && getWindow().getFocusOwner() == editorComp) {
                 editorComp = null;
                 requestFocusInWindow();
             }

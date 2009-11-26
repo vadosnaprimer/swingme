@@ -80,6 +80,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         add(mainPanel);
 
         Menu popupMenu = new Menu( (String)DesktopPane.get("menuText") );
+        popupMenu.setActionCommand("mainMenu");
         popupMenu.addActionListener(this);
 
         doneButton = new Button();
@@ -404,19 +405,28 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             setRowHeight(cellSize);
         }
 
+        /**
+         * @see List#getSelectedValue()
+         */
         public Object getSelectedValue() {
             return getValueAt(getSelectedRow(), getSelectedColumn());
         }
-
+        /**
+         * @see List#getSelectedIndex()
+         */
         public int getSelectedIndex() {
             if (getSelectedRow() == -1 && getSelectedColumn() == -1) return -1;
             return convertLin(getSelectedRow(), getSelectedColumn());
         }
-
+        /**
+         * @see List#getItems()
+         */
         public Vector getItems() {
             return dataVector;
         }
-
+        /**
+         * @see List#setListData(java.util.Vector)
+         */
         public void setListData(Vector files) {
             dataVector = files;
             setSelectedIndex(files.size()>0?0:-1);
@@ -497,6 +507,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             }
         }
+        /**
+         * @see List#setSelectedIndex(int)
+         */
         public void setSelectedIndex(int a) {
             if (a==-1) {
                 setSelectedCell(-1,-1);
