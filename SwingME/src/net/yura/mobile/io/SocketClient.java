@@ -202,11 +202,6 @@ System.out.println("got object: "+task);
         writeThread.kill();
         writeThread = null;
     }
-
-  public Vector getOfflineBox()
-  {
-    return offlineBox;
-  }
   
     protected void sendOfflineInboxMessages() {
 
