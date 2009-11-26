@@ -49,27 +49,28 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int UNEDITABLE=javax.microedition.lcdui.TextField.UNEDITABLE;
         public static final int URL=javax.microedition.lcdui.TextField.URL;
     
-        private static TextBox textbox;
-    
-	private static Button SOFTKEY_CLEAR;
-        static {
-            SOFTKEY_CLEAR = new Button("Clear");
-            SOFTKEY_CLEAR.setActionCommand("clear");
-            SOFTKEY_CLEAR.setMnemonic(KeyEvent.KEY_SOFTKEY2);
-        }
-	public static void setClearButtonText(String a) {
-		SOFTKEY_CLEAR.setText(a);
-	}
+        private TextBox textbox;
 
-        private static Command ok = new Command("OK",Command.OK ,1);
-	public static void setOKButtonText(String a) {
-		ok = new Command(a,ok.getCommandType(),ok.getPriority());
-	}
-        
-        private static Command cancel = new Command("Cancel",Command.CANCEL,1 );
-        public static void setCancelButtonText(String a) {
-		cancel = new Command(a,cancel.getCommandType(),cancel.getPriority());
-	}
+	private Button SOFTKEY_CLEAR;
+        private boolean showingClearKey;
+//        static {
+//            SOFTKEY_CLEAR = new Button("Clear");
+//            SOFTKEY_CLEAR.setActionCommand("clear");
+//            SOFTKEY_CLEAR.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+//        }
+//	public static void setClearButtonText(String a) {
+//		SOFTKEY_CLEAR.setText(a);
+//	}
+//
+//        private static Command ok = new Command("OK",Command.OK ,1);
+//	public static void setOKButtonText(String a) {
+//		ok = new Command(a,ok.getCommandType(),ok.getPriority());
+//	}
+//
+//        private static Command cancel = new Command("Cancel",Command.CANCEL,1 );
+//        public static void setCancelButtonText(String a) {
+//		cancel = new Command(a,cancel.getCommandType(),cancel.getPriority());
+//	}
         
         private static final int cursorBlinkWait = 500;
         private static int autoAcceptTimeout = 1000; // MUST be more then blink time
@@ -154,26 +155,35 @@ public abstract class TextComponent extends Component implements ActionListener,
         }
 	
 	private void updateSoftKeys() {
-		
             if (isFocusOwner()) {
+
                 // put this back in to hide the clear action on phones it is not needed on
 		if (KeyEvent.useSoftKeyClear) {
                     if(caretPosition==0 && tmpChar==0){
-                            SOFTKEY_CLEAR.removeActionListener(this);
+                        if (showingClearKey) {
                             getWindow().removeCommand(SOFTKEY_CLEAR);
+                            showingClearKey = false;
+                        }
                     }
-                    else{
-                            SOFTKEY_CLEAR.addActionListener(this);
+                    else {
+                        if (!showingClearKey) {
                             getWindow().addCommand(SOFTKEY_CLEAR);
+                            showingClearKey = true;
+                        }
                     }
 		}
             }
 	}
 	
 	public void actionPerformed(String actionCommand) {
-            if ("clear".equals(actionCommand)) {
+            if (SOFTKEY_CLEAR.getActionCommand().equals(actionCommand)) {
                 clear(true);
             }
+            //#mdebug
+            else {
+                System.out.println("something not right here?!?!?! "+actionCommand);
+            }
+            //#enddebug
 	}
 
         private void clear(boolean back) {
@@ -329,18 +339,14 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
                 else if (keyEvent.justPressedAction(Canvas.FIRE)) {
 
-                    if (textbox==null) {
-                        textbox = new TextBox(label, getText(), maxSize, constraints);
-                        textbox.addCommand(ok);
-                        textbox.addCommand(cancel);
-                    }
-                    else {
-                       textbox.setString("");
-                       textbox.setConstraints(constraints);
-                       textbox.setTitle(label);
-                       textbox.setString(getText());
-                       textbox.setMaxSize(maxSize);
-                    }
+                    // reusing this causes problems on S60
+                    textbox = new TextBox(label, getText(), maxSize, constraints);
+
+                    Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
+                    Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);
+
+                    textbox.addCommand(ok);
+                    textbox.addCommand(cancel);
 
                     textbox.setCommandListener(this);
                     Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
@@ -400,13 +406,15 @@ public abstract class TextComponent extends Component implements ActionListener,
         }
 
         public void commandAction(Command arg0, Displayable arg1) {
-            if (arg0==ok) {
+            if (arg0.getCommandType()==Command.OK) {
                 setText(textbox.getString());
             }
             // go back to normal
             DesktopPane rp = DesktopPane.getDesktopPane();
             Display.getDisplay(DesktopPane.getMidlet()).setCurrent(rp);
             rp.setFullScreenMode(true);
+
+            textbox = null;
         }
         
 	public void animate() throws InterruptedException {
@@ -501,8 +509,11 @@ public abstract class TextComponent extends Component implements ActionListener,
                 autoAccept();
 
                 if (KeyEvent.useSoftKeyClear) {
-                    SOFTKEY_CLEAR.removeActionListener(this);
-                    getWindow().removeCommand(SOFTKEY_CLEAR);
+                    if(showingClearKey){
+                        getWindow().removeCommand(SOFTKEY_CLEAR);
+                        showingClearKey = false;
+                    }
+                    SOFTKEY_CLEAR = null;
                 }
                 
                 DesktopPane.getDesktopPane().setIndicatorText(null);
@@ -512,14 +523,20 @@ public abstract class TextComponent extends Component implements ActionListener,
 	
 	public void focusGained() {
                 super.focusGained();
-		
 		showCaret = true;
 
 		DesktopPane.getDesktopPane().animateComponent(this);
                 setMode(mode);
-		
-                updateSoftKeys();
-                
+
+                if (KeyEvent.useSoftKeyClear) {
+                    SOFTKEY_CLEAR = new Button( (String)DesktopPane.get("clearText") );
+                    SOFTKEY_CLEAR.addActionListener(this);
+                    SOFTKEY_CLEAR.setActionCommand("clear");
+                    SOFTKEY_CLEAR.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+
+                    updateSoftKeys();
+                }
+
                 // this means that anything stored in
                 // the keyEvent Object will be ignored
                 
@@ -666,14 +683,12 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void updateUI() {
                 super.updateUI();
-                //Style theme = DesktopPane.getDefaultTheme(this);
         
                 font = theme.getFont(Style.ALL);
-//
-//		disabledBorder = theme.getBorder(Style.DISABLED);
-//		activeBorder = theme.getBorder(Style.FOCUSED);
-//
-//		activeTextColor = theme.getForeground(Style.FOCUSED);
+
+                if (SOFTKEY_CLEAR!=null) {
+                    SOFTKEY_CLEAR.updateUI();
+                }
         }
 
 

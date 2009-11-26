@@ -31,18 +31,23 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
  */
 public class Menu extends Button {
 
-        private int arrowDirection;
-        private Menu parentMenu;
-
-        private Window popup;
+        // model
         private MenuBar menuItems;
+
+        // scrollpane for menu
         private ScrollPane scroll;
+
+        // window for scrollpane
+        private Window popup;
+
 
         private boolean useAnimation=true;
         private boolean open;
         private int slide = Graphics.BOTTOM;
         private int destX;
         private int destY;
+        private int arrowDirection;
+        private Menu parentMenu;
 
         public Menu() {
             makeWindow();
@@ -217,22 +222,12 @@ public class Menu extends Button {
             popup.setCloseOnFocusLost(true);
             popup.addWindowListener(this);
 
-            //if (!DesktopPane.me4se) {
-                //MenuBar menubar = new MenuBar();
-                //Button select = new Button("Select");
-                Button cancel = new Button("Cancel");
-                cancel.setActionCommand(Frame.CMD_CLOSE);
-                cancel.addActionListener(this);
-                cancel.setMnemonic(KeyEvent.KEY_SOFTKEY2);
-                //menubar.add(select);
-                //menubar.add(cancel);
-                //popup.setMenuBar(menubar);
-                popup.addCommand(cancel);
-            //}
+            Button cancel = new Button( (String)DesktopPane.get("cancelText") );
+            cancel.setActionCommand(Frame.CMD_CLOSE);
+            cancel.addActionListener(this);
+            cancel.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+            popup.addCommand(cancel);
 
-            //popup.setWindowCommand(0, );
-            //popup.setWindowCommand(1, );
-            //popup.setActionListener(this);
             menuItems = new MenuBar();
             menuItems.setLayoutOrientation(false);
             menuItems.setUseSelectButton(true);
@@ -252,8 +247,6 @@ public class Menu extends Button {
             scroll = new ScrollPane(menuItems);
             popup.add(scroll);
             popup.setName("Menu");
-            
-            // TODO!!! popup.setBorder(DesktopPane.getDefaultTheme(this).getBorder(Style.ALL));
 
         }
 
@@ -440,8 +433,13 @@ public class Menu extends Button {
         public void updateUI() {
             super.updateUI();
             if (popup!=null) {
-                //DesktopPane.updateComponentTreeUI(popup);
-                // TODO: THIS IS NOT GOOD!!
+                popup.updateUI();
+            }
+            if (scroll!=null) {
+                scroll.updateUI();
+            }
+            if (menuItems!=null) {
+                menuItems.updateUI();
             }
         }
 

@@ -33,19 +33,17 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class Button extends Label implements ActionListener {
 
-	private static Button selectButton;
-        
-        static {
-            selectButton = new Button("Select");
-            selectButton.setActionCommand("select");
-        }
-
-	public static void setSelectButtonText(String a) {
-		
-		selectButton.setText(a);
-		
-	}
-	
+	private Button selectButton;
+//
+//        static {
+//            selectButton = new Button("Select");
+//            selectButton.setActionCommand("select");
+//        }
+//
+//	public static void setSelectButtonText(String a) {
+//		selectButton.setText(a);
+//	}
+//	
 //	protected Border activeBorder;
 //        protected Border disabledBorder;
 //        protected Border selectedBorder;
@@ -274,8 +272,8 @@ public class Button extends Label implements ActionListener {
                 super.focusLost();
 		
 		if (useSelectButton) {
-                        selectButton.removeActionListener(this);
-			getWindow().removeCommand(selectButton);
+                    getWindow().removeCommand(selectButton);
+                    selectButton = null;
 		}
 		
 		repaint();
@@ -285,8 +283,11 @@ public class Button extends Label implements ActionListener {
                 super.focusGained();
 		
 		if (useSelectButton) {
-                        selectButton.addActionListener(this);
-			getWindow().addCommand(selectButton);
+                    selectButton = new Button( (String)DesktopPane.get("selectText") );
+                    selectButton.addActionListener(this);
+                    selectButton.setActionCommand("select");
+                    selectButton.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                    getWindow().addCommand(selectButton);
 		}
 		
 		repaint();
@@ -319,6 +320,11 @@ public class Button extends Label implements ActionListener {
 		if(selectButton.getActionCommand().equals(actionCommand)) {
 			fireActionPerformed();
 		}
+                //#mdebug
+                else {
+                    System.out.println("whats going on here??? "+actionCommand);
+                }
+                //#enddebug
 	}
 
 	public boolean isUseSelectButton() {
@@ -375,6 +381,13 @@ public class Button extends Label implements ActionListener {
         }
         public Object getValue() {
             return new Boolean(isSelected());
+        }
+
+        public void updateUI() {
+            super.updateUI();
+            if (selectButton!=null) {
+                selectButton.updateUI();
+            }
         }
 
 }

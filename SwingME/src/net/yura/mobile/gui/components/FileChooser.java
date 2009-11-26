@@ -75,7 +75,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         add(mainPanel);
 
-        Menu popupMenu = new Menu("Menu");
+        Menu popupMenu = new Menu( (String)DesktopPane.get("menuText") );
         popupMenu.addActionListener(this);
 
         doneButton = new Button();
@@ -83,25 +83,25 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         doneButton.addActionListener(popupMenu);
         popupMenu.add(doneButton);
 
-        Menu showMenu = new Menu("Show");
+        Menu showMenu = new Menu((String)DesktopPane.get("showText"));
         showMenu.addActionListener(this);
         ButtonGroup group1 = new ButtonGroup();
-        showAll = addMenuCheckBox(showMenu, group1, "All", "show", true);
-        showNew = addMenuCheckBox(showMenu, group1, "New", "show", false);
+        showAll = addMenuCheckBox(showMenu, group1, (String)DesktopPane.get("allText"), "show", true);
+        showNew = addMenuCheckBox(showMenu, group1, (String)DesktopPane.get("newText"), "show", false);
         popupMenu.add(showMenu);
 
-        Menu viewMenu = new Menu("View");
+        Menu viewMenu = new Menu((String)DesktopPane.get("viewText"));
         viewMenu.addActionListener(this);
         ButtonGroup group2 = new ButtonGroup();
-        listView = addMenuCheckBox(viewMenu, group2, "List", "view", true);
-        gridView = addMenuCheckBox(viewMenu, group2, "Grid", "view", false);
+        listView = addMenuCheckBox(viewMenu, group2, (String)DesktopPane.get("listText"), "view", true);
+        gridView = addMenuCheckBox(viewMenu, group2, (String)DesktopPane.get("gridText"), "view", false);
         popupMenu.add(viewMenu);
 
 
         //setWindowCommand(0, new CommandButton(popupMenu));
         //setWindowCommand(1, new CommandButton(,"cancel"));
 
-        Button close = new Button("Cancel");
+        Button close = new Button((String)DesktopPane.get("cancelText"));
         close.setActionCommand("cancel");
         close.addActionListener(this);
 

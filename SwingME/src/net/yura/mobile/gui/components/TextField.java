@@ -77,7 +77,8 @@ public class TextField extends TextComponent {
         public void focusGained() {
             super.focusGained();
 
-            setCaretPosition(getCaretPosition());
+            // this is called here to update any inner scroll that needs to be done
+            setCaretPosition( getCaretPosition() );
 
         }
 
@@ -104,6 +105,7 @@ public class TextField extends TextComponent {
 
                 repaint();
             }
+
         }
 
         public void workoutMinimumSize() {
@@ -111,11 +113,11 @@ public class TextField extends TextComponent {
             height = font.getHeight() + padding*2; // put some padding in
         }
 
-    public String getDefaultName() {
-        return "TextField";
-    }
+        public String getDefaultName() {
+            return "TextField";
+        }
+
         public boolean allowNewLine() {
             return false;
         }
-        
 }

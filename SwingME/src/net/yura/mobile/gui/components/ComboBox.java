@@ -20,8 +20,10 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
@@ -36,12 +38,15 @@ public class ComboBox extends Button implements ActionListener{
 	private Icon selectedImage;
 	private Icon nonSelectedImage;
 
-        private Window dropDown;
+        // the model, has all the elements
 	private List list;
+        
+        // the scroller for the list
 	private ScrollPane scroll;
-	
-	//private CommandButton[] pbuttons;
-	
+
+        // the window for the dropdown
+        private Window dropDown;
+
         /**
          * @see javax.swing.JComboBox#JComboBox() JComboBox.JComboBox
          */
@@ -103,20 +108,29 @@ public class ComboBox extends Button implements ActionListener{
 
 	public void fireActionPerformed() {
                 createList();
+                createScrollPane();
+
                 if (dropDown==null) {
                     dropDown = new Window();
                     dropDown.setCloseOnFocusLost(true);
                     dropDown.setName("Menu");
-                    scroll = new ScrollPane();
-                    dropDown.add(scroll);
                     dropDown.addWindowListener(this);
+
+                    Button cancel = new Button( (String)DesktopPane.get("cancelText") );
+                    cancel.setActionCommand(Frame.CMD_CLOSE);
+                    cancel.addActionListener(this);
+                    cancel.setMnemonic( KeyEvent.KEY_SOFTKEY2 );
+                    dropDown.addCommand(cancel);
                 }
+
+                dropDown.removeAll();
+                dropDown.add(scroll);
+
                 scroll.removeAll();
                 scroll.add(list);
 
-                //list.workoutSize();
-                //scroll.setPreferredSize(list.getWidth(), list.getHeight());
                 dropDown.pack();
+
                 if (dropDown.getWidthWithBorder()<getWidthWithBorder()) {
                     dropDown.setBoundsWithBorder(0, 0, getWidthWithBorder(), dropDown.getHeightWithBorder());
                 }
@@ -129,7 +143,6 @@ public class ComboBox extends Button implements ActionListener{
                 dropDown.setVisible(true);
                 
                 setSelected(true);
-
         }
 	
 	private void createList() {
@@ -140,6 +153,11 @@ public class ComboBox extends Button implements ActionListener{
                 l.setUseSelectButton(true);
             }
 	}
+        private void createScrollPane() {
+            if (scroll==null) {
+                scroll = new ScrollPane();
+            }
+        }
 
         /**
          * @param list
@@ -188,21 +206,21 @@ public class ComboBox extends Button implements ActionListener{
 
         public void updateUI() {
                 super.updateUI();
-
-                //Style st = DesktopPane.getDefaultTheme(this);
                 
                 nonSelectedImage = (Icon)theme.getProperty("icon", Style.ALL);
                 selectedImage = (Icon)theme.getProperty("icon", Style.SELECTED);
+
+                if (dropDown!=null) {
+                    dropDown.updateUI();
+                }
+                if (scroll!=null) {
+                    scroll.updateUI();
+                }
+                if (list!=null) {
+                    list.updateUI();
+                }
         }
 
-	/*
-        protected int getBorderColor() {
-            if (border instanceof LineBorder) {
-                return ((LineBorder)border).getLineColor();
-            }
-            return 0;
-        }
-        */
 	public Icon getSelectedImage() {
 		return selectedImage;
 	}
@@ -279,6 +297,7 @@ public class ComboBox extends Button implements ActionListener{
          * @see javax.swing.JComboBox#setSelectedItem(java.lang.Object) JComboBox.setSelectedItem
          */
 	public void setSelectedItem(Object selected) {
+            createList();
             setSelectedIndex( list.indexOf(selected) );
 	}
 
@@ -313,7 +332,8 @@ public class ComboBox extends Button implements ActionListener{
          * @see javax.swing.JComboBox#getSelectedIndex() JComboBox#getSelectedIndex
          */
 	public int getSelectedIndex() {
-		return list.getSelectedIndex();
+            createList();
+            return list.getSelectedIndex();
 	}
 	
 	/**
@@ -321,12 +341,12 @@ public class ComboBox extends Button implements ActionListener{
 	 * setIndex method instead
 	 */
 	public void setText(String a) {
-		throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
 	}
 	
 	public void setScrollMode(int m) {
-		createList();
-		scroll.setMode(m);
+            createScrollPane();
+            scroll.setMode(m);
 	}
 
         public void setValue(Object obj) {

@@ -17,6 +17,7 @@
 package net.yura.mobile.gui;
 
 import java.lang.ref.WeakReference;
+import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Canvas;
@@ -186,6 +187,21 @@ public class DesktopPane extends Canvas implements Runnable {
 
         keypad = new KeyEvent(this);
 
+        UIManager = new Hashtable();
+        UIManager.put("clearText", "Clear");
+        UIManager.put("selectText", "Select");
+        UIManager.put("cancelText", "Cancel");
+        UIManager.put("okText", "OK");
+        UIManager.put("menuText", "Menu");
+
+        UIManager.put("showText", "Show");
+        UIManager.put("allText", "All");
+        UIManager.put("newText", "New");
+
+        UIManager.put("viewText", "View");
+        UIManager.put("listText", "List");
+        UIManager.put("gridText", "Grid");
+
         //      // check if we want to be in debug mode
         //      String s;
         //      if ((s = midlet.getAppProperty("Debug-Mode")) != null && ( s.toUpperCase().equals("OFF") || s.toUpperCase().equals("NO") || s.toUpperCase().equals("FALSE") || s.toUpperCase().equals("F") ) ) {
@@ -209,6 +225,22 @@ public class DesktopPane extends Canvas implements Runnable {
             serviceRepaints();
         }
 
+    }
+
+    private Hashtable UIManager;
+
+    /**
+     * @see javax.swing.UIManager#get(java.lang.Object) UIManager.get
+     */
+    public static Object get(Object key) {
+        return getDesktopPane().UIManager.get(key);
+    }
+
+    /*
+     * @see javax.swing.UIManager#put(java.lang.Object, java.lang.Object) UIManager.put
+     */
+    public static void put(Object key,Object value) {
+        getDesktopPane().UIManager.put(key, value);
     }
 
     public Component getAnimatedComponent() {

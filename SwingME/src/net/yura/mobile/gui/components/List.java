@@ -35,17 +35,17 @@ import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
  */
 public class List extends Component implements ActionListener {
 
-    private static Button selectButton;
-
-    static {
-        selectButton = new Button("Select");
-        selectButton.setActionCommand( "select" );
-        selectButton.setMnemonic(KeyEvent.KEY_SOFTKEY1);
-    }
-
-    public static void setSelectButtonText(String a) {
-        selectButton.setText(a);
-    }
+    private Button selectButton;
+//
+//    static {
+//        selectButton = new Button("Select");
+//        selectButton.setActionCommand( "select" );
+//        selectButton.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+//    }
+//
+//    public static void setSelectButtonText(String a) {
+//        selectButton.setText(a);
+//    }
     private boolean useSelectButton;
 
     private ListCellRenderer renderer;
@@ -379,8 +379,8 @@ public class List extends Component implements ActionListener {
     public void focusLost() {
         super.focusLost();
         if (useSelectButton) {
-            selectButton.removeActionListener(this);
             getWindow().removeCommand(selectButton);
+            selectButton = null;
         }
         repaint();
     }
@@ -393,6 +393,9 @@ public class List extends Component implements ActionListener {
         }
 
         if (useSelectButton) {
+            selectButton = new Button( (String)DesktopPane.get("selectText") );
+            selectButton.setActionCommand("select");
+            selectButton.setMnemonic( KeyEvent.KEY_SOFTKEY1 );
             selectButton.addActionListener(this);
             getWindow().addCommand(selectButton);
         }
@@ -735,7 +738,9 @@ public class List extends Component implements ActionListener {
             // components or many of them if it has more then 1
             renderer.updateUI();
         }
-        selectButton.updateUI();
+        if (selectButton!=null) {
+            selectButton.updateUI();
+        }
     }
 
     public String getToolTipText() {

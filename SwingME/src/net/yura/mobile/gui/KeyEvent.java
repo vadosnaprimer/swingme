@@ -26,6 +26,7 @@ import javax.microedition.lcdui.Canvas;
 public class KeyEvent {
 
         public static boolean useSoftKeyClear = false;
+        //public static boolean useSoftKeyClear = true;
 
          // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
 
@@ -184,7 +185,9 @@ public class KeyEvent {
 	public KeyEvent(Canvas c) {
 		canvas = c;
                 String useSoftKeyClearString = DesktopPane.getMidlet().getAppProperty("useSoftKeyClear");
-                useSoftKeyClear = (useSoftKeyClearString!=null && useSoftKeyClearString.equalsIgnoreCase("true"));
+                if (useSoftKeyClearString!=null) {
+                    useSoftKeyClear = useSoftKeyClearString.equalsIgnoreCase("true");
+                }
 	}
 
         public int getJustPressedKey() {

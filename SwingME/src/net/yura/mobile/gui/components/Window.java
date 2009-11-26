@@ -399,21 +399,27 @@ public class Window extends Panel {
          * @see javax.microedition.lcdui.Displayable#addCommand(javax.microedition.lcdui.Command) Displayable.addCommand
          */
         public void addCommand(Button softkey) {
-            //if (!DesktopPane.me4se) {
-                if (softkeys==null) {
-                    softkeys = new Vector(1);
-                }
 
-                if (!softkeys.contains(softkey)) {
-                    softkeys.addElement(softkey);
-                }
-                //#mdebug
-                else {
-                    System.out.println("whats this all about?");
-                    throw new RuntimeException();
-                }
-                //#enddebug
-            //}
+            // this is done in me4se mode too
+            // as we want the F1 and F2 keys to work the same as in a emulator
+            // even when you dont actually see the softkeys
+            if (softkeys==null) {
+                softkeys = new Vector(1);
+            }
+
+            if (!softkeys.contains(softkey)) {
+                softkeys.addElement(softkey);
+            }
+            //#mdebug
+            else {
+                System.out.println("whats this all about?");
+                throw new RuntimeException();
+            }
+            //#enddebug
+
+            if (!DesktopPane.me4se) {
+                repaint();
+            }
         }
 
         /**
@@ -421,17 +427,20 @@ public class Window extends Panel {
          */
         public void removeCommand(Button softkey) {
 
-            //if (!DesktopPane.me4se) {
-                if (softkeys.contains(softkey)) {
-                    softkeys.removeElement(softkey);
-                }
-                //#mdebug
-                else {
-                    System.out.println("whats this all about?");
-                    throw new RuntimeException();
-                }
-                //#enddebug
-            //}
+            // need to remove even in me4se mode
+            if (softkeys.contains(softkey)) {
+                softkeys.removeElement(softkey);
+            }
+            //#mdebug
+            else {
+                System.out.println("whats this all about?");
+                throw new RuntimeException();
+            }
+            //#enddebug
+
+            if (!DesktopPane.me4se) {
+                repaint();
+            }
         }
 
 
