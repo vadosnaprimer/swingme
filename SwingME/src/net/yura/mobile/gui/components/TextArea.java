@@ -162,16 +162,9 @@ public class TextArea extends TextComponent {
                     g.drawString(line , x, y);
 
                     if (showCaret && caretPosition >= beginIndex && caretPosition <= lastCaretIndex) {
-
+                      
                         int w = getStringWidth(font, text.substring(beginIndex, caretPosition) );
-/*
-                        if((align & Graphics.HCENTER) != 0) {
-                                w = (width - getStringWidth(font,line))/2 + w;
-                        }
-                        else if((align & Graphics.RIGHT) != 0) {
-                                w = width - (getStringWidth(font,line)-w); // not best efficency
-                        }
-*/
+
                         g.drawLine(w, y, w, y+lineHeight-1);
                     }
 
