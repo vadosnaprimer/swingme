@@ -215,6 +215,18 @@ public class KeyEvent {
                }
                return res;
         }
+        public int getIsDownAction() {
+               int res = 0;
+               for (int c=0;c<isDownKeys.length;c++) {
+                    if (isDownKeys[c] != 0) {
+                        int action = getKeyAction(isDownKeys[c]);
+                        if (action != 0) {
+                            res = action;
+                        }
+                    }
+               }
+               return res;
+        }
 
         // on nokia emulators can throw when the key does not exist on the phone
         public String getKeyText(int keyCode) {

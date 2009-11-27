@@ -772,7 +772,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             keyevent.isDownAction(Canvas.LEFT) ||
                             keyevent.isDownAction(Canvas.UP))) {
 
-                        focusedComponent.transferFocus(keyevent.getKeyAction(keyevent.getIsDownKey()));
+                        focusedComponent.transferFocus(keyevent.getIsDownAction());
 
                     }
                     else if (!consumed) {//&& keyListener!=null) {
@@ -791,7 +791,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             keyevent.isDownAction(Canvas.DOWN) ||
                             keyevent.isDownAction(Canvas.LEFT) ||
                             keyevent.isDownAction(Canvas.UP)) {
-                        currentWindow.passScrollUpDown(keyevent.getKeyAction(keyevent.getIsDownKey()));
+                        currentWindow.passScrollUpDown(keyevent.getIsDownAction());
                     }
                     else {
                         boolean c = currentWindow.processKeyEvent(keypad);
