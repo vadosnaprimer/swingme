@@ -50,7 +50,6 @@ public abstract class SocketClient implements Runnable {
 
         if (writeThread==null) {
 
-            running = true;
 
             writeThread = new QueueProcessorThread("writeThread") {
                 public void process(Object object) {
@@ -94,6 +93,7 @@ public abstract class SocketClient implements Runnable {
                         connected(in,out);
 
                         // START THE READ THREAD
+                        running = true;
                         Thread readThread = new Thread(SocketClient.this);
                         readThread.start();
 
@@ -191,7 +191,7 @@ System.out.println("got object: "+task);
         out = null;
         in= null;
         conn=null;
-
+        writeThread = null;
         disconnected();
     }
 
@@ -200,7 +200,6 @@ System.out.println("got object: "+task);
         // TODO make sure everything is saved!!!!!
         running = false;
         writeThread.kill();
-        writeThread = null;
     }
   
     protected void sendOfflineInboxMessages() {
