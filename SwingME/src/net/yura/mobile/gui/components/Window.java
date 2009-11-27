@@ -128,7 +128,7 @@ public class Window extends Panel {
          */
         protected void setupFocusedComponent() {
                 Component c = getMostRecentFocusOwner();
-                if (c!=null && c.getWindow()!=this) {
+                if (c!=null && (c.getWindow()!=this || !c.isVisible() || !c.isFocusable())) {
                     setFocusedComponent(null);
                     getMostRecentFocusOwner();
                 }

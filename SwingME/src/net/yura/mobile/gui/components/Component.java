@@ -74,6 +74,10 @@ public abstract class Component {
          */
         public void setVisible(boolean v) {
             visible = v;
+            Window w = getWindow();
+            if (w!=null) {
+                w.setupFocusedComponent();
+            }
         }
 
         /**
@@ -156,19 +160,11 @@ public abstract class Component {
          * @see java.awt.Component#setFocusable(boolean) Component.setFocusable
          */
 	public void setFocusable(boolean selectable) {
-		this.focusable = selectable;
-
-                Window w = getWindow();
-                if (w!=null) {
-                    Component c = w.getMostRecentFocusOwner();
-                    if (!focusable && c==this) {
-                        w.setFocusedComponent(null);
-                        if (w.isFocused()) {
-                            w.getMostRecentFocusOwner();
-                        }
-                    }
-                }
-
+            this.focusable = selectable;
+            Window w = getWindow();
+            if (w!=null) {
+                w.setupFocusedComponent();
+            }
 	}
 
         /**
