@@ -119,10 +119,44 @@ public class Graphics2D {
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage
          */
         public void drawImage(Image src, int x,int y) {
-
                 drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), Sprite.TRANS_NONE , x, y);
-
         }
+
+        /**
+         * unlike the real swing, this will tile the image and not streach it
+         * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) Graphics.drawImage
+         */
+        public void drawImage(Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
+
+            if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) {
+                // #debug
+                //System.out.println("calling tile on a area of size less then 0: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+                return;
+            }
+
+            //#mdebug
+            if ( ((src_w/dest_w)*(src_h/dest_h))>10 ) {
+                System.out.println("going to tile a very small image on a big area: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+            }
+            //#enddebug
+
+            final int[] c = getClip();
+
+            g.clipRect(dest_x,dest_y,dest_w,dest_h);
+
+            boolean normal = (t==Sprite.TRANS_NONE || t==Sprite.TRANS_MIRROR || t==Sprite.TRANS_ROT180 || t==Sprite.TRANS_MIRROR_ROT180);
+            int a = normal?src_w:src_h;
+            int b = normal?src_h:src_w;
+
+            for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
+                for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
+                    drawRegion(img, src_x,  src_y, src_w, src_h, t, pos_x, pos_y);
+                }
+            }
+
+            setClip(c);
+        }
+
 
         /**
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage

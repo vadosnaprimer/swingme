@@ -196,19 +196,19 @@ public class MatteBorder extends EmptyBorder {
                 g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff);
                 g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff);
 
-                ImageUtil.fillArea(g,image,imageLeft,0,imageWidth-imageRight-imageLeft,imageTop,
+                g.drawImage(image,imageLeft,0,imageWidth-imageRight-imageLeft,imageTop,
                         leftDiff,-top,width-leftDiff-rightDiff,imageTop,
                         Sprite.TRANS_NONE); // top line
 
-                ImageUtil.fillArea(g,image,imageLeft,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
+                g.drawImage(image,imageLeft,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
                         leftDiff,height-bottomDiff,width-leftDiff-rightDiff,imageBottom,
                         Sprite.TRANS_NONE); // bottom line
 
-                ImageUtil.fillArea(g,image,0,imageTop,imageLeft,imageHeight-imageTop-imageBottom,
+                g.drawImage(image,0,imageTop,imageLeft,imageHeight-imageTop-imageBottom,
                         -left,topDiff,imageLeft,height-topDiff-bottomDiff,
                         Sprite.TRANS_NONE); // left
 
-                ImageUtil.fillArea(g,image,imageWidth-imageRight,imageTop,imageRight,imageHeight-imageTop-imageBottom,
+                g.drawImage(image,imageWidth-imageRight,imageTop,imageRight,imageHeight-imageTop-imageBottom,
                         width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff,
                         Sprite.TRANS_NONE); // right
 
@@ -223,7 +223,7 @@ public class MatteBorder extends EmptyBorder {
                     //#mdebug
                     System.out.println("filling background with tiled image!");
                     //#enddebug
-                    ImageUtil.fillArea(g,image,imageLeft,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
+                    g.drawImage(image,imageLeft,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
                             leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff,
                             Sprite.TRANS_NONE); // centre
                 }

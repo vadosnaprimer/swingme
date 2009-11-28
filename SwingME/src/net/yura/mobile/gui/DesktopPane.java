@@ -39,6 +39,7 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.util.ImageUtil;
 
 /**
  * @author Yura Mamyrin
@@ -508,10 +509,23 @@ public class DesktopPane extends Canvas implements Runnable {
                 repaintComponent.removeAllElements();
 
                 if (doFullRepaint) {
-                    paintFirst(graphics);
-                    for (int c = 0; c < windows.size(); c++) {
+                    int startC = 0;
+                    for (int c = windows.size()-1; c >= 0; c--) {
+                        Object w = windows.elementAt(c);
+                        if ( w instanceof Frame && ((Frame)w).isMaximum() ) {
+                            startC = c;
+                            break;
+                        }
+                    }
+                    for (int c = startC; c < windows.size(); c++) {
+                        if (c==0) {
+                            paintFirst(graphics);
+                        }
                         paintComponent(graphics, (Window) windows.elementAt(c));
-
+                        if (c == (windows.size() - 2) && fade != null) {
+                            graphics.drawImage(fade, 0, 0, fade.getWidth(), fade.getHeight(), 0, 0, getWidth(), getHeight(), javax.microedition.lcdui.game.Sprite.TRANS_NONE );
+                        }
+/*
                         if (c == (windows.size() - 2) && fade != null) {
                             for (int x = 0; x < getWidth(); x += fade.getWidth()) {
                                 for (int y = 0; y < getHeight(); y += fade.getHeight()) {
@@ -519,7 +533,7 @@ public class DesktopPane extends Canvas implements Runnable {
                                 }
                             }
                         }
-
+*/
                     }
                 }
 
