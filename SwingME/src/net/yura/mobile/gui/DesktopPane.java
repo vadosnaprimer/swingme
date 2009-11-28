@@ -631,6 +631,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private int validating=0;
     public void revalidateComponent(Component rc) {
+        //#mdebug
+        if (rc.getWidth() == 0 || rc.getHeight() ==0 ) {
+            System.out.println("revalidate called on a component with 0 width and 0 height");
+            dumpStack();
+        }
+        //#enddebug
         addToComponentVector(rc, revalidateComponents1);
     }
 

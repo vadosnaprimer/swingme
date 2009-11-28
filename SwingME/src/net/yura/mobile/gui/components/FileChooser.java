@@ -220,10 +220,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         listTitle.setText(title);
         doneButton.setText(approveButtonText);
 
-        setUpView();
-
-
         setMaximum(true);
+
+        setUpView();
 
         setVisible(true);
 

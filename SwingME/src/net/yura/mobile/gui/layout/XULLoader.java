@@ -824,7 +824,10 @@ public class XULLoader {
                     comp.setName( plafname );
                 }
             }
+        }
 
+        if (uiobject.weightx > 0 && uiobject.weighty > 0 && comp instanceof Frame) {
+            ((Frame)comp).setMaximum(true);
         }
 
         while (parser.nextTag() != KXmlParser.END_TAG) {
