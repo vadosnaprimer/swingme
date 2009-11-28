@@ -26,6 +26,7 @@ import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.Spinner;
@@ -33,6 +34,7 @@ import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
+import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
@@ -62,6 +64,7 @@ public class ComponentTest  extends Section{
             addTest("File Chooser","fileChooser");
             addTest("Multi File Chooser","fileChooser2");
             addTest("Test Camera","testCamera");
+            addTest("Test Progress","testProgress");
     }
 
     public void openTest(String actionCommand) {
@@ -454,6 +457,33 @@ public class ComponentTest  extends Section{
                     p.add(l);
 
                     addToContentPane(p,null);
+                }
+                else if ("testProgress".equals(actionCommand)) {
+                    
+                    final Window win = new Window();
+                    win.setName("Dialog");
+                    final ProgressBar bar = new ProgressBar();
+                    win.add(bar);
+                    win.pack();
+                    OptionPane.centre(win);
+
+                    new Thread() {
+                        public void run() {
+                            win.setVisible(true);
+                            bar.setIndeterminate(true);
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException ex) {
+                                ex.printStackTrace();
+                            }
+                            bar.setIndeterminate(false);
+                            win.setVisible(false);
+                        }
+                    }.start();
+                    
+                }
+                else {
+
                 }
     }
 }
