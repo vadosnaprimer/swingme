@@ -98,6 +98,7 @@ public class XHTMLLoader {
 
         if (skinStyle!=null) {
             TextStyle textStyle = new TextStyle();
+            textStyle.setName(name);
             textStyle.putAll(skinStyle);
             return textStyle;
         }
@@ -192,13 +193,18 @@ public class XHTMLLoader {
     final static TextStyle link = new TextStyle();
     static {
         bold.setBold(true);
+        bold.setName("b");
         italic.setItalic(true);
+        italic.setName("i");
         underline.setUnderline(true);
+        underline.setName("u");
         center.setAlignment( Graphics.HCENTER );
+        center.setName("center");
 
         link.setUnderline(true);
         link.setForeground(0x0000FF);
         link.addForeground(0xFF0000, Style.FOCUSED);
+        link.setName("a");
     }
 
     private void startInlineSection() {
@@ -561,7 +567,7 @@ System.out.println("START: "+startTag);
 
             }
             else if ("body".equals(endTag)) {
-                
+
             }
             else if ("p".equals(endTag)) {
                 // do nothing
@@ -620,7 +626,7 @@ System.out.println("START: "+startTag);
             }
             //#enddebug
         }
-        
+
         private void processRef(KXmlParser parser) {
             System.out.println("ref: "+parser.getName());
             if (currentComponent instanceof TextPane) { // should be TextComponent

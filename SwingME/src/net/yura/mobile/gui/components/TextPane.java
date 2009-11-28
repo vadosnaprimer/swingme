@@ -279,6 +279,22 @@ public class TextPane extends Component {
         return false;
     }
 
+    // Overloads Component.updateUI()
+    public void updateUI() {
+        super.updateUI();
+
+        if (sortedElemsList != null) {
+            for (int i = 0; i < sortedElemsList.size(); i++) {
+                Element elem = (Element) sortedElemsList.elementAt(i);
+                elem.style.updateUI();
+            }
+
+            // If the UI theme changed, we may longer have the same size...
+            widthUsed = -1;
+            heightUsed = -1;
+        }
+    }
+
     private boolean makeVisible(int styleIdx, boolean smart) {
         int MAX = Integer.MAX_VALUE;
         int leftX = MAX, rightX = 0;
@@ -706,6 +722,7 @@ public class TextPane extends Component {
         private byte textStyle; // Bitmap of Bold, Italic, Underline, etc
         private Icon icon;
         private String action;
+        private String name;
 
 
         /**
@@ -807,6 +824,14 @@ public class TextPane extends Component {
             this.action = action;
         }
 
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
         // From MutableAttributeSet
         public void putAll(Style attributes) {
 
@@ -828,6 +853,10 @@ public class TextPane extends Component {
 
                 if (a.icon != null) {
                     icon = a.icon;
+                }
+
+                if (a.name != null) {
+                    name = a.name;
                 }
             }
         }
@@ -858,6 +887,16 @@ public class TextPane extends Component {
             // TODO: Font should take care of all this details... and use bitmaps if needed
             // TODO: creating a new Object every time...
             return (style!=javax.microedition.lcdui.Font.STYLE_PLAIN)?new Font(face, style, size):null;
+        }
+
+        public void updateUI() {
+            if (name != null) {
+                Style newStyle = DesktopPane.getDesktopPane().getLookAndFeel().getStyle(name);
+                if (newStyle != null) {
+                    reset(); // Reset parent style
+                    super.putAll(newStyle);
+                }
+            }
         }
     } // End Style class
 

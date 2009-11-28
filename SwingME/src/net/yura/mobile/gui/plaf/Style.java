@@ -225,4 +225,17 @@ public class Style {
         return a;
     }
 
+    protected void reset() {
+        font = null;
+        border= null;
+        background = -1;
+        foreground = -1;
+        properties = null;
+
+        fontStates = null;
+        borderStates = null;
+        backgroundStates = null;
+        foregroundStates = null;
+        propertiesStates = null;
+    }
 }
