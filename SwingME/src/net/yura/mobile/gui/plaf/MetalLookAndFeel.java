@@ -58,26 +58,34 @@ public class MetalLookAndFeel extends LookAndFeel {
             defaultStyle.addBackground( getSecondary3() , Style.ALL);
             defaultStyle.addForeground( getBlack() , Style.ALL);
             setStyleFor("",defaultStyle);            
+
+            Style abstractButtonStyle = new Style(defaultStyle);
+            abstractButtonStyle.addForeground( getBlack() , Style.FOCUSED);
+            abstractButtonStyle.addForeground( getSecondary2() , Style.DISABLED);
+            abstractButtonStyle.addForeground( getPrimary1() , Style.FOCUSED);
             
-            
-            Style radioStyle = new Style(defaultStyle);
-            radioStyle.addForeground( getBlack() , Style.FOCUSED);
-            radioStyle.addForeground( getSecondary2() , Style.DISABLED);
-            radioStyle.addForeground( getPrimary1() , Style.FOCUSED);
+            Style radioStyle = new Style(abstractButtonStyle);
             radioStyle.addProperty(radioIcon, "icon", Style.ALL);
             setStyleFor("RadioButton",radioStyle);
 
-            Style checkboxStyle = new Style(radioStyle);
+            Style checkboxStyle = new Style(abstractButtonStyle);
             checkboxStyle.addProperty(checkboxIcon, "icon", Style.ALL);
             setStyleFor("CheckBox",checkboxStyle);
 
 
-            Style buttonStyle = new Style(radioStyle);
+            Style buttonStyle = new Style(abstractButtonStyle);
             buttonStyle.addBackground( getSecondary3() , Style.ALL);
             buttonStyle.addBorder(new BevelBorder( 1, getWhite(), getSecondary1() ),Style.ALL);
             buttonStyle.addBorder(new BevelBorder( 1, getSecondary1(), getWhite() ), Style.SELECTED);
             buttonStyle.addBorder(new LineBorder( getSecondary2() ), Style.DISABLED);
             setStyleFor("Button",buttonStyle);
+
+            Style menuItemStyle = new Style(defaultStyle);
+            menuItemStyle.addProperty(spinnerRightIcon, "icon", Style.ALL);
+            menuItemStyle.addBackground( getPrimary2() , Style.SELECTED );
+            //menuItemStyle.addForeground( getWhite() , Style.SELECTED );
+            setStyleFor("MenuRenderer",menuItemStyle);
+            setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
             Border inputBorder = new BevelBorder( 1, getSecondary1(), getWhite() );
 
@@ -125,7 +133,6 @@ public class MetalLookAndFeel extends LookAndFeel {
             scrollStyle.addProperty(spinnerLeftIcon,"leftArrow",Style.ALL );
             scrollStyle.addProperty(spinnerRightIcon,"rightArrow",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
-
 
             Style labelStyle = new Style(defaultStyle);
             labelStyle.addBackground(-1, Style.ALL);
@@ -238,7 +245,11 @@ public class MetalLookAndFeel extends LookAndFeel {
             listCellRenderer.addBackground( getWhite() , Style.ALL);
             listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
             setStyleFor("ListRenderer",listCellRenderer);
-            
+
+            Style menuSkin = new Style(defaultStyle);
+            menuSkin.addBorder(new LineBorder( getPrimary1() ), Style.ALL);
+            setStyleFor("Menu",menuSkin);
+
             Style windowSkin = new Style(defaultStyle);
             // TODO: windowSkin.addBorder(new LineBorder( getSecondary1(), 2 ), Style.ALL);
             windowSkin.addBorder(new LineBorder( getPrimary1(), 2 ), Style.ALL);

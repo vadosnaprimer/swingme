@@ -21,9 +21,11 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -46,13 +48,14 @@ public class Menu extends Button {
         private int slide = Graphics.BOTTOM;
         private int destX;
         private int destY;
-        private int arrowDirection;
+        private Icon arrowDirection;
         private Menu parentMenu;
 
         public Menu() {
             makeWindow();
             // TODO ???
-            arrowDirection = Graphics.RIGHT;
+            //arrowDirection = Graphics.RIGHT;
+            //setHorizontalAlignment(Graphics.LEFT);
         }
 
         /**
@@ -302,51 +305,30 @@ public class Menu extends Button {
                 ((Menu)c).setParentMenu(this);
             }
 
+            // hack to make menu items have left alignment
+            if (c instanceof Button && c.getName().equals("Button")){
+                ((Button)c).setName("MenuItem");
+                ((Button)c).setHorizontalAlignment(Graphics.LEFT);
+            }
         }
 
         private void setParentMenu(Menu m) {
             parentMenu = m;
         }
 
-	public boolean processKeyEvent(KeyEvent keyEvent) {
-
-            if (keyEvent.justPressedAction(Canvas.RIGHT)) {
-
-                    fireActionPerformed();
-                    return true;
-            }
-            return super.processKeyEvent(keyEvent);
-
-	}
-
 	public void workoutMinimumSize() {
 
 		super.workoutMinimumSize();
-		width = width + getFont().getHeight()/( ((arrowDirection & Graphics.TOP ) !=0 || (arrowDirection & Graphics.BOTTOM ) !=0) ?1:2) + padding;
+		width = width + (arrowDirection!=null?(arrowDirection.getIconWidth()+gap):0);
 
 	}
 
 	public void paintComponent(Graphics2D g) {
-		super.paintComponent(g);
+            super.paintComponent(g);
 
-                int s = getFont().getHeight();
-		int s2 = s/2;
-
-//                if ((arrowDirection & Graphics.RIGHT ) !=0) {
-//
-//                    if ((arrowDirection & Graphics.TOP ) !=0) {
-//                        ScrollPane.drawUpArrow(g, width-s-padding, (height-s2)/2, s, s2);
-//                    }
-//                    else if ((arrowDirection & Graphics.BOTTOM ) !=0) {
-//                        ScrollPane.drawDownArrow(g, width-s-padding, (height-s2)/2, s, s2);
-//                    }
-//                    else {
-//                        ScrollPane.drawRightArrow(g, width-s2-padding, (height-s)/2, s2, s);
-//                    }
-//
-//                }
-                // TODO support left side arrows
-
+            if (arrowDirection!=null) {
+                arrowDirection.paintIcon(this, g, width-padding-arrowDirection.getIconWidth(), (height - arrowDirection.getIconHeight())/2 );
+            }
 	}
 
         public void animate() throws InterruptedException {
@@ -441,10 +423,8 @@ public class Menu extends Button {
             if (menuItems!=null) {
                 menuItems.updateUI();
             }
-        }
 
-        public void setArrowDirection(int a) {
-            arrowDirection = a;
+            arrowDirection = (Icon)theme.getProperty("icon", Style.ALL);
         }
 
         public Button findMneonicButton(int mnu) {

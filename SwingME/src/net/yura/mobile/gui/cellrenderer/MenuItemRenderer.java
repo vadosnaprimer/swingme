@@ -35,29 +35,17 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
 
     public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         if (value==null) return null;
-        setupState(list, isSelected, cellHasFocus);
         component = (Button)value;
+        setupState(list, isSelected, cellHasFocus);
         return this;
     }
 
     public void paintComponent(Graphics2D g) {
-
-        // HACK
-        //if (component instanceof Menu) {
-        //    ((Menu)component).setArrowDirection( (top?Graphics.BOTTOM:Graphics.TOP) | (left?Graphics.RIGHT:Graphics.LEFT) );
-        //}
-
-        component.workoutSize();
+        component.setSize( getWidth() , getHeight() );
         component.setForeground( getCurrentForeground() );
-
-        int x = 0; //left?0:width-component.getWidth();
-        int y = (height - component.getHeight()) / 2;
-
-        g.translate(x, y);
         component.paintComponent(g);
-        g.translate(-x, -y);
-
     }
+
     public void workoutMinimumSize() {
         component.workoutSize();
         width = component.getWidth();
@@ -65,7 +53,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
     }
 
     public String getDefaultName() {
-        return "MenuItemRenderer";
+        return "MenuRenderer";
     }
 
 }

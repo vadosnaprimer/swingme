@@ -33,8 +33,6 @@ public class MenuBar extends List implements ActionListener {
 
         MenuItemRenderer renderer = new MenuItemRenderer();
 
-        renderer.setName("MenuRenderer");
-
         setCellRenderer(renderer);
 
         setActionCommand("activate");
