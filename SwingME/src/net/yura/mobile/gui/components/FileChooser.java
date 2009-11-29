@@ -85,7 +85,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         doneButton = new Button();
         doneButton.setActionCommand("done");
-        doneButton.addActionListener(popupMenu);
+        doneButton.addActionListener(this);
         popupMenu.add(doneButton);
 
         Menu showMenu = new Menu((String)DesktopPane.get("showText"));
