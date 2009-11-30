@@ -936,7 +936,12 @@ public class DesktopPane extends Canvas implements Runnable {
         synchronized (repaintComponent) {
             //#mdebug
             if (windows.contains(w)) {
-                throw new RuntimeException("trying to set a window visible when it already is visible");
+                System.err.println("trying to set a window visible when it already is visible");
+                dumpStack();
+            }
+            if (w==null) {
+                System.err.println("trying to set add a null window");
+                dumpStack();
             }
             //#enddebug
 
@@ -954,7 +959,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public void setSelectedFrame(Window w) {
         // dont want to change the windows Vector while we are painting
         synchronized (repaintComponent) {
-            if (windows.contains(w) || w == null) {
+            if ( windows.contains(w) ) {
 
                 if (currentWindow == w) {
                     return;
@@ -970,7 +975,8 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#mdebug
             else {
-                throw new RuntimeException("cant setSelected, this window is not visible: " + w);
+                System.err.println("cant setSelected, this window is not visible: " + w);
+                dumpStack();
             }
             //#enddebug
         }
@@ -991,7 +997,8 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#mdebug
             else {
-                throw new RuntimeException("cant remove, this window is not visible: " + w);
+                System.err.println("cant remove, this window is not visible: " + w);
+                dumpStack();
             }
             //#enddebug
         }
