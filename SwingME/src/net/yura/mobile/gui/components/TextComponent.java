@@ -181,7 +181,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
             //#mdebug
             else {
-                System.out.println("something not right here?!?!?! "+actionCommand);
+                System.err.println("something not right here?!?!?! "+actionCommand);
             }
             //#enddebug
 	}

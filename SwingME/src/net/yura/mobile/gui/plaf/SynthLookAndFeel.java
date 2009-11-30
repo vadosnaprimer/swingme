@@ -43,8 +43,8 @@ public class SynthLookAndFeel extends LookAndFeel {
         }
         catch (Exception ex) {
             //#mdebug
+            System.err.println("can not load image: "+path);
             ex.printStackTrace();
-            System.out.println("can not load image: "+path);
             //#enddebug
             return null;
         }
@@ -55,8 +55,8 @@ public class SynthLookAndFeel extends LookAndFeel {
         }
         catch (Exception ex) {
             //#mdebug
+            System.err.println("can not load resource: "+path);
             ex.printStackTrace();
-            System.out.println("can not load resource: "+path);
             //#enddebug
             return null;
         }

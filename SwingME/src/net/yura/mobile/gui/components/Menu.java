@@ -288,7 +288,7 @@ public class Menu extends Button {
             }
             //#mdebug
             else {
-                System.out.println("unknown command in menu: "+actionCommand);
+                System.err.println("unknown command in menu: "+actionCommand);
             }
             //#enddebug
 

@@ -412,7 +412,11 @@ public class Window extends Panel {
             }
             //#mdebug
             else {
-                System.out.println("whats this all about?");
+                System.err.println("whats this all about?");
+                throw new RuntimeException();
+            }
+            if (softkey==null) {
+                System.err.println("trying to add null button");
                 throw new RuntimeException();
             }
             //#enddebug
@@ -433,7 +437,11 @@ public class Window extends Panel {
             }
             //#mdebug
             else {
-                System.out.println("whats this all about?");
+                System.err.println("whats this all about?");
+                throw new RuntimeException();
+            }
+            if (softkey==null) {
+                System.err.println("trying to remove null button");
                 throw new RuntimeException();
             }
             //#enddebug

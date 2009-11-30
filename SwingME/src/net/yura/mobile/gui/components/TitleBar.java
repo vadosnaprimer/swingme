@@ -229,7 +229,7 @@ public class TitleBar extends Panel implements ActionListener {
         }
         else {
              //#debug
-            System.out.println("unknow Window command: "+actionCommand);
+            System.err.println("unknow Window command: "+actionCommand);
         }
 
     }

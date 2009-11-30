@@ -381,7 +381,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
         else {
             //#debug
-            System.out.println("unknown action in file browser: " + myaction);
+            System.err.println("unknown action in file browser: " + myaction);
         }
 
     }

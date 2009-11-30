@@ -200,7 +200,10 @@ public class List extends Component implements ActionListener {
     public void addActionListener(ActionListener l) {
         //#mdebug
         if (al!=null) {
-            System.out.println("trying to add a ActionListener when there is already one registered");
+            System.err.println("trying to add a ActionListener when there is already one registered");
+        }
+        if (l==null) {
+            System.err.println("trying to add a null ActionListener");
         }
         //#enddebug
         al = l;
@@ -210,7 +213,10 @@ public class List extends Component implements ActionListener {
         if (al == l) { al = null; }
         //#mdebug
         else {
-            System.out.println("trying to remove a ActionListener that is not registered");
+            System.err.println("trying to remove a ActionListener that is not registered");
+        }
+        if (l==null) {
+            System.err.println("trying to remove a null ActionListener");
         }
         //#enddebug
     }
@@ -734,7 +740,7 @@ public class List extends Component implements ActionListener {
         }
         //#mdebug
         else {
-            System.out.println("unknown command in List actionPerformed: " + actionCommand);
+            System.err.println("unknown command in List actionPerformed: " + actionCommand);
         }
         //#enddebug
 

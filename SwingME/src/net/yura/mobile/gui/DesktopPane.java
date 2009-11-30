@@ -39,7 +39,6 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
-import net.yura.mobile.util.ImageUtil;
 
 /**
  * @author Yura Mamyrin
@@ -102,7 +101,7 @@ public class DesktopPane extends Canvas implements Runnable {
             else {
                 // if this happens it means that when i add a scrollbar it says it
                 // does not need one, and as soon as i remove it, it says it does
-                System.out.println("asking for revalidate 4th time: "+p);
+                System.err.println("asking for revalidate 4th time: "+p);
                 dumpStack();
             }
             //#enddebug
@@ -647,7 +646,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public void revalidateComponent(Component rc) {
         //#mdebug
         if (rc.getWidth() == 0 || rc.getHeight() ==0 ) {
-            System.out.println("revalidate called on a component with 0 width and 0 height");
+            System.err.println("revalidate called on a component with 0 width and 0 height");
             dumpStack();
         }
         //#enddebug
@@ -1129,7 +1128,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 desktop.debugwindow.repaint();
             }
         } catch (Throwable th) {
-            System.out.println("unable to log: " + s);
+            System.err.println("unable to log: " + s);
             th.printStackTrace();
         }
     //#enddebug

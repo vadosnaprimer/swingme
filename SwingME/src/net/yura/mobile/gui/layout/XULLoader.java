@@ -134,7 +134,7 @@ public class XULLoader {
                 }
                 //#mdebug
                 else {
-                    System.out.println("property does not have a key and value");
+                    System.err.println("property does not have a key and value");
                 }
                 //#enddebug
             }
