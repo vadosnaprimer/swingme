@@ -168,12 +168,26 @@ public class List extends Component implements ActionListener {
 
             }
 
-            setSize(totalWidth,totalHeight);
+            width = totalWidth;
+            height = totalHeight;
         //}
 
     }
 
+    public void setSize(int w,int h) {
+        super.setSize(w, h);
 
+        // if we have changed size since the last request to make a index visible
+        // then we must try again
+        if (ensureIndexIsVisible!=-1) {
+            Component c = getRendererComponentFor(ensureIndexIsVisible);
+            boolean yes = isRectVisible( c.getXWithBorder(), c.getYWithBorder(), c.getWidthWithBorder(), c.getHeightWithBorder());
+            if (!yes) {
+                ensureIndexIsVisible(ensureIndexIsVisible);
+            }
+        }
+
+    }
 
     /**
      * @param horizontal
@@ -274,6 +288,8 @@ public class List extends Component implements ActionListener {
     }
 
     public void paintComponent(Graphics2D g) {
+
+        ensureIndexIsVisible = -1;
 
         boolean good=false;
         int clipx = g.getClipX();
@@ -665,7 +681,24 @@ public class List extends Component implements ActionListener {
         current = a;
         if (current!=-1) {
 
-            Component c = getRendererComponentFor(a);
+            ensureIndexIsVisible(current);
+
+            if (chl!=null && old!=current) {
+                chl.changeEvent(this,current);
+            }
+            // TODO as scroll to always does a repaint
+            // we dont need it here
+            // BUT what if we are not in a scrollPane??
+            repaint();
+        }
+    }
+
+    private int ensureIndexIsVisible=-1;
+    /**
+     * @see javax.swing.JList#ensureIndexIsVisible(int) JList.ensureIndexIsVisible
+     */
+    public void ensureIndexIsVisible(int i) {
+            Component c = getRendererComponentFor(i);
             // good, but too simple
             // what if we are scrolled right already?
             //scrollTo(c);
@@ -691,14 +724,7 @@ public class List extends Component implements ActionListener {
                 scrollRectToVisible( -x, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
             }
 
-            if (chl!=null && old!=current) {
-                chl.changeEvent(this,a);
-            }
-            // TODO as scroll to always does a repaint
-            // we dont need it here
-            // BUT what if we are not in a scrollPane??
-            repaint();
-        }
+            ensureIndexIsVisible = i;
     }
 
     public void actionPerformed(String actionCommand) {
