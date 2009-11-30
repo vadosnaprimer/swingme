@@ -249,9 +249,7 @@ public class TabbedPane extends Panel implements ChangeListener {
 			tabContent.setPreferredSize(tabContent.getPreferredWidth(),component.getHeightWithBorder());
 		}
 	    }
-System.out.println("bob "+tabContent.getPreferredWidth()+" "+tabContent.getPreferredHeight());
 	    super.workoutMinimumSize();
-
         }
 
     public void changeEvent(Component source, int num) {
@@ -261,9 +259,10 @@ System.out.println("bob "+tabContent.getPreferredWidth()+" "+tabContent.getPrefe
         tabContent.removeAll();
         tabContent.add(thetabtoAdd);
 
-        tabContent.revalidate();
-        tabContent.repaint();
-
+        if (getWindow()!=null) {
+            tabContent.revalidate();
+            tabContent.repaint();
+        }
     }
 
     public void removeAll() {
