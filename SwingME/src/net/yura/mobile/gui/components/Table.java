@@ -574,11 +574,11 @@ public class Table extends Panel {
     public void setRowHeight(int rowHeight) {
         
         this.rowHeight = rowHeight;
-        
-        if (parent!=null) {
-            parent.revalidate();
-            parent.repaint();
-        }
+//
+//        if (parent!=null) {
+//            parent.revalidate();
+//            parent.repaint();
+//        }
 
     }
     
