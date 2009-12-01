@@ -479,13 +479,20 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         private int widthUsed = -1;
         public void workoutMinimumSize() {
-            if (widthUsed==-1) {
-                width = getRowHeight(0);
-                height = getRowHeight(0);
+            if (getPreferredWidth()!=-1) {
+                width = getPreferredWidth();
+                widthUsed = width;
+                height = workoutHeight();
             }
             else {
-                width = getRowHeight(0);
-                height = workoutHeight();
+                if (widthUsed==-1) {
+                    width = getRowHeight(0);
+                    height = getRowHeight(0);
+                }
+                else {
+                    width = getRowHeight(0);
+                    height = workoutHeight();
+                }
             }
         }
         public void setSize(int w,int h) {
