@@ -17,7 +17,6 @@
 
 package net.yura.mobile.gui.components;
 
-import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;

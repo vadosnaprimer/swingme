@@ -73,9 +73,6 @@ public class Table extends Panel {
      * @see javax.swing.JTable#JTable()
      */
     public Table() {
-
-        setName("Table");
-        
         colWidths = new Vector();
         rowHeight = (int) (theme.getFont(Style.ALL).getHeight() * 1.5); // default value
         
@@ -88,6 +85,10 @@ public class Table extends Panel {
         // default renderer
         setDefaultRenderer(Object.class, new DefaultListCellRenderer());
         setDefaultEditor(Object.class, new DefaultCellEditor( new TextField() ));
+    }
+
+    public String getDefaultName() {
+        return "Table";
     }
 
     /**

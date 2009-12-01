@@ -31,7 +31,6 @@ import net.yura.mobile.util.Option;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.layout.BorderLayout;
-import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.io.NativeUtil;
 import net.yura.mobile.util.ImageUtil;
 
@@ -402,6 +401,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         public GridList(int cellSize) {
             setRowHeight(cellSize);
+        }
+
+        public String getDefaultName() {
+            return "List";
         }
 
         /**
