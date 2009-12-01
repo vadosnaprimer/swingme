@@ -410,8 +410,12 @@ public class List extends Component implements ActionListener {
     public void focusGained() {
         super.focusGained();
         if (getSize() != 0 ) {
-            if (current==-1 || current>=getSize()) { current=0; }
-            setSelectedIndex(current);
+            if (current==-1 || current>=getSize()) {
+                setSelectedIndex(0);
+            }
+            else {
+                ensureIndexIsVisible(current);
+            }
         }
 
         if (useSelectButton) {
@@ -918,11 +922,11 @@ public class List extends Component implements ActionListener {
      */
     public void removeElementAt(int i) {
         items.removeElementAt(i);
-        if (current == i) {
-            current = -1;
-        }
-        else if (current > i) {
+        if (current > i) { //  we have removed something before the current position
             current--;
+        }
+        else if (current == i) { // we have removed the current item
+            setSelectedIndex(-1);
         }
     }
 

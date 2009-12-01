@@ -716,9 +716,14 @@ public class XULLoader {
                         ((TextArea)text).setLineWrap( "true".equals(value) );
                     }
                 }
-                else if ("columns".equals(key)) {
+                else if ("columns".equals(key)) { // TODO could be done better
                     if (text instanceof TextComponent) {
-                        ((TextComponent)text).setPreferredSize( ((TextComponent)text).getFont().getWidth('W') * Integer.parseInt(value) , -1);
+                        ((TextComponent)text).setPreferredSize( ((TextComponent)text).getFont().getWidth('W') * Integer.parseInt(value) , ((TextComponent)text).getPreferredHeight());
+                    }
+                }
+                else if ("rows".equals(key)) {
+                    if (text instanceof TextArea) {
+                        ((TextArea)text).setPreferredSize( ((TextArea)text).getPreferredWidth(), ((TextArea)text).getFont().getHeight() * Integer.parseInt(value) );
                     }
                 }
 
