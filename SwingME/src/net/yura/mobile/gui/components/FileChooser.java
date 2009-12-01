@@ -624,7 +624,6 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     class SelectableFileRenderer extends CheckBox implements ListCellRenderer, TableCellEditor {
 
         private SelectableFile tbOption;
-        private int state;
 
         public SelectableFileRenderer() {
             setVerticalAlignment(Graphics.BOTTOM);
@@ -643,7 +642,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 name = name.substring(0, name.length() - 1);
             }
 
-            g.setColor(foreground);
+            g.setColor( getCurrentForeground() );
 
             if (gridView.isSelected()) {
                 if (img != null) {
@@ -679,25 +678,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-
-            state = Style.ALL;
-            if (list != null && !list.isFocusable()) {
-                state |= Style.DISABLED;
-            }
-            if (cellHasFocus) {
-                state |= Style.FOCUSED;
-            }
-            if (isSelected) {
-                state |= Style.SELECTED;
-            }
-
-            //setBorder(isSelected?activeBorder:normalBorder);
-            //setForeground(isSelected?activeForeground:normalForeground);
+            setupState(list, isSelected, cellHasFocus);
             return getTableCellEditorComponent(null, value, isSelected, 0, 0);
-        }
-
-        public int getState() {
-            return state;
         }
 
         public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
