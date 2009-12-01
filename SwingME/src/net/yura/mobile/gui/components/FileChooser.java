@@ -51,7 +51,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 //    private boolean useGridView;
 //    private boolean showOnlyNew;
     private Button doneButton;
-    private Label listTitle;
+//    private Label listTitle;
     private ScrollPane scroll;
     private Vector files;
     private Vector lastFewImages;
@@ -67,7 +67,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         //setActionListener(this);
 
         setName("Dialog");
-        listTitle = new Label();
+//        listTitle = new Label();
         //VistoPane.addTitleToWindow(this, listTitle);
 
         addressBar = new Label(dir);
@@ -121,28 +121,20 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     }
 
-    public void setSize(int w, int h) {
+    public void doLayout() {
         // called on revalidate
-
-        calcThumbSize(w,h);
-
-        super.setSize(w, h);
+        calcThumbSize(width,height);
+        super.doLayout();
     }
 
     private void calcThumbSize(int w,int h) {
         if (gridView.isSelected()) {
-
             int a = (h > w) ? w : h;
-
             thumbSize = a/10 + 30;
             // a nice way to work out the best icon size to use
-
             fileTable.setRowHeight( thumbSize + 5 ); // some padding
-
-
         }
         else {
-
             thumbSize = thumbOptionRenderer.getFont().getHeight();
             fileList.setFixedCellHeight( thumbSize + 6 ); // some padding
         }
@@ -212,11 +204,11 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
      * @param approveButtonText the text that will be on the button to select the file
      * @see javax.swing.JFileChooser#showDialog(java.awt.Component, java.lang.String) JFileChooser.showDialog
      */
-    public void showDialog(ActionListener al, String a, String title, String approveButtonText) {
+    public void showDialog(ActionListener al, String action, String title, String approveButtonText) {
         actionListener = al;
-        action = a;
+        this.action = action;
 
-        listTitle.setText(title);
+        setTitle(title);
         doneButton.setText(approveButtonText);
 
         setMaximum(true);
