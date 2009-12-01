@@ -43,10 +43,11 @@ public class BorderLayout implements Layout {
                 int left=0;
                 
                 for (int c=0;c<components.size();c++) {
-			
 			Component comp = (Component)components.elementAt(c);
+                        if (!comp.isVisible()) {
+                            continue;
+                        }
                         Integer pos = (Integer)cons.get(comp);
-
                         if (pos!=null) {
                             switch (pos.intValue()) {
                                 case Graphics.TOP:
@@ -73,8 +74,10 @@ public class BorderLayout implements Layout {
                 int height=panel.getHeight();
                 
                 for (int c=0;c<components.size();c++) {
-			
 			Component comp = (Component)components.elementAt(c);
+                        if (!comp.isVisible()) {
+                            continue;
+                        }
                         Integer pos = (Integer)cons.get(comp);
                         int p = (pos==null)?0:pos.intValue();
                         
@@ -112,8 +115,10 @@ public class BorderLayout implements Layout {
                 int h2=0;
                 
                 for (int c=0;c<components.size();c++) {
-			
 			Component comp = (Component)components.elementAt(c);
+                        if (!comp.isVisible()) {
+                            continue;
+                        }
                         Integer pos = (Integer)cons.get(comp);
                         int p = (pos==null)?0:pos.intValue();
                         
@@ -156,8 +161,10 @@ public class BorderLayout implements Layout {
                 int w2=0;
                 
                 for (int c=0;c<components.size();c++) {
-
 			Component comp = (Component)components.elementAt(c);
+                        if (!comp.isVisible()) {
+                            continue;
+                        }
                         Integer pos = (Integer)cons.get(comp);
                         int p = (pos==null)?0:pos.intValue();
                         
