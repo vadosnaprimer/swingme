@@ -447,13 +447,25 @@ public abstract class Component {
         }
 
         /**
+         * @see java.awt.Component#isShowing() Component.isShowing
+         */
+        public boolean isShowing() {
+            boolean vis = isVisible();
+            Panel p1 = getParent();
+            while (vis && p1!=null) {
+                vis = p1.isVisible();
+                p1 = p1.getParent();
+            }
+            return vis;
+        }
+
+        /**
          * @see java.awt.Component#repaint() Component.repaint
          */
 	public void repaint() {
 
                 // if we are not in a window, do nothing
-                Window w = getWindow();
-		if (!isVisible() || w==null || !w.isVisible()) return;
+		if (getWindow()==null || !isShowing()) return;
 
 		if (!isOpaque()) {
 
