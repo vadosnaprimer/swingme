@@ -264,7 +264,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     }
     
     private boolean factory;
-    public static void showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, Button[] options, Button initialValue) {
+    public static OptionPane showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, Button[] options, Button initialValue) {
 
         Vector myselfs = getAllWindows();
         OptionPane myself=null;
@@ -311,6 +311,8 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         myself.setInitialValue(initialValue);
         
         DesktopPane.getDesktopPane().invokeLater(myself);
+
+        return myself;
     }
 
     public static void showMessageDialog(ActionListener parent, Object message, String title, int messageType) {
