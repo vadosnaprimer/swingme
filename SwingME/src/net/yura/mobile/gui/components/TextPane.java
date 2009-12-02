@@ -90,12 +90,14 @@ public class TextPane extends Component {
             if (icon == null) {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
-                g.setColor(style.getForeground(state));
-                Font f = style.getFont(state);
-                if (f==null) { f = theme.getFont(state); }
-                g.setFont(f);
+                if (str.length() > 0) {
+                    g.setColor(style.getForeground(state));
+                    Font f = style.getFont(state);
+                    if (f==null) { f = theme.getFont(state); }
+                    g.setFont(f);
 
-                g.drawString(str, lineFrag.x, lineFrag.y);
+                    g.drawString(str, lineFrag.x, lineFrag.y);
+                }
             } else {
                 Image img = icon.getImage();
                 g.drawImage(img, lineFrag.x, lineFrag.y);
@@ -491,21 +493,21 @@ public class TextPane extends Component {
 
                 if ("\n".equals(lastLineText)) {
                     if (lastLineX <= 0) {
-                        lineFragments.addElement(new LineFragment(0, 0, 0, 0, style, 0, 0));
+                        lineFragments.addElement(new LineFragment(0, 0, 0, fragH, style, 0, 0));
                     }
                     lastLineX = 0;
 
                 } else {
-                    if (j < lines.length) {
-                        // We can safely trim, since there will be more lines
-                        lastLineText = trimStringRightSide(lastLineText);
-                    }
+
+                    // We can safely trim the last space, if we have more lines
+                    boolean trimSpace = (j < lines.length);
+                    // Trim right hard returns...
+                    lastLineText = trimStringRightSide(lastLineText, trimSpace);
 
                     int fragW = f.getWidth(lastLineText);
 
                     if (fragW > 0) {
                         fragW += borderW;
-                        // Note: First fragments on a line have negative width
                         LineFragment lineFrag = new LineFragment(lastLineX, 0, fragW, fragH, style, startFragIdx, startFragIdx + lastLineText.length());
                         lineFragments.addElement(lineFrag);
                     }
@@ -626,10 +628,20 @@ public class TextPane extends Component {
                (align == TextStyle.ALIGN_RIGHT)? (width - lineW) : 0;
     }
 
-    private String trimStringRightSide(String str) {
+    private String trimStringRightSide(String str, boolean trimSpace) {
 
-        int n = str.length() - 1;
-        return (n >= 0 && str.charAt(n) == ' ') ? str.substring(0, n) : str;
+        int startLen = str.length();
+        int endLen = startLen;
+
+        if (endLen > 0 && str.charAt(endLen - 1) == '\n') {
+            endLen--;
+        }
+
+        if (trimSpace && endLen > 0 && str.charAt(endLen - 1) == ' ') {
+            endLen--;
+        }
+
+        return (endLen != startLen) ? str.substring(0, endLen) : str;
     }
 
     /**
