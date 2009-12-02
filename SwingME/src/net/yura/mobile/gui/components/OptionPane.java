@@ -315,15 +315,15 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         return myself;
     }
 
-    public static void showMessageDialog(ActionListener parent, Object message, String title, int messageType) {
+    public static OptionPane showMessageDialog(ActionListener parent, Object message, String title, int messageType) {
         
-        showOptionDialog(parent, message, title, OK_OPTION, messageType, null, null, null);
+        return showOptionDialog(parent, message, title, OK_OPTION, messageType, null, null, null);
         
     }
 
-    public static void showConfirmDialog(ActionListener parent, Object message, String title, int optionType) {
+    public static OptionPane showConfirmDialog(ActionListener parent, Object message, String title, int optionType) {
         
-        showOptionDialog(parent, message, title, optionType, QUESTION_MESSAGE, null, null, null);
+        return showOptionDialog(parent, message, title, optionType, QUESTION_MESSAGE, null, null, null);
         
     }
 
