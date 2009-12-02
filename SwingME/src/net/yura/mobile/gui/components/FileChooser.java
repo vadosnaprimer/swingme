@@ -464,6 +464,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         public void setRowHeight(int h) {
+            removeEditor(); // make sure editor is closed
             int index = getSelectedIndex();
             super.setRowHeight(h);
             setSelectedIndex(index);
@@ -494,6 +495,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
                 int oldh = height;
 
+                removeEditor(); // make sure editor is closed
                 int index = getSelectedIndex();
                 widthUsed = width;
                 setSelectedIndex(index);
