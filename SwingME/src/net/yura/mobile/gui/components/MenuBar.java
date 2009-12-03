@@ -158,18 +158,18 @@ public class MenuBar extends List implements ActionListener {
             Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
             if (b!=null) {
                 off = b.getWidthWithBorder();
-                if (DesktopPane.getDesktopPane().isSideSoftKeys()) {
-                    int minWidth=0;
-                    ListCellRenderer renderer = getCellRenderer();
-                    int current = getSelectedIndex();
-                    for(int i = 0; i < getSize(); i++){
-                        Object item = getElementAt(i);
-                        Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
-                        c.workoutSize();
-                        minWidth = minWidth + c.getWidthWithBorder();
-                    }
-                    off = width - off - minWidth;
+            }
+            if (DesktopPane.getDesktopPane().isSideSoftKeys()) {
+                int minWidth=0;
+                ListCellRenderer renderer = getCellRenderer();
+                int current = getSelectedIndex();
+                for(int i = 0; i < getSize(); i++){
+                    Object item = getElementAt(i);
+                    Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
+                    c.workoutSize();
+                    minWidth = minWidth + c.getWidthWithBorder();
                 }
+                off = width - off - minWidth;
             }
         }
         g.translate(off, 0);
