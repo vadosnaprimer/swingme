@@ -56,6 +56,10 @@ public class MenuBar extends List implements ActionListener {
         return "MenuBar";
     }
 
+    /**
+     * @see Panel#add(net.yura.mobile.gui.components.Component)
+     * @see java.awt.Container#add(java.awt.Component) Container.add
+     */
     public void add(Component button) {
         addElement(button);
         Window w = getWindow();
@@ -65,14 +69,30 @@ public class MenuBar extends List implements ActionListener {
     }
 
     /**
+     * @see Panel#removeAll()
      * @see java.awt.Container#removeAll()
      */
     public void removeAll() {
+        setSelectedIndex(-1);
         getItems().removeAllElements();
     }
 
+    /**
+     * @see Panel#remove(net.yura.mobile.gui.components.Component)
+     * @see java.awt.Container#remove(java.awt.Component) Container.remove
+     */
     public void remove(Component c) {
+        setSelectedIndex(-1); // TODO can be done better
         getItems().removeElement(c);
+    }
+
+    /**
+     * @see Panel#insert(net.yura.mobile.gui.components.Component, int)
+     * @see java.awt.Container#add(java.awt.Component, int) Container.add
+     */
+    public void insert(Component component,int index) {
+        setSelectedIndex(-1); // TODO can be done better
+        getItems().insertElementAt(component, index);
     }
 
     public static void autoMnemonic(Vector items) {
