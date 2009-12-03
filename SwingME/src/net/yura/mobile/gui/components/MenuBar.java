@@ -54,10 +54,10 @@ public class MenuBar extends List implements ActionListener {
         return "MenuBar";
     }
 
-    public void add(Button button) {
+    public void add(Component button) {
         addElement(button);
         Window w = getWindow();
-        if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+        if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this && button instanceof Button) {
             autoMnemonic( getItems() );
         }
     }
