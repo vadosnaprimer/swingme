@@ -29,13 +29,8 @@ import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 public class MenuBar extends List implements ActionListener {
 
     public MenuBar() {
-
         setLayoutOrientation(true);
-
-        MenuItemRenderer renderer = new MenuItemRenderer();
-
-        setCellRenderer(renderer);
-
+        setCellRenderer( new MenuItemRenderer() );
         setActionCommand("activate");
         addActionListener(this);
     }
@@ -61,11 +56,17 @@ public class MenuBar extends List implements ActionListener {
 
     public void add(Button button) {
         addElement(button);
-
         Window w = getWindow();
         if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
             autoMnemonic( getItems() );
         }
+    }
+
+    /**
+     * @see java.awt.Container#removeAll()
+     */
+    public void removeAll() {
+        getItems().removeAllElements();
     }
 
     public static void autoMnemonic(Vector items) {
@@ -81,56 +82,75 @@ public class MenuBar extends List implements ActionListener {
                 }
             }
         }
-
-    }
-
-    /**
-     * @see java.awt.Container#removeAll()
-     */
-    public void removeAll() {
-        getItems().removeAllElements();
     }
 
     public void actionPerformed(String actionCommand) {
         if ("activate".equals(actionCommand)) {
             int index = getSelectedIndex();
-            Button button = (Button)getElementAt(index);
-            Component comp = getRendererComponentFor( index );
-            button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
-            button.fireActionPerformed();
+            if (index >= 0) {
+                Button button = (Button)getElementAt(index);
+                Component comp = getRendererComponentFor( index );
+                button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                button.fireActionPerformed();
+            }
         }
         else {
             super.actionPerformed(actionCommand);
         }
     }
 
-        public Button findMneonicButton(int mnu) {
-            Vector items = getItems();
-            for(int i = 0; i < items.size(); i++) {
-                Object component = items.elementAt(i);
-                if (component instanceof Button) {
-                    Button button = (Button)component;
-                    if (button.getMnemonic() == mnu) {
-                        if (button.isVisible()) {
-                            Component comp = getRendererComponentFor(i);
-                            button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
-                        }
-                        return button;
+    public Button findMneonicButton(int mnu) {
+        Vector items = getItems();
+        for(int i = 0; i < items.size(); i++) {
+            Object component = items.elementAt(i);
+            if (component instanceof Button) {
+                Button button = (Button)component;
+                if (button.getMnemonic() == mnu) {
+                    if (button.isVisible()) {
+                        Component comp = getRendererComponentFor(i);
+                        button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                     }
-                    else if (component instanceof Menu) {
-                        Button button1 = ((Menu)component).findMneonicButton(mnu);
-                        if (button1!=null) {
-                            return button1;
-                        }
+                    return button;
+                }
+                else if (component instanceof Menu) {
+                    Button button1 = ((Menu)component).findMneonicButton(mnu);
+                    if (button1!=null) {
+                        return button1;
                     }
                 }
             }
-            return null;
-
         }
+        return null;
 
+    }
 
+    // we can only allow focusable components to be selected
+    public void setSelectedIndex(int a) {
+        if (a>=0) {
+            int current = getSelectedIndex();
+            Component c;
+            while (true) {
+                c = (Component)getElementAt( a ); // TODO should check if in range
+                if (c==null || c.isFocusable()) {
+                    break;
+                }
+                if ( current > a) {
+                    a--;
+                }
+                else if (current < a) {
+                    a++;
+                }
+            }
+            if (c==null) {
+                a = current;
+            }
+        }
+        super.setSelectedIndex(a);
+    }
 
+    // #########################################################################
+    // ################################## MODEL ################################
+    // #########################################################################
 
     public Object getElementAt(int index) {
         Vector items = getItems();
@@ -146,8 +166,6 @@ public class MenuBar extends List implements ActionListener {
         return null;
     }
 
-
-
     public int getSize() {
         Vector items = getItems();
         int count=0;
@@ -156,7 +174,6 @@ public class MenuBar extends List implements ActionListener {
                 count++;
             }
         }
-
         return count;
     }
 
