@@ -60,14 +60,16 @@ public class MenuBar extends List implements ActionListener {
     }
 
     public void add(Button button) {
-
-        // this is same as in optionpane
-        if (button.getMnemonic() == 0) {
-            switch(getSize()) {
-                // TODO make sure this mnemonic is not used for another button
-                case 0: button.setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
-                case 1: button.setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
-                case 2: button.setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
+        Window w = getWindow();
+        if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+            // this is same as in optionpane
+            if (button.getMnemonic() == 0) {
+                switch(getItems().size()) {
+                    // TODO make sure this mnemonic is not used for another button
+                    case 0: button.setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
+                    case 1: button.setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
+                    case 2: button.setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
+                }
             }
         }
         addElement(button);

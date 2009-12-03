@@ -110,10 +110,11 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         close.addActionListener(this);
 
         MenuBar bar = new MenuBar();
+        setMenuBar(bar);
+        // we need to add it to the window before we add the buttons so they get
+        // auto softkey assigned
         bar.add(popupMenu);
         bar.add(close);
-
-        setMenuBar(bar);
 
         files = new Vector(0);
         lastFewImages = new Vector();
