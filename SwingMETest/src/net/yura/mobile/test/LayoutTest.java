@@ -65,7 +65,7 @@ public class LayoutTest  extends Section {
                 }
                 else if ("xulTest2".equals(actionCommand)) {
 
-                    final Frame window = new Frame();
+                    final Frame window = new Frame("GEN DEMO");
 
                     try {
                         XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/generate.xml"), new ActionListener() {

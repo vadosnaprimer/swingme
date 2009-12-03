@@ -78,8 +78,10 @@ public class ComponentTest  extends Section{
                                 Menu testMain = new Menu("Menu");
 
                                 testMain.add(new Button("test 1"));
-                                testMain.add(new Button("test 2"));
+                                testMain.add(new Button("test 2 lalalalalal"));
                                 testMain.add(new Button("test 3"));
+                                testMain.add(new RadioButton("test ra"));
+                                testMain.add(new CheckBox("test ch"));
 
                                 Menu testMain2 = new Menu("sub Menu");
 
@@ -177,10 +179,10 @@ public class ComponentTest  extends Section{
                     try {
                         XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
                         test1.add( loader.getRoot() );
+                        loader.getRoot().setBackground(0x0000FF00);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
-
 
 
                     // Test that pack method works too
@@ -200,6 +202,7 @@ public class ComponentTest  extends Section{
                 close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
 
                 Panel p = new Panel( new FlowLayout() );
+                p.setBackground(0x000000FF);
                 p.add(foo);
                 p.add(close);
 
@@ -235,6 +238,10 @@ public class ComponentTest  extends Section{
                         scrollTest.add(areas[1]);
                         scrollTest.add(new Button("BOB2") );
                         scrollTest.add(areas[2]);
+
+                        Button center = new Button("center?");
+                        center.setMnemonic(KeyEvent.KEY_SOFTKEY3);
+                        scrollTest.add(center);
 
 			addToScrollPane(scrollTest,null);
                 }

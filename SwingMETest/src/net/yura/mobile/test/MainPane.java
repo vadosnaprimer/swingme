@@ -239,6 +239,12 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 			addToScrollPane(mainmenu, mainMenu, makeButton("Exit","exit") );
 
+                        MenuBar bar = mainWindow.getMenuBar();
+                        //bar.insert(new Label("a"), 0);
+                        //bar.insert(new Label("b"), 2);
+                        //bar.insert(new Label("c"), 4);
+                        bar.addElement( new Label(image) );
+
 		}
                 else if ("aether1".equals(actionCommand)) {
                     setupNewLookAndFeel( new NimbusLookAndFeel() );
