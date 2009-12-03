@@ -209,21 +209,11 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     public void setOptions(Button[] options) {
         cmdPanel.removeAll();
         for (int c=0;c<options.length;c++) {
-
-            // this is same as menubar
-            if (options[c].getMnemonic() == 0) {
-                switch(c) {
-                    // TODO make sure this mnemonic is not used for another button
-                    case 0: options[c].setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
-                    case 1: options[c].setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
-                    case 2: options[c].setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
-                }
-            }
-
             Button button = (Button)options[c];
             button.addActionListener(this);
             cmdPanel.add(button);
         }
+        MenuBar.autoMnemonic( cmdPanel.getComponents() );
     }
 
     public void setIcon(Icon icon) {

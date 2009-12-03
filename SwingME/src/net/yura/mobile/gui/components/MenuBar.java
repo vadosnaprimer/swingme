@@ -60,20 +60,30 @@ public class MenuBar extends List implements ActionListener {
     }
 
     public void add(Button button) {
+        addElement(button);
+
         Window w = getWindow();
         if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+            autoMnemonic( getItems() );
+        }
+    }
+
+    public static void autoMnemonic(Vector items) {
+        for (int c=0;c<items.size();c++) {
+            Component button = (Component)items.elementAt(c);
             // this is same as in optionpane
-            if (button.getMnemonic() == 0) {
-                switch(getItems().size()) {
+            if (button instanceof Button && ((Button)button).getMnemonic() == 0) {
+                switch(c) {
                     // TODO make sure this mnemonic is not used for another button
-                    case 0: button.setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
-                    case 1: button.setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
-                    case 2: button.setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
+                    case 0: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
+                    case 1: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
+                    case 2: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
                 }
             }
         }
-        addElement(button);
+
     }
+
     /**
      * @see java.awt.Container#removeAll()
      */
