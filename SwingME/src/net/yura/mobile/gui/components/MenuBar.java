@@ -71,6 +71,10 @@ public class MenuBar extends List implements ActionListener {
         getItems().removeAllElements();
     }
 
+    public void remove(Component c) {
+        getItems().removeElement(c);
+    }
+
     public static void autoMnemonic(Vector items) {
         for (int c=0;c<items.size();c++) {
             Component button = (Component)items.elementAt(c);
