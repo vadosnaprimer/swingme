@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import java.util.Vector;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
@@ -42,9 +43,12 @@ public class MenuBar extends List implements ActionListener {
     public boolean isVisible() {
 
         // TODO not sure if this should be here or frame
-        if (!DesktopPane.me4se) {
-            Window w = getWindow();
-            if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+        Window w = getWindow();
+
+        // if we are on a phone, and the window is not maximised, this bar is not visible
+        if (!DesktopPane.me4se && w instanceof Frame && !((Frame)w).isMaximum() ) {
+            
+            if (w!=null && ((Frame)w).getMenuBar() == this ) {
                 return false;
             }
         }
@@ -89,15 +93,16 @@ public class MenuBar extends List implements ActionListener {
     }
 
         public Button findMneonicButton(int mnu) {
-
-            int size = getSize();
-            for(int i = 0; i < size; i++) {
-                Object component = getElementAt(i);
+            Vector items = getItems();
+            for(int i = 0; i < items.size(); i++) {
+                Object component = items.elementAt(i);
                 if (component instanceof Button) {
                     Button button = (Button)component;
                     if (button.getMnemonic() == mnu) {
-                        Component comp = getRendererComponentFor(i);
-                        button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                        if (button.isVisible()) {
+                            Component comp = getRendererComponentFor(i);
+                            button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                        }
                         return button;
                     }
                     else if (component instanceof Menu) {
@@ -111,5 +116,36 @@ public class MenuBar extends List implements ActionListener {
             return null;
 
         }
+
+
+
+
+    public Object getElementAt(int index) {
+        Vector items = getItems();
+        int count=0;
+        for (int c=0;c<items.size();c++) {
+            if ( ((Component)items.elementAt(c)).isVisible() ) {
+                if (count == index) {
+                    return items.elementAt(c);
+                }
+                count++;
+            }
+        }
+        return null;
+    }
+
+
+
+    public int getSize() {
+        Vector items = getItems();
+        int count=0;
+        for (int c=0;c<items.size();c++) {
+            if ( ((Component)items.elementAt(c)).isVisible() ) {
+                count++;
+            }
+        }
+
+        return count;
+    }
 
 }

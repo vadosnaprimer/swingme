@@ -230,29 +230,33 @@ public class Frame extends Window {
 
         public void doLayout() {
 
-            int h=0;
-
             TitleBar titleBar = getTitleBar();
+            int th=0;
             if (titleBar!=null && titleBar.isVisible()) {
-                int th = titleBar.getHeightWithBorder();
+                th = titleBar.getHeightWithBorder();
                 titleBar.setBoundsWithBorder(0, 0, width, th);
-                h = h+th;
             }
 
+            boolean bottom = isMaximum && !DesktopPane.me4se;
+
             MenuBar menubar = getMenuBar();
-            //int mh = 0;
+            int mh = 0;
+            if (bottom) {
+                // leave a gap under content pane for soft key
+                // if we r max and on phone and no softkey bar
+                mh = DesktopPane.getDesktopPane().getMenuHeight();
+            }
+            else if (menubar!=null && menubar.isVisible()) {
+                mh = menubar.getHeightWithBorder();
+            }
+
             if (menubar!=null && menubar.isVisible()) {
-
-                int mh = menubar.getHeightWithBorder();
-                menubar.setBoundsWithBorder(0, h, width,mh );
-                h = h+mh;
-
+                menubar.setBoundsWithBorder(0, bottom?height-mh:th, width,mh );
             }
 
             Panel contentPane = getContentPane();
             if (contentPane!=null && contentPane.isVisible()) {
-                                                                          // leave a gap under content pane for soft key
-                contentPane.setBoundsWithBorder(0, h, width, height - h - (isMaximum && !DesktopPane.me4se? DesktopPane.getDesktopPane().getMenuHeight() :0) );
+                contentPane.setBoundsWithBorder(0, th+(bottom?0:mh), width, height -th -mh );
             }
 
         }
@@ -310,8 +314,10 @@ public class Frame extends Window {
                 // happens in the correct thred
                 // so this method remains threadsafe
                 //setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
-                revalidate();
+
             }
+
+            revalidate();
 /*
             else { // TODO
                 setLocation(oldX, oldY);

@@ -28,14 +28,14 @@ import net.yura.mobile.gui.components.Button;
  */
 public class MenuItemRenderer extends Component implements ListCellRenderer {
 
-    private Button component;
+    private Component component;
     
     public MenuItemRenderer() {
     }
 
     public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         if (value==null) return null;
-        component = (Button)value;
+        component = (Component)value;
         setupState(list, isSelected, cellHasFocus);
         return this;
     }
