@@ -34,10 +34,15 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
     }
 
     public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        if (value==null) return null;
-        component = (Component)value;
-        setupState(list, isSelected, cellHasFocus);
-        return this;
+        if (value instanceof Button) {
+            component = (Component)value;
+            setupState(list, isSelected, cellHasFocus);
+            return this;
+        }
+        else if (value instanceof Component) {
+            return (Component)value;
+        }
+        return null;
     }
 
     public void paintComponent(Graphics2D g) {

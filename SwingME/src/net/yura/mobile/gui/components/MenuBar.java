@@ -20,7 +20,9 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 
 /**
@@ -146,6 +148,33 @@ public class MenuBar extends List implements ActionListener {
             }
         }
         super.setSelectedIndex(a);
+    }
+
+    public void paintComponent(Graphics2D g) {
+        Window w = getWindow();
+        int off = 0;
+        // if we are on a phone, and the window is not maximised, this bar is not visible
+        if (!DesktopPane.me4se && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+            Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
+            if (b!=null) {
+                off = b.getWidthWithBorder();
+                if (DesktopPane.getDesktopPane().isSideSoftKeys()) {
+                    int minWidth=0;
+                    ListCellRenderer renderer = getCellRenderer();
+                    int current = getSelectedIndex();
+                    for(int i = 0; i < getSize(); i++){
+                        Object item = getElementAt(i);
+                        Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
+                        c.workoutSize();
+                        minWidth = minWidth + c.getWidthWithBorder();
+                    }
+                    off = width - off - minWidth;
+                }
+            }
+        }
+        g.translate(off, 0);
+        super.paintComponent(g);
+        g.translate(-off, 0);
     }
 
     // #########################################################################
