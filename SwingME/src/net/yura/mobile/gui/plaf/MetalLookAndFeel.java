@@ -267,6 +267,10 @@ public class MetalLookAndFeel extends LookAndFeel {
             tooltipSkin.addBorder(new LineBorder( getPrimary1() ),Style.ALL);
             setStyleFor("ToolTip",tooltipSkin);
 
+            Style separator = new Style(defaultStyle);
+            separator.addBackground( getSecondary1() , Style.ALL);
+            setStyleFor("Separator",separator);
+
 	}
 
         public void addMetalIcon(Style style, String icon,String prop) {
