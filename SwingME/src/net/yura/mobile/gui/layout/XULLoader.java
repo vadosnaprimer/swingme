@@ -90,13 +90,20 @@ public class XULLoader {
     public void swapComponent(String name,Component comp) {
         Component old = find(name);
 
-        Panel p = old.getParent();
-        GridBagConstraints constr = (GridBagConstraints)p.getConstraints().get(old);
-
-        int index = p.getComponents().indexOf(old);
-        p.remove(old);
-        p.insert(comp, constr, index);
-
+        Component obj = old.getParent();
+        if (obj instanceof Panel) {
+            Panel p = (Panel)obj;
+            GridBagConstraints constr = (GridBagConstraints)p.getConstraints().get(old);
+            int index = p.getComponents().indexOf(old);
+            p.remove(old);
+            p.insert(comp, constr, index);
+        }
+        else if (obj instanceof MenuBar) {
+            MenuBar b = (MenuBar)obj;
+            int i = b.getItems().indexOf(old);
+            b.remove(old);
+            b.insert(comp, i);
+        }
         comp.setName( old.getName() );
         components.put(name, comp);
     }

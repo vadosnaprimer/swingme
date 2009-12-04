@@ -250,15 +250,6 @@ public class Panel extends Component {
     /**
      * this means reclac the size of children
      * and then redo the layout
-     * @see javax.swing.JComponent#revalidate() JComponent.revalidate
-     */
-    public void revalidate() {
-        DesktopPane.getDesktopPane().revalidateComponent(this);
-    }
-
-    /**
-     * this means reclac the size of children
-     * and then redo the layout
      * @see javax.swing.JComponent#validate() JComponent.validate
      */
     public void validate() {
@@ -270,7 +261,6 @@ public class Panel extends Component {
         if (w1!=null) {
             w1.setupFocusedComponent();
         }
-
     }
 
     // BREAK OUT!!!
@@ -358,7 +348,7 @@ public class Panel extends Component {
         if (!scrolled) {
             if (parent != null && !(parent instanceof Window)) {
                 // passes onto parent
-                parent.breakOutAction(this, direction ,scrolltothere,forceFocus);
+                ((Panel)parent).breakOutAction(this, direction ,scrolltothere,forceFocus);
             }
             else if (getWindow().getFocusOwner()!=null) {
                 // done for loop to first/last component
@@ -393,12 +383,6 @@ public class Panel extends Component {
 
     public String toString() {
         return super.toString() + " "+ components;
-    }
-
-    public void clip(Graphics2D g) {
-        if (parent!=null) {
-            parent.clip(g);
-        }
     }
 
     /**

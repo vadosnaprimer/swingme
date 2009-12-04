@@ -722,7 +722,7 @@ public class List extends Component implements ActionListener {
             else {
                 //calc x in relation to the viewport
                 int x = posX;
-                Panel p = parent;
+                Component p = parent;
                 while (p!=null) {
                     if (p instanceof ScrollPane) {
                         break;

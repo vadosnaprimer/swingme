@@ -72,35 +72,15 @@ public class Menu extends Button {
 
         public void fireActionPerformed() {
             super.fireActionPerformed();
-
-            //menuItems.workoutSize(); // what out what the needed size is
-            //scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
             popup.pack();
-
             Border insets=getInsets();
-
-            if (getWindow()!=null) {
-                positionMenuRelativeTo(
-                        popup,
-                        getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
-                        Graphics.TOP
-                        );
-                openMenuAtLocation();
-            }
-            else { // if (DesktopPane.getDesktopPane().getCurrentCommands()[0]!=null) { // ???
-                positionMenuRelativeTo(
-                        popup,
-                        getXWithBorder(),getYWithBorder(),getWidthWithBorder(),getHeightWithBorder(),
-                        parentMenu==null?Graphics.TOP:Graphics.RIGHT
-                        );
-                openMenuAtLocation();
-            }
-
+            positionMenuRelativeTo(
+                    popup,
+                    getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
+                    parentMenu==null?Graphics.TOP:Graphics.RIGHT
+                    );
+            openMenuAtLocation();
         }
-
-//	public Vector getComponents() {
-//		return panel.getComponents();
-//	}
 
         public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,int direction) {
 
@@ -215,7 +195,7 @@ public class Menu extends Button {
          * @see javax.swing.JMenu#removeAll() JMenu.removeAll
          */
         public void removeAll() {
-            menuItems.getItems().removeAllElements();
+            menuItems.removeAll();
         }
 
         private void makeWindow() {
@@ -298,7 +278,7 @@ public class Menu extends Button {
          * @see javax.swing.JMenu#add(java.awt.Component) JMenu.add
          */
         public void add(Component c) {
-            menuItems.addElement(c);
+            menuItems.add(c);
 
             if (c instanceof Menu) {
                 ((Menu)c).setParentMenu(this);

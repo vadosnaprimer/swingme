@@ -66,6 +66,7 @@ public class MenuBar extends List implements ActionListener {
         if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this && button instanceof Button) {
             autoMnemonic( getItems() );
         }
+        button.setParent(this);
     }
 
     /**
@@ -75,6 +76,7 @@ public class MenuBar extends List implements ActionListener {
     public void removeAll() {
         setSelectedIndex(-1);
         getItems().removeAllElements();
+        // TODO reset parents
     }
 
     /**
@@ -84,6 +86,9 @@ public class MenuBar extends List implements ActionListener {
     public void remove(Component c) {
         setSelectedIndex(-1); // TODO can be done better
         getItems().removeElement(c);
+        if (c.getParent() == this) {
+            c.setParent(null);
+        }
     }
 
     /**
@@ -116,7 +121,7 @@ public class MenuBar extends List implements ActionListener {
             if (index >= 0) {
                 Button button = (Button)getElementAt(index);
                 Component comp = getRendererComponentFor( index );
-                button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                button.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                 button.fireActionPerformed();
             }
         }
@@ -134,7 +139,7 @@ public class MenuBar extends List implements ActionListener {
                 if (button.getMnemonic() == mnu) {
                     if (button.isVisible()) {
                         Component comp = getRendererComponentFor(i);
-                        button.setBoundsWithBorder(getXOnScreen()+comp.getXWithBorder(), getYOnScreen()+comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                        button.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                     }
                     return button;
                 }

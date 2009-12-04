@@ -67,10 +67,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
     public static void mySizeChanged(Component aThis) {
 
-        Panel p = aThis.getParent();
+        Component p = aThis.getParent();
         if (p==null) return;
         while (!(p instanceof ScrollPane)) {
-            Panel pp = p.getParent();
+            Component pp = p.getParent();
             if (pp==null) {
                 break;
             }
@@ -616,7 +616,7 @@ public class DesktopPane extends Canvas implements Runnable {
             synchronized (v) {
 
                     for (int c = 0; c < v.size(); c++) {
-                        Panel panel = (Panel) v.elementAt(c);
+                        Component panel = (Component) v.elementAt(c);
                         panel.validate();
                     }
                     v.removeAllElements();
