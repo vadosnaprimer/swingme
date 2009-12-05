@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -82,20 +83,38 @@ public class Menu extends Button {
             openMenuAtLocation();
         }
 
+        private static int extraWidth(Panel p) {
+            Vector children = p.getComponents();
+            for (int c=0;c<children.size();c++) {
+                Component comp = (Component)children.elementAt(c);
+                if (comp instanceof ScrollPane) {
+                    return ((ScrollPane)comp).getBarThickness();
+                }
+                else if (comp instanceof Panel) {
+                    int e = extraWidth( (Panel)comp );
+                    if (e>0) {
+                        return e;
+                    }
+                }
+            }
+            return 0;
+        }
+
         public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,int direction) {
 
             int w = window.getWidthWithBorder();
             int h = window.getHeightWithBorder();
 
-            // resize the popup if its bigger then the screen! if it is then shrink it
-            if (w > DesktopPane.getDesktopPane().getWidth()) {
-                w = DesktopPane.getDesktopPane().getWidth();
-            }
-
             int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getMenuHeight()*2;
 
             if (h > maxh) {
                 h = maxh;
+                w = w + extraWidth(window);
+            }
+
+            // resize the popup if its bigger then the screen! if it is then shrink it
+            if (w > DesktopPane.getDesktopPane().getWidth()) {
+                w = DesktopPane.getDesktopPane().getWidth();
             }
 
             if (direction!=Graphics.RIGHT) {
