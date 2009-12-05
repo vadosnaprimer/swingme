@@ -637,6 +637,13 @@ public class XULLoader {
                         label.setHorizontalAlignment(Graphics.LEFT);
                     }
                 }
+                else if("property".equals(key)) {
+                    Hashtable properties = getProperties(value);
+                    String gap = (String)properties.get("gap");
+                    if (gap!=null) {
+                        label.setIconTextGap( Integer.parseInt(gap) );
+                    }
+                }
             }
 
             if (labelText != null) {
