@@ -22,9 +22,11 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
     public static class Request {
         public String url;
+        public Hashtable headers;
         public Hashtable params;
         public boolean post;
-        public int type;
+        public Object id;
+        public byte[] postData;
     }
 
     protected abstract void onError(Request request, Exception ex);
@@ -48,10 +50,9 @@ public abstract class HTTPClient extends QueueProcessorThread {
           }
           else { // Length not available...
             bStrm = new ByteArrayOutputStream();
-            int ch;
-            while ((ch = iStrm.read()) != -1) {
-              bStrm.write(ch);
-            }
+            int len;
+            for (byte[] buffer = new byte[Math.max(32, iStrm.available())]; (len = iStrm.read(buffer)) != -1; )
+              bStrm.write(buffer, 0, len);
             imageData = bStrm.toByteArray();
             bStrm.close();
           }
@@ -64,7 +65,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
         String url = request.url;
         String getpost = null;
-        if (!request.post && request.params !=null) {
+        if ((!request.post || request.postData!=null) && request.params !=null) {
             StringBuffer getpostb = new StringBuffer();
             Enumeration enu = request.params.keys();
             while(enu.hasMoreElements()) {
@@ -86,7 +87,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
         try {
 
-            if (!request.post && getpost!=null) {
+            if ((!request.post || request.postData!=null) && getpost!=null) {
                 if (url.indexOf('?') >=0) {
                     url = url +"&"+getpost;
                 }
@@ -98,8 +99,12 @@ public abstract class HTTPClient extends QueueProcessorThread {
             httpConn = (HttpConnection)Connector.open(url);
 
             // Setup HTTP Request
-            httpConn.setRequestMethod(request.post?HttpConnection.POST:HttpConnection.GET);
-
+            httpConn.setRequestMethod(request.post || request.postData!=null ? HttpConnection.POST : HttpConnection.GET);
+            for(Enumeration e = request.headers.keys(); e.hasMoreElements(); )
+            {
+              String key = e.nextElement().toString();
+              httpConn.setRequestProperty(key, request.headers.get(key).toString());
+            }
             //httpConn.setRequestProperty("User-Agent",
             //  "Profile/MIDP-1.0 Confirguration/CLDC-1.0");
 
