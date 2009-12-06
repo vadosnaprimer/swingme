@@ -685,13 +685,24 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#setSelectedIndex(int) JList.setSelectedIndex
      */
     public void setSelectedIndex(int a) {
+        setSelectedIndex(a, true);
+    }
 
+    /**
+     *
+     * @param a the index ofthe one cell to select
+     * @param moveScroll if true the scroll positon of the list will be
+     * modified to make the newly selected index visible
+     */
+    public void setSelectedIndex(int a, boolean moveScroll) {
         int old = current;
 
         current = a;
         if (current!=-1) {
 
-            ensureIndexIsVisible(current);
+            if (moveScroll) {
+                ensureIndexIsVisible(current);
+            }
 
             if (chl!=null && old!=current) {
                 chl.changeEvent(this,current);
