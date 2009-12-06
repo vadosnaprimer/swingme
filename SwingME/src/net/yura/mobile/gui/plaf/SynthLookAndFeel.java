@@ -36,6 +36,7 @@ import org.kxml2.io.KXmlParser;
 public class SynthLookAndFeel extends LookAndFeel {
 
     private Style defaultStyle;
+    private Hashtable fonts;
 
     protected Image getImage( String path ) {
         try {
@@ -81,7 +82,9 @@ public class SynthLookAndFeel extends LookAndFeel {
      * @see javax.swing.plaf.synth.SynthLookAndFeel#load(java.io.InputStream, java.lang.Class) SynthLookAndFeel.load
      */
         public void load(InputStream input) throws Exception {
-            
+
+            fonts = new Hashtable();
+
             KXmlParser parser = new KXmlParser();
             parser.setInput(input, null);
             parser.nextTag();
@@ -141,6 +144,8 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             }
 
+            fonts = null;
+
         }
         
         
@@ -179,7 +184,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                             String name2 = parser.getName();
                             
                             if ("font".equals(name2)) {
-                                newStyle.addFont(loadFont(parser,params),st);
+                                newStyle.addFont(loadFont(parser,fonts),st);
                             }
                             else {
                                 if ("imagePainter".equals(name2)) {
@@ -259,7 +264,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                     }
                     else if ("font".equals(name)) {
                             
-                           loadFont(parser,params); 
+                           loadFont(parser,fonts);
                     }
                     else {
                         
@@ -341,6 +346,17 @@ public class SynthLookAndFeel extends LookAndFeel {
         // TODO: support bitmap fonts
         private Font loadFont(KXmlParser parser,Hashtable params) throws Exception {
 
+                Font font = null;
+
+                String fontIdRef = parser.getAttributeValue(null, "idref");
+                if (fontIdRef != null) {
+                    font = (Font) params.get(fontIdRef);
+                    if (font != null) {
+                        parser.skipSubTree();
+                        return font;
+                    }
+                }
+
                 String fontName = parser.getAttributeValue(null, "name");
                 String fontSize = parser.getAttributeValue(null, "size");
                 String fontStyle = parser.getAttributeValue(null, "style");
@@ -412,8 +428,6 @@ System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style:
                     
                     parser.skipSubTree();
                 }
-
-                Font font = null;
                 if (path!=null) {
                     InputStream in = getResourceAsStream(path);
                     if (in!=null) {
