@@ -26,12 +26,13 @@ public abstract class HTTPClient extends QueueProcessorThread {
         public Hashtable params;
         public boolean post;
         public Object id;
+        public int redirects = 5;
         public byte[] postData;
     }
 
-    protected abstract void onError(Request request, Exception ex);
+    protected abstract void onError(Request request, int responseCode, Hashtable headers, Exception ex);
 
-    protected abstract void onResult(Request request, InputStream is,long length) throws IOException;
+    protected abstract void onResult(Request request, int responseCode, Hashtable headers, InputStream is, long length) throws IOException;
 
 
     public static byte[] getData(InputStream iStrm,int length) throws IOException {
@@ -100,7 +101,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
             // Setup HTTP Request
             httpConn.setRequestMethod(request.post || request.postData!=null ? HttpConnection.POST : HttpConnection.GET);
-            for(Enumeration e = request.headers.keys(); e.hasMoreElements(); )
+            if(request.headers!=null) for(Enumeration e = request.headers.keys(); e.hasMoreElements(); )
             {
               String key = e.nextElement().toString();
               httpConn.setRequestProperty(key, request.headers.get(key).toString());
@@ -108,29 +109,49 @@ public abstract class HTTPClient extends QueueProcessorThread {
             //httpConn.setRequestProperty("User-Agent",
             //  "Profile/MIDP-1.0 Confirguration/CLDC-1.0");
 
+            os = httpConn.openOutputStream();
+            if (request.post) {
+                os.write(getpost.getBytes());
+                os.flush();
+                // TODO do we close here ???
+            }
             /** Initiate connection and check for the response code. If the
             response code is HTTP_OK then get the content from the target
             **/
             int respCode = httpConn.getResponseCode();
-            if (respCode == HttpConnection.HTTP_OK) {
-                //StringBuffer sb = new StringBuffer();
-                os = httpConn.openOutputStream();
+            Hashtable headers = new Hashtable();
+            String key;
+            for(int i=0; (key = httpConn.getHeaderFieldKey(i))!=null; i++)
+              headers.put(key, httpConn.getHeaderField(i));
+            switch(respCode)
+            {
+              case HttpConnection.HTTP_OK:
                 is = httpConn.openInputStream();
-
-                if (request.post) {
-                    os.write(getpost.getBytes());
-                    os.flush();
-                    // TODO do we close here ???
+                onResult(request, respCode, headers, is,httpConn.getLength());
+                break;
+              //case HttpConnection.HTTP_MOVED_PERM:
+              case HttpConnection.HTTP_SEE_OTHER:
+                request.post = false;
+                request.postData = null;
+              case HttpConnection.HTTP_MOVED_TEMP:
+              case HttpConnection.HTTP_TEMP_REDIRECT:
+                request.url = httpConn.getHeaderField("Location");
+                if(request.url != null && request.redirects>0)
+                {
+                  addToInbox(request);
+                  request.redirects--;
+                  break;
                 }
-
-                onResult(request,is,httpConn.getLength());
-            }
-            else {
-                throw new IOException("HTTP ERROR: " + respCode);
+              default:
+                is = httpConn.openInputStream();
+                onResult(request, respCode, headers, is,httpConn.getLength());
+                break;
             }
         }
         catch(Exception ex) {
-            onError(request,ex);
+            //#debug
+            ex.printStackTrace();
+            onError(request, 0, null, ex);
         }
         finally {
             NativeUtil.close(httpConn);
