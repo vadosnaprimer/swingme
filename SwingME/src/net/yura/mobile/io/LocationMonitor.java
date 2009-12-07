@@ -27,6 +27,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     static final int j2meCellPollRateInSeconds = 3;
     boolean bJ2MECellMonitorLoop = true;
+    boolean bCellRequestMade = false;
+    boolean bCellNotifyMade = false;
     String j2mePreviousCell = "UNSET";
 
     public class J2MECellMonitor extends TimerTask {
@@ -144,7 +146,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             return -1;
         }
 
-        public void run() {
+        public synchronized void run() {
             ServiceLink link = ServiceLink.getInstance();
             if (link.isConnected()) {
                 if (bJ2MECellMonitorLoop) {
@@ -171,9 +173,11 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     public void getCellId() {
         ServiceLink link = ServiceLink.getInstance();
-        if (link.isConnected())
+        if (!bCellRequestMade) {
             link.addToOutbox(new ServiceLink.Task("GetCellId", null));
-        else
+            bCellRequestMade = true;
+        }
+        if (!link.isConnected())
             new Timer().schedule(new J2MECellMonitor(), 1);
     }
 
@@ -184,10 +188,11 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     public void setNotifyForCellId(boolean b) {
         ServiceLink link = ServiceLink.getInstance();
-        if (link.isConnected()) {
+        if (!bCellNotifyMade) {
             link.addToOutbox(new ServiceLink.Task("PutOptionCellIdPush", new Boolean(b)));
+            bCellNotifyMade = true;
         }
-        else {
+        if (!link.isConnected()) {
             bJ2MECellMonitorLoop = b;
             if (b) {
                 new Timer().schedule(new J2MECellMonitor(), j2meCellPollRateInSeconds*1000);
