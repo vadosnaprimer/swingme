@@ -62,15 +62,15 @@ public class TextField extends TextComponent {
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
-
             if (type==DesktopPane.RELEASED) {
-
-                String txt = getDisplayString()+" ";
-
-                // TODO take into account centre and right aligh
-                int mid = searchStringCharOffset(txt,font,x -offset);
-
-                setCaretPosition(mid);
+                if (DesktopPane.me4se) {
+                    String txt = getDisplayString()+" ";
+                    int mid = searchStringCharOffset(txt,font,x -offset);
+                    setCaretPosition(mid);
+                }
+                else {
+                    openNativeEditor();
+                }
             }
         }
 

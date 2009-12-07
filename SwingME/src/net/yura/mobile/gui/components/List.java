@@ -415,6 +415,7 @@ public class List extends Component implements ActionListener {
             }
             else {
                 ensureIndexIsVisible(current);
+                repaint(); // repaint even if we have not scrolled
             }
         }
 

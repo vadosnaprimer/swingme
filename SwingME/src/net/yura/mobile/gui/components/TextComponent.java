@@ -112,8 +112,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 setConstraints(constraints);
                 setText(initialText);
-
-                mode = DesktopPane.me4se?MODE_123:MODE_abc;
         }
 
         /**
@@ -339,25 +337,29 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
                 else if (keyEvent.justPressedAction(Canvas.FIRE)) {
 
-                    // reusing this causes problems on S60
-                    textbox = new TextBox(label, getText(), maxSize, constraints);
-
-                    Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
-                    Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);
-
-                    textbox.addCommand(ok);
-                    textbox.addCommand(cancel);
-
-                    textbox.setCommandListener(this);
-                    Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
+                    openNativeEditor();
 
                     return true;
 		}
                 return false;
             }
-            
-            
 	}
+
+        public void openNativeEditor() {
+
+                // can not reuse this because of problems on S60
+                textbox = new TextBox(label, getText(), maxSize, constraints);
+
+                Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
+                Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);
+
+                textbox.addCommand(ok);
+                textbox.addCommand(cancel);
+
+                textbox.setCommandListener(this);
+                Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
+
+        }
         
         private boolean shouldUseUppercase() {
             
@@ -565,7 +567,6 @@ public abstract class TextComponent extends Component implements ActionListener,
                 
                 // cant change mode under these constraints
                 return;
-                
             }
 
             String i;
@@ -610,7 +611,10 @@ public abstract class TextComponent extends Component implements ActionListener,
                 
                 focusable = (javax.microedition.lcdui.TextField.UNEDITABLE & constraints) == 0;
 
-                if ( allowOnlyNumberConstraint() ) {
+                if (DesktopPane.me4se) { // in desktop mode numbers are always numbers
+                    setMode(MODE_123);
+                }
+                else if ( allowOnlyNumberConstraint() ) {
                     setMode(MODE_123);
                 }
                 else if ( initialCapsConstraint() ) {
