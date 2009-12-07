@@ -74,10 +74,15 @@ public abstract class Component {
      */
     public void setVisible(boolean v) {
         visible = v;
-        Window w = getWindow();
-        if (w!=null) {
-            w.setupFocusedComponent();
-        }
+        // should not need to do this, as we need to revalidate
+        // after we change visability anyway
+        // having this here causes problems as some components need to be revalidated
+        // first before they if they can have focus or not
+        // and we always will revalidate after we change some visibility
+        //Window w = getWindow();
+        //if (w!=null) {
+        //    w.setupFocusedComponent();
+        //}
     }
 
     /**
