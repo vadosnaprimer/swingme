@@ -348,7 +348,7 @@ public class TextArea extends TextComponent {
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
-            if (type==DesktopPane.RELEASED) {
+            if (focusable && type==DesktopPane.RELEASED) {
                 if (DesktopPane.me4se) {
                     int lineHeight = font.getHeight() + lineSpacing;
                     int line = y / lineHeight;
