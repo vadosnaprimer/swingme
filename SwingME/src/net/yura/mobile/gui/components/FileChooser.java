@@ -704,6 +704,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             tbOption.setSelected(isSelected());
             return tbOption;
         }
+
+        public String getDefaultName() {
+            return "CheckBoxRenderer";
+        }
     }
 
     private static Image imgDir,  imgPic,  imgAudio,  imgVid,  imgUnknown;
