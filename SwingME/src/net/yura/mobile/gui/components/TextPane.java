@@ -284,6 +284,8 @@ public class TextPane extends Component {
     // Overloads Component.updateUI()
     public void updateUI() {
         super.updateUI();
+        if(ta!=null)
+        ta.updateUI(); // TODO get rid of this hack
 
         if (sortedElemsList != null) {
             for (int i = 0; i < sortedElemsList.size(); i++) {

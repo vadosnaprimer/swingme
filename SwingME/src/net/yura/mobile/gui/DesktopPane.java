@@ -33,6 +33,7 @@ import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
@@ -114,6 +115,18 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public static void updateComponentTreeUI(Component com) {
 
+        if (com instanceof MenuBar) {
+            Vector v = ((MenuBar) com).getItems();
+            for (int c = 0; c < v.size(); c++) {
+                ((Component)v.elementAt(c)).updateUI();
+            }
+        }
+        if (com instanceof Window) {
+            Vector v = ((Window) com).getCommands();
+            for (int c = 0; v!=null && c < v.size(); c++) {
+                ((Component)v.elementAt(c)).updateUI();
+            }
+        }
         if (com instanceof Panel) {
             Vector v = ((Panel) com).getComponents();
             for (int c = 0; c < v.size(); c++) {

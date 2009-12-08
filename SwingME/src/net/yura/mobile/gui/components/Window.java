@@ -454,6 +454,10 @@ public class Window extends Panel {
         }
 
 
+  public Vector getCommands()
+  {
+    return softkeys;
+  }
 
 
         public Button findMneonicButton(int mn) {
