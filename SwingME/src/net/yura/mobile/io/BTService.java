@@ -8,10 +8,7 @@ import javax.bluetooth.DiscoveryAgent;
 import javax.bluetooth.UUID;
 import javax.bluetooth.LocalDevice;
 import javax.bluetooth.ServiceRecord;
-import javax.microedition.io.Connection;
 import javax.microedition.io.StreamConnection;
-import java.io.InputStream;
-import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
 /**
@@ -62,23 +59,14 @@ public class BTService extends ServiceLink {
          return bRegistered;
     }
 
-    protected InputStream getInputStream() throws IOException {
-        StreamConnection sc = (StreamConnection) conn;
-        return sc.openInputStream();
-    }
-    protected OutputStream getOutputStream() throws IOException {
-        StreamConnection sc = (StreamConnection) conn;
-        return sc.openOutputStream();
-    }
-
-    protected Connection openConnection() throws IOException {
+    protected StreamConnection openConnection() throws IOException {
         if (bClient) {
             if (discoveryAgent == null)
                 throw new IOException("BlueTooth Not Supported");
             String connectionString = discoveryAgent.selectService(uuid, ServiceRecord.NOAUTHENTICATE_NOENCRYPT, false);
             if (connectionString == null)
                 throw new IOException("No Services Found");
-            return Connector.open(connectionString);
+            return (StreamConnection)Connector.open(connectionString);
         } else {
             if (streamNotifier == null)
                 throw new IOException("BlueTooth Not Supported");

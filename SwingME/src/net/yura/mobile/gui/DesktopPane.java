@@ -588,9 +588,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
         catch (Throwable th) {
-            //#debug
+            //#mdebug
             th.printStackTrace();
             log("Error in paint: " + th.toString());
+            //#enddebug
         }
 
     }
@@ -773,7 +774,13 @@ public class DesktopPane extends Canvas implements Runnable {
                 message = null;
             }
 
-            if (currentWindow != null) {
+            // we keep the current window seperate so that we know if a new window
+            // has been opened and we need to reworkout the new focused component
+            // and that NEEDs to be done after the valiating, and before the painting
+            // but sometimes we can get a event after a new window has been opened
+            // but before it has become the new window, and we dont even know what
+            // component will be focused on this window
+            if (currentWindow != null && currentWindow == windows.lastElement()) {
 
                 Button mneonicButton = null;
                 if (keyevent.getJustPressedKey() != 0) {
@@ -837,9 +844,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
         catch (Throwable th) {
-            //#debug
+            //#mdebug
             th.printStackTrace();
             log("Error in KeyEvent: " + th.toString());
+            //#enddebug
         }
 
         showHideToolTip(
@@ -1103,9 +1111,7 @@ public class DesktopPane extends Canvas implements Runnable {
     //#enddebug
 
     public static void log(String s) {
-
         //#mdebug
-
         try {
             if (desktop.debugwindow == null) {
 
@@ -1211,31 +1217,26 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     private void pointerEvent(int type, int x, int y) {
-
         try {
-
-            if (type == PRESSED) {
-                pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
-
+            if (currentWindow != null && currentWindow == windows.lastElement()) {
+                if (type == PRESSED) {
+                    pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
+                }
+                if (pointerComponent != null) {
+                    pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
+                }
+                if (type == RELEASED) {
+                    pointerComponent = null;
+                }
             }
-
-            if (pointerComponent != null) {
-                pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
-            }
-
-            if (type == RELEASED) {
-                pointerComponent = null;
-            }
-
         }
         catch (Throwable th) {
-            //#debug
+            //#mdebug
             th.printStackTrace();
             log("Exception in pointerEvent: " + th.toString());
+            //#enddebug
         }
-
         showHideToolTip(type == PRESSED);
-
     }
 
     // #####################################################################

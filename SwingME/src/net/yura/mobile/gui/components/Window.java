@@ -153,6 +153,7 @@ public class Window extends Panel {
          * @see java.awt.Window#pack() Window.pack
          */
         public void pack() {
+            // TODO this fails when there is a scrolpane with a panel with many textPanes inside
             workoutSize();
             doLayout();
             setupFocusedComponent();

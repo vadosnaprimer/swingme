@@ -5,8 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
 import javax.microedition.io.Connector;
-import javax.microedition.io.Connection;
-import javax.microedition.io.SocketConnection;
+import javax.microedition.io.StreamConnection;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.util.QueueProcessorThread;
 
@@ -24,7 +23,7 @@ public abstract class SocketClient implements Runnable {
     private Vector offlineBox = new Vector();
 
     private boolean running;
-    protected Connection conn=null;
+    protected StreamConnection conn=null;
 
     protected OutputStream out = null;
     protected InputStream in = null;
@@ -34,16 +33,8 @@ public abstract class SocketClient implements Runnable {
     public SocketClient(String server) {
         this.server = server;
     }
-    protected Connection openConnection() throws IOException {
-        return Connector.open("socket://" + server);
-    }
-    protected InputStream getInputStream() throws IOException {
-        SocketConnection sc = (SocketConnection) conn;
-        return sc.openInputStream();
-    }
-    protected OutputStream getOutputStream() throws IOException {
-        SocketConnection sc = (SocketConnection) conn;
-        return sc.openOutputStream();
+    protected StreamConnection openConnection() throws IOException {
+        return (StreamConnection)Connector.open("socket://" + server);
     }
 
     public void addToOutbox(Object obj) {
@@ -65,8 +56,8 @@ public abstract class SocketClient implements Runnable {
 
                             try {
                                 conn = openConnection();
-                                out = getOutputStream();
-                                in = getInputStream();
+                                out = conn.openOutputStream();
+                                in = conn.openInputStream();
                             }
                             catch (IOException x) {
                                 updateState(DISCONNECTED);
@@ -196,14 +187,13 @@ System.out.println("got object: "+task);
     }
 
     public void disconnect() {
-
         // TODO make sure everything is saved!!!!!
         running = false;
+        NativeUtil.close( conn );
         writeThread.kill();
     }
   
     protected void sendOfflineInboxMessages() {
-
         while (!offlineBox.isEmpty()) {
                 Object task = offlineBox.elementAt(0);
                 offlineBox.removeElementAt(0);
