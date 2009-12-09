@@ -16,7 +16,6 @@
  */
 
 //package net.yura.mobile.gui.components;
-
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
@@ -28,6 +27,9 @@ import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
 import javax.microedition.media.control.VideoControl;
 
+import javax.microedition.rms.RecordStore;
+import javax.microedition.rms.RecordStoreException;
+import javax.microedition.rms.RecordStoreNotOpenException;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
@@ -35,15 +37,15 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.StringUtil;
 
-
 /**
  * @author Jane
  */
-public class Camera extends Component implements Runnable, PlayerListener
-{
+public class Camera extends Component implements Runnable, PlayerListener {
 
     private int defaultCaptureHeight = 480;
     private int defaultCaptureWidth = 640;
+    private int[][] knownEncodingDimensions = {{640, 480}, {480, 640}};
+    private String[] knownEncodingFormats = {"jpeg", "jpg", "png", "gif", "bmp"};
     private Font font;
     private String waitingMessage = "";
     private int waitingMessageLength;
@@ -57,7 +59,6 @@ public class Camera extends Component implements Runnable, PlayerListener
     private boolean running = true;
     VideoControl videoCtrl = null;
     Player player = null;
-
     private ActionListener actionListener;
     private String actionCommand;
 
@@ -70,7 +71,6 @@ public class Camera extends Component implements Runnable, PlayerListener
         font = theme.getFont(Style.ALL);
     }
 
-
     protected String getDefaultName() {
         return "Camera";
     }
@@ -82,7 +82,7 @@ public class Camera extends Component implements Runnable, PlayerListener
 
     public void paintComponent(Graphics2D g) {
 
-System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
+        System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
 
 //        g.setColor(0x0000FF);
 //        g.fillRect(0, 0, getWidth(), getHeight());
@@ -97,9 +97,9 @@ System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
         }
     }
 
-    public void setWaitingMessage (String message){
+    public void setWaitingMessage(String message) {
         waitingMessage = message;
-        waitingMessageLength =  font.getWidth(waitingMessage);
+        waitingMessageLength = font.getWidth(waitingMessage);
     }
 
     public void focusGained() {
@@ -107,17 +107,15 @@ System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
         super.focusGained();
     }
 
-
-
     public void focusLost() {
         super.focusLost();
-System.out.println(">> focusLost()");
+        System.out.println(">> focusLost()");
         cameraThread = null;
         running = false;
         synchronized (uiLock) {
             uiLock.notifyAll();
         }
-System.out.println("focusLost2");
+        System.out.println("focusLost2");
     }
 
     public void close() {
@@ -171,14 +169,12 @@ System.out.println("focusLost2");
     // Player Thread
     public void run() {
 
-       
+
 
         try {
             while (true) {
-System.out.println(".");
-                synchronized (uiLock) {
-System.out.println(".2");
 
+                synchronized (uiLock) {
                     if (Thread.currentThread() != cameraThread) {
                         break;
                     }
@@ -208,10 +204,20 @@ System.out.println(".2");
                             photoData = null;
                             // some devices will not return the supported size even though its supported
                             if (snapshotEncoding.indexOf("width") < 0) {
+
+                                String encodingString = getEncodingStringFromRMS();
+
+                                if (encodingString == null || encodingString.length() < 1) {
+                                    encodingString = snapshotEncoding + "&width=" + defaultCaptureWidth + "&height=" + defaultCaptureHeight;
+                                }
+
                                 try {
-                                    photoData = videoCtrl.getSnapshot(snapshotEncoding + "&width=" + defaultCaptureWidth + "&height=" + defaultCaptureHeight);
+                                    photoData = videoCtrl.getSnapshot(encodingString);
                                 } catch (Throwable t) {
+                                    // this is a worst case scenario, now we want to cycle through all the possible encoding configurations and see which one works
+                                    //#debug
                                     t.printStackTrace();
+                                    photoData = discoverEncodingDimensions(videoCtrl);
                                 }
                             }
                             if (photoData == null) {
@@ -225,17 +231,22 @@ System.out.println(".2");
                     uiLock.wait(2500);
                 }
             }
-        }
-        catch (Throwable e) {
+        } catch (Throwable e) {
             e.printStackTrace();
-        }
+        } finally {
 
-        closePlayer();
-        System.out.println("Camera Thread GONE.");
+            try {
+                closePlayer();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+
+            System.out.println("Camera Thread GONE.");
+        }
     }
 
-    private synchronized void closePlayer(){
-        if (videoCtrl !=null) {
+    private synchronized void closePlayer() {
+        if (videoCtrl != null) {
             videoCtrl.setVisible(false);
         }
 
@@ -250,15 +261,57 @@ System.out.println(".2");
         System.out.println("playerUpdate: " + event);
 
         if (PlayerListener.CLOSED.equals(event)) {
-            synchronized(uiLock){
+            synchronized (uiLock) {
                 uiLock.notifyAll();
             }
             DesktopPane.getDesktopPane().fullRepaint();
         }
     }
 
+    public void setKnownEncodingDimensions(int[][] knownEncodingDimensions) {
+        this.knownEncodingDimensions = knownEncodingDimensions;
+    }
+
     /**
-     * Initialise snapshot encoding, file ext and player locator
+     * Attempt to take a snapshot with a set of known encoding dimesions. If
+     * successful then log this to RMS for future reference. The list of encoding
+     * dimensions should have the preferred dimension at the start of the array as a
+     * successful snapshot will result in the for loop returning at that point.
+     * 
+     * @param videoCtrl
+     * @param snapshotEncoding
+     * @return
+     */
+    private byte[] discoverEncodingDimensions(VideoControl videoCtrl) {
+        byte[] data = null;
+
+        for (int f = 0; f < knownEncodingFormats.length; f++) {
+            for (int i = 0; i < knownEncodingDimensions.length; i++) {
+
+                String encodingStr = "encoding=" + knownEncodingFormats[f] + "&width=" + knownEncodingDimensions[i][0] + "&height=" + knownEncodingDimensions[i][1];
+                try {
+
+                    data = videoCtrl.getSnapshot(encodingStr);
+
+                    if (data != null) {                        
+                        setEncodingStringInRMS(encodingStr);
+                        return data;
+                    }
+                } catch (MediaException ex) {
+                    //#debug
+                    ex.printStackTrace();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Initialise snapshot encoding, file ext and player locator.
+     *
+     * This method attempts to discover the best encodings from the advertised
+     * supported encodings.
      */
     private void init() {
         // Start with some sensible defaults
@@ -271,12 +324,11 @@ System.out.println(".2");
         if (prop != null) {
 
             String[][] encodinTable = {
-                    {"jpeg", "jpg"},
-                    {"jpg",  "jpg"},
-                    {"png",  "png"},
-                    {"gif",  "gif"},
-                    {"bmp",  "bmp"},
-            };
+                {"jpeg", "jpg"},
+                {"jpg", "jpg"},
+                {"png", "png"},
+                {"gif", "gif"},
+                {"bmp", "bmp"},};
 
             String encodings = prop.toLowerCase().trim();
             String[] supportedEncs = StringUtil.split(encodings, ' ');
@@ -296,7 +348,7 @@ System.out.println(".2");
         // Some phones (i.e. Nokia S40) need a capture://image locator
         String[] contentTypes = Manager.getSupportedContentTypes("capture");
         for (int i = 0; i < contentTypes.length; i++) {
-System.out.println("SupportedContentType = capture://" + contentTypes[i]);
+            System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             if ("image".equals(contentTypes[i])) {
                 playerLocator = "capture://image";
                 break;
@@ -328,7 +380,7 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
     private String getHighestResolutionEncoding(String format, String[] supportedEncs) {
 
         String highestResEncoding = "";
-        int prevHighResWidth  = 0;
+        int prevHighResWidth = 0;
         int prevHighResHeight = 0;
 
         for (int i = 0; i < supportedEncs.length; i++) {
@@ -336,24 +388,24 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
 
             int encodingWidth = getEncodingParameterInteger(encoding, "width");
             int encodingHeight = getEncodingParameterInteger(encoding, "height");
-            String encodingType = getEncodingParamString(encoding, "encoding") .toLowerCase();
+            String encodingType = getEncodingParamString(encoding, "encoding").toLowerCase();
 
-            if ( encodingWidth  >= prevHighResWidth  && encodingWidth <= defaultCaptureWidth &&
-                 encodingHeight >= prevHighResHeight && encodingHeight <= defaultCaptureHeight &&
-                 ( encodingType.equals(format           ) ||    // encoding=png      , encoding=PNG
-                   encodingType.equals("image/" + format))) { // encoding=image/png, encoding=IMAGE/PNG
+            if (encodingWidth >= prevHighResWidth && encodingWidth <= defaultCaptureWidth &&
+                    encodingHeight >= prevHighResHeight && encodingHeight <= defaultCaptureHeight &&
+                    (encodingType.equals(format) || // encoding=png      , encoding=PNG
+                    encodingType.equals("image/" + format))) { // encoding=image/png, encoding=IMAGE/PNG
 
                 highestResEncoding = encoding;
-                prevHighResWidth   = encodingWidth;
-                prevHighResHeight  = encodingHeight;
+                prevHighResWidth = encodingWidth;
+                prevHighResHeight = encodingHeight;
             }
         }
 
-        System.out.println( "getHighestResolutionEncoding - determined highest resolution encoding format \"" +
-                            (format == null ? "UNSPECIFIED" : format )                                        +
-                            "\" to be \""                                                                     +
-                            highestResEncoding                                                         +
-                            "\""                                                                              );
+        System.out.println("getHighestResolutionEncoding - determined highest resolution encoding format \"" +
+                (format == null ? "UNSPECIFIED" : format) +
+                "\" to be \"" +
+                highestResEncoding +
+                "\"");
 
         return highestResEncoding;
     }
@@ -367,7 +419,7 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             if (ampersandIdx < 0) {
                 ampersandIdx = encoding.length();
             }
-            result = encoding.substring(prefixIdx + prefix.length() + 1,  ampersandIdx);
+            result = encoding.substring(prefixIdx + prefix.length() + 1, ampersandIdx);
         }
 
         return result;
@@ -377,12 +429,10 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
         try {
             String s = getEncodingParamString(encoding, prefix);
             return Integer.parseInt(s);
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             return 0;
         }
     }
-
 
     private static class DummyCanvas extends Canvas {
 
@@ -392,7 +442,49 @@ System.out.println("SupportedContentType = capture://" + contentTypes[i]);
         }
     }
 
-    public static boolean isCameraSupported(){
+    public static boolean isCameraSupported() {
         return System.getProperty("video.snapshot.encodings") != null;
+    }
+    private static final String CAPTURE_ENCODING_STRING_RECORD_STORE = "cap_enc_str_rs";
+
+    private void setEncodingStringInRMS(String encodingString) {
+
+        try {
+            RecordStore rs = RecordStore.openRecordStore(CAPTURE_ENCODING_STRING_RECORD_STORE, true);
+            rs.addRecord(encodingString.getBytes(), 0, encodingString.length());
+
+            return;
+
+        } catch (RecordStoreNotOpenException ex) {
+            // this is just a best effort to persist dimensions to rms
+            ex.printStackTrace();
+        } catch (RecordStoreException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    private String getEncodingStringFromRMS() {
+        RecordStore rs;
+        try {
+            rs = RecordStore.openRecordStore(CAPTURE_ENCODING_STRING_RECORD_STORE, false);
+            if (rs == null) {
+                return null;
+            }
+
+            byte[] encodingStringBytes = rs.getRecord(1);
+
+            if (encodingStringBytes == null || encodingStringBytes.length < 1) {
+                return null;
+            }
+            String encodingString = new String(encodingStringBytes);
+
+            return encodingString;
+        } catch (RecordStoreException ex) {
+            // again just a best effort to look up dimensions
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 }
