@@ -1,5 +1,7 @@
 package net.yura.mobile.util;
 
+import net.yura.mobile.gui.DesktopPane;
+
 /**
  *
  * @author BMA
@@ -13,7 +15,8 @@ public class Timer extends Thread{
 
     public void schedule(String id, Runnable task, long delay){
 
-        //System.out.println("Setting schedule for {" + id + "} with delay of: " + delay);
+        //#debug
+        System.out.println("Setting schedule for {" + id + "} with delay of: " + delay);
         
         this.id = id;
         this.delay = delay;
@@ -27,26 +30,32 @@ public class Timer extends Thread{
         while(!cancelled){
             try {
                 this.sleep(delay);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
+            } catch (InterruptedException e) {                
                 e.printStackTrace();
             }
 
             if (cancelled) break;
 
-            //System.out.println("Running task {" + id + "} after a schedule of: " + delay);
+            //#debug
+            System.out.println("Running task {" + id + "} after a schedule of: " + delay);
 
             try {
                 task.run();
             } catch (Throwable t){
-                // System.out.println(t.getMessage());
+                //#mdebug
+                    DesktopPane.log(t.getMessage());
+                    t.printStackTrace();
+                //#enddebug
             }
         }
     }
 
 
     public void cancel(){
-        //System.out.println("Cancelling task {" + id + "}");
+
+        //#debug
+        System.out.println("Cancelling task {" + id + "}");
+
         cancelled = true;
     }
 }
