@@ -454,10 +454,11 @@ public class Window extends Panel {
             }
         }
 
-
-  public Vector getCommands()
+  public void updateUI()
   {
-    return softkeys;
+    super.updateUI();
+    for (int c = 0; softkeys!=null && c < softkeys.size(); c++)
+      ((Component)softkeys.elementAt(c)).updateUI();
   }
 
 

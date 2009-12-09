@@ -121,12 +121,6 @@ public class DesktopPane extends Canvas implements Runnable {
                 ((Component)v.elementAt(c)).updateUI();
             }
         }
-        if (com instanceof Window) {
-            Vector v = ((Window) com).getCommands();
-            for (int c = 0; v!=null && c < v.size(); c++) {
-                ((Component)v.elementAt(c)).updateUI();
-            }
-        }
         if (com instanceof Panel) {
             Vector v = ((Panel) com).getComponents();
             for (int c = 0; c < v.size(); c++) {
