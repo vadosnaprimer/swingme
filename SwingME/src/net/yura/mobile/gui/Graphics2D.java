@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui;
 
+import java.util.Random;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -138,16 +139,7 @@ public class Graphics2D {
                 return;
             }
 
-            //#mdebug
-            if ( ((dest_w/src_w)*(dest_h/src_h))>10 ) {
-                System.err.println("#################");
-                System.err.println("going to tile a very small image on a big area: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
-                System.err.println("#################");
-            }
-            //#enddebug
-
             final int[] c = getClip();
-
             g.clipRect(dest_x,dest_y,dest_w,dest_h);
 
             boolean normal = (t==Sprite.TRANS_NONE || t==Sprite.TRANS_MIRROR || t==Sprite.TRANS_ROT180 || t==Sprite.TRANS_MIRROR_ROT180);
@@ -161,6 +153,27 @@ public class Graphics2D {
             }
 
             setClip(c);
+
+
+
+            //#mdebug
+            int tile = ((dest_w/a)*(dest_h/b));
+            if ( tile>15 ) {
+                System.err.println("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+
+                if ( tile>30 ) {
+                    System.err.println("#################################");
+                    g.setColor( new Random().nextInt() );
+                    for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
+                        g.drawLine(pos_x, dest_y, pos_x, (dest_y+dest_h));
+                    }
+                    for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
+                        g.drawLine(dest_x, pos_y, (dest_x+dest_w), pos_y);
+                    }
+                }
+            }
+            //#enddebug
+
         }
 
 
