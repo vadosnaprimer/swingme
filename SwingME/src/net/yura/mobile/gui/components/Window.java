@@ -412,6 +412,7 @@ public class Window extends Panel {
 
             if (!softkeys.contains(softkey)) {
                 softkeys.addElement(softkey);
+                softkey.setParent(this);
             }
             //#mdebug
             else {
@@ -437,6 +438,7 @@ public class Window extends Panel {
             // need to remove even in me4se mode
             if (softkeys.contains(softkey)) {
                 softkeys.removeElement(softkey);
+                softkey.removeParent(this);
             }
             //#mdebug
             else {

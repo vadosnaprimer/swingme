@@ -38,6 +38,10 @@ public class Graphics2D {
             setGraphics(g);
         }
 
+        public int getColor() {
+            return g.getColor();
+        }
+
         public void setTransform(int t) {
             trans = t;
         }

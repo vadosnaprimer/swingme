@@ -86,9 +86,7 @@ public class MenuBar extends List implements ActionListener {
     public void remove(Component c) {
         setSelectedIndex(-1); // TODO can be done better
         getItems().removeElement(c);
-        if (c.getParent() == this) {
-            c.setParent(null);
-        }
+        c.removeParent(this);
     }
 
     /**

@@ -132,9 +132,7 @@ public class Panel extends Component {
     public void remove(int c) {
         Component component = (Component)components.elementAt(c);
         components.removeElementAt(c);
-        if (component.getParent() == this) {
-            component.setParent(null);
-        }
+        component.removeParent(this);
         constraints.remove(component);
     }
 
@@ -374,7 +372,7 @@ public class Panel extends Component {
 
             for(int i = 0; i < components.size(); i++){
                 Component component = (Component)components.elementAt(i);
-                component.setParent(null);
+                component.removeParent(this);
             }
             components.removeAllElements();
             constraints.clear();

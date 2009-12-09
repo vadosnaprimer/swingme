@@ -278,7 +278,7 @@ public class Button extends Label implements ActionListener {
                 super.focusLost();
 		
 		if (useSelectButton) {
-                    getWindow().removeCommand(selectButton);
+                    selectButton.getWindow().removeCommand(selectButton);
                     selectButton = null;
 		}
 		

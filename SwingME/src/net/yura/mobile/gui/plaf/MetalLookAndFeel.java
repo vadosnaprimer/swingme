@@ -59,6 +59,18 @@ public class MetalLookAndFeel extends LookAndFeel {
             defaultStyle.addForeground( getBlack() , Style.ALL);
             setStyleFor("",defaultStyle);            
 
+
+            Style listCellRenderer = new Style(defaultStyle);
+            listCellRenderer.addBorder(new EmptyBorder(1,1,1,1),Style.ALL);
+            Border darkline = new LineBorder( getPrimary2() ,-1,1,false,Graphics.DOTTED);
+            listCellRenderer.addBorder(darkline,Style.FOCUSED | Style.SELECTED);
+            listCellRenderer.addBorder(darkline,Style.FOCUSED);
+            listCellRenderer.addBorder(new LineBorder( getPrimary3() ),Style.SELECTED);
+            listCellRenderer.addBackground( getWhite() , Style.ALL);
+            listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
+            setStyleFor("ListRenderer",listCellRenderer);
+
+
             Style abstractButtonStyle = new Style(defaultStyle);
             abstractButtonStyle.addForeground( getBlack() , Style.FOCUSED);
             abstractButtonStyle.addForeground( getSecondary2() , Style.DISABLED);
@@ -72,6 +84,14 @@ public class MetalLookAndFeel extends LookAndFeel {
             checkboxStyle.addProperty(checkboxIcon, "icon", Style.ALL);
             setStyleFor("CheckBox",checkboxStyle);
 
+            Style checkboxRendererStyle = new Style(checkboxStyle);
+            checkboxRendererStyle.putAll(listCellRenderer);
+            addMetalIcon(checkboxRendererStyle,"/image.gif" , "imageIcon");
+            addMetalIcon(checkboxRendererStyle,"/directory.gif" , "folderIcon");
+            addMetalIcon(checkboxRendererStyle,"/sound.gif" , "soundIcon");
+            addMetalIcon(checkboxRendererStyle,"/movie.gif" , "videoIcon");
+            addMetalIcon(checkboxRendererStyle,"/unknown.gif" , "unknownIcon");
+            setStyleFor("CheckBoxRenderer",checkboxRendererStyle);
 
             Style buttonStyle = new Style(abstractButtonStyle);
             buttonStyle.addBackground( getSecondary3() , Style.ALL);
@@ -235,16 +255,6 @@ public class MetalLookAndFeel extends LookAndFeel {
             Style titleBar = new Style(defaultStyle);
             titleBar.addBackground(getPrimary3(), Style.ALL);
             setStyleFor("TitleBar",titleBar);
-            
-            Style listCellRenderer = new Style(defaultStyle);
-            listCellRenderer.addBorder(new EmptyBorder(1,1,1,1),Style.ALL);
-            Border darkline = new LineBorder( getPrimary2() ,-1,1,false,Graphics.DOTTED);
-            listCellRenderer.addBorder(darkline,Style.FOCUSED | Style.SELECTED);
-            listCellRenderer.addBorder(darkline,Style.FOCUSED);
-            listCellRenderer.addBorder(new LineBorder( getPrimary3() ),Style.SELECTED);
-            listCellRenderer.addBackground( getWhite() , Style.ALL);
-            listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
-            setStyleFor("ListRenderer",listCellRenderer);
 
             Style menuSkin = new Style(defaultStyle);
             menuSkin.addBorder(new LineBorder( getPrimary1() ), Style.ALL);

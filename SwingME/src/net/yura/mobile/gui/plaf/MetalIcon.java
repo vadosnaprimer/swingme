@@ -57,6 +57,10 @@ public class MetalIcon extends Icon {
                 int w = getIconWidth();
                 int h = getIconHeight();
 
+                int a = g.getColor();
+                g.setColor( background );
+                g.fillRect(x, y, w, h);
+                g.setColor(a);
                 g.drawRect(x, y, w-1, h-1);
 
                 if (c instanceof Button) {
@@ -78,6 +82,10 @@ public class MetalIcon extends Icon {
                 int w = getIconWidth();
                 int h = getIconHeight();
 
+                int a = g.getColor();
+                g.setColor( background );
+                g.fillArc(x, y, w, h, 0, 360);
+                g.setColor(a);
                 g.drawArc(x, y, w-1, h-1, 0, 360);
 
                 if (c instanceof Button) {

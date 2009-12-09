@@ -187,7 +187,18 @@ public abstract class Component {
      * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
      */
     protected void setParent(Component p) {
+        //#mdebug
+        if (p==null) {
+            throw new NullPointerException("parent can not be set to null");
+        }
+        //#enddebug
         parent = p;
+    }
+
+    public void removeParent(Component p) {
+        if (parent == p) {
+            parent = null;
+        }
     }
 
     /**
