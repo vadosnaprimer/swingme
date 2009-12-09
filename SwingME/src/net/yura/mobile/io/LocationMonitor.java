@@ -35,11 +35,11 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     public class J2MECellMonitor implements Runnable {
         protected int cellPropertyIndex = -1;
-        protected int mccPropertyIndex = -1;
+        protected int homeCountryPropertyIndex = -1;
         protected int mncPropertyIndex = -1;
         protected int signalPropertyIndex = -1;
         protected int locationAreaPropertyIndex = -1;
-        protected int cmccPropertyIndex = -1;
+        protected int currentCountryPropertyIndex = -1;
         protected int imsiPropertyIndex = -1;
         String[] sysPropertyNames = {
             "CellID", "Cell-ID", "CELLID", "Cell ID", "ID", "Cellid", "CellID",
@@ -50,10 +50,16 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "com.samsung.cellid",
             "com.siemens.cellid",
             "cid"};
-        String[] cmccPropertyNames = {
-            "com.sonyericsson.net.cmcc"
+        String[] currentCountryPropertyNames = {
+            "com.nokia.mid.countrycode",
+            "com.sonyericsson.net.cmcc",
+            "com.sonyericsson.net.mcc",
+            "cmcc",
+            "CMCC",
+            "mcc",
+            "MCC"
         };
-        String[] mccPropertyNames = {
+        String[] homeCountryPropertyNames = {
             "com.nokia.mid.countrycode",
             "com.sonyericsson.net.mcc",
             "mcc",
@@ -81,8 +87,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
         };
         public J2MECellMonitor() {
             cellPropertyIndex = getPropertyIndex(sysPropertyNames);
-            cmccPropertyIndex = getPropertyIndex(cmccPropertyNames);
-            mccPropertyIndex = getPropertyIndex(mccPropertyNames);
+            currentCountryPropertyIndex = getPropertyIndex(currentCountryPropertyNames);
+            homeCountryPropertyIndex = getPropertyIndex(homeCountryPropertyNames);
             mncPropertyIndex = getPropertyIndex(mncPropertyNames);
             signalPropertyIndex = getPropertyIndex(signalPropertyNames);
             locationAreaPropertyIndex = getPropertyIndex(locationAreaPropertyNames);
@@ -120,8 +126,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                         Hashtable hash = new Hashtable(6);
 
                         hash.put(cell, signal);
-                        if (cmccPropertyIndex >= 0) {
-                            addPropertyToHash(hash,mccPropertyNames[cmccPropertyIndex],COUNTRY_CODE_TYPE);
+                        if (currentCountryPropertyIndex >= 0) {
+                            addPropertyToHash(hash,currentCountryPropertyNames[currentCountryPropertyIndex],COUNTRY_CODE_TYPE);
                         }
                         if (mncPropertyIndex >= 0) {
                             addPropertyToHash(hash,mncPropertyNames[mncPropertyIndex],NETWORK_CODE_TYPE);
@@ -132,8 +138,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                         if (imsiPropertyIndex >= 0) {
                             addPropertyToHash(hash,imsiPropertyNames[imsiPropertyIndex],SUBSCRIBER_IMSI_TYPE);
                         }
-                        if (mccPropertyIndex >= 0) {
-                            addPropertyToHash(hash,mccPropertyNames[mccPropertyIndex],SUBSCRIBER_HOME_COUNTRY_TYPE);
+                        if (homeCountryPropertyIndex >= 0) {
+                            addPropertyToHash(hash,homeCountryPropertyNames[homeCountryPropertyIndex],SUBSCRIBER_HOME_COUNTRY_TYPE);
                         }
 
                         ServiceLink.Task task = new ServiceLink.Task("PutCellId", hash);
