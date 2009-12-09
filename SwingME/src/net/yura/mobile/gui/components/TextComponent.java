@@ -651,6 +651,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 		maxSize = size;
 	}
 
+        public int getMaxSize() {
+            return maxSize;
+        }
+
         /**
          * @return the text
          * @see javax.swing.text.JTextComponent#getText() JTextComponent.getText
