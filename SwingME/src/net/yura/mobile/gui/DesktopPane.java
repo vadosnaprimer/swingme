@@ -919,6 +919,16 @@ public class DesktopPane extends Canvas implements Runnable {
     public void setIndicatorText(String txt) {
         indicator.setText(txt);
         indicator.workoutSize();
+
+        setupIndicatorPosition();
+
+        // as we dont know what size it was
+        fullRepaint();
+
+    }
+
+    private void setupIndicatorPosition() {
+
         int w = indicator.getWidthWithBorder();
         int h = indicator.getHeightWithBorder();
         if (sideSoftKeys) {
@@ -928,11 +938,7 @@ public class DesktopPane extends Canvas implements Runnable {
             indicator.setBoundsWithBorder(getWidth() - w, 0, w, h);
         }
 
-        // as we dont know what size it was
-        fullRepaint();
-
     }
-
 
     // if no command listener is used key events fall though to this method
     // used for adding global shortcut keys
@@ -1288,6 +1294,8 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         oldw = w;
         oldh = h;
+
+        setupIndicatorPosition();
     }
 
     // this is to fix buttons not being released properly on some phones
