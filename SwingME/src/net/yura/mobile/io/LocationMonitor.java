@@ -9,9 +9,10 @@
  */
 
 package net.yura.mobile.io;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.Hashtable;
+import net.yura.mobile.util.Timer;
+
+
 
 /**
  *
@@ -25,13 +26,14 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
     public static final String SUBSCRIBER_IMSI_TYPE = "-4";
     public static final String SUBSCRIBER_HOME_COUNTRY_TYPE = "-5";
 
-    static final int j2meCellPollRateInSeconds = 3;
+    static final int j2meCellPollRateInSeconds = 300;
     boolean bJ2MECellMonitorLoop = true;
     boolean bCellRequestMade = false;
     boolean bCellNotifyMade = false;
     String j2mePreviousCell = "UNSET";
+    Timer timer;
 
-    public class J2MECellMonitor extends TimerTask {
+    public class J2MECellMonitor implements Runnable {
         protected int cellPropertyIndex = -1;
         protected int mccPropertyIndex = -1;
         protected int mncPropertyIndex = -1;
@@ -157,7 +159,13 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             else {
                 getCellId();
                 if (bJ2MECellMonitorLoop) {
-                    new Timer().schedule(this, j2meCellPollRateInSeconds*1000);
+
+                    if (timer != null){
+                        timer.cancel();
+                    }
+
+                    timer = new Timer();
+                    timer.schedule("J2MECellMonitor1", this, j2meCellPollRateInSeconds*1000);
                 }
             }
         }
@@ -178,7 +186,13 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             bCellRequestMade = true;
         }
         if (!link.isConnected())
-            new Timer().schedule(new J2MECellMonitor(), 1);
+
+            if (timer != null){
+                timer.cancel();
+            }
+
+            timer = new Timer();
+            timer.schedule("J2MECellMonitor2", new J2MECellMonitor(), 1);
     }
 
     public void getWifiList() {
@@ -195,7 +209,11 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
         if (!link.isConnected()) {
             bJ2MECellMonitorLoop = b;
             if (b) {
-                new Timer().schedule(new J2MECellMonitor(), j2meCellPollRateInSeconds*1000);
+                if (timer != null){
+                    timer.cancel();
+                }
+                timer = new Timer();
+                timer.schedule("J2MECellMonitor3", new J2MECellMonitor(), j2meCellPollRateInSeconds*1000);
             }
         }
     }
