@@ -159,7 +159,7 @@ public class Graphics2D {
             //#mdebug
             int tile = ((dest_w/a)*(dest_h/b));
             if ( tile>15 ) {
-                System.err.println("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+                System.err.println("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
 
                 if ( tile>30 ) {
                     System.err.println("#################################");
