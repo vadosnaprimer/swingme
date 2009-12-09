@@ -17,10 +17,8 @@
 
 package net.yura.mobile.util;
 
-import net.yura.mobile.gui.Graphics2D;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Image2D;

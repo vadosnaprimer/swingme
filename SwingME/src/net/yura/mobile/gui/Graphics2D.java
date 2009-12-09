@@ -139,8 +139,10 @@ public class Graphics2D {
             }
 
             //#mdebug
-            if ( ((src_w/dest_w)*(src_h/dest_h))>10 ) {
-                System.out.println("going to tile a very small image on a big area: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+            if ( ((dest_w/src_w)*(dest_h/src_h))>10 ) {
+                System.err.println("#################");
+                System.err.println("going to tile a very small image on a big area: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+                System.err.println("#################");
             }
             //#enddebug
 

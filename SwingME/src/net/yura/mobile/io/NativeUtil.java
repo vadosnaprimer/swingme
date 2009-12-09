@@ -655,35 +655,47 @@ public class NativeUtil {
         return is;
     }
 
-
+    /**
+     * will return null if no thumb found
+     */
     public static Image getThumbnailFromFile(final String fileName) {
-
         DataInputStream dis = null;
-
         try {
             dis = ((FileConnection)Connector.open(fileName)).openDataInputStream();
-            
             byte[] thumb = parseJPEG(dis);
-
             if (thumb != null && thumb.length > 0) {
                 return Image.createImage(thumb,0,thumb.length);
             }
-            else {
-                return null;
-            }
+            return null;
         }
-        catch (Exception ex) {
-            //#debug
-            ex.printStackTrace();
+        catch (Throwable err) {
+            err.printStackTrace();
             return null;
         }
         finally {
             close(dis);
         }
-
     }
 
-    public static byte[] parseJPEG( DataInputStream dis ) throws Exception {
+    /**
+     * return null if not enough mem to load image
+     */
+    public static Image getImageFromFile(String filename) {
+        InputStream is=null;
+        try {
+            is = NativeUtil.getInputStreamFromFileConnector(filename);
+            return Image.createImage(is);
+        }
+        catch (Throwable err) {
+            err.printStackTrace();
+            return null;
+        }
+        finally {
+            NativeUtil.close(is);
+        }
+    }
+
+    public static byte[] parseJPEG( DataInputStream dis ) throws IOException {
 
         boolean motorolaOrder;
         byte[] thumbData = null;
@@ -710,7 +722,7 @@ public class NativeUtil {
                     else if( byteAlign1 == 0x4D && byteAlign2 == 0x4D)        //4D4D
                         motorolaOrder = true;
                     else
-                        throw new Exception("unsupported byte order format in TIFF header");
+                        throw new IOException("unsupported byte order format in TIFF header");
 
                     dis.skip( 2 );                 // Moto->00 2A Inter->2A 00
 
@@ -734,7 +746,7 @@ public class NativeUtil {
      * parse IFD directory and copy out thumb data, and ignore other attributes
      * IFD format can be refered from {@link http://www.media.mit.edu/pia/Research/deepview/exif.html }
      */
-    public static byte[] readIFD( DataInputStream dis,int thumbOffset,int thumbSize,boolean motorolaOrder ) throws Exception
+    public static byte[] readIFD( DataInputStream dis,int thumbOffset,int thumbSize,boolean motorolaOrder ) throws IOException
     {
         int numDirectoryEntries = readShort( dis,motorolaOrder );
 
@@ -778,7 +790,7 @@ public class NativeUtil {
     /**
      * convert 4 byte to int using the byte order read from TIFF header
      */
-    public static int readInt( DataInputStream dis,boolean motorolaOrder ) throws Exception {
+    public static int readInt( DataInputStream dis,boolean motorolaOrder ) throws IOException {
         int temp = dis.readInt();
         return motorolaOrder ? temp : ( (temp&0xFF)<<24) | ( ((temp>>8)&0xFF)<<16)| (((temp>>16)&0xFF)<<8)| ( ((temp>>24)&0xFF));
     }
@@ -786,7 +798,7 @@ public class NativeUtil {
     /**
      * convert 2 byte to int using the byte order read from TIFF header
      */
-    public static int readShort( DataInputStream dis,boolean motorolaOrder ) throws Exception {
+    public static int readShort( DataInputStream dis,boolean motorolaOrder ) throws IOException {
         int temp = dis.readShort();
         return motorolaOrder ? temp : ( ((temp)&0xFF)<<8)| ( ((temp>>8)&0xFF));
     }

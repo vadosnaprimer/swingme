@@ -528,7 +528,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         private int currentThumbSize;
         private boolean toggleSelected = false;
         private String filename;
-        private Icon defaultImage;
+        private boolean loadFailed;
 
         /**
          * Constructor as required by Option. Notice ThumbOptions are actually
@@ -574,38 +574,38 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
                 Icon img = (currentThumbSize == thumbSize && thumb != null) ? (Icon) thumb.get() : null;
 
-                if (img == null) {
+                if (img == null && !loadFailed) {
                     String absoultePath = getAbsolutePath();
                     //Should use a separate thread for this imo.
                     Image image = NativeUtil.getThumbnailFromFile(absoultePath);
-
                     if (image == null) {
-                        final InputStream is = NativeUtil.getInputStreamFromFileConnector(getAbsolutePath());
-                        if (is != null) {
-                            try {
-                                image = Image.createImage(is);
-                            }
-                            catch (IOException ex) {
-                                ex.printStackTrace();
-                            }
-                        }
+                        image = NativeUtil.getImageFromFile( absoultePath );
                     }
-                    //else {
-                        //Do sampling mb or display default blank thumbnail.
-                    //}
 
-                    image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
+                    if (image!=null) {
+                        image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
+                    }
+                    if (image!=null) {
+                        img = new Icon(image);
+                    }
+
+                    if (img!=null) {
+                        thumb = new WeakReference(img);
+                    }
+                    else {
+                        loadFailed = true;
+                    }
 
                     currentThumbSize = thumbSize;
-                    img = new Icon(image);
-                    thumb = new WeakReference(img);
                 }
 
-                if (!lastFewImages.contains(img)) {
-                    lastFewImages.addElement(img);
-                }
-                if (lastFewImages.size() > 15) { // KEEP TRACK OF LAST 15 thumbs used!
-                    lastFewImages.removeElementAt(0);
+                if (img!=null) {
+                    if (!lastFewImages.contains(img)) {
+                        lastFewImages.addElement(img);
+                    }
+                    if (lastFewImages.size() > 15) { // KEEP TRACK OF LAST 15 thumbs used!
+                        lastFewImages.removeElementAt(0);
+                    }
                 }
 
                 return img;
