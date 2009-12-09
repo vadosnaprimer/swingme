@@ -98,32 +98,44 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             return null;
         }
 
+        private void addPropertyToHash(Hashtable values, String property, Object key) {
+            Object value = System.getProperty(property);
+            if (value != null) {
+                values.put(value, key);
+            }
+        }
+
         protected void getCellId() {
             try {
                 if (cellPropertyIndex >= 0) {
                     String cell = System.getProperty(sysPropertyNames[cellPropertyIndex]);
                     if (!cell.equals(j2mePreviousCell)) {
-                        String signal = "0";
+                        String signal = null;
                         if (signalPropertyIndex >= 0) {
                             signal = System.getProperty(signalPropertyNames[signalPropertyIndex]);
                         }
-                        Hashtable hash = new Hashtable(4);
+                        if (signal == null) {
+                            signal = "0";
+                        }
+                        Hashtable hash = new Hashtable(6);
+
                         hash.put(cell, signal);
                         if (cmccPropertyIndex >= 0) {
-                            hash.put(System.getProperty(mccPropertyNames[cmccPropertyIndex]), COUNTRY_CODE_TYPE);
+                            addPropertyToHash(hash,mccPropertyNames[cmccPropertyIndex],COUNTRY_CODE_TYPE);
                         }
                         if (mncPropertyIndex >= 0) {
-                            hash.put(System.getProperty(mncPropertyNames[mncPropertyIndex]), NETWORK_CODE_TYPE);
+                            addPropertyToHash(hash,mncPropertyNames[mncPropertyIndex],NETWORK_CODE_TYPE);
                         }
                         if (locationAreaPropertyIndex >= 0) {
-                            hash.put(System.getProperty(locationAreaPropertyNames[locationAreaPropertyIndex]), LOCATION_AREA_CODE_TYPE);
+                            addPropertyToHash(hash,locationAreaPropertyNames[locationAreaPropertyIndex],LOCATION_AREA_CODE_TYPE);
                         }
                         if (imsiPropertyIndex >= 0) {
-                            hash.put(System.getProperty(imsiPropertyNames[imsiPropertyIndex]), SUBSCRIBER_IMSI_TYPE);
+                            addPropertyToHash(hash,imsiPropertyNames[imsiPropertyIndex],SUBSCRIBER_IMSI_TYPE);
                         }
                         if (mccPropertyIndex >= 0) {
-                            hash.put(System.getProperty(mccPropertyNames[mccPropertyIndex]), SUBSCRIBER_HOME_COUNTRY_TYPE);
+                            addPropertyToHash(hash,mccPropertyNames[mccPropertyIndex],SUBSCRIBER_HOME_COUNTRY_TYPE);
                         }
+
                         ServiceLink.Task task = new ServiceLink.Task("PutCellId", hash);
                         handleTask(task);
                         j2mePreviousCell = cell;
@@ -185,14 +197,9 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             link.addToOutbox(new ServiceLink.Task("GetCellId", null));
             bCellRequestMade = true;
         }
-        if (!link.isConnected())
-
-            if (timer != null){
-                timer.cancel();
-            }
-
-            timer = new Timer();
-            timer.schedule("J2MECellMonitor2", new J2MECellMonitor(), 1);
+        if (!link.isConnected()) {
+            new Thread(new J2MECellMonitor()).start();
+        }
     }
 
     public void getWifiList() {
