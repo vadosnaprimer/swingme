@@ -428,7 +428,7 @@ System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style:
                     
                     parser.skipSubTree();
                 }
-                if (path!=null) {
+                if (path!=null && !images.isEmpty()) {
                     InputStream in = getResourceAsStream(path);
                     if (in!=null) {
                         int[] colorsArray = new int[colors.size()];
