@@ -105,6 +105,7 @@ System.out.println("sending object: "+object);
                     }
                     catch(IOException ex) {
                         // THIS WILL ONLY HAPPEN IF YOU GET A DISCONNECT DURING A SEND
+                        //#debug
                         ex.printStackTrace();
                         addToOfflineBox( object );
                     }
@@ -169,8 +170,10 @@ System.out.println("got object: "+task);
 
             }
             catch (Exception x) {
-                DesktopPane.log("CAN NOT HANDLE! " + x.getMessage() + " Task: " + task );
+                //#mdebug
+                DesktopPane.log("CAN NOT HANDLE! " + x.getMessage() + " Task: " + task+" "+x.toString() );
                 x.printStackTrace();
+                //#enddebug
             }
 
             updateState(CONNECTED);
