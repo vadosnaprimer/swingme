@@ -27,7 +27,7 @@ public class NativeUtil {
         int fileSize=-1;
         try
         {
-            fc=(FileConnection)(Connector.open(fileName));
+            fc=(FileConnection)(Connector.open(fileName, Connector.READ));
             if(fc!=null&&fc.exists())
             {
                 fileSize=(int)fc.fileSize();
@@ -53,7 +53,7 @@ public class NativeUtil {
         long lastModified=-1;
         try
         {
-            fc=(FileConnection)(Connector.open(fileName));
+            fc=(FileConnection)(Connector.open(fileName, Connector.READ));
             if(fc!=null&&fc.exists())
             {
                 lastModified=fc.lastModified();
@@ -580,7 +580,7 @@ public class NativeUtil {
         catch(Exception ex) {
             //#mdebug
             ex.printStackTrace();
-            DesktopPane.log("error moving dir: "+ex.toString());
+            DesktopPane.log("\error moving dir: "+ex.toString());
             //#enddebug
         }
 
@@ -656,7 +656,7 @@ public class NativeUtil {
     public static Image getThumbnailFromFile(final String fileName) {
         DataInputStream dis = null;
         try {
-            dis = ((FileConnection)Connector.open(fileName)).openDataInputStream();
+            dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openDataInputStream();
             byte[] thumb = parseJPEG(dis);
             if (thumb != null && thumb.length > 0) {
                 return Image.createImage(thumb,0,thumb.length);
