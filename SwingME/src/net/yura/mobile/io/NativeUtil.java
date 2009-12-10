@@ -580,7 +580,7 @@ public class NativeUtil {
         catch(Exception ex) {
             //#mdebug
             ex.printStackTrace();
-            DesktopPane.log("\error moving dir: "+ex.toString());
+            DesktopPane.log("error moving dir: "+ex.toString());
             //#enddebug
         }
 
