@@ -12,6 +12,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Image;
+import net.yura.mobile.gui.DesktopPane;
 
 public class NativeUtil {
 
@@ -539,27 +540,18 @@ public class NativeUtil {
 
         Vector files = new Vector();
 
-        FileConnection fc=null;
         try {
-            if (!ROOT_PREX.equals(dir)) {
-                fc = (FileConnection)Connector.open(dir);
+            if (ROOT_PREX.equals(dir)) {
+                // add root folder
+                for (Enumeration e = FileSystemRegistry.listRoots(); e.hasMoreElements();) {
+                    files.addElement( (String)e.nextElement()  );
+                }
             }
-        }
-        catch(Exception ex) {
-            //#debug
-            ex.printStackTrace();
-        }
+            else {
+                files.addElement( "../" );
 
+                FileConnection fc = (FileConnection)Connector.open(dir);
 
-        if( fc == null ) {
-        	// add root folder
-        	for (Enumeration e = FileSystemRegistry.listRoots(); e.hasMoreElements();) {
-                files.addElement( (String)e.nextElement()  );
-            }
-        }
-        else {
-            files.addElement( "../" );
-            try {
                 if (fc.exists() && fc.isDirectory()) {
 
                     long earliestAcceptableTime = System.currentTimeMillis()-RECENT_PICTURE_TIME_INTERVAL;
@@ -583,10 +575,13 @@ public class NativeUtil {
                     }
                 }
             }
-            catch (Exception ioe) {
-                //#debug
-                ioe.printStackTrace();
-            }
+
+        }
+        catch(Exception ex) {
+            //#mdebug
+            ex.printStackTrace();
+            DesktopPane.log("error moving dir: "+ex.toString());
+            //#enddebug
         }
 
         return files;
