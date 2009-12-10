@@ -550,7 +550,7 @@ public class NativeUtil {
             else {
                 files.addElement( "../" );
 
-                FileConnection fc = (FileConnection)Connector.open(dir);
+                FileConnection fc = (FileConnection)Connector.open(dir, Connector.READ);
 
                 if (fc.exists() && fc.isDirectory()) {
 
