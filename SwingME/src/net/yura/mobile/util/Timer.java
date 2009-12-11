@@ -41,10 +41,11 @@ public class Timer extends Thread{
 
             try {
                 task.run();
-            } catch (Throwable t){
+            }
+            catch (Throwable t) {
                 //#mdebug
-                    DesktopPane.log(t.getMessage());
-                    t.printStackTrace();
+                DesktopPane.log("error in {"+id+"} timer: "+t.toString());
+                t.printStackTrace();
                 //#enddebug
             }
         }
