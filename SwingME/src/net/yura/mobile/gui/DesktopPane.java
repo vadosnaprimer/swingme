@@ -741,6 +741,7 @@ public class DesktopPane extends Canvas implements Runnable {
     // #####################################################################
     // action handeling
     // #####################################################################
+    private final int[] directions = new int[] {Canvas.RIGHT,Canvas.DOWN,Canvas.LEFT,Canvas.UP};
     private void passKeyEvent(KeyEvent keyevent) {
 
         try {
@@ -783,59 +784,39 @@ public class DesktopPane extends Canvas implements Runnable {
                 Component focusedComponent = currentWindow.getFocusOwner();
 
                 if (mneonicButton != null) {
-
                     mneonicButton.fireActionPerformed();
-
                 }
-                else if (focusedComponent != null) {
-
-                    boolean consumed = focusedComponent.processKeyEvent(keyevent);
-
-                    //System.out.println("rootpane KEY PRESSED on "+activeComponent+" and consumed after is: "+consumed);
-
-                    // TODO
-                    // it may say that a down key is pressed, BUT
-                    // getting the gameAction may not work
-                    // keyevent.getKeyAction(keyevent.getIsDownKey())
-                    // if another key was pressed first!
-
-                    if (!consumed && keyevent.getJustReleasedKey() == 0 && ( // dont want to fire anything on release
-                            keyevent.isDownAction(Canvas.RIGHT) ||
-                            keyevent.isDownAction(Canvas.DOWN) ||
-                            keyevent.isDownAction(Canvas.LEFT) ||
-                            keyevent.isDownAction(Canvas.UP))) {
-
-                        focusedComponent.transferFocus(keyevent.getIsDownAction());
-
+                else {
+                    boolean consumed=false;
+                    
+                    if (focusedComponent != null) {
+                        consumed = focusedComponent.processKeyEvent(keyevent);
                     }
-                    else if (!consumed) {//&& keyListener!=null) {
-
-                        boolean c = currentWindow.processKeyEvent(keypad);
-                        if (!c) {
-                            keyEvent(keyevent);
+                    if (!consumed) {
+                        consumed = currentWindow.processKeyEvent(keyevent);
+                    }
+                    if (!consumed) {
+                        consumed = keyEvent(keyevent);
+                    }
+                    if (!consumed && keyevent.getJustReleasedKey() == 0) {
+                        int d = -1;
+                        for (int c=0;c<directions.length;c++) {
+                            if (keyevent.isDownAction(directions[c])) {
+                                d = directions[c];
+                                break;
+                            }
                         }
-                    }
-
-                } // sometimes keyevents come in on S40 b4 anything has been setup,
-                // such as the fire key being released after you start the app
-                else { //  if (keyListener!=null) {
-
-                    if (keyevent.isDownAction(Canvas.RIGHT) ||
-                            keyevent.isDownAction(Canvas.DOWN) ||
-                            keyevent.isDownAction(Canvas.LEFT) ||
-                            keyevent.isDownAction(Canvas.UP)) {
-                        currentWindow.passScrollUpDown(keyevent.getIsDownAction());
-                    }
-                    else {
-                        boolean c = currentWindow.processKeyEvent(keypad);
-                        if (!c) {
-                            keyEvent(keyevent);
+                        if (d!=-1) {
+                            if (focusedComponent!=null) {
+                                focusedComponent.transferFocus(d);
+                            }
+                            else {
+                                currentWindow.passScrollUpDown(d);
+                            }
                         }
                     }
                 }
             }
-
-
         }
         catch (Throwable th) {
             //#mdebug
@@ -942,7 +923,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
     // if no command listener is used key events fall though to this method
     // used for adding global shortcut keys
-    public void keyEvent(KeyEvent kypd) {
+    public boolean keyEvent(KeyEvent kypd) {
+        return false;
     }
 
     // #####################################################################
