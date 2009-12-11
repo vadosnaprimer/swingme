@@ -916,7 +916,8 @@ public class DesktopPane extends Canvas implements Runnable {
             indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
         }
         else {
-            indicator.setBoundsWithBorder(getWidth() - w, 0, w, h);
+            String suny = System.getProperty("com.sonyericsson.java.platform");
+            indicator.setBoundsWithBorder(suny!=null?0:(getWidth()-w), 0, w, h);
         }
 
     }
