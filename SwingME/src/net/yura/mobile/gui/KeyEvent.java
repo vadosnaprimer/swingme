@@ -38,9 +38,14 @@ public class KeyEvent {
         public static final int KEY_DELETE = -9; // for me4se
 
         public static final int KEY_CALL = -10;
-        public static final int KEY_END  = -11;
+        public static final int KEY_END  = -11; // back button on some sony ericsons
         public static final int KEY_MENU = -12;
         public static final int KEY_EDIT = -50;
+        //public static final int KEY_WEB = -20; // SonyE
+        //public static final int KEY_PHOTO = -26; // SonyE
+        //public static final int KEY_ZOOM_IN = -36; // SonyE
+        //public static final int KEY_ZOOM_OUT = -37; // SonyE
+        //public static final int KEY_MUSIC = -22; // SonyE
 
 	private Canvas canvas;
 

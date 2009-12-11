@@ -197,6 +197,13 @@ public class List extends Component implements ActionListener {
         this.horizontal = horizontal;
     }
 
+    /**
+     * @see javax.swing.JList#getLayoutOrientation() JList.getLayoutOrientation
+     */
+    public boolean getLayoutOrientation() {
+        return horizontal;
+    }
+
     public void addActionListener(ActionListener l) {
         //#mdebug
         if (al!=null) {

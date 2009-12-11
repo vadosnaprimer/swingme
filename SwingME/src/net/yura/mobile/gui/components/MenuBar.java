@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
+import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -35,6 +36,14 @@ public class MenuBar extends List implements ActionListener {
         setCellRenderer( new MenuItemRenderer() );
         setActionCommand("activate");
         addActionListener(this);
+    }
+
+    public boolean processKeyEvent(KeyEvent keyEvent) {
+        if (!getLayoutOrientation() && getSelectedValue() instanceof Menu && keyEvent.justPressedAction(Canvas.RIGHT)) {
+            fireActionPerformed();
+            return true;
+        }
+        return super.processKeyEvent(keyEvent);
     }
 
     public boolean isVisible() {
