@@ -303,6 +303,11 @@ public class TextArea extends TextComponent {
         public boolean processKeyEvent(KeyEvent keyEvent) {
             boolean result = super.processKeyEvent(keyEvent);
 
+            // copypasta from super.processKeyEvent()
+            if (keyEvent.getJustReleasedKey()!=0) {
+                return false;
+            }
+
             if (!result) {
                 if (keyEvent.isDownAction(Canvas.UP)) {
 
@@ -348,17 +353,12 @@ public class TextArea extends TextComponent {
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
-            if (focusable && type==DesktopPane.RELEASED) {
-                if (DesktopPane.me4se) {
-                    int lineHeight = font.getHeight() + lineSpacing;
-                    int line = y / lineHeight;
-                    if (line > lines.length) { line = lines.length; }
-                    else if (line < 0) { line = 0; }
-                    gotoLine(line,x);
-                }
-                else {
-                    openNativeEditor();
-                }
+            if (focusable && type==DesktopPane.RELEASED && DesktopPane.me4se) {
+                int lineHeight = font.getHeight() + lineSpacing;
+                int line = y / lineHeight;
+                if (line > lines.length) { line = lines.length; }
+                else if (line < 0) { line = 0; }
+                gotoLine(line,x);
             }
         }
 

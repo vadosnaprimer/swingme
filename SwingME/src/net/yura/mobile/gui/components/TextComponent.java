@@ -203,6 +203,16 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
         }
 
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            boolean focusOwner = isFocusOwner();
+            super.processMouseEvent(type, x, y, keys);
+            if (focusOwner && type==DesktopPane.PRESSED && !DesktopPane.me4se) {
+                // TODO check if we have a qwerty keyboard
+                openNativeEditor();
+            }
+        }
+
+
 	public boolean processKeyEvent(KeyEvent keyEvent) {
 
             // if we are getting this event because of a release of a key
