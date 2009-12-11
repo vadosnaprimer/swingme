@@ -108,13 +108,14 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
             //httpConn.setRequestProperty("User-Agent",
             //  "Profile/MIDP-1.0 Confirguration/CLDC-1.0");
-
             os = httpConn.openOutputStream();
-            if (request.post) {
-                os.write(getpost.getBytes());
-                os.flush();
-                // TODO do we close here ???
+            if (request.postData!=null ) {
+                os.write(request.postData);
             }
+            else if(request.post && getpost!=null) {
+                os.write(getpost.getBytes());
+            }
+            os.flush();
             /** Initiate connection and check for the response code. If the
             response code is HTTP_OK then get the content from the target
             **/
