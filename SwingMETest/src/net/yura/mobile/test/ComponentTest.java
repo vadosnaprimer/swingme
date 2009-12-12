@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
+import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.BevelBorder;
@@ -19,6 +20,7 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Camera;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
+import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
@@ -60,7 +62,8 @@ public class ComponentTest  extends Section{
             addTest("Window Test","windowTest1");
             addTest("Option Pane Test","optionPaneTest");
             addTest("Table Test","tableTest");
-            addTest("Scroll Test","scrollTest1");
+            addTest("Scroll Test 1","scrollTest1");
+            addTest("Scroll Test 2","scrollTest2");
             addTest("File Chooser","fileChooser");
             addTest("Multi File Chooser","fileChooser2");
             addTest("Test Camera","testCamera");
@@ -166,8 +169,16 @@ public class ComponentTest  extends Section{
 			addToScrollPane(componentTest, menu );
 
 		}
-
-               else if ("windowTest1".equals(actionCommand)) {
+                else if ("scrollTest1".equals(actionCommand)) {
+                    Panel p = new Panel( new FlowLayout(Graphics.VCENTER) );
+                    for (int c=0;c<30;c++) {
+                        Button b = new Button("hello "+c);
+                        b.setFocusable(false);
+                        p.add(b);
+                    }
+                    addToScrollPane(p,null);
+                }
+                else if ("windowTest1".equals(actionCommand)) {
 
                     Frame test1 = new Frame("Window Title");
                     test1.setIconImage(mainPane.image);
@@ -218,8 +229,7 @@ public class ComponentTest  extends Section{
                     test1.setVisible(true);
 
                 }
-
-                else if ("scrollTest1".equals(actionCommand)) {
+                else if ("scrollTest2".equals(actionCommand)) {
 
                         Panel scrollTest = new Panel(new FlowLayout(Graphics.VCENTER));
 
@@ -323,7 +333,14 @@ public class ComponentTest  extends Section{
 
                                 Panel tab4 = new Panel( new BorderLayout() );
                                 tab4.add(new Label("Tab 4 title"),Graphics.TOP);
-                                tab4.add(new ScrollPane(new List(anotherlist,new DefaultListCellRenderer(),false)));
+
+                                List l2 = new List(anotherlist,new DefaultListCellRenderer(),false);
+                                l2.addChangeListener(new ChangeListener() {
+                                    public void changeEvent(Component arg0, int arg1) {
+                                        System.out.println("change "+arg1);
+                                    }
+                                });
+                                tab4.add(new ScrollPane(l2));
 
                                 tabbedPane.add(tab1);
                                 tabbedPane.addTab("TAB 2", mainPane.image, tab2,"i am a tooltip");

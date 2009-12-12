@@ -6,7 +6,6 @@
 package net.yura.mobile.test;
 
 import java.util.Hashtable;
-import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.layout.BorderLayout;
