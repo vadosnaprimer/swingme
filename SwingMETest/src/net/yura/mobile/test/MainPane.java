@@ -219,10 +219,12 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Font Test","fontTest");
 
                                 addSection("ServiceLink Test",new ServiceLinkTest());
+
                                 try {
                                     addSection("BlueTooth Test",new BlueToothTest());
                                 }
                                 catch(Throwable th) {
+                                    mainmenu.add( new Label("no BlueTooth") );
                                     mainmenu.add( new Label( th.toString() ) );
                                 }
 
