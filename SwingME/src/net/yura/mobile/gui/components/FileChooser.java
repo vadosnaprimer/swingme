@@ -257,20 +257,20 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     }
 
     private void startImageLoadingThread(SelectableFile file) {
-
-            boolean doStart = requestImage.isEmpty();
-            if (!requestImage.contains(file)) {
-                requestImage.addElement(file);
-            }
-            if (doStart) {
-                new Thread(this).start();
-            }
-
+        boolean doStart = requestImage.isEmpty();
+        if (!requestImage.contains(file)) {
+            requestImage.addElement(file);
+        }
+        if (doStart) {
+            new Thread(this).start();
+        }
     }
     
     final private Vector requestImage = new Vector();
 
     public void run() {
+
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
         if (files.isEmpty()) {
             requestImage.removeAllElements();
@@ -296,11 +296,21 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             revalidate();
             repaint();
+            return;
         }
 
-        while (!requestImage.isEmpty() && !files.isEmpty()) {
+        while (true) {
 
-            SelectableFile file = (SelectableFile)requestImage.firstElement();
+            SelectableFile file;
+
+            synchronized (requestImage) {
+                if (!requestImage.isEmpty() && !files.isEmpty() ) {
+                    file = (SelectableFile)requestImage.firstElement();
+                }
+                else {
+                    return;
+                }
+            }
 
             String absoultePath = file.getAbsolutePath();
             //Should use a separate thread for this imo.
@@ -313,7 +323,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
             }
 
-            synchronized(requestImage) {
+            synchronized (requestImage) {
                 if (image!=null) {
                     file.thumb = new WeakReference( new Icon(image) );
                 }
@@ -325,6 +335,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     requestImage.removeElementAt(0);
                 }
             }
+
             repaint();
         }
     }
@@ -618,14 +629,11 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
                 Icon img;
 
-                synchronized(requestImage) {
-
+                synchronized (requestImage) {
                     img = (currentThumbSize == thumbSize && thumb != null) ? (Icon) thumb.get() : null;
-
                     if (img == null && !loadFailed) {
                         startImageLoadingThread(this);
                     }
-
                 }
 
                 if (img!=null) {
