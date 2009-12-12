@@ -268,6 +268,14 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     
     final private Vector requestImage = new Vector();
 
+    private void yield() {
+        try {
+            Thread.yield();
+            Thread.sleep(0);
+        }
+        catch (InterruptedException ex) {}
+    }
+
     public void run() {
 
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -313,11 +321,18 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
 
             String absoultePath = file.getAbsolutePath();
-            //Should use a separate thread for this imo.
+
+            yield();
+
             Image image = NativeUtil.getThumbnailFromFile(absoultePath);
+
+            yield();
+
             if (image == null) {
                 image = NativeUtil.getImageFromFile( absoultePath );
             }
+
+            yield();
 
             if (image!=null) {
                 image = ImageUtil.scaleImage(image, thumbSize, thumbSize);

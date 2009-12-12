@@ -643,8 +643,11 @@ public class NativeUtil {
         try {
             is = ((FileConnection)Connector.open(fileName,Connector.READ)).openDataInputStream();
         } catch (Exception ex) {
-            //#debug
+            //#mdebug
+            DesktopPane.log("failed to load stream for: "+fileName+" "+ex.toString());
+            System.err.println("failed to load stream for: "+fileName+" "+ex.toString());
             ex.printStackTrace();
+            //#enddebug
             return null;
         }
         return is;
@@ -661,10 +664,14 @@ public class NativeUtil {
             if (thumb != null && thumb.length > 0) {
                 return Image.createImage(thumb,0,thumb.length);
             }
-            return null;
+            throw new Exception("no thumb");
         }
         catch (Throwable err) {
+            //#mdebug
+            DesktopPane.log("failed to load thumb for: "+fileName+" "+err.toString());
+            System.err.println("failed to load thumb for: "+fileName+" "+err.toString());
             err.printStackTrace();
+            //#enddebug
             return null;
         }
         finally {
@@ -682,7 +689,11 @@ public class NativeUtil {
             return Image.createImage(is);
         }
         catch (Throwable err) {
+            //#mdebug
+            DesktopPane.log("failed to load image for: "+filename+" "+err.toString());
+            System.err.println("failed to load image for: "+filename+" "+err.toString());
             err.printStackTrace();
+            //#enddebug
             return null;
         }
         finally {

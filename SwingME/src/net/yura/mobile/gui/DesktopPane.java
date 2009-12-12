@@ -792,7 +792,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     if (suny && key==KeyEvent.KEY_END) { // for sony-ericson, back is save as softkey 2
                         key = KeyEvent.KEY_SOFTKEY2;
                     }
-                    mneonicButton = currentWindow.findMneonicButton(keyevent.getJustPressedKey());
+                    mneonicButton = currentWindow.findMneonicButton(key);
                 }
                 Component focusedComponent = currentWindow.getFocusOwner();
 
