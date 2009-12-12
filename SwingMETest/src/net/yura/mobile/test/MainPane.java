@@ -18,10 +18,13 @@
 package net.yura.mobile.test;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Vector;
 
 //import javax.microedition.lcdui.Font;
+import javax.microedition.io.Connector;
+import javax.microedition.io.InputConnection;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -77,7 +80,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
         Frame xuldialog;
 
-        
+        private TextArea sysoutArea;
 
 
 
@@ -225,6 +228,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 				addMainMenuButton("Load Images","loadpanel");
 				addMainMenuButton("Throw Error","throwerror");
+                                addMainMenuButton("System.out", "sysout");
 
                                 // add theme swap test
                                 
@@ -251,6 +255,42 @@ public class MainPane extends DesktopPane implements ActionListener {
                         bar.addElement( new Label(image) );
 
 		}
+                else if ("sysout".equals(actionCommand)) {
+
+                    if (sysoutArea==null) {
+
+                        sysoutArea = new TextArea();
+                        sysoutArea.setLineWrap(true);
+                        sysoutArea.setFocusable(false);
+
+                        new Thread() {
+                            public void run() {
+                                try {
+                                    InputConnection inputConnection = (InputConnection)Connector.open("redirect://", 1);
+                                    InputStream inputStream = inputConnection.openInputStream();
+                                    byte buffer[] = new byte[256];
+                                    int len = -1;
+                                    do {
+                                        len = inputStream.read(buffer);
+                                        if(len > 0) {
+                                            String s = new String(buffer, 0, len);
+                                            sysoutArea.append(s);
+                                        }
+                                    } while(true);
+                                    //inputStream.close();
+                                }
+                                catch(Exception ee)
+                                {
+                                    ee.printStackTrace();
+                                }
+                            }
+
+                        }.start();
+                    }
+
+                    addToScrollPane(sysoutArea, null,  makeButton("Back","mainmenu") );
+
+                }
                 else if ("aether1".equals(actionCommand)) {
                     setupNewLookAndFeel( new NimbusLookAndFeel() );
                 }
