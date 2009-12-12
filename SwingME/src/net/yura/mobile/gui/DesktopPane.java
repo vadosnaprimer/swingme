@@ -132,16 +132,25 @@ public class DesktopPane extends Canvas implements Runnable {
     }
     public static final boolean debug = false;
     public static final boolean me4se;
-
+    public static final boolean suny;
 
     static {
-        boolean init = false;
+        Class init = null;
         try {
-            Class.forName("org.me4se.MIDletRunner");
-            init = true;
+            init = Class.forName("org.me4se.MIDletRunner");
         }
-        catch (ClassNotFoundException ex) { }
-        me4se = init;
+        catch (Throwable ex) { }
+
+        me4se = (init != null);
+
+        String sunyString=null;
+        try {
+            sunyString = System.getProperty("com.sonyericsson.java.platform");
+        }
+        catch(Throwable th) {}
+
+        suny = (sunyString!=null);
+
     }
 
     // object variables
@@ -778,7 +787,11 @@ public class DesktopPane extends Canvas implements Runnable {
             if (currentWindow != null && currentWindow == windows.lastElement()) {
 
                 Button mneonicButton = null;
-                if (keyevent.getJustPressedKey() != 0) {
+                int key = keyevent.getJustPressedKey();
+                if (key != 0) {
+                    if (suny && key==KeyEvent.KEY_END) { // for sony-ericson, back is save as softkey 2
+                        key = KeyEvent.KEY_SOFTKEY2;
+                    }
                     mneonicButton = currentWindow.findMneonicButton(keyevent.getJustPressedKey());
                 }
                 Component focusedComponent = currentWindow.getFocusOwner();
@@ -916,8 +929,7 @@ public class DesktopPane extends Canvas implements Runnable {
             indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
         }
         else {
-            String suny = System.getProperty("com.sonyericsson.java.platform");
-            indicator.setBoundsWithBorder(suny!=null?0:(getWidth()-w), 0, w, h);
+            indicator.setBoundsWithBorder(suny?0:(getWidth()-w), 0, w, h);
         }
 
     }

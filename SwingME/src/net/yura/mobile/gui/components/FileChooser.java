@@ -16,8 +16,6 @@
  */
 package net.yura.mobile.gui.components;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -27,7 +25,6 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.celleditor.TableCellEditor;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
-import net.yura.mobile.util.Option;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
@@ -90,14 +87,14 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         popupMenu.add(doneButton);
 
         Menu showMenu = new Menu((String)DesktopPane.get("showText"));
-        showMenu.addActionListener(this);
+        //showMenu.addActionListener(this);
         ButtonGroup group1 = new ButtonGroup();
         showAll = addMenuCheckBox(showMenu, group1, (String)DesktopPane.get("allText"), "show", true);
         showNew = addMenuCheckBox(showMenu, group1, (String)DesktopPane.get("newText"), "show", false);
         popupMenu.add(showMenu);
 
         Menu viewMenu = new Menu((String)DesktopPane.get("viewText"));
-        viewMenu.addActionListener(this);
+        //viewMenu.addActionListener(this);
         ButtonGroup group2 = new ButtonGroup();
         listView = addMenuCheckBox(viewMenu, group2, (String)DesktopPane.get("listText"), "view", true);
         gridView = addMenuCheckBox(viewMenu, group2, (String)DesktopPane.get("gridText"), "view", false);
@@ -220,7 +217,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         setVisible(true);
 
-        startLoadingThread();
+        startFileLoadingThread();
     }
 
 
@@ -254,34 +251,82 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         repaint();
     }
 
-    private void startLoadingThread() {
+    private void startFileLoadingThread() {
         this.files.removeAllElements();
         new Thread(this).start();
     }
 
+    private void startImageLoadingThread(SelectableFile file) {
+
+            boolean doStart = requestImage.isEmpty();
+            if (!requestImage.contains(file)) {
+                requestImage.addElement(file);
+            }
+            if (doStart) {
+                new Thread(this).start();
+            }
+
+    }
+    
+    final private Vector requestImage = new Vector();
+
     public void run() {
 
-        Vector fileNames = NativeUtil.listFiles(dir, filter, showNew.isSelected());
+        if (files.isEmpty()) {
+            requestImage.removeAllElements();
+            Vector fileNames = NativeUtil.listFiles(dir, filter, showNew.isSelected());
 
-        for (int c = 0; c < fileNames.size(); c++) {
+            for (int c = 0; c < fileNames.size(); c++) {
 
-            String name = (String) fileNames.elementAt(c);
+                String name = (String) fileNames.elementAt(c);
 
-            SelectableFile tbo = new SelectableFile(name);
-            files.addElement(tbo);
+                SelectableFile tbo = new SelectableFile(name);
+                files.addElement(tbo);
 
+            }
+
+            if (gridView.isSelected()) {
+                fileTable.setListData(files);
+                fileTable.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
+            }
+            else {
+                fileList.setListData(files);
+                fileList.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
+            }
+
+            revalidate();
+            repaint();
         }
 
-        if (gridView.isSelected()) {
-            fileTable.setListData(files);
-            fileTable.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
+        while (!requestImage.isEmpty() && !files.isEmpty()) {
+
+            SelectableFile file = (SelectableFile)requestImage.firstElement();
+
+            String absoultePath = file.getAbsolutePath();
+            //Should use a separate thread for this imo.
+            Image image = NativeUtil.getThumbnailFromFile(absoultePath);
+            if (image == null) {
+                image = NativeUtil.getImageFromFile( absoultePath );
+            }
+
+            if (image!=null) {
+                image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
+            }
+
+            synchronized(requestImage) {
+                if (image!=null) {
+                    file.thumb = new WeakReference( new Icon(image) );
+                }
+                else {
+                    file.loadFailed = true;
+                }
+                file.currentThumbSize = thumbSize;
+                if (!requestImage.isEmpty()) {
+                    requestImage.removeElementAt(0);
+                }
+            }
+            repaint();
         }
-        else {
-            fileList.setListData(files);
-            fileList.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
-        }
-        revalidate();
-        repaint();
     }
 
     /**
@@ -340,7 +385,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             setUpView();
         }
         else if ("show".equals(myaction)) {
-            startLoadingThread();
+            startFileLoadingThread();
         }
         else if ("listSelect".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileList.getSelectedValue();
@@ -381,7 +426,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             fileTable.removeEditor();
         }
         setCurrentDirectory(to.getAbsolutePath());
-        startLoadingThread();
+        startFileLoadingThread();
     }
 
     /**
@@ -564,7 +609,6 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         /**
          * Returns the cached image representing this option
-         * (non-Javadoc)
          * @see net.yura.mobile.util.Option#getIcon()
          */
         public Icon getIcon() {
@@ -572,31 +616,16 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             int type = NativeUtil.getFileType(filename);
             if (type == NativeUtil.TYPE_PICTURE) {
 
-                Icon img = (currentThumbSize == thumbSize && thumb != null) ? (Icon) thumb.get() : null;
+                Icon img;
 
-                if (img == null && !loadFailed) {
-                    String absoultePath = getAbsolutePath();
-                    //Should use a separate thread for this imo.
-                    Image image = NativeUtil.getThumbnailFromFile(absoultePath);
-                    if (image == null) {
-                        image = NativeUtil.getImageFromFile( absoultePath );
-                    }
+                synchronized(requestImage) {
 
-                    if (image!=null) {
-                        image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
-                    }
-                    if (image!=null) {
-                        img = new Icon(image);
+                    img = (currentThumbSize == thumbSize && thumb != null) ? (Icon) thumb.get() : null;
+
+                    if (img == null && !loadFailed) {
+                        startImageLoadingThread(this);
                     }
 
-                    if (img!=null) {
-                        thumb = new WeakReference(img);
-                    }
-                    else {
-                        loadFailed = true;
-                    }
-
-                    currentThumbSize = thumbSize;
                 }
 
                 if (img!=null) {
