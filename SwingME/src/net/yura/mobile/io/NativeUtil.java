@@ -11,8 +11,10 @@ import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.util.ImageUtil;
 
 public class NativeUtil {
 
@@ -641,7 +643,7 @@ public class NativeUtil {
     public static InputStream getInputStreamFromFileConnector(final String fileName){
         InputStream is = null;
         try {
-            is = ((FileConnection)Connector.open(fileName,Connector.READ)).openDataInputStream();
+            is = ((FileConnection)Connector.open(fileName,Connector.READ)).openInputStream();
         } catch (Exception ex) {
             //#mdebug
             DesktopPane.log("failed to load stream for: "+fileName+" "+ex.toString());
@@ -657,14 +659,10 @@ public class NativeUtil {
      * will return null if no thumb found
      */
     public static Image getThumbnailFromFile(final String fileName) {
-        DataInputStream dis = null;
+        InputStream dis = null;
         try {
-            dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openDataInputStream();
-            byte[] thumb = parseJPEG(dis);
-            if (thumb != null && thumb.length > 0) {
-                return Image.createImage(thumb,0,thumb.length);
-            }
-            throw new Exception("no thumb");
+            dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openInputStream();
+            return ImageUtil.getThumbFromFile(dis);
         }
         catch (Throwable err) {
             //#mdebug
@@ -697,116 +695,29 @@ public class NativeUtil {
             return null;
         }
         finally {
-            NativeUtil.close(is);
-        }
-    }
-
-    public static byte[] parseJPEG( DataInputStream dis ) throws IOException {
-
-        boolean motorolaOrder;
-        byte[] thumbData = null;
-
-        dis.read();            //SOI marker:ff
-        dis.read();            //SOI marker:d8
-
-        while (dis.read() == 0xFF)  //APP1 marker: FF
-        {
-            int marker = dis.read();    //APP1 marker: E1
-            int ssss1 = dis.read();  //marker length
-            int ssss2 = dis.read();  //marker length
-            switch( marker )
-            {
-                case 0xE1:              //APP1 marker for EXIF format jpeg
-                    dis.skip( 6 );      //EXIF header: E x i f 00 00
-
-                    dis.mark( Integer.MAX_VALUE );  //TIFF start
-
-                    int byteAlign1 = dis.read();   //byte order: 4D4D->Motorola 4949->Intel
-                    int byteAlign2 = dis.read();
-                    if( byteAlign1 == 0x49 && byteAlign2 == 0x49 )            //4949
-                        motorolaOrder = false;
-                    else if( byteAlign1 == 0x4D && byteAlign2 == 0x4D)        //4D4D
-                        motorolaOrder = true;
-                    else
-                        throw new IOException("unsupported byte order format in TIFF header");
-
-                    dis.skip( 2 );                 // Moto->00 2A Inter->2A 00
-
-                    int IDF0offset = readInt( dis,motorolaOrder );//position of the first IFD, normally 8 this is relative to TIFF start
-
-                    thumbData = readIFD( dis,0,0,motorolaOrder );
-
-                    break;
-
-                default:
-                    dis.skip(ssss1 - 2);//skip the rest of the chunk
-                    break;
-            }
-        }
-        dis.close();
-        return thumbData;
-    }
-
-
-    /**
-     * parse IFD directory and copy out thumb data, and ignore other attributes
-     * IFD format can be refered from {@link http://www.media.mit.edu/pia/Research/deepview/exif.html }
-     */
-    public static byte[] readIFD( DataInputStream dis,int thumbOffset,int thumbSize,boolean motorolaOrder ) throws IOException
-    {
-        int numDirectoryEntries = readShort( dis,motorolaOrder );
-
-        for( int i = 0; i < numDirectoryEntries; i++ )
-        {
-            int entryTag = readShort( dis,motorolaOrder );
-            int dataFormat = readShort( dis,motorolaOrder );
-            int components = readInt( dis,motorolaOrder );
-            int data = readInt( dis,motorolaOrder );
-            switch( entryTag )
-            {
-                case 0x0201:
-                    thumbOffset = data;
-                    break;
-                case 0x0202:
-                    thumbSize = data;
-                    break;
-            }
-        }
-        int nextIFDOffset = readInt( dis,motorolaOrder );
-
-        if( nextIFDOffset != 0 )
-        {
-            dis.reset();
-            long skipped = dis.skip( nextIFDOffset );
-            return readIFD( dis,thumbOffset,thumbSize,motorolaOrder );
-        }
-        else
-        {
-            //this is the IFD1 block so its the thumbnail
-            dis.reset();
-            dis.skip( thumbOffset );
-            byte[] thumbData = new byte[ thumbSize ];
-            dis.readFully( thumbData );
-            return thumbData;
+            close(is);
         }
     }
 
 
 
-    /**
-     * convert 4 byte to int using the byte order read from TIFF header
-     */
-    public static int readInt( DataInputStream dis,boolean motorolaOrder ) throws IOException {
-        int temp = dis.readInt();
-        return motorolaOrder ? temp : ( (temp&0xFF)<<24) | ( ((temp>>8)&0xFF)<<16)| (((temp>>16)&0xFF)<<8)| ( ((temp>>24)&0xFF));
-    }
 
-    /**
-     * convert 2 byte to int using the byte order read from TIFF header
-     */
-    public static int readShort( DataInputStream dis,boolean motorolaOrder ) throws IOException {
-        int temp = dis.readShort();
-        return motorolaOrder ? temp : ( ((temp)&0xFF)<<8)| ( ((temp>>8)&0xFF));
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
