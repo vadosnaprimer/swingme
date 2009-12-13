@@ -248,7 +248,7 @@ public class ProtoUtil {
             case BinUtil.TYPE_ARRAY: return computeArraySize( (Object[])obj );
             case BinUtil.TYPE_HASHTABLE: return computeHashtableSize( (Hashtable)obj );
             case BinUtil.TYPE_FLOAT: return CodedOutputStream.computeFloatSize(DEFAULT_FIELD, ((Float)obj).floatValue());
-            case BinUtil.TYPE_BYTE_ARRAY: return CodedOutputStream.computeBytesSize(DEFAULT_FIELD, ((byte[])obj).length );
+            case BinUtil.TYPE_BYTE_ARRAY: return CodedOutputStream.computeBytesSize(DEFAULT_FIELD, computeByteArraySize(obj));
             case BinUtil.TYPE_NULL: return 0; // nothing
             default: throw new RuntimeException();
         }
@@ -270,11 +270,21 @@ public class ProtoUtil {
             case BinUtil.TYPE_ARRAY: encodeArray( out, (Object[])obj ); break;
             case BinUtil.TYPE_HASHTABLE: encodeHashtable( out, (Hashtable)obj ); break;
             case BinUtil.TYPE_FLOAT: out.writeFloat(DEFAULT_FIELD, ((Float)obj).floatValue() ); break;
-            case BinUtil.TYPE_BYTE_ARRAY: out.writeBytes(DEFAULT_FIELD, (byte[])obj); break;
+            case BinUtil.TYPE_BYTE_ARRAY: {
+                out.writeBytes(DEFAULT_FIELD, computeByteArraySize(obj) );
+                encodeByteArray(out,obj); break;
+            }
             case BinUtil.TYPE_NULL: break; // nothing
             default: throw new IOException();
         }
 
+    }
+
+    protected int computeByteArraySize(Object obj) {
+        return ((byte[])obj).length;
+    }
+    protected void encodeByteArray(CodedOutputStream out,Object obj) throws IOException {
+        out.writeRawBytes((byte[])obj);
     }
 
     public int computeAnonymousObjectSize(Object obj) {
