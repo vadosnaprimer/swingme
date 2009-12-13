@@ -323,18 +323,15 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             String absoultePath = file.getAbsolutePath();
 
             yield();
-
             Image image = NativeUtil.getThumbnailFromFile(absoultePath);
 
-            yield();
-
             if (image == null) {
+                yield();
                 image = NativeUtil.getImageFromFile( absoultePath );
             }
 
-            yield();
-
             if (image!=null) {
+                yield();
                 image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
             }
 
