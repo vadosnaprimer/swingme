@@ -50,6 +50,9 @@ public class XMLAccess extends XMLUtil {
         serializer.startTag(null,"body");
         saveObject(serializer, object.getBody() );
         serializer.endTag(null,"body");
+        serializer.startTag(null,"andOneInside");
+        saveObject(serializer, object.getAndOneInside() );
+        serializer.endTag(null,"andOneInside");
         serializer.startTag(null,"legs");
         saveObject(serializer, object.getLegs() );
         serializer.endTag(null,"legs");
@@ -62,9 +65,6 @@ public class XMLAccess extends XMLUtil {
         serializer.startTag(null,"organs");
         saveObject(serializer, object.getOrgans() );
         serializer.endTag(null,"organs");
-        serializer.startTag(null,"andOneInside");
-        saveObject(serializer, object.getAndOneInside() );
-        serializer.endTag(null,"andOneInside");
     }
     protected void saveTest(XmlSerializer serializer,Test object) throws IOException {
         serializer.attribute(null,"id", String.valueOf( object.getId() ) );
@@ -128,6 +128,14 @@ public class XMLAccess extends XMLUtil {
                 }
                 object.setBody( (Object)obj );
             }
+            else if ("andOneInside".equals(name)) {
+                Object obj = null;
+                while (parser.nextTag() != KXmlParser.END_TAG) {
+                    if (obj!=null) { throw new IOException(); }
+                    obj = readObject(parser);
+                }
+                object.setAndOneInside( (Test)obj );
+            }
             else if ("objects".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
@@ -179,14 +187,6 @@ public class XMLAccess extends XMLUtil {
                     obj = readObject(parser);
                 }
                 object.setOrgans( (Hashtable)obj );
-            }
-            else if ("andOneInside".equals(name)) {
-                Object obj = null;
-                while (parser.nextTag() != KXmlParser.END_TAG) {
-                    if (obj!=null) { throw new IOException(); }
-                    obj = readObject(parser);
-                }
-                object.setAndOneInside( (Test)obj );
             }
             else {
                 System.out.println("unknown section: "+name);

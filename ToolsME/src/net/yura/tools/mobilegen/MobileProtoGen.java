@@ -192,7 +192,7 @@ for (ProtoLoader.FieldDefinition field:fields) {
                 type = "String";
             }
             else if (isPrimitive(field.getType())) {
-                type = primitiveToJavaType(field.getType());
+                type = primitiveToJavaType(field.getType(),false);
             }
             else {
                 MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
@@ -210,7 +210,7 @@ for (ProtoLoader.FieldDefinition field:fields) {
                     type = field.getImplementation().getComponentType().getSimpleName();
                 }
                 else if (isPrimitive(field.getType())) { // vector
-                    type = primitiveToJavaType(field.getType());
+                    type = primitiveToJavaType(field.getType(),false);
                 }
                 else {
                     MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
@@ -278,7 +278,7 @@ ps.println("        }");
         String thing = field.getName()+"Value";
         String type = field.getType();
         if (message.getImplementation() == Hashtable.class && !"string".equals(type) && !"bytes".equals(type) && isPrimitive(type) ) {
-            thing = thing+"."+getPrimativeFromJavaType( primitiveToJavaType(type) ) +"Value()";
+            thing = thing+"."+getPrimativeFromJavaType( primitiveToJavaType(type,false) ) +"Value()";
         }
 
         if (field.getEnumeratedType()!=null) {
@@ -296,9 +296,10 @@ ps.println("        }");
                 }
         }
 
+        String t1=("bytes".equals(type))?"computeByteArraySize("+thing+")":thing;
         if (calc) {
             if ( isPrimitive(type) ) {
-                ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+thing+" );");
+                ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+t1+" );");
             }
             else {
                 ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", "+s+");");
@@ -306,7 +307,8 @@ ps.println("        }");
         }
         else {
             if ( isPrimitive(type) ) {
-                ps.println("        out.write"+firstUp(type)+"("+field.getID()+", "+thing+" );");
+                ps.println("        out.write"+firstUp(type)+"("+field.getID()+", "+t1+" );");
+                if ("bytes".equals(type)) { ps.println("encodeByteArray(out,"+thing+");"); }
             }
             else {
                 ps.println("out.writeBytes("+field.getID()+","+s+");");
@@ -368,11 +370,11 @@ for (ProtoLoader.FieldDefinition field:fields) {
     }
     else if (isPrimitive(field.getType())) {
         if ("string".equals(field.getType()) || "bytes".equals(field.getType())) {
-            ps.println("        "+primitiveToJavaType(field.getType())+" value = in2.read"+firstUp(field.getType())+"();");
+            ps.println("        "+primitiveToJavaType(field.getType(),true)+" value = in2.read"+firstUp(field.getType())+"();");
         }
         else {
             if (field.getRepeated() || message.getImplementation() == Hashtable.class) {
-                ps.println("    "+primitiveToJavaType(field.getType())+" value = new "+primitiveToJavaType(field.getType())+"(in2.read"+firstUp(field.getType())+"() );");
+                ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = new "+primitiveToJavaType(field.getType(),true)+"(in2.read"+firstUp(field.getType())+"() );");
             }
             else {
                 ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"();");
@@ -642,7 +644,7 @@ ps.println("    }");
             type.equals( "bytes"    )
             );
     }
-    private static String primitiveToJavaType( String type ) {
+    private static String primitiveToJavaType( String type,boolean read ) {
 
         if (
             type.equals( "string"   )
@@ -670,7 +672,7 @@ ps.println("    }");
         if (
             type.equals( "bytes"    )
             )
-            return "byte[]";
+            return read?"byte[]":"Object";
 
         if (
             type.equals( "double"   )

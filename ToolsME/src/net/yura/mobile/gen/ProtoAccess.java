@@ -80,13 +80,13 @@ public class ProtoAccess extends ProtoUtil {
     protected int getObjectTypeEnum(Object obj) {
         if (obj instanceof Hashtable) {
             Hashtable table = (Hashtable)obj;
-            if (hashtableIsMessage(table,new String[] {"vec1","vec2","vec3"},new String[] {})) {
+            if (hashtableIsMessage(table,new String[] {},new String[] {"vec1","vec2","vec3"})) {
                 return TYPE_BOB;
             }
-            if (hashtableIsMessage(table,new String[] {"username","password","type","tests","inty","intx","intz"},new String[] {"image"})) {
+            if (hashtableIsMessage(table,new String[] {"username","password","intx","intz"},new String[] {"type","tests","image","inty"})) {
                 return TYPE_LOGIN;
             }
-            if (hashtableIsMessage(table,new String[] {"sessionId","albums","login","login2","newPeople","newMessages"},new String[] {})) {
+            if (hashtableIsMessage(table,new String[] {"sessionId","login","login2","newPeople","newMessages"},new String[] {"albums"})) {
                 return TYPE_CLIENT_LOGIN_SUCCESS;
             }
             if (hashtableIsMessage(table,new String[] {"body"},new String[] {})) {
@@ -154,9 +154,9 @@ public class ProtoAccess extends ProtoUtil {
                 size = size + CodedOutputStream.computeBytesSize(4, computeTestObjectSize( testsValue ));
             }
         }
-        byte[] imageValue = (byte[])object.get("image");
+        Object imageValue = (Object)object.get("image");
         if (imageValue!=null) {
-            size = size + CodedOutputStream.computeBytesSize(5, imageValue );
+            size = size + CodedOutputStream.computeBytesSize(5, computeByteArraySize(imageValue) );
         }
         Vector intyVector = (Vector)object.get("inty");
         if (intyVector!=null) {
@@ -223,7 +223,7 @@ public class ProtoAccess extends ProtoUtil {
         }
         byte[] imageValue = object.getImage();
         if (imageValue!=null) {
-            size = size + CodedOutputStream.computeBytesSize(1, imageValue );
+            size = size + CodedOutputStream.computeBytesSize(1, computeByteArraySize(imageValue) );
         }
         Vector armsVector = object.getArms();
         if (armsVector!=null) {
@@ -307,9 +307,10 @@ public class ProtoAccess extends ProtoUtil {
                 encodeTestObject( out, testsValue );
             }
         }
-        byte[] imageValue = (byte[])object.get("image");
+        Object imageValue = (Object)object.get("image");
         if (imageValue!=null) {
-            out.writeBytes(5, imageValue );
+            out.writeBytes(5, computeByteArraySize(imageValue) );
+            encodeByteArray(out,imageValue);
         }
         Vector intyVector = (Vector)object.get("inty");
         if (intyVector!=null) {
@@ -376,7 +377,8 @@ public class ProtoAccess extends ProtoUtil {
         }
         byte[] imageValue = object.getImage();
         if (imageValue!=null) {
-            out.writeBytes(1, imageValue );
+            out.writeBytes(1, computeByteArraySize(imageValue) );
+            encodeByteArray(out,imageValue);
         }
         Vector armsVector = object.getArms();
         if (armsVector!=null) {
