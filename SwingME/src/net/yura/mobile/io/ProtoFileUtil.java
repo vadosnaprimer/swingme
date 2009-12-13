@@ -17,8 +17,8 @@ public class ProtoFileUtil extends ProtoUtil {
         return super.getObjectTypeEnum(obj);
     }
 
-    protected int computeObjectSize(Object obj,int type) {
-        if (type==BinUtil.TYPE_BYTE_ARRAY && obj instanceof FileConnection) {
+    protected int computeByteArraySize(Object obj) {
+        if (obj instanceof FileConnection) {
             try {
                 FileConnection file = (FileConnection)obj;
                 return (int)file.fileSize();
@@ -30,15 +30,13 @@ public class ProtoFileUtil extends ProtoUtil {
             }
         }
         else {
-            return super.computeObjectSize(obj, type);
+            return super.computeByteArraySize(obj);
         }
     }
 
-    protected void encodeObject(CodedOutputStream out, Object obj,int type) throws IOException {
-        if (type==BinUtil.TYPE_BYTE_ARRAY && obj instanceof FileConnection) {
-            out.writeBytes(1, computeObjectSize(obj,type) ); // 1 is the default field id
+    protected void encodeByteArray(CodedOutputStream out,Object obj) throws IOException {
+        if (obj instanceof FileConnection) {
             int COPY_BLOCK_SIZE=1024;
-
             FileConnection file = (FileConnection)obj;
             InputStream is = file.openInputStream();
             byte[] data = new byte[COPY_BLOCK_SIZE];
@@ -46,9 +44,10 @@ public class ProtoFileUtil extends ProtoUtil {
             while( ( i = is.read(data,0,COPY_BLOCK_SIZE ) ) != -1  ) {
                 out.writeRawBytes(data,0,i);
             }
+            NativeUtil.close(is);
         }
         else {
-            super.encodeObject(out, obj, type);
+            super.encodeByteArray(out, obj);
         }
     }
 
