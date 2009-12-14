@@ -36,15 +36,20 @@ public class ProtoFileUtil extends ProtoUtil {
 
     protected void encodeByteArray(CodedOutputStream out,Object obj) throws IOException {
         if (obj instanceof FileConnection) {
-            int COPY_BLOCK_SIZE=1024;
-            FileConnection file = (FileConnection)obj;
-            InputStream is = file.openInputStream();
-            byte[] data = new byte[COPY_BLOCK_SIZE];
-            int i = 0;
-            while( ( i = is.read(data,0,COPY_BLOCK_SIZE ) ) != -1  ) {
-                out.writeRawBytes(data,0,i);
+            InputStream is=null;
+            try {
+                int COPY_BLOCK_SIZE=1024;
+                FileConnection file = (FileConnection)obj;
+                is = file.openInputStream();
+                byte[] data = new byte[COPY_BLOCK_SIZE];
+                int i = 0;
+                while( ( i = is.read(data,0,COPY_BLOCK_SIZE ) ) != -1  ) {
+                    out.writeRawBytes(data,0,i);
+                }
             }
-            NativeUtil.close(is);
+            finally {
+                NativeUtil.close(is);
+            }
         }
         else {
             super.encodeByteArray(out, obj);
