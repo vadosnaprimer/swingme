@@ -67,6 +67,19 @@ public class Menu extends Button {
             setText(string);
         }
 
+        /**
+         * @see javax.swing.JMenu#addSeparator() JMenu.addSeparator
+         */
+        public void addSeparator() {
+            add( makeSeparator() );
+        }
+        public static Component makeSeparator() {
+            Label separator = new Label();
+            separator.setPreferredSize(-1, 1);
+            separator.setName("Separator");
+            return separator;
+        }
+
         public void setMenuRenderer(ListCellRenderer renderer) {
             menuItems.setCellRenderer(renderer);
         }

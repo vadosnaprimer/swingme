@@ -399,9 +399,7 @@ public class XULLoader {
             return readUIObject(parser, checkbox,listener);
         }
         else if (name.equals("separator")) {
-            Label separator = new Label();
-            separator.setPreferredSize(-1, 1);
-            separator.setName("Separator");
+            Component separator = Menu.makeSeparator();
             return readUIObject(parser, separator,listener);
         }
         else if (name.equals("combobox")) {
