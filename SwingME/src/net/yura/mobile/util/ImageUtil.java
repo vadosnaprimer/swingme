@@ -235,50 +235,62 @@ public class ImageUtil {
    */
   public static Image getThumbFromFile (InputStream str) throws IOException {
 
-            byte[] tempByteArray = new byte[THUMB_MAX_SIZE]; // how big can a thumb get.
-            byte[] bytefileReader = {0}; // lazy byte reader
-            byte firstByte,secondByte = 0;
-            int currentIndex = 0;
-
-          str.read (bytefileReader);
-          firstByte = bytefileReader[0];
-          str.read (bytefileReader);
-          secondByte = bytefileReader[0];
-          if (isJPEG (firstByte, secondByte)){
-            byte rByte = 0;
-            do{
-              while(rByte != -1){
-                str.read (bytefileReader);
-                rByte = bytefileReader[0];
+      byte[] tempByteArray = new byte[THUMB_MAX_SIZE]; // how big can a thumb get.
+      byte[] bytefileReader = {0}; // lazy byte reader
+      byte firstByte, secondByte = 0;
+      int currentIndex = 0;
+      str.read(bytefileReader);
+      firstByte = bytefileReader[0];
+      str.read(bytefileReader);
+      secondByte = bytefileReader[0];
+      int a;
+      if (isJPEG(firstByte, secondByte)) {
+          byte rByte = 0;
+          do {
+              while (rByte != -1) {
+                  a = str.read(bytefileReader);
+                  if (a == -1) {
+                      return null;
+                  }
+                  rByte = bytefileReader[0];
               }
-              str.read (bytefileReader);
+              a = str.read(bytefileReader);
+              if (a == -1) {
+                  return null;
+              }
               rByte = bytefileReader[0];
 
-            } while ( (rByte & 0xFF) != 0xD8 ); // thumb starts
-            tempByteArray[currentIndex++] = -1;
-            tempByteArray[currentIndex++] = rByte;
-            rByte = 0;
-            do{
-              while (rByte != -1){
-                str.read (bytefileReader);
-                rByte = bytefileReader[0];
-                tempByteArray[currentIndex++] = rByte;
+          } while ((rByte & 0xFF) != 0xD8); // thumb starts
+          tempByteArray[currentIndex++] = -1;
+          tempByteArray[currentIndex++] = rByte;
+          rByte = 0;
+          do {
+              while (rByte != -1) {
+                  a = str.read(bytefileReader);
+                  if (a == -1) {
+                      return null;
+                  }
+                  rByte = bytefileReader[0];
+                  tempByteArray[currentIndex++] = rByte;
               }
-              str.read (bytefileReader);
+              a = str.read(bytefileReader);
+              if (a == -1) {
+                  return null;
+              }
               rByte = bytefileReader[0];
               tempByteArray[currentIndex++] = rByte;
-            }while ( (rByte & 0xFF) != 0xD9 ); // thumb ends
+          } while ((rByte & 0xFF) != 0xD9); // thumb ends
 
-            // byte[] thumbBytes = new byte[currentIndex-1];
-            tempByteArray[currentIndex++] = -1;
-            Image im = Image.createImage ( tempByteArray, 0, currentIndex-1);
-            tempByteArray = null;
-            return im;
+// byte[] thumbBytes = new byte[currentIndex-1];
+          tempByteArray[currentIndex++] = -1;
+          Image im = Image.createImage(tempByteArray, 0, currentIndex - 1);
+          tempByteArray = null;
+          return im;
 
-          }
-          str.close ();
+      }
+      str.close();
 
-    return null;
+      return null;
   }
 
   /**

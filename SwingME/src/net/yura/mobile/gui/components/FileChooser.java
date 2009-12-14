@@ -294,11 +294,15 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
 
             if (gridView.isSelected()) {
+                fileTable.setSelectedIndex(-1);
                 fileTable.setListData(files);
+                fileTable.setSelectedIndex(0);
                 fileTable.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
             }
             else {
+                fileList.setSelectedIndex(-1);
                 fileList.setListData(files);
+                fileList.setSelectedIndex(0);
                 fileList.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
             }
 
@@ -321,20 +325,21 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
 
             String absoultePath = file.getAbsolutePath();
-
+//System.out.println("start load 1: "+absoultePath);
             yield();
             Image image = NativeUtil.getThumbnailFromFile(absoultePath);
-
+//System.out.println("start load 2: "+absoultePath);
             if (image == null) {
                 yield();
                 image = NativeUtil.getImageFromFile( absoultePath );
             }
-
+//System.out.println("start load 3: "+absoultePath);
+            int th = thumbSize;
             if (image!=null) {
                 yield();
-                image = ImageUtil.scaleImage(image, thumbSize, thumbSize);
+                image = ImageUtil.scaleImage(image, th, th);
             }
-
+//System.out.println("end load: "+absoultePath);
             synchronized (requestImage) {
                 if (image!=null) {
                     file.thumb = new WeakReference( new Icon(image) );
@@ -342,7 +347,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 else {
                     file.loadFailed = true;
                 }
-                file.currentThumbSize = thumbSize;
+                file.currentThumbSize = th;
                 if (!requestImage.isEmpty()) {
                     requestImage.removeElementAt(0);
                 }
@@ -490,7 +495,6 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
          */
         public void setListData(Vector files) {
             dataVector = files;
-            setSelectedIndex(files.size()>0?0:-1);
         }
 
         private int convertLin(int rowIndex, int columnIndex) {
