@@ -57,6 +57,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     private int thumbSize;
     private RadioButton showAll,  showNew,  listView,  gridView;
     private Label addressBar;
+    private int hardImages = 15;
 
     /**
      * @see javax.swing.JFileChooser#JFileChooser() JFileChooser.JFileChooser
@@ -125,19 +126,27 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         // called on revalidate
         calcThumbSize(width,height);
         super.doLayout();
+        calcHardImages();
     }
 
     private void calcThumbSize(int w,int h) {
         if (gridView.isSelected()) {
-            int a = (h > w) ? w : h;
-            thumbSize = a/10 + 30;
-            // a nice way to work out the best icon size to use
+            thumbSize = ( (h > w) ? w : h )/10 + 30;
             fileTable.setRowHeight( thumbSize + 5 ); // some padding
         }
         else {
             thumbSize = thumbOptionRenderer.getFont().getHeight();
             fileList.setFixedCellHeight( thumbSize + 6 ); // some padding
         }
+    }
+    private void calcHardImages() {
+        if (gridView.isSelected()) {
+            hardImages = fileTable.getColumnCount() * getHeight()/fileTable.getRowHeight(0);
+        }
+        else {
+            hardImages = getHeight()/fileList.getFixedCellHeight();
+        }
+        System.err.println("hardImages = " + hardImages);
     }
 
     /**
@@ -656,7 +665,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     if (!lastFewImages.contains(img)) {
                         lastFewImages.addElement(img);
                     }
-                    if (lastFewImages.size() > 15) { // KEEP TRACK OF LAST 15 thumbs used!
+                    if (lastFewImages.size() > hardImages) { // KEEP TRACK OF LAST 15 thumbs used!
                         lastFewImages.removeElementAt(0);
                     }
                 }
