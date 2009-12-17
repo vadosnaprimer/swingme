@@ -175,7 +175,8 @@ System.out.println("got object: "+task);
                 x.printStackTrace();
                 //#enddebug
             }
-
+//#debug
+System.out.println("finished handling object, waiting for new object from server");
             updateState(CONNECTED);
         }
 
