@@ -904,7 +904,15 @@ public final class CodedOutputStream {
         position = length;
       } else {
         // Write is very big.  Let's do it all at once.
-        output.write(value, offset, length);
+//        output.write(value, offset, length);
+        // We can not right it all at once because it craches on SE-T650i
+        int size;
+        while(length > 0){
+            size = Math.min(length, 4096);
+            output.write(value, offset, size);
+            offset += size;
+            length -= size;
+        }
       }
     }
   }
