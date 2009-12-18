@@ -90,6 +90,10 @@ public abstract class QueueProcessorThread extends Thread {
         }
     }
 
+    public Vector getInbox() {
+        return inbox;
+    }
+
     public abstract void process(Object object) throws Exception;
 
 }
