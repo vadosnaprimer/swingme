@@ -127,8 +127,6 @@ System.out.println("[SocketClient] sending object: "+object);
                         // move this and any queued objects to offline inbox
                         addToOfflineBox( object );
 
-                        clearInboxToOffline();
-
                         NativeUtil.close(conn);
                         conn = null;
                     }
@@ -212,7 +210,12 @@ System.out.println("[SocketClient] finished handling object, waiting for new obj
 
         // we have not had a disconnect requested, so we have to get ready to reconnect
         if (writeThread!=null) {
-            clearInboxToOffline();
+            // move anything in the inbox to the offline inbox
+            Vector inbox = writeThread.getInbox();
+            for (int c=0;c<inbox.size();c++) {
+                addToOfflineBox(inbox.elementAt(c));
+            }
+            writeThread.clearInbox();
             disconnected();
         }
 
@@ -221,15 +224,6 @@ System.out.println("[SocketClient] finished handling object, waiting for new obj
 
 //#debug
 System.out.println("[SocketClient] ENDING "+name);
-    }
-
-    private synchronized void clearInboxToOffline() {
-        // move anything in the inbox to the offline inbox
-        Vector inbox = writeThread.getInbox();
-        for (int c=0;c<inbox.size();c++) {
-            addToOfflineBox(inbox.elementAt(c));
-        }
-        writeThread.clearInbox();
     }
 
     public void disconnect() {

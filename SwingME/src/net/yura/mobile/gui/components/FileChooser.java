@@ -286,7 +286,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     }
 
     public void run() {
-
+        System.out.println("FC START");
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
         if (files.isEmpty()) {
@@ -317,6 +317,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             revalidate();
             repaint();
+            System.out.println("FC END 1");
             return;
         }
 
@@ -329,6 +330,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     file = (SelectableFile)requestImage.firstElement();
                 }
                 else {
+                    System.out.println("FC END 2");
                     return;
                 }
             }
@@ -364,6 +366,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             repaint();
         }
+
     }
 
     /**
