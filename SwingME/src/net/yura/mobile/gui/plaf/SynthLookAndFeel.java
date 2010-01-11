@@ -38,9 +38,14 @@ public class SynthLookAndFeel extends LookAndFeel {
     private Style defaultStyle;
     private Hashtable fonts;
 
-    protected Image getImage( String path ) {
+    protected Icon getIcon( String path ,int x,int y,int w,int h) {
         try {
-            return Image.createImage(path);
+            if (w!=0 && h !=0) {
+                Image img = Image.createImage(path);
+                img = Image.createImage(img, x, y, w, h, Sprite.TRANS_NONE);
+                return new Icon(img);
+            }
+            return new Icon(path);
         }
         catch (Exception ex) {
             //#mdebug
@@ -192,9 +197,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String sourceInsets = parser.getAttributeValue(null, "sourceInsets");
                                     String paintCenter = parser.getAttributeValue(null, "paintCenter");
 
-                                    Image img = getImage( path );
-                                    if (img!=null) {
-                                        Icon activeimage = new Icon( img );
+                                    Icon activeimage = getIcon( path,0,0,0,0 );
+                                    if (activeimage!=null) {
                                         String[] split = StringUtil.split(sourceInsets, ' ');
                                         border = new MatteBorder(activeimage,
                                                 insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
@@ -285,14 +289,10 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 String height = parser.getAttributeValue(null, "height");
                                 String id = parser.getAttributeValue(null, "id");
 
-                                Image newImage = getImage( path );
+                                Icon newImage = getIcon( path,x==null?0:Integer.parseInt(x),y==null?0:Integer.parseInt(y),width==null?0:Integer.parseInt(width),height==null?0:Integer.parseInt(height) );
                                 if (newImage!=null) {
-                                    if (x!=null && y!=null && width!=null && height!=null) {
-                                        newImage = Image.createImage( newImage, Integer.parseInt(x), Integer.parseInt(y), Integer.parseInt(width), Integer.parseInt(height), Sprite.TRANS_NONE);
-                                    }
-                                    params.put(id, new Icon(newImage) );
+                                    params.put(id, newImage );
                                 }
-
                         }
                         else if ("opaque".equals(name)) {
 
@@ -412,8 +412,9 @@ System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style:
                         String imagePath = parser.getAttributeValue(null, "path");
                         String imageColor = parser.getAttributeValue(null, "color");
 
-                        Image img = getImage(imagePath);
-                        if (img !=null) {
+                        InputStream in = getResourceAsStream(imagePath);
+                        if (in != null) {
+                            Image img = Image.createImage( in );
                             int color = 0; // default to black
                             if (imageColor!=null) {
                                 color = parseInt(imageColor, 16);
@@ -429,6 +430,9 @@ System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style:
                     parser.skipSubTree();
                 }
                 if (path!=null) {
+                    // this needs to be outside the images.isEmpty() check
+                    // to tell it that the resource is needed even if the other
+                    // one is not available yet
                     InputStream in = getResourceAsStream(path);
                     if (in!=null && !images.isEmpty()) {
                         int[] colorsArray = new int[colors.size()];
