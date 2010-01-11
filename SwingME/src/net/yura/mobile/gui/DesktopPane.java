@@ -453,14 +453,6 @@ public class DesktopPane extends Canvas implements Runnable {
             // even though it did not get revalidated
             synchronized (repaintComponent) {
 
-                // first we need to run anthing that has been scheduled to run
-                synchronized (runners) {
-                    for (int c=0;c<runners.size();c++) {
-                        ((Runnable)runners.elementAt(c)).run();
-                    }
-                    runners.removeAllElements();
-                }
-
                 // now we need to layout all the components
                 // we use a 3 pass system, as 3 passes is the maximum needed to layout even
                 // the most complex layout with flexable components inside scrollpanes
@@ -898,16 +890,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
-    private final Vector runners = new Vector();
     /**
      * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
      */
-    public void invokeLater(Runnable runner) {
-        // while we are running the runners we can not add any new runners
-        synchronized (runners) {
-            runners.addElement(runner);
-        }
-        repaint();
+    public static void invokeLater(Runnable runner) {
+        Display.getDisplay(getMidlet()).callSerially(runner);
     }
 
     public void setIndicatorText(String txt) {
