@@ -99,8 +99,7 @@ public class TextPane extends Component {
                     g.drawString(str, lineFrag.x, lineFrag.y);
                 }
             } else {
-                Image img = icon.getImage();
-                g.drawImage(img, lineFrag.x, lineFrag.y);
+                icon.paintIcon(this, g, lineFrag.x, lineFrag.y);
             }
         }
     }
@@ -537,12 +536,12 @@ public class TextPane extends Component {
 
     private void addLineImageFragments(TextStyle style) {
         Icon icon = style.getIcon();
-        Image img = icon.getImage();
+        int imgW = icon.getIconWidth();
+        int imgH = icon.getIconHeight();
 
-        if (img != null) {
-            int imgW = img.getWidth() + getBorderWidth(style);
-            int imgH = img.getHeight() + getBorderHeight(style);
-            img = null; // Allow GC to collect
+        if (imgH > 0 && imgW > 0) {
+            imgW += getBorderWidth(style);
+            imgH += getBorderHeight(style);
 
             // Can the image be added to last line?
             if (lastLineX + imgW > width) {

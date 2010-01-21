@@ -165,7 +165,7 @@ public class MatteBorder extends EmptyBorder {
          */
         public void paintBorder(Component c, Graphics2D g, int width,int height) {
             
-            if (activeimage==null) {
+            if (activeimage==null || activeimage.getImage() == null) {
             
                 g.setColor(color);
                 if (back) {
