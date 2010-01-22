@@ -139,8 +139,8 @@ public abstract class Component {
      * @see java.awt.Component#isFocusOwner() Component.isFocusOwner
      */
     public boolean isFocusOwner() {
-        Window selectedWindow = DesktopPane.getDesktopPane().getSelectedFrame();
-        return selectedWindow !=null && selectedWindow.getFocusOwner() == this;
+        Window myWindow = getWindow();
+        return myWindow !=null && myWindow.isFocused() && myWindow.getFocusOwner() == this;
     }
 
     /**
@@ -480,8 +480,12 @@ public abstract class Component {
      */
     public void repaint() {
 
+            Window myWindow = getWindow();
+
             // if we are not in a window, do nothing
-            if (getWindow()==null || !isShowing()) return;
+            if (myWindow==null || !isShowing()) return;
+
+            DesktopPane desktop = myWindow.getDesktopPane();
 
             if (!isOpaque()) {
 
@@ -499,14 +503,14 @@ public abstract class Component {
                     }
                     // if we have reached the nothingness
                     if (p == null) {
-                            DesktopPane.getDesktopPane().fullRepaint();
+                            desktop.fullRepaint();
                     }
                     else {
-                            DesktopPane.getDesktopPane().repaintComponent(p);
+                            desktop.repaintComponent(p);
                     }
             }
             else {
-                    DesktopPane.getDesktopPane().repaintComponent(this);
+                    desktop.repaintComponent(this);
             }
     }
 

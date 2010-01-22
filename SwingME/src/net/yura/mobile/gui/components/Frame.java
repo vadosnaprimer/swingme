@@ -310,8 +310,12 @@ public class Frame extends Window {
                 }
 */
                 setLocation(0, 0);
-                width = DesktopPane.getDesktopPane().getWidth();
-                height = DesktopPane.getDesktopPane().getHeight();
+                
+                DesktopPane desktop = getDesktopPane();
+                if (desktop!=null) {
+                    width = desktop.getWidth();
+                    height = desktop.getHeight();
+                }
                 // we want to use revalidate as it will make sure it
                 // happens in the correct thred
                 // so this method remains threadsafe

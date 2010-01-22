@@ -135,7 +135,7 @@ public class TitleBar extends Panel implements ActionListener {
             if (!owner.isMaximum()) {
 
                 owner.setLocation(owner.getX()+(x-oldX),owner.getY()+(y-oldY));
-                DesktopPane.getDesktopPane().fullRepaint();
+                owner.getDesktopPane().fullRepaint();
             }
 
         }
@@ -150,28 +150,28 @@ public class TitleBar extends Panel implements ActionListener {
                 
                 if (move) { owner.setLocation(owner.getX()-2,owner.getY()); }
                 else if (resize) { owner.setSize(owner.getWidth()-2, owner.getHeight()); }
-                DesktopPane.getDesktopPane().fullRepaint();
+                owner.getDesktopPane().fullRepaint();
                 return true;
             }
             if (keypad.isDownAction(Canvas.RIGHT)) {
                 
                 if (move) { owner.setLocation(owner.getX()+2,owner.getY()); }
                 else if (resize) { owner.setSize(owner.getWidth()+2, owner.getHeight()); }
-                DesktopPane.getDesktopPane().fullRepaint();
+                owner.getDesktopPane().fullRepaint();
                 return true;
             }
             if (keypad.isDownAction(Canvas.UP)) {
                 
                 if (move) { owner.setLocation(owner.getX(),owner.getY()-2); }
                 else if (resize) { owner.setSize(owner.getWidth(), owner.getHeight()-2); }
-                DesktopPane.getDesktopPane().fullRepaint();
+                owner.getDesktopPane().fullRepaint();
                 return true;
             }
             if (keypad.isDownAction(Canvas.DOWN)) {
                 
                 if (move) { owner.setLocation(owner.getX(),owner.getY()+2); }
                 else if (resize) { owner.setSize(owner.getWidth(), owner.getHeight()+2); }
-                DesktopPane.getDesktopPane().fullRepaint();
+                owner.getDesktopPane().fullRepaint();
                 return true;
             }
             if (keypad.isDownAction(Canvas.FIRE)) {
@@ -211,9 +211,9 @@ public class TitleBar extends Panel implements ActionListener {
          else if (Frame.CMD_MIN.equals(actionCommand)) {
 
              //if (parent==null) {
-                 Vector windows = DesktopPane.getDesktopPane().getAllFrames();
+                 Vector windows = getWindow().getDesktopPane().getAllFrames();
                  if (windows.size()>1) {
-                     DesktopPane.getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
+                     getWindow().getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
                  }
              //}
 

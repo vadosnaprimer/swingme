@@ -16,7 +16,6 @@
  */
 package net.yura.mobile.gui;
 
-import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.io.ConnectionNotFoundException;
@@ -948,7 +947,13 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
 
+            w.setDesktopPane(this);
+
             windows.addElement(w);
+
+            if (w instanceof Frame && ((Frame)w).isMaximum() ) {
+                ((Frame)w).setMaximum(true);
+            }
 
             pointerComponent = null;
             fullRepaint();
@@ -1257,10 +1262,10 @@ public class DesktopPane extends Canvas implements Runnable {
             sideSoftKeys = wideScreen;
         }
 
-        Vector win = Window.getAllWindows();
+        Vector win = getAllFrames();
 
         for (int c = 0; c < win.size(); c++) {
-            Window window = (Window) ((WeakReference) win.elementAt(c)).get();
+            Window window = (Window)win.elementAt(c);
 
             // TODO RESIZE better
 

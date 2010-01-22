@@ -32,10 +32,7 @@ import net.yura.mobile.gui.layout.BorderLayout;
  */
 public class Window extends Panel {
 
-        private static Vector allWindows = new Vector();
-        public static Vector getAllWindows() {
-            return allWindows;
-        }
+        private DesktopPane desktop;
         
         private Component focusedComponent;
 
@@ -49,24 +46,18 @@ public class Window extends Panel {
          * @see java.awt.Window#Window() Window.Window
          */
 	public Window() {
-
             setLayout( new BorderLayout() );
-		//contentPane = new Panel();
-                //setLayout( new BorderLayout() );
-
-                //contentPane.setOwnerAndParent(this,null);
-
-                //windowCommands = new CommandButton[2];
-
-                for (int c=0;c<allWindows.size();c++) {
-                    if (((WeakReference)allWindows.elementAt(c)).get() == null) {
-                        allWindows.removeElementAt(c);
-                        c--;
-                    }
-                }
-                allWindows.addElement(new WeakReference(this));
-
 	}
+
+        /**
+         * @see javax.swing.JInternalFrame#getDesktopPane() JInternalFrame.getDesktopPane
+         */
+        public DesktopPane getDesktopPane() {
+            return desktop;
+        }
+        public void setDesktopPane(DesktopPane a) {
+            desktop = a;
+        }
 
         /**
          * not swing
@@ -81,7 +72,7 @@ public class Window extends Panel {
          * @see java.awt.Window#isFocused() Window.isFocused
          */
         public boolean isFocused() {
-            return DesktopPane.getDesktopPane().getSelectedFrame() == this;
+            return desktop!=null && desktop.getSelectedFrame() == this;
         }
         /**
          * @see java.awt.Window#getFocusOwner() Window.getFocusOwner
@@ -191,6 +182,7 @@ public class Window extends Panel {
         }
 
         /**
+         * This method can ONLY be used if there is ONLY ONE DesktopPane
          * @param b true if the window is to be shown, false to hide the window
          * @see java.awt.Component#setVisible(boolean) Component.setVisible
          */
@@ -216,7 +208,7 @@ public class Window extends Panel {
          * @see java.awt.Component#isVisible() Component.isVisible
          */
         public boolean isVisible() {
-            return DesktopPane.getDesktopPane().getAllFrames().contains(this);
+            return desktop!=null && desktop.getAllFrames().contains(this);
         }
        
 
@@ -283,7 +275,7 @@ public class Window extends Panel {
         public void paint(Graphics2D g) {
             super.paint(g);
 
-            if (!DesktopPane.me4se && getWindow() == DesktopPane.getDesktopPane().getSelectedFrame()) {
+            if (!DesktopPane.me4se && getWindow() == desktop.getSelectedFrame()) {
 
                 int offsetX = getXOnScreen();
                 int offsetY = getYOnScreen();
@@ -336,16 +328,16 @@ public class Window extends Panel {
 
     public Component getRendererComponentOnScreen(Button button){
 
-            boolean sideSoftKeys = DesktopPane.getDesktopPane().isSideSoftKeys();
+            boolean sideSoftKeys = desktop.isSideSoftKeys();
 
             int mnemonic = button.getMnemonic();
 
-            int desktopWidth = DesktopPane.getDesktopPane().getWidth();
-            int desktopHeight = DesktopPane.getDesktopPane().getHeight();
+            int desktopWidth = desktop.getWidth();
+            int desktopHeight = desktop.getHeight();
 
     //System.out.println("Screen height: "+desktopHeight);
 
-            Component component = DesktopPane.getDesktopPane().getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
+            Component component = desktop.getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
 
             component.workoutSize();
             int componentWidth = component.getWidthWithBorder();

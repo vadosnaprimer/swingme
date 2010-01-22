@@ -77,6 +77,11 @@ public class Icon {
         }
     }
 
+    /**
+     * This method will only work if this Icon is actually a ImageIcon
+     * otherwise it will return null
+     * @see javax.swing.ImageIcon#getImage() ImageIcon.getImage
+     */
     public Image getImage() {
         if (image instanceof Image) {
             return (Image)image;

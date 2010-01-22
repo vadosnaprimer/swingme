@@ -37,6 +37,11 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class OptionPane extends Frame implements Runnable, ActionListener {
 
+    private static Vector allWindows = new Vector();
+    public static Vector getAllWindows() {
+        return allWindows;
+    }
+
     public static final int YES_NO_OPTION = 0;
     public static final int OK_OPTION = 1;
     public static final int OK_CANCEL_OPTION = 2;
@@ -56,6 +61,17 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     private Panel cmdPanel;
     
     public OptionPane() {
+
+
+        for (int c=0;c<allWindows.size();c++) {
+            if (((WeakReference)allWindows.elementAt(c)).get() == null) {
+                allWindows.removeElementAt(c);
+                c--;
+            }
+        }
+        allWindows.addElement(new WeakReference(this));
+
+
         setName("Dialog");
 
         setMaximizable(false);
