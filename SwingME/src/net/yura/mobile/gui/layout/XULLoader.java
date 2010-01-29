@@ -162,6 +162,10 @@ public class XULLoader {
         return key;
     }
 
+    public Hashtable getGroups() {
+        return groups;
+    }
+
     public Component find(String name) {
         return (Component)components.get(name);
     }
@@ -367,34 +371,7 @@ public class XULLoader {
         }
         else if (name.equals("checkbox") || "checkboxmenuitem".equals(name)) {
 
-            Button checkbox;
-            boolean selected = false;
-            String group = null;
-            final int count = parser.getAttributeCount();
-            for (int c=0;c<count;c++) {
-                String key = parser.getAttributeName(c);
-                String value = parser.getAttributeValue(c);
-                if ("group".equals(key)) {
-                    group = value;
-                }
-                else if ("selected".equals(key)) {
-                    selected = "true".equalsIgnoreCase(value);
-                }
-            }
-            if (group == null) {
-                checkbox = new CheckBox();
-            }
-            else {
-                checkbox = new RadioButton();
-                ButtonGroup g = (ButtonGroup)groups.get(group);
-                if (g==null) {
-                    g = new ButtonGroup();
-                    groups.put(group, g);
-                }
-                g.add(checkbox);
-            }
-            checkbox.setSelected(selected);
-            readButton(parser,checkbox,listener);
+            Button checkbox = readCheckbox(parser, listener);
 
             return readUIObject(parser, checkbox,listener);
         }
@@ -789,6 +766,40 @@ public class XULLoader {
         if (label != null) {
             op.setValue( getPropertyText(label,i18n) );
         }
+    }
+
+    protected Button readCheckbox(KXmlParser parser, ActionListener listener) {
+        Button checkbox;
+
+        boolean selected = false;
+        String group = null;
+        final int count = parser.getAttributeCount();
+        for (int c=0;c<count;c++) {
+            String key = parser.getAttributeName(c);
+            String value = parser.getAttributeValue(c);
+            if ("group".equals(key)) {
+                group = value;
+            }
+            else if ("selected".equals(key)) {
+                selected = "true".equalsIgnoreCase(value);
+            }
+        }
+        if (group == null) {
+            checkbox = new CheckBox();
+        }
+        else {
+            checkbox = new RadioButton();
+            ButtonGroup g = (ButtonGroup)groups.get(group);
+            if (g==null) {
+                g = new ButtonGroup();
+                groups.put(group, g);
+            }
+            g.add(checkbox);
+        }
+        checkbox.setSelected(selected);
+        readButton(parser,checkbox,listener);
+
+        return checkbox;
     }
 
     public GridBagConstraints readUIObject(KXmlParser parser,Component comp,ActionListener listener) throws Exception {
