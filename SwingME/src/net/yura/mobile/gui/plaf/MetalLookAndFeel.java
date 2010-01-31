@@ -120,6 +120,7 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             Style textStyle = new Style(inputStyle);
             textStyle.addBorder(inputBorder, Style.ALL);
+            textStyle.addBackground(getSecondary3(), Style.DISABLED);
             setStyleFor("TextField",textStyle);
 
 
