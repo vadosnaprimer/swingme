@@ -11,8 +11,11 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.translation.MessageTool;
 import org.me4se.JadFile;
@@ -23,6 +26,9 @@ import org.me4se.JadFile;
 public class XULTranslationTool extends MessageTool {
 
     public static void main(String[] args) {
+
+        // this is needed as ME4SE uses AWT and not Swing
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 
         XULTranslationTool tt = new XULTranslationTool();
 
@@ -36,6 +42,7 @@ public class XULTranslationTool extends MessageTool {
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 
+        
 
         JPanel panel = new JPanel( new BorderLayout() );
         panel.setMinimumSize( new Dimension(50, 50) );
@@ -49,24 +56,13 @@ public class XULTranslationTool extends MessageTool {
 
         frame.getContentPane().add(split);
 
-        JPanel a = new JPanel( new BorderLayout() );
-        JPanel b = new JPanel( new BorderLayout() );
-        JSplitPane sp1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, a, b);
-        sp1.setContinuousLayout(true);
-        panel.add(sp1);
+        final ME4SEPanel me4sePanel = new ME4SEPanel();
 
-        final ApplicationManager manager = ApplicationManager.createInstance(a, null );
-        JadFile jad = new JadFile();
-        jad.setValue("MIDlet-1", ",," + EmptyMidlet.class.getName());
-        manager.launch(jad, 0);
-
-
-
-        final ApplicationManager manager2 = ApplicationManager.createInstance(b, null );
-        JadFile jad2 = new JadFile();
-        jad2.setValue("MIDlet-1", ",," + EmptyMidlet.class.getName());
-        manager2.launch(jad2, 0);
-
+        final Frame meFrame = new Frame("Test");
+        Label l = new Label("hello world");
+        meFrame.add(l);
+        meFrame.setMaximum(true);
+        me4sePanel.getDesktopPane().add(meFrame);
 
         //manager.destroy(true, false);
 
@@ -79,10 +75,9 @@ public class XULTranslationTool extends MessageTool {
 
                     SynthLookAndFeel synthPlaf = loader.loadNewSynth(frame);
                     if (synthPlaf!=null) {
-                        EmptyMidlet midlet = (EmptyMidlet)manager.active;
-                        DesktopPane desktop = (DesktopPane) Display.getDisplay(midlet).getCurrent();
+                        DesktopPane desktop = me4sePanel.getDesktopPane();
                         desktop.setLookAndFeel(synthPlaf);
-                        //DesktopPane.updateComponentTreeUI(midlet.mainWindow);
+                        DesktopPane.updateComponentTreeUI(meFrame);
                     }
                 }
             }
@@ -95,6 +90,12 @@ public class XULTranslationTool extends MessageTool {
         synth.setActionCommand("synth");
         synth.addActionListener(al);
         menu.add(synth);
+
+
+        JSplitPane sp1 = new JSplitPane(JSplitPane.VERTICAL_SPLIT, me4sePanel, new JPanel());
+        sp1.setContinuousLayout(true);
+        panel.add(sp1);
+
 
         panel.add(menuBar,BorderLayout.NORTH);
 
