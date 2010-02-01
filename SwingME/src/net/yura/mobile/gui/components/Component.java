@@ -592,7 +592,7 @@ public abstract class Component {
     }
 
     public void wait(int a) throws InterruptedException {
-        DesktopPane dp = DesktopPane.getDesktopPane();
+        DesktopPane dp = getWindow().getDesktopPane();
         dp.wait(a);
         if (dp.getAnimatedComponent()!=this) {
             throw new InterruptedException();

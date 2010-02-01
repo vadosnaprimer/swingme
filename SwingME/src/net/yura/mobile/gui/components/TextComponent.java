@@ -537,7 +537,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 super.focusGained();
 		showCaret = true;
 
-		DesktopPane.getDesktopPane().animateComponent(this);
+		getWindow().getDesktopPane().animateComponent(this);
                 setMode(mode);
 
                 if (KeyEvent.useSoftKeyClear) {

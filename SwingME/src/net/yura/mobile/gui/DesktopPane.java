@@ -662,7 +662,7 @@ public class DesktopPane extends Canvas implements Runnable {
         //#mdebug
         if (rc.getWidth() == 0 || rc.getHeight() ==0 ) {
             System.err.println("revalidate called on a component with 0 width and 0 height");
-            dumpStack();
+            //dumpStack();
         }
         //#enddebug
         addToComponentVector(rc, revalidateComponents1);
@@ -1248,11 +1248,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private void sizeChangedImpl() {
 
-        // Until we don't do the initial setup, ignore this.
-        if (!paintdone) {
-            return;
-        }
-
         int w = super.getWidth();
         int h = super.getHeight();
 
@@ -1289,6 +1284,12 @@ public class DesktopPane extends Canvas implements Runnable {
         oldw = w;
         oldh = h;
 
+        // we want to do this later, as on me4se mode we want
+        // the size to be setup before we have any paints called
+        if (!paintdone) {
+            return;
+        }
+        // Until we don't do the initial setup, ignore this.
         setupIndicatorPosition();
     }
 
