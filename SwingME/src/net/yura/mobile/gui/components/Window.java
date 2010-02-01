@@ -195,7 +195,7 @@ public class Window extends Panel {
 
 //                // TODO ??
 //                if (parent==null) {
-                    DesktopPane.getDesktopPane().remove(this);
+                    getDesktopPane().remove(this);
 //                 }
 //                 else {
 //                     parent.remove(this);
