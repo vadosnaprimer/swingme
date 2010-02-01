@@ -346,6 +346,13 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void setLookAndFeel(LookAndFeel a) {
 
+        // TODO hack
+        // this is just in case it has become somthing else
+        // as we need the desktop to == to this one
+        // as its the static desktop where components will get there
+        // new theme from
+        desktop = this;
+
         theme = a;
 
         // TODO find better way to do this
@@ -547,10 +554,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 //                    drawSoftkeys(graphics);
                 //                }
 
-                if (tooltip.isShowing()) {
+                if (tooltip!=null && tooltip.isShowing()) {
                     paintComponent(graphics, tooltip);
                 }
-                if (indicator.getText() != null && !me4se) {
+                if (indicator!=null && indicator.getText() != null && !me4se) {
                     paintComponent(graphics, indicator);
                 }
 

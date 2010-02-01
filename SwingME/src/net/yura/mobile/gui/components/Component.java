@@ -741,7 +741,13 @@ public abstract class Component {
      * @see javax.swing.JComponent#revalidate() JComponent.revalidate
      */
     public void revalidate() {
-        DesktopPane.getDesktopPane().revalidateComponent(this);
+        Window w = getWindow();
+        if (w!=null) {
+            DesktopPane dp = w.getDesktopPane();
+            if (dp!=null) {
+                dp.revalidateComponent(this);
+            }
+        }
     }
     public void validate() {
         // nothing??
