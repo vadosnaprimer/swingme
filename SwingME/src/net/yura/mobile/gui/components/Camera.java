@@ -34,6 +34,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.StringUtil;
 
@@ -118,6 +119,20 @@ public class Camera extends Component implements Runnable, PlayerListener {
         System.out.println("focusLost2");
     }
 
+    // Overloads Component.processKeyEvent
+    public boolean processKeyEvent(KeyEvent keypad) {
+
+        // try to guess the "camera key" code, and execute capture
+        int keycode = keypad.getJustPressedKey();
+        if (actionListener != null &&
+           (keycode == -24 || keycode == -25 || keycode == -26)) {
+            capture();
+            return true;
+        }
+
+        return false;
+    }
+
     public void close() {
         if (!running) {
             return;
@@ -183,8 +198,11 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         Thread.yield();
                         init();
 
-                        // WORK-AROUND: Some SE phones, will rotate the view                        // finder if init video is called with player state                        // bigger than realise (i.e. prefetch())                        player = Manager.createPlayer(playerLocator);
+                        // WORK-AROUND: Some SE phones, will rotate the view
+                        // finder if init video is called with player state
+                        // bigger than realise (i.e. prefetch())
                         player = Manager.createPlayer(playerLocator);
+
                         player.realize();
                         player.addPlayerListener(this);
 
@@ -277,7 +295,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
      * successful then log this to RMS for future reference. The list of encoding
      * dimensions should have the preferred dimension at the start of the array as a
      * successful snapshot will result in the for loop returning at that point.
-     * 
+     *
      * @param videoCtrl
      * @param snapshotEncoding
      * @return
@@ -293,7 +311,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
                     data = videoCtrl.getSnapshot(encodingStr);
 
-                    if (data != null) {                        
+                    if (data != null) {
                         setEncodingStringInRMS(encodingStr);
                         return data;
                     }
