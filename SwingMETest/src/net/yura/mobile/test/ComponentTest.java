@@ -454,14 +454,15 @@ public class ComponentTest  extends Section{
                 else if ("testCamera".equals(actionCommand)) {
                     cameraPanel = new Camera();
                     addToContentPane(cameraPanel, makeButton("Capture","cameraCapture") );
+                    cameraPanel.setActionListener(this);
+                    cameraPanel.setActionCommand("cameraCaptureDone");
                 }
                 else if ("cameraCapture".equals(actionCommand)) {
 
-                    cameraPanel.setActionListener(this);
-                    cameraPanel.setActionCommand("cameraCaptureDone");
                     cameraPanel.capture();
                 }
                 else if ("cameraCaptureDone".equals(actionCommand)) {
+                    cameraPanel.setActionListener(null);
                     cameraPanel.close();
                     byte[] imgData = cameraPanel.getSnapshotData();
 
