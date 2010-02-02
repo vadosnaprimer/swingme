@@ -1,14 +1,16 @@
 package net.yura.tools.translation;
 
+import java.io.File;
 import java.util.Hashtable;
 import qdxml.DocHandler;
 
 public class XULScanner implements DocHandler {
 
+    File baseDir;
+
     public void scan() {
 
-
-
+        File[] files = baseDir.listFiles();
 
     }
 

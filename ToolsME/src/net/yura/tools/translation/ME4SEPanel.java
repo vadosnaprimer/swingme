@@ -50,13 +50,18 @@ public class ME4SEPanel extends Container {
     }
 
     public Dimension getMinimumSize() {
+        Dimension d = super.getPreferredSize();
+
         if (frame1!=null) {
+            Dimension a = new Dimension( frame1.getWidth(), frame1.getHeight());
             frame1.pack(); // TODO: does this really set the height right away to the min???
-            Dimension d = new Dimension( frame1.getWidth(), frame1.getHeight());
+            Dimension b = new Dimension( frame1.getWidth(), frame1.getHeight());
             //System.out.println("d="+d);
-            return d;
+            frame1.setSize(a.width, a.height);
+            return b;
         }
-        return super.getMinimumSize();
+
+        return d;
     }
 
     public Dimension getPreferredSize() {

@@ -24,13 +24,12 @@ import net.yura.mobile.gui.plaf.SynthLookAndFeel;
  */
 public class PLAFLoader implements ActionListener {
 
-    Window parent;
     private File synth_file,synth_base;
     XULLoader loader;
     Dialog dialog;
 
     public SynthLookAndFeel loadNewSynth(Window parent) {
-        this.parent = parent;
+        //this.parent = parent;
 
         ME4SEPanel wrapper = new ME4SEPanel();
 
@@ -38,10 +37,6 @@ public class PLAFLoader implements ActionListener {
         try {
             loader = XULLoader.load(getClass().getResourceAsStream("/synth_load.xml"), this);
             panel = (Panel)loader.getRoot();
-
-            
-
-
         }
         catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -93,7 +88,7 @@ public class PLAFLoader implements ActionListener {
 
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            int result = chooser.showOpenDialog(parent);
+            int result = chooser.showOpenDialog(dialog);
 
             if (result==JFileChooser.APPROVE_OPTION) {
                 synth_base = chooser.getSelectedFile();
@@ -107,7 +102,7 @@ public class PLAFLoader implements ActionListener {
 
             JFileChooser chooser = new JFileChooser(synth_base);
 
-            int result = chooser.showOpenDialog(parent);
+            int result = chooser.showOpenDialog(dialog);
 
             if (result==JFileChooser.APPROVE_OPTION) {
                 synth_file = chooser.getSelectedFile();
