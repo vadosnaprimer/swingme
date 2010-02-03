@@ -26,6 +26,7 @@ import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
 import javax.microedition.media.control.VideoControl;
+import javax.microedition.midlet.MIDlet;
 
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
@@ -58,10 +59,11 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private boolean requestCapture;
     private final Object uiLock = new Object();
     private boolean running = true;
-    VideoControl videoCtrl = null;
-    Player player = null;
+    private VideoControl videoCtrl;
+    private Player player;
     private ActionListener actionListener;
     private String actionCommand;
+    private int cameraPermission;
 
     public Camera() {
 
@@ -70,6 +72,8 @@ public class Camera extends Component implements Runnable, PlayerListener {
         focusable = true;
 
         font = theme.getFont(Style.ALL);
+
+        cameraPermission = getCameraPermission();
     }
 
     protected String getDefaultName() {
@@ -243,7 +247,16 @@ public class Camera extends Component implements Runnable, PlayerListener {
                             }
                         }
 
-                        actionListener.actionPerformed(actionCommand);
+                        // If camera permission is -1, we just took a dummy
+                        // picture, to show the security prompt
+                        if (cameraPermission < 0) {
+                            photoData = null;
+                        } else {
+                            actionListener.actionPerformed(actionCommand);
+                        }
+
+                        // From now on, we don't take any more "dummy pictures"
+                        cameraPermission = 1;
                     }
 
                     uiLock.wait(2500);
@@ -274,11 +287,26 @@ public class Camera extends Component implements Runnable, PlayerListener {
         }
     }
 
+    private int getCameraPermission() {
+
+        MIDlet midlet = DesktopPane.getMidlet();
+        int perm = midlet.checkPermission("javax.microedition.media.control.VideoControl.getSnapshot");
+
+        return perm;
+    }
+
     // From PlayerListener Interface
     public void playerUpdate(Player player, String event, Object obj) {
         System.out.println("playerUpdate: " + event);
 
-        if (PlayerListener.CLOSED.equals(event)) {
+        if (PlayerListener.STARTED.equals(event)) {
+
+            if (cameraPermission < 0) {
+                // Take dummy picture, to show user the security prompt
+                capture();
+            }
+        }
+        else if (PlayerListener.CLOSED.equals(event)) {
             synchronized (uiLock) {
                 uiLock.notifyAll();
             }
