@@ -64,6 +64,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private ActionListener actionListener;
     private String actionCommand;
     private int cameraPermission;
+    private boolean useDummyCanvas = true;
 
     public Camera() {
 
@@ -72,8 +73,6 @@ public class Camera extends Component implements Runnable, PlayerListener {
         focusable = true;
 
         font = theme.getFont(Style.ALL);
-
-        cameraPermission = getCameraPermission();
     }
 
     protected String getDefaultName() {
@@ -202,21 +201,30 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         Thread.yield();
                         init();
 
-                        // WORK-AROUND: Some SE phones, will rotate the view
-                        // finder if init video is called with player state
-                        // bigger than realise (i.e. prefetch())
                         player = Manager.createPlayer(playerLocator);
 
-                        player.realize();
-                        player.addPlayerListener(this);
+                        // WORK-AROUND1: Some SE phones, rotate the view finder
+                        // if init video is called with player state bigger than
+                        // realise (i.e. prefetch())
+                        // WORK-AROUND2: Nokia S40 hangs for a long time, if
+                        // prefetch() is not called before start()
+
+                        if (useDummyCanvas) {
+                            player.realize();
+                        } else {
+                            player.prefetch();
+                        }
 
                         videoCtrl = initVideoControl(player);
+                        player.addPlayerListener(this);
 
                         player.start();
 
                         // WORK-AROUND: some SE phones don't display the view
                         // finder, if there is no "Canvas transition"
-                        Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
+                        if (useDummyCanvas) {
+                            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
+                        }
                     }
 
                     if (requestCapture && actionListener != null) {
@@ -259,7 +267,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         cameraPermission = 1;
                     }
 
-                    uiLock.wait(2500);
+                    uiLock.wait(1000);
                 }
             }
         } catch (Throwable e) {
@@ -301,6 +309,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
         if (PlayerListener.STARTED.equals(event)) {
 
+            cameraPermission = getCameraPermission();
             if (cameraPermission < 0) {
                 // Take dummy picture, to show user the security prompt
                 capture();
@@ -397,6 +406,10 @@ public class Camera extends Component implements Runnable, PlayerListener {
             System.out.println("SupportedContentType = capture://" + contentTypes[i]);
             if ("image".equals(contentTypes[i])) {
                 playerLocator = "capture://image";
+
+                // WORK-AROUND: a 640x480 on Nokia S40 takes half of the memory heap (1Mb)
+                snapshotEncoding = "encoding=image/jpeg&width=320&height=240";
+                useDummyCanvas = false;
                 break;
             }
         }
