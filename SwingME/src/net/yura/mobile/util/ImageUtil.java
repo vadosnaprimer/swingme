@@ -173,6 +173,7 @@ public class ImageUtil {
   public static Image getJPEGthumb (byte[] fileBytes ) {
     Image image = null;
 
+    try {
       // If file is JPEG encoded.
       if ( isJPEG (fileBytes[0], fileBytes[1]) ) {
         // Try to find thumbnail. Will throw ArrayOutOfBoundsException
@@ -199,6 +200,9 @@ public class ImageUtil {
         // Create image out of thumbnail.
         image = Image.createImage ( fileBytes, startIndex - 1, endIndex - startIndex + 2 );
       }
+    } catch (Throwable e) {
+
+    }
 
     return image;
   }

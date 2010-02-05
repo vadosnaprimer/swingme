@@ -15,12 +15,9 @@
  *  along with 'yura.net Swing ME'. If not, see <http://www.gnu.org/licenses/>.
  */
 
-//package net.yura.mobile.gui.components;
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Graphics;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
@@ -30,7 +27,6 @@ import javax.microedition.midlet.MIDlet;
 
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreNotOpenException;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
@@ -43,6 +39,9 @@ import net.yura.mobile.util.StringUtil;
  * @author Jane
  */
 public class Camera extends Component implements Runnable, PlayerListener {
+
+    private static int cameraPermission;
+
 
     private int defaultCaptureHeight = 480;
     private int defaultCaptureWidth = 640;
@@ -63,7 +62,6 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private Player player;
     private ActionListener actionListener;
     private String actionCommand;
-    private int cameraPermission;
     private boolean useDummyCanvas = true;
 
     public Camera() {
@@ -88,8 +86,6 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
         System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
 
-//        g.setColor(0x0000FF);
-//        g.fillRect(0, 0, getWidth(), getHeight());
         int msgPosX = (getWidth() / 2) - (waitingMessageLength / 2);
         int msgPosY = (getHeight() / 2) - (font.getHeight() / 2);
         g.setColor(foreground);
@@ -175,6 +171,24 @@ public class Camera extends Component implements Runnable, PlayerListener {
         return res;
     }
 
+    /**
+     * Get the requested width used to take the snapshot. If available, that
+     * will avoid the creation of an Image Object to return it's width.
+     * @return Requested snapshot width, or zero if not available.
+     */
+    public int getSnapshotWidth() {
+        return getEncodingParameterInteger(snapshotEncoding, "width");
+    }
+
+    /**
+     * Get the requested height used to take the snapshot. If available, that
+     * will avoid the creation of an Image Object to return it's height.
+     * @return Requested snapshot height, or zero if not available.
+     */
+    public int getSnapshotHeight() {
+        return getEncodingParameterInteger(snapshotEncoding, "height");
+    }
+
     public String getFileExtention() {
         return snapshotFileExt;
     }
@@ -186,8 +200,6 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     // Player Thread
     public void run() {
-
-
 
         try {
             while (true) {
@@ -218,13 +230,15 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         videoCtrl = initVideoControl(player);
                         player.addPlayerListener(this);
 
+                        System.gc();
                         player.start();
 
                         // WORK-AROUND: some SE phones don't display the view
                         // finder, if there is no "Canvas transition"
-                        if (useDummyCanvas) {
-                            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
-                        }
+// TODO: This seems to no longer be need... This was used on SE, where a "Canvas transition" was need to "unlock the view finder"...
+//                        if (useDummyCanvas) {
+//                            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
+//                        }
                     }
 
                     if (requestCapture && actionListener != null) {
@@ -241,17 +255,16 @@ public class Camera extends Component implements Runnable, PlayerListener {
                                     encodingString = snapshotEncoding + "&width=" + defaultCaptureWidth + "&height=" + defaultCaptureHeight;
                                 }
 
-                                try {
-                                    photoData = videoCtrl.getSnapshot(encodingString);
-                                } catch (Throwable t) {
-                                    // this is a worst case scenario, now we want to cycle through all the possible encoding configurations and see which one works
-                                    //#debug
-                                    t.printStackTrace();
+                                photoData = getSnapshot(encodingString);
+                                if (photoData == null) {
+                                    // Worst case scenario. Need to cycle through all
+                                    // possible encoding configurations and see which one works
                                     photoData = discoverEncodingDimensions(videoCtrl);
                                 }
                             }
+
                             if (photoData == null) {
-                                photoData = videoCtrl.getSnapshot(snapshotEncoding);
+                                photoData = getSnapshot(snapshotEncoding);
                             }
                         }
 
@@ -260,7 +273,12 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         if (cameraPermission < 0) {
                             photoData = null;
                         } else {
-                            actionListener.actionPerformed(actionCommand);
+                            try {
+                                actionListener.actionPerformed(actionCommand);
+                            } catch (Exception e) {
+                                //#debug
+                                e.printStackTrace();
+                            }
                         }
 
                         // From now on, we don't take any more "dummy pictures"
@@ -303,16 +321,36 @@ public class Camera extends Component implements Runnable, PlayerListener {
         return perm;
     }
 
+    private byte[] getSnapshot(String encoding) {
+        byte[] data = null;
+        try {
+            //#debug
+            System.out.println("getSnapshot: Trying " + encoding);
+            data = videoCtrl.getSnapshot(encoding);
+        } catch (Exception e) {
+        }
+
+        if (data != null) {
+            // If the snapshot was successful, save the encoding.
+            this.snapshotEncoding = encoding;
+        }
+
+        //#debug
+        System.out.println("getSnapshot: " + ((data == null) ? "FAIL." : "OK."));
+        return data;
+    }
+
     // From PlayerListener Interface
     public void playerUpdate(Player player, String event, Object obj) {
         System.out.println("playerUpdate: " + event);
 
         if (PlayerListener.STARTED.equals(event)) {
-
-            cameraPermission = getCameraPermission();
             if (cameraPermission < 0) {
-                // Take dummy picture, to show user the security prompt
-                capture();
+                System.out.println("cameraPermission: " + cameraPermission);
+                if (getCameraPermission() < 0) {
+                    // Take dummy picture, to show user the security prompt
+                    capture();
+                }
             }
         }
         else if (PlayerListener.CLOSED.equals(event)) {
@@ -344,22 +382,16 @@ public class Camera extends Component implements Runnable, PlayerListener {
             for (int i = 0; i < knownEncodingDimensions.length; i++) {
 
                 String encodingStr = "encoding=" + knownEncodingFormats[f] + "&width=" + knownEncodingDimensions[i][0] + "&height=" + knownEncodingDimensions[i][1];
-                try {
+                data = getSnapshot(encodingStr);
 
-                    data = videoCtrl.getSnapshot(encodingStr);
-
-                    if (data != null) {
-                        setEncodingStringInRMS(encodingStr);
-                        return data;
-                    }
-                } catch (MediaException ex) {
-                    //#debug
-                    ex.printStackTrace();
+                if (data != null) {
+                    setEncodingStringInRMS(encodingStr);
+                    break;
                 }
             }
         }
 
-        return null;
+        return data;
     }
 
     /**
@@ -493,13 +525,14 @@ public class Camera extends Component implements Runnable, PlayerListener {
         }
     }
 
-    private static class DummyCanvas extends Canvas {
-
-        protected void paint(Graphics arg0) {
-            Canvas playerCanvas = DesktopPane.getDesktopPane();
-            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
-        }
-    }
+// TODO: This seems to no longer be need... This was used on SE, where a "Canvas transition" was need to "unlock the view finder"...
+//    private static class DummyCanvas extends Canvas {
+//
+//        protected void paint(Graphics arg0) {
+//            Canvas playerCanvas = DesktopPane.getDesktopPane();
+//            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
+//        }
+//    }
 
     public static boolean isCameraSupported() {
         return System.getProperty("video.snapshot.encodings") != null;
@@ -511,35 +544,21 @@ public class Camera extends Component implements Runnable, PlayerListener {
         try {
             RecordStore rs = RecordStore.openRecordStore(CAPTURE_ENCODING_STRING_RECORD_STORE, true);
             rs.addRecord(encodingString.getBytes(), 0, encodingString.length());
-
-            return;
-
-        } catch (RecordStoreNotOpenException ex) {
+        } catch (RecordStoreException ex) {
             // this is just a best effort to persist dimensions to rms
             ex.printStackTrace();
-        } catch (RecordStoreException ex) {
-            ex.printStackTrace();
         }
-
     }
 
     private String getEncodingStringFromRMS() {
-        RecordStore rs;
         try {
-            rs = RecordStore.openRecordStore(CAPTURE_ENCODING_STRING_RECORD_STORE, false);
-            if (rs == null) {
-                return null;
-            }
-
+            RecordStore rs = RecordStore.openRecordStore(CAPTURE_ENCODING_STRING_RECORD_STORE, false);
             byte[] encodingStringBytes = rs.getRecord(1);
 
-            if (encodingStringBytes == null || encodingStringBytes.length < 1) {
-                return null;
+            if (encodingStringBytes != null && encodingStringBytes.length > 0) {
+                return new String(encodingStringBytes);
             }
-            String encodingString = new String(encodingStringBytes);
-
-            return encodingString;
-        } catch (RecordStoreException ex) {
+        } catch (Throwable ex) {
             // again just a best effort to look up dimensions
             ex.printStackTrace();
         }
