@@ -2,32 +2,35 @@ package net.yura.tools.translation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
-import javax.microedition.midlet.ApplicationManager;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
-import net.yura.mobile.gui.DesktopPane;
+import javax.swing.event.TreeSelectionEvent;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.TextField;
-import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.translation.MessageTool;
-import org.me4se.JadFile;
+import net.yura.translation.MyNode;
 
 /**
  * @author Yura Mamyrin
  */
 public class XULTranslationTool extends MessageTool {
+
+        ControlPanel control;
+
+	public void valueChanged(TreeSelectionEvent e) {
+
+            MyNode node = (MyNode)e.getPath().getLastPathComponent();
+
+            control.scanForName( node.getName() );
+
+        }
+
 
     public static void main(String[] args) {
 
@@ -96,15 +99,16 @@ public class XULTranslationTool extends MessageTool {
 
         //JPanel area = new JPanel();
         JDesktopPane area = new JDesktopPane();
-        JInternalFrame box = new JInternalFrame("Phone");
+        JInternalFrame box = new JInternalFrame("Preview");
         box.add(me4sePanel);
         box.setResizable(true);
         box.pack();
         box.setVisible(true);
         area.add(box);
 
+        tt.control = new ControlPanel(me4sePanel,box,tt);
 
-        panel.add(new ControlPanel(me4sePanel,box),BorderLayout.NORTH);
+        panel.add(tt.control,BorderLayout.NORTH);
         panel.add(area);
 
 
