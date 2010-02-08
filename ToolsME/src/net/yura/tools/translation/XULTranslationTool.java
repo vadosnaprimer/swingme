@@ -24,6 +24,7 @@ public class XULTranslationTool extends MessageTool {
         ControlPanel control;
 
 	public void valueChanged(TreeSelectionEvent e) {
+            super.valueChanged(e);
 
             MyNode node = (MyNode)e.getPath().getLastPathComponent();
 
