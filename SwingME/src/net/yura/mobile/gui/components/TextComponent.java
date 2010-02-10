@@ -27,6 +27,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.plaf.Style;
 
 /**
@@ -34,7 +35,7 @@ import net.yura.mobile.gui.plaf.Style;
  * @see javax.swing.text.JTextComponent
  */
 public abstract class TextComponent extends Component implements ActionListener, CommandListener {
-	
+
         public static final int ANY=javax.microedition.lcdui.TextField.ANY;
         public static final int CONSTRAINT_MASK=javax.microedition.lcdui.TextField.CONSTRAINT_MASK;
         public static final int DECIMAL=javax.microedition.lcdui.TextField.DECIMAL;
@@ -48,7 +49,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int SENSITIVE=javax.microedition.lcdui.TextField.SENSITIVE;
         public static final int UNEDITABLE=javax.microedition.lcdui.TextField.UNEDITABLE;
         public static final int URL=javax.microedition.lcdui.TextField.URL;
-    
+
         private TextBox textbox;
 
 	private Button SOFTKEY_CLEAR;
@@ -71,16 +72,17 @@ public abstract class TextComponent extends Component implements ActionListener,
 //        public static void setCancelButtonText(String a) {
 //		cancel = new Command(a,cancel.getCommandType(),cancel.getPriority());
 //	}
-        
+
         private static final int cursorBlinkWait = 500;
+        private static final int changeModeChar = (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ? '*' : '#';
         private static int autoAcceptTimeout = 1000; // MUST be more then blink time
         protected int padding = 2;
-        
+
         public static final int MODE_abc = 0;
         public static final int MODE_Abc = 1;
         public static final int MODE_ABC = 2;
         public static final int MODE_123 = 3;
-        
+
         private String label;
 	private int constraints;
         private int mode;
@@ -95,13 +97,13 @@ public abstract class TextComponent extends Component implements ActionListener,
 
 	private int maxSize;
 	protected int caretPosition;
-        
+
 	protected boolean showCaret;
-	
+
         protected char tmpChar;
         private long lastKeyEvent;
         //protected double preferredPercentWidth=-1;
-        
+
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
          */
@@ -124,34 +126,34 @@ public abstract class TextComponent extends Component implements ActionListener,
         public boolean allowNewLine() {
             return true;
         }
-        
+
         private void insertNewCharacter(char ch) {
                 text.insert(caretPosition, ch);
-                
+
                 if (mode==MODE_Abc && !initialCapsConstraint()) {
                     setMode(MODE_abc);
                 }
-                
+
         }
 
         /**
          * @see javax.swing.event.DocumentListener#changedUpdate(javax.swing.event.DocumentEvent) DocumentListener.changedUpdate
          */
         protected void changedUpdate(int offset,int length) {
-            
+
         }
-        
+
         protected void autoAccept() {
-            
+
             if (tmpChar!=0) {
                 char tmp = tmpChar;
                 tmpChar=0;
                 insertNewCharacter(tmp);
                 setCaretPosition(caretPosition+1);
             }
-            
+
         }
-	
+
 	private void updateSoftKeys() {
             if (isFocusOwner()) {
 
@@ -172,7 +174,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 		}
             }
 	}
-	
+
 	public void actionPerformed(String actionCommand) {
             if (SOFTKEY_CLEAR.getActionCommand().equals(actionCommand)) {
                 clear(true);
@@ -223,18 +225,18 @@ public abstract class TextComponent extends Component implements ActionListener,
 
             // most recent down key
             int keyCode = keyEvent.getIsDownKey();
-            
+
             int justPressed = keyEvent.getJustPressedKey();
             if (justPressed!=0) {
                 keyCode = justPressed;
             }
-            
+
             lastKeyEvent = System.currentTimeMillis();
-            
+
             // 8 is the ascii for backspace, so we dont want this key, no no
             // this is done in the key event
             //if (keyCode==8) { keyCode=KeyEvent.KEY_CLEAR; }
-            
+
             // if it is a letter that can be typed
             // we dont want to allow Character.MAX_VALUE as its not a real input char
 
@@ -242,7 +244,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 keyCode='\n';
             }
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!='#' || DesktopPane.me4se || allowOnlyNumberConstraint())) {
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || DesktopPane.me4se || allowOnlyNumberConstraint())) {
 
                 if (keyCode=='\n' && !allowNewLine()) {
                     return false;
@@ -268,22 +270,22 @@ public abstract class TextComponent extends Component implements ActionListener,
                         keyCode=0;
                     }
                 }
-                
+
                 if (text.length() < maxSize && keyCode!=0) {
-                    
+
                     char thechar = (char)keyCode;
-                    
+
                     if (keyEvent.acceptOld()) {
                         autoAccept();
                     }
                     else {
                         tmpChar = 0;
                     }
-                    
+
                     if (mode==MODE_ABC || (mode==MODE_Abc && shouldUseUppercase() )) {
                         thechar = Character.toUpperCase(thechar);
                     }
-                    
+
                     if (keyEvent.acceptNew()) {
                          insertNewCharacter(thechar);
                          changedUpdate(caretPosition,1);
@@ -299,7 +301,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 return true;
             }
             else {
-                if (keyCode=='#') {
+                if (keyCode==changeModeChar) {
                     autoAccept();
                     if (mode!=3) {
                         setMode(mode+1);
@@ -318,7 +320,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 			return true;
 		}
                 else if (keyEvent.isDownAction(Canvas.LEFT)) {
-                    
+
                     if (caretPosition>0) {
                         autoAccept();
                         setCaretPosition(caretPosition-1);
@@ -327,10 +329,10 @@ public abstract class TextComponent extends Component implements ActionListener,
                     else {
                         return !keyEvent.justPressedAction(Canvas.LEFT);
                     }
-                    
+
                 }
                 else if (keyEvent.isDownAction(Canvas.RIGHT)) {
-                    
+
                     if (tmpChar!=0) {
                        autoAccept();
                        return true;
@@ -343,7 +345,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                     else {
                         return !keyEvent.justPressedAction(Canvas.RIGHT);
                     }
-                    
+
                 }
                 else if (keyEvent.justPressedAction(Canvas.FIRE)) {
 
@@ -370,9 +372,9 @@ public abstract class TextComponent extends Component implements ActionListener,
                 Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
 
         }
-        
+
         private boolean shouldUseUppercase() {
-            
+
             if (initialCapsConstraint()) {
 
                 for (int c=0;c<caretPosition;c++) {
@@ -384,20 +386,20 @@ public abstract class TextComponent extends Component implements ActionListener,
                         continue;
                     }
                     if (ch=='\n' || ch=='.' || ch=='!' || ch=='?') return true;
-                    
+
                     // return false if we hit a letter!
                     return false;
                 }
 
             }
-            
+
             return true;
         }
-        
+
         public void setTitle(String s) {
             label = s;
         }
-        
+
         /**
          * @param a position in the text
          * @see javax.swing.text.JTextComponent#setCaretPosition(int) JTextComponent.setCaretPosition
@@ -408,7 +410,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             repaint();
             updateSoftKeys();
         }
-        
+
         /**
          * @return the Caret position
          * @see javax.swing.text.JTextComponent#getCaretPosition() JTextComponent.getCaretPosition
@@ -428,20 +430,20 @@ public abstract class TextComponent extends Component implements ActionListener,
 
             textbox = null;
         }
-        
+
 	public void animate() throws InterruptedException {
 
             try {
                 int newWait = cursorBlinkWait;
-            
+
 		while (isFocusOwner()) {
 
                     int oldCaret = caretPosition;
-                    
+
 			wait(newWait);
 
                         long timeNow = System.currentTimeMillis();
-                        
+
                         if (tmpChar!=0 && timeNow > lastKeyEvent + autoAcceptTimeout) {
 
                                 autoAccept();
@@ -460,7 +462,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                         else {
                             showCaret = true;
                         }
-			
+
 			repaint();
 		}
             }
@@ -471,12 +473,12 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
         protected String getDisplayString() {
-            
+
             String s=text.toString();
-            
+
             // there is a VERY small chance that this method is called
             // when the caret is outside the text
-            // this is because it is called during a paint method, and 
+            // this is because it is called during a paint method, and
             // they can happen when ever
             //
             // the reason a caret can be outside the text is because
@@ -486,13 +488,13 @@ public abstract class TextComponent extends Component implements ActionListener,
             // so when the carret is moving, is has information such as
             // what is in the string and how many lines it takes up available
             int caret = caretPosition>s.length()?s.length():caretPosition;
-            
+
             // TODO if password or entering text, add that info
             boolean password = ((javax.microedition.lcdui.TextField.PASSWORD & constraints) != 0);
-            
+
             String st1 = s.substring(0, caret);
             String st2 = s.substring(caret, s.length() );
-            
+
             if (password) {
                 StringBuffer buffer = new StringBuffer();
                 for (int c=0;c<st1.length();c++) {
@@ -504,18 +506,18 @@ public abstract class TextComponent extends Component implements ActionListener,
                 for (int c=0;c<st2.length();c++) {
                     buffer.append('*');
                 }
-                
+
                 return buffer.toString();
             }
             else {
                  return st1+((tmpChar!=0)?String.valueOf(tmpChar):"")+st2;
             }
-           
+
         }
 
 	public void focusLost() {
 		super.focusLost();
-		
+
 		showCaret = false;
 
                 autoAccept();
@@ -527,12 +529,12 @@ public abstract class TextComponent extends Component implements ActionListener,
                     }
                     SOFTKEY_CLEAR = null;
                 }
-                
+
                 DesktopPane.getDesktopPane().setIndicatorText(null);
 		repaint();
 	}
 
-	
+
 	public void focusGained() {
                 super.focusGained();
 		showCaret = true;
@@ -551,10 +553,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 // this means that anything stored in
                 // the keyEvent Object will be ignored
-                
+
                 // not needed i think
                 //tmpChar = 0;
-                
+
 		repaint();
 
 	}
@@ -572,9 +574,9 @@ public abstract class TextComponent extends Component implements ActionListener,
 //        }
 
         public void setMode(int m) {
-            
+
             if (m!=MODE_123 && allowOnlyNumberConstraint() ) {
-                
+
                 // cant change mode under these constraints
                 return;
             }
@@ -587,27 +589,27 @@ public abstract class TextComponent extends Component implements ActionListener,
                 case MODE_123: i="123"; break;
                 default: throw new IllegalArgumentException();
             }
-                        
+
             mode = m;
-            
+
             if (isFocusOwner()) {
 
                 DesktopPane.getDesktopPane().setIndicatorText(i);
-                
+
             }
         }
-        
+
         private boolean allowOnlyNumberConstraint() {
             return  ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.PHONENUMBER) ||
                     ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC) ||
                     ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.DECIMAL);
         }
-        
+
         private boolean initialCapsConstraint() {
             return  ((javax.microedition.lcdui.TextField.INITIAL_CAPS_WORD & constraints) != 0) ||
                     ((javax.microedition.lcdui.TextField.INITIAL_CAPS_SENTENCE & constraints) != 0);
         }
-//    
+//
 //	public int getActiveTextColor() {
 //		return activeTextColor;
 //	}
@@ -618,7 +620,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void setConstraints(int m) {
 		constraints = m;
-                
+
                 focusable = (javax.microedition.lcdui.TextField.UNEDITABLE & constraints) == 0;
 
                 if (DesktopPane.me4se) { // in desktop mode numbers are always numbers
@@ -635,7 +637,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
 
 	}
-        
+
 	public int getConstraints() {
 		return constraints;
 	}
@@ -679,7 +681,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 return s.substring(0, caretPosition)+tmpChar+ s.substring(caretPosition, s.length() );
             }
 	}
-        
+
         /**
          * @return the font
          * @see java.awt.Component#getFont() Component.getFont
@@ -687,7 +689,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public Font getFont() {
 		return font;
 	}
-        
+
         /**
          * @param font The font to use
          * @see javax.swing.JComponent#setFont(java.awt.Font) JComponent.setFont
@@ -702,7 +704,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void updateUI() {
                 super.updateUI();
-        
+
                 font = theme.getFont(Style.ALL);
 
                 if (SOFTKEY_CLEAR!=null) {

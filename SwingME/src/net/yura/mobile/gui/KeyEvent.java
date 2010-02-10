@@ -120,8 +120,9 @@ public class KeyEvent {
 
         private static final String CHARS_PHONE = "*+pw";
         private static final String CHARS_DECIMAL = ".-";
+        private static final String CHARS_35 = " ";
         private static final String CHARS_42 = "*#";
-        private static final String CHARS_48 = " 0";
+        private static final String CHARS_48;
         private static final String CHARS_49 = ".,?!1@'-_():;&/%";
         private static final String CHARS_50 = "abc2";
         private static final String CHARS_51 = "def3";
@@ -131,6 +132,15 @@ public class KeyEvent {
         private static final String CHARS_55 = "pqrs7";
         private static final String CHARS_56 = "tuv8";
         private static final String CHARS_57 = "wxyz9";
+
+        static {
+            if (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) {
+                CHARS_48 = "0+";
+            }
+            else {
+                CHARS_48 = " 0";
+            }
+        };
 
         public static String getChars(char keycode,int constraints) {
 
@@ -171,6 +181,7 @@ public class KeyEvent {
             }
 
             switch(keycode) {
+                case '#': return CHARS_35;
                 case '*': return CHARS_42;
                 case '0': return CHARS_48;
                 case '1': return CHARS_49;
