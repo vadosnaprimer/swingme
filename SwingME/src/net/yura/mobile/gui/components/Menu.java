@@ -178,7 +178,7 @@ public class Menu extends Button {
             //scroll.setPreferredSize(menuItems.getWidth(), menuItems.getHeight());
             popup.pack();
 
-            OptionPane.centre(popup);
+            popup.setLocationRelativeTo(null);
 
             // TODO, make sure it does not go over the edges
             // should be only 1 place that does this, optionpane already does this

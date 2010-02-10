@@ -448,13 +448,11 @@ public class Window extends Panel {
             }
         }
 
-  public void updateUI()
-  {
-    super.updateUI();
-    for (int c = 0; softkeys!=null && c < softkeys.size(); c++)
-      ((Component)softkeys.elementAt(c)).updateUI();
-  }
-
+        public void updateUI() {
+            super.updateUI();
+            for (int c = 0; softkeys!=null && c < softkeys.size(); c++)
+              ((Component)softkeys.elementAt(c)).updateUI();
+        }
 
         public Button findMneonicButton(int mn) {
 
@@ -467,5 +465,15 @@ public class Window extends Panel {
 
         }
 
+        /**
+         * @see java.awt.Window#setLocationRelativeTo(java.awt.Component) Window.setLocationRelativeTo
+         */
+        public void setLocationRelativeTo(Component comp) {
+            if (comp == null) {
+                setLocation((DesktopPane.getDesktopPane().getWidth() - getWidth()) /2,
+                        (DesktopPane.getDesktopPane().getHeight() - getHeight()) /2
+                );
+            }
+        }
 
 }

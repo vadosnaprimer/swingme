@@ -256,18 +256,12 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         }
         getMostRecentFocusOwner();
         
-        centre(this);
+        setLocationRelativeTo(null);
         
         setVisible(true);
 
     }
-    
-    public static void centre(Window w) {
-        
-        w.setLocation((DesktopPane.getDesktopPane().getWidth() - w.getWidth()) /2, 
-                (DesktopPane.getDesktopPane().getHeight() - w.getHeight()) /2
-        );
-    }
+   
     
     private boolean factory;
     public static OptionPane showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, Button[] options, Button initialValue) {
