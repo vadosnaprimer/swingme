@@ -17,22 +17,49 @@ public abstract class SocketClient implements Runnable {
     public final static int CONNECTED = 2;
     public final static int CONNECTING = 3;
     public final static int COMMUNICATING = 4;
+    public final static int DISCONNECTED_AND_PAUSED = 5;
 
-    private QueueProcessorThread writeThread;
+    protected QueueProcessorThread writeThread;
     private Thread readThread;
 
-    private Vector offlineBox = new Vector();
+    protected Vector offlineBox = new Vector();
 
     protected StreamConnection conn;
     protected OutputStream out;
     protected InputStream in;
 
     private final String server;
-    private int wait;
+
+    //#debug
+    private boolean disconnected = false;
+
+
+    // configurable parameters
+    protected int maxRetries = 3;
+    protected int retryWaitMultiplier = 2;
+    protected int initialWaitValue = 1000;
+    protected int maxWaitTimeMillis = 30000;
+    boolean pauseReconnectOnFailure = false;
+
+    private int retryCount = 0;
+
 
     public SocketClient(String server) {
         this.server = server;
     }
+
+    public SocketClient(String server, int maxRetries, int retryWaitMultiplier, int initialWaitValue, int maxWaitTimeMillis, boolean pauseReconnectOnFailure){
+
+        this.server = server;
+
+        this.maxRetries = maxRetries;
+        this.retryWaitMultiplier = retryWaitMultiplier;
+        this.initialWaitValue = initialWaitValue;
+        this.maxWaitTimeMillis = maxWaitTimeMillis;
+        this.pauseReconnectOnFailure = pauseReconnectOnFailure;
+    }
+
+
     protected StreamConnection openConnection() throws IOException {
         return (StreamConnection)Connector.open("socket://" + server);
     }
@@ -45,27 +72,33 @@ public abstract class SocketClient implements Runnable {
 
                     if (conn==null) {
 
-                        // if we had a disconnect in the read and have shutdown the socket
-                        // but are still getting objects comming in, and we have not yet
-                        // told the app we have lost the connection
-                        if (out!=null || in!=null) {
-                            addToOfflineBox(object);
-                            return;
-                        }
-
-                        wait = 1000;
+                        int wait = initialWaitValue;
                         // MAKE THE CONNECTION!!
                         while (out==null || in==null) {
 
                             if(!isRunning()) return;
 
-                            updateState(CONNECTING);
                             //#debug
                             System.out.println("[SocketClient] Trying to connect to: "+server);
                             try {
+
+                                retryCount++;
+
+                                //#debug
+                                if (disconnected) throw new IOException();
+
+
                                 conn = openConnection();
                                 out = conn.openOutputStream();
                                 in = conn.openInputStream();
+
+
+                                // success therefore reset connecting state
+                                updateState(CONNECTING);
+
+                                // reset the retryCount and initial wait time
+                                retryCount=0;
+                                wait = initialWaitValue;
                             }
                             catch (SecurityException s) {
                                 updateState(DISCONNECTED);
@@ -76,23 +109,58 @@ public abstract class SocketClient implements Runnable {
                                 return;
                             }
                             catch (Exception x) {
-                                updateState(DISCONNECTED);
+
+
                                 //#debug
                                 x.printStackTrace();
 
-                                try {
-                                    Thread.sleep(wait);
-                                }
-                                catch (InterruptedException ex) {
-                                    //#debug
-                                    ex.printStackTrace();
-                                }
+                                if (retryCount <= maxRetries){
+                                    updateState(DISCONNECTED);
 
-                                wait = wait * 2;
-                                if (wait > 300000) {
-                                    wait = 300000;
-                                }
+                                    try {
+                                        // pause a while before next reconnect attempt
+                                        Thread.sleep(wait);
 
+                                        // increment the wait time between subsequent reconnect attempts
+
+                                        wait = wait * retryWaitMultiplier;
+                                        if (wait > maxWaitTimeMillis) {
+                                            wait = maxWaitTimeMillis;
+                                        }
+
+                                    }
+                                    catch (InterruptedException ex) {
+                                        //#debug
+                                        ex.printStackTrace();
+                                    }
+
+
+                                }
+                                else {
+
+                                    if (pauseReconnectOnFailure){
+
+                                        updateState(DISCONNECTED_AND_PAUSED);
+
+                                        // number of reconnects exhausted so wait thread
+                                        synchronized(this) {
+                                            try {
+                                                wait();
+                                            }
+                                            catch (Exception e){
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    }
+                                    else {
+
+                                        // update listener with current state
+                                        updateState(DISCONNECTED);
+
+                                        // reset the retry count
+                                        retryCount = 0;
+                                    }
+                                }
                             }
                         }
 
@@ -109,6 +177,9 @@ public abstract class SocketClient implements Runnable {
 //#debug
 System.out.println("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
+
+                        //#debug
+                        if (disconnected) throw new IOException();
 
                         write(out, object);
 
@@ -127,8 +198,8 @@ System.out.println("[SocketClient] sending object: "+object);
                         // move this and any queued objects to offline inbox
                         addToOfflineBox( object );
 
-                        NativeUtil.close(conn);
-                        conn = null;
+                        shutdownConnection();
+
                     }
                 }
             };
@@ -136,11 +207,17 @@ System.out.println("[SocketClient] sending object: "+object);
         }
 
         writeThread.addToInbox( obj );
+
     }
 
     public void addToOfflineBox(Object t) {
-        if (offlineBox.contains(t)) {
+        if (!offlineBox.contains(t)) {
             offlineBox.addElement(t);
+        }
+
+        // if we are in the DISCONNECTED_AND_PAUSED state, wake us up
+        synchronized(writeThread){
+            writeThread.notify();
         }
     }
 
@@ -148,7 +225,36 @@ System.out.println("[SocketClient] sending object: "+object);
         return offlineBox;
     }
 
+    private synchronized void shutdownConnection() {
+
+         NativeUtil.close(conn);
+         conn = null;
+
+         // we HAVE to close these here, as if we do not close them, and ONLY
+         // close the Connection, the readThread stays in the blocked state
+        NativeUtil.close(in); // close on input can block???
+        NativeUtil.close(out);
+
+        in = null;
+        out = null;
+
+
+        // move anything in the inbox to the offline inbox
+        if (writeThread != null){
+            Vector inbox = writeThread.getInbox();
+            for (int c=0;c<inbox.size();c++) {
+                addToOfflineBox(inbox.elementAt(c));
+            }
+            writeThread.clearInbox();
+        }
+
+    }
+
+
     public final void run() {
+
+        try {
+
 //#mdebug
 String name = readThread.getName();
 System.out.println("[SocketClient] STARTING "+name);
@@ -157,6 +263,10 @@ System.out.println("[SocketClient] STARTING "+name);
         Object task;
         while (true) {
             try {
+
+                //#debug
+                if (disconnected) throw new IOException();
+
                 task = read(in);
             }
             catch(Exception ex) {
@@ -171,8 +281,8 @@ System.out.println("[SocketClient] STARTING "+name);
                 }
                 //#enddebug
 
-                NativeUtil.close(conn);
-                conn=null;
+                shutdownConnection();
+
                 break;
             }
 
@@ -202,36 +312,26 @@ System.out.println("[SocketClient] finished handling object, waiting for new obj
             updateState(CONNECTED);
         }
 
-        Object a1=in;
-        Object a2=out;
-
-        in = null;
-        out = null;
-
         // we have not had a disconnect requested, so we have to get ready to reconnect
         if (writeThread!=null) {
-            // move anything in the inbox to the offline inbox
-            Vector inbox = writeThread.getInbox();
-            for (int c=0;c<inbox.size();c++) {
-                addToOfflineBox(inbox.elementAt(c));
-            }
-            writeThread.clearInbox();
             disconnected();
         }
 
-        NativeUtil.close(a1);
-        NativeUtil.close(a2); // close on input can block???
-
 //#debug
 System.out.println("[SocketClient] ENDING "+name);
+        }
+        catch (Throwable t){
+            t.printStackTrace();
+        }
     }
 
     public void disconnect() {
+        shutdownConnection();
+
         writeThread.kill();
         writeThread = null;
-        NativeUtil.close(conn);
     }
-  
+
     protected void sendOfflineInboxMessages() {
         //#debug
         System.out.println("[SocketClient] sending offline messages: "+offlineBox);
@@ -242,9 +342,27 @@ System.out.println("[SocketClient] ENDING "+name);
         }
     }
 
+    //#mdebug
+    public void setDisconnected(boolean b){
+        this.disconnected = b;
+    }
+    //#enddebug
+
     protected void securityException() {
         //#debug
         System.out.println("[SocketClient] Socket connections are not allowed.");
+    }
+
+    public void setRetryCount(int retryCount){
+        this.retryCount = retryCount;
+    }
+
+    protected int getRetryCount(){
+        return retryCount;
+    }
+
+    protected int getMaxRetries(){
+        return maxRetries;
     }
 
     protected abstract void handleObject(Object task);

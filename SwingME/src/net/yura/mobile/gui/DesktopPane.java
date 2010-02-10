@@ -49,6 +49,21 @@ public class DesktopPane extends Canvas implements Runnable {
     // static methods
     private static DesktopPane desktop;
 
+    private static Vector keylisteners = new Vector();
+
+    //#mdebug
+    public static void addKeyPressListener(KeyListener listener){
+        keylisteners.addElement(listener);
+    }
+
+    public void notifyKeyListeners(KeyEvent event){
+        for (int i = 0; i < keylisteners.size(); i++){
+            KeyListener listener = (KeyListener)keylisteners.elementAt(i);
+            listener.keyPressedEvent(event);
+        }
+    }
+    //#enddebug
+
     public static DesktopPane getDesktopPane() {
         return desktop;
     }
@@ -751,6 +766,9 @@ public class DesktopPane extends Canvas implements Runnable {
     private final int[] directions = new int[] {Canvas.RIGHT,Canvas.DOWN,Canvas.LEFT,Canvas.UP};
     private void passKeyEvent(KeyEvent keyevent) {
 
+        //#debug
+        notifyKeyListeners(keyevent);
+        
         try {
 
             //#mdebug
@@ -1162,6 +1180,8 @@ public class DesktopPane extends Canvas implements Runnable {
     private KeyEvent keypad;
 
     public void keyPressed(int keyCode) {
+
+
 
         keypad.keyPressed(keyCode);
 

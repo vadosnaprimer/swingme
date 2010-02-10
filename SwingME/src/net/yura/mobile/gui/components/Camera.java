@@ -326,8 +326,10 @@ public class Camera extends Component implements Runnable, PlayerListener {
         try {
             //#debug
             System.out.println("getSnapshot: Trying " + encoding);
-            data = videoCtrl.getSnapshot(encoding);
+            data = videoCtrl.getSnapshot(encoding);           
         } catch (Exception e) {
+            //#debug
+            e.printStackTrace();
         }
 
         if (data != null) {
@@ -560,6 +562,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             }
         } catch (Throwable ex) {
             // again just a best effort to look up dimensions
+            //#debug
             ex.printStackTrace();
         }
 
