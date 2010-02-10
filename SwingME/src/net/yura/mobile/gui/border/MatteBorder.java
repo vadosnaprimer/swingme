@@ -165,18 +165,24 @@ public class MatteBorder extends EmptyBorder {
          */
         public void paintBorder(Component c, Graphics2D g, int width,int height) {
             
-            if (activeimage==null || activeimage.getImage() == null) {
-            
+            if (activeimage==null) {
+                // color can NOT be -1 here
                 g.setColor(color);
                 if (back) {
                     g.fillRect(-left, -top, width+left+right, height+top+bottom);
                 }
                 else {
-
                     g.fillRect(-left, -top, width+left+right, top); // top
                     g.fillRect(-left, height, width+left+right, bottom); // bottom
                     g.fillRect(-left, 0, left, height ); // left
                     g.fillRect(width, 0, right, height ); // right
+                }
+            }
+            // we will have a image, but its not loaded yet or we can not use it for some reason
+            else if (activeimage.getImage() == null) {
+                if (color!=-1) {
+                    g.setColor(color);
+                    g.fillRect(-left, -top, width+left+right, height+top+bottom);
                 }
             }
             else {

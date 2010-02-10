@@ -646,9 +646,10 @@ public abstract class TextComponent extends Component implements ActionListener,
          */
 	public void setText(String str) {
 
-		String old = text==null?"":text.toString();
+		String old = text==null?"":getText();
 
 		text = new StringBuffer(str);
+                tmpChar = 0;
 
 		if (!str.equals(old)) {
 			changedUpdate(0,text.length());
