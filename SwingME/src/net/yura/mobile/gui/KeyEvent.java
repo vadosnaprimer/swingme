@@ -189,10 +189,9 @@ public class KeyEvent {
 
 	public KeyEvent(Canvas c) {
 		canvas = c;
-                String useSoftKeyClearString = DesktopPane.getMidlet().getAppProperty("useSoftKeyClear");
-                if (useSoftKeyClearString!=null) {
-                    useSoftKeyClear = useSoftKeyClearString.equalsIgnoreCase("true");
-                }
+
+		// Nokia S40 does not have a dedicated delete key
+		useSoftKeyClear = (Midlet.getPlatform() == Midlet.PLATFORM_NOKIA_S40);
 	}
 
         public int getJustPressedKey() {

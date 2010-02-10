@@ -91,7 +91,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             p=pp;
         }
-        
+
         DesktopPane dp = getDesktopPane();
 
         // while it chooses what array to add the component to
@@ -149,22 +149,8 @@ public class DesktopPane extends Canvas implements Runnable {
     public static final boolean suny;
 
     static {
-        Class init = null;
-        try {
-            init = Class.forName("org.me4se.MIDletRunner");
-        }
-        catch (Throwable ex) { }
-
-        me4se = (init != null);
-
-        String sunyString=null;
-        try {
-            sunyString = System.getProperty("com.sonyericsson.java.platform");
-        }
-        catch(Throwable th) {}
-
-        suny = (sunyString!=null);
-
+        me4se = (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE);
+        suny = (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON);
     }
 
     // object variables
@@ -768,7 +754,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         //#debug
         notifyKeyListeners(keyevent);
-        
+
         try {
 
             //#mdebug
@@ -817,7 +803,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
                 else {
                     boolean consumed=false;
-                    
+
                     if (focusedComponent != null) {
                         consumed = focusedComponent.processKeyEvent(keyevent);
                     }
