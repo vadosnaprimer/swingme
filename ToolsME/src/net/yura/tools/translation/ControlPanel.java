@@ -9,10 +9,12 @@ import javax.swing.SwingUtilities;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.XULLoader;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.util.Properties;
 import net.yura.translation.Mtcomm;
@@ -52,18 +54,11 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
     public void actionPerformed(String arg0) {
         if ("new_synth".equals(arg0)) {
 
-            final PLAFLoader loader = new PLAFLoader();
+            final PLAFLoader ploader = new PLAFLoader();
 
-            SynthLookAndFeel synthPlaf = loader.loadNewSynth( SwingUtilities.getWindowAncestor(this) );
+            LookAndFeel synthPlaf = ploader.loadNewSynth( SwingUtilities.getWindowAncestor(this) );
             if (synthPlaf!=null) {
-                DesktopPane desktop = me4sePanel.getDesktopPane();
-                desktop.setLookAndFeel(synthPlaf);
-                Vector frames = desktop.getAllFrames();
-                for (int c = 0;c<frames.size();c++) {
-                    Component comp = (Component)frames.elementAt(c);
-                    DesktopPane.updateComponentTreeUI( comp );
-                }
-                desktop.fullRepaint();
+                setLookAndFeel(synthPlaf);
             }
 
         }
@@ -73,10 +68,10 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
 
             chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-            int result = chooser.showOpenDialog(box);
+            int result = chooser.showOpenDialog(this);
 
             if (result==JFileChooser.APPROVE_OPTION) {
-                baseXULdir = chooser.getSelectedFile();
+                setBaseXULDir( chooser.getSelectedFile() );
                 
             }
 
@@ -116,9 +111,23 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
 
             DesktopPane dp = me4sePanel.getDesktopPane();
 
-            dp.remove( dp.getSelectedFrame() );
+            // remove all windows
+            Vector<Window> v = dp.getAllFrames();
+            while (!v.isEmpty()) {
+                dp.remove( v.firstElement() );
+            }
 
             if (panel instanceof Window) {
+                if (panel instanceof Frame) {
+                    if ( !((Frame)panel).isMaximum()) {
+                        // YURA:TODO
+                        // THIS IS CORRECT but in badoo, it thinks all
+                        // thse windows need to be maximum
+                        // ((Window)panel).pack();
+                        System.err.println("XUL NOT Maximum: "+file.toString());
+                        ((Frame)panel).setMaximum(true);
+                    }
+                }
                 dp.add((Window)panel);
             }
             else {
@@ -129,6 +138,21 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
         else {
             System.out.println("unknown action "+arg0);
         }
+    }
+
+    public void setBaseXULDir(File selectedFile) {
+        baseXULdir = selectedFile;
+    }
+
+    public void setLookAndFeel(LookAndFeel plaf) {
+            DesktopPane desktop = me4sePanel.getDesktopPane();
+            desktop.setLookAndFeel(plaf);
+            Vector frames = desktop.getAllFrames();
+            for (int c = 0;c<frames.size();c++) {
+                Component comp = (Component)frames.elementAt(c);
+                DesktopPane.updateComponentTreeUI( comp );
+            }
+            desktop.fullRepaint();
     }
 
     class XULFile {

@@ -17,6 +17,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.layout.XULLoader;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 
 /**
@@ -28,7 +29,7 @@ public class PLAFLoader implements ActionListener {
     XULLoader loader;
     Dialog dialog;
 
-    public SynthLookAndFeel loadNewSynth(Window parent) {
+    public LookAndFeel loadNewSynth(Window parent) {
         //this.parent = parent;
 
         ME4SEPanel wrapper = new ME4SEPanel();
@@ -74,10 +75,22 @@ public class PLAFLoader implements ActionListener {
                     JOptionPane.showMessageDialog(parent, ex.toString() );
                 }
 
-                return synth;
+                try {
+                    return loadSynth(synth_base,synth_file);
+                }
+                catch(Exception ex) {
+                    JOptionPane.showMessageDialog(parent, ex.toString() );
+                }
 
         }
         return null;
+    }
+
+    public static LookAndFeel loadSynth(File base, File file) throws Exception {
+
+        ME4SESynth synth = new ME4SESynth(base);
+        synth.load( new FileInputStream(file) );
+        return synth;
     }
 
     public void actionPerformed(String arg0) {
@@ -127,7 +140,7 @@ public class PLAFLoader implements ActionListener {
     }
 
 
-    public class ME4SESynth extends SynthLookAndFeel {
+    public static class ME4SESynth extends SynthLookAndFeel {
 
         private File current;
 

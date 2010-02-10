@@ -2,6 +2,7 @@ package net.yura.tools.translation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.io.File;
 import javax.microedition.lcdui.Graphics;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
@@ -13,6 +14,7 @@ import javax.swing.event.TreeSelectionEvent;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.TextField;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.translation.MessageTool;
 import net.yura.translation.MyNode;
 
@@ -112,6 +114,19 @@ public class XULTranslationTool extends MessageTool {
         panel.add(tt.control,BorderLayout.NORTH);
         panel.add(area);
 
+
+
+
+        tt.control.setBaseXULDir( new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res") );
+
+        try {
+            LookAndFeel plaf = PLAFLoader.loadSynth(new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res"),
+                                                    new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res/xml/synth.xml"));
+            tt.control.setLookAndFeel(plaf);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
 
         frame.setVisible(true);
     }
