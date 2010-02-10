@@ -208,7 +208,8 @@ public abstract class TextComponent extends Component implements ActionListener,
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             boolean focusOwner = isFocusOwner();
             super.processMouseEvent(type, x, y, keys);
-            if (focusOwner && type==DesktopPane.PRESSED && !DesktopPane.me4se) {
+            if (focusOwner && type==DesktopPane.PRESSED &&
+                    Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
                 // TODO check if we have a qwerty keyboard
                 openNativeEditor();
             }
@@ -240,11 +241,13 @@ public abstract class TextComponent extends Component implements ActionListener,
             // if it is a letter that can be typed
             // we dont want to allow Character.MAX_VALUE as its not a real input char
 
-            if (DesktopPane.me4se && keyCode==-5) {
+            boolean me4se = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
+
+            if (me4se && keyCode==-5) {
                 keyCode='\n';
             }
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || DesktopPane.me4se || allowOnlyNumberConstraint())) {
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || me4se || allowOnlyNumberConstraint())) {
 
                 if (keyCode=='\n' && !allowNewLine()) {
                     return false;
@@ -623,7 +626,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 focusable = (javax.microedition.lcdui.TextField.UNEDITABLE & constraints) == 0;
 
-                if (DesktopPane.me4se) { // in desktop mode numbers are always numbers
+                if ( Midlet.getPlatform() == Midlet.PLATFORM_ME4SE ) { // in desktop mode numbers are always numbers
                     setMode(MODE_123);
                 }
                 else if ( allowOnlyNumberConstraint() ) {

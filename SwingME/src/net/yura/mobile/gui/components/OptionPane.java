@@ -93,7 +93,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
         Panel c = new Panel( new BoxLayout(Graphics.VCENTER) );
 
-        if (DesktopPane.me4se) {
+        if (DesktopPane.getDesktopPane().NO_SOFT_KEYS) {
             panel.add(icon,Graphics.LEFT);
         }
         else {
@@ -175,7 +175,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
 
         int space = DesktopPane.getDesktopPane().getWidth() - 12 - scroll.getBarThickness(); // padding
-        if (DesktopPane.me4se) {
+        if (DesktopPane.getDesktopPane().NO_SOFT_KEYS) {
             icon.workoutSize();
             space = space - icon.getWidthWithBorder();
         }

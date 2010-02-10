@@ -91,7 +91,8 @@ public class Button extends Label implements ActionListener {
 	}
 
         public boolean isVisible() {
-            if (!DesktopPane.me4se && (mneonic == KeyEvent.KEY_SOFTKEY1 || mneonic == KeyEvent.KEY_SOFTKEY2 || mneonic == KeyEvent.KEY_SOFTKEY3)) return false;
+            DesktopPane dp = getWindow().getDesktopPane();
+            if ((mneonic == KeyEvent.KEY_SOFTKEY1 || mneonic == KeyEvent.KEY_SOFTKEY2 || mneonic == KeyEvent.KEY_SOFTKEY3) && !dp.NO_SOFT_KEYS ) return false;
             return super.isVisible();
         }
 

@@ -23,6 +23,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 
 /**
  * what happens with sizes:
@@ -353,7 +354,9 @@ public class TextArea extends TextComponent {
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
-            if (focusable && type==DesktopPane.RELEASED && DesktopPane.me4se) {
+            if (focusable && type==DesktopPane.RELEASED && 
+                    Midlet.getPlatform() == Midlet.PLATFORM_ME4SE
+                    ) {
                 int lineHeight = font.getHeight() + lineSpacing;
                 int line = y / lineHeight;
                 if (line > lines.length) { line = lines.length; }

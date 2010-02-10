@@ -412,7 +412,9 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if ("action".equals(key)) {
                     list.setActionCommand(value);
-                    list.addActionListener(listener);
+                    if (listener!=null) {
+                        list.addActionListener(listener);
+                    }
                 }
                 else if("property".equals(key)) {
                     Hashtable properties = getProperties(value);
@@ -556,7 +558,9 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if ("action".equals(key)) {
                     button.setActionCommand(value);
-                    button.addActionListener(listener);
+                    if (listener!=null) {
+                        button.addActionListener(listener);
+                    }
                 }
                 else if ("mnemonic".equals(key)) {
                     int mnemonic = Integer.parseInt(value);

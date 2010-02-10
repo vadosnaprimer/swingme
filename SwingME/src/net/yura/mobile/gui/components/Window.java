@@ -235,7 +235,7 @@ public class Window extends Panel {
         }
 
         public Component getComponentAt(final int xclick,final int yclick) {
-            if (!DesktopPane.me4se) {
+            if (!getDesktopPane().NO_SOFT_KEYS) {
 
                     int x = xclick + getXOnScreen();
                     int y = yclick + getYOnScreen();
@@ -275,7 +275,9 @@ public class Window extends Panel {
         public void paint(Graphics2D g) {
             super.paint(g);
 
-            if (!DesktopPane.me4se && getWindow() == desktop.getSelectedFrame()) {
+            Window w = getWindow();
+
+            if (!w.getDesktopPane().NO_SOFT_KEYS && w == desktop.getSelectedFrame()) {
 
                 int offsetX = getXOnScreen();
                 int offsetY = getYOnScreen();
@@ -417,7 +419,8 @@ public class Window extends Panel {
             }
             //#enddebug
 
-            if (!DesktopPane.me4se) {
+            DesktopPane dp = getDesktopPane();
+            if (dp!=null && !dp.NO_SOFT_KEYS) {
                 repaint();
             }
         }
@@ -443,7 +446,7 @@ public class Window extends Panel {
             }
             //#enddebug
 
-            if (!DesktopPane.me4se) {
+            if (!getDesktopPane().NO_SOFT_KEYS) {
                 repaint();
             }
         }
@@ -457,7 +460,7 @@ public class Window extends Panel {
         public Button findMneonicButton(int mn) {
 
             Button b = getSoftkeyForMneonic(mn);
-            if (!DesktopPane.me4se && b!=null) {
+            if (!getDesktopPane().NO_SOFT_KEYS && b!=null) {
                     Component comp = getRendererComponentOnScreen(b);
                     b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
             }

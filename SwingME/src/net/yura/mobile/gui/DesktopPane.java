@@ -145,11 +145,15 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
     public static final boolean debug = false;
-    public static final boolean me4se;
+
+    // 2 things that are not related to softkeys also depend on this flag
+    // where the icon goes on a option pane,
+    // and if by default a window has a close and max button at the top
+    public boolean NO_SOFT_KEYS;
+
     public static final boolean suny;
 
     static {
-        me4se = (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE);
         suny = (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON);
     }
 
@@ -192,6 +196,9 @@ public class DesktopPane extends Canvas implements Runnable {
      * @param sph the splash screen image
      */
     public DesktopPane(Midlet m, int back, Image sph) {
+
+        NO_SOFT_KEYS = (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE);
+
         desktop = this;
 
         background = back;
@@ -237,7 +244,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // TODO me4se needs to be here, or keyboard events dont come in
         // WHY WHY WHY??!!! this is very strange
-        if (me4se) {
+        if (NO_SOFT_KEYS) {
             serviceRepaints();
         }
 
@@ -558,7 +565,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (tooltip!=null && tooltip.isShowing()) {
                     paintComponent(graphics, tooltip);
                 }
-                if (indicator!=null && indicator.getText() != null && !me4se) {
+                if (indicator!=null && indicator.getText() != null && !NO_SOFT_KEYS) {
                     paintComponent(graphics, indicator);
                 }
 
