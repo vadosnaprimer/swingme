@@ -25,6 +25,7 @@ import java.util.Vector;
 //import javax.microedition.lcdui.Font;
 import javax.microedition.io.Connector;
 import javax.microedition.io.InputConnection;
+import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
@@ -231,6 +232,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 				addMainMenuButton("Load Images","loadpanel");
 				addMainMenuButton("Throw Error","throwerror");
                                 addMainMenuButton("System.out", "sysout");
+                                addMainMenuButton("Hide Show", "hideshow");
 
                                 // add theme swap test
                                 
@@ -257,6 +259,26 @@ public class MainPane extends DesktopPane implements ActionListener {
                         bar.addElement( new Label(image) );
 
 		}
+                else if ("hideshow".equals(actionCommand)) {
+
+                    final Display display = Display.getDisplay(DesktopPane.getMidlet());
+                    final DesktopPane dp = DesktopPane.getDesktopPane();
+
+                    DesktopPane.hide();
+
+                    new Thread() {
+                        public void run() {
+                            try {
+                                Thread.sleep(5000);
+                            }
+                            catch (InterruptedException ex) {
+                                ex.printStackTrace();
+                            }
+                            //dp.callSerially(this);
+                            display.setCurrent( dp );
+                        }
+                    }.start();
+                }
                 else if ("sysout".equals(actionCommand)) {
 
                     if (sysoutArea==null) {

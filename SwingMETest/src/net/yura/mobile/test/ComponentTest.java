@@ -41,6 +41,7 @@ import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.XULLoader;
+import net.yura.mobile.io.NativeUtil;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.Option;
 
@@ -55,6 +56,7 @@ public class ComponentTest  extends Section{
     private Panel tableTest;
     private Menu menu;
     private Panel tabPanel;
+    FileChooser chooser1;
 
     public void createTests() {
             addTest("Component Test","componentTest");
@@ -83,6 +85,7 @@ public class ComponentTest  extends Section{
                                 testMain.add(new Button("test 1"));
                                 testMain.add(new Button("test 2 lalalalalal"));
                                 testMain.add(new Button("test 3"));
+                                testMain.addSeparator();
                                 testMain.add(new RadioButton("test ra"));
                                 testMain.add(new CheckBox("test ch"));
 
@@ -442,14 +445,24 @@ public class ComponentTest  extends Section{
                 }
                 else if ("fileChooser".equals(actionCommand)) {
 
-                    FileChooser chooser = new FileChooser();
-                    chooser.showDialog(this, "fileSelected", "Select File", "Select");
+                    if (chooser1==null) {
+                        chooser1 = new FileChooser();
+                    }
+                    chooser1.showDialog(this, "fileSelected1", "Select File", "Select");
                 }
                 else if ("fileChooser2".equals(actionCommand)) {
 
                     FileChooser chooser = new FileChooser();
                     chooser.setMultiSelectionEnabled(true);
-                    chooser.showDialog(this, "fileSelected", "Select File", "Select");
+                    chooser.showDialog(this, "fileSelected2", "Select File", "Select");
+                }
+                else if ("fileSelected1".equals(actionCommand)) {
+
+                    String file = chooser1.getSelectedFile();
+                    Image img = NativeUtil.getImageFromFile(file);
+                    if (img!=null) {
+                        OptionPane.showMessageDialog(null, new Label(new Icon(img)), "image", OptionPane.PLAIN_MESSAGE);
+                    }
                 }
                 else if ("testCamera".equals(actionCommand)) {
                     cameraPanel = new Camera();
