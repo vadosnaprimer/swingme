@@ -204,7 +204,10 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             bCellRequestMade = true;
         }
         if (!link.isConnected()) {
-            new Thread(new J2MECellMonitor()).start();
+            // If underline service is not running yet, we create a dummy
+            // CellMonitor Object, and force it to populate the Cell Id...
+            J2MECellMonitor CellMonitor = new J2MECellMonitor();
+            CellMonitor.getCellId();
         }
     }
 
@@ -235,7 +238,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
         ServiceLink link = ServiceLink.getInstance();
         link.addToOutbox(new ServiceLink.Task("PutOptionWiFiPush", new Boolean(b)));
     }
-   
+
     public javax.microedition.location.Coordinates getGPS() throws javax.microedition.location.LocationException, InterruptedException {
 
             // Set criteria for selecting a location provider:
