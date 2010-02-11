@@ -17,6 +17,7 @@ import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.translation.MessageTool;
 import net.yura.translation.MyNode;
+import net.yura.translation.plugins.PropertiesComm;
 
 /**
  * @author Yura Mamyrin
@@ -71,6 +72,7 @@ public class XULTranslationTool extends MessageTool {
         meFrame.add( new Label("hello world") );
         meFrame.add( new TextField(), Graphics.BOTTOM );
         meFrame.setMaximum(true);
+        me4sePanel.getDesktopPane().NO_SOFT_KEYS = false;
         me4sePanel.getDesktopPane().add(meFrame);
         Dimension d = new Dimension(100, 100);
         me4sePanel.setPreferredSize(d);
@@ -114,15 +116,18 @@ public class XULTranslationTool extends MessageTool {
         panel.add(tt.control,BorderLayout.NORTH);
         panel.add(area);
 
-
-
-
-        tt.control.setBaseXULDir( new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res") );
-
         try {
+
+            tt.control.setBaseXULDir( new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res") );
+
             LookAndFeel plaf = PLAFLoader.loadSynth(new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res"),
                                                     new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res/xml/synth.xml"));
             tt.control.setLookAndFeel(plaf);
+
+            PropertiesComm conn = new PropertiesComm();
+            conn.load( new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res_en/messages_en.txt") );
+            tt.load(conn);
+
         }
         catch (Exception ex) {
             ex.printStackTrace();

@@ -2,12 +2,15 @@ package net.yura.tools.translation;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.util.Vector;
+import javax.microedition.lcdui.Image;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.List;
@@ -15,7 +18,6 @@ import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.gui.plaf.LookAndFeel;
-import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.util.Properties;
 import net.yura.translation.Mtcomm;
 import net.yura.translation.plugins.PropertiesComm;
@@ -99,10 +101,30 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
                     }
                 };
             }
+            else {
+                // TODO make it work for all plugins
+            }
+
+            // hack tso themeing works again
+            me4sePanel.getDesktopPane().showNotify();
 
             Component panel = null;
             try {
-                XULLoader xloader = XULLoader.load( new FileInputStream(file.file), null, properties);
+
+                XULLoader xloader = new XULLoader() {
+                    @Override
+                    public Icon loadIcon(String value) {
+                        try {
+                            Image img = Image.createImage( new FileInputStream(new File(baseXULdir, value)) );
+                            return new Icon(img);
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                            return null;
+                        }
+                    }
+                };
+                xloader.load( new FileReader(file.file), null, properties);
                 panel = xloader.getRoot();
             }
             catch (Exception ex) {
