@@ -243,8 +243,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         //scroll.setPreferredSize(content.getWidth(), content.getHeight());
         pack();
 
-        int maxw = DesktopPane.getDesktopPane().getWidth();
-        int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getMenuHeight()*2;
+        DesktopPane dp = DesktopPane.getDesktopPane();
+
+        int maxw = dp.getWidth();
+        int maxh = dp.getHeight() - dp.getMenuHeight()*2;
 
         if (getHeightWithBorder() > maxh) {
             setFocusedComponent(null);
@@ -310,7 +312,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
         myself.setInitialValue(initialValue);
         
-        DesktopPane.getDesktopPane().invokeLater(myself);
+        DesktopPane.invokeLater(myself);
 
         return myself;
     }

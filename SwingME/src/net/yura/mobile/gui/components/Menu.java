@@ -91,6 +91,7 @@ public class Menu extends Button {
             positionMenuRelativeTo(
                     popup,
                     getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
+                    getWindow().getDesktopPane(),
                     parentMenu==null?Graphics.TOP:Graphics.RIGHT
                     );
             openMenuAtLocation();
@@ -113,12 +114,12 @@ public class Menu extends Button {
             return 0;
         }
 
-        public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,int direction) {
+        public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,DesktopPane dp,int direction) {
 
             int w = window.getWidthWithBorder();
             int h = window.getHeightWithBorder();
 
-            int maxh = DesktopPane.getDesktopPane().getHeight() - DesktopPane.getDesktopPane().getMenuHeight()*2;
+            int maxh = dp.getHeight() - dp.getMenuHeight()*2;
 
             if (h > maxh) {
                 h = maxh;
@@ -126,15 +127,15 @@ public class Menu extends Button {
             }
 
             // resize the popup if its bigger then the screen! if it is then shrink it
-            if (w > DesktopPane.getDesktopPane().getWidth()) {
-                w = DesktopPane.getDesktopPane().getWidth();
+            if (w > dp.getWidth()) {
+                w = dp.getWidth();
             }
 
             if (direction!=Graphics.RIGHT) {
                 // the right x position of whatever opended me!
-                int right = DesktopPane.getDesktopPane().getWidth() - x - width;
-                //int bottom = DesktopPane.getDesktopPane().getHeight() - y - height;
-                boolean up = (y+height/2 > DesktopPane.getDesktopPane().getHeight()/2);
+                int right = dp.getWidth() - x - width;
+                //int bottom = dp.getHeight() - y - height;
+                boolean up = (y+height/2 > dp.getHeight()/2);
 
                 if (up) {
                     y = y-h;
@@ -144,7 +145,7 @@ public class Menu extends Button {
                 }
 
                 if (right==0) {
-                    x = DesktopPane.getDesktopPane().getWidth() - w;
+                    x = dp.getWidth() - w;
                 }
                 //else {
                 //    x = x;
@@ -155,17 +156,17 @@ public class Menu extends Button {
             }
 
             // check we r not going off the screen if we are then move us
-            if (x+w > DesktopPane.getDesktopPane().getWidth()) {
-                x = DesktopPane.getDesktopPane().getWidth() - w;
+            if (x+w > dp.getWidth()) {
+                x = dp.getWidth() - w;
             }
 
-            int softkeyHeight = (DesktopPane.getDesktopPane().getHeight() - maxh)/2;
+            int softkeyHeight = (dp.getHeight() - maxh)/2;
 
             if (y<softkeyHeight) {
                 y=softkeyHeight;
             }
             if (y+h > maxh + softkeyHeight) {
-                y = DesktopPane.getDesktopPane().getHeight() - h - softkeyHeight;
+                y = dp.getHeight() - h - softkeyHeight;
             }
 
             window.setBoundsWithBorder(x, y, w, h);
@@ -419,7 +420,7 @@ public class Menu extends Button {
                 else {
                     open=true;
                     popup.setLocation(destX, destY);
-                    DesktopPane.getDesktopPane().fullRepaint();
+                    popup.getDesktopPane().fullRepaint();
                 }
             }
 
