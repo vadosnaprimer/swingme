@@ -162,10 +162,13 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     }
     
     private Component getComponentFromObject(Object object) {
+
+        DesktopPane dp = DesktopPane.getDesktopPane();
+
         if (object instanceof Component) {
             Component component = (Component)object;
             if (component instanceof TextField && component.getPreferredWidth() == -1) {
-                component.setPreferredSize(DesktopPane.getDesktopPane().getWidth()/2, component.getPreferredHeight());
+                component.setPreferredSize(dp.getWidth()/2, component.getPreferredHeight());
             }
             return component;
         }
@@ -174,8 +177,8 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         }
 
 
-        int space = DesktopPane.getDesktopPane().getWidth() - 12 - scroll.getBarThickness(); // padding
-        if (DesktopPane.getDesktopPane().NO_SOFT_KEYS) {
+        int space = dp.getWidth() - 12 - scroll.getBarThickness(); // padding
+        if (dp.NO_SOFT_KEYS) {
             icon.workoutSize();
             space = space - icon.getWidthWithBorder();
         }

@@ -473,8 +473,11 @@ public class Window extends Panel {
          */
         public void setLocationRelativeTo(Component comp) {
             if (comp == null) {
-                setLocation((DesktopPane.getDesktopPane().getWidth() - getWidth()) /2,
-                        (DesktopPane.getDesktopPane().getHeight() - getHeight()) /2
+
+                DesktopPane dp = DesktopPane.getDesktopPane();
+
+                setLocation((dp.getWidth() - getWidth()) /2,
+                        (dp.getHeight() - getHeight()) /2
                 );
             }
         }
