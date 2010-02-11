@@ -85,6 +85,8 @@ public class Table extends Panel {
         // default renderer
         setDefaultRenderer(Object.class, new DefaultListCellRenderer());
         setDefaultEditor(Object.class, new DefaultCellEditor( new TextField() ));
+
+        dataVector = new Vector(0);
     }
 
     public String getDefaultName() {
@@ -191,7 +193,7 @@ public class Table extends Panel {
                             y< (editorComp.getYWithBorder()+editorComp.getHeightWithBorder())
                             ) { //  && !(editorComp instanceof TextComponent)
                         // now pass on the event onto the component
-                        DesktopPane.getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
+                        getWindow().getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
                     }
                     //editorComp.pointerEvent(type, x, y);
                 }

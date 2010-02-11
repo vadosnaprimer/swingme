@@ -427,7 +427,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setText(textbox.getString());
             }
             // go back to normal
-            DesktopPane rp = DesktopPane.getDesktopPane();
+            DesktopPane rp = getWindow().getDesktopPane();
             Display.getDisplay(DesktopPane.getMidlet()).setCurrent(rp);
             rp.setFullScreenMode(true);
 
@@ -533,7 +533,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                     SOFTKEY_CLEAR = null;
                 }
 
-                DesktopPane.getDesktopPane().setIndicatorText(null);
+                getWindow().getDesktopPane().setIndicatorText(null);
 		repaint();
 	}
 
@@ -597,7 +597,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
             if (isFocusOwner()) {
 
-                DesktopPane.getDesktopPane().setIndicatorText(i);
+                getWindow().getDesktopPane().setIndicatorText(i);
 
             }
         }

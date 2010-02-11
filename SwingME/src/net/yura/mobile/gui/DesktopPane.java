@@ -388,8 +388,16 @@ public class DesktopPane extends Canvas implements Runnable {
 
         menuHeight = DefaultListCellRenderer.setPrototypeCellValue(new Button("test"), softkeyRenderer);
 
+        // this is a hack
+        // to make sure that EVERYTHING on screen has a parent window and DesktopPane
+        Window dummy = new Window();
+        dummy.setDesktopPane(this);
+
         tooltip = new ToolTip();
         indicator = new ToolTip();
+
+        dummy.add(tooltip);
+        dummy.add(indicator);
     //currentWindow.setSize(getWidth(),getHeight());
     }
 

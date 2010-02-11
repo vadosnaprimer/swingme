@@ -189,6 +189,8 @@ public class Menu extends Button {
 
         private void openMenuAtLocation() {
 
+            DesktopPane dp = getWindow().getDesktopPane();
+
             if (useAnimation) {
 
                 int x = popup.getXWithBorder();
@@ -197,13 +199,13 @@ public class Menu extends Button {
                 int h = popup.getInsets().getTop();
 
                 if (slide==Graphics.BOTTOM) {
-                    popup.setLocation(w+x,h+ DesktopPane.getDesktopPane().getHeight());
+                    popup.setLocation(w+x,h+ dp.getHeight());
                 }
                 if (slide==Graphics.TOP) {
                     popup.setLocation(w+x, h-popup.getHeightWithBorder());
                 }
                 if (slide==Graphics.RIGHT) {
-                    popup.setLocation(w+DesktopPane.getDesktopPane().getWidth(), h+y);
+                    popup.setLocation(w+dp.getWidth(), h+y);
                 }
                 if (slide==Graphics.LEFT) {
                     popup.setLocation(w-popup.getWidthWithBorder(), h+y);
@@ -217,10 +219,10 @@ public class Menu extends Button {
 
                 open = false;
 
-                DesktopPane.getDesktopPane().animateComponent(this);
+                dp.animateComponent(this);
             }
 
-            popup.setVisible(true);
+            dp.add(popup);
         }
 
         /**

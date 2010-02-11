@@ -246,7 +246,7 @@ public class Frame extends Window {
             if (bottom) {
                 // leave a gap under content pane for soft key
                 // if we r max and on phone and no softkey bar
-                mh = DesktopPane.getDesktopPane().getMenuHeight();
+                mh = getDesktopPane().getMenuHeight();
             }
             else if (menubar!=null && menubar.isVisible()) {
                 mh = menubar.getHeightWithBorder();

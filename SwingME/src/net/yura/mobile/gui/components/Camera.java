@@ -359,7 +359,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             synchronized (uiLock) {
                 uiLock.notifyAll();
             }
-            DesktopPane.getDesktopPane().fullRepaint();
+            getWindow().getDesktopPane().fullRepaint();
         }
     }
 
@@ -456,12 +456,13 @@ public class Camera extends Component implements Runnable, PlayerListener {
         VideoControl videoCtrl = (VideoControl) player.getControl("VideoControl");
         if (videoCtrl != null) {
 
-            Canvas playerCanvas = DesktopPane.getDesktopPane();
+            Canvas playerCanvas = getWindow().getDesktopPane();
 
             videoCtrl.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, playerCanvas);
             videoCtrl.setDisplayLocation(getXOnScreen(), getYOnScreen());
             videoCtrl.setDisplaySize(getWidth(), getHeight());
 
+            //#debug
             System.out.println("Video Size = " + getWidth() + "x" + getHeight());
 
             videoCtrl.setVisible(true);
