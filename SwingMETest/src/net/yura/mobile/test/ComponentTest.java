@@ -484,13 +484,13 @@ public class ComponentTest  extends Section{
                     addToContentPane(p,null);
                 }
                 else if ("testProgress".equals(actionCommand)) {
-                    
+
                     final Window win = new Window();
                     win.setName("Dialog");
                     final ProgressBar bar = new ProgressBar();
                     win.add(bar);
                     win.pack();
-                    OptionPane.centre(win);
+                    win.setLocationRelativeTo(null);
 
                     new Thread() {
                         public void run() {
@@ -505,7 +505,7 @@ public class ComponentTest  extends Section{
                             win.setVisible(false);
                         }
                     }.start();
-                    
+
                 }
                 else {
 
