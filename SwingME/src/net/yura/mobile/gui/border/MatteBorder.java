@@ -102,7 +102,7 @@ public class MatteBorder extends EmptyBorder {
 			
             Properties newborder = new Properties();
 
-            newborder.load( DesktopPane.getDesktopPane().getClass().getResourceAsStream(name) );
+            newborder.load( DesktopPane.class.getResourceAsStream(name) );
 
             String imageName = newborder.getProperty("active");
 

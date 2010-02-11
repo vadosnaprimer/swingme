@@ -188,14 +188,15 @@ public class MenuBar extends List implements ActionListener {
 
     public void paintComponent(Graphics2D g) {
         Window w = getWindow();
+        DesktopPane dp = w.getDesktopPane();
         int off = 0;
         // if we are on a phone, and the window is not maximised, this bar is not visible
-        if (!w.getDesktopPane().NO_SOFT_KEYS && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
-            Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
+        if (!dp.NO_SOFT_KEYS && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+            Button b = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
             if (b!=null) {
                 off = b.getWidthWithBorder();
             }
-            if (DesktopPane.getDesktopPane().isSideSoftKeys()) {
+            if (dp.isSideSoftKeys()) {
                 int minWidth=0;
                 ListCellRenderer renderer = getCellRenderer();
                 int current = getSelectedIndex();

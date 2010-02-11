@@ -1315,7 +1315,7 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     // this is to fix buttons not being released properly on some phones
-    protected void showNotify() {
+    public void showNotify() {
 
         desktop = this;
 
