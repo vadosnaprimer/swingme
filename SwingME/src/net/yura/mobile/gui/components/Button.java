@@ -92,15 +92,18 @@ public class Button extends Label implements ActionListener {
 
         public boolean isVisible() {
 
-            DesktopPane dp = getWindow().getDesktopPane();
+            if (mneonic == KeyEvent.KEY_SOFTKEY1 || mneonic == KeyEvent.KEY_SOFTKEY2 || mneonic == KeyEvent.KEY_SOFTKEY3) {
 
-            // TODO can not replace with getWindow().getDesktopPane()
-            // because sometimes a window has not been set to visable
-            // and we still call setSize() on the window, so the layout is done
-            // is this isVisible() is called by the layout manager
-            if (dp==null) { dp = DesktopPane.getDesktopPane(); }
+                DesktopPane dp = getWindow().getDesktopPane();
 
-            if ((mneonic == KeyEvent.KEY_SOFTKEY1 || mneonic == KeyEvent.KEY_SOFTKEY2 || mneonic == KeyEvent.KEY_SOFTKEY3) && !dp.NO_SOFT_KEYS ) return false;
+                // TODO can not replace with getWindow().getDesktopPane()
+                // because sometimes a window has not been set to visable
+                // and we still call setSize() on the window, so the layout is done
+                // is this isVisible() is called by the layout manager
+                if (dp==null) { dp = DesktopPane.getDesktopPane(); }
+
+                if (!dp.NO_SOFT_KEYS) return false;
+            }
             return super.isVisible();
         }
 
