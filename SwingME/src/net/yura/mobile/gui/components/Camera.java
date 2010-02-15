@@ -18,6 +18,8 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Graphics;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
@@ -32,6 +34,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.util.StringUtil;
 
@@ -62,7 +65,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private Player player;
     private ActionListener actionListener;
     private String actionCommand;
-    private boolean useDummyCanvas = true;
+    private boolean seBug = true;
 
     public Camera() {
 
@@ -221,7 +224,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         // WORK-AROUND2: Nokia S40 hangs for a long time, if
                         // prefetch() is not called before start()
 
-                        if (useDummyCanvas) {
+                        if (seBug) {
                             player.realize();
                         } else {
                             player.prefetch();
@@ -233,12 +236,11 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         System.gc();
                         player.start();
 
-                        // WORK-AROUND: some SE phones don't display the view
+                        // WORK-AROUND: WTK don't display the view
                         // finder, if there is no "Canvas transition"
-// TODO: This seems to no longer be need... This was used on SE, where a "Canvas transition" was need to "unlock the view finder"...
-//                        if (useDummyCanvas) {
-//                            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
-//                        }
+                        if (Midlet.getPlatform() == Midlet.PLATFORM_WTK) {
+                            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
+                        }
                     }
 
                     if (requestCapture && actionListener != null) {
@@ -326,7 +328,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         try {
             //#debug
             System.out.println("getSnapshot: Trying " + encoding);
-            data = videoCtrl.getSnapshot(encoding);           
+            data = videoCtrl.getSnapshot(encoding);
         } catch (Exception e) {
             //#debug
             e.printStackTrace();
@@ -443,7 +445,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
                 // WORK-AROUND: a 640x480 on Nokia S40 takes half of the memory heap (1Mb)
                 snapshotEncoding = "encoding=image/jpeg&width=320&height=240";
-                useDummyCanvas = false;
+                seBug = false;
                 break;
             }
         }
@@ -528,14 +530,13 @@ public class Camera extends Component implements Runnable, PlayerListener {
         }
     }
 
-// TODO: This seems to no longer be need... This was used on SE, where a "Canvas transition" was need to "unlock the view finder"...
-//    private static class DummyCanvas extends Canvas {
-//
-//        protected void paint(Graphics arg0) {
-//            Canvas playerCanvas = DesktopPane.getDesktopPane();
-//            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
-//        }
-//    }
+    private static class DummyCanvas extends Canvas {
+
+        protected void paint(Graphics arg0) {
+            Canvas playerCanvas = DesktopPane.getDesktopPane();
+            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
+        }
+    }
 
     public static boolean isCameraSupported() {
         return System.getProperty("video.snapshot.encodings") != null;
