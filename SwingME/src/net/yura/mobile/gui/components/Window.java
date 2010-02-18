@@ -33,7 +33,7 @@ import net.yura.mobile.gui.layout.BorderLayout;
 public class Window extends Panel {
 
         private DesktopPane desktop;
-        
+
         private Component focusedComponent;
 
         private boolean closeOnFocusLost;
@@ -81,7 +81,7 @@ public class Window extends Panel {
             if (!isFocused()) return null;
             return focusedComponent;
 	}
-        
+
         /**
          * @see java.awt.Window#getMostRecentFocusOwner() Window.getMostRecentFocusOwner
          */
@@ -91,7 +91,7 @@ public class Window extends Panel {
             }
             return focusedComponent;
         }
-        
+
         /**
          * Only used by requestFocusInWindow() in Component
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
@@ -112,7 +112,7 @@ public class Window extends Panel {
                     focusedComponent.focusGained();
             }
 	}
-        
+
         /**
          * called by pack and revalidate
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
@@ -126,7 +126,7 @@ public class Window extends Panel {
                     }
                 }
         }
-	
+
 	public void passScrollUpDown(int right) {
             breakOutAction(null,right,true,false);
 	}
@@ -203,14 +203,14 @@ public class Window extends Panel {
 
             }
         }
-        
+
         /**
          * @see java.awt.Component#isVisible() Component.isVisible
          */
         public boolean isVisible() {
             return desktop!=null && desktop.getAllFrames().contains(this);
         }
-       
+
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
 
@@ -419,9 +419,21 @@ public class Window extends Panel {
             }
             //#enddebug
 
+            softKeyRepaint();
+        }
+
+        private void softKeyRepaint() {
             DesktopPane dp = getDesktopPane();
             if (dp!=null && !dp.NO_SOFT_KEYS) {
-                repaint();
+                // HACK: Jane - If the soft-keys are outside the "window paint area", we need a
+                // full repaint, otherwise, replacing a "big" soft-key with a "small" will
+                // leave garbage pixels... However, just because a window is smaller that
+                // the desktop, it does not mean the soft-keys are outside it...
+                if (getWidth() < dp.getWidth() || getHeight() < dp.getHeight()) {
+                    dp.fullRepaint();
+                } else {
+                    repaint();
+                }
             }
         }
 
@@ -446,9 +458,7 @@ public class Window extends Panel {
             }
             //#enddebug
 
-            if (!getDesktopPane().NO_SOFT_KEYS) {
-                repaint();
-            }
+            softKeyRepaint();
         }
 
         public void updateUI() {
