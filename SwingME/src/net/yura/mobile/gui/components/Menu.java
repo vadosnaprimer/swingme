@@ -36,9 +36,6 @@ public class Menu extends Button {
         // model
         private MenuBar menuItems;
 
-        // scrollpane for menu
-        private ScrollPane scroll;
-
         // window for scrollpane
         private Window popup;
 
@@ -261,8 +258,7 @@ public class Menu extends Button {
 
             // #################################################################
 
-            scroll = new ScrollPane(menuItems);
-            popup.add(scroll);
+            popup.add(new ScrollPane(menuItems));
             popup.setName("Menu");
 
         }
@@ -349,7 +345,7 @@ public class Menu extends Button {
 
 
             try {
-            
+
                 int travelDistance = 0;
                 if (slide==Graphics.BOTTOM) {
                     travelDistance = popup.getY() - destY;
@@ -429,10 +425,7 @@ public class Menu extends Button {
         public void updateUI() {
             super.updateUI();
             if (popup!=null) {
-                popup.updateUI();
-            }
-            if (scroll!=null) {
-                scroll.updateUI();
+                DesktopPane.updateComponentTreeUI(popup);
             }
             if (menuItems!=null) {
                 menuItems.updateUI();
