@@ -87,6 +87,13 @@ public class KeyEvent {
                     return 0;
                 }
 
+                if (code == '0' && Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) {
+                    // Hack: Jane - For SE, the "+" is entered on "0", using a long key press...
+                    acc = (pos == -1);
+                    old = (pos >= 0);
+                    return (pos >= 0) ? '0' : (pos==-1) ? '+' : 0;
+                }
+
                 // this means we are here coz the user is holding down the button
                 // (and the last letter was NOT accepted, as pos can NOT be -1 if it was)
                 if (pos==-1) {
