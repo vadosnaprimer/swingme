@@ -70,6 +70,11 @@ public class MenuBar extends List implements ActionListener {
      * @see java.awt.Container#add(java.awt.Component) Container.add
      */
     public void add(Component button) {
+    	//#mdebug
+    	if (getItems().contains(button)) {
+    		throw new RuntimeException("can not add the same button twice: "+button);
+    	}
+    	//#enddebug
         addElement(button);
         Window w = getWindow();
         if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this && button instanceof Button) {

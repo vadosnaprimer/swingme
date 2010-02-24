@@ -61,15 +61,15 @@ public class List extends Component implements ActionListener {
 
     private int fixedCellHeight = -1;
     private int fixedCellWidth = -1;
-
+  
     /**
      * @see javax.swing.JList#JList() JList.JList
      */
     public List() {
         this((Vector)null);
     }
-
-    /**
+  
+	/**
      * @param a
      * @see javax.swing.JList#JList(java.util.Vector) JList.JList
      */
@@ -80,7 +80,7 @@ public class List extends Component implements ActionListener {
     public List(ListCellRenderer a) {
         this(null,a,false);
     }
-
+    
     // real constructor!
     public List(Vector a,ListCellRenderer b,boolean h) {
         items = a;
@@ -105,6 +105,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.event.ListDataListener#contentsChanged(javax.swing.event.ListDataEvent) ListDataListener.contentsChanged
      */
     public void contentsChanged() {
+
         if (items == null || current >= items.size()){
             setSelectedIndex(-1);
         }
@@ -180,6 +181,10 @@ public class List extends Component implements ActionListener {
         // if we have changed size since the last request to make a index visible
         // then we must try again
         if (ensureIndexIsVisible!=-1) {
+        	if (ensureIndexIsVisible >= getSize()) {
+        		ensureIndexIsVisible = -1;
+        		return;
+        	}
             Component c = getRendererComponentFor(ensureIndexIsVisible);
             boolean yes = isRectVisible( c.getXWithBorder(), c.getYWithBorder(), c.getWidthWithBorder(), c.getHeightWithBorder());
             if (!yes) {
@@ -364,7 +369,7 @@ public class List extends Component implements ActionListener {
 
     public Component getRendererComponentFor(int a) {
 
-        if (horizontal && fixedCellWidth!=-1) {
+    	if (horizontal && fixedCellWidth!=-1) {
             return getComponentFor(a,a*fixedCellWidth);
         }
         else if (!horizontal && fixedCellHeight!=-1) {
@@ -703,9 +708,11 @@ public class List extends Component implements ActionListener {
      * modified to make the newly selected index visible
      */
     public void setSelectedIndex(int a, boolean moveScroll) {
+    	
         int old = current;
 
         current = a;
+        
         if (current!=-1) {
 
             if (moveScroll) {
@@ -718,7 +725,7 @@ public class List extends Component implements ActionListener {
             // TODO as scroll to always does a repaint
             // we dont need it here
             // BUT what if we are not in a scrollPane??
-            repaint();
+            repaint();            
         }
     }
 
@@ -727,6 +734,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#ensureIndexIsVisible(int) JList.ensureIndexIsVisible
      */
     public void ensureIndexIsVisible(int i) {
+    
             Component c = getRendererComponentFor(i);
             // good, but too simple
             // what if we are scrolled right already?
@@ -752,7 +760,6 @@ public class List extends Component implements ActionListener {
 
                 scrollRectToVisible( -x, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
             }
-
             ensureIndexIsVisible = i;
     }
 
@@ -892,6 +899,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
      */
     public Object getElementAt(int index) {
+    	
         return (items != null) ? items.elementAt(index) : null;
 	// && items.size()>index // this method SHOULD throw array index out of bounds if it is
     }
@@ -909,7 +917,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.DefaultListModel#addElement(java.lang.Object) DefaultListModel.addElement
      */
     public void addElement(Object a) {
-        items.addElement(a);
+    	items.addElement(a);
         contentsChanged();
     }
 
