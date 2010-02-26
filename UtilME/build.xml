@@ -5,12 +5,24 @@
 <project name="UtilME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
+     
+    <available file="../SwingMETest" type="dir" property="SwingMETest"/>
+    <available file="../AgentLib" type="dir" property="AgentLib"/>
+    <available file="../ToolsME" type="dir" property="ToolsME"/>
 
-    <target name="do-deploy" description="copy lib to some other places">
-        <copy file="${deployment.jar}" todir="../SwingME/lib"/>
+
+    <target name="d1" if="SwingMETest">
+        <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
+    </target>
+    <target name="d2" if="AgentLib">
         <copy file="${deployment.jar}" todir="../AgentLib/lib"/>
+    </target>
+    <target name="d3" if="ToolsME">
         <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
     </target>
+    
+
+    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3"/>
 
     <!--
 
