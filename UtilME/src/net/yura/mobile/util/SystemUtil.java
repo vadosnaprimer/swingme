@@ -200,4 +200,12 @@ public class SystemUtil {
 	return -(low + 1);  // key not found
     }
 
+    public static String getFileSafeName(String name) {
+        String invalid = "/?<>\\:*|\"";
+        for (int c=0;c<invalid.length();c++) {
+            name = StringUtil.replaceAll(name,String.valueOf(invalid.charAt(c)),"");
+        }
+        return name;
+    }
+
 }
