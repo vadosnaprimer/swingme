@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="me4se" default="build" basedir=".">
+
+	
+  <property name="version" value="3.1.9" />	
+	<property environment="env"/>
+	<!--<property name="wtk.home" value="${env.WTK_HOME}" />-->
+	<!--<property name="wtk.home" value="C:\Program Files\NetBeans 6.7.1\mobility8\Java_ME_platform_SDK_3.0" />-->
+	<property name="wtk.home" value="C:\Program Files\NetBeans 6.5.1\mobility8\WTK2.5.2" />
+	
+	<!-- depends on xme4se(?)
+	
+	<target name="jsr_overview">
+		<mkdir dir="www/status" />
+		<javadoc packagenames="javax.microedition.media.*,javax.microedition.rms.*,javax.microedition.lcdui.*,javax.microedition.pki.*,javax.microedition.midlet.*,javax.microedition.io.*" protected="yes" sourcepath="src" destdir="doc/status" classpath="lib/png.zip:lib/kobjects-j2se.jar">
+			//  classpaht="..." 
+
+			<doclet name="org.me4se.doc.JsrDoclet" path="classes">
+
+				// path="classes:lib/kxml2.zip:lib/ksoap2-j2se.jar:lib/jdbcutils.jar" 
+
+			</doclet>
+		</javadoc>
+	</target>
+	
+    -->
+
+	<target name="build-src">
+		<mkdir dir="dist" />
+		<!-- delete would kill other dist parts! -->
+
+		<zip zipfile="dist/me4se-src-${version}.zip">
+			<fileset dir=".">
+				<include name="src/**" />
+				<include name="opt/location/src"/>
+				<include name="opt/contactless/src"/>
+				<include name="opt/bluetooth/src"/>
+				<include name="lib/*" />
+				<include name="samples/**" />
+			</fileset>
+		</zip>
+
+	</target>
+
+  <!--
+	<target name="build-uidemo">
+
+		<taskdef resource="antenna.properties" classpath="lib/antenna-bin-0.9.15.jar" />
+		
+		<delete dir="tmpclasses" />
+		<mkdir dir="tmpclasses" />
+
+		<mkdir dir="dist" />
+		<delete file="dist/uidemo.*" />
+
+		<wtkjad jadfile="dist/uidemo-${version}.jad" jarfile="dist/uidemo.jar" name="UIDemo" vendor="Michael Kroll" version="1.0.0">
+			<midlet name="UIDemo" class="org.me4se.samples.ui.UIDemo" />
+		</wtkjad>
+		
+		<wtkbuild srcdir="samples" source="1.5" target="1.5" includes="org/me4se/samples/ui/*" destdir="tmpclasses" preverify="false" />
+
+		<wtkpackage jarfile="dist/uidemo-${version}.jar" jadfile="dist/uidemo-${version}.jad">
+			<fileset dir="tmpclasses" />
+			<fileset dir="res" />
+		</wtkpackage>
+
+		<wtkpreverify jarfile="dist/uidemo-${version}.jar" jadfile="dist/uidemo-${version}.jad" />
+		<delete dir="tmpclasses" />		
+		
+		<copy file="dist/uidemo-${version}.jar" tofile="www/samples/uidemo.zip" />
+	</target>
+	-->
+	
+	<target name="build-jars">
+		<mkdir dir="dist" />
+
+		<delete dir="tmpclasses" />
+		<mkdir dir="tmpclasses" />
+
+		<unzip src="lib/kobjects-j2se.jar" dest="tmpclasses" overwrite="true">
+			<patternset>
+				<include name="org/kobjects/util/Csv.class" />
+				<include name="org/kobjects/pim/PimField.class" />
+			  <include name="org/kobjects/pim/PimItem.class" />
+				<include name="org/kobjects/pim/PimParser.class" />
+				<include name="org/kobjects/pim/PimWriter.class" />
+				<include name="org/kobjects/pim/VCard.class" />			
+				<include name="org/kobjects/io/LookAheadReader.class" />
+			</patternset>
+		</unzip>
+
+		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt" source="1.5" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar" destdir="tmpclasses" debug="on" target="1.5">
+
+		</javac>
+
+		<mkdir dir="dist" />
+		<jar jarfile="dist/me4se-${version}.jar">
+			<fileset dir="tmpclasses">
+				<include name="**/*.class" />
+				<include name="**/vcards.txt" />
+				<include name="META-INF/**" />
+        <exclude name="javax/bluetooth/**"/>
+        <exclude name="javax/obex/**"/>
+			</fileset>
+			<fileset dir="res">
+				<include name="*.png" />
+				<include name="*.jpg" />
+				<include name="*.txt" />
+			</fileset>
+		</jar>
+
+		<jar jarfile="dist/midletrunner.jar">
+    <manifest>
+      <attribute name="Class-Path" value="BrowserLauncher2.jar" />
+    </manifest>
+			<fileset dir="tmpclasses">
+				<include name="**/*.class" />
+				<exclude name="org/me4se/psi/java1/gcf/serversocket/*.class" />
+				<exclude name="org/me4se/psi/java2/**/*.*" />
+				<exclude name="org/me4se/psi/comm/**/*.*" />
+				<exclude name="org/me4se/impl/jam/*.class" />
+				<exclude name="javax/microedition/m3g/**"/>
+				<exclude name="javax/bluetooth/**"/>
+				<exclude name="javax/obex/**"/>
+				<include name="META-INF/**" />
+			</fileset>
+			<fileset dir="res">
+				<include name="*.png" />
+			</fileset>
+		</jar>
+
+	  <jar jarfile="dist/opt.jar">
+	     <fileset dir="tmpclasses">
+	     	 <include name="javax/microedition/pim/*.class"/>
+	     	 <include name="javax/microedition/pim/*.txt"/>
+	     	 <include name="javax/microedition/contactless/*.class"/>
+	       <include name="javax/microedition/contactless/ndef/*.class"/>
+         <include name="javax/microedition/contactless/rf/*.class"/>
+         <include name="javax/microedition/contactless/sc/*.class"/>
+         <include name="javax/microedition/contactless/visual/*.class"/>	     	
+         <include name="javax/microedition/location/*.class"/>
+	     	 <include name="javax/bluetooth/*.class"/>
+	     	 <include name="javax/obex/*.class"/>
+	     </fileset>
+	  </jar>
+		
+    <jar jarfile="dist/opt_avetana_bt.jar">
+       <fileset dir="tmpclasses">
+         <include name="org/me4se/psi/java1/gcf/btspp/*.class"/>
+       </fileset>
+    </jar>
+		
+		<jar jarfile="dist/me4se3d.jar">
+		  <fileset dir="tmpclasses">
+			<include name="javax/microedition/m3g/**"/>
+          </fileset>
+        </jar>
+		
+		<copy file="dist/midletrunner.jar" tofile="www/samples/me4se_applet.zip" overwrite="true" />		
+		
+		<!--delete dir="tmpclasses" /-->
+	</target>
+		
+
+<!--	<target name="build-m3g" depends="prepare">
+	
+	
+	</target>  -->
+
+	<target name="build" depends="build-src,build-jars"> <!-- build-uidemo -->
+
+	</target>
+
+
+
+    <target name="deploy" depends="build-jars" description="copy lib to some other places">
+        <copy file="dist/midletrunner.jar" todir="../../SwingMETest/lib"/>
+        <copy file="dist/midletrunner.jar" todir="../../cha/lib"/>
+        <copy file="dist/midletrunner.jar" todir="../../AgentClient/lib"/>
+        <copy file="dist/midletrunner.jar" todir="../../ToolsME/lib"/>
+    </target>
+
+	<target name="demo" description="demo compile">
+		<delete dir="tmpclasses" />
+		<mkdir dir="tmpclasses" />
+
+		<mkdir dir="dist" />
+		<delete file="dist/uidemo.*" />
+
+		<javac debug="on" srcdir="samples" destdir="tmpclasses" source="1.4" target="1.4" classpath="dist/midletrunner.jar"/>
+		<copy todir="tmpclasses">
+			<fileset dir="res" includes="**/*.*"/>
+		</copy>
+		<jar destfile="dist/uidemo.jar" basedir="tmpclasses"/>
+	</target>
+
+</project>
