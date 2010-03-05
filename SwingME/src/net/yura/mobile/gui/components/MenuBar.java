@@ -75,12 +75,12 @@ public class MenuBar extends List implements ActionListener {
     		throw new RuntimeException("can not add the same button twice: "+button);
     	}
     	//#enddebug
+        button.setParent(this);
         addElement(button);
         Window w = getWindow();
         if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this && button instanceof Button) {
             autoMnemonic( getItems() );
         }
-        button.setParent(this);
     }
 
     /**
