@@ -247,7 +247,7 @@ public class Menu extends Button {
             menuItems.setUseSelectButton(true);
             menuItems.setLoop(true);
 
-            // #################################################################
+            //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
             // hack, this is not the best way of doing this, but its all i can think of for now
 
             activateAction = menuItems.getActionCommand();
@@ -256,7 +256,7 @@ public class Menu extends Button {
             menuItems.setActionCommand("select");
             menuItems.addActionListener(this);
 
-            // #################################################################
+            //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
             popup.add(new ScrollPane(menuItems));
             popup.setName("Menu");

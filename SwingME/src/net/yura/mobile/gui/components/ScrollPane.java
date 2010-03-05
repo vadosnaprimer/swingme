@@ -444,7 +444,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         int extenth = h;
 
         // DRAW ARROWS
-        // #############################################################
+        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
 
         if (trackTop!=null) {
 
@@ -458,14 +458,14 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         }
 
         // draw the track fill color
-        // #############################################################
+        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
 
         if (trackFill!=null) {
             tileIcon(g, trackFill, x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
         }
 
         // draw the thumb!
-        // #############################################################
+        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
 
         int[] tmp = getOffsets(x,y,w,h,value,extent,max);
         starty = tmp[1];

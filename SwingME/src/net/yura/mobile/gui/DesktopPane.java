@@ -655,8 +655,10 @@ public class DesktopPane extends Canvas implements Runnable {
             }
     }
 
-    // #####################################################################
-    // Different ways of caling repaint
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== Different ways of calling repaint ===================================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
     /**
      * this method should NOT normally be called
      * is it called when repaint() is called on a window,
@@ -1259,9 +1261,10 @@ public class DesktopPane extends Canvas implements Runnable {
         showHideToolTip(type == PRESSED);
     }
 
-    // #####################################################################
-    // other events from the canvas
-    // #####################################################################
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== other events from the canvas ========================================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
     private int oldw,  oldh;
 
     protected void sizeChanged(int w, int h) {
