@@ -201,7 +201,7 @@ public class SystemUtil {
     }
 
     public static String getFileSafeName(String name) {
-        String invalid = "/?<>\\:*|\"";
+        String invalid = "/?<>\\:*|\" ";
         for (int c=0;c<invalid.length();c++) {
             name = StringUtil.replaceAll(name,String.valueOf(invalid.charAt(c)),"");
         }
