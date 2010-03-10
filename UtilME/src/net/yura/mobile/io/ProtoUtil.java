@@ -231,7 +231,7 @@ public class ProtoUtil {
         return hashtable;
     }
 
-    // #########################################################################
+    /////////////////////////////////////////////////////////////////////////////
 
     protected int computeObjectSize(Object obj,int type) {
 

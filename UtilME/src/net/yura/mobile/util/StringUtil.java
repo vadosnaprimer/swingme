@@ -24,6 +24,10 @@ import java.util.Vector;
  */
 public class StringUtil {
 
+    
+    private static final char TOKEN_PREFIX = '{';
+    private static final char TOKEN_SUFFIX = '}';
+
     /**
      * @see java.lang.String#split(java.lang.String) String.split
      */
@@ -85,5 +89,40 @@ public class StringUtil {
             return sBuffer.toString();
 
         }
+    
+        public static String replace(String str, String replace, String replacement) {
+            StringBuffer buffer = new StringBuffer(str);
+
+            int i = str.indexOf(replace);
+            buffer.delete(i, i + replace.length());
+            buffer.insert(i, replacement);
+
+            return buffer.toString();
+        }
+
+        /**
+         * Replace a token in the format {I} where I is a positive integer.
+         * Only one replacement will take place.
+         * 
+         * @return str with a replacement
+         */
+        public static String replaceToken(String str, int tokenIndex, String replacement) {
+            char[] chars = str.toCharArray();
+            char tokenIndexChar = (char) (tokenIndex + '0');
+
+            for (int i=0; i<chars.length - 2; i++) {
+                if (chars[i] == TOKEN_PREFIX
+                        && chars[i+1] == tokenIndexChar
+                        && chars[i+2] == TOKEN_SUFFIX) {
+                    String before = str.substring(0,   i);
+                    String after  = str.substring(i+3, str.length());
+                    return before + replacement + after;
+                }
+            }
+
+            /* No replacement took place. */
+            return str;
+        }
+
 
 }
