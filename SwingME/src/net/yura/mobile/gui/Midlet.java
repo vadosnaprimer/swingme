@@ -37,6 +37,7 @@ public abstract class Midlet extends MIDlet {
     public static final int PLATFORM_LG = 7;
     public static final int PLATFORM_ME4SE = 8;
     public static final int PLATFORM_WTK = 9;
+    public static final int PLATFORM_ANDROID = 10;
 
     private static int platform = detectPlatform();
 
@@ -85,6 +86,7 @@ public abstract class Midlet extends MIDlet {
 	}
 
 	private static int detectPlatform() {
+
         String currentPlatform = System.getProperty("microedition.platform");
         if (currentPlatform == null) {
             currentPlatform = ""; // Avoid null pointer exceptions
@@ -140,6 +142,11 @@ public abstract class Midlet extends MIDlet {
         // detecting WTK
         if (currentPlatform.indexOf("wtk") >= 0) {
             return PLATFORM_WTK;
+        }
+
+        // detecting Android
+        if (hasClass("android.app.Activity")) {
+            return PLATFORM_ANDROID;
         }
 
         return PLATFORM_NOT_DEFINED;
