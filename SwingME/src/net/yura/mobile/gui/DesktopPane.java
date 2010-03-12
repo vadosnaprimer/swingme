@@ -39,6 +39,7 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.util.SystemUtil;
 
 /**
  * @author Yura Mamyrin
@@ -92,25 +93,25 @@ public class DesktopPane extends Canvas implements Runnable {
             p=pp;
         }
 
-        DesktopPane dp = getDesktopPane();
+        DesktopPane dp = aThis.getWindow().getDesktopPane();
 
         // while it chooses what array to add the component to
         // the validating turn id can NOT be changed
         synchronized(dp.revalidateLock) {
 
             if (dp.validating==0) {
-                dp.addToComponentVector(p, dp.revalidateComponents1);
+                addToComponentVector(p, dp.revalidateComponents1);
                 p.repaint();
             }
             else if (dp.validating==1) {
     //#debug
     System.out.println("thats some complex layout");
-                dp.addToComponentVector(p, dp.revalidateComponents2);
+                addToComponentVector(p, dp.revalidateComponents2);
             }
             else if (dp.validating==2) {
     //#debug
     System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
-                dp.addToComponentVector(p, dp.revalidateComponents3);
+                addToComponentVector(p, dp.revalidateComponents3);
             }
             //#mdebug
             else {
@@ -162,7 +163,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private LookAndFeel theme;
     public int defaultSpace;
     private int menuHeight;
-    private Vector windows = new Vector();
+    final private Vector windows = new Vector();
     private Window currentWindow;
     private ToolTip tooltip;
     private ToolTip indicator;
@@ -426,6 +427,7 @@ public class DesktopPane extends Canvas implements Runnable {
     // cant do this
     //}
     private Graphics2D graphics;
+    private Vector repaintComponent2 = new Vector();
 
     /**
      * @param gtmp The Graphics object
@@ -470,7 +472,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
-            Window newWindow;
+            boolean doFullRepaint;
 
             // if we have started revalidating, we do not want any random reval and repaint happening
             // as if they do happen half way though, we would get a component being repainted
@@ -496,10 +498,20 @@ public class DesktopPane extends Canvas implements Runnable {
                     validating = 0;
                 }
 
+                // For thread safety, we cache the components to repaint
+                SystemUtil.addAll(repaintComponent2, repaintComponent);
+                repaintComponent.removeAllElements();
 
-                // now that we have finished laying out components
-                // we can setup the focus if a new window has opened
-                newWindow = windows.size()==0?null:(Window)windows.lastElement();
+                // For thread safety, we cache fullrepaint now, and clean it
+                doFullRepaint = fullrepaint;
+                fullrepaint = false;
+
+            }
+
+            // can not add or remove windows while this is happening
+            synchronized(windows) {
+
+                Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
 
                 if (newWindow!=currentWindow) {
                     if (currentWindow != null) {
@@ -510,37 +522,40 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                     currentWindow = newWindow;
                     if (currentWindow != null) {
+                        // this needs to be done after all revalidates have finished
+                        // as revalidates can change what component can be focusable
                         Component focusedComponent = newWindow.getMostRecentFocusOwner();
                         if (focusedComponent != null) {
+                            // even though MOST focusGained call a repaint
+                            // we can NOT allow a repaint here to actually be added
+                            // to the list of components to be repainted as then
+                            // any thred could repaint at this point
+                            // and the layout may not be valid yet for that component.
+                            // e.g. If focusGained calls revalidate on its parent too
+                            // that will not get done and yet it will still paint
                             focusedComponent.focusGained();
                         }
                     }
                 }
 
-            //synchronized (repaintComponent) {
-
                 // now start painting
                 graphics.setGraphics(gtmp);
 
-                // For thread safety, we cache fullrepaint now, and clean it
-                boolean doFullRepaint = fullrepaint;
-                fullrepaint = false;
-
-
-                if (!doFullRepaint && !repaintComponent.isEmpty()) {
-                    for (int c = 0; c < repaintComponent.size(); c++) {
-                        if (((Component) repaintComponent.elementAt(c)).getWindow() != currentWindow) {
+                if (!doFullRepaint && !repaintComponent2.isEmpty()) {
+                    for (int c = 0; c < repaintComponent2.size(); c++) {
+                        if (((Component) repaintComponent2.elementAt(c)).getWindow() != currentWindow) {
                             doFullRepaint = true;
                             break;
                         }
                     }
                     if (!doFullRepaint) {
-                        for (int c = 0; c < repaintComponent.size(); c++) {
-                            paintComponent(graphics, (Component) repaintComponent.elementAt(c));
+                        for (int c = 0; c < repaintComponent2.size(); c++) {
+                            paintComponent(graphics, (Component) repaintComponent2.elementAt(c));
                         }
                     }
                 }
-                repaintComponent.removeAllElements();
+
+                repaintComponent2.removeAllElements();
 
                 if (doFullRepaint) {
                     int startC = 0;
@@ -559,7 +574,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         if (c == (windows.size() - 2) && fade != null) {
                             graphics.drawImage(fade, 0, 0, fade.getWidth(), fade.getHeight(), 0, 0, getWidth(), getHeight(), javax.microedition.lcdui.game.Sprite.TRANS_NONE );
                         }
-/*
+    /*
                         if (c == (windows.size() - 2) && fade != null) {
                             for (int x = 0; x < getWidth(); x += fade.getWidth()) {
                                 for (int y = 0; y < getHeight(); y += fade.getHeight()) {
@@ -567,24 +582,23 @@ public class DesktopPane extends Canvas implements Runnable {
                                 }
                             }
                         }
-*/
+    */
                     }
                 }
-
-                //                if (!windows.isEmpty()) {
-                //                    drawSoftkeys(graphics);
-                //                }
-
-                if (tooltip!=null && tooltip.isShowing()) {
-                    paintComponent(graphics, tooltip);
-                }
-                if (indicator!=null && indicator.getText() != null && !NO_SOFT_KEYS) {
-                    paintComponent(graphics, indicator);
-                }
-
-                paintLast(graphics);
-
             }
+
+            //                if (!windows.isEmpty()) {
+            //                    drawSoftkeys(graphics);
+            //                }
+
+            if (tooltip!=null && tooltip.isShowing()) {
+                paintComponent(graphics, tooltip);
+            }
+            if (indicator!=null && indicator.getText() != null && !NO_SOFT_KEYS) {
+                paintComponent(graphics, indicator);
+            }
+
+            paintLast(graphics);
 
             //#mdebug
             if (mem != null) {
@@ -684,7 +698,9 @@ public class DesktopPane extends Canvas implements Runnable {
         //#debug
         System.out.println("FULL REPAINT!!! this method should NOT normally be called");
 
-        fullrepaint = true;
+        synchronized(repaintComponent) {
+            fullrepaint = true;
+        }
 
         repaint();
     }
@@ -765,7 +781,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void add(Window w) {
         // we dont want to add half way though a repaint, as it could be using this vector
-        synchronized (repaintComponent) {
+        synchronized (windows) {
             //#mdebug
             if (windows.contains(w)) {
                 System.err.println("trying to set a window visible when it already is visible");
@@ -796,7 +812,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void remove(Window w) {
         // dont want to change the windows Vector while we are painting
-        synchronized (repaintComponent) {
+        synchronized (windows) {
             if (windows.contains(w)) {
                 windows.removeElement(w);
 
@@ -818,7 +834,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void setSelectedFrame(Window w) {
         // dont want to change the windows Vector while we are painting
-        synchronized (repaintComponent) {
+        synchronized (windows) {
             if ( windows.contains(w) ) {
 
                 if (currentWindow == w) {
