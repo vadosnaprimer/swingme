@@ -470,6 +470,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
+            Window newWindow;
+
             // if we have started revalidating, we do not want any random reval and repaint happening
             // as if they do happen half way though, we would get a component being repainted
             // even though it did not get revalidated
@@ -497,7 +499,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 // now that we have finished laying out components
                 // we can setup the focus if a new window has opened
-                Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
+                newWindow = windows.size()==0?null:(Window)windows.lastElement();
+
                 if (newWindow!=currentWindow) {
                     if (currentWindow != null) {
                         Component focusedComponent = currentWindow.getFocusOwner();
@@ -513,6 +516,8 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
                 }
+
+            //synchronized (repaintComponent) {
 
                 // now start painting
                 graphics.setGraphics(gtmp);
@@ -660,6 +665,15 @@ public class DesktopPane extends Canvas implements Runnable {
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
     /**
+     * this is called when you call repaint() on a component
+     * @param rc The Component to repaint
+     */
+    public void repaintComponent(Component rc) {
+        addToComponentVector(rc, repaintComponent);
+        repaint();
+    }
+
+    /**
      * this method should NOT normally be called
      * is it called when repaint() is called on a window,
      * but that window is currently in the background
@@ -675,6 +689,13 @@ public class DesktopPane extends Canvas implements Runnable {
         repaint();
     }
 
+    /**
+     * Repaint the softkeybar
+     */
+    public void softkeyRepaint() {
+        repaint();
+    }
+
     private int validating=0;
     public void revalidateComponent(Component rc) {
         //#mdebug
@@ -686,30 +707,7 @@ public class DesktopPane extends Canvas implements Runnable {
         addToComponentVector(rc, revalidateComponents1);
     }
 
-    //#mdebug
-    /**
-     * @see java.lang.Thread#dumpStack() Thread.dumpStack
-     */
-    public static void dumpStack() {
-            try {
-                throw new Exception();
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
-    }
-    //#enddebug
-
-    /**
-     * this is called when you call repaint() on a component
-     * @param rc The Component to repaint
-     */
-    public void repaintComponent(Component rc) {
-        addToComponentVector(rc, repaintComponent);
-        repaint();
-    }
-
-    private void addToComponentVector(Component rc, Vector vec) {
+    private static void addToComponentVector(Component rc, Vector vec) {
         // System.out.println("someone asking for repaint "+rc);
 
         if (rc.getWindow() == null) return;
@@ -756,16 +754,139 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
+
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== normal desktop calls == (can be called from any thread) =============
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
     /**
-     * Repaint the softkeybar
+     * @param w The window to add
+     * @see java.awt.Container#add(java.awt.Component) Container.add
      */
-    public void softkeyRepaint() {
-        repaint();
+    public void add(Window w) {
+        // we dont want to add half way though a repaint, as it could be using this vector
+        synchronized (repaintComponent) {
+            //#mdebug
+            if (windows.contains(w)) {
+                System.err.println("trying to set a window visible when it already is visible");
+                dumpStack();
+            }
+            if (w==null) {
+                System.err.println("trying to set add a null window");
+                dumpStack();
+            }
+            //#enddebug
+
+            w.setDesktopPane(this);
+
+            windows.addElement(w);
+
+            if (w instanceof Frame && ((Frame)w).isMaximum() ) {
+                ((Frame)w).setMaximum(true);
+            }
+
+            pointerComponent = null;
+            fullRepaint();
+        }
+    }
+
+    /**
+     * @param w the window to close
+     * @see java.awt.Container#remove(java.awt.Component) Container.remove
+     */
+    public void remove(Window w) {
+        // dont want to change the windows Vector while we are painting
+        synchronized (repaintComponent) {
+            if (windows.contains(w)) {
+                windows.removeElement(w);
+
+                pointerComponent = null;
+                fullRepaint();
+            }
+            //#mdebug
+            else {
+                System.err.println("cant remove, this window is not visible: " + w);
+                dumpStack();
+            }
+            //#enddebug
+        }
+    }
+
+    /**
+     * @param w the internal frame that's currently selected
+     * @see javax.swing.JDesktopPane#setSelectedFrame(javax.swing.JInternalFrame) JDesktopPane.setSelectedFrame
+     */
+    public void setSelectedFrame(Window w) {
+        // dont want to change the windows Vector while we are painting
+        synchronized (repaintComponent) {
+            if ( windows.contains(w) ) {
+
+                if (currentWindow == w) {
+                    return;
+                }
+
+                if (w != null) {
+                    windows.removeElement(w);
+                    windows.addElement(w);
+                }
+
+                pointerComponent = null;
+                fullRepaint();
+            }
+            //#mdebug
+            else {
+                System.err.println("cant setSelected, this window is not visible: " + w);
+                dumpStack();
+            }
+            //#enddebug
+        }
+    }
+
+    /**
+     * @return an Vector of InternalFrame objects
+     * @see javax.swing.JDesktopPane#getAllFrames() JDesktopPane.getAllFrames
+     */
+    public Vector getAllFrames() {
+        return windows;
+    }
+
+    /**
+     * @return the internal frame that's currently selected
+     * @see javax.swing.JDesktopPane#getSelectedFrame() JDesktopPane.getSelectedFrame
+     */
+    public Window getSelectedFrame() {
+        return currentWindow;
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-    //==== action handeling ====================================================
+    //==== key commands ========================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+    // we reuse this keyevent for all keyevents
+    private KeyEvent keypad;
+
+    public void keyPressed(int keyCode) {
+        keypad.keyPressed(keyCode);
+        passKeyEvent(keypad);
+
+    // TODO: add this
+    // if (vendor == Samsung) {
+    //   if (keyCode == KeyEvent.KEY_SOFTKEY1 || KeyEvent == Keypad.KEY_SOFTKEY2) {
+    //           keyReleased(keyCode);
+    //   }
+    // }
+
+    }
+
+    public void keyReleased(int keyCode) {
+        keypad.keyReleased(keyCode);
+        passKeyEvent(keypad);
+    }
+
+    public void keyRepeated(int keyCode) {
+        keypad.keyRepeated(keyCode);
+        passKeyEvent(keypad);
+    }
 
     private final int[] directions = new int[] {Canvas.RIGHT,Canvas.DOWN,Canvas.LEFT,Canvas.UP};
     private void passKeyEvent(KeyEvent keyevent) {
@@ -867,6 +988,56 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
+    // if no command listener is used key events fall though to this method
+    // used for adding global shortcut keys
+    public boolean keyEvent(KeyEvent kypd) {
+        return false;
+    }
+
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== pointer commands ====================================================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+    public static final int DRAGGED = 0;
+    public static final int PRESSED = 1;
+    public static final int RELEASED = 2;
+    private Component pointerComponent;
+
+    public void pointerDragged(int x, int y) {
+        pointerEvent(DRAGGED, x, y);
+    }
+
+    public void pointerPressed(int x, int y) {
+        pointerEvent(PRESSED, x, y);
+    }
+
+    public void pointerReleased(int x, int y) {
+        pointerEvent(RELEASED, x, y);
+    }
+
+    private void pointerEvent(int type, int x, int y) {
+        try {
+            if (currentWindow != null && currentWindow == windows.lastElement()) {
+                if (type == PRESSED) {
+                    pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
+                }
+                if (pointerComponent != null) {
+                    pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
+                }
+                if (type == RELEASED) {
+                    pointerComponent = null;
+                }
+            }
+        }
+        catch (Throwable th) {
+            //#mdebug
+            th.printStackTrace();
+            log("Exception in pointerEvent: " + th.toString());
+            //#enddebug
+        }
+        showHideToolTip(type == PRESSED);
+    }
+    
     private void showHideToolTip(boolean show) {
 
         Component focusedComponent;
@@ -918,13 +1089,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
-    /**
-     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
-     */
-    public static void invokeLater(Runnable runner) {
-        Display.getDisplay(getMidlet()).callSerially(runner);
-    }
-
     public void setIndicatorText(String txt) {
         indicator.setText(txt);
         indicator.workoutSize();
@@ -949,118 +1113,16 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
-    // if no command listener is used key events fall though to this method
-    // used for adding global shortcut keys
-    public boolean keyEvent(KeyEvent kypd) {
-        return false;
-    }
-
-    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-    //==== normal desktop calls ================================================
-    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
-
-    /**
-     * @param w The window to add
-     * @see java.awt.Container#add(java.awt.Component) Container.add
-     */
-    public void add(Window w) {
-        // we dont want to add half way though a repaint, as it could be using this vector
-        synchronized (repaintComponent) {
-            //#mdebug
-            if (windows.contains(w)) {
-                System.err.println("trying to set a window visible when it already is visible");
-                dumpStack();
-            }
-            if (w==null) {
-                System.err.println("trying to set add a null window");
-                dumpStack();
-            }
-            //#enddebug
-
-            w.setDesktopPane(this);
-
-            windows.addElement(w);
-
-            if (w instanceof Frame && ((Frame)w).isMaximum() ) {
-                ((Frame)w).setMaximum(true);
-            }
-
-            pointerComponent = null;
-            fullRepaint();
-        }
-    }
-
-    /**
-     * @param w the internal frame that's currently selected
-     * @see javax.swing.JDesktopPane#setSelectedFrame(javax.swing.JInternalFrame) JDesktopPane.setSelectedFrame
-     */
-    public void setSelectedFrame(Window w) {
-        // dont want to change the windows Vector while we are painting
-        synchronized (repaintComponent) {
-            if ( windows.contains(w) ) {
-
-                if (currentWindow == w) {
-                    return;
-                }
-
-                if (w != null) {
-                    windows.removeElement(w);
-                    windows.addElement(w);
-                }
-
-                pointerComponent = null;
-                fullRepaint();
-            }
-            //#mdebug
-            else {
-                System.err.println("cant setSelected, this window is not visible: " + w);
-                dumpStack();
-            }
-            //#enddebug
-        }
-    }
-
-    /**
-     * @param w the window to close
-     * @see java.awt.Container#remove(java.awt.Component) Container.remove
-     */
-    public void remove(Window w) {
-        // dont want to change the windows Vector while we are painting
-        synchronized (repaintComponent) {
-            if (windows.contains(w)) {
-                windows.removeElement(w);
-
-                pointerComponent = null;
-                fullRepaint();
-            }
-            //#mdebug
-            else {
-                System.err.println("cant remove, this window is not visible: " + w);
-                dumpStack();
-            }
-            //#enddebug
-        }
-    }
-
-    /**
-     * @return an Vector of InternalFrame objects
-     * @see javax.swing.JDesktopPane#getAllFrames() JDesktopPane.getAllFrames
-     */
-    public Vector getAllFrames() {
-        return windows;
-    }
-
-    /**
-     * @return the internal frame that's currently selected
-     * @see javax.swing.JDesktopPane#getSelectedFrame() JDesktopPane.getSelectedFrame
-     */
-    public Window getSelectedFrame() {
-        return currentWindow;
-    }
-
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== platform Requests ===================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+    /**
+     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
+     */
+    public static void invokeLater(Runnable runner) {
+        Display.getDisplay(getMidlet()).callSerially(runner);
+    }
 
     public static Midlet getMidlet() {
         return desktop.midlet;
@@ -1102,6 +1164,9 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
+    /**
+     * @see java.lang.System#exit(int) System.exit
+     */
     public static void exit() {
         try {
             getMidlet().destroyApp(true);
@@ -1178,88 +1243,19 @@ public class DesktopPane extends Canvas implements Runnable {
     //#enddebug
     }
 
-    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-    //==== key commands ========================================================
-    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
-
-    // we reuse this keyevent for all keyevents
-    private KeyEvent keypad;
-
-    public void keyPressed(int keyCode) {
-
-
-
-        keypad.keyPressed(keyCode);
-
-        passKeyEvent(keypad);
-
-    // TODO: add this
-    // if (vendor == Samsung) {
-    //   if (keyCode == KeyEvent.KEY_SOFTKEY1 || KeyEvent == Keypad.KEY_SOFTKEY2) {
-    //           keyReleased(keyCode);
-    //   }
-    // }
-
-    }
-
-    public void keyReleased(int keyCode) {
-
-        keypad.keyReleased(keyCode);
-
-        passKeyEvent(keypad);
-
-    }
-
-    public void keyRepeated(int keyCode) {
-
-        keypad.keyRepeated(keyCode);
-
-        passKeyEvent(keypad);
-    }
-
-    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-    //==== pointer commands ====================================================
-    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
-
-    public static final int DRAGGED = 0;
-    public static final int PRESSED = 1;
-    public static final int RELEASED = 2;
-    private Component pointerComponent;
-
-    public void pointerDragged(int x, int y) {
-        pointerEvent(DRAGGED, x, y);
-    }
-
-    public void pointerPressed(int x, int y) {
-        pointerEvent(PRESSED, x, y);
-    }
-
-    public void pointerReleased(int x, int y) {
-        pointerEvent(RELEASED, x, y);
-    }
-
-    private void pointerEvent(int type, int x, int y) {
-        try {
-            if (currentWindow != null && currentWindow == windows.lastElement()) {
-                if (type == PRESSED) {
-                    pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
-                }
-                if (pointerComponent != null) {
-                    pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
-                }
-                if (type == RELEASED) {
-                    pointerComponent = null;
-                }
+    //#mdebug
+    /**
+     * @see java.lang.Thread#dumpStack() Thread.dumpStack
+     */
+    public static void dumpStack() {
+            try {
+                throw new Exception();
             }
-        }
-        catch (Throwable th) {
-            //#mdebug
-            th.printStackTrace();
-            log("Exception in pointerEvent: " + th.toString());
-            //#enddebug
-        }
-        showHideToolTip(type == PRESSED);
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
     }
+    //#enddebug
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== other events from the canvas ========================================
@@ -1338,10 +1334,8 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     protected void hideNotify() {
-
         //System.out.println("hideNotify");
         keypad.clear();
-
     }
 
     public boolean isSideSoftKeys() {
