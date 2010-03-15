@@ -878,7 +878,7 @@ public class XULLoader {
             }
             else if (comp instanceof Frame) {
                 Panel panel = ((Frame)comp).getContentPane();
-                if (panel instanceof ScrollPane) { panel = (Panel)((ScrollPane)panel).getComponent(); }
+                if (panel instanceof ScrollPane) { panel = (Panel)((ScrollPane)panel).getView(); }
 
                 Component component = ((GridBagConstraints)obj).component;
                 if (panel.getComponentCount() == 0 && component instanceof MenuBar) {
@@ -889,7 +889,7 @@ public class XULLoader {
                 }
             }
             else if (comp instanceof ScrollPane) {
-                ((Panel)((ScrollPane)comp).getComponent()).add(((GridBagConstraints)obj).component, obj);
+                ((Panel)((ScrollPane)comp).getView()).add(((GridBagConstraints)obj).component, obj);
             }
             else if (comp instanceof Panel) {
                 ((Panel)comp).add(((GridBagConstraints)obj).component, obj);

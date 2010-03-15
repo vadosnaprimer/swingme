@@ -542,7 +542,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         Icon trackBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_BOTTOM, trackBottomSettings, decodeColor("text"));
         Icon trackFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_FILL, trackFillSettings, decodeColor("text"));
         Icon arrowUp = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
-        Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
+        Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_DOWN, null, decodeColor("text"));
         Icon arrowLeft = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_LEFT, null, decodeColor("text"));
         Icon arrowRight = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_RIGHT, null, decodeColor("text"));
 

@@ -802,8 +802,8 @@ public class DesktopPane extends Canvas implements Runnable {
             }
 
             pointerComponent = null;
-            fullRepaint();
         }
+        fullRepaint();
     }
 
     /**
@@ -815,9 +815,7 @@ public class DesktopPane extends Canvas implements Runnable {
         synchronized (windows) {
             if (windows.contains(w)) {
                 windows.removeElement(w);
-
                 pointerComponent = null;
-                fullRepaint();
             }
             //#mdebug
             else {
@@ -826,6 +824,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
+        fullRepaint();
     }
 
     /**
@@ -836,18 +835,14 @@ public class DesktopPane extends Canvas implements Runnable {
         // dont want to change the windows Vector while we are painting
         synchronized (windows) {
             if ( windows.contains(w) ) {
-
                 if (currentWindow == w) {
                     return;
                 }
-
                 if (w != null) {
                     windows.removeElement(w);
                     windows.addElement(w);
                 }
-
                 pointerComponent = null;
-                fullRepaint();
             }
             //#mdebug
             else {
@@ -856,6 +851,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
+        fullRepaint();
     }
 
     /**
@@ -1038,6 +1034,18 @@ public class DesktopPane extends Canvas implements Runnable {
                     pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
                 }
                 if (pointerComponent != null) {
+/*
+                    if (type == DRAGGED) {
+                        ScrollPane scrollpaneParent = pointerComponent.getScrollPane();
+                        if (!pointerComponent.consumsDragging() && scrollpaneParent!=null && hasSomewhereToScroll) {
+                            // if (check its dragged more then 5px) {
+
+                                // find scrollpane parent
+                                pointerComponent = scrollpaneParent;
+                            //}
+                        }
+                    }
+*/
                     pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
                 }
                 if (type == RELEASED) {
@@ -1051,6 +1059,9 @@ public class DesktopPane extends Canvas implements Runnable {
             log("Exception in pointerEvent: " + th.toString());
             //#enddebug
         }
+
+        // if dragged by only a little bit, should not hide the tooltip
+
         showHideToolTip(type == PRESSED);
     }
     

@@ -138,7 +138,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     public void setMessage(Object newMessage) {
         
         content.removeAll();
-        scroll.getComponent().setLocation(0, 0);
+        scroll.getView().setLocation(0, 0);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.weightx = 1;
         
