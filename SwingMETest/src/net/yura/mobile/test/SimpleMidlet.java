@@ -35,17 +35,17 @@ import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 public class SimpleMidlet extends Midlet implements ActionListener {
 
 	private DesktopPane rootpane;
-	
+
 	protected DesktopPane makeNewRootPane() {
 		return new DesktopPane(this,0,null);
 	}
-	
+
 	protected void initialize(DesktopPane rp) {
 
 		this.rootpane = rp;
 
 		rootpane.setLookAndFeel( new MetalLookAndFeel() );
-		
+
                 Frame mainWindow = new Frame();
 
                 Button exit = new Button("Exit");
@@ -105,13 +105,13 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 	}
 
 	public void actionPerformed(String actionCommand) {
-		
+
 		if ("exit".equals(actionCommand)) {
-			
-			rootpane.exit();
-			
+
+			Midlet.exit();
+
 		}
-		
+
 	}
 
 }

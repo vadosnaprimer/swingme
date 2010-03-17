@@ -32,6 +32,7 @@ import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
@@ -183,7 +184,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
             public abstract void createTests();
             public abstract void openTest(String id);
-            
+
             public Button makeButton(String label,String action) {
                 Button button = new Button(label);
                 button.setActionCommand(action);
@@ -196,7 +197,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 
 		if ("exit".equals(actionCommand)) {
 
-			exit();
+			Midlet.exit();
 
 		}
 		else if ("mainmenu".equals(actionCommand)) {
@@ -235,7 +236,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 addMainMenuButton("Hide Show", "hideshow");
 
                                 // add theme swap test
-                                
+
                                 mainMenu = new Menu("Menu");
                                 //mainMenu.addActionListener(this);
                                 addMenuItem(mainMenu,"metalTheme", "Metal Theme");
@@ -261,10 +262,10 @@ public class MainPane extends DesktopPane implements ActionListener {
 		}
                 else if ("hideshow".equals(actionCommand)) {
 
-                    final Display display = Display.getDisplay(DesktopPane.getMidlet());
+                    final Display display = Display.getDisplay(Midlet.getMidlet());
                     final DesktopPane dp = DesktopPane.getDesktopPane();
 
-                    DesktopPane.hide();
+                    Midlet.hide();
 
                     new Thread() {
                         public void run() {
@@ -525,7 +526,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                 else if ("fontTest".equals(actionCommand)) {
                     Panel panel = new Panel( new FlowLayout( Graphics.VCENTER ) );
 
-		    
+
 
 		    String[] labels = {
 			    "abcdefgh",
@@ -574,7 +575,7 @@ public class MainPane extends DesktopPane implements ActionListener {
 		    for(int f = 0; f < fonts.length; f++ ) {
 
 			panel.add(new Label("Font " + f));
-			
+
 			int color = 0;
 
 			for(int l = 0; l < labels.length; l++) {
@@ -586,12 +587,12 @@ public class MainPane extends DesktopPane implements ActionListener {
 				    button.setFont(fonts[f]);
 				    button.setForeground(colors[color]);
 				    panel.add(button);
-				
-				    
+
+
 				color++;
 			}
 		    }
-		    
+
                     Font treasure = Font.getFont("/basicfont/treasure.font");
 
 		    TextArea t = new TextArea("/|\\/|\\/|\\/|\\\n|||||||||\nWwWwWwWwW\n~~~~~~~~~\n_-_-_-_-_\n||||||||||");
