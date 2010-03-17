@@ -92,14 +92,16 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         DesktopPane dp = aThis.getWindow().getDesktopPane();
-
-        // while it chooses what array to add the component to
-        // the validating turn id can NOT be changed
+        // if a window is not yet visable it still needs the
+        // mulipass validate system to work. e.g. DesktopPane#log() first time
+        if (dp==null) { dp = getDesktopPane(); }
 
         // if this method is being called from a thread other then the event thread
         // we dont want it to mess with whats currently happening in the paint
         synchronized(dp.repaintComponent) {
 
+            // while it chooses what array to add the component to
+            // the validating turn id can NOT be changed
             if (dp.validating==0) {
                 addToComponentVector(p, dp.revalidateComponents1);
                 p.repaint();
