@@ -3,9 +3,9 @@ package net.yura.mobile.logging;
 import java.util.Vector;
 
 /**
- * 
+ *
  * @author Orens
- * 
+ *
  */
 public final class Logger {
 //#mdebug error
@@ -31,19 +31,19 @@ public final class Logger {
     private final static boolean PRINT_CLASS_NAME = true;
 
     /**
+     * Static initialiser
+     */
+    static {
+        _logger = new Logger();
+        addMessageToContainer("*********** " + NEW_SESSION_STR + "***************");
+    }
+
+    /**
      * Instantiates a new logger.
      */
     private Logger() {
         //TODO: load previous data if exists.
         _messageContainer = new Vector();
-    }
-
-    /**
-     * Inits the.
-     */
-    public static void init() {
-        _logger = new Logger();
-        addMessageToContainer("*********** " + NEW_SESSION_STR + "***************");
     }
 
     public synchronized static void trace(String message) {
