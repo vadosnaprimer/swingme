@@ -372,7 +372,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 textbox.addCommand(cancel);
 
                 textbox.setCommandListener(this);
-                Display.getDisplay(DesktopPane.getMidlet()).setCurrent(textbox);
+                Display.getDisplay(Midlet.getMidlet()).setCurrent(textbox);
 
         }
 
@@ -428,7 +428,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
             // go back to normal
             DesktopPane rp = getWindow().getDesktopPane();
-            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(rp);
+            Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
             rp.setFullScreenMode(true);
 
             textbox = null;

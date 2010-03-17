@@ -18,7 +18,6 @@ package net.yura.mobile.gui;
 
 import java.util.Hashtable;
 import java.util.Vector;
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
@@ -47,12 +46,9 @@ import net.yura.mobile.util.SystemUtil;
  */
 public class DesktopPane extends Canvas implements Runnable {
 
-    // static methods
-    private static DesktopPane desktop;
-
+    //#mdebug
     private static Vector keylisteners = new Vector();
 
-    //#mdebug
     public static void addKeyPressListener(KeyListener listener){
         keylisteners.addElement(listener);
     }
@@ -64,6 +60,8 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
     //#enddebug
+
+    private static DesktopPane desktop;
 
     public static DesktopPane getDesktopPane() {
         return desktop;
@@ -97,7 +95,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // while it chooses what array to add the component to
         // the validating turn id can NOT be changed
-        synchronized(dp.revalidateLock) {
+
+        // if this method is being called from a thread other then the event thread
+        // we dont want it to mess with whats currently happening in the paint
+        synchronized(dp.repaintComponent) {
 
             if (dp.validating==0) {
                 addToComponentVector(p, dp.revalidateComponents1);
@@ -125,7 +126,6 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     /**
-     * @param com
      * @see javax.swing.SwingUtilities#updateComponentTreeUI(java.awt.Component) SwingUtilities.updateComponentTreeUI
      */
     public static void updateComponentTreeUI(Component com) {
@@ -152,12 +152,6 @@ public class DesktopPane extends Canvas implements Runnable {
     // and if by default a window has a close and max button at the top
     public boolean NO_SOFT_KEYS;
 
-    public static final boolean suny;
-
-    static {
-        suny = (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON);
-    }
-
     // object variables
     protected Midlet midlet;
     private LookAndFeel theme;
@@ -171,7 +165,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private final Vector revalidateComponents1 = new Vector();
     private final Vector revalidateComponents2 = new Vector();
     private final Vector revalidateComponents3 = new Vector();
-    private final Object revalidateLock = new Object();
+    //private final Object revalidateLock = new Object();
     private Thread animationThread;
 
     // the nextAnimatedComponent can be == to animatedComponent
@@ -241,7 +235,6 @@ public class DesktopPane extends Canvas implements Runnable {
         // and that will in tern call initialise of the midlet
         Display.getDisplay(m).setCurrent(this);
         repaint();
-        // TODO: (Yura) Can we really comment this?
 
         // TODO me4se needs to be here, or keyboard events dont come in
         // WHY WHY WHY??!!! this is very strange
@@ -416,6 +409,13 @@ public class DesktopPane extends Canvas implements Runnable {
         return menuHeight;
     }
 
+    /**
+     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
+     */
+    public static void invokeLater(Runnable runner) {
+        Display.getDisplay(Midlet.getMidlet()).callSerially(runner);
+    }
+
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== painting ============================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
@@ -472,44 +472,36 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
-            boolean doFullRepaint;
-
-            // if we have started revalidating, we do not want any random reval and repaint happening
-            // as if they do happen half way though, we would get a component being repainted
-            // even though it did not get revalidated
-            synchronized (repaintComponent) {
-
-                // now we need to layout all the components
-                // we use a 3 pass system, as 3 passes is the maximum needed to layout even
-                // the most complex layout with flexable components inside scrollpanes
-                synchronized(revalidateLock) {
-                    validating = 1;
-                }
-                validateComponents(revalidateComponents1);
-                synchronized(revalidateLock) {
-                    validating = 2;
-                }
-                validateComponents(revalidateComponents2);
-                synchronized(revalidateLock) {
-                    validating = 3;
-                }
-                validateComponents(revalidateComponents3);
-                synchronized(revalidateLock) {
-                    validating = 0;
-                }
-
-                // For thread safety, we cache the components to repaint
-                SystemUtil.addAll(repaintComponent2, repaintComponent);
-                repaintComponent.removeAllElements();
-
-                // For thread safety, we cache fullrepaint now, and clean it
-                doFullRepaint = fullrepaint;
-                fullrepaint = false;
-
-            }
-
             // can not add or remove windows while this is happening
             synchronized(windows) {
+
+                boolean doFullRepaint;
+
+                // if we have started revalidating, we do not want any random reval and repaint happening
+                // as if they do happen half way though, we would get a component being repainted
+                // even though it did not get revalidated
+                synchronized (repaintComponent) {
+
+                    // now we need to layout all the components
+                    // we use a 3 pass system, as 3 passes is the maximum needed to layout even
+                    // the most complex layout with flexable components inside scrollpanes
+                    validating = 1;
+                    validateComponents(revalidateComponents1);
+                    validating = 2;
+                    validateComponents(revalidateComponents2);
+                    validating = 3;
+                    validateComponents(revalidateComponents3);
+                    validating = 0;
+
+                    // For thread safety, we cache the components to repaint
+                    SystemUtil.addAll(repaintComponent2, repaintComponent);
+                    repaintComponent.removeAllElements();
+
+                    // For thread safety, we cache fullrepaint now, and clean it
+                    doFullRepaint = fullrepaint;
+                    fullrepaint = false;
+
+                }
 
                 Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
 
@@ -663,7 +655,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private void validateComponents(Vector v) {
 
         // while we are going though the vector it can not be updated
-            synchronized (v) {
+            //synchronized (v) {
 
                     for (int c = 0; c < v.size(); c++) {
                         Component panel = (Component) v.elementAt(c);
@@ -671,7 +663,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                     v.removeAllElements();
 
-            }
+            //}
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
@@ -683,7 +675,9 @@ public class DesktopPane extends Canvas implements Runnable {
      * @param rc The Component to repaint
      */
     public void repaintComponent(Component rc) {
-        addToComponentVector(rc, repaintComponent);
+        synchronized(repaintComponent) {
+            addToComponentVector(rc, repaintComponent);
+        }
         repaint();
     }
 
@@ -720,7 +714,10 @@ public class DesktopPane extends Canvas implements Runnable {
             //dumpStack();
         }
         //#enddebug
-        addToComponentVector(rc, revalidateComponents1);
+
+        synchronized (repaintComponent) {
+            addToComponentVector(rc, revalidateComponents1);
+        }
     }
 
     private static void addToComponentVector(Component rc, Vector vec) {
@@ -732,7 +729,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // we should not make any other changes to this vector while we are searching
         // and adding to it
-        synchronized (vec) {
+        //synchronized (vec) {
 
             // If we find the parent on the list, we don't need to add this one
             Component c1 = rc;
@@ -766,7 +763,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
             }
 
-        }
+        //}
 
     }
 
@@ -782,26 +779,20 @@ public class DesktopPane extends Canvas implements Runnable {
     public void add(Window w) {
         // we dont want to add half way though a repaint, as it could be using this vector
         synchronized (windows) {
-            //#mdebug
-            if (windows.contains(w)) {
-                System.err.println("trying to set a window visible when it already is visible");
-                dumpStack();
+            if (w!=null && !windows.contains(w)) {
+                w.setDesktopPane(this);
+                windows.addElement(w);
+                if (w instanceof Frame && ((Frame)w).isMaximum() ) {
+                    ((Frame)w).setMaximum(true);
+                }
+                pointerComponent = null;
             }
-            if (w==null) {
-                System.err.println("trying to set add a null window");
+            //#mdebug
+            else {
+                System.err.println("trying to set a window visible when it already is visible or null: "+w);
                 dumpStack();
             }
             //#enddebug
-
-            w.setDesktopPane(this);
-
-            windows.addElement(w);
-
-            if (w instanceof Frame && ((Frame)w).isMaximum() ) {
-                ((Frame)w).setMaximum(true);
-            }
-
-            pointerComponent = null;
         }
         fullRepaint();
     }
@@ -834,19 +825,17 @@ public class DesktopPane extends Canvas implements Runnable {
     public void setSelectedFrame(Window w) {
         // dont want to change the windows Vector while we are painting
         synchronized (windows) {
-            if ( windows.contains(w) ) {
+            if ( w != null && windows.contains(w) ) {
                 if (currentWindow == w) {
                     return;
                 }
-                if (w != null) {
-                    windows.removeElement(w);
-                    windows.addElement(w);
-                }
+                windows.removeElement(w);
+                windows.addElement(w);
                 pointerComponent = null;
             }
             //#mdebug
             else {
-                System.err.println("cant setSelected, this window is not visible: " + w);
+                System.err.println("cant setSelected, this window is not visible or null: " + w);
                 dumpStack();
             }
             //#enddebug
@@ -942,7 +931,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 Button mneonicButton = null;
                 int key = keyevent.getJustPressedKey();
                 if (key != 0) {
-                    if (suny && key==KeyEvent.KEY_END) { // for sony-ericson, back is save as softkey 2
+                    if ( key==KeyEvent.KEY_END && (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ) { // for sony-ericson, back is save as softkey 2
                         key = KeyEvent.KEY_SOFTKEY2;
                     }
                     mneonicButton = currentWindow.findMneonicButton(key);
@@ -1135,79 +1124,9 @@ public class DesktopPane extends Canvas implements Runnable {
             indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
         }
         else {
-            indicator.setBoundsWithBorder(suny?0:(getWidth()-w), 0, w, h);
+            indicator.setBoundsWithBorder( (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ?0:(getWidth()-w), 0, w, h);
         }
 
-    }
-
-    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-    //==== platform Requests ===================================================
-    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
-
-    /**
-     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
-     */
-    public static void invokeLater(Runnable runner) {
-        Display.getDisplay(getMidlet()).callSerially(runner);
-    }
-
-    public static Midlet getMidlet() {
-        return desktop.midlet;
-    }
-
-    public static void call(String number) {
-        try {
-            // TODO remove spaces from number
-            getMidlet().platformRequest("tel:" + number);
-        }
-        catch (ConnectionNotFoundException e) {
-            log("can not call: " + number + " " + e.toString());
-            //#debug
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void openURL(String url) {
-        try {
-            getMidlet().platformRequest(url);
-        }
-        catch (ConnectionNotFoundException e) {
-            log("can not open url: " + url + " " + e.toString());
-            //#debug
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void vibration(int duration) {
-        try {
-            Display.getDisplay(getMidlet()).vibrate(duration);
-        }
-        catch (Exception e) {
-            log("can not vibration " + e.toString());
-            //#debug
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * @see java.lang.System#exit(int) System.exit
-     */
-    public static void exit() {
-        try {
-            getMidlet().destroyApp(true);
-        }
-        catch (Exception ex) {
-            // as you called this yourself, you should not be throwing here
-            //#debug
-            ex.printStackTrace();
-            throw new RuntimeException();
-        }
-    }
-
-    public static void hide() {
-        Display.getDisplay(getMidlet()).setCurrent(null);
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
@@ -1256,11 +1175,13 @@ public class DesktopPane extends Canvas implements Runnable {
                 desktop.debugwindow.setBounds(10, 10, desktop.getWidth() - 20, desktop.getHeight() / 2);
             }
 
+            // TODO is this thread safe???
             desktop.text.append(s + "\n");
 
             if (!desktop.debugwindow.isVisible()) {
                 desktop.debugwindow.setVisible(true);
-            } else {
+            }
+            else {
                 desktop.debugwindow.repaint();
             }
         } catch (Throwable th) {

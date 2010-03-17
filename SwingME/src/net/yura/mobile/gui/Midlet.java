@@ -152,14 +152,80 @@ public abstract class Midlet extends MIDlet {
         return PLATFORM_NOT_DEFINED;
     }
 
-	// Utility method. Finds if a class is available to the class Loader
-	private static boolean hasClass(String className) {
-	    try {
+    // Utility method. Finds if a class is available to the class Loader
+    private static boolean hasClass(String className) {
+        try {
             Class.forName(className);
             return true;
-        } catch (Throwable ex) {
+        }
+        catch (Throwable ex) {
             return false;
         }
-	}
+    }
+
+
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== platform Requests ===================================================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+    public static Midlet getMidlet() {
+        return DesktopPane.getDesktopPane().midlet;
+    }
+
+    public static void call(String number) {
+        try {
+            // TODO remove spaces from number
+            getMidlet().platformRequest("tel:" + number);
+        }
+        catch (Exception e) {
+            DesktopPane.log("can not call: " + number + " " + e.toString());
+            //#debug
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void openURL(String url) {
+        try {
+            getMidlet().platformRequest(url);
+        }
+        catch (Exception e) {
+            DesktopPane.log("can not open url: " + url + " " + e.toString());
+            //#debug
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void vibration(int duration) {
+        try {
+            Display.getDisplay(getMidlet()).vibrate(duration);
+        }
+        catch (Exception e) {
+            DesktopPane.log("can not vibration " + e.toString());
+            //#debug
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * @see java.lang.System#exit(int) System.exit
+     */
+    public static void exit() {
+        try {
+            getMidlet().destroyApp(true);
+        }
+        catch (Exception ex) {
+            // as you called this yourself, you should not be throwing here
+            //#debug
+            ex.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    public static void hide() {
+        Display.getDisplay(getMidlet()).setCurrent(null);
+    }
+
 
 }

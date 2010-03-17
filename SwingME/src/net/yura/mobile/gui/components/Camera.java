@@ -239,7 +239,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         // WORK-AROUND: WTK don't display the view
                         // finder, if there is no "Canvas transition"
                         if (Midlet.getPlatform() == Midlet.PLATFORM_WTK) {
-                            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(new DummyCanvas());
+                            Display.getDisplay(Midlet.getMidlet()).setCurrent(new DummyCanvas());
                         }
                     }
 
@@ -317,7 +317,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     private int getCameraPermission() {
 
-        MIDlet midlet = DesktopPane.getMidlet();
+        MIDlet midlet = Midlet.getMidlet();
         int perm = midlet.checkPermission("javax.microedition.media.control.VideoControl.getSnapshot");
 
         return perm;
@@ -534,7 +534,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
         protected void paint(Graphics arg0) {
             Canvas playerCanvas = DesktopPane.getDesktopPane();
-            Display.getDisplay(DesktopPane.getMidlet()).setCurrent(playerCanvas);
+            Display.getDisplay(Midlet.getMidlet()).setCurrent(playerCanvas);
         }
     }
 
