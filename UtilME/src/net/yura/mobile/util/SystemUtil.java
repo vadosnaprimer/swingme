@@ -17,6 +17,9 @@
 
 package net.yura.mobile.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -207,5 +210,27 @@ public class SystemUtil {
         }
         return name;
     }
+    
+    public static byte[] arrayCopy(byte[] b, int offset, int length){
+    	byte[] n = new byte[length];
+    	
+    	for (int i = offset, j=0; i < offset + length; i++,j++){
+    		n[j] = b[i];
+    	}
+    	
+    	return n;
+    }
 
+	public static byte[] getBytes(InputStream is) throws IOException {
+		
+		StringBuffer buffer = new StringBuffer();
+		byte[] buf = new byte[1024];
+		int read = 0;
+		while ((read = is.read(buf)) != -1){
+			buffer.append(new String(buf, 0, read));
+		}
+		
+		return buffer.toString().getBytes();
+	}
+	
 }
