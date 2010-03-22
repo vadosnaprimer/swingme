@@ -16,6 +16,12 @@ import android.opengl.GLU;
 
 public final class Graphics3D {
 
+	public static final int	ANTIALIAS  = 2;
+	public static final int	DITHER     = 4;
+	public static final int	OVERWRITE  = 16;
+	public static final int	TRUE_COLOR = 8;
+
+
 	private static Graphics3D instance = null;
 
 	static final int MAX_LIGHT_COUNT = 8;
@@ -87,10 +93,10 @@ public final class Graphics3D {
 //		}
 	}
 
-//JP	public void bindTarget(Object target, boolean depthBuffer, int hints)
-//	{
-//		bindTarget(target, null);
-//	}
+	public void bindTarget(Object target, boolean depthBuffer, int hints)
+	{
+//JP		bindTarget(target, null);
+	}
 
 	public Object getTarget()
 	{
