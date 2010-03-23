@@ -12,273 +12,283 @@ import android.view.MotionEvent;
 import android.view.View;
 
 public abstract class Canvas extends Displayable {
-	public static final int UP = 1;
-	public static final int DOWN = 6;
-	public static final int LEFT = 2;
-	public static final int RIGHT = 5;
-	public static final int FIRE = 8;
+    public static final int UP = 1;
+    public static final int DOWN = 6;
+    public static final int LEFT = 2;
+    public static final int RIGHT = 5;
+    public static final int FIRE = 8;
 
-	public static final int GAME_A = 9;
-	public static final int GAME_B = 10;
-	public static final int GAME_C = 11;
-	public static final int GAME_D = 12;
+    public static final int GAME_A = 9;
+    public static final int GAME_B = 10;
+    public static final int GAME_C = 11;
+    public static final int GAME_D = 12;
 
-	public static final int KEY_NUM0 = 48;
-	public static final int KEY_NUM1 = 49;
-	public static final int KEY_NUM2 = 50;
-	public static final int KEY_NUM3 = 51;
-	public static final int KEY_NUM4 = 52;
-	public static final int KEY_NUM5 = 53;
-	public static final int KEY_NUM6 = 54;
-	public static final int KEY_NUM7 = 55;
-	public static final int KEY_NUM8 = 56;
-	public static final int KEY_NUM9 = 57;
-	public static final int KEY_STAR = 42;
-	public static final int KEY_POUND = 35;
+    public static final int KEY_NUM0 = 48;
+    public static final int KEY_NUM1 = 49;
+    public static final int KEY_NUM2 = 50;
+    public static final int KEY_NUM3 = 51;
+    public static final int KEY_NUM4 = 52;
+    public static final int KEY_NUM5 = 53;
+    public static final int KEY_NUM6 = 54;
+    public static final int KEY_NUM7 = 55;
+    public static final int KEY_NUM8 = 56;
+    public static final int KEY_NUM9 = 57;
+    public static final int KEY_STAR = 42;
+    public static final int KEY_POUND = 35;
 
-	private CanvasView canvasView;
+    private CanvasView canvasView;
+    private Bitmap graphicsBitmap;
 
-	private Bitmap graphicsBitmap;
+    protected Canvas() {
+        this.canvasView = new CanvasView((AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet()).getActivity());
+    }
 
-	protected Canvas() {
-	}
+    public void setFullScreenMode(boolean fullScreen) {
+        // do nothing, is this possible on android?
+    }
 
-	public void setFullScreenMode(boolean fullScreen) {
-		// do nothing, is this possible on android?
-	}
+    @Override
+    public int getWidth() {
+        return MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth();
+    }
 
-	public int getGameAction(int keyCode) {
-		int gameActionKeyCode = getKeyCode(-keyCode);
-		return -gameActionKeyCode;
-	}
+    @Override
+    public int getHeight() {
+        return MIDlet.DEFAULT_MIDLET.getToolkit().getScreenHeight();
+    }
 
-	public int getKeyCode(int gameAction) {
-		switch (gameAction) {
-			case Canvas.FIRE:
-			case Canvas.UP:
-			case Canvas.DOWN:
-			case Canvas.LEFT:
-			case Canvas.RIGHT:
-			case Canvas.GAME_A:
-			case Canvas.GAME_B:
-			case Canvas.GAME_C:
-			case Canvas.GAME_D:
-				return -gameAction;
-			default:
-				return 0;
-		}
-	}
+    public int getGameAction(int keyCode) {
+        int gameActionKeyCode = getKeyCode(-keyCode);
+        return -gameActionKeyCode;
+    }
 
-	public void repaint(int x, int y, int w, int h) {
-		if (this.canvasView != null) {
-			this.canvasView.postInvalidate(x, y, x + w, y + h);
-		}
-	}
+    public int getKeyCode(int gameAction) {
+        switch (gameAction) {
+            case Canvas.FIRE:
+            case Canvas.UP:
+            case Canvas.DOWN:
+            case Canvas.LEFT:
+            case Canvas.RIGHT:
+            case Canvas.GAME_A:
+            case Canvas.GAME_B:
+            case Canvas.GAME_C:
+            case Canvas.GAME_D:
+                return -gameAction;
+            default:
+                return 0;
+        }
+    }
 
-	public void repaint() {
-		if (this.canvasView != null) {
-			this.canvasView.postInvalidate();
-		}
-	}
+    public void repaint(int x, int y, int w, int h) {
+        if (this.canvasView != null) {
+            this.canvasView.postInvalidate(x, y, x + w, y + h);
+        }
+    }
 
-	protected void keyPressed(int keyCode) {
-		System.out.println(keyCode);
-		this.repaint();
-	}
+    public void repaint() {
+        if (this.canvasView != null) {
+            this.canvasView.postInvalidate();
+        }
+    }
 
-	protected void keyReleased(int keyCode) {
+    protected void keyPressed(int keyCode) {
+        System.out.println(keyCode);
+        this.repaint();
+    }
 
-	}
+    protected void keyReleased(int keyCode) {
 
-	protected void keyRepeated(int keyCode) {
+    }
 
-	}
+    protected void keyRepeated(int keyCode) {
 
-	protected abstract void paint(javax.microedition.lcdui.Graphics g);
+    }
 
-	public boolean hasPointerEvents() {
-		return true;
-	}
+    protected abstract void paint(javax.microedition.lcdui.Graphics g);
 
-	protected void pointerPressed(int x, int y) {
+    public boolean hasPointerEvents() {
+        return true;
+    }
 
-	}
+    protected void pointerPressed(int x, int y) {
 
-	protected void pointerReleased(int x, int y) {
+    }
 
-	}
+    protected void pointerReleased(int x, int y) {
 
-	protected void pointerDragged(int x, int y) {
+    }
 
-	}
+    protected void pointerDragged(int x, int y) {
 
-	@Override
-	public View getView() {
-		return this.canvasView;
-	}
+    }
 
-	@Override
-	public void disposeDisplayable() {
-//		this.canvasView = null;
-	}
+    @Override
+    public View getView() {
+        return this.canvasView;
+    }
 
-	@Override
-	public void initDisplayable(MIDlet midlet) {
-		if (this.canvasView == null) {
-			this.canvasView = new CanvasView(midlet.getActivity());
-		}
-	}
+    @Override
+    public void disposeDisplayable() {
+//        this.canvasView = null;
+    }
 
-	private class CanvasView extends View {
-		private javax.microedition.lcdui.Graphics graphics;
+    @Override
+    public void initDisplayable(MIDlet midlet) {
+        if (this.canvasView == null) {
+            this.canvasView = new CanvasView(midlet.getActivity());
+        }
+    }
 
-		public CanvasView(Context context) {
-			super(context);
+    protected javax.microedition.lcdui.Graphics getGraphics() {
+        return this.canvasView.graphics;
+    }
 
-			setFocusable(true);
-			setFocusableInTouchMode(true);
-		}
+    private class CanvasView extends View {
+        javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());;
 
-		@Override
-		protected void onDraw(android.graphics.Canvas androidCanvas) {
-			if (graphicsBitmap != null && androidCanvas != null) {
+        public CanvasView(Context context) {
+            super(context);
 
-				// Check for size changes...
-				if (graphicsBitmap.getWidth() != androidCanvas.getWidth()
-						|| graphicsBitmap.getHeight() != androidCanvas
-								.getHeight()) {
+            setFocusable(true);
+            setFocusableInTouchMode(true);
+        }
 
-					graphics = null;
-					graphicsBitmap = null;
-				}
-			}
+        @Override
+        protected void onDraw(android.graphics.Canvas androidCanvas) {
+            if (graphicsBitmap != null && androidCanvas != null) {
 
-			if (graphics == null) {
+                // Check for size changes...
+                if (graphicsBitmap.getWidth() != androidCanvas.getWidth()
+                        || graphicsBitmap.getHeight() != androidCanvas
+                                .getHeight()) {
 
-				graphicsBitmap = Bitmap.createBitmap(androidCanvas.getWidth(),
-						androidCanvas.getHeight(), Bitmap.Config.ARGB_8888);
+                    graphicsBitmap = null;
+                }
+            }
 
-				android.graphics.Canvas myCanvas = new android.graphics.Canvas(
-						graphicsBitmap);
-				graphics = new Graphics(myCanvas);
-			}
+            if (graphicsBitmap == null) {
 
-			graphics.translate(-graphics.getTranslateX(), -graphics.getTranslateY());
+                graphicsBitmap = Bitmap.createBitmap(androidCanvas.getWidth(),
+                        androidCanvas.getHeight(), Bitmap.Config.ARGB_8888);
 
-			paint(graphics);
-			androidCanvas.drawBitmap(graphicsBitmap, 0, 0, null);
-		}
+                graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
+            }
 
-		@Override
-		protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-			invalidate();
-		}
+            graphics.translate(-graphics.getTranslateX(), -graphics.getTranslateY());
 
-		@Override
-		public boolean onKeyDown(int keyCode, KeyEvent event) {
-			keyCode = getKeyCode(event);
+            paint(graphics);
+            androidCanvas.drawBitmap(graphicsBitmap, 0, 0, null);
+        }
 
-			if (event.getRepeatCount() == 0) {
-				keyPressed(keyCode);
-			} else {
-				keyRepeated(keyCode);
-			}
-			return true;
-		}
+        @Override
+        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+            invalidate();
+        }
 
-		@Override
-		public boolean onKeyUp(int keyCode, KeyEvent event) {
+        @Override
+        public boolean onKeyDown(int keyCode, KeyEvent event) {
+            keyCode = getKeyCode(event);
 
-			keyCode = getKeyCode(event);
-			keyReleased(keyCode);
-			return true;
-		}
+            if (event.getRepeatCount() == 0) {
+                keyPressed(keyCode);
+            } else {
+                keyRepeated(keyCode);
+            }
+            return true;
+        }
 
-		@Override
-		public boolean onTouchEvent(MotionEvent event) {
-			// System.out.println(
-			// "("+(int)event.getX()+","+(int)event.getY()+","+event.getAction()+")"
-			// );
-			switch (event.getAction()) {
-			case MotionEvent.ACTION_DOWN:
-				Canvas.this.pointerPressed(Math.round(event.getX()), Math
-						.round(event.getY()));
-				break;
-			case MotionEvent.ACTION_UP:
-				Canvas.this.pointerReleased(Math.round(event.getX()), Math
-						.round(event.getY()));
-				break;
-			case MotionEvent.ACTION_MOVE:
-				Canvas.this.pointerDragged(Math.round(event.getX()), Math
-						.round(event.getY()));
-				break;
-			}
+        @Override
+        public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-			return true;
-		}
+            keyCode = getKeyCode(event);
+            keyReleased(keyCode);
+            return true;
+        }
 
-		private int getKeyCode(KeyEvent keyEvent) {
-			// TODO implement as lookup table
-			int deviceKeyCode = keyEvent.getKeyCode();
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+            // System.out.println(
+            // "("+(int)event.getX()+","+(int)event.getY()+","+event.getAction()+")"
+            // );
+            switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Canvas.this.pointerPressed(Math.round(event.getX()), Math
+                        .round(event.getY()));
+                break;
+            case MotionEvent.ACTION_UP:
+                Canvas.this.pointerReleased(Math.round(event.getX()), Math
+                        .round(event.getY()));
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Canvas.this.pointerDragged(Math.round(event.getX()), Math
+                        .round(event.getY()));
+                break;
+            }
 
-			int resultKeyCode;
-			switch (deviceKeyCode) {
-			case KeyEvent.KEYCODE_DPAD_CENTER :
-				resultKeyCode = -Canvas.FIRE;
-				break;
-			case KeyEvent.KEYCODE_DPAD_UP :
-				resultKeyCode = -Canvas.UP;
-				break;
-			case KeyEvent.KEYCODE_DPAD_DOWN :
-				resultKeyCode = -Canvas.DOWN;
-				break;
-			case KeyEvent.KEYCODE_DPAD_LEFT :
-				resultKeyCode = -Canvas.LEFT;
-				break;
-			case KeyEvent.KEYCODE_DPAD_RIGHT :
-				resultKeyCode = -Canvas.RIGHT;
-				break;
-//			case KeyEvent.KEYCODE_MENU :
-//				resultKeyCode = -6; // Left Soft-Key
-//				break;
-			case KeyEvent.KEYCODE_BACK :
-				resultKeyCode = -7; // Right Soft-Key
-				break;
-			case KeyEvent.KEYCODE_DEL :
-				resultKeyCode = 8; // Backspace ascii
-				break;
-			default:
-	            resultKeyCode = keyEvent.getUnicodeChar();
-	            if (resultKeyCode == 0) {
-	                 resultKeyCode = -deviceKeyCode;
-	            }
-			}
+            return true;
+        }
 
-			return resultKeyCode;
-		}
+        private int getKeyCode(KeyEvent keyEvent) {
+            // TODO implement as lookup table
+            int deviceKeyCode = keyEvent.getKeyCode();
 
-	}
+            int resultKeyCode;
+            switch (deviceKeyCode) {
+            case KeyEvent.KEYCODE_DPAD_CENTER :
+                resultKeyCode = -Canvas.FIRE;
+                break;
+            case KeyEvent.KEYCODE_DPAD_UP :
+                resultKeyCode = -Canvas.UP;
+                break;
+            case KeyEvent.KEYCODE_DPAD_DOWN :
+                resultKeyCode = -Canvas.DOWN;
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT :
+                resultKeyCode = -Canvas.LEFT;
+                break;
+            case KeyEvent.KEYCODE_DPAD_RIGHT :
+                resultKeyCode = -Canvas.RIGHT;
+                break;
+//            case KeyEvent.KEYCODE_MENU :
+//                resultKeyCode = -6; // Left Soft-Key
+//                break;
+            case KeyEvent.KEYCODE_BACK :
+                resultKeyCode = -7; // Right Soft-Key
+                break;
+            case KeyEvent.KEYCODE_DEL :
+                resultKeyCode = 8; // Backspace ascii
+                break;
+            default:
+                resultKeyCode = keyEvent.getUnicodeChar();
+                if (resultKeyCode == 0) {
+                     resultKeyCode = -deviceKeyCode;
+                }
+            }
 
-	protected void hideNotify() {
+            return resultKeyCode;
+        }
 
-	}
+    }
 
-	public void serviceRepaints() {
-		// TODO Auto-generated method stub
+    protected void hideNotify() {
 
-	}
+    }
 
-	public String getKeyName(int keyCode) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public void serviceRepaints() {
+        AndroidMeMIDlet.DEFAULT_ACTIVITY.invokeAndWait(new Thread());
+    }
 
-	public boolean isShown() {
-		// TODO Auto-generated method stub
-		return Display.getDisplay(AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
-	}
+    public String getKeyName(int keyCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public void setTitle(Object object) {
-		// TODO Auto-generated method stub
-	}
+    public boolean isShown() {
+        // TODO Auto-generated method stub
+        return Display.getDisplay(AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
+    }
+
+    public void setTitle(Object object) {
+        // TODO Auto-generated method stub
+    }
 }

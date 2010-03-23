@@ -34,12 +34,18 @@ public class Graphics {
 
 	public Graphics(android.graphics.Canvas canvas) {
 		setFont(Font.getDefaultFont());
-		this.canvas = canvas;
-		canvas.save();
+		setCanvas(canvas);
 	}
 
 	public android.graphics.Canvas getCanvas() {
 		return this.canvas;
+	}
+
+	public void setCanvas(android.graphics.Canvas canvas) {
+		this.canvas = canvas;
+		if (canvas != null) {
+            canvas.save();
+        }
 	}
 
 	public int getClipX() {
