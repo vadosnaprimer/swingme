@@ -74,7 +74,6 @@ public class ScrollPane extends Panel implements Runnable {
         super(null);
         setMode(m);
         super.setName("ScrollPane");
-
     }
 
     public void setLayout(Layout lt) {
@@ -146,6 +145,10 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
     public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
+        return makeVisible(x, y, w, h, smartscroll, true);
+    }
+
+    public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll, boolean bond) {
 
         Component component = getView();
         int oldX = component.getX();
@@ -191,10 +194,13 @@ public class ScrollPane extends Panel implements Runnable {
 
 
         // check we r not scrolling off the content panel
-        if ((viewX+componentX+viewWidth)>component.getWidth()) { componentX=component.getWidth()-viewWidth-viewX; }
-        if ((viewY+componentY+viewHeight)>component.getHeight()) { componentY=component.getHeight()-viewHeight-viewY; }
-        if (componentX<-viewX) { componentX=-viewX; }
-        if (componentY<-viewY) { componentY=-viewY; }
+        if (bond) {
+            componentX = Math.min(componentX, component.getWidth() - viewWidth - viewX);
+            componentY = Math.min(componentY, component.getHeight() - viewHeight - viewY);
+
+            componentX = Math.max(componentX, -viewX);
+            componentY = Math.max(componentY, -viewY);
+        }
 
         int xdiff=-componentX -component.getX();
         int ydiff=-componentY -component.getY();
@@ -393,43 +399,42 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
     private void drawScrollBars(final Graphics2D g) {
 
-        int viewX = getViewPortX();
-        int viewY = getViewPortY();
-        int viewHeight=getViewPortHeight();
-        int viewWidth=getViewPortWidth(viewHeight);
-        int componentWidth = getView().getWidth();
-        int componentHeight = getView().getHeight();
+        int viewPortX = getViewPortX();
+        int viewPortY = getViewPortY();
+        int viewPortHeight=getViewPortHeight();
+        int viewPortWidth=getViewPortWidth(viewPortHeight);
+        int viewWidth = getView().getWidth();
+        int viewHeight = getView().getHeight();
 
 
         // NEEDS to be same check as in getViewPortWidth
-        if ( componentHeight > viewHeight ) { // vertical
-
+        if ( viewHeight > viewPortHeight ) { // vertical
             drawScrollBar(g,
-                    viewX + viewWidth,
-                    viewY,
-                    width - viewX - viewWidth,
-                    viewHeight,
-                    viewY-getView().getY(),
-                    viewHeight,
-                    componentHeight
+                    viewPortX + viewPortWidth,
+                    viewPortY,
+                    width - viewPortX - viewPortWidth,
+                    viewPortHeight,
+                    viewPortY-getView().getY(),
+                    viewPortHeight,
+                    viewHeight
             );
 
         }
 
         // NEEDS to be same check as in getViewPortHeight
-        if ( componentWidth > (width-viewX) ) { // horizontal
+        if ( viewWidth > (width-viewPortX) ) { // horizontal
 
             int t = g.getTransform();
             g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
 
             drawScrollBar(g,
-                    viewY + viewHeight,
-                    viewX,
-                    height - viewY - viewHeight,
-                    viewWidth,
-                    viewX-getView().getX(),
-                    viewWidth,
-                    componentWidth
+                    viewPortY + viewPortHeight,
+                    viewPortX,
+                    height - viewPortY - viewPortHeight,
+                    viewPortWidth,
+                    viewPortX-getView().getX(),
+                    viewPortWidth,
+                    viewWidth
             );
 
             g.setTransform( t );
@@ -488,6 +493,16 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
     }
 
+    /**
+     * @param x - Ignored?
+     * @param y - Start of bar
+     * @param w - width of bar
+     * @param h - viewPort Height/Width
+     * @param value - Desired view X/Y
+     * @param extent - viewPort Height/Width > same as h?
+     * @param max - view Height/Width
+     * @return
+     */
     private int[] getOffsets(int x,int y,int w, int h, int value,int extent, int max) {
 
         int box = 0;
@@ -508,6 +523,10 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             space = space-extenth;
             max = max-extent;
         }
+
+        // make sure the thumb value is bound
+        value = Math.max(value, 0);
+        value = Math.min(value, max - extent);
 
         int starty = y+box+ (int)( (space*value)/(double)max + 0.5 );
 
@@ -656,12 +675,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
      */
     public boolean isOpaque() {
         boolean mine = super.isOpaque();
-        if (!mine) {
-            return getView().isOpaque();
-        }
-        else {
-            return mine;
-        }
+        return (mine) ? mine : getView().isOpaque();
     }
     public void updateUI() {
         super.updateUI();
@@ -696,211 +710,463 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         int viewHeight=getViewPortHeight();
         int viewWidth=getViewPortWidth(viewHeight);
 
-        if ( isPointInsideRect(x,y,viewX,viewY,viewWidth,viewHeight) ) {
+        if (isPointInsideRect(x,y,viewX,viewY,viewWidth,viewHeight)) {
 
             return super.getComponentAt(x,y);
-
         }
 
         return this;
     }
 
-    private boolean isPointInsideRect(int x,int y,int viewX,int viewY,int viewWidth,int viewHeight) {
+    private boolean isPointInsideRect(int x,int y,int recX,int recY,int recWidth,int recHeight) {
 
-        return x>=viewX && x<(viewX+viewWidth) && y>=viewY && y<(viewY+viewHeight);
-
+        return x>=recX && x<(recX+recWidth) && y>=recY && y<(recY+recHeight);
     }
 
-    public void doClickInScrollbar(int x1,int y1,int w1,int h1,int value1,int extent1, int max1,
+
+
+    // -------------------------- POINTER DRAGGING ------------------------
+    private static final int DRAG_NONE = 0;
+    private static final int DRAG_CLICKED_ARROW = 1;
+    private static final int DRAG_CLICKED_TRACK = 2;
+    private static final int DRAG_SLIDER_HORZ = 3;
+    private static final int DRAG_SLIDER_VERT = 4;
+
+    private static final int DRAG_BUFFER_SIZE = 50;
+    private static final int DRAG_PAGE_RATE = 10;
+    private static final int DRAG_FRAME_RATE = 10;
+
+    private static ScrollPane dragScrollPane;
+
+    private int dragScrollBarMode;
+    private int dragStartViewY, dragStartViewX;
+    private int dragStartY, dragStartX;
+    private int dragLastY, dragLastX;
+    private int dragVelocityY, dragVelocityX;
+    private int dragFriction;
+
+    // Keep a history of drag events, so we can later calculate the average speed.
+    // These are circular buffers
+    private long[] dragTimes = new long[DRAG_BUFFER_SIZE];
+    private int[] dragBufferX = new int[DRAG_BUFFER_SIZE];
+    private int[] dragBufferY = new int[DRAG_BUFFER_SIZE];
+
+    // Index of the most recent entry.
+    private int dragBufferPos;
+
+    private int doClickInScrollbar(int x1,int y1,int w1,int h1,int value1,int extent1, int max1,
             int pointX,int pointY,
-            int d1,int d2,int d3
-    ) {
+            int dragSlider)
+    {
+        if (dragScrollBarMode != DRAG_NONE) {
+            return 0;
+        }
 
         int[] tmp = getOffsets(x1,y1,w1,h1,value1,extent1,max1);
         int box = tmp[0];
         int starty = tmp[1];
         int extenth = tmp[2];
 
+        int dragMode;
+        int velocity;
+        if (isPointInsideRect(pointX, pointY, x1, y1, w1, box)) {
 
-        if ( isPointInsideRect(     pointX, pointY, x1, y1, w1, box ) ) {
-
-            go = true;
-            direction = d1;
-            jump = 10;
-
+            dragMode = DRAG_CLICKED_ARROW;
+            velocity = 200;
         }
-        else if ( isPointInsideRect(pointX, pointY, x1, y1+box ,w1, starty-y1-box ) ) {
+        else if (isPointInsideRect(pointX, pointY, x1, y1+box, w1, starty-y1-box)) {
 
-            go = true;
-            direction = d1;
-            jump = extent1;
-
+            dragMode = DRAG_CLICKED_TRACK;
+            velocity = extent1 * DRAG_FRAME_RATE;
         }
-        else if ( isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth ) ) { // thumb on the right
+        else if (isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth)) { // thumb on the right
 
-            direction = d3;
-            scrollDrag = value1;
-            scrollStart = pointY;
-
+            velocity = 0;
+            dragMode = dragSlider;
         }
-        else if ( isPointInsideRect(pointX, pointY, x1, starty+extenth  ,w1, h1 - box - (starty-y1) -extenth) ) {
+        else if (isPointInsideRect(pointX, pointY, x1, starty+extenth, w1, h1 - box - (starty-y1) - extenth)) {
 
-            go = true;
-            direction = d2;
-            jump = extent1;
-
+            dragMode = DRAG_CLICKED_TRACK;
+            velocity = -extent1 * DRAG_FRAME_RATE;
         }
-        else if ( isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box) ) {
+        else if (isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box)) {
 
-            go = true;
-            direction = d2;
-            jump = 10;
-
+            dragMode = DRAG_CLICKED_ARROW;
+            velocity = -200;
+        }
+        else {
+            velocity = 0;
+            dragMode = DRAG_NONE;
         }
 
+        dragScrollBarMode = dragMode;
 
-        if (go) {
+        return velocity;
+    }
 
-            new Thread(this).start();
+    private synchronized static void setDragScrollPane(ScrollPane dragScrollPane) {
+        boolean startThread = (ScrollPane.dragScrollPane == null && dragScrollPane != null);
 
+        ScrollPane.dragScrollPane = dragScrollPane;
+
+        if (startThread) {
+            new Thread(dragScrollPane).start();
         }
 
+        ScrollPane.class.notifyAll();
+    }
+
+    // this can also be done by kidnapping the animation thread
+    // and then giving it back when it is not needed any more
+    public void run() {
+        System.out.println("START ScrollPane Thread...");
+
+        while (true) {
+
+            long time = System.currentTimeMillis();
+            synchronized (ScrollPane.class) {
+
+                System.out.println("- ScrollPane Animate -");
+
+                boolean animate = dragScrollBars();
+                if (!animate) {
+                    if (ScrollPane.dragScrollPane == this) {
+                        ScrollPane.dragScrollPane = null;
+                    }
+                    break;
+                }
+
+                int rate = (dragScrollBarMode == DRAG_CLICKED_TRACK) ? DRAG_PAGE_RATE : DRAG_FRAME_RATE;
+                long timeToWait = time - System.currentTimeMillis() + (1000L / rate);
+                if (timeToWait > 0) {
+
+                    if (timeToWait < (900L / rate)) {
+                        System.out.println("--- timeToWait = " + timeToWait);
+                    }
+
+                    try {
+                        ScrollPane.class.wait(timeToWait);
+                    }
+                    catch(InterruptedException e) {}
+                }
+            }
+        }
+
+        System.out.println("END ScrollPane Thread...");
+    }
+
+    private void updateDragSpeed(int x, int y, long time) {
+        dragBufferPos++;
+        if (dragBufferPos >= DRAG_BUFFER_SIZE) {
+            dragBufferPos = 0;
+        }
+
+        dragTimes[dragBufferPos] = time;
+        dragBufferX[dragBufferPos] = x;
+        dragBufferY[dragBufferPos] = y;
+    }
+
+    /**
+     * Uses the recent history of drag events to calculate the velocity (in
+     * pixels per second).
+     * @param x the x coordinate of released point
+     * @param y the y coordinate of released point
+     * @param vertical if true, returns vertical velocity. Horizontal otherwise.
+     */
+    private int getDragVelocity(int[] dragBuffer) {
+
+        final long OLDEST_TIME = System.currentTimeMillis() - 200;
+
+        int lastPos = dragBufferPos;
+        int pos = lastPos;
+        int firstPos;
+
+        do {
+            firstPos = pos;
+
+            pos--;
+            if (pos < 0) {
+                pos = DRAG_BUFFER_SIZE - 1;
+            }
+        } while (dragTimes[pos] >= OLDEST_TIME && pos != lastPos);
+
+
+        // Elapsed time can't be zero... Arithmetic exception
+        long elapsedTime = Math.max(dragTimes[lastPos] - dragTimes[firstPos], 1);
+        int traveledPixels = dragBuffer[lastPos] - dragBuffer[firstPos];
+
+        return (int) (traveledPixels * 1000 / elapsedTime);
     }
 
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
 
+        Component view = getView();
+        int viewY = view.getY();
+        int viewX = view.getX();
+        int viewHeight = view.getHeight();
+        int viewWidth = view.getWidth();
 
-        int viewX = getViewPortX();
-        int viewY = getViewPortY();
-        int viewHeight=getViewPortHeight();
-        int viewWidth=getViewPortWidth(viewHeight);
+        int viewPortX = getViewPortX();
+        int viewPortY = getViewPortY();
+        int viewPortHeight = getViewPortHeight();
+        int viewPortWidth = getViewPortWidth(viewPortHeight);
 
-        if (type == DesktopPane.PRESSED) { //  || type == DesktopPane.DRAGGED
+        updateDragSpeed(pointX, pointY, System.currentTimeMillis());
+
+        if (type == DesktopPane.PRESSED) {
+            dragScrollBarMode = DRAG_NONE;
+            dragFriction = 0;
+
+            dragLastX = pointX;
+            dragStartX = pointX;
+            dragStartViewX = viewX;
+            dragVelocityX = 0;
+
+            dragLastY = pointY;
+            dragStartY = pointY;
+            dragStartViewY = viewY;
+            dragVelocityY = 0;
 
             if (mode == MODE_SCROLLBARS) {
 
-                doClickInScrollbar(
-                        viewX + viewWidth,
-                        viewY,
-                        width - viewX - viewWidth,
-                        viewHeight,
-                        viewY-getView().getY(),
-                        viewHeight,
-                        getView().getHeight(),
-                        pointX,pointY,
-                        Graphics.TOP,Graphics.BOTTOM,Graphics.RIGHT
+                dragVelocityX = doClickInScrollbar(
+                      viewPortY + viewPortHeight,
+                      viewPortX,
+                      height - viewPortY - viewPortHeight,
+                      viewPortWidth,
+                      viewPortX-viewX,
+                      viewPortWidth,
+                      viewWidth,
+                      pointY,pointX,
+                      DRAG_SLIDER_HORZ
                 );
 
-                doClickInScrollbar(
-                        viewY + viewHeight,
-                        viewX,
-                        height - viewY - viewHeight,
-                        viewWidth,
-                        viewX-getView().getX(),
-                        viewWidth,
-                        getView().getWidth(),
-                        pointY,pointX,
-                        Graphics.LEFT,Graphics.RIGHT,Graphics.BOTTOM
+                dragVelocityY = doClickInScrollbar(
+                        viewPortX + viewPortWidth,
+                        viewPortY,
+                        width - viewPortX - viewPortWidth,
+                        viewPortHeight,
+                        viewPortY - viewY,
+                        viewPortHeight,
+                        viewHeight,
+                        pointX, pointY,
+                        DRAG_SLIDER_VERT
                 );
-
-
             }
             else if (mode == MODE_SCROLLARROWS) {
 
-                jump = 20;
+                if (viewWidth > width) {
+                    if (isPointInsideRect(pointX, pointY, 0, 0, barThickness, height)) {
 
-                if (getView().getWidth() > width) {
-
-                    if ( isPointInsideRect(pointX, pointY,   0, 0, barThickness, height )) {
-
-                        go = true;
-                        direction = Graphics.LEFT;
-
+                        dragVelocityX = 200;
                     }
-                    else if ( isPointInsideRect(pointX, pointY,   width - barThickness , 0, barThickness, height )) {
+                    else if (isPointInsideRect(pointX, pointY, width - barThickness, 0, barThickness, height)) {
 
-                        go = true;
-                        direction = Graphics.RIGHT;
-
+                        dragVelocityX = -200;
                     }
-
                 }
 
-                if (getView().getHeight() > height) {
+                if (viewHeight > height) {
+                    if (isPointInsideRect(pointX, pointY, 0, 0, width, barThickness)) {
 
-                    if ( isPointInsideRect(pointX, pointY,   0, 0, width, barThickness)) {
-
-                        go = true;
-                        direction = Graphics.TOP;
-
+                        dragVelocityY = 200;
                     }
-                    else if ( isPointInsideRect(pointX, pointY,   0,height-barThickness, width, barThickness)) {
+                    else if (isPointInsideRect(pointX, pointY, 0, height-barThickness, width, barThickness)) {
 
-                        go = true;
-                        direction = Graphics.BOTTOM;
-
+                        dragVelocityY = -200;
                     }
-
                 }
 
-                if (go) {
-
-                    new Thread(this).start();
-
+                if (dragVelocityX != 0 || dragVelocityY != 0) {
+                    dragScrollBarMode = DRAG_CLICKED_ARROW;
                 }
-
             }
 
-
-
+            if (dragVelocityX != 0 || dragVelocityY != 0) {
+                setDragScrollPane(this);
+            }
         }
         else if (type == DesktopPane.DRAGGED) {
 
-            if (mode == MODE_SCROLLBARS && !go) {
-
-                if (direction==Graphics.RIGHT) { // vertical
-
-                    int newValue = getNewValue(
-                            viewX + viewWidth,
-                            viewY,
-                            width - viewX - viewWidth,
-                            viewHeight,
-                            scrollDrag,//viewY-getComponent().getY(),
-                            viewHeight,
-                            getView().getHeight(),
-
-                            pointY-scrollStart
-                    );
-
-                    makeVisible( getViewPortX()-getView().getX() , newValue ,viewWidth,viewHeight,false);
-
-                }
-                else if (direction==Graphics.BOTTOM) { // horizontal
-
-                    int newValue = getNewValue(
-                            viewY + viewHeight,
-                            viewX,
-                            height - viewY - viewHeight,
-                            viewWidth,
-                            scrollDrag,//viewX-getComponent().getX(),
-                            viewWidth,
-                            getView().getWidth(),
-
-                            pointX-scrollStart
-                    );
-
-                    makeVisible( newValue , getViewPortY()-getView().getY() ,viewWidth,viewHeight,false);
-                }
+            if (dragScrollBarMode == DRAG_SLIDER_HORZ) {
+                dragLastX = getNewValue(
+                        viewPortY + viewHeight,
+                        viewPortX,
+                        height - viewPortY - viewPortHeight,
+                        viewPortWidth,
+                        dragStartX,
+                        viewPortWidth,
+                        viewWidth,
+                        dragStartX-pointX
+                  );
+                dragScrollBars();
             }
+            else if (dragScrollBarMode == DRAG_SLIDER_VERT) {
 
+                dragLastY = getNewValue(
+                        viewPortX + viewWidth,
+                        viewPortY,
+                        width - viewPortX - viewPortWidth,
+                        viewPortHeight,
+                        dragStartY,
+                        viewPortHeight,
+                        viewHeight,
+                        dragStartY-pointY
+                  );
+
+                dragScrollBars();
+            }
+            else if (dragScrollBarMode == DRAG_NONE) {
+                dragLastX = pointX;
+                dragLastY = pointY;
+
+                dragFriction = 0;
+                dragScrollBars();
+            }
         }
         else if (type == DesktopPane.RELEASED) {
 
-            go = false;
-            direction = 0;
+            if (dragScrollBarMode == DRAG_NONE) {
+                dragVelocityX = getDragVelocity(dragBufferX);
+                dragVelocityY = getDragVelocity(dragBufferY);
 
+                System.out.println("SPEEDX = " + dragVelocityX + " SPEEDY = " + dragVelocityY);
+            } else {
+                // Stop animation...
+                dragVelocityX = 0;
+                dragVelocityY = 0;
+            }
+
+            dragFriction = 1000;
+            setDragScrollPane(this);
+
+            // Reset drag speed (0 is a very "old" time)
+            updateDragSpeed(pointX, pointY, 0);
+        }
+    }
+
+    private boolean dragScrollBars() {
+        boolean res = false;
+        int viewY = getView().getY();
+        int viewX = getView().getX();
+        int cX = getViewPortX() - viewX;
+        int cY = getViewPortY() - viewY;
+        int cW = getView().getWidth();
+        int cH = getView().getHeight();
+
+        int viewPortHeight = getViewPortHeight();
+        int viewPortWidth = getViewPortWidth(viewPortHeight);
+
+        boolean forceBound = (dragScrollBarMode != DRAG_NONE ||
+                             (ScrollPane.dragScrollPane != null && ScrollPane.dragScrollPane != this));
+
+        if (cW > viewPortWidth) {
+            int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
+                                          dragStartX, dragLastX, dragStartViewX,
+                                          cX, cW, viewX, viewPortWidth);
+            cX = newPosX[0];
+            dragLastX = newPosX[1];
+            dragVelocityX = newPosX[2];
+            res |= (newPosX[3] != 0);
         }
 
+        if (cH > viewPortHeight) {
+            int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
+                                          dragStartY, dragLastY, dragStartViewY,
+                                          cY, cH, viewY, viewPortHeight);
+            cY = newPosY[0];
+            dragLastY = newPosY[1];
+            dragVelocityY = newPosY[2];
+            res |= (newPosY[3] != 0);
+        }
+
+        makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
+
+        return res;
+    }
+
+    private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
+                                int dragStartY, int dragLastY, int dragStartViewY,
+                                int cY, int cH, int viewY, int viewPortHeight) {
+
+        int diffBottomY = cY  - cH + viewPortHeight;
+
+        boolean springBack = (dragVelocityY == 0 && dragFriction != 0);
+        if (springBack) {
+            if (cY <= 0) {
+                dragLastY = dragStartY - dragStartViewY;
+            }
+            else if (diffBottomY >= 0) {
+                dragLastY = dragStartY - dragStartViewY + (viewPortHeight - cH);
+            }
+        }
+
+        if (dragVelocityY != 0) {
+            // Friction is always opposite to velocity, and never changes its direction
+            int velocityInc = dragFriction / DRAG_FRAME_RATE;
+            if (Math.abs(dragVelocityY) < velocityInc) {
+                dragVelocityY = 0;
+            }
+            else if (dragVelocityY > 0) {
+                dragVelocityY -= velocityInc;
+            }
+            else if (dragVelocityY < 0) {
+                dragVelocityY += velocityInc;
+            }
+
+            dragLastY += (dragVelocityY / DRAG_FRAME_RATE);
+        }
+
+        final int SPRING_MAX = (viewPortHeight / 8);
+
+        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - viewY);
+
+        if (springBack) {
+            int jumpInc = (-cY >= SPRING_MAX  || diffBottomY >= SPRING_MAX) ? 5 * SPRING_MAX : SPRING_MAX;
+            jumpInc = Math.max(1, jumpInc / DRAG_FRAME_RATE);
+            if (jumpY  > jumpInc) {
+                jumpY = jumpInc;
+            }
+            else if (jumpY < -jumpInc) {
+                jumpY = -jumpInc;
+            }
+        }
+
+        if (jumpY != 0 || bound) {
+            cY += jumpY;
+            diffBottomY += jumpY;
+
+            if (!springBack) {
+                if (cY <= 0) {
+                    if (bound) {
+                        jumpY = 0;
+                        cY = 0;
+                    }
+                    else if (dragVelocityY != 0 && -cY >= 2 * SPRING_MAX) {
+                        dragVelocityY = 0;
+                        cY = -SPRING_MAX;
+                    }
+                    else {
+                        cY = cY / 2;
+                    }
+                }
+                else if (diffBottomY >= 0) {
+                    if (bound) {
+                        jumpY = 0;
+                        cY -= diffBottomY;
+                    }
+                    else if (dragVelocityY != 0 && diffBottomY >= 2 * SPRING_MAX) {
+                        dragVelocityY = 0;
+                        cY -= diffBottomY - SPRING_MAX;
+                    }
+                    else {
+                        cY -= diffBottomY / 2;
+                    }
+                }
+            }
+        }
+
+        return new int[] {cY, dragLastY, dragVelocityY, jumpY};
     }
 
     private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
@@ -909,44 +1175,4 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
         return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
     }
-
-    private int scrollDrag;
-    private int scrollStart;
-
-    private int direction;
-    private boolean go;
-    private int jump;
-
-    // this can also be done by kidnapping the animation thread
-    // and then giving it back when it is not needed any more
-    public void run() {
-
-        while (go) {
-
-            int cX = getViewPortX()-getView().getX();
-            int cY = getViewPortY()-getView().getY();
-            int viewHeight=getViewPortHeight();
-            int viewWidth=getViewPortWidth(viewHeight);
-
-            switch(direction) {
-
-                case Graphics.TOP: cY=cY-jump; break;
-                case Graphics.BOTTOM: cY=cY+jump; break;
-                case Graphics.LEFT: cX=cX-jump; break;
-                case Graphics.RIGHT: cX=cX+jump; break;
-
-            }
-
-            makeVisible(cX,cY,viewWidth,viewHeight,false);
-
-            synchronized (this) {
-                try {
-                    wait( (long) 100);
-                }
-                catch(InterruptedException e) {}
-            }
-
-        }
-    }
-
 }

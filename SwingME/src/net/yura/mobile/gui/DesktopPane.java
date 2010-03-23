@@ -1005,6 +1005,10 @@ public class DesktopPane extends Canvas implements Runnable {
     public static final int PRESSED = 1;
     public static final int RELEASED = 2;
     private Component pointerComponent;
+    private ScrollPane pointerScrollPane;
+    private int pointerFristX;
+    private int pointerFristY;
+
 
     public void pointerDragged(int x, int y) {
         pointerEvent(DRAGGED, x, y);
@@ -1018,28 +1022,76 @@ public class DesktopPane extends Canvas implements Runnable {
         pointerEvent(RELEASED, x, y);
     }
 
+    private ScrollPane getScrollPaneParent(Component comp) {
+        Component parent = comp;
+        while (parent != null) {
+            if (parent instanceof ScrollPane) {
+                return (ScrollPane) parent;
+            }
+            parent = parent.getParent();
+        }
+
+        return null;
+    }
+
     private void pointerEvent(int type, int x, int y) {
         try {
             if (currentWindow != null && currentWindow == windows.lastElement()) {
+
+                // When pointer pressed, initialize pointer Component/ScrollPane
                 if (type == PRESSED) {
                     pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
-                }
-                if (pointerComponent != null) {
-/*
-                    if (type == DRAGGED) {
-                        ScrollPane scrollpaneParent = pointerComponent.getScrollPane();
-                        if (!pointerComponent.consumsDragging() && scrollpaneParent!=null && hasSomewhereToScroll) {
-                            // if (check its dragged more then 5px) {
 
-                                // find scrollpane parent
-                                pointerComponent = scrollpaneParent;
-                            //}
+                    ScrollPane sp = getScrollPaneParent(pointerComponent);
+                    if (sp != null) {
+                        if (sp.getViewPortHeight() < sp.getView().getHeight() ||
+                            sp.getViewPortWidth() < sp.getView().getWidth()) {
+
+                            pointerScrollPane = sp;
+
+                            if (pointerComponent == sp) {
+                                pointerComponent = null;
+                            }
                         }
                     }
-*/
-                    pointerComponent.processMouseEvent(type, x - pointerComponent.getXOnScreen(), y - pointerComponent.getYOnScreen(), keypad);
+
+                    pointerFristX = x;
+                    pointerFristY = y;
                 }
+
+                // Start forwarding events to pointer ScrollPane?
+                if (pointerComponent != null) {
+                    if (type == DRAGGED && pointerScrollPane != null) {
+                        // check its dragged more then 5px
+                        if (Math.abs(pointerFristX - x) > 5 ||
+                            Math.abs(pointerFristY - y) > 5) {
+
+                            pointerComponent = null;
+                        }
+                     }
+                }
+
+                // Handle events for pointer component
+               if (pointerComponent != null) {
+                        int pcX = x - pointerComponent.getXOnScreen();
+                        int pcY = y - pointerComponent.getYOnScreen();
+                        pointerComponent.processMouseEvent(type, pcX, pcY, keypad);
+                    }
+
+                // Handle events for pointer ScrollPane
+                if (pointerScrollPane != null) {
+                    if (type == PRESSED || type == RELEASED ||
+                       (type == DRAGGED && pointerComponent == null)) {
+
+                        int spX = x - pointerScrollPane.getXOnScreen();
+                        int spY = y - pointerScrollPane.getYOnScreen();
+                        pointerScrollPane.processMouseEvent(type, spX, spY, keypad);
+                    }
+                }
+
+                // When pointer released, reset pointer Component/ScrollPane
                 if (type == RELEASED) {
+                    pointerScrollPane = null;
                     pointerComponent = null;
                 }
             }
@@ -1055,7 +1107,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         showHideToolTip(type == PRESSED);
     }
-    
+
     private void showHideToolTip(boolean show) {
 
         Component focusedComponent;
