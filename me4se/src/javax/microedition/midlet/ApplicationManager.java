@@ -923,15 +923,18 @@ public class ApplicationManager {
     }
   }
 
-  /** Destruction requested "externally" or by midlet */
-
+/**
+ * Destruction requested "externally" or by midlet
+ * @param notifyMIDlet - should the midlet be told
+ * @param killAll - true if the event comes from the [x] in the window, and signals Everything must be closed
+ */
   public void destroy(boolean notifyMIDlet, boolean killAll) {
       //System.out.println("[ME4SE] destroy(notifyMIDlet="+notifyMIDlet+",killAll="+killAll+")");
     // imageCache = new Hashtable();
 
-    ApplicationManager manager = ApplicationManager.manager;
+    //ApplicationManager manager = ApplicationManager.manager;
 
-    String activeName = active == null ? "" : manager.active.getClass()
+    String activeName = active == null ? "" : active.getClass()
         .getName();
 
     if (notifyMIDlet && active != null) {
@@ -947,19 +950,21 @@ public class ApplicationManager {
 
     // stop pending sounds
 
-    for (int i = manager.activePlayers.size() - 1; i >= 0; i--) {
-      ((Player) manager.activePlayers.elementAt(i)).close();
+    for (int i = activePlayers.size() - 1; i >= 0; i--) {
+      ((Player) activePlayers.elementAt(i)).close();
     }
 
     // Try to fall back to something
 
-    int midletCount = manager.jadFile.getMIDletCount();
+    int midletCount = jadFile.getMIDletCount();
 
     try {
-      if ((midletCount > 1 || applet != null)
+        // first we need to check if we are not part of a multi-midlet
+        // jar and need to go back to the midlet choice menu
+      if ((midletCount > 1 || applet != null) && !killAll
           && !activeName.equals("org.me4se.impl.MIDletChooser")) {
-        manager.launch(manager.jadFile, 0);
-      } else if (killAll) {
+        launch(jadFile, 0);
+      } else {
         active = null;
         org.me4se.System.exit(0);
       }
