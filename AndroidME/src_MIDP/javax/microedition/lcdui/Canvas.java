@@ -40,7 +40,7 @@ public abstract class Canvas extends Displayable {
     private Bitmap graphicsBitmap;
 
     protected Canvas() {
-        this.canvasView = new CanvasView((AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet()).getActivity());
+        this.canvasView = new CanvasView(AndroidMeMIDlet.DEFAULT_ACTIVITY);
     }
 
     public void setFullScreenMode(boolean fullScreen) {
@@ -81,7 +81,7 @@ public abstract class Canvas extends Displayable {
 
     public void repaint(int x, int y, int w, int h) {
         if (this.canvasView != null) {
-            this.canvasView.postInvalidate(x, y, x + w, y + h);
+            this.canvasView.postInvalidate();
         }
     }
 
