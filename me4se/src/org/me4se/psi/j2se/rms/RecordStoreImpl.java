@@ -197,6 +197,11 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 				}
 				dis.close();
 			} catch (Exception ioe) {
+                                // file not found is ok here
+                            // as the create boolean handles that
+                                if (!(ioe instanceof FileNotFoundException)) {
+                                    ioe.printStackTrace();
+                                }
 
 				if (!create) {
 					refCount = 0;

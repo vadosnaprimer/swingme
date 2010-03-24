@@ -926,7 +926,7 @@ public class ApplicationManager {
   /** Destruction requested "externally" or by midlet */
 
   public void destroy(boolean notifyMIDlet, boolean killAll) {
-
+      //System.out.println("[ME4SE] destroy(notifyMIDlet="+notifyMIDlet+",killAll="+killAll+")");
     // imageCache = new Hashtable();
 
     ApplicationManager manager = ApplicationManager.manager;

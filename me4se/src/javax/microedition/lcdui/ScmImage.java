@@ -26,7 +26,7 @@ class ScmImage extends ScmDeviceComponent {
     this.layout = layout;
     // if the appereance mode is set to button or hyperlik, 
     // lets make the ImageItem selectable. Otherwise not.
-    if (item.appearanceMode == Item.BUTTON || item.appearanceMode == Item.HYPERLINK) {
+    if (item!=null && (item.appearanceMode == Item.BUTTON || item.appearanceMode == Item.HYPERLINK)) {
       setFocusable(true);  
     }
   }
