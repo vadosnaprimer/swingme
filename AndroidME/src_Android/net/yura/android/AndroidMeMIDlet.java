@@ -126,9 +126,17 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         System.setProperty("microedition.profiles", "MIDP-2.0");
 
         try {
-            InputStream is = getAssets().open("BadooMobile.jad");
-            properties.load(is);
+            String[] assetList = getResources().getAssets().list("");
+            for (int i = 0; i < assetList.length; i++) {
+                System.out.println("> > >" + assetList[i]);
+                if (assetList[i].endsWith(".jad")) {
+                    System.out.println("Found a Jad File: " + assetList[i]);
 
+                    InputStream is = getAssets().open(assetList[i]);
+                    properties.load(is);
+                    break;
+                }
+            }
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -147,7 +155,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
             while (true) {
                 count++;
                 String midletProp = properties.getProperty("MIDlet-" + count);
-                System.out.println(">>>>>>>>> ----------- " + midletProp);
+                System.out.println("Found MIDlet: " + midletProp);
                 if (midletProp == null) {
                     break;
                 }
