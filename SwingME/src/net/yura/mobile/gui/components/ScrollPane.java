@@ -148,7 +148,7 @@ public class ScrollPane extends Panel implements Runnable {
         return makeVisible(x, y, w, h, smartscroll, true);
     }
 
-    public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll, boolean bond) {
+    private boolean makeVisible(int x,int y,int w,int h,boolean smartscroll, boolean bond) {
 
         Component component = getView();
         int oldX = component.getX();
@@ -705,12 +705,12 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
      */
     public Component getComponentAt(int x, int y) {
 
-        int viewX=getViewPortX();
-        int viewY=getViewPortY();
-        int viewHeight=getViewPortHeight();
-        int viewWidth=getViewPortWidth(viewHeight);
+        int viewPortX=getViewPortX();
+        int viewYPortY=getViewPortY();
+        int viewPortHeight=getViewPortHeight();
+        int viewPortWidth=getViewPortWidth(viewPortHeight);
 
-        if (isPointInsideRect(x,y,viewX,viewY,viewWidth,viewHeight)) {
+        if (isPointInsideRect(x,y,viewPortX,viewYPortY,viewPortWidth,viewPortHeight)) {
 
             return super.getComponentAt(x,y);
         }
@@ -1047,10 +1047,10 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
     private boolean dragScrollBars() {
         boolean res = false;
-        int viewY = getView().getY();
-        int viewX = getView().getX();
-        int cX = getViewPortX() - viewX;
-        int cY = getViewPortY() - viewY;
+        int viewPortX = getViewPortX();
+        int viewPortY = getViewPortY();
+        int cX = getView().getX() - viewPortX;
+        int cY = getView().getY() - viewPortY;
         int cW = getView().getWidth();
         int cH = getView().getHeight();
 
@@ -1063,7 +1063,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         if (cW > viewPortWidth) {
             int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
                                           dragStartX, dragLastX, dragStartViewX,
-                                          cX, cW, viewX, viewPortWidth);
+                                          cX, cW, viewPortX, viewPortWidth);
             cX = newPosX[0];
             dragLastX = newPosX[1];
             dragVelocityX = newPosX[2];
@@ -1073,7 +1073,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         if (cH > viewPortHeight) {
             int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
                                           dragStartY, dragLastY, dragStartViewY,
-                                          cY, cH, viewY, viewPortHeight);
+                                          cY, cH, viewPortY, viewPortHeight);
             cY = newPosY[0];
             dragLastY = newPosY[1];
             dragVelocityY = newPosY[2];
@@ -1087,17 +1087,17 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
     private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
                                 int dragStartY, int dragLastY, int dragStartViewY,
-                                int cY, int cH, int viewY, int viewPortHeight) {
+                                int cY, int cH, int viewPortY, int viewPortHeight) {
 
-        int diffBottomY = cY  - cH + viewPortHeight;
+        int diffBottomY =  viewPortHeight - cY - cH;
 
         boolean springBack = (dragVelocityY == 0 && dragFriction != 0);
         if (springBack) {
-            if (cY <= 0) {
-                dragLastY = dragStartY - dragStartViewY;
+            if (cY >= 0) {
+                dragLastY = dragStartY - dragStartViewY + viewPortY;
             }
             else if (diffBottomY >= 0) {
-                dragLastY = dragStartY - dragStartViewY + (viewPortHeight - cH);
+                dragLastY = dragStartY - dragStartViewY + (viewPortHeight - cH) + viewPortY;
             }
         }
 
@@ -1119,10 +1119,10 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
         final int SPRING_MAX = (viewPortHeight / 8);
 
-        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - viewY);
+        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - (cY + viewPortY));
 
         if (springBack) {
-            int jumpInc = (-cY >= SPRING_MAX  || diffBottomY >= SPRING_MAX) ? 5 * SPRING_MAX : SPRING_MAX;
+            int jumpInc = (cY >= SPRING_MAX || diffBottomY >= SPRING_MAX) ? 5 * SPRING_MAX : SPRING_MAX;
             jumpInc = Math.max(1, jumpInc / DRAG_FRAME_RATE);
             if (jumpY  > jumpInc) {
                 jumpY = jumpInc;
@@ -1133,18 +1133,19 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         }
 
         if (jumpY != 0 || bound) {
-            cY += jumpY;
+
+            cY -= jumpY;
             diffBottomY += jumpY;
 
             if (!springBack) {
-                if (cY <= 0) {
+                if (cY >= 0) {
                     if (bound) {
                         jumpY = 0;
                         cY = 0;
                     }
-                    else if (dragVelocityY != 0 && -cY >= 2 * SPRING_MAX) {
+                    else if (dragVelocityY != 0 && cY >= 2 * SPRING_MAX) {
                         dragVelocityY = 0;
-                        cY = -SPRING_MAX;
+                        cY = SPRING_MAX;
                     }
                     else {
                         cY = cY / 2;
@@ -1153,20 +1154,20 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                 else if (diffBottomY >= 0) {
                     if (bound) {
                         jumpY = 0;
-                        cY -= diffBottomY;
+                        cY += diffBottomY;
                     }
                     else if (dragVelocityY != 0 && diffBottomY >= 2 * SPRING_MAX) {
                         dragVelocityY = 0;
-                        cY -= diffBottomY - SPRING_MAX;
+                        cY += diffBottomY - SPRING_MAX;
                     }
                     else {
-                        cY -= diffBottomY / 2;
+                        cY += diffBottomY / 2;
                     }
                 }
             }
         }
 
-        return new int[] {cY, dragLastY, dragVelocityY, jumpY};
+        return new int[] {-cY, dragLastY, dragVelocityY, jumpY};
     }
 
     private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
