@@ -805,7 +805,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
     }
 
     private synchronized static void setDragScrollPane(ScrollPane dragScrollPane) {
-        boolean startThread = (ScrollPane.dragScrollPane == null && dragScrollPane != null);
+        boolean startThread = (ScrollPane.dragScrollPane != dragScrollPane);
 
         ScrollPane.dragScrollPane = dragScrollPane;
 
