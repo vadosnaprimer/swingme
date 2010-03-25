@@ -80,20 +80,16 @@ public abstract class Canvas extends Displayable {
     }
 
     public void repaint(int x, int y, int w, int h) {
-        if (this.canvasView != null) {
-            this.canvasView.postInvalidate();
-        }
+        repaint();
     }
 
-    public void repaint() {
+    public synchronized void repaint() {
         if (this.canvasView != null) {
             this.canvasView.postInvalidate();
         }
     }
 
     protected void keyPressed(int keyCode) {
-        System.out.println(keyCode);
-        this.repaint();
     }
 
     protected void keyReleased(int keyCode) {
@@ -144,7 +140,7 @@ public abstract class Canvas extends Displayable {
     }
 
     private class CanvasView extends View {
-        javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());;
+        javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());
 
         public CanvasView(Context context) {
             super(context);
@@ -161,10 +157,10 @@ public abstract class Canvas extends Displayable {
             // If Possible, try to not use more than 50% on CPU time on painting...
             long elapsed = System.currentTimeMillis() - time;
 
-            if (elapsed < 50) {
+            if (elapsed < 10) {
                 try {
                     System.out.println("paint: elapsed " + elapsed);
-                    Thread.sleep(50);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                 }
             }
@@ -187,8 +183,10 @@ public abstract class Canvas extends Displayable {
 
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }
-
-            graphics.translate(-graphics.getTranslateX(), -graphics.getTranslateY());
+            else {
+                graphics.translate(-graphics.getTranslateX(), -graphics.getTranslateY());
+                graphics.clipRect(0, 0, graphicsBitmap.getWidth(), graphicsBitmap.getHeight());
+            }
 
             paint(graphics);
             androidCanvas.drawBitmap(graphicsBitmap, 0, 0, null);
