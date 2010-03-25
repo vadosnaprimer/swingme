@@ -183,10 +183,8 @@ public abstract class Canvas extends Displayable {
 
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }
-            else {
-                graphics.translate(-graphics.getTranslateX(), -graphics.getTranslateY());
-                graphics.clipRect(0, 0, graphicsBitmap.getWidth(), graphicsBitmap.getHeight());
-            }
+
+            graphics.reset();
 
             paint(graphics);
             androidCanvas.drawBitmap(graphicsBitmap, 0, 0, null);
