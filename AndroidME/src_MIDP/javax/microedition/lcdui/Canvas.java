@@ -153,8 +153,22 @@ public abstract class Canvas extends Displayable {
             setFocusableInTouchMode(true);
         }
 
+        long time = System.currentTimeMillis();
+
         @Override
         protected void onDraw(android.graphics.Canvas androidCanvas) {
+
+            // If Possible, try to not use more than 50% on CPU time on painting...
+            long elapsed = System.currentTimeMillis() - time;
+
+            if (elapsed < 50) {
+                try {
+                    System.out.println("paint: elapsed " + elapsed);
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                }
+            }
+
             if (graphicsBitmap != null && androidCanvas != null) {
 
                 // Check for size changes...
@@ -178,6 +192,8 @@ public abstract class Canvas extends Displayable {
 
             paint(graphics);
             androidCanvas.drawBitmap(graphicsBitmap, 0, 0, null);
+
+            time = System.currentTimeMillis();
         }
 
         @Override

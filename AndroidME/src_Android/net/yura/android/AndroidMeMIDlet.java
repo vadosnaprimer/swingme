@@ -33,6 +33,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     private MIDlet midlet;
     private Vector<String[]> jadMidlets;
     private View defaultView;
+    private View waitingView;
     private Handler handler;
     private Thread eventThread;
     private Object lock = new Object();
@@ -80,34 +81,50 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         this.handler = new Handler();
         this.eventThread = Thread.currentThread();
 
-        View splash = this.getLayoutInflater().inflate(R.layout.main, null,    false);
-        this.defaultView = splash;
-        setContentView(splash);
+        showWaitingView(false);
 
 //        PrintStream log = new PrintStream(new LogOutputStream("AndroidMe"));
 //        System.setErr(log);
 //        System.setOut(log);
     }
 
+    private void showContentView(final View view) {
+        invokeAndWait(new Runnable() {
+            public void run() {
+                if (defaultView != view) {
+                    setContentView(view);
+                }
+            }
+        });
+        this.defaultView = view;
+    }
+
+    private void showWaitingView(boolean wait) {
+        if (waitingView == null) {
+            waitingView = this.getLayoutInflater().inflate(R.layout.main, null, false);
+        }
+
+        showContentView(waitingView);
+
+        if (wait) {
+            while (defaultView.getWidth() == 0) {
+                try {
+                    System.out.println("Waiting for view...");
+                    Thread.sleep(100);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void startMIDlet(final String midletClassName) {
         Thread thread = new Thread() {
             public void run() {
-                while (defaultView.getWidth() == 0) {
-                    try {
-                        System.out.println("Waiting for view...");
-                        Thread.sleep(100);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-
                 try {
                     MIDlet midlet = createMIDlet(midletClassName);
                     AndroidMeMIDlet.this.midlet = midlet;
 
-                    if (midlet != null) {
-                        midlet.doStartApp();
-                    }
                 } catch (Throwable ex) {
                     ex.printStackTrace();
                 }
@@ -118,6 +135,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     }
 
     private MIDlet createMIDlet(String midletClassName) {
+        showWaitingView(false);
 
         Properties properties = new Properties();
         System.setProperty("microedition.platform", "microemulator-android");
@@ -189,31 +207,37 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
 
                 listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listValues));
 
-                this.defaultView = listView;
-                invokeAndWait(new Runnable() {
-                    public void run() {
-                        setContentView(defaultView);
-                    }
-                });
+                showContentView(listView);
             }
         }
 
-        MIDlet midlet = null;
+
         if (midletClassName != null) {
+            showWaitingView(true);
+
             // create a new class loader that correctly handles getResourceAsStream!
-            ClassLoader classLoader = this.getClassLoader();
+            final ClassLoader classLoader = this.getClassLoader();
 
             MIDlet.DEFAULT_ACTIVITY = this;
             MIDlet.DEFAULT_TOOLKIT = this;
             MIDlet.DEFAULT_APPLICATION_PROPERTIES = properties;
 
-            try {
-                Class midletClass = Class.forName(midletClassName, true, classLoader);
-                midlet = (MIDlet) midletClass.newInstance();
-            } catch (Exception ex) {
-                throw new RuntimeException("unable to load class "
-                        + midletClassName, ex);
-            }
+            final String className = midletClassName;
+            invokeAndWait(new Runnable() {
+                public void run() {
+                    try {
+                        Class midletClass = Class.forName(className, true, classLoader);
+                        midlet = (MIDlet) midletClass.newInstance();
+
+                        if (midlet != null) {
+                            midlet.doStartApp();
+                        }
+                    } catch (Exception ex) {
+                        throw new RuntimeException("unable to load class "
+                                + className, ex);
+                    }
+                }
+            });
         }
 
         return midlet;
