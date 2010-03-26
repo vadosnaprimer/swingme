@@ -204,9 +204,21 @@ public class ScmContainer extends ScmComponent {
     }
 
     public boolean mousePressed(int button, int x, int y, int mask) {
-        ScmComponent c = getComponentAt(x, y);
-        return (c != null)
-            ? c.mousePressed(button, x - c.x, y - c.y, mask)
+        //ScmComponent c = getComponentAt(x, y);
+
+        // YURA change: moved from mouseMoved to here
+        ScmComponent newOwner = getComponentAt(x, y);
+
+        if (newOwner != mouseOwner) {
+            if (mouseOwner != null)
+                mouseOwner.mouseExited();
+            if (newOwner != null)
+                newOwner.mouseEntered();
+            mouseOwner = newOwner;
+        }
+
+        return (mouseOwner != null)
+            ? mouseOwner.mousePressed(button, x - mouseOwner.x, y - mouseOwner.y, mask)
             : false;
     }
 
@@ -219,17 +231,6 @@ public class ScmContainer extends ScmComponent {
 
     public boolean mouseMoved(int x, int y, int mask) {
         //("mm " + x + "," + y);
-
-        ScmComponent newOwner = getComponentAt(x, y);
-
-        if (newOwner != mouseOwner) {
-            if (mouseOwner != null)
-                mouseOwner.mouseExited();
-            if (newOwner != null)
-                newOwner.mouseEntered();
-            mouseOwner = newOwner;
-        }
-
         return mouseOwner != null
             ? mouseOwner.mouseMoved(x - mouseOwner.x, y - mouseOwner.y, mask)
             : false;
