@@ -3,7 +3,7 @@
     <type>org.netbeans.modules.java.j2seproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/j2se-project/3">
-            <name>UtilMEGen</name>
+            <name>ToolsME</name>
             <source-roots>
                 <root id="src.res.dir"/>
                 <root id="src.dir"/>
