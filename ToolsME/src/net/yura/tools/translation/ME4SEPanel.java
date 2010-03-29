@@ -3,10 +3,16 @@ package net.yura.tools.translation;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import javax.microedition.midlet.ApplicationManager;
+import javax.swing.JComponent;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import org.me4se.JadFile;
 
@@ -37,6 +43,22 @@ public class ME4SEPanel extends Container {
 
         // todo find this from a better place
         desktop.setLookAndFeel( new MetalLookAndFeel() );
+
+        final java.awt.Component comp = getComponents()[0];
+
+        comp.addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent e) {
+                // nothing
+            }
+            public void mouseMoved(MouseEvent e) {
+                Window w = desktop.getSelectedFrame();
+                Component c = w.getComponentAt(-w.getX()+e.getX(), -w.getY()+e.getY());
+                if (c!=null) {
+                    System.out.println("c "+c.getName());
+                }
+            }
+        });
+
     }
 
     public void add(Panel panel) {
@@ -71,5 +93,4 @@ public class ME4SEPanel extends Container {
         }
         return d;
     }
-
 }

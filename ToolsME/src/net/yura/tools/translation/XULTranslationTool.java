@@ -10,6 +10,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
+import javax.swing.ToolTipManager;
 import javax.swing.event.TreeSelectionEvent;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
@@ -40,6 +41,7 @@ public class XULTranslationTool extends MessageTool {
 
         // this is needed as ME4SE uses AWT and not Swing
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+        //ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
         XULTranslationTool tt = new XULTranslationTool();
 
@@ -118,14 +120,16 @@ public class XULTranslationTool extends MessageTool {
 
         try {
 
-            tt.control.setBaseXULDir( new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res") );
+            String badooHome = "E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk/";
 
-            LookAndFeel plaf = PLAFLoader.loadSynth(new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res"),
-                                                    new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res/xml/synth.xml"));
+            tt.control.setBaseXULDir( new File(badooHome+"res") );
+
+            LookAndFeel plaf = PLAFLoader.loadSynth(new File(badooHome+"res"),
+                                                    new File(badooHome+"res/xml/synth.xml"));
             tt.control.setLookAndFeel(plaf);
 
             PropertiesComm conn = new PropertiesComm();
-            conn.load( new File("E:/My_World/6_Yura/linuxhome/BadooMobile/res_en/messages_en.txt") );
+            conn.load( new File(badooHome+"res_en/messages_en.txt") );
             tt.load(conn);
 
         }
