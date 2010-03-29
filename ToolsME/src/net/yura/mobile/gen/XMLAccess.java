@@ -33,7 +33,7 @@ public class XMLAccess extends XMLUtil {
             serializer.attribute(null,"name", object.getName() );
         }
         if (object.getImage()!=null) {
-            serializer.attribute(null,"image", new String( org.bouncycastle.util.encoders.Base64.encode( object.getImage() ) ) );
+            //serializer.attribute(null,"image", new String( org.bouncycastle.util.encoders.Base64.encode( object.getImage() ) ) );
         }
         serializer.attribute(null,"lastUpdated", String.valueOf( object.getLastUpdated() ) );
         serializer.attribute(null,"things", String.valueOf( object.getThings() ) );
@@ -91,7 +91,7 @@ public class XMLAccess extends XMLUtil {
                 object.setName(value);
             }
             else if ("image".equals(key)) {
-                object.setImage( org.bouncycastle.util.encoders.Base64.decode(value) );
+                //object.setImage( org.bouncycastle.util.encoders.Base64.decode(value) );
             }
             else if ("lastUpdated".equals(key)) {
                 object.setLastUpdated( Long.parseLong( value ) );

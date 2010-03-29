@@ -81,7 +81,7 @@ public class JSONAccess extends JSONUtil {
         {
             byte[] bytes = object.getImage();
             if (bytes!=null) {
-                serializer.value( new String(org.bouncycastle.util.encoders.Base64.encode(bytes)) );
+                //serializer.value( new String(org.bouncycastle.util.encoders.Base64.encode(bytes)) );
             }
             else {
                 serializer.nullValue();
@@ -200,7 +200,7 @@ public class JSONAccess extends JSONUtil {
             }
             else if ("image".equals(key)) {
                 if (!tokener.nextNull()) {
-                    object.setImage( org.bouncycastle.util.encoders.Base64.decode( tokener.nextString() ) );
+                    //object.setImage( org.bouncycastle.util.encoders.Base64.decode( tokener.nextString() ) );
                 }
             }
             else if ("isAlive".equals(key)) {
