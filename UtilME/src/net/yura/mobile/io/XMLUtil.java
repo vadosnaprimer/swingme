@@ -9,6 +9,7 @@ import org.kxml2.io.KXmlParser;
 import org.kxml2.io.KXmlSerializer;
 import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -44,7 +45,7 @@ public class XMLUtil {
             throw ex;
         }
         catch(Exception ex) { // other exceptions here are just IOException really
-            ex.printStackTrace();
+            Logger.report(ex);
             throw new IOException(ex.toString());
         }
     }

@@ -1,6 +1,7 @@
 package net.yura.mobile.util;
 
 import java.util.Vector;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Kat
@@ -45,7 +46,7 @@ public abstract class QueueProcessorThread extends Thread {
                                         wait();
                                     }
                                     catch (InterruptedException ex) {
-                                        ex.printStackTrace();
+                                      Logger.report(ex);
                                     }
                             }
                             object = inbox.elementAt(0);
@@ -63,17 +64,15 @@ public abstract class QueueProcessorThread extends Thread {
 
                 }
                 catch (Exception ex) {
-                    ex.printStackTrace();
-                    //DesktopPane.log(getName()+" "+ex.toString());
+                    Logger.report(ex);
                 }
 
             }
 
         }
         catch (Throwable t){
-            t.printStackTrace();
+           Logger.report(t);
         }
-
     }
 
     public void addToInbox(Object obj) {

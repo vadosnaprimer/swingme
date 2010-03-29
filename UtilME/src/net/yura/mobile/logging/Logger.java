@@ -163,6 +163,20 @@ public final class Logger {
         return str;
     }
 //#enddebug
+
+    public static synchronized final void report(Throwable t)
+    {
+      t.printStackTrace();
+      if(exceptionListener!=null)
+        exceptionListener.exceptionThrown(t);
+    }
+
+  private static ExceptionListener exceptionListener;
+
+  public static void setExceptionListener(ExceptionListener listener)
+  {
+    exceptionListener = listener;
+  }
 }
 
 

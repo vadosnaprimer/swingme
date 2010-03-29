@@ -62,7 +62,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug
-			e.printStackTrace();
+//# 			e.printStackTrace();
 		}
     return false;
 	}
@@ -79,7 +79,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug
-			e.printStackTrace();
+//# 			e.printStackTrace();
 		}
     return null;
 	}
@@ -100,7 +100,7 @@ public class CallStack
 		catch(Exception e)
 		{
 			//#debug
-			e.printStackTrace();
+//# 			e.printStackTrace();
 		}
   }
 
@@ -115,7 +115,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug
-			e.printStackTrace();
+//# 			e.printStackTrace();
 		}
 	}
 
@@ -130,22 +130,6 @@ public class CallStack
 	{
 		return getCallStack().stacktrace.toByteArray();
 	}
-
-  public static void saveStacktrace(String dir)
-  {
-    try
-    {
-      FileConnection file = (FileConnection)Connector.open(dir + System.currentTimeMillis() + ".tra", Connector.WRITE);
-      file.create();
-      file.openOutputStream().write(getStacktrace());
-      file.close();
-    }
-    catch(IOException e)
-    {
-      //#debug
-      e.printStackTrace();
-    }
-  }
 
 	private static CallStack getCallStack()
 	{
@@ -245,7 +229,7 @@ public class CallStack
     catch(IOException e)
     {
       //#debug
-      e.printStackTrace();
+//#       e.printStackTrace();
     }
 	}
 
@@ -337,7 +321,7 @@ public class CallStack
 			catch(RecordStoreException e)
 			{
 				//#debug
-				e.printStackTrace();
+//# 				e.printStackTrace();
 			}
 		}
 	}
