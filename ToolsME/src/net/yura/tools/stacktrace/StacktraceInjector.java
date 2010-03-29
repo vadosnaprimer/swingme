@@ -55,16 +55,26 @@ public class StacktraceInjector extends Task {
   private final Set<String> pushMethods = new HashSet<String>();
   private int oldSize = 0, newSize = 0, injectedClasses = 0, totalMethods, injectedMethods;
 
+  public StacktraceInjector() {
+    log("StacktraceInjector v1.0");
+  }
+
   public void addFileSet(FileSet classFiles) {
     this.classFiles = classFiles;
   }
 
   public void setLineNumbers(boolean lineNumbers) {
     this.lineNumbers = lineNumbers;
+    if (lineNumbers) {
+      log("Line numbers enabled");
+    }
   }
 
   public void setArguments(boolean arguments) {
     this.arguments = arguments;
+    if (arguments) {
+      log("Arguments enabled");
+    }
   }
 
   public void setMethods(boolean methods) {
@@ -124,12 +134,9 @@ public class StacktraceInjector extends Task {
       InputStream inputStream = new FileInputStream(classFile);
       ClassReader reader = new ClassReader(inputStream);
       ClassWriter writer = new ClassWriter(reader, ClassWriter.COMPUTE_MAXS);
-      try
-      {
+      try {
         reader.accept(new PushMethodGenerator(writer), 0);
-      }
-      finally
-      {
+      } finally {
         inputStream.close();
       }
       byte[] b = writer.toByteArray();
@@ -144,7 +151,6 @@ public class StacktraceInjector extends Task {
       log(e, 0);
     }
   }
-
 //  private Set<String> getPushMethods() throws IOException {
 //    File classFile = new File(classFiles.getDir(), CALLSTACK_FILE);
 //    InputStream inputStream = new FileInputStream(classFile);
@@ -153,7 +159,6 @@ public class StacktraceInjector extends Task {
 //    inputStream.close();
 //    return pushMethods;
 //  }
-
   private final Method THROWING_METHOD = new Method();
 
   private class Method extends EmptyVisitor implements Opcodes {
@@ -333,6 +338,7 @@ public class StacktraceInjector extends Task {
         pushMethods.remove(desc);
       }
       return new MethodAdapter(super.visitMethod(access, name, desc, signature, exceptions)) {
+
         public void visitTableSwitchInsn(int min, int max, Label dflt, Label[] labels) {
 //          for (Iterator<String> i = pushMethods.iterator(); i.hasNext();) {
 //            Type[] args = Type.getArgumentTypes(desc);
