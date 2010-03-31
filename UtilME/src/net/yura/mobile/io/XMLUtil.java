@@ -45,7 +45,7 @@ public class XMLUtil {
             throw ex;
         }
         catch(Exception ex) { // other exceptions here are just IOException really
-            Logger.report(ex);
+            Logger.warn(ex);
             throw new IOException(ex.toString());
         }
     }

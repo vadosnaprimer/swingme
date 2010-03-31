@@ -1,182 +1,125 @@
 package net.yura.mobile.logging;
 
-import java.util.Vector;
-
 /**
  *
  * @author Orens
  *
  */
-public final class Logger {
-//#mdebug error
-    private static final int MAX_NUMBER_OF_ENTRIES = 100;
-    private static boolean STORE_LOG = true;
+public class Logger {
+    public final static int DEBUG = 0; //debug
+    public final static int INFO = 1; //info
+    public final static int WARN = 2; //warn
+    public final static int ERROR = 3; //error
+    public final static int FATAL = 4; //fatal
+    private static final String[] LEVEL_NAMES = {"debug", "info", "warn", "error"};
+    private static Logger logger = new Logger();
+    private static int level;
 
-    private final static int OFF = 99;
-    private final static int TRACE = 0;
-    private final static int DEBUG = 1;
-    private final static int INFO = 2;
-    private final static int WARNING = 3;
-    private final static int ERROR = 4;
-
-    private static String NEW_SESSION_STR = "New Session";
-    private static final String[] LEVEL_NAMES = {"TRACE", "DEBUG", "INFO", "WARNING", "ERROR"};
-    private static long _startTime = System.currentTimeMillis();
-    private static Logger _logger;
-    private Vector _messageContainer;
-    private static int printLevel = TRACE;
-
-
-    // If like to see the class name in log printing, switch to true:
-    private final static boolean PRINT_CLASS_NAME = true;
-
-    /**
-     * Static initialiser
-     */
-    static {
-        _logger = new Logger();
-        addMessageToContainer("*********** " + NEW_SESSION_STR + "***************");
+    protected  Logger() {
+      //#debug fatal
+      level = FATAL;
+      //#debug error
+      level = ERROR;
+      //#debug warn
+      level = WARN;
+      //#debug info
+      level = INFO;
+      //#debug debug
+      level = DEBUG;
     }
 
-    /**
-     * Instantiates a new logger.
-     */
-    private Logger() {
-        //TODO: load previous data if exists.
-        _messageContainer = new Vector();
-    }
-
-    public synchronized static void trace(String message) {
-        log(message, TRACE);
-    }
-
-    public synchronized static void info(String message) {
-        log(message, INFO);
-    }
-
-    public synchronized static void debug(String message) {
-        log(message, DEBUG);
-    }
-
-    public synchronized static void warning(String message) {
-        log(message, WARNING);
-    }
-
-    public synchronized static void error(String message) {
-        log(message, ERROR);
-    }
-
-    /**
-     * Clear log.
-     */
-    public void clearLog() {
-        _logger._messageContainer = new Vector();
-        addMessageToContainer("***** " + NEW_SESSION_STR + "**************");
-        addMessageToContainer(formatMessage("***** Log Cleared", INFO));
-        storeLog();
-    }
-
-    /**
-     * Store log.
-     */
-    public static void storeLog() {
-        // to implement
-    }
-
-    /**
-     * Gets the log.
-     *
-     * @return the log
-     */
-    public static Vector getLog() {
-        return _logger._messageContainer;
-    }
-
-    // ////////////////
-    // Private methods
-    // ///////////////
-
-     /**
-     * Log.
-     *
-     * @param message the message
-     * @param level the level
-     * @param e the e
-     */
-    private static void log(String message, int level) {
-        if ( PRINT_CLASS_NAME ) {
-            message = "[" + classNameWithoutPackage( Thread.currentThread().getClass().getName() ) + "]" + message;
-        }
-        String formattedMessage = formatMessage(message, level);
-        // always print screen
-        if (level >= printLevel) {
-            System.out.println(formattedMessage);
-        	// add to logger
-        	addMessageToContainer(formattedMessage);
-        }
-
-        if (level == ERROR && STORE_LOG) {
-            storeLog();
-        }
-    }
-    /**
-     * Adds the message to container.
-     *
-     * @param message the message
-     */
-    private static void addMessageToContainer(String message) {
-        if (STORE_LOG) {
-        if (_logger._messageContainer.size() >= MAX_NUMBER_OF_ENTRIES) {
-            _logger._messageContainer.removeElementAt(0);
-        }
-        _logger._messageContainer.addElement(message);
-    }
-    }
-
-    /**
-     * Format message.
-     *
-     * @param message the message
-     * @param level the level
-     *
-     * @return the string
-     */
-    private static String formatMessage(String message, int level) {
-        StringBuffer formattedMessage = new StringBuffer();
-        formattedMessage.append(System.currentTimeMillis() - _startTime);
-        formattedMessage.append(" [");
-        if (level < LEVEL_NAMES.length) {
-            formattedMessage.append(LEVEL_NAMES[level]);
-        }
-        formattedMessage.append("]");
-        formattedMessage.append(message);
-        return formattedMessage.toString();
-    }
-
-    private static String classNameWithoutPackage( String longClassName ) {
-        int i = 0;
-        String str = longClassName.substring( i );
-        while ( i != -1 ) {
-            i = str.indexOf(".");
-            str = str.substring( i + 1 );
-        }
-        return str;
-    }
-//#enddebug
-
-    public static synchronized final void report(Throwable t)
+    public static void setLogger(Logger logger)
     {
-      t.printStackTrace();
-      if(exceptionListener!=null)
-        exceptionListener.exceptionThrown(t);
+      Logger.logger = logger;
     }
 
-  private static ExceptionListener exceptionListener;
+    public static void setLevel(int level)
+    {
+      Logger.level = level;
+    }
 
-  public static void setExceptionListener(ExceptionListener listener)
-  {
-    exceptionListener = listener;
-  }
+    /**
+     * Debug logging is the most verbose and can be used for any type of logging.
+     * Developers will only need to see this info when debugging a problem and should work at the info level most of the time.
+     */
+    public static void debug(String message) {
+      //#debug debug
+      if(level<=DEBUG) logger.log(message, "DEBUG");
+    }
+
+    /**
+     * Debug logging is the most verbose and can be used for any type of logging.
+     * Developers will only need to see this info when debugging a problem and should work at the info level most of the time.
+     */
+    public static void debug(Throwable throwable) {
+      //#debug debug
+      if(level<=DEBUG) logger.log(throwable, "DEBUG");
+    }
+
+    /**
+     * Info logging should be used for information that may prove useful for any developer.
+     * Logging related to debugging a specific issue should use the debug level.
+     */
+    public static void info(String message) {
+      //#debug info
+      if(level<=INFO) logger.log(message, "INFO");
+    }
+
+    /**
+     * Info logging should be used for information that may prove useful for any developer.
+     * Logging related to debugging a specific issue should use the debug level.
+     */
+    public static void info(Throwable throwable) {
+      //#debug info
+      if(level<=INFO) logger.log(throwable, "INFO");
+    }
+
+    /**
+     * Warn logging should be used for errors which should be reported in the testing phase.
+     * These logs could be, for example, written out to the filesystem during testing.
+     */
+    public static void warn(String message) {
+      //#debug warn
+      if(level<=WARN) logger.log(message, "WARN");
+    }
+
+    /**
+     * Warn logging should be used for errors which should be reported in the testing phase.
+     * These logs could be, for example, written out to the filesystem during testing.
+     */
+    public static void warn(Throwable throwable) {
+      //#debug warn
+      if(level<=WARN) logger.log(throwable, "WARN");
+    }
+
+    /**
+     * Error logging should be used for errors which should be reported even on a release build.
+     * These logs could be, for example, send over the network and therefore should only contain serious errors.
+     */
+    public static void error(String message) {
+      //#debug error
+      if(level<=ERROR) logger.log(message, "ERROR");
+     }
+
+    /**
+     * Error logging should be used for errors which should be reported even on a release build.
+     * These logs could be, for example, send over the network and therefore should only contain serious errors.
+     */
+    public static void error(Throwable throwable) {
+      //#debug error
+      if(level<=ERROR) logger.log(throwable, "ERROR");
+     }
+
+    protected synchronized void log(String message, String level)
+    {
+      System.err.print("[" + level + "] " + message);
+    }
+
+    protected synchronized void log(Throwable throwable, String level)
+    {
+      System.err.print("[" + level + "] ");
+      throwable.printStackTrace();
+    }
 }
 
 

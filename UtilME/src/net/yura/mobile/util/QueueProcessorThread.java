@@ -27,51 +27,45 @@ public abstract class QueueProcessorThread extends Thread {
 
     public void run() {
 
-        try {
-            Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
-            runnning = true;
+        runnning = true;
 
-            runLoop: while (runnning) {
+        runLoop: while (runnning) {
 
-                try {
-                        Object object;
+            try {
+                    Object object;
 
-                        synchronized(this) {
-                            while(inbox.isEmpty()) {
-                                    if (!runnning) {
-                                        break runLoop;
-                                    }
-                                    try {
-                                        wait();
-                                    }
-                                    catch (InterruptedException ex) {
-                                      Logger.report(ex);
-                                    }
-                            }
-                            object = inbox.elementAt(0);
-                            inbox.removeElementAt(0);
+                    synchronized(this) {
+                        while(inbox.isEmpty()) {
+                                if (!runnning) {
+                                    break runLoop;
+                                }
+                                try {
+                                    wait();
+                                }
+                                catch (InterruptedException ex) {
+                                    Logger.info(ex);
+                                }
                         }
+                        object = inbox.elementAt(0);
+                        inbox.removeElementAt(0);
+                    }
 
-                        // try not to slow down the UI
-                        Thread.yield();
-                        Thread.sleep(0);
+                    // try not to slow down the UI
+                    Thread.yield();
+                    Thread.sleep(0);
 
-                        process(object);
+                    process(object);
 
-                        Thread.yield();
-                        Thread.sleep(0);
-
-                }
-                catch (Exception ex) {
-                    Logger.report(ex);
-                }
+                    Thread.yield();
+                    Thread.sleep(0);
 
             }
+            catch (Exception ex) {
+               Logger.warn(ex);
+            }
 
-        }
-        catch (Throwable t){
-           Logger.report(t);
         }
     }
 
