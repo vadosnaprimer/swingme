@@ -11,7 +11,6 @@ public class Logger {
     public final static int WARN = 2; //warn
     public final static int ERROR = 3; //error
     public final static int FATAL = 4; //fatal
-    private static final String[] LEVEL_NAMES = {"debug", "info", "warn", "error"};
     private static Logger logger = new Logger();
     private static int level;
 
@@ -40,7 +39,9 @@ public class Logger {
 
     /**
      * Debug logging is the most verbose and can be used for any type of logging.
-     * Developers will only need to see this info when debugging a problem and should work at the info level most of the time.
+     * Developers will only need to see this info when debugging a problem and
+     * should work at the info level most of the time to avoid all the output.
+     * Expected exceptions can be reported on the debug level
      */
     public static void debug(String message) {
       //#debug debug
@@ -49,16 +50,20 @@ public class Logger {
 
     /**
      * Debug logging is the most verbose and can be used for any type of logging.
-     * Developers will only need to see this info when debugging a problem and should work at the info level most of the time.
+     * Developers will only need to see this info when debugging a problem and
+     * should work at the info level most of the time to avoid all the output.
+     * Expected exceptions can be reported on the debug level
      */
-    public static void debug(Throwable throwable) {
+    public static void debug(Exception exception) {
       //#debug debug
-      if(level<=DEBUG) logger.log(throwable, "DEBUG");
+      if(level<=DEBUG) logger.log(exception, "DEBUG");
     }
 
     /**
-     * Info logging should be used for information that may prove useful for any developer.
-     * Logging related to debugging a specific issue should use the debug level.
+     * Info logging should be used for information that may prove useful for any
+     * developer. Logging related to debugging a specific issue or with lots of
+     * output should use the debug level. Unexpected exceptions without
+     * implications can be reported on the info level.
      */
     public static void info(String message) {
       //#debug info
@@ -66,17 +71,19 @@ public class Logger {
     }
 
     /**
-     * Info logging should be used for information that may prove useful for any developer.
-     * Logging related to debugging a specific issue should use the debug level.
+     * Info logging should be used for information that may prove useful for any
+     * developer. Logging related to debugging a specific issue or with lots of
+     * output should use the debug level. Unexpected exceptions without
+     * implications can be reported on the info level.
      */
-    public static void info(Throwable throwable) {
+    public static void info(Exception exception) {
       //#debug info
-      if(level<=INFO) logger.log(throwable, "INFO");
+      if(level<=INFO) logger.log(exception, "INFO");
     }
 
     /**
-     * Warn logging should be used for errors which should be reported in the testing phase.
-     * These logs could be, for example, written out to the filesystem during testing.
+     * Warn logging should be used for any errors or bugs. Unexpected exceptions
+     * with implications and errors can be reported on the warn level.
      */
     public static void warn(String message) {
       //#debug warn
@@ -84,17 +91,27 @@ public class Logger {
     }
 
     /**
-     * Warn logging should be used for errors which should be reported in the testing phase.
-     * These logs could be, for example, written out to the filesystem during testing.
+     * Warn logging should be used for any errors or bugs. Unexpected exceptions
+     * with implications and errors can be reported on the warn level.
      */
-    public static void warn(Throwable throwable) {
+    public static void warn(Exception exception) {
       //#debug warn
-      if(level<=WARN) logger.log(throwable, "WARN");
+      if(level<=WARN) logger.log(exception, "WARN");
     }
 
     /**
-     * Error logging should be used for errors which should be reported even on a release build.
-     * These logs could be, for example, send over the network and therefore should only contain serious errors.
+     * Warn logging should be used for any errors or bugs. Unexpected exceptions
+     * with implications and errors can be reported on the warn level.
+     */
+    public static void warn(Error error) {
+      //#debug warn
+      if(level<=WARN) logger.log(error, "WARN");
+    }
+
+    /**
+     * Error logging should be used for serious errors which should be reported
+     * even on a release build. Throwable try catch blocks surrounding code entry
+     * points should report on the error level.
      */
     public static void error(String message) {
       //#debug error
@@ -102,8 +119,9 @@ public class Logger {
      }
 
     /**
-     * Error logging should be used for errors which should be reported even on a release build.
-     * These logs could be, for example, send over the network and therefore should only contain serious errors.
+     * Error logging should be used for serious errors which should be reported
+     * even on a release build. Throwable try catch blocks surrounding code entry
+     * points should report on the error level.
      */
     public static void error(Throwable throwable) {
       //#debug error

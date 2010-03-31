@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import net.yura.mobile.io.json.JSONTokener;
 import net.yura.mobile.io.json.JSONWriter;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -176,7 +177,8 @@ public class JSONUtil {
             }
             else {
                 // TODO load class or something???
-                System.out.println("unknown object: "+name);
+                //#debug warn
+                Logger.warn("unknown object: " + name);
                 //return value;
                 throw new IOException();
             }

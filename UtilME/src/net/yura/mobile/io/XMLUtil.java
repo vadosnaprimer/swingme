@@ -183,7 +183,8 @@ public class XMLUtil {
             }
             else {
                 // TODO do something else??
-                System.out.println("unknown object: "+object.getClass());
+                //#debug warn
+                Logger.warn("unknown object: "+object.getClass());
                 tagName = object.getClass().getName();
                 throw new IOException();
             }
@@ -297,7 +298,8 @@ public class XMLUtil {
             }
             else {
                 // TODO load class or something???
-                System.out.println("unknown object: "+name);
+                //#debug warn
+                Logger.warn("unknown object: "+name);
                 //return value;
                 throw new IOException();
             }

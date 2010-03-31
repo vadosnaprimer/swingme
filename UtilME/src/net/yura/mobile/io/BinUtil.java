@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Lenin
@@ -169,10 +170,12 @@ public class BinUtil {
 
     protected Object readObject(DataInputStream in2,int type,int size) throws IOException {
 
-        System.out.println("unknown object, type: "+type+" length: "+size);
+        //#debug warn
+        Logger.warn("unknown object, type: "+type+" length: "+size);
         for (int c=0;c<size;c++) {
             Object obj = readObject(in2);
-            System.out.println("unknown object, content: "+obj);
+            //#debug warn
+            Logger.warn("unknown object, content: "+obj);
         }
         //return null;
         throw new IOException();
@@ -182,7 +185,8 @@ public class BinUtil {
 
         for (int c=0;c<num;c++) {
             Object obj = readObject(in);
-            System.out.println("unknown object found: "+obj);
+            //#debug warn
+            Logger.warn("unknown object found: "+obj);
         }
 
     }
