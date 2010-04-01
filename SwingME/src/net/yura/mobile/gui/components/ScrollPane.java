@@ -734,7 +734,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
     private static final int DRAG_BUFFER_SIZE = 50;
     private static final int DRAG_PAGE_RATE = 10;
-    private static final int DRAG_FRAME_RATE = 10;
+    private static final int DRAG_FRAME_RATE = 50;
 
     private static ScrollPane dragScrollPane;
 
@@ -744,6 +744,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
     private int dragLastY, dragLastX;
     private int dragVelocityY, dragVelocityX;
     private int dragFriction;
+    private int dragTimeY, dragTimeX;
 
     // Keep a history of drag events, so we can later calculate the average speed.
     // These are circular buffers
@@ -820,15 +821,16 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
     // and then giving it back when it is not needed any more
     public void run() {
         System.out.println("START ScrollPane Thread...");
+        long startAnimTime = System.currentTimeMillis();
 
         while (true) {
 
-            long time = System.currentTimeMillis();
             synchronized (ScrollPane.class) {
 
                 System.out.println("- ScrollPane Animate -");
 
-                boolean animate = dragScrollBars();
+                long time = System.currentTimeMillis();
+                boolean animate = dragScrollBars((int)(time - startAnimTime));
                 if (!animate) {
                     if (ScrollPane.dragScrollPane == this) {
                         ScrollPane.dragScrollPane = null;
@@ -840,9 +842,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                 long timeToWait = time - System.currentTimeMillis() + (1000L / rate);
                 if (timeToWait > 0) {
 
-                    if (timeToWait < (900L / rate)) {
-                        System.out.println("--- timeToWait = " + timeToWait);
-                    }
+                    System.out.println("--- ScrollPane timeToWait = " + timeToWait);
 
                     try {
                         ScrollPane.class.wait(timeToWait);
@@ -852,7 +852,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             }
         }
 
-        System.out.println("END ScrollPane Thread...");
+        System.out.println("END ScrollPane Thread... (" + (System.currentTimeMillis() - startAnimTime) + "ms)");
     }
 
     private void updateDragSpeed(int x, int y, long time) {
@@ -921,11 +921,13 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             dragStartX = pointX;
             dragStartViewX = viewX;
             dragVelocityX = 0;
+            dragTimeX = -1;
 
             dragLastY = pointY;
             dragStartY = pointY;
             dragStartViewY = viewY;
             dragVelocityY = 0;
+            dragTimeY = -1;
 
             if (mode == MODE_SCROLLBARS) {
 
@@ -999,7 +1001,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                         viewWidth,
                         dragStartX-pointX
                   );
-                dragScrollBars();
+                dragScrollBars(0);
             }
             else if (dragScrollBarMode == DRAG_SLIDER_VERT) {
 
@@ -1014,14 +1016,14 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                         dragStartY-pointY
                   );
 
-                dragScrollBars();
+                dragScrollBars(0);
             }
             else if (dragScrollBarMode == DRAG_NONE) {
                 dragLastX = pointX;
                 dragLastY = pointY;
 
                 dragFriction = 0;
-                dragScrollBars();
+                dragScrollBars(0);
             }
         }
         else if (type == DesktopPane.RELEASED) {
@@ -1045,7 +1047,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         }
     }
 
-    private boolean dragScrollBars() {
+    private boolean dragScrollBars(int time) {
         boolean res = false;
         int viewPortX = getViewPortX();
         int viewPortY = getViewPortY();
@@ -1063,21 +1065,25 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
         if (cW > viewPortWidth) {
             int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
                                           dragStartX, dragLastX, dragStartViewX,
-                                          cX, cW, viewPortX, viewPortWidth);
+                                          cX, cW, viewPortX, viewPortWidth,
+                                          time, dragTimeX);
             cX = newPosX[0];
             dragLastX = newPosX[1];
             dragVelocityX = newPosX[2];
             res |= (newPosX[3] != 0);
+            dragTimeX = newPosX[4];
         }
 
         if (cH > viewPortHeight) {
             int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
                                           dragStartY, dragLastY, dragStartViewY,
-                                          cY, cH, viewPortY, viewPortHeight);
+                                          cY, cH, viewPortY, viewPortHeight,
+                                          time, dragTimeY);
             cY = newPosY[0];
             dragLastY = newPosY[1];
             dragVelocityY = newPosY[2];
             res |= (newPosY[3] != 0);
+            dragTimeY = newPosY[4];
         }
 
         makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
@@ -1087,11 +1093,15 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
 
     private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
                                 int dragStartY, int dragLastY, int dragStartViewY,
-                                int cY, int cH, int viewPortY, int viewPortHeight) {
+                                int cY, int cH, int viewPortY, int viewPortHeight,
+                                int time, int springBackTime) {
 
         int diffBottomY =  viewPortHeight - cY - cH;
 
+
         boolean springBack = (dragVelocityY == 0 && dragFriction != 0);
+
+        System.out.println("cY in = " + cY + " dragLastY = " + dragLastY + " springBack = " + springBack + " dragFriction = " + dragFriction + " time = " + time);
         if (springBack) {
             if (cY >= 0) {
                 dragLastY = dragStartY - dragStartViewY + viewPortY;
@@ -1100,8 +1110,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                 dragLastY = dragStartY - dragStartViewY + (viewPortHeight - cH) + viewPortY;
             }
         }
-
-        if (dragVelocityY != 0) {
+        else if (dragVelocityY != 0) {
             // Friction is always opposite to velocity, and never changes its direction
             int velocityInc = dragFriction / DRAG_FRAME_RATE;
             if (Math.abs(dragVelocityY) < velocityInc) {
@@ -1117,20 +1126,38 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             dragLastY += (dragVelocityY / DRAG_FRAME_RATE);
         }
 
-        final int SPRING_MAX = (viewPortHeight / 8);
-
         int jumpY = (dragStartY - dragLastY) - (dragStartViewY - (cY + viewPortY));
 
-        if (springBack) {
-            int jumpInc = (cY >= SPRING_MAX || diffBottomY >= SPRING_MAX) ? 5 * SPRING_MAX : SPRING_MAX;
-            jumpInc = Math.max(1, jumpInc / DRAG_FRAME_RATE);
-            if (jumpY  > jumpInc) {
-                jumpY = jumpInc;
-            }
-            else if (jumpY < -jumpInc) {
-                jumpY = -jumpInc;
-            }
+        final int a = 60 ;
+        System.out.println("a = " + a);
+        if (springBack && springBackTime < 0) {
+            springBackTime = time + (int)(Math.sqrt(Math.abs(jumpY * 1000 * 1000) / a));
         }
+
+
+        System.out.println("jumpY1 = " + jumpY);
+
+        if (springBack && jumpY != 0) {
+            time = springBackTime - time;
+            int newCy = (int)((a * time * time) / (1000 * 1000));
+            if (jumpY < 0) {
+                newCy = -newCy;
+            }
+
+            int newJump = jumpY - newCy ;
+            System.out.println("newJump = " + newJump);
+            // New jump can never be zero, or bigger than the initial jump...
+            if (newJump == 0) {
+                jumpY = (jumpY < 0) ? -1 : 1;
+            }
+            else if (Math.abs(newJump) < Math.abs(jumpY)) {
+                jumpY = newJump;
+            }
+
+
+            //jumpY = newJump;
+        }
+        System.out.println("jumpY2 = " + jumpY);
 
         if (jumpY != 0 || bound) {
 
@@ -1143,9 +1170,9 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                         jumpY = 0;
                         cY = 0;
                     }
-                    else if (dragVelocityY != 0 && cY >= 2 * SPRING_MAX) {
+                    else if (dragVelocityY != 0 && cY >= (viewPortHeight / 2)) {
                         dragVelocityY = 0;
-                        cY = SPRING_MAX;
+                        cY = viewPortHeight / 2;
                     }
                     else {
                         cY = cY / 2;
@@ -1156,9 +1183,9 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                         jumpY = 0;
                         cY += diffBottomY;
                     }
-                    else if (dragVelocityY != 0 && diffBottomY >= 2 * SPRING_MAX) {
+                    else if (dragVelocityY != 0 && diffBottomY >= (viewPortHeight / 2)) {
                         dragVelocityY = 0;
-                        cY += diffBottomY - SPRING_MAX;
+                        cY += diffBottomY - (viewPortHeight / 2);
                     }
                     else {
                         cY += diffBottomY / 2;
@@ -1167,7 +1194,9 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
             }
         }
 
-        return new int[] {-cY, dragLastY, dragVelocityY, jumpY};
+        System.out.println("cY out = " + cY);
+
+        return new int[] {-cY, dragLastY, dragVelocityY, jumpY, springBackTime, dragFriction};
     }
 
     private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
