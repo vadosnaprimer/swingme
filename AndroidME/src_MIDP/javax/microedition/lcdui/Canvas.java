@@ -324,10 +324,16 @@ public abstract class Canvas extends Displayable {
                 resultKeyCode = -8; // Backspace ascii
                 break;
             case KeyEvent.KEYCODE_CALL :
-                resultKeyCode = -10; // Backspace ascii
+                resultKeyCode = -10;
                 break;
             case KeyEvent.KEYCODE_ENDCALL :
-                resultKeyCode = -11; // Backspace ascii
+                resultKeyCode = -11;
+                break;
+            case KeyEvent.KEYCODE_VOLUME_UP :
+                resultKeyCode = -36;
+                break;
+            case KeyEvent.KEYCODE_VOLUME_DOWN :
+                resultKeyCode = -37;
                 break;
             default:
                 resultKeyCode = keyEvent.getUnicodeChar();
@@ -338,7 +344,6 @@ public abstract class Canvas extends Displayable {
 
             return resultKeyCode;
         }
-
     }
 
     protected void hideNotify() {
