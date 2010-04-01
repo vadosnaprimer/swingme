@@ -58,25 +58,78 @@ public abstract class Canvas extends Displayable {
     }
 
     public int getGameAction(int keyCode) {
-        int gameActionKeyCode = getKeyCode(-keyCode);
-        return -gameActionKeyCode;
+        int res;
+        switch (keyCode) {
+            case -5:
+            case -10:
+                res = Canvas.FIRE;
+                break;
+            case -1:
+                res = Canvas.UP;
+                break;
+            case -2:
+                res = Canvas.DOWN;
+                break;
+            case -3:
+                res = Canvas.LEFT;
+                break;
+            case -4:
+                res = Canvas.RIGHT;
+                break;
+            case '7':
+                res = Canvas.GAME_A;
+                break;
+            case '9':
+                res = Canvas.GAME_B;
+                break;
+            case '*':
+                res = Canvas.GAME_C;
+                break;
+            case '#':
+                res = Canvas.GAME_D;
+                break;
+            default:
+                res = 0;
+                break;
+        }
+        return res;
     }
 
     public int getKeyCode(int gameAction) {
+        int res;
         switch (gameAction) {
             case Canvas.FIRE:
+                res = -5;
+                break;
             case Canvas.UP:
+                res = -1;
+                break;
             case Canvas.DOWN:
+                res = -2;
+                break;
             case Canvas.LEFT:
+                res = -3;
+                break;
             case Canvas.RIGHT:
+                res = -4;
+                break;
             case Canvas.GAME_A:
+                res = '7';
+                break;
             case Canvas.GAME_B:
+                res = '9';
+                break;
             case Canvas.GAME_C:
+                res = '*';
+                break;
             case Canvas.GAME_D:
-                return -gameAction;
+                res = '#';
+                break;
             default:
-                return 0;
+                res = 0;
+                break;
         }
+        return res;
     }
 
     public void repaint(int x, int y, int w, int h) {
@@ -246,29 +299,35 @@ public abstract class Canvas extends Displayable {
 
             int resultKeyCode;
             switch (deviceKeyCode) {
-            case KeyEvent.KEYCODE_DPAD_CENTER :
-                resultKeyCode = -Canvas.FIRE;
-                break;
             case KeyEvent.KEYCODE_DPAD_UP :
-                resultKeyCode = -Canvas.UP;
+                resultKeyCode = -1;
                 break;
             case KeyEvent.KEYCODE_DPAD_DOWN :
-                resultKeyCode = -Canvas.DOWN;
+                resultKeyCode = -2;
                 break;
             case KeyEvent.KEYCODE_DPAD_LEFT :
-                resultKeyCode = -Canvas.LEFT;
+                resultKeyCode = -3;
                 break;
             case KeyEvent.KEYCODE_DPAD_RIGHT :
-                resultKeyCode = -Canvas.RIGHT;
+                resultKeyCode = -4;
                 break;
-//            case KeyEvent.KEYCODE_MENU :
-//                resultKeyCode = -6; // Left Soft-Key
-//                break;
+            case KeyEvent.KEYCODE_DPAD_CENTER :
+                resultKeyCode = -5;
+                break;
+            case KeyEvent.KEYCODE_MENU :
+                resultKeyCode = -6; // Left Soft-Key
+                break;
             case KeyEvent.KEYCODE_BACK :
                 resultKeyCode = -7; // Right Soft-Key
                 break;
             case KeyEvent.KEYCODE_DEL :
-                resultKeyCode = 8; // Backspace ascii
+                resultKeyCode = -8; // Backspace ascii
+                break;
+            case KeyEvent.KEYCODE_CALL :
+                resultKeyCode = -10; // Backspace ascii
+                break;
+            case KeyEvent.KEYCODE_ENDCALL :
+                resultKeyCode = -11; // Backspace ascii
                 break;
             default:
                 resultKeyCode = keyEvent.getUnicodeChar();
