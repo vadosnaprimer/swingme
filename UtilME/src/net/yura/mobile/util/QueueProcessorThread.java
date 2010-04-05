@@ -27,6 +27,7 @@ public abstract class QueueProcessorThread extends Thread {
 
     public void run() {
 
+      try {
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
         runnning = true;
@@ -65,8 +66,12 @@ public abstract class QueueProcessorThread extends Thread {
             catch (Exception ex) {
                Logger.warn(ex);
             }
-
         }
+      }
+      catch(Throwable t)
+      {
+        Logger.error(t);
+      }
     }
 
     public void addToInbox(Object obj) {

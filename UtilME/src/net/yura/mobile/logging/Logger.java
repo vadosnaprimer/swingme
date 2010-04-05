@@ -11,6 +11,7 @@ public class Logger {
     public final static int WARN = 2; //warn
     public final static int ERROR = 3; //error
     public final static int FATAL = 4; //fatal
+    private final static String LEVEL_NAMES[] = new String[]{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
     private static Logger logger = new Logger();
     private static int level;
 
@@ -45,7 +46,7 @@ public class Logger {
      */
     public static void debug(String message) {
       //#debug debug
-      if(level<=DEBUG) logger.log(message, "DEBUG");
+      if(level<=DEBUG) logger.log(message, DEBUG);
     }
 
     /**
@@ -56,7 +57,7 @@ public class Logger {
      */
     public static void debug(Exception exception) {
       //#debug debug
-      if(level<=DEBUG) logger.log(exception, "DEBUG");
+      if(level<=DEBUG) logger.log(exception, DEBUG);
     }
 
     /**
@@ -67,7 +68,7 @@ public class Logger {
      */
     public static void info(String message) {
       //#debug info
-      if(level<=INFO) logger.log(message, "INFO");
+      if(level<=INFO) logger.log(message, INFO);
     }
 
     /**
@@ -78,7 +79,7 @@ public class Logger {
      */
     public static void info(Exception exception) {
       //#debug info
-      if(level<=INFO) logger.log(exception, "INFO");
+      if(level<=INFO) logger.log(exception, INFO);
     }
 
     /**
@@ -87,25 +88,37 @@ public class Logger {
      */
     public static void warn(String message) {
       //#debug warn
-      if(level<=WARN) logger.log(message, "WARN");
+      if(level<=WARN) logger.log(message, WARN);
     }
 
     /**
      * Warn logging should be used for any errors or bugs. Unexpected exceptions
-     * with implications and errors can be reported on the warn level.
+     * with implications and errors can be reported on the warn level. Warn
+     * logging can also and should be used for assertions.
      */
     public static void warn(Exception exception) {
       //#debug warn
-      if(level<=WARN) logger.log(exception, "WARN");
+      if(level<=WARN) logger.log(exception, WARN);
     }
 
     /**
      * Warn logging should be used for any errors or bugs. Unexpected exceptions
-     * with implications and errors can be reported on the warn level.
+     * with implications and errors can be reported on the warn level. Warn
+     * logging can also and should be used for assertions.
      */
     public static void warn(Error error) {
       //#debug warn
-      if(level<=WARN) logger.log(error, "WARN");
+      if(level<=WARN) logger.log(error, WARN);
+    }
+
+    /**
+     * Warn logging should be used for any errors or bugs. Unexpected exceptions
+     * with implications and errors can be reported on the warn level. Warn
+     * logging can also and should be used for assertions.
+     */
+    public static void warn(boolean assertion) {
+      //#debug warn
+      if(level<=WARN && assertion) throw new IllegalArgumentException("Assertion failed");
     }
 
     /**
@@ -115,7 +128,7 @@ public class Logger {
      */
     public static void error(String message) {
       //#debug error
-      if(level<=ERROR) logger.log(message, "ERROR");
+      if(level<=ERROR) logger.log(message, ERROR);
      }
 
     /**
@@ -125,17 +138,36 @@ public class Logger {
      */
     public static void error(Throwable throwable) {
       //#debug error
-      if(level<=ERROR) logger.log(throwable, "ERROR");
+      if(level<=ERROR) logger.log(throwable, ERROR);
      }
 
-    protected synchronized void log(String message, String level)
+    public static void printStackTrace(String message, int level)
     {
-      System.err.print("[" + level + "] " + message);
+      //#mdebug error
+      if(Logger.level<=level) try
+      {
+        throw new Exception(message);
+      }
+      catch(Exception e)
+      {
+        logger.log(e, level);
+      }
+      //#enddebug
     }
 
-    protected synchronized void log(Throwable throwable, String level)
+    protected String toString(int level)
     {
-      System.err.print("[" + level + "] ");
+      return "[" + LEVEL_NAMES[level] + "] ";
+    }
+
+    protected synchronized void log(String message, int level)
+    {
+      System.err.println(toString(level) + message);
+    }
+
+    protected synchronized void log(Throwable throwable, int level)
+    {
+      System.err.print(toString(level));
       throwable.printStackTrace();
     }
 }

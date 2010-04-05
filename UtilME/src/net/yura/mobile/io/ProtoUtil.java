@@ -36,7 +36,7 @@ public class ProtoUtil {
 
         out2.flush();
         //out.write(message);
-//System.out.println("save size "+size);
+//Logger.debug("save size "+size);
         return size;
     }
 
@@ -60,13 +60,13 @@ public class ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
 //            int wireType = WireFormat.getTagWireType(tag);
-    //System.out.println("read field "+fieldNo );
-    //System.out.println("wire type "+wireType );
+    //Logger.debug("read field "+fieldNo );
+    //Logger.debug("wire type "+wireType );
 
             switch (fieldNo) {
                 case OBJECT_TYPE: {
                     type = in2.readInt32();
-                    //System.out.println("object type "+type);
+                    //Logger.debug("object type "+type);
                     break;
                 }
                 case OBJECT_VALUE: {
@@ -75,9 +75,9 @@ public class ProtoUtil {
                     }
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    //System.out.println("object size "+size);
+                    //Logger.debug("object size "+size);
                     obj = decodeObject(in2,type);
-                    //System.out.println("object "+obj);
+                    //Logger.debug("object "+obj);
                     in2.popLimit(lim);
                     break;
                 }
@@ -109,8 +109,8 @@ public class ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
 //            int wireType = WireFormat.getTagWireType(tag);
-    //System.out.println("read field "+fieldNo );
-    //System.out.println("wire type "+wireType );
+    //Logger.debug("read field "+fieldNo );
+    //Logger.debug("wire type "+wireType );
 
             if (fieldNo == DEFAULT_FIELD) {
                 simple = readSimple(in2,type);
@@ -148,13 +148,13 @@ public class ProtoUtil {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
 //            int wireType = WireFormat.getTagWireType(tag);
-    //System.out.println("read field "+fieldNo );
-    //System.out.println("wire type "+wireType );
+    //Logger.debug("read field "+fieldNo );
+    //Logger.debug("wire type "+wireType );
 
             if (fieldNo == VECTOR_ELEMENT) {
                 int size = in2.readBytesSize();
                 int lim = in2.pushLimit(size);
-                //System.out.println("object size "+size);
+                //Logger.debug("object size "+size);
                 Object obj = decodeAnonymousObject(in2);
                 vector.addElement(obj);
                 in2.popLimit(lim);
@@ -175,8 +175,8 @@ public class ProtoUtil {
             final int tag = in2.readTag();
             final int fieldNo = WireFormat.getTagFieldNumber(tag);
 //            final int wireType = WireFormat.getTagWireType(tag);
-    //System.out.println("read field "+fieldNo );
-    //System.out.println("wire type "+wireType );
+    //Logger.debug("read field "+fieldNo );
+    //Logger.debug("wire type "+wireType );
 
             if (fieldNo == KEY_VALUE) {
 
@@ -190,14 +190,14 @@ public class ProtoUtil {
                     final int tag2 = in2.readTag();
                     final int fieldNo2 = WireFormat.getTagFieldNumber(tag2);
 //                    final int wireType2 = WireFormat.getTagWireType(tag2);
-            //System.out.println("read field "+fieldNo2 );
-            //System.out.println("wire type "+wireType2 );
+            //Logger.debug("read field "+fieldNo2 );
+            //Logger.debug("wire type "+wireType2 );
 
                     switch(fieldNo2) {
                         case HASHTABLE_KEY: {
                             int size2 = in2.readBytesSize();
                             int lim2 = in2.pushLimit(size2);
-                            //System.out.println("object size "+size2);
+                            //Logger.debug("object size "+size2);
                             key = decodeAnonymousObject(in2);
                             in2.popLimit(lim2);
                             break;
@@ -205,7 +205,7 @@ public class ProtoUtil {
                         case HASHTABLE_VALUE: {
                             int size2 = in2.readBytesSize();
                             int lim2 = in2.pushLimit(size2);
-                            //System.out.println("object size "+size2);
+                            //Logger.debug("object size "+size2);
                             value = decodeAnonymousObject(in2);
                             in2.popLimit(lim2);
                             break;

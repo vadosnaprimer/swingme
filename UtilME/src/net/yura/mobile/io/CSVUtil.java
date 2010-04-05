@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Vector;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.StringUtil;
 
 /**
@@ -87,16 +88,16 @@ public class CSVUtil {
 			}
 		}
 		//catch(Exception ex) {
-			//ex.printStackTrace();
+			//Logger.warn(ex);
 			//buf.append(ex.toString());
 		//}
 		finally {
 
 			try { if (inputStreamTxt!=null) inputStreamTxt.close(); }
-			catch(IOException ex) { }
+			catch(IOException ex) { Logger.info(ex); }
 
 			try {if (inputStream!=null)  inputStream.close(); }
-			catch(IOException ex) { }
+			catch(IOException ex) { Logger.info(ex); }
 		}
 
 	}
@@ -151,10 +152,10 @@ public class CSVUtil {
             finally {
 
                 try { if (writer!=null) writer.close(); }
-                catch(IOException ex) { }
+                catch(IOException ex) { Logger.info(ex); }
 
                 try { if (out!=null) out.close(); }
-                catch(IOException ex) { }
+                catch(IOException ex) { Logger.info(ex); }
 	    }
 	}
 
