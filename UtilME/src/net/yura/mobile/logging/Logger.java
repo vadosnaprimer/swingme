@@ -44,10 +44,11 @@ public class Logger {
      * should work at the info level most of the time to avoid all the output.
      * Expected exceptions can be reported on the debug level
      */
+    //#mdebug debug
     public static void debug(String message) {
-      //#debug debug
       if(level<=DEBUG) logger.log(message, DEBUG);
     }
+    //#enddebug
 
     /**
      * Debug logging is the most verbose and can be used for any type of logging.
@@ -66,10 +67,11 @@ public class Logger {
      * output should use the debug level. Unexpected exceptions without
      * implications can be reported on the info level.
      */
+    //#mdebug info
     public static void info(String message) {
-      //#debug info
       if(level<=INFO) logger.log(message, INFO);
     }
+    //#enddebug
 
     /**
      * Info logging should be used for information that may prove useful for any
@@ -86,10 +88,11 @@ public class Logger {
      * Warn logging should be used for any errors or bugs. Unexpected exceptions
      * with implications and errors can be reported on the warn level.
      */
+    //#mdebug warn
     public static void warn(String message) {
-      //#debug warn
       if(level<=WARN) logger.log(message, WARN);
     }
+    //#enddebug
 
     /**
      * Warn logging should be used for any errors or bugs. Unexpected exceptions
@@ -116,20 +119,23 @@ public class Logger {
      * with implications and errors can be reported on the warn level. Warn
      * logging can also and should be used for assertions.
      */
+    //#mdebug warn
     public static void warn(boolean assertion) {
-      //#debug warn
       if(level<=WARN && assertion) throw new IllegalArgumentException("Assertion failed");
     }
+    //#enddebug
 
     /**
      * Error logging should be used for serious errors which should be reported
      * even on a release build. Throwable try catch blocks surrounding code entry
      * points should report on the error level.
      */
+    //#mdebug error
     public static void error(String message) {
       //#debug error
       if(level<=ERROR) logger.log(message, ERROR);
      }
+    //#enddebug
 
     /**
      * Error logging should be used for serious errors which should be reported
@@ -141,12 +147,12 @@ public class Logger {
       if(level<=ERROR) logger.log(throwable, ERROR);
      }
 
-    public static void printStackTrace(String message, int level)
+    public static void dumpStack()
     {
-      //#mdebug error
-      if(Logger.level<=level) try
+      //#mdebug warn
+      if(level<=WARN) try
       {
-        throw new Exception(message);
+        throw new Exception("Stack Dump");
       }
       catch(Exception e)
       {
