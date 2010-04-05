@@ -25,6 +25,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -337,7 +338,7 @@ public class Window extends Panel {
             int desktopWidth = desktop.getWidth();
             int desktopHeight = desktop.getHeight();
 
-    //System.out.println("Screen height: "+desktopHeight);
+    //Logger.debug("Screen height: "+desktopHeight);
 
             Component component = desktop.getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
 
@@ -345,14 +346,14 @@ public class Window extends Panel {
             int componentWidth = component.getWidthWithBorder();
             int componentHeight = component.getHeightWithBorder();
 
-    //System.out.println("Component height: "+componentHeight);
+    //Logger.debug("Component height: "+componentHeight);
 
             //button.setSize(componentWidth, componentHeight);
 
             int bottom = desktopHeight-componentHeight;
             int right = desktopWidth-componentWidth;
 
-    //System.out.println("Bottom: "+bottom);
+    //Logger.debug("Bottom: "+bottom);
 
             int x = 0, y = 0;
 
@@ -408,13 +409,13 @@ public class Window extends Panel {
                 softkeys.addElement(softkey);
                 softkey.setParent(this);
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("whats this all about?");
+                Logger.warn("whats this all about?");
                 throw new RuntimeException();
             }
             if (softkey==null) {
-                System.err.println("trying to add null button");
+                Logger.warn("trying to add null button");
                 throw new RuntimeException();
             }
             //#enddebug
@@ -447,13 +448,13 @@ public class Window extends Panel {
                 softkeys.removeElement(softkey);
                 softkey.removeParent(this);
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("whats this all about?");
+                Logger.warn("whats this all about?");
                 throw new RuntimeException();
             }
             if (softkey==null) {
-                System.err.println("trying to remove null button");
+                Logger.warn("trying to remove null button");
                 throw new RuntimeException();
             }
             //#enddebug

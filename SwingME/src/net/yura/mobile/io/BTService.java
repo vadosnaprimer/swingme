@@ -11,6 +11,7 @@ import javax.bluetooth.ServiceRecord;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnectionNotifier;
+import net.yura.mobile.logging.Logger;
 /**
  *
  * @author MarkH
@@ -39,7 +40,10 @@ public class BTService extends ServiceLink {
               try {
                    discoveryAgent = LocalDevice.getLocalDevice().getDiscoveryAgent();
                    bRegistered = true;
-              } catch (Exception ex) {}
+              }
+              catch (Exception ex) {
+                Logger.warn(ex);
+              }
          }
          return bRegistered;
     }
@@ -50,11 +54,14 @@ public class BTService extends ServiceLink {
 
          bClient = false;
          if (isSupported()) {
-              try {
+                try {
                     LocalDevice.getLocalDevice().setDiscoverable(DiscoveryAgent.GIAC);
                     streamNotifier = (StreamConnectionNotifier) Connector.open("btspp://localhost:" + aUuid.toString() + ";name=" + serviceName + ";authorize=false");
                     bRegistered = true;
-                } catch (Exception ex) {}
+                }
+                catch (Exception ex) {
+                    Logger.warn(ex);
+                }
          }
          return bRegistered;
     }

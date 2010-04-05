@@ -25,6 +25,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -154,8 +155,8 @@ public class ScrollPane extends Panel implements Runnable {
         int oldX = component.getX();
         int oldY = component.getY();
 
-        //System.out.println("x="+x+" y="+y+" w="+w+" h="+h);
-        //System.out.println("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
+        //Logger.debug("x="+x+" y="+y+" w="+w+" h="+h);
+        //Logger.debug("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
 
         int right = x+w;
         int bottom = y+h;
@@ -231,7 +232,7 @@ public class ScrollPane extends Panel implements Runnable {
         // NEVER CALL setBounds here as it will call setSize and that will cause a revalidate
         //component.setBounds(15, 15, component.getWidth(), component.getHeight());
 
-        //System.out.println("new pos: x="+component.getX()+" y="+component.getY() );
+        //Logger.debug("new pos: x="+component.getX()+" y="+component.getY() );
 
         // only repint if we have moved
         if (oldX!=component.getX() || oldY!=component.getY()) {
@@ -328,7 +329,7 @@ public class ScrollPane extends Panel implements Runnable {
 /* this is another solution
             // we need to pass
             if (mode == MODE_SCROLLBARS && ch > viewHeight && cw < viewWidth ) {
-System.out.println("size1 "+ viewWidth+" "+ ch);
+Logger.debug("size1 "+ viewWidth+" "+ ch);
                 comp.setSize( viewWidth , ch);
                 comp.workoutSize();
                 cw = comp.getWidth();
@@ -342,7 +343,7 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                 ch = viewHeight;
             }
 
-//System.out.println("size2 "+ cw+" "+ ch);
+//Logger.debug("size2 "+ cw+" "+ ch);
             comp.setSize(cw, ch);
 
             if (comp.getX() > getViewPortX()) {
@@ -847,7 +848,9 @@ System.out.println("size1 "+ viewWidth+" "+ ch);
                     try {
                         ScrollPane.class.wait(timeToWait);
                     }
-                    catch(InterruptedException e) {}
+                    catch(InterruptedException e) {
+                      Logger.info(e);
+                    }
                 }
             }
         }

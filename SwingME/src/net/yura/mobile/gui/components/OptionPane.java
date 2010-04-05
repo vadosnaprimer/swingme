@@ -30,6 +30,7 @@ import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.GridBagConstraints;
 import net.yura.mobile.gui.layout.GridBagLayout;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -240,9 +241,9 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     }
 
     public void run() {
-        
+        try {
         //content.workoutSize(); // what out what the needed size is
-        //System.out.println("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
+        //Logger.debug("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
         //scroll.setPreferredSize(content.getWidth(), content.getHeight());
         pack();
 
@@ -264,7 +265,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         setLocationRelativeTo(null);
         
         setVisible(true);
-
+        }
+        catch(Throwable t) {
+          Logger.error(t);
+        }
     }
    
     

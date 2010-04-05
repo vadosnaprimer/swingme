@@ -185,7 +185,7 @@ public class Panel extends Component {
                         g.translate(-cx, -cy);
                     }
                     //else {
-                    //    System.out.println("Wont paint "+component);
+                    //    Logger.debug("Wont paint "+component);
                     //}
 
             }

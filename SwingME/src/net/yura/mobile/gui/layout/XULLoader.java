@@ -51,6 +51,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.io.UTF8InputStreamReader;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
@@ -139,9 +140,9 @@ public class XULLoader {
                 if( 2 == property.length ) {
                     properties.put(property[0], property[1]);
                 }
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.err.println("property does not have a key and value");
+                    Logger.warn("property does not have a key and value: "+cProperties[x]);
                 }
                 //#enddebug
             }
@@ -342,7 +343,7 @@ public class XULLoader {
                 }
                 else {
                     //#debug
-                    System.out.println("ignored item in tab: "+obj);
+                    Logger.debug("ignored item in tab: "+obj);
                 }
             }
             return tab;
@@ -504,7 +505,7 @@ public class XULLoader {
         }
         else { // if (name.equals("slider")) {
             //#debug
-            System.out.println("unknown object found: "+name);
+            Logger.debug("unknown object found: "+name);
 
             Label slider = new Label("unknown item: "+name);
             return readUIObject(parser, slider,listener);
@@ -635,7 +636,7 @@ public class XULLoader {
             return new Icon(value);
         }
         catch (Exception ex) {
-            ex.printStackTrace();
+            Logger.warn(ex);
             return null;
         }
     }
@@ -822,7 +823,7 @@ public class XULLoader {
                 uiobject.weighty = Integer.parseInt(value);
             }
             else if ("colspan".equals(key)) {
-//                System.out.println("Setting colspan to "+Integer.parseInt(value));
+//                Logger.debug("Setting colspan to "+Integer.parseInt(value));
                 uiobject.colSpan = Integer.parseInt(value);
             }
             else if ("rowspan".equals(key)) {
@@ -908,7 +909,7 @@ public class XULLoader {
             }
             else {
                 //#debug
-                System.out.println("what to do with this object: "+obj.getClass() +" "+obj+" parent="+uiobject.component);
+                Logger.debug("what to do with this object: "+obj.getClass() +" "+obj+" parent="+uiobject.component);
             }
         }
 

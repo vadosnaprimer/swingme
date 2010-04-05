@@ -26,6 +26,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.MatteBorder;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.StringUtil;
 import org.kxml2.io.KXmlParser;
 
@@ -48,9 +49,9 @@ public class SynthLookAndFeel extends LookAndFeel {
             return new Icon(path);
         }
         catch (Exception ex) {
-            //#mdebug
-            System.err.println("can not load image: "+path);
-            ex.printStackTrace();
+            //#mdebug warn
+            Logger.warn("can not load image: "+path);
+            Logger.warn(ex);
             //#enddebug
             return null;
         }
@@ -60,9 +61,9 @@ public class SynthLookAndFeel extends LookAndFeel {
             return getClass().getResourceAsStream(path);
         }
         catch (Exception ex) {
-            //#mdebug
-            System.err.println("can not load resource: "+path);
-            ex.printStackTrace();
+            //#mdebug warn
+            Logger.warn("can not load resource: "+path);
+            Logger.warn(ex);
             //#enddebug
             return null;
         }
@@ -137,8 +138,8 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                     }
                     else {
-                        //#debug
-                        System.out.println("unknown found: "+name);
+                        //#debug warn
+                        Logger.warn("unknown found: "+name);
                     }
                     
                     // read end tag
@@ -256,8 +257,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     }
                                 }
                                 else {
-                                    //#debug
-                                    System.out.println("unknown found: "+name2);
+                                    //#debug warn
+                                    Logger.warn("unknown found: "+name2);
                                 }
 
                                 // read end tag
@@ -303,8 +304,8 @@ public class SynthLookAndFeel extends LookAndFeel {
 
 			}
                         else {
-                            //#debug
-                            System.out.println("unknown found: "+name);
+                            //#debug warn
+                            Logger.warn("unknown found: "+name);
                         }
                         
                         // read end tag
@@ -364,8 +365,8 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                 String path = parser.getAttributeValue(null, "path");
 
-//#debug
-System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style: "+fontStyle+", id: "+fontId);
+                //#debug info
+                Logger.info("Loading font: name: "+fontName+", size: "+fontSize+", style: "+fontStyle+", id: "+fontId);
 
                 int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
                 int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
@@ -424,8 +425,8 @@ System.out.println("Loading font: name: "+fontName+", size: "+fontSize+", style:
                         }
                     }
 
-                    //#debug
-                    System.out.println("oooo: "+name);
+                    //#debug debug
+                    Logger.debug("oooo: "+name);
                     
                     parser.skipSubTree();
                 }

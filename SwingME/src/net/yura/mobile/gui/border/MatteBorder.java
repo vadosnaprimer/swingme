@@ -24,7 +24,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.util.ImageUtil;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Properties;
 
 /**
@@ -226,9 +226,8 @@ public class MatteBorder extends EmptyBorder {
                 }
                 
                 else if (back) {
-                    //#mdebug
-                    System.out.println("filling background with tiled image!");
-                    //#enddebug
+                    //#debug
+                    Logger.debug("filling background with tiled image!");
                     g.drawImage(image,imageLeft,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
                             leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff,
                             Sprite.TRANS_NONE); // centre
@@ -241,9 +240,9 @@ public class MatteBorder extends EmptyBorder {
                     g.fillRect(fillsides?-left:leftDiff,filltop?-top:topDiff,width-(fillsides?-(left+right):leftDiff+rightDiff),height-(filltop?-(top+bottom):topDiff+bottomDiff));
                 }
 
-                //#mdebug
+                //#mdebug info
                 else {
-                    System.out.println("imagePainter has image but does not have anything to fill the area, this is prob bad");
+                    Logger.info("imagePainter has image but does not have anything to fill the area, this is prob bad");
                 }
                 if (DesktopPane.debug) {
                     Random r = new Random();

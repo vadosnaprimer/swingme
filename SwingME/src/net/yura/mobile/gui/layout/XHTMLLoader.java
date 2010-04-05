@@ -20,6 +20,7 @@ import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.StringUtil;
 import org.kxml2.io.KXmlParser;
@@ -50,8 +51,7 @@ public class XHTMLLoader {
             endInlineSection();
         }
         catch(Exception ex) {
-            //#debug
-            ex.printStackTrace();
+            Logger.warn(ex);
         }
     }
 
@@ -65,8 +65,7 @@ public class XHTMLLoader {
             read(parser);
         }
         catch(Exception ex) {
-            //#debug
-            ex.printStackTrace();
+            Logger.warn(ex);
         }
     }
 
@@ -168,13 +167,13 @@ public class XHTMLLoader {
             }
             //#mdebug
             else if(eventType == KXmlParser.START_DOCUMENT) {
-                System.out.println("Start document");
+                Logger.debug("Start document");
             }
             else if(eventType == KXmlParser.END_DOCUMENT) {
-                System.out.println("End document");
+                Logger.debug("End document");
             }
             else {
-                System.out.println("unknown event: "+eventType);
+                Logger.debug("unknown event: "+eventType);
             }
             //#enddebug
             eventType = parser.nextToken();
@@ -265,8 +264,8 @@ public class XHTMLLoader {
         public void processStartElement(KXmlParser parser) throws Exception {
             final int count = parser.getAttributeCount();
             String startTag = parser.getName().toLowerCase();
-
-System.out.println("START: "+startTag);
+//#debug debug
+Logger.debug("START: "+startTag);
 
             if ("a".equals(startTag)) {
                 for (int c=0;c<count;c++) {
@@ -288,9 +287,9 @@ System.out.println("START: "+startTag);
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                     inlineText.setText( inlineText.getText()+"\n" );
                 }
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.out.println("strange place for br tag, br can not go here");
+                    Logger.warn("strange place for br tag, br can not go here");
                 }
                 //#enddebug
             }
@@ -342,9 +341,9 @@ System.out.println("START: "+startTag);
                         inlineText.setSelectedValues(selectedValues);
                     }
                 }
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.out.println("strange place for option, should be inside select");
+                    Logger.warn("strange place for option, should be inside select");
                 }
                 //#enddebug
             }
@@ -425,9 +424,9 @@ System.out.println("START: "+startTag);
                 if (parent!=null && parent.rows!=null) {
                     parent.row++;
                 }
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.out.println("strange place for tr tag, tr can not go here");
+                    Logger.warn("strange place for tr tag, tr can not go here");
                 }
                 //#enddebug
             }
@@ -446,9 +445,9 @@ System.out.println("START: "+startTag);
                         parent.parent.addToRow(a,colspani);
                     }
                 }
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.out.println("strange place for th/td tag, th/td can not go here");
+                    Logger.warn("strange place for th/td tag, th/td can not go here");
                 }
                 //#enddebug
 
@@ -466,7 +465,7 @@ System.out.println("START: "+startTag);
                 insertPanel(p, c);
 
             }
-            //#mdebug
+            //#mdebug warn
             else if ("b".equals(startTag)) {
 
             }
@@ -495,7 +494,7 @@ System.out.println("START: "+startTag);
                 // do nothing
             }
             else {
-                System.out.println("unknwon start: "+startTag);
+                Logger.warn("unknwon start: "+startTag);
             }
             //#enddebug
 
@@ -541,7 +540,8 @@ System.out.println("START: "+startTag);
                 }
                 GridBagLayout layout = (GridBagLayout)((Panel)currentComponent).getLayout();
                 layout.columns = biggest;
-                System.out.println("bigget "+rows+" "+biggest);
+                //#debug debug
+                Logger.debug("bigget "+rows+" "+biggest);
                 endComponent();
             }
             else if ("li".equals(endTag)) {
@@ -550,7 +550,7 @@ System.out.println("START: "+startTag);
             else if ("ul".equals(endTag) || "ol".equals(endTag)) {
                 endComponent();
             }
-            //#mdebug
+            //#mdebug warn
             else if ("b".equals(endTag)) {
 
             }
@@ -588,7 +588,7 @@ System.out.println("START: "+startTag);
                 // do nothing
             }
             else {
-                System.out.println("unknown end: "+endTag);
+                Logger.warn("unknown end: "+endTag);
             }
             //#enddebug
         }
@@ -599,7 +599,8 @@ System.out.println("START: "+startTag);
             //string = StringUtil.replaceAll(string, "\t", " ");
             //string = StringUtil.replaceAll(string, "  ", " ");
             //string = StringUtil.trimStart(string);
-            System.out.println("    text: \""+string+"\"");
+            //#debug debug
+            Logger.debug("    text: \""+string+"\"");
             if (currentComponent instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                 inlineText.append( string );
@@ -620,22 +621,23 @@ System.out.println("START: "+startTag);
                 TextArea inlineText = (TextArea)XHTMLLoader.this.currentComponent;
                 inlineText.append( string );
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.out.println("strange place for text");
+                Logger.warn("strange place for text");
             }
             //#enddebug
         }
 
         private void processRef(KXmlParser parser) {
-            System.out.println("ref: "+parser.getName());
+            //#debug debug
+            Logger.debug("ref: "+parser.getName());
             if (currentComponent instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                 inlineText.setText( inlineText.getText()+parser.getName() );
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.out.println("strange place for ref");
+                Logger.warn("strange place for ref");
             }
             //#enddebug
         }

@@ -21,6 +21,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -73,12 +74,12 @@ public abstract class Midlet extends MIDlet {
 
 	protected void pauseApp() {
 		// TODO
-		//System.out.println("pauseApp");
+		//Logger.debug("pauseApp");
 	}
 
 	protected void startApp() {
 		// TODO come out of pause
-		//System.out.println("startApp");
+		//Logger.debug("startApp");
 	}
 
 	public static int getPlatform() {
@@ -178,9 +179,10 @@ public abstract class Midlet extends MIDlet {
             getMidlet().platformRequest("tel:" + number);
         }
         catch (Exception e) {
-            DesktopPane.log("can not call: " + number + " " + e.toString());
-            //#debug
-            e.printStackTrace();
+            //#mdebug warn
+            Logger.warn("can not call: " + number + " " + e.toString());
+            Logger.warn(e);
+            //#enddebug
         }
 
     }
@@ -190,9 +192,10 @@ public abstract class Midlet extends MIDlet {
             getMidlet().platformRequest(url);
         }
         catch (Exception e) {
-            DesktopPane.log("can not open url: " + url + " " + e.toString());
-            //#debug
-            e.printStackTrace();
+            //#mdebug warn
+            Logger.warn("can not open url: " + url + " " + e.toString());
+            Logger.warn(e);
+            //#enddebug
         }
 
     }
@@ -202,9 +205,10 @@ public abstract class Midlet extends MIDlet {
             Display.getDisplay(getMidlet()).vibrate(duration);
         }
         catch (Exception e) {
-            DesktopPane.log("can not vibration " + e.toString());
-            //#debug
-            e.printStackTrace();
+            //#mdebug warn
+            Logger.warn("can not vibration " + e.toString());
+            Logger.warn(e);
+            //#enddebug
         }
     }
 
@@ -217,8 +221,7 @@ public abstract class Midlet extends MIDlet {
         }
         catch (Exception ex) {
             // as you called this yourself, you should not be throwing here
-            //#debug
-            ex.printStackTrace();
+            Logger.warn(ex);
             throw new RuntimeException();
         }
     }

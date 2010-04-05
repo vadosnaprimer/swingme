@@ -25,6 +25,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
@@ -119,8 +120,7 @@ public class Font {
                     return getFont(is, characterImage, colors);
 		}
                 catch (IOException ex) {
-                    //#debug
-                    ex.printStackTrace();
+                    Logger.warn(ex);
                     throw new RuntimeException();
 		}
 	}
@@ -138,26 +138,26 @@ public class Font {
             dis.skipBytes(4);
 
             // block: info
-            //System.out.println("FONT: Reading info");
+            //Logger.debug("FONT: Reading info");
             dis.skipBytes(1);
             int size = getLong(dis);
             dis.skipBytes(size);
 
             // block: common
-            //System.out.println("FONT: Reading common");
+            //Logger.debug("FONT: Reading common");
             dis.skipBytes(1);
             size = getLong(dis);
             f.height = getShortUnsigned(dis);
             dis.skipBytes(size - 2);
 
             // block: page
-            //System.out.println("FONT: Reading pages");
+            //Logger.debug("FONT: Reading pages");
             dis.skipBytes(1);
             size = getLong(dis);
             dis.skipBytes(size);
 
             // block: chars
-            //System.out.println("FONT: Reading chars");
+            //Logger.debug("FONT: Reading chars");
             f.characters = new Hashtable();
 
             dis.skipBytes(1);
@@ -201,7 +201,7 @@ public class Font {
             if (dis.available() > 0) {
                     dis.skipBytes(1);
                     dis.skipBytes(4);
-                    //System.out.println("FONT: Starting kerning reading");
+                    //Logger.debug("FONT: Starting kerning reading");
                     while (dis.available() > 0) {
                             char first = (char) getLong(dis);
                             char second = (char) getLong(dis);
@@ -212,11 +212,11 @@ public class Font {
                             Integer kerningValue = getInteger(amount);
                             f.kerning.put(charPairIdentifier, kerningValue);
 
-                            //System.out.println("FONT: Kerning for "+first+"-"+second+" = "+amount);
+                            //Logger.debug("FONT: Kerning for "+first+"-"+second+" = "+amount);
                     }
             }
             else {
-                    //System.out.println("FONT: No kerning info available");
+                    //Logger.debug("FONT: No kerning info available");
             }
 
             integers = null;
@@ -401,8 +401,7 @@ public class Font {
                         return f;
 		}
 		catch (IOException ex) {
-                    //#debug
-                    ex.printStackTrace();
+                    Logger.warn(ex);
                     throw new RuntimeException("unable to load font: "+name);
 		}
 
@@ -522,7 +521,7 @@ public class Font {
 
 				if(charIndex > - 1) {
 
-					//System.out.println("FONT: get kergning for: "+prevCharacter+"-"+charIndex);
+					//Logger.debug("FONT: get kergning for: "+prevCharacter+"-"+charIndex);
 
 					Integer kerningModifier = (Integer) kerning.get(getCharPairId((char)prevCharacter, (char)charIndex));
 					if (kerningModifier != null) {
@@ -560,14 +559,14 @@ public class Font {
 				}
 
 				prevCharacter = charIndex;
-				//System.out.println(i + ": " + character + " | w:" + w + "\tgW:" + getWidth(character) + "\tcS:" + characterSpacing + "\tadv:" + advance[charIndex] + "\txOff:" + offsetX[charIndex] + "\tkern:" + k);
+				//Logger.debug(i + ": " + character + " | w:" + w + "\tgW:" + getWidth(character) + "\tcS:" + characterSpacing + "\tadv:" + advance[charIndex] + "\txOff:" + offsetX[charIndex] + "\tkern:" + k);
 
 				width += w;
 
 			}
 
 			// Return the width, minus the spacing from the final charIndex.
-			//System.out.println(s + ":" + width);
+			//Logger.debug(s + ":" + width);
 			return width;
 		}
 	}
@@ -586,13 +585,13 @@ public class Font {
                         // find if we have this color already
                         for (int c=0;c<colors.length;c++) {
                             if (color == colors[c]) {
-
-//				System.err.println("characterHeight = " + characterHeight[index]);
-//				System.err.println("characterWidth = " + characterWidth[index]);
-//				System.err.println("startY = " + startY[index]);
-//				System.err.println("startX = " + startX[index]);
-//				System.err.println("characterImage = " + characterImage[c]);
-
+          //#mdebug debug
+//				Logger.debug("characterHeight = " + characterHeight[index]);
+//				Logger.debug("characterWidth = " + characterWidth[index]);
+//				Logger.debug("startY = " + startY[index]);
+//				Logger.debug("startX = " + startX[index]);
+//				Logger.debug("characterImage = " + characterImage[c]);
+          //#enddebug
                                 // hack to stop the thing crashing, this should be taken out
                                 //if (characterWidth[index]==0) {
                                 //    glyphs[index] = Image.createImage(1, 1);
@@ -772,7 +771,7 @@ public class Font {
 						//#enddebug
 
 						g.drawImage(glyph, thisx, y + offsetY[charIndex], Graphics.TOP | Graphics.LEFT);
-						//System.out.println("yOff:" + offsetY[charIndex] + ' ' + character);
+						//Logger.debug("yOff:" + offsetY[charIndex] + ' ' + character);
 						// Advance drawing position.
 						x += advance[charIndex] + characterSpacing;
 

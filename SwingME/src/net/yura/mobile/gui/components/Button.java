@@ -26,6 +26,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -154,12 +155,12 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.AbstractButton#addActionListener(java.awt.event.ActionListener) AbstractButton.addActionListener
          */
 	public void addActionListener(ActionListener l) {
-                //#mdebug
+                //#mdebug warn
                 if (al!=null) {
-                    System.err.println("trying to add a ActionListener when there is already one registered");
+                    Logger.warn("trying to add a ActionListener when there is already one registered");
                 }
                 if (l==null) {
-                    System.err.println("trying to add a null ActionListener");
+                    Logger.warn("trying to add a null ActionListener");
                 }
                 //#enddebug
 		al = l;
@@ -170,12 +171,12 @@ public class Button extends Label implements ActionListener {
          */
 	public void removeActionListener(ActionListener l) {
 		if (al == l) { al = null; }
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.err.println("trying to remove a ActionListener that is not registered");
+                    Logger.warn("trying to remove a ActionListener that is not registered");
                 }
                 if (l==null) {
-                    System.err.println("trying to remove a null ActionListener");
+                    Logger.warn("trying to remove a null ActionListener");
                 }
                 //#enddebug
 	}
@@ -338,9 +339,9 @@ public class Button extends Label implements ActionListener {
 		if(selectButton.getActionCommand().equals(actionCommand)) {
 			fireActionPerformed();
 		}
-                //#mdebug
+                //#mdebug warn
                 else {
-                    System.err.println("whats going on here??? "+actionCommand);
+                    Logger.warn("whats going on here??? "+actionCommand);
                 }
                 //#enddebug
 	}

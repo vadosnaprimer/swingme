@@ -21,6 +21,7 @@ import java.util.Vector;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.layout.BorderLayout;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -224,7 +225,7 @@ public class Frame extends Window {
                 h = h + ch;
             }
 
-            //System.out.println("size: "+w+" "+h);
+            //Logger.debug("size: "+w+" "+h);
 
             width = w;
             height = h;
@@ -275,20 +276,20 @@ public class Frame extends Window {
         // java 1.5 hack
         public void add(Component comp) {
             getContentPane().add(comp);
-            //#debug
-            System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
+            //#debug info
+            Logger.info("try and avoid using add() on a Frame, use getContentPane().add() instead");
         }
         // java 1.5 hack
         public void add(Component comp,Object consta) {
             getContentPane().add(comp,consta);
-            //#debug
-            System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
+            //#debug info
+            Logger.info("try and avoid using add() on a Frame, use getContentPane().add() instead");
         }
         // java 1.5 hack
         public void add(Component comp,int consta) {
             getContentPane().add(comp,consta);
-            //#debug
-            System.out.println("try and avoid using add() on a Frame, use getContentPane().add() instead");
+            //#debug info
+            Logger.info("try and avoid using add() on a Frame, use getContentPane().add() instead");
         }
 
 //        private int oldX,oldY,oldWidth,oldHeight;

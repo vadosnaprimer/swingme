@@ -31,6 +31,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.io.NativeUtil;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 
 /**
@@ -146,7 +147,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         else {
             hardImages = getHeight()/fileList.getFixedCellHeight();
         }
-        System.err.println("hardImages = " + hardImages);
+        //#debug debug
+        Logger.debug("hardImages = " + hardImages);
     }
 
     /**
@@ -282,91 +284,104 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             Thread.yield();
             Thread.sleep(0);
         }
-        catch (InterruptedException ex) {}
+        catch (InterruptedException ex) {
+          Logger.info(ex);
+        }
     }
 
     public void run() {
-        System.out.println("FC START");
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+      try {
+          //#debug
+          Logger.debug("FC START");
+          Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
-        if (files.isEmpty()) {
-            requestImage.removeAllElements();
-            Vector fileNames = NativeUtil.listFiles(dir, filter, showNew.isSelected());
+          if (files.isEmpty()) {
+              requestImage.removeAllElements();
+              Vector fileNames = NativeUtil.listFiles(dir, filter, showNew.isSelected());
 
-            for (int c = 0; c < fileNames.size(); c++) {
+              for (int c = 0; c < fileNames.size(); c++) {
 
-                String name = (String) fileNames.elementAt(c);
+                  String name = (String) fileNames.elementAt(c);
 
-                SelectableFile tbo = new SelectableFile(name);
-                files.addElement(tbo);
+                  SelectableFile tbo = new SelectableFile(name);
+                  files.addElement(tbo);
 
-            }
+              }
 
-            if (gridView.isSelected()) {
-                fileTable.setSelectedIndex(-1);
-                fileTable.setListData(files);
-                fileTable.setSelectedIndex(0);
-                fileTable.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
-            }
-            else {
-                fileList.setSelectedIndex(-1);
-                fileList.setListData(files);
-                fileList.setSelectedIndex(0);
-                fileList.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
-            }
+              if (gridView.isSelected()) {
+                  fileTable.setSelectedIndex(-1);
+                  fileTable.setListData(files);
+                  fileTable.setSelectedIndex(0);
+                  fileTable.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
+              }
+              else {
+                  fileList.setSelectedIndex(-1);
+                  fileList.setListData(files);
+                  fileList.setSelectedIndex(0);
+                  fileList.setLocation(scroll.getViewPortX(), scroll.getViewPortY());
+              }
 
-            revalidate();
-            repaint();
-            System.out.println("FC END 1");
-            return;
-        }
+              revalidate();
+              repaint();
+              //#debug
+              Logger.debug("FC END 1");
+              return;
+          }
 
-        while (true) {
+          while (true) {
 
-            SelectableFile file;
+              SelectableFile file;
 
-            synchronized (requestImage) {
-                if (!requestImage.isEmpty() && !files.isEmpty() ) {
-                    file = (SelectableFile)requestImage.firstElement();
-                }
-                else {
-                    System.out.println("FC END 2");
-                    return;
-                }
-            }
+              synchronized (requestImage) {
+                  if (!requestImage.isEmpty() && !files.isEmpty() ) {
+                      file = (SelectableFile)requestImage.firstElement();
+                  }
+                  else {
+                      //#debug
+                      Logger.debug("FC END 2");
+                      return;
+                  }
+              }
 
-            String absoultePath = file.getAbsolutePath();
-//System.out.println("start load 1: "+absoultePath);
-            yield();
-            Image image = NativeUtil.getThumbnailFromFile(absoultePath);
-//System.out.println("start load 2: "+absoultePath);
-            if (image == null) {
-                yield();
-                image = NativeUtil.getImageFromFile( absoultePath );
-            }
-//System.out.println("start load 3: "+absoultePath);
-            int th = thumbSize;
-            if (image!=null) {
-                yield();
-                image = ImageUtil.scaleImage(image, th, th);
-            }
-//System.out.println("end load: "+absoultePath);
-            synchronized (requestImage) {
-                if (image!=null) {
-                    file.thumb = new WeakReference( new Icon(image) );
-                }
-                else {
-                    file.loadFailed = true;
-                }
-                file.currentThumbSize = th;
-                if (!requestImage.isEmpty()) {
-                    requestImage.removeElementAt(0);
-                }
-            }
+              String absoultePath = file.getAbsolutePath();
+  //#debug debug
+  //Logger.debug("start load 1: "+absoultePath);
+              yield();
+              Image image = NativeUtil.getThumbnailFromFile(absoultePath);
+  //#debug debug
+  //Logger.debug("start load 2: "+absoultePath);
+              if (image == null) {
+                  yield();
+                  image = NativeUtil.getImageFromFile( absoultePath );
+              }
+  //#debug debug
+  //Logger.debug("start load 3: "+absoultePath);
+              int th = thumbSize;
+              if (image!=null) {
+                  yield();
+                  image = ImageUtil.scaleImage(image, th, th);
+              }
+  //#debug debug
+  //Logger.debug("end load: "+absoultePath);
+              synchronized (requestImage) {
+                  if (image!=null) {
+                      file.thumb = new WeakReference( new Icon(image) );
+                  }
+                  else {
+                      file.loadFailed = true;
+                  }
+                  file.currentThumbSize = th;
+                  if (!requestImage.isEmpty()) {
+                      requestImage.removeElementAt(0);
+                  }
+              }
 
-            repaint();
-        }
-
+              repaint();
+          }
+      }
+      catch(Throwable t) {
+        Logger.error(t);
+      }
     }
 
     /**
@@ -455,8 +470,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
         }
         else {
-            //#debug
-            System.err.println("unknown action in file browser: " + myaction);
+            //#debug warn
+            Logger.warn("unknown action in file browser: " + myaction);
         }
 
     }

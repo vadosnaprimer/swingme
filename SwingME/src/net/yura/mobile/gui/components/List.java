@@ -26,6 +26,7 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
+import net.yura.mobile.logging.Logger;
 
 /**
  * if you would like the list to wrap the items then please use GridList
@@ -210,12 +211,12 @@ public class List extends Component implements ActionListener {
     }
 
     public void addActionListener(ActionListener l) {
-        //#mdebug
+        //#mdebug warn
         if (al!=null) {
-            System.err.println("trying to add a ActionListener when there is already one registered");
+            Logger.warn("trying to add a ActionListener when there is already one registered");
         }
         if (l==null) {
-            System.err.println("trying to add a null ActionListener");
+            Logger.warn("trying to add a null ActionListener");
         }
         //#enddebug
         al = l;
@@ -223,12 +224,12 @@ public class List extends Component implements ActionListener {
     public void removeActionListener(ActionListener l) {
 
         if (al == l) { al = null; }
-        //#mdebug
+        //#mdebug warn
         else {
-            System.err.println("trying to remove a ActionListener that is not registered");
+           Logger.warn("trying to remove a ActionListener that is not registered");
         }
         if (l==null) {
-            System.err.println("trying to remove a null ActionListener");
+            Logger.warn("trying to remove a null ActionListener");
         }
         //#enddebug
     }
@@ -768,9 +769,9 @@ public class List extends Component implements ActionListener {
         if(selectButton.getActionCommand().equals(actionCommand)) {
             fireActionPerformed();
         }
-        //#mdebug
+        //#mdebug warn
         else {
-            System.err.println("unknown command in List actionPerformed: " + actionCommand);
+            Logger.warn("unknown command in List actionPerformed: " + actionCommand);
         }
         //#enddebug
 

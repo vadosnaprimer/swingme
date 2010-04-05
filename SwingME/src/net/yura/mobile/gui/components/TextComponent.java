@@ -29,6 +29,7 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -179,9 +180,9 @@ public abstract class TextComponent extends Component implements ActionListener,
             if (SOFTKEY_CLEAR.getActionCommand().equals(actionCommand)) {
                 clear(true);
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("something not right here?!?!?! "+actionCommand);
+                Logger.warn("something not right here?!?!?! "+actionCommand);
             }
             //#enddebug
 	}

@@ -1,6 +1,6 @@
 package net.yura.mobile.util;
 
-import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.logging.Logger;
 
 /**
  *
@@ -16,7 +16,7 @@ public class Timer extends Thread{
     public void schedule(String id, Runnable task, long delay){
 
         //#debug
-        System.out.println("Setting schedule for {" + id + "} with delay of: " + delay);
+        Logger.debug("Setting schedule for {" + id + "} with delay of: " + delay);
         
         this.id = id;
         this.delay = delay;
@@ -29,24 +29,24 @@ public class Timer extends Thread{
 
         while(!cancelled){
             try {
-                this.sleep(delay);
-            } catch (InterruptedException e) {                
-                e.printStackTrace();
-            }
+              try {
+                  this.sleep(delay);
+              }
+              catch (InterruptedException e) {
+                Logger.info(e);
+              }
 
-            if (cancelled) break;
+              if (cancelled) break;
 
-            //#debug
-            System.out.println("Running task {" + id + "} after a schedule of: " + delay);
-
-            try {
-                task.run();
+              //#debug debug
+              Logger.debug("Running task {" + id + "} after a schedule of: " + delay);
+              task.run();
             }
             catch (Throwable t) {
-                //#mdebug
-                DesktopPane.log("error in {"+id+"} timer: "+t.toString());
-                t.printStackTrace();
-                //#enddebug
+              //#mdebug
+              Logger.error("error in {"+id+"} timer: "+t.toString());
+              Logger.error(t);
+              //#enddebug
             }
         }
     }
@@ -54,8 +54,8 @@ public class Timer extends Thread{
 
     public void cancel(){
 
-        //#debug
-        System.out.println("Cancelling task {" + id + "}");
+        //#debug debug
+        Logger.debug("Cancelling task {" + id + "}");
 
         cancelled = true;
     }

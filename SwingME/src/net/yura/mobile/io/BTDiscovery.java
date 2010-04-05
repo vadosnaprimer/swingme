@@ -10,6 +10,7 @@ import javax.bluetooth.ServiceRecord;
 import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 import javax.bluetooth.DeviceClass;
+import net.yura.mobile.logging.Logger;
 /**
  *
  * @author MarkH
@@ -29,7 +30,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
                 return true;
               }
             } catch (IOException ex) {
-                handleException(ex);            
+              Logger.warn(ex);
             }
             return false;
     }
@@ -43,8 +44,8 @@ public abstract class BTDiscovery implements DiscoveryListener {
                 String address = device.getBluetoothAddress();
                 handleRemoteId(name, address);
             }
-            } catch (Exception ex) {
-                handleException(ex);
+            } catch (Throwable t) {
+                Logger.error(t);
             }
     }
    public void servicesDiscovered(int transId, ServiceRecord[] serviceRecords) {
@@ -54,12 +55,16 @@ public abstract class BTDiscovery implements DiscoveryListener {
             {
                 //Do Nothing
             }
-        } catch (Exception ex) {
-            handleException(ex);
+        } catch (Throwable t) {
+            Logger.error(t);
         }
     }
     public void inquiryCompleted(int discoveryType) {
+        try {
             handleInquiryCompleted();
+        } catch (Throwable t) {
+            Logger.error(t);
+        }
     }
     public void serviceSearchCompleted(int transId, int responseCode) {
     }
@@ -67,7 +72,6 @@ public abstract class BTDiscovery implements DiscoveryListener {
     abstract public void handleMyId(String name, String address);
     abstract public void handleRemoteId(String name, String address);
     abstract public void handleInquiryCompleted();
-    abstract public void handleException(Exception ex);
 
     protected static boolean isSupported() {
         if (System.getProperty( "bluetooth.api.version" ) == null) {

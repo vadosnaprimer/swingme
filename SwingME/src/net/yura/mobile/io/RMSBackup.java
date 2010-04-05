@@ -8,6 +8,7 @@ import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 import java.io.InputStream;
 import java.io.OutputStream;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
 /**
@@ -36,8 +37,8 @@ public class RMSBackup extends QueueProcessorThread {
             RecordStore.deleteRecordStore(rmsName);
         }
         catch (Exception ex) {
-            //ex.printStackTrace();
-            System.out.println("can not del RMS");
+            //#debug info
+            Logger.info("can not del RMS");
         }
         table.clear();
     }
@@ -81,7 +82,9 @@ public class RMSBackup extends QueueProcessorThread {
             try {
                 start();
             }
-            catch(IllegalThreadStateException ex) { } // TODO, find a better way
+            catch(IllegalThreadStateException ex) {
+              Logger.info(ex);
+            } // TODO, find a better way
         }
         addToInbox(obj);
 
@@ -99,7 +102,7 @@ public class RMSBackup extends QueueProcessorThread {
             }
             catch(Exception ex) {
                 // this should really never happen
-                ex.printStackTrace();
+                Logger.warn(ex);
             }
 
     }

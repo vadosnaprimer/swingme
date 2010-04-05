@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.microedition.io.file.FileConnection;
 import net.yura.mobile.io.proto.CodedOutputStream;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -24,8 +25,7 @@ public class ProtoFileUtil extends ProtoUtil {
                 return (int)file.fileSize();
             }
             catch(Exception ex) {
-                //#debug
-                ex.printStackTrace();
+                Logger.warn(ex);
                 return 0;
             }
         }

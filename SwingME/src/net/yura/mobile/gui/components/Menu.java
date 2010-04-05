@@ -26,6 +26,7 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -296,9 +297,9 @@ public class Menu extends Button {
 
 //                button.fireActionPerformed();
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("unknown command in menu: "+actionCommand);
+                Logger.warn("unknown command in menu: "+actionCommand);
             }
             //#enddebug
 

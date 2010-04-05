@@ -13,6 +13,7 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 
 public class NativeUtil {
@@ -35,9 +36,8 @@ public class NativeUtil {
                 fc.close();
             }
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        catch(Exception e) {
+          Logger.warn(e);
         }
         return fileSize;
     }
@@ -60,9 +60,8 @@ public class NativeUtil {
                 lastModified=fc.lastModified();
             }
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        catch(Exception e) {
+          Logger.warn(e);
         }
 
         //Close the file connection
@@ -73,8 +72,8 @@ public class NativeUtil {
                 fc.close();
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex) {
+          Logger.warn(ex);
         }
 
         return lastModified;
@@ -118,9 +117,8 @@ public class NativeUtil {
                 return buffer;
             }
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        catch(Exception e) {
+          Logger.warn(e);
         }
         return null;
     }
@@ -194,31 +192,27 @@ public class NativeUtil {
                 os.flush();
             }
         }
-        catch(Exception e)
-        {
+        catch(Exception e) {
             dstname = null;
 
-            e.printStackTrace();
+          Logger.warn(e);
         }
-        finally
-        {
-            if( os != null )
-            {
-                try
-                {
+        finally {
+            if( os != null ) {
+                try {
                     os.close();
                 }
-                catch(IOException ioe)
-                {}
+                catch(IOException ioe) {
+                  Logger.warn(ioe);
+                }
             }
-            if( fc != null )
-            {
-                try
-                {
+            if( fc != null ) {
+                try {
                     fc.close();
                 }
-                catch(IOException ioe)
-                {}
+                catch(IOException ioe) {
+                  Logger.warn(ioe);
+                }
             }
         }
         return dstname;
@@ -234,8 +228,7 @@ public class NativeUtil {
         if (filePath==null) return false;
 
         FileConnection fc = null;
-        try
-        {
+        try {
             fc = (FileConnection)(Connector.open(filePath, Connector.READ_WRITE));
             if (fc != null)
             {
@@ -244,9 +237,9 @@ public class NativeUtil {
 
             return false;
         }
-        catch (Exception e)
-        {
-            return false;
+        catch (Exception e) {
+          Logger.info(e);
+          return false;
         }
     }
 
@@ -281,22 +274,18 @@ public class NativeUtil {
      * @param dir The path to the directory we will look into.
      * @return A String Enumeration of all the available files and directories inside dir.
      */
-    public static Enumeration getDirectoryFiles(String dir)
-    {
+    public static Enumeration getDirectoryFiles(String dir) {
         Enumeration en = null;
-        if(dir==null || !dir.trim().endsWith("/"))
-        {
+        if(dir==null || !dir.trim().endsWith("/")) {
             return null;
         }
         FileConnection fc=null;
-        try
-        {
+        try {
             fc=(FileConnection)(Connector.open(dir,Connector.READ));
             en = fc.list();
         }
-        catch (Exception ex)
-        {
-
+        catch (Exception ex) {
+          Logger.info(ex);
         }
 
         return en;
@@ -307,18 +296,15 @@ public class NativeUtil {
      * @param dirName dir name
      * @return if success return true
      */
-    public static boolean mkDir(String dirName)
-    {
+    public static boolean mkDir(String dirName) {
         if(!dirName.trim().endsWith("/"))
         {
             return false;    //dir name should be endswith "/" on Nokia device
         }
         FileConnection fc=null;
-        try
-        {
+        try {
             fc=(FileConnection)(Connector.open(dirName,Connector.READ_WRITE ));
-            if( fc != null )
-            {
+            if( fc != null ) {
                 if( !fc.exists() )
                     fc.mkdir() ;
                 fc.close();
@@ -326,9 +312,8 @@ public class NativeUtil {
                 return true;
             }
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        catch(Exception e) {
+          Logger.warn(e);
         }
         return false;
     }
@@ -377,49 +362,43 @@ public class NativeUtil {
                 writesucc = true;
             }
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             writesucc = false;
 
-            e.printStackTrace();
+          Logger.warn(e);
         }
-        finally
-        {
-            if( dis != null)
-            {
-                try
-                {
+        finally {
+            if( dis != null) {
+                try {
                     dis.close();
                 }
-                catch(IOException ioe)
-                {}
+                catch(IOException ioe) {
+                  Logger.warn(ioe);
+                }
             }
-            if( dos != null)
-            {
-                try
-                {
+            if( dos != null) {
+                try {
                     dos.close();
                 }
-                catch(IOException ioe)
-                {}
+                catch(IOException ioe) {
+                  Logger.info(ioe);
+                }
             }
-            if( src != null )
-            {
-                try
-                {
+            if( src != null ) {
+                try {
                     src.close();
                 }
-                catch(Exception e)
-                {}
+                catch(Exception e) {
+                  Logger.info(e);
+                }
             }
-            if( dst != null )
-            {
-                try
-                {
+            if( dst != null ) {
+                try {
                     dst.close();
                 }
-                catch(Exception e)
-                {}
+                catch(Exception e) {
+                  Logger.info(e);
+                }
             }
         }
         return writesucc;
@@ -447,9 +426,8 @@ public class NativeUtil {
                 fc.close();
             }
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        catch(Exception e) {
+          Logger.warn(e);
         }
     }
 
@@ -457,16 +435,13 @@ public class NativeUtil {
      * @param source the path to the source file
      * @param destination the path to the destination file
      */
-    public static void copyFile(String source, String destination)
-    {
-        try
-        {
+    public static void copyFile(String source, String destination) {
+        try {
             byte[] sourceData = NativeUtil.readFile(source, 0, -1);
             NativeUtil.writeFile(destination, false, true, 0, sourceData, 0, sourceData.length);
         }
-        catch(Exception e)
-        {
-            e.printStackTrace();
+        catch(Exception e) {
+          Logger.warn(e);
         }
     }
 
@@ -530,7 +505,9 @@ public class NativeUtil {
                     throw new RuntimeException();
                 }
             }
-            catch(IOException ioe) {}
+            catch(IOException ioe) {
+                      Logger.info(ioe);
+            }
         }
     }
 
@@ -579,10 +556,10 @@ public class NativeUtil {
 
         }
         catch(Exception ex) {
-            //#mdebug
-            ex.printStackTrace();
-            DesktopPane.log("error moving dir: "+ex.toString());
-            //#enddebug
+          //#mdebug
+          Logger.warn("error moving dir: "+ex.toString());
+          Logger.warn(ex);
+          //#enddebug
         }
 
         return files;
@@ -643,11 +620,11 @@ public class NativeUtil {
         InputStream is = null;
         try {
             is = ((FileConnection)Connector.open(fileName,Connector.READ)).openInputStream();
-        } catch (Exception ex) {
-            //#mdebug
-            DesktopPane.log("failed to load stream for: "+fileName+" "+ex.toString());
-            System.err.println("failed to load stream for: "+fileName+" "+ex.toString());
-            ex.printStackTrace();
+        }
+        catch (Exception ex) {
+            //#mdebug warn
+            Logger.warn("failed to load stream for: "+fileName+" "+ex.toString());
+            Logger.warn(ex);
             //#enddebug
             return null;
         }
@@ -663,11 +640,10 @@ public class NativeUtil {
             dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openInputStream();
             return ImageUtil.getThumbFromFile(dis);
         }
-        catch (Throwable err) {
-            //#mdebug
-            DesktopPane.log("failed to load thumb for: "+fileName+" "+err.toString());
-            System.err.println("failed to load thumb for: "+fileName+" "+err.toString());
-            err.printStackTrace();
+        catch (Exception err) {
+            //#mdebug warn
+            Logger.warn("failed to load thumb for: "+fileName+" "+err.toString());
+            Logger.warn(err);
             //#enddebug
             return null;
         }
@@ -685,13 +661,12 @@ public class NativeUtil {
             is = NativeUtil.getInputStreamFromFileConnector(filename);
             return Image.createImage(is);
         }
-        catch (Throwable err) {
-            //#mdebug
-            DesktopPane.log("failed to load image for: "+filename+" "+err.toString());
-            System.err.println("failed to load image for: "+filename+" "+err.toString());
-            err.printStackTrace();
-            //#enddebug
-            return null;
+        catch (Exception err) {
+          //#mdebug warn
+          Logger.warn("failed to load image for: "+filename+" "+err.toString());
+          Logger.warn(err);
+          //#enddebug
+          return null;
         }
         finally {
             close(is);

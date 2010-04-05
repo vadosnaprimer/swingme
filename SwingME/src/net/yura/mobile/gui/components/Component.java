@@ -275,7 +275,7 @@ public abstract class Component {
      * @see java.awt.Component#paint(java.awt.Graphics) Component.paint
      */
     public void paint(Graphics2D g) {
-            //System.out.println("paint "+this);
+            //Logger.debug("paint "+this);
             paintBorder(g);
 
             int back = getCurrentBackground();
@@ -283,7 +283,7 @@ public abstract class Component {
                 g.setColor(back);
                 g.fillRect(0, 0, width, height);
             }
-            //System.out.println("getname" + getName() + " " + getCurrentBackground() );
+            //Logger.debug("getname" + getName() + " " + getCurrentBackground() );
             paintComponent(g);
 
     }

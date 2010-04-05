@@ -36,6 +36,7 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.StringUtil;
 
 /**
@@ -69,7 +70,8 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     public Camera() {
 
-        System.out.println("CameraPanel() constructor");
+        //#debug
+        Logger.debug("CameraPanel() constructor");
 
         focusable = true;
 
@@ -87,7 +89,8 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     public void paintComponent(Graphics2D g) {
 
-        System.out.println("paintComponent: " + getWidth() + "x" + getHeight());
+        //#debug
+        Logger.debug("paintComponent: " + getWidth() + "x" + getHeight());
 
         int msgPosX = (getWidth() / 2) - (waitingMessageLength / 2);
         int msgPosY = (getHeight() / 2) - (font.getHeight() / 2);
@@ -112,13 +115,15 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     public void focusLost() {
         super.focusLost();
-        System.out.println(">> focusLost()");
+        //#debug
+        Logger.debug(">> focusLost()");
         cameraThread = null;
         running = false;
         synchronized (uiLock) {
             uiLock.notifyAll();
         }
-        System.out.println("focusLost2");
+        //#debug
+        Logger.debug("focusLost2");
     }
 
     // Overloads Component.processKeyEvent
@@ -147,7 +152,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             try {
                 uiLock.wait(5000);
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                Logger.info(ex);
             }
         }
     }
@@ -278,8 +283,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                             try {
                                 actionListener.actionPerformed(actionCommand);
                             } catch (Exception e) {
-                                //#debug
-                                e.printStackTrace();
+                              Logger.warn(e);
                             }
                         }
 
@@ -291,16 +295,16 @@ public class Camera extends Component implements Runnable, PlayerListener {
                 }
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+            Logger.error(e);
         } finally {
 
             try {
                 closePlayer();
-            } catch (Throwable t) {
-                t.printStackTrace();
+            } catch (Exception e) {
+                Logger.warn(e);
             }
-
-            System.out.println("Camera Thread GONE.");
+            //#debug
+            Logger.debug("Camera Thread GONE.");
         }
     }
 
@@ -327,11 +331,10 @@ public class Camera extends Component implements Runnable, PlayerListener {
         byte[] data = null;
         try {
             //#debug
-            System.out.println("getSnapshot: Trying " + encoding);
+            Logger.debug("getSnapshot: Trying " + encoding);
             data = videoCtrl.getSnapshot(encoding);
         } catch (Exception e) {
-            //#debug
-            e.printStackTrace();
+            Logger.warn(e);
         }
 
         if (data != null) {
@@ -340,17 +343,18 @@ public class Camera extends Component implements Runnable, PlayerListener {
         }
 
         //#debug
-        System.out.println("getSnapshot: " + ((data == null) ? "FAIL." : "OK."));
+        Logger.debug("getSnapshot: " + ((data == null) ? "FAIL." : "OK."));
         return data;
     }
 
     // From PlayerListener Interface
     public void playerUpdate(Player player, String event, Object obj) {
-        System.out.println("playerUpdate: " + event);
+        //#debug
+        Logger.debug("playerUpdate: " + event);
 
         if (PlayerListener.STARTED.equals(event)) {
             if (cameraPermission < 0) {
-                System.out.println("cameraPermission: " + cameraPermission);
+                Logger.debug("cameraPermission: " + cameraPermission);
                 if (getCameraPermission() < 0) {
                     // Take dummy picture, to show user the security prompt
                     capture();
@@ -439,7 +443,8 @@ public class Camera extends Component implements Runnable, PlayerListener {
         // Some phones (i.e. Nokia S40) need a capture://image locator
         String[] contentTypes = Manager.getSupportedContentTypes("capture");
         for (int i = 0; i < contentTypes.length; i++) {
-            System.out.println("SupportedContentType = capture://" + contentTypes[i]);
+            //#debug
+            Logger.debug("SupportedContentType = capture://" + contentTypes[i]);
             if ("image".equals(contentTypes[i])) {
                 playerLocator = "capture://image";
 
@@ -465,7 +470,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             videoCtrl.setDisplaySize(getWidth(), getHeight());
 
             //#debug
-            System.out.println("Video Size = " + getWidth() + "x" + getHeight());
+            Logger.debug("Video Size = " + getWidth() + "x" + getHeight());
 
             videoCtrl.setVisible(true);
         }
@@ -496,8 +501,8 @@ public class Camera extends Component implements Runnable, PlayerListener {
                 prevHighResHeight = encodingHeight;
             }
         }
-
-        System.out.println("getHighestResolutionEncoding - determined highest resolution encoding format \"" +
+        //#debug
+        Logger.debug("getHighestResolutionEncoding - determined highest resolution encoding format \"" +
                 (format == null ? "UNSPECIFIED" : format) +
                 "\" to be \"" +
                 highestResEncoding +
@@ -525,7 +530,9 @@ public class Camera extends Component implements Runnable, PlayerListener {
         try {
             String s = getEncodingParamString(encoding, prefix);
             return Integer.parseInt(s);
-        } catch (Exception exception) {
+        }
+        catch (Exception e) {
+            Logger.warn(e);
             return 0;
         }
     }
@@ -544,13 +551,13 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private static final String CAPTURE_ENCODING_STRING_RECORD_STORE = "cap_enc_str_rs";
 
     private void setEncodingStringInRMS(String encodingString) {
-
         try {
             RecordStore rs = RecordStore.openRecordStore(CAPTURE_ENCODING_STRING_RECORD_STORE, true);
             rs.addRecord(encodingString.getBytes(), 0, encodingString.length());
-        } catch (RecordStoreException ex) {
+        }
+        catch (RecordStoreException ex) {
             // this is just a best effort to persist dimensions to rms
-            ex.printStackTrace();
+            Logger.info(ex);
         }
     }
 
@@ -562,12 +569,11 @@ public class Camera extends Component implements Runnable, PlayerListener {
             if (encodingStringBytes != null && encodingStringBytes.length > 0) {
                 return new String(encodingStringBytes);
             }
-        } catch (Throwable ex) {
-            // again just a best effort to look up dimensions
-            //#debug
-            ex.printStackTrace();
         }
-
+        catch (Exception ex) {
+            // again just a best effort to look up dimensions
+            Logger.info(ex);
+        }
         return null;
     }
 }

@@ -28,6 +28,7 @@ import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.TabBorder;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -290,8 +291,8 @@ public class MetalLookAndFeel extends LookAndFeel {
                 style.addProperty(icn, prop, Style.ALL);
             }
             catch (IOException ex) {
-                //#debug
-                System.out.println("can not find icon for metal theme "+icon);
+                //#debug warn
+                Logger.warn("can not find icon for metal theme "+icon);
             }
         }
 

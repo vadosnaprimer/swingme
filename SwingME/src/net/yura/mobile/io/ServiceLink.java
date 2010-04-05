@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -75,8 +76,8 @@ public class ServiceLink extends SocketClient {
             TaskHandler handler = (TaskHandler) register.get(method);
             if (handler != null)
                 handler.handleTask(task);
-            else
-                System.out.println("dont know what to do with task " + task);
+            //#debug warn
+            else Logger.warn("dont know what to do with task " + task);
         }
     }
 

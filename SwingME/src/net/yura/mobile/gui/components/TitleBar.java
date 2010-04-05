@@ -26,6 +26,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.GridLayout;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -228,8 +229,8 @@ public class TitleBar extends Panel implements ActionListener {
              }
         }
         else {
-             //#debug
-            System.err.println("unknow Window command: "+actionCommand);
+             //#debug warn
+            Logger.warn("unknow Window command: "+actionCommand);
         }
 
     }

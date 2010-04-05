@@ -24,6 +24,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.logging.Logger;
 
 /**
  * what happens with sizes:
@@ -508,8 +509,8 @@ public class TextArea extends TextComponent {
 	 */
         public int[] getLines(String str,Font f,int startPos,int startW, int w) {
 
-//#debug
-System.out.println("getLines start="+startPos +" w="+w+" stringLength="+str.length());
+  //#debug
+  Logger.debug("getLines start="+startPos +" w="+w+" stringLength="+str.length());
 // this is here as this is quite a CPU intensive method
 
 		final Vector parts = new Vector();

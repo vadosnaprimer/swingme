@@ -324,7 +324,7 @@ public class GridBagLayout implements Layout {
                                         false);
                         String halign = subConstraint.getHalign();//getString(comp, "halign", "fill");
                         String valign = subConstraint.getValign();//getString(comp, "valign", "fill");
-//                        System.out.println("HAlign for "+subComponent.getName()+" = "+halign);
+//                        Logger.debug("HAlign for "+subComponent.getName()+" = "+halign);
                         if ((!"fill".equals(halign)) || (!"fill".equals(valign))) {
                                 //Dimension d = getPreferredSize(comp);
                                 if (!"fill".equals(halign)) {
@@ -347,7 +347,7 @@ public class GridBagLayout implements Layout {
                                 }
                         }
                         //setRectangle(comp, "bounds", ix, iy, iwidth, iheight);
-//                        System.out.println("Setting "+subComponent.getName()+" = "+iwidth);
+//                        Logger.debug("Setting "+subComponent.getName()+" = "+iwidth);
                         subComponent.setBoundsWithBorder(ix, iy, iwidth, iheight);
                         //doLayout(comp);
                         i++;

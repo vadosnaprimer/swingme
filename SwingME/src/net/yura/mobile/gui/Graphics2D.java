@@ -21,6 +21,7 @@ import java.util.Random;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -135,7 +136,7 @@ public class Graphics2D {
 
             if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) {
                 // #debug
-                //System.out.println("calling tile on a area of size less then 0: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
+                //Logger.debug("calling tile on a area of size less then 0: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
                 return;
             }
 
@@ -156,13 +157,13 @@ public class Graphics2D {
 
 
 
-            //#mdebug
+            //#mdebug info
             int tile = ((dest_w/a)*(dest_h/b));
             if ( tile>15 ) {
-                System.err.println("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
+                Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
 
                 if ( tile>30 ) {
-                    System.err.println("#################################");
+                  Logger.info("###########################################################");
                     g.setColor( new Random().nextInt() );
                     for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
                         g.drawLine(pos_x, dest_y, pos_x, (dest_y+dest_h));

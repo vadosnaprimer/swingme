@@ -7,6 +7,7 @@ import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
 /**
@@ -78,8 +79,8 @@ public abstract class SocketClient implements Runnable {
 
                             if(!isRunning()) return;
 
-                            //#debug
-                            System.out.println("[SocketClient] Trying to connect to: "+server);
+                            //#debug info
+                            Logger.info("[SocketClient] Trying to connect to: "+server);
                             try {
 
                                 retryCount++;
@@ -102,8 +103,7 @@ public abstract class SocketClient implements Runnable {
                             }
                             catch (SecurityException s) {
                                 updateState(DISCONNECTED);
-                                //#debug
-                                s.printStackTrace();
+                                Logger.info(s);
 
                                 securityException();
                                 return;
@@ -111,8 +111,7 @@ public abstract class SocketClient implements Runnable {
                             catch (Exception x) {
 
 
-                                //#debug
-                                x.printStackTrace();
+                                Logger.info(x);
 
                                 if (retryCount <= maxRetries){
                                     updateState(DISCONNECTED);
@@ -130,8 +129,7 @@ public abstract class SocketClient implements Runnable {
 
                                     }
                                     catch (InterruptedException ex) {
-                                        //#debug
-                                        ex.printStackTrace();
+                                      Logger.info(ex);
                                     }
 
 
@@ -148,7 +146,7 @@ public abstract class SocketClient implements Runnable {
                                                 wait();
                                             }
                                             catch (Exception e){
-                                                e.printStackTrace();
+                                                Logger.info(e);
                                             }
                                         }
                                     }
@@ -174,8 +172,8 @@ public abstract class SocketClient implements Runnable {
                     }
 
                     try {
-//#debug
-System.out.println("[SocketClient] sending object: "+object);
+//#debug info
+Logger.info("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
 
                         //#debug
@@ -190,9 +188,9 @@ System.out.println("[SocketClient] sending object: "+object);
                     }
                     catch(Exception ex) {
                         // THIS WILL ONLY HAPPEN IF YOU GET A DISCONNECT DURING A SEND
-                        //#mdebug
-                        System.out.println("[SocketClient] Exception during a write to socket");
-                        ex.printStackTrace();
+                        //#mdebug info
+                        Logger.info("[SocketClient] Exception during a write to socket");
+                        Logger.info(ex);
                         //#enddebug
 
                         // move this and any queued objects to offline inbox
@@ -255,10 +253,10 @@ System.out.println("[SocketClient] sending object: "+object);
 
         try {
 
-//#mdebug
-String name = readThread.getName();
-System.out.println("[SocketClient] STARTING "+name);
-//#enddebug
+        //#mdebug info
+        String name = readThread.getName();
+        Logger.info("[SocketClient] STARTING "+ name );
+        //#enddebug
         Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
         Object task;
         while (true) {
@@ -274,10 +272,10 @@ System.out.println("[SocketClient] STARTING "+name);
 
                 updateState(DISCONNECTED);
 
-                //#mdebug
+                //#mdebug info
                 if (writeThread!=null) {
-                    System.out.println("[SocketClient] Exception during read from socket");
-                    ex.printStackTrace();
+                  Logger.info("[SocketClient] Exception during read from socket");
+                  Logger.info(ex);
                 }
                 //#enddebug
 
@@ -288,8 +286,8 @@ System.out.println("[SocketClient] STARTING "+name);
 
             updateState(COMMUNICATING);
 
-//#debug
-System.out.println("[SocketClient] got object: "+task);
+          //#debug info
+          Logger.info("[SocketClient] got object: "+task);
             try {
 
                 Thread.yield();
@@ -302,13 +300,13 @@ System.out.println("[SocketClient] got object: "+task);
 
             }
             catch (Exception x) {
-                //#mdebug
-                DesktopPane.log("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
-                x.printStackTrace();
+                //#mdebug warn
+                Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
+                Logger.warn(x);
                 //#enddebug
             }
-//#debug
-System.out.println("[SocketClient] finished handling object, waiting for new object from server");
+            //#debug info
+            Logger.info("[SocketClient] finished handling object, waiting for new object from server");
             updateState(CONNECTED);
         }
 
@@ -317,11 +315,11 @@ System.out.println("[SocketClient] finished handling object, waiting for new obj
             disconnected();
         }
 
-//#debug
-System.out.println("[SocketClient] ENDING "+name);
+        //#debug info
+        Logger.info("[SocketClient] ENDING "+ name );
         }
         catch (Throwable t){
-            t.printStackTrace();
+            Logger.error(t);
         }
     }
 
@@ -333,8 +331,8 @@ System.out.println("[SocketClient] ENDING "+name);
     }
 
     protected void sendOfflineInboxMessages() {
-        //#debug
-        System.out.println("[SocketClient] sending offline messages: "+offlineBox);
+        //#debug info
+        Logger.info("[SocketClient] sending offline messages: "+offlineBox);
         while (!offlineBox.isEmpty()) {
                 Object task = offlineBox.elementAt(0);
                 offlineBox.removeElementAt(0);
@@ -349,8 +347,8 @@ System.out.println("[SocketClient] ENDING "+name);
     //#enddebug
 
     protected void securityException() {
-        //#debug
-        System.out.println("[SocketClient] Socket connections are not allowed.");
+        //#debug warn
+        Logger.warn("[SocketClient] Socket connections are not allowed.");
     }
 
     public void setRetryCount(int retryCount){

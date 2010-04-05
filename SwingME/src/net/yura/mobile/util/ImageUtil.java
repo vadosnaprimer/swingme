@@ -27,6 +27,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.m3g.Background;
 import javax.microedition.m3g.Graphics3D;
 import javax.microedition.m3g.Image2D;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -200,8 +201,9 @@ public class ImageUtil {
         // Create image out of thumbnail.
         image = Image.createImage ( fileBytes, startIndex - 1, endIndex - startIndex + 2 );
       }
-    } catch (Throwable e) {
-
+    }
+    catch (Throwable e) {
+      Logger.error(e);
     }
 
     return image;
@@ -338,7 +340,7 @@ public class ImageUtil {
        return getScaledImage(Image.createImage (is),cW,cH);
     }
     catch(Exception ex){
-      System.out.println("createImage(is) " + ex.toString() + " " + ex.getMessage ());
+      Logger.warn(ex);
     }
     return null;
   }
@@ -361,8 +363,9 @@ public class ImageUtil {
       System.gc ();
       try {
         return getJPEGthumb ( encodedImage );
-      } catch( Exception e2 ) {
-        System.out.println (" IamgeFunctions::createImage " +  e2.toString ());
+      }
+      catch( Exception e2 ) {
+        Logger.warn(e2);
       }
     }
     return null;

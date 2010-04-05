@@ -32,12 +32,11 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
-import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
-import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.SystemUtil;
 
 /**
@@ -108,20 +107,20 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             else if (dp.validating==1) {
     //#debug
-    System.out.println("thats some complex layout");
+    Logger.debug("thats some complex layout");
                 addToComponentVector(p, dp.revalidateComponents2);
             }
             else if (dp.validating==2) {
     //#debug
-    System.out.println("thats some CRAZY SHIT COMPLEX LAYOUT");
+    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
                 addToComponentVector(p, dp.revalidateComponents3);
             }
-            //#mdebug
+            //#mdebug info
             else {
                 // if this happens it means that when i add a scrollbar it says it
                 // does not need one, and as soon as i remove it, it says it does
-                System.err.println("asking for revalidate 4th time: "+p);
-                dumpStack();
+                Logger.info("asking for revalidate 4th time: "+p);
+                Logger.dumpStack();
             }
             //#enddebug
         }
@@ -272,15 +271,17 @@ public class DesktopPane extends Canvas implements Runnable {
             midlet.initialize(this);
         }
         catch (Throwable th) {
-            //#debug
-            th.printStackTrace();
-            log("Error in initialize: " + th.toString());
+            //#mdebug error
+            Logger.error("Error in initialize: " + th.toString());
+            Logger.error(th);
+            //#enddebug
         }
 
         // Set thread to maximum priority (smother animations and text input)
         Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
         while (true) {
+          try {
 
             if (killflag) {
                 return;
@@ -295,8 +296,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         wait();
                     }
                     catch (InterruptedException e) {
-                        //#debug
-                        e.printStackTrace();
+                        Logger.info(e);
                     }
                     continue; // Go to while (true) again
                 }
@@ -305,17 +305,17 @@ public class DesktopPane extends Canvas implements Runnable {
                     currentAnimatedComponent.animate();
                 }
                 catch (InterruptedException e) {
-                    //#debug
-                    System.out.println("InterruptedException during animation");
-                }
-                catch (Throwable th) {
-                    //#debug
-                    th.printStackTrace();
-                    log("Error in animation: " + th.toString());
+                    Logger.debug("Interrupted during animation");
                 }
             }
         }
-
+        catch (Throwable th) {
+            //#mdebug error
+            Logger.error("Error in animation: " + th.toString());
+            Logger.error(th);
+            //#enddebug
+        }
+      }
     }
 
     /**
@@ -430,13 +430,16 @@ public class DesktopPane extends Canvas implements Runnable {
     //}
     private Graphics2D graphics;
     private Vector repaintComponent2 = new Vector();
+    //#debug
+    private String mem;
+
 
     /**
      * @param gtmp The Graphics object
      */
     protected void paint(Graphics gtmp) {
 
-        //System.out.println("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
+        //Logger.debug("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
 
         if (!paintdone) {
 
@@ -618,9 +621,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
         catch (Throwable th) {
-            //#mdebug
-            th.printStackTrace();
-            log("Error in paint: " + th.toString());
+            //#mdebug error
+            Logger.error("Error in paint: " + th.toString());
+            Logger.error(th);
             //#enddebug
         }
 
@@ -692,7 +695,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public void fullRepaint() {
         // this is here coz this method should NOT be used
         //#debug
-        System.out.println("FULL REPAINT!!! this method should NOT normally be called");
+        Logger.debug("FULL REPAINT!!! this method should NOT normally be called");
 
         synchronized(repaintComponent) {
             fullrepaint = true;
@@ -710,9 +713,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private int validating=0;
     public void revalidateComponent(Component rc) {
-        //#mdebug
+        //#mdebug info
         if (rc.getWidth() == 0 || rc.getHeight() ==0 ) {
-            System.err.println("revalidate called on a component with 0 width and 0 height");
+            Logger.info("revalidate called on a component with 0 width and 0 height");
             //dumpStack();
         }
         //#enddebug
@@ -723,7 +726,7 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     private static void addToComponentVector(Component rc, Vector vec) {
-        // System.out.println("someone asking for repaint "+rc);
+        // Logger.debug("someone asking for repaint "+rc);
 
         if (rc.getWindow() == null) return;
 
@@ -789,10 +792,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
                 pointerComponent = null;
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("trying to set a window visible when it already is visible or null: "+w);
-                dumpStack();
+                Logger.warn("trying to set a window visible when it already is visible or null: "+w);
+                Logger.dumpStack();
             }
             //#enddebug
         }
@@ -810,10 +813,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 windows.removeElement(w);
                 pointerComponent = null;
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("cant remove, this window is not visible: " + w);
-                dumpStack();
+                Logger.warn("cant remove, this window is not visible: " + w);
+                Logger.dumpStack();
             }
             //#enddebug
         }
@@ -835,10 +838,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 windows.addElement(w);
                 pointerComponent = null;
             }
-            //#mdebug
+            //#mdebug warn
             else {
-                System.err.println("cant setSelected, this window is not visible or null: " + w);
-                dumpStack();
+                Logger.warn("cant setSelected, this window is not visible or null: " + w);
+                Logger.dumpStack();
             }
             //#enddebug
         }
@@ -976,9 +979,9 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
         catch (Throwable th) {
-            //#mdebug
-            th.printStackTrace();
-            log("Error in KeyEvent: " + th.toString());
+            //#mdebug error
+            Logger.error("Error in KeyEvent: " + th.toString());
+            Logger.error(th);
             //#enddebug
         }
 
@@ -1097,9 +1100,9 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
         catch (Throwable th) {
-            //#mdebug
-            th.printStackTrace();
-            log("Exception in pointerEvent: " + th.toString());
+            //#mdebug error
+            Logger.error("Exception in pointerEvent: " + th.toString());
+            Logger.error(th);
             //#enddebug
         }
 
@@ -1184,82 +1187,6 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-    //==== debug dialog ========================================================
-    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
-
-    //#mdebug
-    private Frame debugwindow;
-    private TextArea text;
-    private String mem;
-    //#enddebug
-
-    public static void log(String s) {
-        //#mdebug
-        try {
-            if (desktop.debugwindow == null) {
-
-                desktop.debugwindow = new Frame("Debug");
-                desktop.debugwindow.setName("Dialog");
-                desktop.text = new TextArea();
-                desktop.text.setFocusable(false);
-                desktop.text.setLineWrap(true);
-                //MenuBar menubar = new MenuBar();
-                Button close = new Button("Close");
-                close.setActionCommand(Frame.CMD_CLOSE);
-
-                // hack to avoid having to make a new action listoner
-                close.addActionListener(desktop.debugwindow.getTitleBar());
-
-                close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
-                //menubar.add(close);
-                //desktop.debugwindow.setMenuBar(menubar);
-                Panel p = new Panel(new FlowLayout());
-                p.add(close);
-
-                // This is not needed, but just in case something
-                // has gone wrong with the theme, we set some defaults
-                desktop.text.setFont( Font.getDefaultSystemFont() );
-                desktop.text.setForeground(0x00000000);
-                desktop.text.setBackground(0x00FFFFFF);
-                //desktop.debugwindow.setBackground(0x00FFFFFF);
-
-                desktop.debugwindow.getContentPane().add(new ScrollPane(desktop.text));
-                desktop.debugwindow.getContentPane().add(p, Graphics.BOTTOM);
-
-                desktop.debugwindow.setBounds(10, 10, desktop.getWidth() - 20, desktop.getHeight() / 2);
-            }
-
-            // TODO is this thread safe???
-            desktop.text.append(s + "\n");
-
-            if (!desktop.debugwindow.isVisible()) {
-                desktop.debugwindow.setVisible(true);
-            }
-            else {
-                desktop.debugwindow.repaint();
-            }
-        } catch (Throwable th) {
-            System.err.println("unable to log: " + s);
-            th.printStackTrace();
-        }
-    //#enddebug
-    }
-
-    //#mdebug
-    /**
-     * @see java.lang.Thread#dumpStack() Thread.dumpStack
-     */
-    public static void dumpStack() {
-            try {
-                throw new Exception();
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
-    }
-    //#enddebug
-
-    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== other events from the canvas ========================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
@@ -1267,7 +1194,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
     protected void sizeChanged(int w, int h) {
         //#debug
-        System.out.println("sizeChanged!! " + paintdone + " w=" + w + " h=" + h);
+        Logger.debug("sizeChanged!! " + paintdone + " w=" + w + " h=" + h);
 
         sizeChangedImpl();
         fullRepaint();
@@ -1325,7 +1252,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         desktop = this;
 
-        //System.out.println("showNotify");
+        //Logger.debug("showNotify");
         keypad.clear();
 
         // A landscape change can happens when we are hidden. So check it now.
@@ -1336,7 +1263,7 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     protected void hideNotify() {
-        //System.out.println("hideNotify");
+        //Logger.debug("hideNotify");
         keypad.clear();
     }
 

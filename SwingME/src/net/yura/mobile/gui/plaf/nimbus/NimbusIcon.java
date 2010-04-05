@@ -35,7 +35,7 @@ public class NimbusIcon extends Icon {
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
 
-        //System.out.println(c.getName()+" icon at "+x+" "+y);
+        //Logger.debug(c.getName()+" icon at "+x+" "+y);
 
         // Draw aether borders
 //        if ((type == LookAndFeel.ICON_RADIO)) {

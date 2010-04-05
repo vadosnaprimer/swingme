@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.IOException;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -23,8 +24,8 @@ public class RMSUtil {
                     RecordStore.deleteRecordStore(name);
                 }
                 catch (Exception ex) {
-                    //ex.printStackTrace();
-                    System.out.println("can not del RMS");
+                    //#debug info
+                    Logger.info("can not del RMS");
                 }
 
 		// Open the record store.

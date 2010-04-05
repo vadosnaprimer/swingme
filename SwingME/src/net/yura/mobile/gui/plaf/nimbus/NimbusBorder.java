@@ -158,7 +158,7 @@ public class NimbusBorder implements Border {
         double incrG = (g1-g2)/max;
         double incrB = (b1-b2)/max;
 
-        //System.out.println(incrR);
+        //Logger.debug(incrR);
 
         int r;
         int g;
@@ -179,7 +179,7 @@ public class NimbusBorder implements Border {
             b = (int) (b1-(incrB*offset));
             gradient[i] = getRGB(r, b, g);
 
-            //System.out.println(r+" "+g+" "+b);
+            //Logger.debug(r+" "+g+" "+b);
         }
         
         return gradient;
@@ -218,7 +218,7 @@ public class NimbusBorder implements Border {
      */
     public static void drawRoundedGradientRect(int c1, int c2, Graphics2D g, int x, int y, int width, int height, int[] corners, double reflection, int gradientOrientation) {
 
-        //System.out.println("-----------------------");
+        //Logger.debug("-----------------------");
 
         if ((c1 == -1) && (c2 == -1)) {
             return;

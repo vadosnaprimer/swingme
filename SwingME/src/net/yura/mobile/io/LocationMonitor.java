@@ -10,6 +10,7 @@
 
 package net.yura.mobile.io;
 import java.util.Hashtable;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Timer;
 
 
@@ -148,9 +149,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                     }
                 }
             }
-            catch (Throwable t) {
-                //#debug
-                t.printStackTrace();
+            catch (Exception t) {
+                Logger.warn(t);
             }
         }
 
@@ -161,12 +161,15 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                     if ((property != null) && (property.length() > 0))
                         return index;
                 }
-                catch (Throwable t) {}
+                catch (Exception t) {
+                  Logger.warn(t);
+                }
             }
             return -1;
         }
 
         public synchronized void run() {
+          try {
             ServiceLink link = ServiceLink.getInstance();
             if (link.isConnected()) {
                 if (bJ2MECellMonitorLoop) {
@@ -186,7 +189,12 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                     timer.schedule("J2MECellMonitor1", this, j2meCellPollRateInSeconds*1000);
                 }
             }
+          }
+          catch(Throwable t) {
+            Logger.error(t);
+          }
         }
+
     }
     /** Creates a new instance of LocationMonitor */
     public LocationMonitor() {
@@ -258,7 +266,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
               double lat = c.getLatitude();
               double lng = c.getLongitude();
 
-              System.out.println("lat:"+lat+" lng:"+lng);
+              //#debug
+              Logger.debug("lat:"+lat+" lng:"+lng);
             }
 
             return c;

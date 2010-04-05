@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
 /**
@@ -150,8 +151,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
         }
         catch(Exception ex) {
-            //#debug
-            ex.printStackTrace();
+            Logger.info(ex);
             onError(request, 0, null, ex);
         }
         finally {
