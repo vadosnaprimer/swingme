@@ -1,0 +1,16 @@
+
+<project name="fix_Android" default="fix-build" basedir=".">   
+    
+    <!-- Eclipse uses "bin" for its own output, so we do the same. -->
+    <property name="outdir" location="bin" />
+	<property name="AndroidFixResourceAsStream.jar" value="/Dev/workspace_Android/AndroidFixResourceAsStream/lib/AndroidFixResourceAsStream.jar" />
+   
+	<target name="fix-build">
+		<echo>Fixing build....</echo>
+				    	
+        <java classname="net.yura.mobile.asm.AndroidFixer" classpath="${AndroidFixResourceAsStream.jar}">     
+        	<arg value="net.yura.android.AndroidMeMIDlet"/>
+            <arg value="${outdir}"/>            
+        </java>
+    </target>	
+</project>
