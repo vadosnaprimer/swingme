@@ -1,118 +1,62 @@
 package javax.microedition.lcdui;
 
 import javax.microedition.midlet.MIDlet;
+import net.yura.android.AndroidMeMIDlet;
 
 
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
-public class TextBox extends Screen implements Runnable
-{
-    // TODO : present title and maxSize sensibly
-    private String title;
+public class TextBox extends Screen {
     private String text;
     private int maxSize;
     private int constraints;
-    private MIDlet midlet;
+    private View currentView;
 
-    private TextView textView;
-
-    public TextBox( String title, String text, int maxSize, int constraints )
-    {
-        this.title = title;
+    public TextBox(String title, String text, int maxSize, int constraints) {
         this.text = text;
         this.maxSize = maxSize;
         this.constraints = constraints;
+
+        // Hack: Current view could change...
+        MIDlet midlet = AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet();
+        this.currentView = Display.getDisplay(midlet).getCurrent().getView();
     }
 
     @Override
-    public void disposeDisplayable()
-    {
-        this.textView = null;
-        this.midlet = null;
+    public void disposeDisplayable() {
     }
 
     @Override
-    public View getView()
-    {
-    	LinearLayout view = new LinearLayout(midlet.getActivity());
-
-//    	if (title != null) {
-//	    	TextView titleView = new TextView(midlet.getActivity());
-//			titleView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//	//		TypedArray a = titleView.getContext().obtainStyledAttributes(android.R.style.Theme, null);
-//	//		titleView.setTextAppearance(titleView.getContext(), a.getResourceId(android.R.style.TextAppearance_Large, -1));
-//			titleView.setText(title);
-//			view.addView(titleView);
-//    	}
-
-		view.setOrientation(LinearLayout.VERTICAL);
-		view.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.FILL_PARENT));
-
-		view.addView(textView);
-
-        return view;
+    public View getView() {
+        return currentView;
     }
 
     @Override
-    public void initDisplayable( MIDlet midlet )
-    {
-    	this.midlet = midlet;
-        TextView textView = TextField.createTextView( this.constraints, midlet.getActivity() );
-        textView.setText( this.text );
-        this.textView = textView;
+    public void initDisplayable(MIDlet midlet) {
+        midlet.getToolkit().showNativeTextInput();
     }
 
-    public int getMaxSize()
-    {
+    public int getMaxSize() {
         return this.maxSize;
     }
 
-    public void setMaxSize( int maxSize )
-    {
+    public void setMaxSize(int maxSize) {
         this.maxSize = maxSize;
     }
 
-    public String getString()
-    {
-        String result;
-        if( this.textView != null )
-        {
-        	result = this.textView.getText().toString();
-        }
-        else
-        {
-            result = this.text;
-        }
-        return result;
+    public String getString() {
+        return this.text;
     }
 
-    public void setString( String text )
-    {
+    public void setString(String text) {
         this.text = text;
-        if( this.textView != null )
-        {
-        	this.midlet.getHandler().post( this );
-        }
     }
 
-    public int getConstraints()
-    {
+    public int getConstraints() {
         return this.constraints;
     }
 
-    public void setConstraints( int constraints )
-    {
+    public void setConstraints(int constraints) {
         this.constraints = constraints;
-        // TODO : adjust the view if it exists
-    }
-
-    public void run()
-    {
-    	if( this.textView != null )
-    	{
-    		this.textView.setText( this.text );
-    	}
     }
 }

@@ -2,7 +2,6 @@ package net.yura.android;
 
 
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
@@ -16,15 +15,19 @@ import javax.microedition.midlet.MIDlet;
 import net.yura.android.lcdui.Toolkit;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnKeyListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -35,6 +38,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     private View defaultView;
     private View waitingView;
     private Handler handler;
+    private InputMethodManager inputManager;
     private Thread eventThread;
     private Object lock = new Object();
 
@@ -82,6 +86,17 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         this.eventThread = Thread.currentThread();
 
         showWaitingView(false);
+
+        try {
+            if (midlet == null) {
+                startMIDlet(null);
+            }
+            else {
+                midlet.doStartApp();
+            }
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
 
 //        PrintStream log = new PrintStream(new LogOutputStream("AndroidMe"));
 //        System.setErr(log);
@@ -243,58 +258,65 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         return midlet;
     }
 
-    @Override
-    protected void onDestroy() {
-        try {
-            if (this.midlet != null) {
-                this.midlet.doDestroyApp(true);
-                this.midlet = null;
-            }
-        } catch (Exception ex) {
-            throw new RuntimeException("unable to destroy", ex);
-        }
-        // this.resources.getAssets().release();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        try {
-            if (this.midlet != null) {
-                this.midlet.doPauseApp();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new RuntimeException("unable to freeze app", ex);
-        }
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        // TODO: JP
-        onDestroy();
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        try {
-            if (midlet == null) {
-                startMIDlet(null);
-            }
-            else {
-                midlet.doStartApp();
-            }
-        } catch (Throwable ex) {
-            ex.printStackTrace();
-        }
-    }
+// JP - TODO
+//    @Override
+//    protected void onDestroy() {
+//        try {
+//            if (this.midlet != null) {
+//                this.midlet.doDestroyApp(true);
+//                this.midlet = null;
+//            }
+//        } catch (Exception ex) {
+//            throw new RuntimeException("unable to destroy", ex);
+//        }
+//        // this.resources.getAssets().release();
+//        super.onDestroy();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        try {
+//            if (this.midlet != null) {
+//                this.midlet.doPauseApp();
+//            }
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//            throw new RuntimeException("unable to freeze app", ex);
+//        }
+//        super.onPause();
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        // TODO: JP
+////JP        onDestroy();
+//
+//        super.onStop();
+//    }
+//
+//
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        try {
+//            if (midlet == null) {
+//                startMIDlet(null);
+//            }
+//            else {
+//                midlet.doStartApp();
+//            }
+//        } catch (Throwable ex) {
+//            ex.printStackTrace();
+//        }
+//    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (midlet == null) {
+            return super.onPrepareOptionsMenu(menu);
+        }
 
         boolean result = false;
         Display display = Display.getDisplay(midlet);
@@ -334,18 +356,12 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         return false;
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        if (this.midlet != null) {
-//            this.midlet.setMenu(menu);
-//        } else {
-//            this.menu = menu;
-//        }
-//        return super.onCreateOptionsMenu(menu);
-//    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (this.midlet == null) {
+            return super.onKeyDown(keyCode, event);
+        }
 
         Displayable displayable = Display.getDisplay(this.midlet).getCurrent();
 
@@ -367,44 +383,6 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         }
 
         return super.onKeyDown(keyCode, event);
-    }
-
-    public int getResourceId(String resourceName) {
-        // slow, slow, slow (cache?)
-        // mmmmm, introspection
-        String[] splits = resourceName.split("\\.");
-        Class c = R.class;
-        for (int i = 0; i < splits.length; i++) {
-            String name = splits[i];
-            if (i < splits.length - 1) {
-                Class[] childClasses = c.getDeclaredClasses();
-                Class found = null;
-                for (int j = 0; j < childClasses.length; j++) {
-                    Class childClass = childClasses[j];
-                    String separator;
-
-                    if (childClass.getName().endsWith("$" + name)) {
-                        found = childClass;
-                        break;
-                    }
-                }
-                if (found == null) {
-                    throw new RuntimeException("no class " + resourceName + "("
-                            + name + ") in " + c.getName());
-                } else {
-                    c = found;
-                }
-            } else {
-                try {
-                    Field field = c.getField(name);
-                    return field.getInt(null);
-                } catch (Exception ex) {
-                    throw new RuntimeException("no field " + name + " in "
-                            + c.getName());
-                }
-            }
-        }
-        throw new RuntimeException("no resource " + resourceName);
     }
 
     public int getScreenHeight() {
@@ -451,6 +429,13 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
             String midletClassName = jadMidlets.elementAt(position)[2];
             startMIDlet(midletClassName);
         }
+    }
+
+    public void showNativeTextInput() {
+        inputManager = (InputMethodManager) defaultView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        //inputManager.hideSoftInputFromWindow(defaultView.getWindowToken(), 0);
+
+        inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
     }
 
 }

@@ -1,6 +1,5 @@
 package javax.microedition.lcdui;
 
-import java.util.Vector;
 import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.AndroidMeMIDlet;
@@ -45,16 +44,6 @@ public abstract class Canvas extends Displayable {
 
     public void setFullScreenMode(boolean fullScreen) {
         // do nothing, is this possible on android?
-    }
-
-    @Override
-    public int getWidth() {
-        return MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return MIDlet.DEFAULT_MIDLET.getToolkit().getScreenHeight();
     }
 
     public int getGameAction(int keyCode) {
@@ -136,7 +125,7 @@ public abstract class Canvas extends Displayable {
         repaint();
     }
 
-    public synchronized void repaint() {
+    public void repaint() {
         if (this.canvasView != null) {
             this.canvasView.postInvalidate();
         }
@@ -168,6 +157,10 @@ public abstract class Canvas extends Displayable {
     }
 
     protected void pointerDragged(int x, int y) {
+
+    }
+
+    protected void sizeChanged(int w, int h) {
 
     }
 
@@ -207,6 +200,11 @@ public abstract class Canvas extends Displayable {
         @Override
         protected void onDraw(android.graphics.Canvas androidCanvas) {
 
+            // Sanity check...
+            if (androidCanvas == null || this.getWidth() <= 0 || this.getHeight() <= 0) {
+                return;
+            }
+
             // If Possible, try to not use more than 50% on CPU time on painting...
             long elapsed = System.currentTimeMillis() - time;
 
@@ -221,18 +219,16 @@ public abstract class Canvas extends Displayable {
             if (graphicsBitmap != null && androidCanvas != null) {
 
                 // Check for size changes...
-                if (graphicsBitmap.getWidth() != androidCanvas.getWidth()
-                        || graphicsBitmap.getHeight() != androidCanvas
-                                .getHeight()) {
+                if (graphicsBitmap.getWidth() != this.getWidth() ||
+                    graphicsBitmap.getHeight() != this.getHeight()) {
 
                     graphicsBitmap = null;
                 }
             }
 
             if (graphicsBitmap == null) {
-
-                graphicsBitmap = Bitmap.createBitmap(androidCanvas.getWidth(),
-                        androidCanvas.getHeight(), Bitmap.Config.ARGB_8888);
+                graphicsBitmap = Bitmap.createBitmap(this.getWidth(),
+                        this.getHeight(), Bitmap.Config.ARGB_8888);
 
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }
@@ -247,6 +243,7 @@ public abstract class Canvas extends Displayable {
 
         @Override
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+            sizeChanged(w, h);
             invalidate();
         }
 
