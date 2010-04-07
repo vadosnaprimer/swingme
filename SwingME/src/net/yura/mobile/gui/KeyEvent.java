@@ -25,9 +25,6 @@ import javax.microedition.lcdui.Canvas;
  */
 public class KeyEvent {
 
-        public static boolean useSoftKeyClear = false;
-        //public static boolean useSoftKeyClear = true;
-
          // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
 
 	public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value
@@ -207,9 +204,6 @@ public class KeyEvent {
 
 	public KeyEvent(Canvas c) {
 		canvas = c;
-
-		// Nokia S40 does not have a dedicated delete key
-		useSoftKeyClear = (Midlet.getPlatform() == Midlet.PLATFORM_NOKIA_S40);
 	}
 
         public int getJustPressedKey() {

@@ -153,6 +153,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public boolean MAX_CLOSE_BUTTONS; // if by default a window has a close and max button at the top
     public boolean IPHONE_SCROLL;
     public boolean QWERTY_KAYPAD; // if true the multi letter per number is disabled
+    public boolean USE_SOFT_KEY_CLEAR; // Nokia S40 does not have a dedicated delete key
 
     // object variables
     protected Midlet midlet;
@@ -199,6 +200,7 @@ public class DesktopPane extends Canvas implements Runnable {
         MAX_CLOSE_BUTTONS = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
         IPHONE_SCROLL = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
         QWERTY_KAYPAD = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE || Midlet.getPlatform() == Midlet.PLATFORM_ANDROID;
+        USE_SOFT_KEY_CLEAR = Midlet.getPlatform() == Midlet.PLATFORM_NOKIA_S40;
 
         desktop = this;
 

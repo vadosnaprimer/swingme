@@ -10,8 +10,9 @@
     <available file="../VistoJ2ME" type="dir" property="VistoJ2ME"/>
     <available file="../vauchacha" type="dir" property="vauchacha"/>
     <available file="../AgentClient" type="dir" property="AgentClient"/>
-    <available file="../BadooMobile" type="dir" property="BadooMobile"/>
+    <available file="E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk" type="dir" property="BadooMobile"/>
     <available file="../iPhoneRace" type="dir" property="iPhoneRace"/>
+    <available file="../ToolsME" type="dir" property="ToolsME"/>
 
     <target name="d1" if="SwingMETest">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
@@ -26,13 +27,16 @@
         <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
     </target>
     <target name="d5" if="BadooMobile">
-        <copy file="${deployment.jar}" todir="../BadooMobile/lib"/>
+        <copy file="${deployment.jar}" todir="E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk/lib"/>
     </target>
     <target name="d6" if="iPhoneRace">
         <copy file="${deployment.jar}" todir="../iPhoneRace/lib"/>
     </target>
+    <target name="d7" if="ToolsME">
+        <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
+    </target>
 
-    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6"/>
+    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6,d7"/>
 
 
     <!--

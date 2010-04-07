@@ -159,7 +159,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             if (isFocusOwner()) {
 
                 // put this back in to hide the clear action on phones it is not needed on
-		if (KeyEvent.useSoftKeyClear) {
+		if (getWindow().getDesktopPane().USE_SOFT_KEY_CLEAR) {
                     if(caretPosition==0 && tmpChar==0){
                         if (showingClearKey) {
                             getWindow().removeCommand(SOFTKEY_CLEAR);
@@ -524,15 +524,17 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 autoAccept();
 
-                if (KeyEvent.useSoftKeyClear) {
+                Window w = getWindow();
+
+                if (w.getDesktopPane().USE_SOFT_KEY_CLEAR) {
                     if(showingClearKey){
-                        getWindow().removeCommand(SOFTKEY_CLEAR);
+                        w.removeCommand(SOFTKEY_CLEAR);
                         showingClearKey = false;
                     }
                     SOFTKEY_CLEAR = null;
                 }
 
-                getWindow().getDesktopPane().setIndicatorText(null);
+                w.getDesktopPane().setIndicatorText(null);
 		repaint();
 	}
 
@@ -541,10 +543,12 @@ public abstract class TextComponent extends Component implements ActionListener,
                 super.focusGained();
 		showCaret = true;
 
-		getWindow().getDesktopPane().animateComponent(this);
+                Window w = getWindow();
+
+		w.getDesktopPane().animateComponent(this);
                 setMode(mode);
 
-                if (KeyEvent.useSoftKeyClear) {
+                if (w.getDesktopPane().USE_SOFT_KEY_CLEAR) {
                     SOFTKEY_CLEAR = new Button( (String)DesktopPane.get("clearText") );
                     SOFTKEY_CLEAR.addActionListener(this);
                     SOFTKEY_CLEAR.setActionCommand("clear");
