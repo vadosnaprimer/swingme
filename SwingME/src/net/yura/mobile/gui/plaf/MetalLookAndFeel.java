@@ -291,8 +291,8 @@ public class MetalLookAndFeel extends LookAndFeel {
                 style.addProperty(icn, prop, Style.ALL);
             }
             catch (IOException ex) {
-                //#debug warn
-                Logger.warn("can not find icon for metal theme "+icon);
+                //#debug info
+                Logger.info("can not find icon for metal theme "+icon);
             }
         }
 
