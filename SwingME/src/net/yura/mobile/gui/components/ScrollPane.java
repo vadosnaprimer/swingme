@@ -506,32 +506,58 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
      */
     private int[] getOffsets(int x,int y,int w, int h, int value,int extent, int max) {
 
-        int box = 0;
-        int topBotton = 0;
+        final int box;
+        final int topBotton;
         if (trackTop!=null) {
             box = (trackTop.getIconHeight() >w)?w:trackTop.getIconHeight();
             topBotton = (thumbTop==null)?0:thumbTop.getIconHeight()+thumbBottom.getIconHeight();
         }
+        else {
+            box = 0;
+            topBotton = 0;
+        }
+        final int space1 = h - box * 2;
 
-        int space = h - box * 2;
-        int extenth = (int) ( (extent*space)/(double)max + 0.5);
-
+        int extenth = (int) ( (extent*space1)/(double)max + 0.5);
         int min = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
-        min = min>(space/2)?space/2:min;
+        min = min>(space1/2)?space1/2:min;
 
+        int space = space1;
         if (extenth < min) {
             extenth = min;
             space = space-extenth;
             max = max-extent;
         }
+        int starty = box+ (int)( (space*value)/(double)max + 0.5 );
 
         // make sure the thumb value is bound
-        value = Math.max(value, 0);
-        value = Math.min(value, max - extent);
+        /*
+         // this works but is not that nice
+        if (starty < box) {
+            starty = box;
+        }
+        else if ((starty+extenth) > (box+space1)) {
+            starty = box + space1 - extenth;
+        }
+         */
+        // add squidge!
+        if ((starty+extenth) < (box+MINIMUM_THUMB_SIZE)) {
+            starty = box;
+            extenth = MINIMUM_THUMB_SIZE;
+        }
+        else if (starty < box) {
+            extenth = starty+extenth-box;
+            starty = box;
+        }
+        else if (starty > (box+space1-MINIMUM_THUMB_SIZE)) {
+            starty = box+space1-MINIMUM_THUMB_SIZE;
+            extenth = MINIMUM_THUMB_SIZE;
+        }
+        else if ((starty+extenth) > (box+space1)) {
+            extenth = box+space1-starty;
+        }
 
-        int starty = y+box+ (int)( (space*value)/(double)max + 0.5 );
-
-        return new int[] {box,starty,extenth};
+        return new int[] {box,y+starty,extenth};
     }
 
     private void tileIcon(Graphics2D g, Icon icon,int dest_x,int dest_y,int dest_w,int dest_h) {
