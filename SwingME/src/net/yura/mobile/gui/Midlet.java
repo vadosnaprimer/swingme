@@ -21,6 +21,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+import net.yura.mobile.logging.DesktopLogger;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -41,6 +42,11 @@ public abstract class Midlet extends MIDlet {
     public static final int PLATFORM_ANDROID = 10;
 
     private static int platform = detectPlatform();
+
+    static {
+        //#debug warn
+        Logger.setLogger( new DesktopLogger(Logger.WARN) );
+    }
 
 	private DesktopPane rootpane;
 

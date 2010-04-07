@@ -194,9 +194,6 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public DesktopPane(Midlet m, int back, Image sph) {
 
-        //#debug warn
-        Logger.setLogger( new DesktopLogger(Logger.WARN) );
-
         NO_SOFT_KEYS = (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE);
 
         desktop = this;
