@@ -41,7 +41,7 @@ public class FilesystemLogger extends Logger {
       }
       log.println(toString(level) + message);
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.log(e, WARN);
     }
   }
 
@@ -52,9 +52,9 @@ public class FilesystemLogger extends Logger {
         open();
       }
       String stacktrace = CallStack.getStacktrace();
-      log.println(toString(level) + (stacktrace.length()==0 ? throwable.toString() : stacktrace));
+      log.print(toString(level) + (stacktrace.length()==0 ? throwable.toString() + "\n" : stacktrace));
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.log(e, WARN);
     }
   }
 

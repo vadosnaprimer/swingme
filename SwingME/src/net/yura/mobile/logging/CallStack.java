@@ -17,7 +17,7 @@ import javax.microedition.rms.RecordStoreException;
  *
  * @author Administrator
  */
-class CallStack
+public class CallStack
 {
 	private static final int
 		INT_MASK = 0xF0,
