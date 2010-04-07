@@ -242,13 +242,11 @@ public abstract class TextComponent extends Component implements ActionListener,
             // if it is a letter that can be typed
             // we dont want to allow Character.MAX_VALUE as its not a real input char
 
-            boolean me4se = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
-
-            if (me4se && keyCode==-5) {
+            if (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE && keyCode==-5) {
                 keyCode='\n';
             }
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || me4se || allowOnlyNumberConstraint())) {
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || getWindow().getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
 
                 if (keyCode=='\n' && !allowNewLine()) {
                     return false;
@@ -627,7 +625,18 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 focusable = (javax.microedition.lcdui.TextField.UNEDITABLE & constraints) == 0;
 
-                if ( Midlet.getPlatform() == Midlet.PLATFORM_ME4SE ) { // in desktop mode numbers are always numbers
+                // this crap again
+                Window w = getWindow();
+                DesktopPane dp=null;
+                if (w!=null) {
+                    dp = w.getDesktopPane();
+                }
+                if (dp==null) {
+                    dp = DesktopPane.getDesktopPane();
+                }
+                // end crap
+
+                if ( dp.QWERTY_KAYPAD ) { // in desktop mode numbers are always numbers
                     setMode(MODE_123);
                 }
                 else if ( allowOnlyNumberConstraint() ) {

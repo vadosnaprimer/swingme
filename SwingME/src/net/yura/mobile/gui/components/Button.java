@@ -103,7 +103,7 @@ public class Button extends Label implements ActionListener {
                 // is this isVisible() is called by the layout manager
                 if (dp==null) { dp = DesktopPane.getDesktopPane(); }
 
-                if (!dp.NO_SOFT_KEYS) return false;
+                if (dp.SOFT_KEYS) return false;
             }
             return super.isVisible();
         }
@@ -158,9 +158,11 @@ public class Button extends Label implements ActionListener {
                 //#mdebug warn
                 if (al!=null) {
                     Logger.warn("trying to add a ActionListener when there is already one registered");
+                    Logger.dumpStack();
                 }
                 if (l==null) {
                     Logger.warn("trying to add a null ActionListener");
+                    Logger.dumpStack();
                 }
                 //#enddebug
 		al = l;
@@ -174,9 +176,11 @@ public class Button extends Label implements ActionListener {
                 //#mdebug warn
                 else {
                     Logger.warn("trying to remove a ActionListener that is not registered");
+                    Logger.dumpStack();
                 }
                 if (l==null) {
                     Logger.warn("trying to remove a null ActionListener");
+                    Logger.dumpStack();
                 }
                 //#enddebug
 	}

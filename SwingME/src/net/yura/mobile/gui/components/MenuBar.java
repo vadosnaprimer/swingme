@@ -52,7 +52,7 @@ public class MenuBar extends List implements ActionListener {
         Window w = getWindow();
 
         // if we are on a phone, and the window is not maximised, this bar is not visible
-        if (w instanceof Frame && !((Frame)w).isMaximum() && ((w.getDesktopPane()!=null && !w.getDesktopPane().NO_SOFT_KEYS) || !DesktopPane.getDesktopPane().NO_SOFT_KEYS) && ((Frame)w).getMenuBar() == this ) {
+        if (w instanceof Frame && !((Frame)w).isMaximum() && ((w.getDesktopPane()!=null && w.getDesktopPane().SOFT_KEYS) || DesktopPane.getDesktopPane().SOFT_KEYS) && ((Frame)w).getMenuBar() == this ) {
             return false;
         }
         return super.isVisible();
@@ -193,7 +193,7 @@ public class MenuBar extends List implements ActionListener {
         DesktopPane dp = w.getDesktopPane();
         int off = 0;
         // if we are on a phone, and the window is not maximised, this bar is not visible
-        if (!dp.NO_SOFT_KEYS && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+        if (dp.SOFT_KEYS && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
             Button b = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
             if (b!=null) {
                 off = b.getWidthWithBorder();

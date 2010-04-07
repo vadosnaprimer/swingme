@@ -36,7 +36,6 @@ import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
-import net.yura.mobile.logging.DesktopLogger;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.SystemUtil;
 
@@ -149,10 +148,11 @@ public class DesktopPane extends Canvas implements Runnable {
     }
     public static final boolean debug = false;
 
-    // 2 things that are not related to softkeys also depend on this flag
-    // where the icon goes on a option pane,
-    // and if by default a window has a close and max button at the top
-    public boolean NO_SOFT_KEYS;
+    public boolean SOFT_KEYS; // is this is true, no input indicator is shown
+    public boolean VERY_BIG_SCREEN; // where the icon goes on a option pane,
+    public boolean MAX_CLOSE_BUTTONS; // if by default a window has a close and max button at the top
+    public boolean IPHONE_SCROLL;
+    public boolean QWERTY_KAYPAD;
 
     // object variables
     protected Midlet midlet;
@@ -194,7 +194,11 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public DesktopPane(Midlet m, int back, Image sph) {
 
-        NO_SOFT_KEYS = (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE);
+        SOFT_KEYS = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
+        VERY_BIG_SCREEN = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
+        MAX_CLOSE_BUTTONS = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
+        IPHONE_SCROLL = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
+        QWERTY_KAYPAD = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE || Midlet.getPlatform() == Midlet.PLATFORM_ANDROID;
 
         desktop = this;
 
@@ -240,7 +244,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // TODO me4se needs to be here, or keyboard events dont come in
         // WHY WHY WHY??!!! this is very strange
-        if (NO_SOFT_KEYS) {
+        if ( Midlet.getPlatform() == Midlet.PLATFORM_ME4SE ) {
             serviceRepaints();
         }
 
@@ -590,7 +594,7 @@ public class DesktopPane extends Canvas implements Runnable {
             if (tooltip!=null && tooltip.isShowing()) {
                 paintComponent(graphics, tooltip);
             }
-            if (indicator!=null && indicator.getText() != null && !NO_SOFT_KEYS) {
+            if (indicator!=null && indicator.getText() != null && !QWERTY_KAYPAD) {
                 paintComponent(graphics, indicator);
             }
 
@@ -1042,15 +1046,17 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (type == PRESSED) {
                     pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
 
-                    ScrollPane sp = getScrollPaneParent(pointerComponent);
-                    if (sp != null) {
-                        if (sp.getViewPortHeight() < sp.getView().getHeight() ||
-                            sp.getViewPortWidth() < sp.getView().getWidth()) {
+                    if (IPHONE_SCROLL) {
+                        ScrollPane sp = getScrollPaneParent(pointerComponent);
+                        if (sp != null) {
+                            if (sp.getViewPortHeight() < sp.getView().getHeight() ||
+                                sp.getViewPortWidth() < sp.getView().getWidth()) {
 
-                            pointerScrollPane = sp;
+                                pointerScrollPane = sp;
 
-                            if (pointerComponent == sp) {
-                                pointerComponent = null;
+                                if (pointerComponent == sp) {
+                                    pointerComponent = null;
+                                }
                             }
                         }
                     }

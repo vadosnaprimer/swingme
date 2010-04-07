@@ -41,7 +41,7 @@ public class Frame extends Window {
          */
         public Frame() {
             setUndecorated(false);
-            if (DesktopPane.getDesktopPane().NO_SOFT_KEYS) {
+            if (DesktopPane.getDesktopPane().MAX_CLOSE_BUTTONS) {
                 setMaximizable(true);
                 setClosable(true);
             }
@@ -240,7 +240,7 @@ public class Frame extends Window {
                 titleBar.setBoundsWithBorder(0, 0, width, th);
             }
 
-            boolean bottom = isMaximum && !getDesktopPane().NO_SOFT_KEYS;
+            boolean bottom = isMaximum && getDesktopPane().SOFT_KEYS;
 
             MenuBar menubar = getMenuBar();
             int mh = 0;

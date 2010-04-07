@@ -236,7 +236,7 @@ public class Window extends Panel {
         }
 
         public Component getComponentAt(final int xclick,final int yclick) {
-            if (!getDesktopPane().NO_SOFT_KEYS) {
+            if (getDesktopPane().SOFT_KEYS) {
 
                     int x = xclick + getXOnScreen();
                     int y = yclick + getYOnScreen();
@@ -278,7 +278,7 @@ public class Window extends Panel {
 
             Window w = getWindow();
 
-            if (!w.getDesktopPane().NO_SOFT_KEYS && w == desktop.getSelectedFrame()) {
+            if (w.getDesktopPane().SOFT_KEYS && w == desktop.getSelectedFrame()) {
 
                 int offsetX = getXOnScreen();
                 int offsetY = getYOnScreen();
@@ -425,7 +425,7 @@ public class Window extends Panel {
 
         private void softKeyRepaint() {
             DesktopPane dp = getDesktopPane();
-            if (dp!=null && !dp.NO_SOFT_KEYS) {
+            if (dp!=null && dp.SOFT_KEYS) {
                 // HACK: Jane - If the soft-keys are outside the "window paint area", we need a
                 // full repaint, otherwise, replacing a "big" soft-key with a "small" will
                 // leave garbage pixels... However, just because a window is smaller that
@@ -471,7 +471,7 @@ public class Window extends Panel {
         public Button findMneonicButton(int mn) {
 
             Button b = getSoftkeyForMneonic(mn);
-            if (!getDesktopPane().NO_SOFT_KEYS && b!=null) {
+            if (getDesktopPane().SOFT_KEYS && b!=null) {
                     Component comp = getRendererComponentOnScreen(b);
                     b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
             }

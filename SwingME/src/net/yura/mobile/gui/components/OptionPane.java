@@ -94,7 +94,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
         Panel c = new Panel( new BoxLayout(Graphics.VCENTER) );
 
-        if (DesktopPane.getDesktopPane().NO_SOFT_KEYS) {
+        if (DesktopPane.getDesktopPane().VERY_BIG_SCREEN) {
             panel.add(icon,Graphics.LEFT);
         }
         else {
@@ -179,7 +179,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
 
         int space = dp.getWidth() - 12 - scroll.getBarThickness(); // padding
-        if (dp.NO_SOFT_KEYS) {
+        if (dp.VERY_BIG_SCREEN) {
             icon.workoutSize();
             space = space - icon.getWidthWithBorder();
         }
