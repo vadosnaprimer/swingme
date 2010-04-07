@@ -368,7 +368,12 @@ public class Camera extends Component implements Runnable, PlayerListener {
             synchronized (uiLock) {
                 uiLock.notifyAll();
             }
-            getWindow().getDesktopPane().fullRepaint();
+            // by the time we receive the close event 
+            // the camera might not belong to a window
+            Window w = getWindow();
+            if(w != null){
+            	w.getDesktopPane().fullRepaint();
+            }
         }
     }
 
