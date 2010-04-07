@@ -36,6 +36,7 @@ import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
+import net.yura.mobile.logging.DesktopLogger;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.SystemUtil;
 
@@ -193,6 +194,9 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public DesktopPane(Midlet m, int back, Image sph) {
 
+        //#debug warn
+        Logger.setLogger( new DesktopLogger(Logger.WARN) );
+
         NO_SOFT_KEYS = (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE);
 
         desktop = this;
@@ -271,10 +275,9 @@ public class DesktopPane extends Canvas implements Runnable {
             midlet.initialize(this);
         }
         catch (Throwable th) {
-            //#mdebug error
-            Logger.error("Error in initialize: " + th.toString());
+            //#debug warn
+            Logger.warn("Error in initialize: " + th.toString());
             Logger.error(th);
-            //#enddebug
         }
 
         // Set thread to maximum priority (smother animations and text input)
@@ -310,10 +313,9 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
         catch (Throwable th) {
-            //#mdebug error
-            Logger.error("Error in animation: " + th.toString());
+            //#debug warn
+            Logger.warn("Error in animation: " + th.toString());
             Logger.error(th);
-            //#enddebug
         }
       }
     }
@@ -621,10 +623,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
         }
         catch (Throwable th) {
-            //#mdebug error
-            Logger.error("Error in paint: " + th.toString());
+            //#debug warn
+            Logger.warn("Error in paint: " + th.toString());
             Logger.error(th);
-            //#enddebug
         }
 
     }
@@ -979,10 +980,9 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
         catch (Throwable th) {
-            //#mdebug error
-            Logger.error("Error in KeyEvent: " + th.toString());
+            //#debug warn
+            Logger.warn("Error in KeyEvent: " + th.toString());
             Logger.error(th);
-            //#enddebug
         }
 
         showHideToolTip(
@@ -1100,10 +1100,9 @@ public class DesktopPane extends Canvas implements Runnable {
             }
         }
         catch (Throwable th) {
-            //#mdebug error
-            Logger.error("Exception in pointerEvent: " + th.toString());
+            //#debug warn
+            Logger.warn("Exception in pointerEvent: " + th.toString());
             Logger.error(th);
-            //#enddebug
         }
 
         // if dragged by only a little bit, should not hide the tooltip

@@ -65,34 +65,22 @@ public class DesktopLogger extends Logger {
 
   protected synchronized void log(String message, int level) {
     super.log(message, level);
-    if (level <= this.level) {
-      if (debugwindow == null) {
-        init();
-      }
-      text.append(toString(level) + message + "\n");
-      if (!debugwindow.isVisible()) {
-        debugwindow.setVisible(true);
-      }
-      else {
-        debugwindow.repaint();
-      }
+    try {
+        if (level >= this.level) {
+          if (debugwindow == null) {
+            init();
+          }
+          text.append(toString(level) + message + "\n");
+          if (!debugwindow.isVisible()) {
+            debugwindow.setVisible(true);
+          }
+          else {
+            debugwindow.repaint();
+          }
+        }
     }
-  }
-
-  protected synchronized void log(Throwable throwable, int level) {
-    super.log(throwable, level);
-    if (level <= this.level) {
-      if (debugwindow == null) {
-        init();
-      }
-      String stacktrace = CallStack.getStacktrace();
-      text.append(toString(level) + (stacktrace.length() == 0 ? throwable.toString() : stacktrace) + "\n");
-      if (!debugwindow.isVisible()) {
-        debugwindow.setVisible(true);
-      }
-      else {
-        debugwindow.repaint();
-      }
+    catch(Throwable th) {
+        Logger.error(th);
     }
   }
 }

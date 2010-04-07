@@ -38,31 +38,32 @@ public abstract class BTDiscovery implements DiscoveryListener {
     {
         boolean isPhone = (deviceClass.getMajorDeviceClass() == 0x200);
         try {
-            if (isPhone)
-            {
+            if (isPhone) {
                 String name = device.getFriendlyName(false);
                 String address = device.getBluetoothAddress();
                 handleRemoteId(name, address);
             }
-            } catch (Throwable t) {
-                Logger.error(t);
-            }
+        }
+        catch (Throwable t) {
+            Logger.error(t);
+        }
     }
    public void servicesDiscovered(int transId, ServiceRecord[] serviceRecords) {
         try {
             // there should only be one record
-            if (serviceRecords.length == 1)
-            {
+            if (serviceRecords.length == 1) {
                 //Do Nothing
             }
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logger.error(t);
         }
     }
     public void inquiryCompleted(int discoveryType) {
         try {
             handleInquiryCompleted();
-        } catch (Throwable t) {
+        }
+        catch (Throwable t) {
             Logger.error(t);
         }
     }

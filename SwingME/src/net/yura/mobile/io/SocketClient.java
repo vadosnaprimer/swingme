@@ -250,73 +250,70 @@ Logger.info("[SocketClient] sending object: "+object);
 
 
     public final void run() {
-
         try {
+            //#mdebug info
+            String name = readThread.getName();
+            Logger.info("[SocketClient] STARTING "+ name );
+            //#enddebug
+            Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
+            Object task;
+            while (true) {
+                try {
 
-        //#mdebug info
-        String name = readThread.getName();
-        Logger.info("[SocketClient] STARTING "+ name );
-        //#enddebug
-        Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
-        Object task;
-        while (true) {
-            try {
+                    //#debug
+                    if (disconnected) throw new IOException();
 
-                //#debug
-                if (disconnected) throw new IOException();
-
-                task = read(in);
-            }
-            catch(Exception ex) {
-                // THIS HAPPENS ON A DISCONNECT
-
-                updateState(DISCONNECTED);
-
-                //#mdebug info
-                if (writeThread!=null) {
-                  Logger.info("[SocketClient] Exception during read from socket");
-                  Logger.info(ex);
+                    task = read(in);
                 }
-                //#enddebug
+                catch(Exception ex) {
+                    // THIS HAPPENS ON A DISCONNECT
 
-                shutdownConnection();
+                    updateState(DISCONNECTED);
 
-                break;
+                    //#mdebug info
+                    if (writeThread!=null) {
+                      Logger.info("[SocketClient] Exception during read from socket");
+                      Logger.info(ex);
+                    }
+                    //#enddebug
+
+                    shutdownConnection();
+
+                    break;
+                }
+
+                updateState(COMMUNICATING);
+
+              //#debug info
+              Logger.info("[SocketClient] got object: "+task);
+                try {
+
+                    Thread.yield();
+                    Thread.sleep(0);
+
+                    handleObject( task );
+
+                    Thread.yield();
+                    Thread.sleep(0);
+
+                }
+                catch (Exception x) {
+                    //#debug warn
+                    Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
+                    Logger.error(x);
+                }
+                //#debug info
+                Logger.info("[SocketClient] finished handling object, waiting for new object from server");
+                updateState(CONNECTED);
             }
 
-            updateState(COMMUNICATING);
-
-          //#debug info
-          Logger.info("[SocketClient] got object: "+task);
-            try {
-
-                Thread.yield();
-                Thread.sleep(0);
-
-                handleObject( task );
-
-                Thread.yield();
-                Thread.sleep(0);
-
+            // we have not had a disconnect requested, so we have to get ready to reconnect
+            if (writeThread!=null) {
+                disconnected();
             }
-            catch (Exception x) {
-                //#mdebug warn
-                Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
-                Logger.warn(x);
-                //#enddebug
-            }
+
             //#debug info
-            Logger.info("[SocketClient] finished handling object, waiting for new object from server");
-            updateState(CONNECTED);
-        }
-
-        // we have not had a disconnect requested, so we have to get ready to reconnect
-        if (writeThread!=null) {
-            disconnected();
-        }
-
-        //#debug info
-        Logger.info("[SocketClient] ENDING "+ name );
+            Logger.info("[SocketClient] ENDING "+ name );
         }
         catch (Throwable t){
             Logger.error(t);

@@ -43,10 +43,9 @@ public class Timer extends Thread{
               task.run();
             }
             catch (Throwable t) {
-              //#mdebug
-              Logger.error("error in {"+id+"} timer: "+t.toString());
+              //#debug warn
+              Logger.warn("error in {"+id+"} timer: "+t.toString());
               Logger.error(t);
-              //#enddebug
             }
         }
     }

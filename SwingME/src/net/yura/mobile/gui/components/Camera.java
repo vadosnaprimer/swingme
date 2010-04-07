@@ -294,13 +294,16 @@ public class Camera extends Component implements Runnable, PlayerListener {
                     uiLock.wait(1000);
                 }
             }
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             Logger.error(e);
-        } finally {
+        }
+        finally {
 
             try {
                 closePlayer();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 Logger.warn(e);
             }
             //#debug
