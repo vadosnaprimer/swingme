@@ -7,6 +7,6 @@
     <label text="Synth File"/>
     <textfield editable="false" name="synth_file"/>
     <button action="brouse_file" text="Browse"/>
-    <button action="cancel_synth" colspan="2" halign="right" text="Cancel" valign="bottom" weighty="1"/>
-    <button action="load_synth" text="Load" valign="bottom"/>
+    <button action="cancel_synth" colspan="2" halign="right" text="Cancel" type="cancel" valign="bottom" weighty="1"/>
+    <button action="load_synth" text="Load" type="default" valign="bottom"/>
 </panel>

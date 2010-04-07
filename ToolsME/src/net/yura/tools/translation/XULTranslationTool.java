@@ -74,7 +74,13 @@ public class XULTranslationTool extends MessageTool {
         meFrame.add( new Label("hello world") );
         meFrame.add( new TextField(), Graphics.BOTTOM );
         meFrame.setMaximum(true);
-        me4sePanel.getDesktopPane().NO_SOFT_KEYS = false;
+
+        me4sePanel.getDesktopPane().SOFT_KEYS = true;
+        me4sePanel.getDesktopPane().VERY_BIG_SCREEN = false;
+        me4sePanel.getDesktopPane().MAX_CLOSE_BUTTONS = false;
+        me4sePanel.getDesktopPane().IPHONE_SCROLL = true;
+        me4sePanel.getDesktopPane().QWERTY_KAYPAD = false;
+
         me4sePanel.getDesktopPane().add(meFrame);
         Dimension d = new Dimension(100, 100);
         me4sePanel.setPreferredSize(d);
