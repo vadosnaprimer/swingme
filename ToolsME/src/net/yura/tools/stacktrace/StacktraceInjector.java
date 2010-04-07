@@ -46,8 +46,8 @@ import org.objectweb.asm.commons.EmptyVisitor;
  */
 public class StacktraceInjector extends Task {
 
-  private final static String CALLSTACK_FILE = "net\\yura\\mobile\\util\\CallStack.class";
-  private final static String CALLSTACK_CLASS = "net/yura/mobile/util/CallStack";
+  private final static String CALLSTACK_FILE = "net\\yura\\mobile\\logging\\CallStack.class";
+  private final static String CALLSTACK_CLASS = "net/yura/mobile/logging/CallStack";
   private final static String GET_CALLSTACK = "getCallStack";
   private FileSet classFiles;
   private boolean lineNumbers, arguments;
@@ -129,7 +129,7 @@ public class StacktraceInjector extends Task {
       }
       File classFile = new File(classFiles.getDir(), CALLSTACK_FILE);
       if (!classFile.exists()) {
-        throw new BuildException("Missing net.yura.mobile.util.CallStack class");
+        throw new BuildException("Missing net.yura.mobile.logging.CallStack class");
       }
       InputStream inputStream = new FileInputStream(classFile);
       ClassReader reader = new ClassReader(inputStream);
