@@ -68,8 +68,9 @@ public abstract class QueueProcessorThread extends Thread {
             }
         }
       }
-      catch(Throwable t)
-      {
+      catch(Throwable t) {
+        //#debug warn
+        Logger.warn("Error in QueueProcessorThread: "+t.toString());
         Logger.error(t);
       }
     }

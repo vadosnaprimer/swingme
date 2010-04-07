@@ -1,5 +1,7 @@
 package net.yura.mobile.logging;
 
+import java.io.PrintStream;
+
 /**
  *
  * @author Orens
@@ -168,7 +170,8 @@ public class Logger {
 
     protected synchronized void log(String message, int level)
     {
-      System.err.println(toString(level) + message);
+      PrintStream out = level<WARN ? System.out : System.err;
+      out.println(toString(level) + message);
     }
 
     protected synchronized void log(Throwable throwable, int level)
