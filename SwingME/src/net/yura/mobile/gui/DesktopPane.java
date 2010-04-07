@@ -148,11 +148,11 @@ public class DesktopPane extends Canvas implements Runnable {
     }
     public static final boolean debug = false;
 
-    public boolean SOFT_KEYS; // is this is true, no input indicator is shown
+    public boolean SOFT_KEYS;
     public boolean VERY_BIG_SCREEN; // where the icon goes on a option pane,
     public boolean MAX_CLOSE_BUTTONS; // if by default a window has a close and max button at the top
     public boolean IPHONE_SCROLL;
-    public boolean QWERTY_KAYPAD;
+    public boolean QWERTY_KAYPAD; // if true the multi letter per number is disabled
 
     // object variables
     protected Midlet midlet;
