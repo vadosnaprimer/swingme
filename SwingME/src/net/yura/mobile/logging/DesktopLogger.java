@@ -63,20 +63,24 @@ public class DesktopLogger extends Logger {
     debugwindow.setBounds(10, 10, DesktopPane.getDesktopPane().getWidth() - 20, DesktopPane.getDesktopPane().getHeight() / 2);
   }
 
-  protected synchronized void log(String message, int level) {
+  private final Object uilock = new Object();
+
+  protected void log(String message, int level) {
     super.log(message, level);
     try {
         if (level >= this.level) {
-          if (debugwindow == null) {
-            init();
-          }
-          text.append(toString(level) + message + "\n");
-          if (!debugwindow.isVisible()) {
-            debugwindow.setVisible(true);
-          }
-          else {
-            debugwindow.repaint();
-          }
+            synchronized(uilock) {
+              if (debugwindow == null) {
+                init();
+              }
+              text.append(toString(level) + message + "\n");
+              if (!debugwindow.isVisible()) {
+                debugwindow.setVisible(true);
+              }
+              else {
+                debugwindow.repaint();
+              }
+            }
         }
     }
     catch(Throwable th) {
