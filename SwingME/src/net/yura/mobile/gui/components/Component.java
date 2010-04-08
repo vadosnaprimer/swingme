@@ -212,7 +212,6 @@ public abstract class Component {
      * @see javax.swing.SwingUtilities#windowForComponent(java.awt.Component) SwingUtilities.windowForComponent
      */
     public Window getWindow() {
-
         if (parent == null) { return (this instanceof Window)?(Window)this : null; }
         return parent.getWindow();
     }
@@ -592,7 +591,7 @@ public abstract class Component {
     }
 
     public void wait(int a) throws InterruptedException {
-        DesktopPane dp = getWindow().getDesktopPane();
+        DesktopPane dp = getDesktopPane();
         dp.wait(a);
         if (dp.getAnimatedComponent()!=this) {
             throw new InterruptedException();
@@ -741,13 +740,7 @@ public abstract class Component {
      * @see javax.swing.JComponent#revalidate() JComponent.revalidate
      */
     public void revalidate() {
-        Window w = getWindow();
-        if (w!=null) {
-            DesktopPane dp = w.getDesktopPane();
-            if (dp!=null) {
-                dp.revalidateComponent(this);
-            }
-        }
+        getDesktopPane().revalidateComponent(this);
     }
     public void validate() {
         // nothing??
@@ -800,6 +793,14 @@ public abstract class Component {
         if (parent!=null) {
             parent.clip(g);
         }
+    }
+
+    public DesktopPane getDesktopPane() {
+        Window w = getWindow();
+        if (w!=null) {
+            return w.getDesktopPane();
+        }
+        return DesktopPane.getDesktopPane();
     }
 
 }

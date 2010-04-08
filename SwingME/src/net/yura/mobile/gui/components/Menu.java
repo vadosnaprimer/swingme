@@ -89,7 +89,7 @@ public class Menu extends Button {
             positionMenuRelativeTo(
                     popup,
                     getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
-                    getWindow().getDesktopPane(),
+                    getDesktopPane(),
                     parentMenu==null?Graphics.TOP:Graphics.RIGHT
                     );
             openMenuAtLocation();
@@ -188,7 +188,7 @@ public class Menu extends Button {
 
         private void openMenuAtLocation() {
 
-            DesktopPane dp = getWindow().getDesktopPane();
+            DesktopPane dp = getDesktopPane();
 
             if (useAnimation) {
 

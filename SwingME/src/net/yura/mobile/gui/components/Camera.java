@@ -370,10 +370,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             }
             // by the time we receive the close event 
             // the camera might not belong to a window
-            Window w = getWindow();
-            if(w != null){
-            	w.getDesktopPane().fullRepaint();
-            }
+            getDesktopPane().fullRepaint();
         }
     }
 
@@ -471,7 +468,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         VideoControl videoCtrl = (VideoControl) player.getControl("VideoControl");
         if (videoCtrl != null) {
 
-            Canvas playerCanvas = getWindow().getDesktopPane();
+            Canvas playerCanvas = getDesktopPane();
 
             videoCtrl.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, playerCanvas);
             videoCtrl.setDisplayLocation(getXOnScreen(), getYOnScreen());

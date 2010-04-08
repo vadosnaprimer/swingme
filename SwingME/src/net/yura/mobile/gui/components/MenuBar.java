@@ -52,7 +52,7 @@ public class MenuBar extends List implements ActionListener {
         Window w = getWindow();
 
         // if we are on a phone, and the window is not maximised, this bar is not visible
-        if (w instanceof Frame && !((Frame)w).isMaximum() && ((w.getDesktopPane()!=null && w.getDesktopPane().SOFT_KEYS) || DesktopPane.getDesktopPane().SOFT_KEYS) && ((Frame)w).getMenuBar() == this ) {
+        if (w instanceof Frame && !((Frame)w).isMaximum() && ((Frame)w).getMenuBar() == this && getDesktopPane().SOFT_KEYS) {
             return false;
         }
         return super.isVisible();

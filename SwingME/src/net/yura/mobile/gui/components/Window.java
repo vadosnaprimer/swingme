@@ -17,7 +17,6 @@
 
 package net.yura.mobile.gui.components;
 
-import java.lang.ref.WeakReference;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.ActionListener;
@@ -54,7 +53,10 @@ public class Window extends Panel {
          * @see javax.swing.JInternalFrame#getDesktopPane() JInternalFrame.getDesktopPane
          */
         public DesktopPane getDesktopPane() {
-            return desktop;
+            if (desktop!=null) {
+                return desktop;
+            }
+            return DesktopPane.getDesktopPane();
         }
         public void setDesktopPane(DesktopPane a) {
             desktop = a;
@@ -425,7 +427,7 @@ public class Window extends Panel {
 
         private void softKeyRepaint() {
             DesktopPane dp = getDesktopPane();
-            if (dp!=null && dp.SOFT_KEYS) {
+            if (dp.SOFT_KEYS) {
                 // HACK: Jane - If the soft-keys are outside the "window paint area", we need a
                 // full repaint, otherwise, replacing a "big" soft-key with a "small" will
                 // leave garbage pixels... However, just because a window is smaller that

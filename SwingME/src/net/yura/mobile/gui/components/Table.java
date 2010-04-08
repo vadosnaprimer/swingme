@@ -193,7 +193,7 @@ public class Table extends Panel {
                             y< (editorComp.getYWithBorder()+editorComp.getHeightWithBorder())
                             ) { //  && !(editorComp instanceof TextComponent)
                         // now pass on the event onto the component
-                        getWindow().getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
+                        getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
                     }
                     //editorComp.pointerEvent(type, x, y);
                 }

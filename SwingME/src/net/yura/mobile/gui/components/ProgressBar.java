@@ -106,7 +106,7 @@ public class ProgressBar extends Component {
 
         if (v) {
 		go = true;
-		getWindow().getDesktopPane().animateComponent(this);
+		getDesktopPane().animateComponent(this);
         }
         else {
                 go = false;

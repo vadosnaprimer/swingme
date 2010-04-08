@@ -212,9 +212,9 @@ public class TitleBar extends Panel implements ActionListener {
          else if (Frame.CMD_MIN.equals(actionCommand)) {
 
              //if (parent==null) {
-                 Vector windows = getWindow().getDesktopPane().getAllFrames();
+                 Vector windows = getDesktopPane().getAllFrames();
                  if (windows.size()>1) {
-                     getWindow().getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
+                     getDesktopPane().setSelectedFrame((Window)windows.elementAt(windows.size()-2));
                  }
              //}
 

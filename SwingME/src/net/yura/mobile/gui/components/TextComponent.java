@@ -159,7 +159,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             if (isFocusOwner()) {
 
                 // put this back in to hide the clear action on phones it is not needed on
-		if (getWindow().getDesktopPane().USE_SOFT_KEY_CLEAR) {
+		if (getDesktopPane().USE_SOFT_KEY_CLEAR) {
                     if(caretPosition==0 && tmpChar==0){
                         if (showingClearKey) {
                             getWindow().removeCommand(SOFTKEY_CLEAR);
@@ -246,7 +246,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 keyCode='\n';
             }
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || getWindow().getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
 
                 if (keyCode=='\n' && !allowNewLine()) {
                     return false;
@@ -426,7 +426,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setText(textbox.getString());
             }
             // go back to normal
-            DesktopPane rp = getWindow().getDesktopPane();
+            DesktopPane rp = getDesktopPane();
             Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
             rp.setFullScreenMode(true);
 
@@ -600,7 +600,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
             if (isFocusOwner()) {
 
-                getWindow().getDesktopPane().setIndicatorText(i);
+                getDesktopPane().setIndicatorText(i);
 
             }
         }

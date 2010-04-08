@@ -138,7 +138,7 @@ public class ComboBox extends Button implements ActionListener{
                 Menu.positionMenuRelativeTo(
                         dropDown,
                         getXOnScreen() - getInsets().getLeft(), getYOnScreen(), getWidthWithBorder(),getHeight(),
-                        getWindow().getDesktopPane(),
+                        getDesktopPane(),
                         Graphics.TOP
                         );
                 dropDown.setVisible(true);

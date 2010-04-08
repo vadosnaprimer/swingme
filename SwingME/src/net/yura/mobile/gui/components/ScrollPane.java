@@ -1048,21 +1048,25 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 dragScrollBars(0);
             }
             else if (dragScrollBarMode == DRAG_NONE) {
-                dragLastX = pointX;
-                dragLastY = pointY;
+                if (getDesktopPane().IPHONE_SCROLL) {
+                    dragLastX = pointX;
+                    dragLastY = pointY;
 
-                dragFriction = 0;
-                dragScrollBars(0);
+                    dragFriction = 0;
+                    dragScrollBars(0);
+                }
             }
         }
         else if (type == DesktopPane.RELEASED) {
 
             if (dragScrollBarMode == DRAG_NONE) {
-                dragVelocityX = getDragVelocity(dragBufferX);
-                dragVelocityY = getDragVelocity(dragBufferY);
-
+                if (getDesktopPane().IPHONE_SCROLL) {
+                    dragVelocityX = getDragVelocity(dragBufferX);
+                    dragVelocityY = getDragVelocity(dragBufferY);
+                }
                 //System.out.println("SPEEDX = " + dragVelocityX + " SPEEDY = " + dragVelocityY);
-            } else {
+            }
+            else {
                 // Stop animation...
                 dragVelocityX = 0;
                 dragVelocityY = 0;
@@ -1230,7 +1234,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
 
-        int[] offsets = getOffsets(x, y, w, h, value, extent, max);
+        int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
 
         return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
     }
