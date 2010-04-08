@@ -524,17 +524,17 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 autoAccept();
 
-                Window w = getWindow();
+                DesktopPane dp = getDesktopPane();
 
-                if (w.getDesktopPane().USE_SOFT_KEY_CLEAR) {
+                if (dp.USE_SOFT_KEY_CLEAR) {
                     if(showingClearKey){
-                        w.removeCommand(SOFTKEY_CLEAR);
+                        SOFTKEY_CLEAR.getWindow().removeCommand(SOFTKEY_CLEAR);
                         showingClearKey = false;
                     }
                     SOFTKEY_CLEAR = null;
                 }
 
-                w.getDesktopPane().setIndicatorText(null);
+                dp.setIndicatorText(null);
 		repaint();
 	}
 

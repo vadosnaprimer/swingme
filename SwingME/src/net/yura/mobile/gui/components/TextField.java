@@ -63,8 +63,7 @@ public class TextField extends TextComponent {
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);
-            if (focusable && type==DesktopPane.RELEASED &&
-                    Midlet.getPlatform() == Midlet.PLATFORM_ME4SE) {
+            if (focusable) {
                 String txt = getDisplayString()+" ";
                 int mid = searchStringCharOffset(txt,font,x -offset);
                 setCaretPosition(mid);
