@@ -70,7 +70,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     public Camera() {
 
-        //#debug
+        //#debug debug
         Logger.debug("CameraPanel() constructor");
 
         focusable = true;
@@ -89,7 +89,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     public void paintComponent(Graphics2D g) {
 
-        //#debug
+        //#debug debug
         Logger.debug("paintComponent: " + getWidth() + "x" + getHeight());
 
         int msgPosX = (getWidth() / 2) - (waitingMessageLength / 2);
@@ -115,14 +115,14 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
     public void focusLost() {
         super.focusLost();
-        //#debug
+        //#debug debug
         Logger.debug(">> focusLost()");
         cameraThread = null;
         running = false;
         synchronized (uiLock) {
             uiLock.notifyAll();
         }
-        //#debug
+        //#debug debug
         Logger.debug("focusLost2");
     }
 
@@ -306,7 +306,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             catch (Exception e) {
                 Logger.warn(e);
             }
-            //#debug
+            //#debug debug
             Logger.debug("Camera Thread GONE.");
         }
     }
@@ -333,7 +333,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private byte[] getSnapshot(String encoding) {
         byte[] data = null;
         try {
-            //#debug
+            //#debug debug
             Logger.debug("getSnapshot: Trying " + encoding);
             data = videoCtrl.getSnapshot(encoding);
         } catch (Exception e) {
@@ -345,14 +345,14 @@ public class Camera extends Component implements Runnable, PlayerListener {
             this.snapshotEncoding = encoding;
         }
 
-        //#debug
+        //#debug debug
         Logger.debug("getSnapshot: " + ((data == null) ? "FAIL." : "OK."));
         return data;
     }
 
     // From PlayerListener Interface
     public void playerUpdate(Player player, String event, Object obj) {
-        //#debug
+        //#debug debug
         Logger.debug("playerUpdate: " + event);
 
         if (PlayerListener.STARTED.equals(event)) {
@@ -448,7 +448,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         // Some phones (i.e. Nokia S40) need a capture://image locator
         String[] contentTypes = Manager.getSupportedContentTypes("capture");
         for (int i = 0; i < contentTypes.length; i++) {
-            //#debug
+            //#debug debug
             Logger.debug("SupportedContentType = capture://" + contentTypes[i]);
             if ("image".equals(contentTypes[i])) {
                 playerLocator = "capture://image";
@@ -474,7 +474,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             videoCtrl.setDisplayLocation(getXOnScreen(), getYOnScreen());
             videoCtrl.setDisplaySize(getWidth(), getHeight());
 
-            //#debug
+            //#debug debug
             Logger.debug("Video Size = " + getWidth() + "x" + getHeight());
 
             videoCtrl.setVisible(true);
@@ -506,7 +506,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                 prevHighResHeight = encodingHeight;
             }
         }
-        //#debug
+        //#debug debug
         Logger.debug("getHighestResolutionEncoding - determined highest resolution encoding format \"" +
                 (format == null ? "UNSPECIFIED" : format) +
                 "\" to be \"" +

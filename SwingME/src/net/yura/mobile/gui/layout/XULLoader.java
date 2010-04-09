@@ -342,7 +342,7 @@ public class XULLoader {
                     tab.component = ((GridBagConstraints)obj).component;
                 }
                 else {
-                    //#debug
+                    //#debug debug
                     Logger.debug("ignored item in tab: "+obj);
                 }
             }
@@ -504,7 +504,7 @@ public class XULLoader {
             return readUIObject(parser, table,listener);
         }
         else { // if (name.equals("slider")) {
-            //#debug
+            //#debug debug
             Logger.debug("unknown object found: "+name);
 
             Label slider = new Label("unknown item: "+name);
@@ -908,7 +908,7 @@ public class XULLoader {
                 ((List)comp).getItems().addElement(obj);
             }
             else {
-                //#debug
+                //#debug debug
                 Logger.debug("what to do with this object: "+obj.getClass() +" "+obj+" parent="+uiobject.component);
             }
         }

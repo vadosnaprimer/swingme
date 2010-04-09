@@ -31,7 +31,7 @@ public abstract class SocketClient implements Runnable {
 
     private final String server;
 
-    //#debug
+    //#debug debug
     private boolean disconnected = false;
 
 
@@ -85,7 +85,7 @@ public abstract class SocketClient implements Runnable {
 
                                 retryCount++;
 
-                                //#debug
+                                //#debug debug
                                 if (disconnected) throw new IOException();
 
 
@@ -176,7 +176,7 @@ public abstract class SocketClient implements Runnable {
 Logger.info("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
 
-                        //#debug
+                        //#debug debug
                         if (disconnected) throw new IOException();
 
                         write(out, object);
@@ -260,7 +260,7 @@ Logger.info("[SocketClient] sending object: "+object);
             while (true) {
                 try {
 
-                    //#debug
+                    //#debug debug
                     if (disconnected) throw new IOException();
 
                     task = read(in);

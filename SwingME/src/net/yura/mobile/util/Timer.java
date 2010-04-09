@@ -15,7 +15,7 @@ public class Timer extends Thread{
 
     public void schedule(String id, Runnable task, long delay){
 
-        //#debug
+        //#debug debug
         Logger.debug("Setting schedule for {" + id + "} with delay of: " + delay);
         
         this.id = id;

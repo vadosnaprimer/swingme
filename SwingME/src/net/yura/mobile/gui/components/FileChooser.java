@@ -291,7 +291,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     public void run() {
       try {
-          //#debug
+          //#debug debug
           Logger.debug("FC START");
           Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
 
@@ -323,7 +323,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
               revalidate();
               repaint();
-              //#debug
+              //#debug debug
               Logger.debug("FC END 1");
               return;
           }
@@ -337,7 +337,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                       file = (SelectableFile)requestImage.firstElement();
                   }
                   else {
-                      //#debug
+                      //#debug debug
                       Logger.debug("FC END 2");
                       return;
                   }
