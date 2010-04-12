@@ -10,7 +10,7 @@ public class TextBox extends Screen {
     private String text;
     private int maxSize;
     private int constraints;
-    private View currentView;
+    private Canvas.CanvasView currentCanvasView;
 
     public TextBox(String title, String text, int maxSize, int constraints) {
         this.text = text;
@@ -19,7 +19,11 @@ public class TextBox extends Screen {
 
         // Hack: Current view could change...
         MIDlet midlet = AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet();
-        this.currentView = Display.getDisplay(midlet).getCurrent().getView();
+        View view = Display.getDisplay(midlet).getCurrent().getView();
+
+        if (view instanceof Canvas.CanvasView) {
+            this.currentCanvasView = (Canvas.CanvasView) view;
+        }
     }
 
     @Override
@@ -28,12 +32,14 @@ public class TextBox extends Screen {
 
     @Override
     public View getView() {
-        return currentView;
+        return currentCanvasView;
     }
 
     @Override
     public void initDisplayable(MIDlet midlet) {
-        midlet.getToolkit().showNativeTextInput();
+        if (currentCanvasView != null) {
+            currentCanvasView.showNativeTextInput();
+        }
     }
 
     public int getMaxSize() {

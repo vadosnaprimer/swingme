@@ -15,19 +15,14 @@ import javax.microedition.midlet.MIDlet;
 import net.yura.android.lcdui.Toolkit;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -356,35 +351,6 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         return false;
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-
-        if (this.midlet == null) {
-            return super.onKeyDown(keyCode, event);
-        }
-
-        Displayable displayable = Display.getDisplay(this.midlet).getCurrent();
-
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // we need to see if there is a back option in the current display
-            for (Command c : displayable.getCommands()) {
-                if (c.getCommandType() == Command.BACK) {
-                    // manually call the back operation: YECH!
-                    displayable.getCommandListener().commandAction(c,
-                            displayable);
-                    return true;
-                }
-            }
-        }
-
-        if (displayable instanceof OnKeyListener) {
-            OnKeyListener keyListener = (OnKeyListener) displayable;
-            keyListener.onKey(null, keyCode, event);
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
-
     public int getScreenHeight() {
         return this.defaultView.getHeight();
     }
@@ -430,12 +396,4 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
             startMIDlet(midletClassName);
         }
     }
-
-    public void showNativeTextInput() {
-        inputManager = (InputMethodManager) defaultView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        //inputManager.hideSoftInputFromWindow(defaultView.getWindowToken(), 0);
-
-        inputManager.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-    }
-
 }

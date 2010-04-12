@@ -6,9 +6,12 @@ import net.yura.android.AndroidMeMIDlet;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public abstract class Canvas extends Displayable {
     public static final int UP = 1;
@@ -185,8 +188,17 @@ public abstract class Canvas extends Displayable {
         return this.canvasView.graphics;
     }
 
-    private class CanvasView extends View {
+    @Override
+    public int getHeight() {
+        int h = canvasView.canvasH;
+        return (h > 0) ? h : super.getHeight();
+    }
+
+    class CanvasView extends View {
         javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());
+        private int canvasY;
+        private int canvasH;
+        private int keyMenuCount;
 
         public CanvasView(Context context) {
             super(context);
@@ -216,27 +228,50 @@ public abstract class Canvas extends Displayable {
                 }
             }
 
-            if (graphicsBitmap != null && androidCanvas != null) {
+            // WorkArround: View Re-size not done by the platform on landscape
+            // virtual keyboard... Find what bit of the canvas are visible.
+
+            // 1 - Get location in window, and keep top corner if not
+            // displaying the virtual keyboard.
+            int[] location = {0, 0};
+            getLocationInWindow(location);
+
+            if (location[1] > 0) {
+                canvasY = location[1];
+                canvasH = getHeight();
+            } else {
+                // 2 - Visible height if displaying the virtual keyboard
+                canvasH = getHeight() + location[1] - canvasY;
+            }
+
+            if (graphicsBitmap != null) {
 
                 // Check for size changes...
                 if (graphicsBitmap.getWidth() != this.getWidth() ||
-                    graphicsBitmap.getHeight() != this.getHeight()) {
+                    graphicsBitmap.getHeight() != canvasH) {
+
+                    // Notify Canvas clients
+                    try {
+                        sizeChanged(this.getWidth(), canvasH);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
 
                     graphicsBitmap = null;
                 }
             }
 
             if (graphicsBitmap == null) {
-                graphicsBitmap = Bitmap.createBitmap(this.getWidth(),
-                        this.getHeight(), Bitmap.Config.ARGB_8888);
-
+                graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }
 
             graphics.reset();
 
             paint(graphics);
-            androidCanvas.drawBitmap(graphicsBitmap, 0, 0, null);
+
+            int graphicsY = getHeight() - canvasH;
+            androidCanvas.drawBitmap(graphicsBitmap, 0, graphicsY, null);
 
             time = System.currentTimeMillis();
         }
@@ -249,41 +284,58 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
-            keyCode = getKeyCode(event);
+            System.out.println("onKeyDown -> " + keyCode);
 
-            if (event.getRepeatCount() == 0) {
-                keyPressed(keyCode);
-            } else {
-                keyRepeated(keyCode);
+            int keyCount = event.getRepeatCount();
+            if (keyCode == KeyEvent.KEYCODE_MENU) {
+                keyMenuCount = keyCount;
+                if (keyMenuCount == 1) {
+                    toggleNativeTextInput();
+                }
             }
+            else {
+                int meKeyCode = getKeyCode(event);
+                if (keyCount == 0) {
+                    keyPressed(meKeyCode);
+                } else {
+                    keyRepeated(meKeyCode);
+                }
+            }
+
             return true;
         }
 
         @Override
         public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-            keyCode = getKeyCode(event);
-            keyReleased(keyCode);
+            int meKeyCode = getKeyCode(event);
+            if (keyCode == KeyEvent.KEYCODE_MENU) {
+                if (keyMenuCount == 0) {
+                    // Simulate a press on menu
+                    keyPressed(meKeyCode);
+                    keyReleased(meKeyCode);
+                }
+            } else {
+                keyReleased(meKeyCode);
+            }
             return true;
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            // System.out.println(
-            // "("+(int)event.getX()+","+(int)event.getY()+","+event.getAction()+")"
-            // );
+            int x = Math.round(event.getX());
+            int y = Math.round(event.getY() - getHeight() + canvasH);
+
+            System.out.println("(" + x + "," + y + "," + event.getAction() + ")");
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Canvas.this.pointerPressed(Math.round(event.getX()), Math
-                        .round(event.getY()));
+                Canvas.this.pointerPressed(x, y);
                 break;
             case MotionEvent.ACTION_UP:
-                Canvas.this.pointerReleased(Math.round(event.getX()), Math
-                        .round(event.getY()));
+                Canvas.this.pointerReleased(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Canvas.this.pointerDragged(Math.round(event.getX()), Math
-                        .round(event.getY()));
+                Canvas.this.pointerDragged(x, y);
                 break;
             }
 
@@ -341,6 +393,41 @@ public abstract class Canvas extends Displayable {
 
             return resultKeyCode;
         }
+
+        private InputMethodManager getInputManager() {
+            return (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        }
+
+        private void fixVirtualKeyboard() {
+            getHandler().postDelayed(new Runnable() {
+                public void run() {
+
+                    // WorkArround: View Re-size not done by the platform on landscape
+                    // virtual keyboard... Ask to scroll to the bottom of the view.
+                    requestRectangleOnScreen(new Rect(0, getHeight() - 1, 1, getHeight()));
+
+                    int h = getHeight();
+                    if (requestRectangleOnScreen(new Rect(0, h - 1, 1, h), true)) {
+                        invalidate();
+                    }
+                }
+            }, 500);
+        }
+
+        public void showNativeTextInput() {
+            fixVirtualKeyboard();
+            getInputManager().showSoftInput(this, InputMethodManager.SHOW_FORCED);
+        }
+
+        public void hideNativeTextInput() {
+            fixVirtualKeyboard();
+            getInputManager().hideSoftInputFromWindow(getWindowToken(), 0);
+        }
+
+        public void toggleNativeTextInput() {
+            fixVirtualKeyboard();
+            getInputManager().toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
     }
 
     protected void hideNotify() {
@@ -357,7 +444,6 @@ public abstract class Canvas extends Displayable {
     }
 
     public boolean isShown() {
-        // TODO Auto-generated method stub
         return Display.getDisplay(AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
     }
 

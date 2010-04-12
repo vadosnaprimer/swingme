@@ -13,6 +13,4 @@ public interface Toolkit {
     int getScreenWidth();
 
     int getScreenHeight();
-
-    void showNativeTextInput();
 }
