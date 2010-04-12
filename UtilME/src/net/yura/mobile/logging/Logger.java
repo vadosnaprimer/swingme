@@ -158,7 +158,7 @@ public class Logger {
       }
       catch(Exception e)
       {
-        logger.log(e, level);
+        logger.log(e, WARN);
       }
       //#enddebug
     }
