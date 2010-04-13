@@ -563,6 +563,9 @@ public abstract class TextComponent extends Component implements ActionListener,
                 // not needed i think
                 //tmpChar = 0;
 
+                // when a new text component becomes focused
+                // if on android the keyboard is already visible
+                // we need to update it to display the correct keyboard
                 if (textbox!=null) {
                     openNativeEditor();
                 }
