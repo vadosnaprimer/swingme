@@ -6,11 +6,12 @@ import net.yura.android.AndroidMeMIDlet;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 
 public abstract class Canvas extends Displayable {
@@ -199,6 +200,7 @@ public abstract class Canvas extends Displayable {
         private int canvasY;
         private int canvasH;
         private int keyMenuCount;
+        private View inputConnectionView;
 
         public CanvasView(Context context) {
             super(context);
@@ -278,8 +280,10 @@ public abstract class Canvas extends Displayable {
 
         @Override
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-            sizeChanged(w, h);
+            fixVirtualKeyboard();
             invalidate();
+
+            super.onSizeChanged(w, h, oldw, oldh);
         }
 
         @Override
@@ -326,7 +330,7 @@ public abstract class Canvas extends Displayable {
             int x = Math.round(event.getX());
             int y = Math.round(event.getY() - getHeight() + canvasH);
 
-            System.out.println("(" + x + "," + y + "," + event.getAction() + ")");
+            // System.out.println("(" + x + "," + y + "," + event.getAction() + ")");
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Canvas.this.pointerPressed(x, y);
@@ -394,6 +398,10 @@ public abstract class Canvas extends Displayable {
             return resultKeyCode;
         }
 
+        public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+            return (inputConnectionView == null) ? null : inputConnectionView.onCreateInputConnection(outAttrs);
+        }
+
         private InputMethodManager getInputManager() {
             return (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         }
@@ -427,6 +435,22 @@ public abstract class Canvas extends Displayable {
         public void toggleNativeTextInput() {
             fixVirtualKeyboard();
             getInputManager().toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+
+        public void setInputConnectionView(View view) {
+            if (inputConnectionView != view) {
+                this.inputConnectionView = view;
+                getInputManager().restartInput(this);
+            }
+        }
+
+        public void sendText(CharSequence text) {
+            int count = text.length();
+            for (int i = 0; i < count; i++) {
+                int meKeyCode = text.charAt(i);
+                keyPressed(meKeyCode);
+                keyReleased(meKeyCode);
+            }
         }
     }
 

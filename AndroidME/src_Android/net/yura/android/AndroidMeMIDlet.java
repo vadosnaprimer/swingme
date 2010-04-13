@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -33,7 +32,6 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     private View defaultView;
     private View waitingView;
     private Handler handler;
-    private InputMethodManager inputManager;
     private Thread eventThread;
     private Object lock = new Object();
 
