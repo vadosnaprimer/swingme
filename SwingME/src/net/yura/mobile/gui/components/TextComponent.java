@@ -51,7 +51,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int UNEDITABLE=javax.microedition.lcdui.TextField.UNEDITABLE;
         public static final int URL=javax.microedition.lcdui.TextField.URL;
 
-        private TextBox textbox;
+        private static TextBox textbox;
 
 	private Button SOFTKEY_CLEAR;
         private boolean showingClearKey;
@@ -375,6 +375,18 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         }
 
+        public void commandAction(Command arg0, Displayable arg1) {
+            if (arg0.getCommandType()==Command.OK) {
+                setText(textbox.getString());
+            }
+            // go back to normal
+            DesktopPane rp = getDesktopPane();
+            Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
+            rp.setFullScreenMode(true);
+
+            textbox = null;
+        }
+
         private boolean shouldUseUppercase() {
 
             if (initialCapsConstraint()) {
@@ -419,18 +431,6 @@ public abstract class TextComponent extends Component implements ActionListener,
          */
         public int getCaretPosition() {
             return caretPosition;
-        }
-
-        public void commandAction(Command arg0, Displayable arg1) {
-            if (arg0.getCommandType()==Command.OK) {
-                setText(textbox.getString());
-            }
-            // go back to normal
-            DesktopPane rp = getDesktopPane();
-            Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
-            rp.setFullScreenMode(true);
-
-            textbox = null;
         }
 
 	public void animate() throws InterruptedException {
@@ -562,6 +562,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 // not needed i think
                 //tmpChar = 0;
+
+                if (textbox!=null) {
+                    openNativeEditor();
+                }
 
 		repaint();
 
