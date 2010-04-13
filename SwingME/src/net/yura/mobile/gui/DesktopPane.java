@@ -539,6 +539,16 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                 }
 
+                if (sizeChanged) {
+                    if (currentWindow != null) {
+                        Component focusedComponent = currentWindow.getFocusOwner();
+                        if (focusedComponent!=null) {
+                            focusedComponent.makeVisible();
+                        }
+                    }
+                    sizeChanged = false;
+                }
+
                 // now start painting
                 graphics.setGraphics(gtmp);
 
@@ -1248,7 +1258,13 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         // Until we don't do the initial setup, ignore this.
         setupIndicatorPosition();
+
+        sizeChanged = true;
+        pointerComponent = null;
+        pointerScrollPane = null;
+
     }
+    boolean sizeChanged;
 
     // this is to fix buttons not being released properly on some phones
     public void showNotify() {
