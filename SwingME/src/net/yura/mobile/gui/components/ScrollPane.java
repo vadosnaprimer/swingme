@@ -1134,7 +1134,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         boolean springBack = (dragVelocityY == 0 && dragFriction != 0);
 
-        //System.out.println("cY in = " + cY + " dragLastY = " + dragLastY + " springBack = " + springBack + " dragFriction = " + dragFriction + " time = " + time);
         if (springBack) {
             if (cY >= 0) {
                 dragLastY = dragStartY - dragStartViewY + viewPortY;
@@ -1159,26 +1158,34 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragLastY += (dragVelocityY / DRAG_FRAME_RATE);
         }
 
+        // How far are we from the desire position?
         int jumpY = (dragStartY - dragLastY) - (dragStartViewY - (cY + viewPortY));
 
-        final int a = 300; // 60 ;
-        //System.out.println("a = " + a);
-        if (springBack && springBackTime < 0) {
-            springBackTime = time + (int)(Math.sqrt(Math.abs(jumpY * 1000 * 1000) / a));
-        }
-
-
-        //System.out.println("jumpY1 = " + jumpY);
-
         if (springBack && jumpY != 0) {
+            // Quadratic motion equations:
+            // (1) position = acceleration * time * time;
+            // (2) time = sqrt(position / acceleration)
+            // (3) acceleration = distance / (time * time)
+
+            // Acceleration (3): Is a constant
+            // Time is in milli's... Drag needs to be divided by (1000 * 1000)
+            final float springDrag = 300.0f / (1000 * 1000);
+
+            // Animation runs "backward"... De-accelerates, and ends at zero.
+            if (springBackTime < 0) {
+                // When would it finish, if it run forward? (2)
+                springBackTime = time + (int)(Math.sqrt(Math.abs(jumpY) / springDrag));
+            }
+
+            // Animation runs "backward"...  Re-map time.
             time = springBackTime - time;
-            int newCy = (int)((a * time * time) / (1000 * 1000));
+            int newCy = (int)(springDrag * time * time);
             if (jumpY < 0) {
+                // If animate bottom,
                 newCy = -newCy;
             }
 
             int newJump = jumpY - newCy ;
-            //System.out.println("newJump = " + newJump);
             // New jump can never be zero, or bigger than the initial jump...
             if (newJump == 0) {
                 jumpY = (jumpY < 0) ? -1 : 1;
@@ -1186,11 +1193,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             else if (Math.abs(newJump) < Math.abs(jumpY)) {
                 jumpY = newJump;
             }
-
-
-            //jumpY = newJump;
         }
-        //System.out.println("jumpY2 = " + jumpY);
 
         if (jumpY != 0 || bound) {
 
@@ -1226,8 +1229,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 }
             }
         }
-
-        //System.out.println("cY out = " + cY);
 
         return new int[] {-cY, dragLastY, dragVelocityY, jumpY, springBackTime, dragFriction};
     }
