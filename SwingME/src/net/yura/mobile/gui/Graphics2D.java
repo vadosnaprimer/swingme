@@ -55,7 +55,7 @@ public class Graphics2D {
         }
 
         public void drawRect(int x,int y,int w,int h) {
-                
+
                 g.drawRect(
                         convertTrans(x,y),
                         convertTrans(y,x),
@@ -266,6 +266,12 @@ public class Graphics2D {
 
     public void translate(int x, int y) {
         g.translate( convertTrans(x,y), convertTrans(y,x));
+    }
+    public int getTranslateX() {
+        return convertTrans(g.getTranslateX(),g.getTranslateY());
+    }
+    public int getTranslateY() {
+        return convertTrans(g.getTranslateY(),g.getTranslateX());
     }
 
     public void drawString(String drawString, int tx, int ty) {

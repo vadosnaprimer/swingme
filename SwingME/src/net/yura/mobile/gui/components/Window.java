@@ -277,13 +277,16 @@ public class Window extends Panel {
 
         public void paint(Graphics2D g) {
             super.paint(g);
+            paintSoftKeys(g);
+        }
 
+        public void paintSoftKeys(Graphics2D g) {
             Window w = getWindow();
 
             if (w.getDesktopPane().SOFT_KEYS && w == desktop.getSelectedFrame()) {
 
-                int offsetX = getXOnScreen();
-                int offsetY = getYOnScreen();
+                int offsetX = g.getTranslateX();
+                int offsetY = g.getTranslateY();
                 g.translate(-offsetX,-offsetY);
 
                 for (int i=0; i< 3; i++) {
