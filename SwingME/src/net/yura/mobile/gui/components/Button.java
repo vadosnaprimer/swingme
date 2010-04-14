@@ -188,7 +188,7 @@ public class Button extends Label implements ActionListener {
          * @see javax.swing.AbstractButton#getActionListeners() AbstractButton.getActionListeners
          */
         public ActionListener[] getActionListeners() {
-            return new ActionListener[] {al};
+            return al == null? new ActionListener[0]:new ActionListener[] {al};
         }
 
         /**
