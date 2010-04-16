@@ -231,6 +231,7 @@ public class MainPane extends DesktopPane implements ActionListener {
                                 }
 
 				addMainMenuButton("Load Images","loadpanel");
+				addSection("Graphics Test",new GraphicsTest());
 				addMainMenuButton("Throw Error","throwerror");
                                 addMainMenuButton("System.out", "sysout");
                                 addMainMenuButton("Hide Show", "hideshow");
