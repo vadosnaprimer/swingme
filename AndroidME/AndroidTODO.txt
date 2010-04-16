@@ -1,13 +1,13 @@
-- Rotate of the images is broken (e.g. horizontal scroll bar)
-- camera
-- pim 2 versions
-- location/ callId
-- blue tooth
-- sms
-- photo browser being able to go to next and previous image
+- PIM 2 versions
+- Camera
+- Blue tooth
+- SMS
+- Photo browser being able to go to next and previous image
 
 
 --- DONE ---
+- Location: cellId, MMC, etc
+- Rotate of the images is broken (e.g. horizontal scroll bar)
 - Long press on "Menu" should bring the "text keyboard"
 - When pressing SwingMe textBox, should show the soft-keyboard, and when the keyboard is visible it should resize the screen, to the available area. when the keyboard is visible and the user presses 'back' then it will hide the native keyboard, also if device has a physical keyboard, do nothing
 - Fix rotate
