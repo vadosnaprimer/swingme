@@ -328,6 +328,10 @@ public class Graphics2D {
         g = gtmp;
     }
 
+    public Graphics getGraphics() {
+        return g;
+    }
+
     public int getTransform() {
         return trans;
     }
