@@ -44,20 +44,16 @@ public abstract class Displayable {
 
 	public int getWidth() {
 		View view = this.getView();
-		if (view == null) {
-			return MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth();
-		} else {
-			return view.getWidth();
-		}
+		int w = (view == null) ? 0 : view.getWidth();
+
+		return (w <= 0) ? MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth() : w;
 	}
 
 	public int getHeight() {
 		View view = this.getView();
-		if (view == null) {
-			return MIDlet.DEFAULT_MIDLET.getToolkit().getScreenHeight();
-		} else {
-			return view.getHeight();
-		}
+		int h = (view == null) ? 0 : view.getHeight();
+
+        return (h <= 0) ? MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth() : h;
 	}
 
 	public Display getCurrentDisplay() {

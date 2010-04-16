@@ -5,7 +5,6 @@ import javax.microedition.lcdui.game.Sprite;
 
 import net.yura.android.lcdui.FontManager;
 
-import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -94,8 +93,7 @@ public class Graphics {
         canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, y, paint);
     }
 
-    public void drawImage(javax.microedition.lcdui.Image image, int x, int y,
-            int anchor) {
+    public void drawImage(javax.microedition.lcdui.Image image, int x, int y, int anchor) {
         int ax;
         int ay;
         if ((anchor & LEFT) != 0) {
@@ -221,126 +219,139 @@ public class Graphics {
         drawString(new String(carr), x, y, anchor);
     }
 
-    public void drawRegion(Image src, int x_src, int y_src, int width,
+    public void drawRegion(Image src, int xSrc, int ySrc, int width,
             int height, int transform, int x_dst, int y_dst, int anchor) {
-        // may throw NullPointerException, this is ok
-        if (x_src + width > src.getWidth() || y_src + height > src.getHeight() || width < 0 || height < 0 || x_src < 0
-                || y_src < 0)
-//JP            throw new IllegalArgumentException("Area out of Image");
-            return;
 
-        // this cannot be done on the same image we are drawing
-        // check this if the implementation of getGraphics change so
-        // as to return different Graphic Objects on each call to
-        // getGraphics
-        if (src.isMutable() && src.getGraphics() == this)
-            throw new IllegalArgumentException("Image is source and target");
+        int rotate;
+        boolean mirror;
 
-        Bitmap img = src.getBitmap();
-
-        Matrix matrix = new Matrix();
-        int dW = width, dH = height;
         switch (transform) {
-        case Sprite.TRANS_NONE: {
-            break;
-        }
-        case Sprite.TRANS_ROT90: {
-            matrix.preRotate(90);
-            img = Bitmap.createBitmap(img, x_src, y_src, width, height, matrix, true);
-            dW = height;
-            dH = width;
-            break;
-        }
-        case Sprite.TRANS_ROT180: {
-            matrix.preRotate(180);
-            img = Bitmap.createBitmap(img, x_src, y_src, width, height, matrix, true);
-            break;
-        }
-        case Sprite.TRANS_ROT270: {
-            matrix.preRotate(270);
-            img = Bitmap.createBitmap(img, x_src, y_src, width, height, matrix, true);
-            dW = height;
-            dH = width;
-            break;
-        }
-        case Sprite.TRANS_MIRROR: {
-            // TODO
-            break;
-        }
-        case Sprite.TRANS_MIRROR_ROT90: {
-            // TODO
-            dW = height;
-            dH = width;
-            break;
-        }
-        case Sprite.TRANS_MIRROR_ROT180: {
-            // TODO
-            break;
-        }
-        case Sprite.TRANS_MIRROR_ROT270: {
-            // TODO
-            dW = height;
-            dH = width;
-            break;
-        }
-        default:
-            throw new IllegalArgumentException("Bad transform");
-        }
-
-        // process anchor and correct x and y _dest
-        // vertical
-        boolean badAnchor = false;
-
-        if (anchor == 0) {
-            anchor = TOP | LEFT;
-        }
-
-        if ((anchor & 0x7f) != anchor || (anchor & BASELINE) != 0)
-            badAnchor = true;
-
-        if ((anchor & TOP) != 0) {
-            if ((anchor & (VCENTER | BOTTOM)) != 0)
-                badAnchor = true;
-        } else if ((anchor & BOTTOM) != 0) {
-            if ((anchor & VCENTER) != 0)
-                badAnchor = true;
-            else {
-                y_dst -= dH - 1;
+            case Sprite.TRANS_NONE: {
+                rotate = 0;
+                mirror = false;
+                break;
             }
-        } else if ((anchor & VCENTER) != 0) {
-            y_dst -= (dH - 1) >>> 1;
-        } else {
-            // no vertical anchor
-            badAnchor = true;
-        }
-
-        // horizontal
-        if ((anchor & LEFT) != 0) {
-            if ((anchor & (HCENTER | RIGHT)) != 0)
-                badAnchor = true;
-        } else if ((anchor & RIGHT) != 0) {
-            if ((anchor & HCENTER) != 0)
-                badAnchor = true;
-            else {
-                x_dst -= dW - 1;
+            case Sprite.TRANS_ROT90: {
+                rotate = 90;
+                mirror = false;
+                break;
             }
-        } else if ((anchor & HCENTER) != 0) {
-            x_dst -= (dW - 1) >>> 1;
-        } else {
-            // no horizontal anchor
-            badAnchor = true;
+            case Sprite.TRANS_ROT180: {
+                rotate = 180;
+                mirror = false;
+                break;
+            }
+            case Sprite.TRANS_ROT270: {
+                rotate = 270;
+                mirror = false;
+                break;
+            }
+            case Sprite.TRANS_MIRROR: {
+                rotate = 0;
+                mirror = true;
+                break;
+            }
+            case Sprite.TRANS_MIRROR_ROT90: {
+                rotate = 90;
+                mirror = true;
+                break;
+            }
+            case Sprite.TRANS_MIRROR_ROT180: {
+                rotate = 180;
+                mirror = true;
+                break;
+            }
+            case Sprite.TRANS_MIRROR_ROT270: {
+                rotate = 270;
+                mirror = true;
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("Bad transform");
+            }
         }
 
-        if (badAnchor) {
+        drawRegion(src, xSrc, ySrc, width, height, rotate, mirror, x_dst, y_dst, anchor);
+    }
+
+    public void drawRegion(Image src, int xSrc, int ySrc, int width,
+            int height, int rotate, boolean mirror, int xDst, int yDst, int anchor) {
+
+        // may throw NullPointerException, this is ok
+        if (xSrc + width > src.getWidth() || ySrc + height > src.getHeight() ||
+            width < 0 || height < 0 || xSrc < 0 || ySrc < 0) {
+            throw new IllegalArgumentException("Area out of Image");
+        }
+
+        // Create a matrix and apply the rotation and mirroring (scale == -1)
+        Matrix matrix = new Matrix();
+        matrix.preRotate(rotate);
+        matrix.preScale(mirror ? -1.0f : 1.0f, 1.0f);
+
+        // Get the destination rectangle after rotation and mirroring...
+        RectF r = new RectF(0, 0,  width,  height);
+        matrix.mapRect(r);
+
+
+        float anchorX = (r.right - r.left);
+        int nRefs = 0;
+
+        // Process horizontal anchor (LEFT, RIGHT and HCENTER)
+        if ((anchor & LEFT) > 0) {
+            nRefs++;
+            anchorX = 0.0f;
+        }
+        if ((anchor & HCENTER) > 0) {
+            nRefs++;
+            anchorX = anchorX / 2.0f;
+        }
+        if ((anchor & RIGHT) > 0) {
+            nRefs++;
+        }
+
+        // Can only have one horizontal anchor
+        if (nRefs > 1) {
             throw new IllegalArgumentException("Bad Anchor");
         }
 
-        Rect srcRect = new Rect(x_src, y_src, x_src + width, y_src + height);
-        Rect dstRect = new Rect(x_dst, y_dst, x_dst + width, y_dst + height);
+        float anchorY = (r.bottom - r.top);
+        nRefs = 0;
 
-//JP        paint.setStyle(Paint.Style.FILL);
-//        canvas.drawBitmap(img, srcRect, dstRect, paint);
-        canvas.drawBitmap(img, srcRect, dstRect, null);
+        // Process vertical anchor (BASELINE, BOTTOM, TOP and VCENTER)
+        if ((anchor & BASELINE) > 0) {
+            nRefs++;
+        }
+        if ((anchor & BOTTOM) > 0) {
+            nRefs++;
+        }
+        if ((anchor & TOP) > 0) {
+            nRefs++;
+            anchorY = 0.0f;
+        }
+        if ((anchor & VCENTER) > 0) {
+            nRefs++;
+            anchorY = anchorY / 2.0f;
+        }
+
+        // Can only have one horizontal anchor
+        if (nRefs > 1) {
+            throw new IllegalArgumentException("Bad Anchor");
+        }
+
+        canvas.save();
+
+        // Translate for new destination, destination rectangle and anchor
+        canvas.translate((xDst - r.left - anchorX), (yDst - r.top - anchorY));
+
+        // Apply the transformation matrix
+        canvas.concat(matrix);
+
+        // Draw the image
+        Rect srcRect = new Rect(xSrc, ySrc, xSrc + width, ySrc + height);
+        Rect dstRect = new Rect(0, 0,  width,  height);
+        canvas.drawBitmap(src.getBitmap(), srcRect, dstRect, null);
+
+        canvas.restore();
     }
 
     public void setStrokeStyle(int stroke) {
@@ -385,9 +396,6 @@ public class Graphics {
         if (scanlength == 0) {
             scanlength = width;
         }
-//JP        paint.setStyle(Paint.Style.FILL);
-//        canvas.drawBitmap(rgbData, offset, scanlength, x, y, width, height,
-//                processAlpha, paint);
 
         canvas.drawBitmap(rgbData, offset, scanlength, x, y, width, height, processAlpha, null);
     }
