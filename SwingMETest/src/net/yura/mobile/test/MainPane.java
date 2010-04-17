@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Graphics;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Label;
@@ -44,7 +45,7 @@ public class MainPane extends DesktopPane {
     private Frame mainWindow;
     private ScrollPane scroll;
 
-    public MainPane(MyMidlet a) {
+    public MainPane(Midlet a) {
         super(a,0,null);
     }
 
@@ -78,8 +79,6 @@ public class MainPane extends DesktopPane {
     public void setMainSection(Section section) {
 
         section.mainPane = this;
-
-        section.createTests();
         section.openTest("mainmenu");
     }
 
