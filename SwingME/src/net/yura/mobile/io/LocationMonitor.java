@@ -74,7 +74,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "MNC"
         };
         String[] signalPropertyNames = {
-            "com.nokia.mid.networksignal"
+            "com.nokia.mid.networksignal",
+            "NETWORKSIGNAL"
         };
         String[] locationAreaPropertyNames = {
             "com.nokia.mid.lac",
@@ -84,7 +85,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "phone.lac"
         };
         String[] imsiPropertyNames = {
-            "com.sonyericsson.sim.subscribernumber"
+            "com.sonyericsson.sim.subscribernumber",
+            "IMSI"
         };
         public J2MECellMonitor() {
             cellPropertyIndex = getPropertyIndex(sysPropertyNames);
