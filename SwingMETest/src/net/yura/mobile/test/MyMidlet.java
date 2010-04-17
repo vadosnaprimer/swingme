@@ -24,13 +24,15 @@ import net.yura.mobile.gui.DesktopPane;
  * @author Yura Mamyrin
  */
 public class MyMidlet extends Midlet {
-	
+
 	protected DesktopPane makeNewRootPane() {
 		return new MainPane(this);
 	}
 
 	protected void initialize(DesktopPane rp) {
-		((MainPane)rp).initialize();
+	    MainPane mainPane = (MainPane) rp;
+	    mainPane.initialize();
+	    mainPane.setMainSection(new MainTest(mainPane));
 	}
 
 }
