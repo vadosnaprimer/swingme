@@ -152,8 +152,10 @@ public abstract class MIDlet {
                 System.setProperty("MCC", tm.getSimCountryIso());
                 System.setProperty("IMSI", tm.getSubscriberId());
 
-                // TODO: Docs says NetworkOperator() is MMC + MNC
-                System.setProperty("MNC", tm.getNetworkOperator());
+                // Network Operator = MMC + MNC
+                String op = tm.getNetworkOperator();
+                System.setProperty("MMC", op.substring(0, 3));
+                System.setProperty("MNC", op.substring(3));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
