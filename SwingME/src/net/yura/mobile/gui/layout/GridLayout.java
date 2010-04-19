@@ -74,16 +74,17 @@ public class GridLayout implements Layout {
 		int d=0;
 
 		for (int i=0;i<components.size();i++) {
-			
 			Component comp = (Component)components.elementAt(i);
-			comp.setBoundsWithBorder((a*cwidth)+padding+(padding*a), (d*cheight)+padding+(padding*d), cwidth, cheight);
-			a++;
-                        
-                        // when it gets to the end of the row it adds 1
-			if (a==ac && i!=(components.size()-1)) {
-				a=0;
-				d++;
-			}
+                        if (comp.isVisible()) {
+                            comp.setBoundsWithBorder((a*cwidth)+padding+(padding*a), (d*cheight)+padding+(padding*d), cwidth, cheight);
+                            a++;
+
+                            // when it gets to the end of the row it adds 1
+                            if (a==ac && i!=(components.size()-1)) {
+                                    a=0;
+                                    d++;
+                            }
+                        }
 		}
 
 	}
@@ -96,7 +97,7 @@ public class GridLayout implements Layout {
             
             for (int i=0;i<components.size();i++) {
 			Component comp = (Component)components.elementAt(i);
-			if (comp.getHeightWithBorder() > cheight) {
+			if (comp.isVisible() && comp.getHeightWithBorder() > cheight) {
 				cheight = comp.getHeightWithBorder(); 
 			}
 
@@ -114,7 +115,7 @@ public class GridLayout implements Layout {
             
             for (int i=0;i<components.size();i++) {
 			Component comp = (Component)components.elementAt(i);
-			if (comp.getWidthWithBorder() > cwidth) {
+			if (comp.isVisible() && comp.getWidthWithBorder() > cwidth) {
 				cwidth = comp.getWidthWithBorder();
 			}
             }
@@ -124,30 +125,44 @@ public class GridLayout implements Layout {
     
     private int getCols(Vector components) {
 
-                int ac;
-                if (across!=0) {
-                    ac=across;
-                }
-                else {
-                    ac = (components.size()+(down-1)) / down;
-                }
-                
-                if (components.size() < ac) { ac=components.size(); }
-                
-                return ac;
+        int count = getComponentsCount(components);
+
+        int ac;
+        if (across!=0) {
+            ac=across;
+        }
+        else {
+            ac = (count+(down-1)) / down;
+        }
+
+        if (count < ac) { ac=count; }
+
+        return ac;
     }
     private int getRows(Vector components) {
-                int de;
-                if (down!=0) {
-                    de=down;
-                }
-                else {
-                    de = (components.size()+(across-1)) / across;
-                }
-                
-                if (components.size() < de) { de=components.size(); }
-                
-                return de;
+
+        int count = getComponentsCount(components);
+
+        int de;
+        if (down!=0) {
+            de=down;
+        }
+        else {
+            de = (count+(across-1)) / across;
+        }
+
+        if (count < de) { de=count; }
+
+        return de;
+    }
+    private int getComponentsCount(Vector components) {
+        int count = 0;
+        for (int c=0;c<components.size();c++) {
+            if (((Component)components.elementAt(c)).isVisible()) {
+                count++;
+            }
+        }
+        return count;
     }
 
 }
