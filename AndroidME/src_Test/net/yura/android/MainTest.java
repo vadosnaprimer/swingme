@@ -11,14 +11,14 @@ public class MainTest extends Section {
         super(mainPane);
     }
 
-    @Override
+//    @Override
     public void createTests() {
         add(new Label("Android Tests"));
 
-        addTest("PIM", "pim");
+        addSection("PIM", new PimTest());
     }
 
-    @Override
+//    @Override
     public void openTest(String actionCommand) {
         if ("mainmenu".equals(actionCommand)) {
             addToScrollPane(this, null, makeButton("Exit", "exit"));
