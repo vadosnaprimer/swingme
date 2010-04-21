@@ -10,9 +10,11 @@ import android.graphics.Rect;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
 
 public abstract class Canvas extends Displayable {
     public static final int UP = 1;
@@ -39,11 +41,16 @@ public abstract class Canvas extends Displayable {
     public static final int KEY_STAR = 42;
     public static final int KEY_POUND = 35;
 
+    private LinearLayout linearLayout;
     private CanvasView canvasView;
     private Bitmap graphicsBitmap;
 
     protected Canvas() {
+        this.linearLayout = new LinearLayout(AndroidMeMIDlet.DEFAULT_ACTIVITY);
         this.canvasView = new CanvasView(AndroidMeMIDlet.DEFAULT_ACTIVITY);
+
+        canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        linearLayout.addView(canvasView);
     }
 
     public void setFullScreenMode(boolean fullScreen) {
@@ -170,19 +177,19 @@ public abstract class Canvas extends Displayable {
 
     @Override
     public View getView() {
-        return this.canvasView;
+        return this.linearLayout;
     }
 
     @Override
     public void disposeDisplayable() {
-//        this.canvasView = null;
+// JP        this.canvasView = null;
     }
 
     @Override
     public void initDisplayable(MIDlet midlet) {
-        if (this.canvasView == null) {
-            this.canvasView = new CanvasView(midlet.getActivity());
-        }
+// JP        if (this.canvasView == null) {
+//            this.canvasView = new CanvasView(midlet.getActivity());
+//        }
     }
 
     protected javax.microedition.lcdui.Graphics getGraphics() {
@@ -473,5 +480,13 @@ public abstract class Canvas extends Displayable {
 
     public void setTitle(Object object) {
         // TODO Auto-generated method stub
+    }
+
+    public void addOverlayView(View v) {
+        linearLayout.addView(v);
+    }
+
+    public void removeOverlayView(View v) {
+        linearLayout.removeView(v);
     }
 }

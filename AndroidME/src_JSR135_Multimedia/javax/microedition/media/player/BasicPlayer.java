@@ -22,10 +22,11 @@ public abstract class BasicPlayer implements Player {
     // Player worker methods
     abstract protected void doRealize() throws MediaException;
     abstract protected void doPrefetch() throws MediaException;
-    abstract protected boolean doStart() throws MediaException;
+    abstract protected void doStart() throws MediaException;
     abstract protected void doStop();
     abstract protected void doDeallocate();
     abstract protected void doClose();
+
     abstract protected long doSetMediaTime(long now) throws MediaException;
     abstract protected long doGetMediaTime();
     abstract protected long doGetDuration();
@@ -68,7 +69,7 @@ public abstract class BasicPlayer implements Player {
         chkClosed(false);
 
         if (state < REALIZED) {
-            doRealize();
+            sendPlayerEvent("doRealize", null);
             state = REALIZED;
         }
     }
@@ -80,7 +81,7 @@ public abstract class BasicPlayer implements Player {
         if (state < PREFETCHED) {
 
             realize();
-            doPrefetch();
+            sendPlayerEvent("doPrefetch", null);
 
             state = PREFETCHED;
         }
@@ -99,10 +100,10 @@ public abstract class BasicPlayer implements Player {
 // JP        if (EOM)
 //            setMediaTime(0);
 
-            doStart();
+            sendPlayerEvent("doStart", null);
 
             state = STARTED;
-            sendEvent(PlayerListener.STARTED, new Long(getMediaTime()));
+            sendListenerEvent(PlayerListener.STARTED, new Long(getMediaTime()));
         }
     }
 
@@ -112,10 +113,14 @@ public abstract class BasicPlayer implements Player {
 //JP        loopAfterEOM = false;
 
         if (state >= STARTED) {
-            doStop();
+            try {
+                sendPlayerEvent("doStop", null);
+            }
+            catch (Exception e) {
+            }
 
             state = PREFETCHED;
-            sendEvent(PlayerListener.STOPPED, new Long(getMediaTime()));
+            sendListenerEvent(PlayerListener.STOPPED, new Long(getMediaTime()));
         }
     }
 
@@ -126,7 +131,11 @@ public abstract class BasicPlayer implements Player {
 
         if (state >= PREFETCHED) {
             stop();
-            doDeallocate();
+            try {
+                sendPlayerEvent("doDeallocate", null);
+            }
+            catch (MediaException e) {
+            }
             state = REALIZED;
         }
     }
@@ -134,7 +143,11 @@ public abstract class BasicPlayer implements Player {
     public synchronized void close() {
         if (state > CLOSED) {
             deallocate();
-            doClose();
+            try {
+                sendPlayerEvent("doClose", null);
+            }
+            catch (MediaException e) {
+            }
 
             state = CLOSED;
 
@@ -143,7 +156,7 @@ public abstract class BasicPlayer implements Player {
 //                stream.close();
 //            } catch (IOException e) { }
 
-            sendEvent(PlayerListener.CLOSED, null);
+            sendListenerEvent(PlayerListener.CLOSED, null);
         }
     }
 
@@ -194,7 +207,7 @@ public abstract class BasicPlayer implements Player {
         listenerList.remove(playerListener);
     }
 
-    public void sendEvent(final String evt, final Object evtData) {
+    void sendListenerEvent(final String evt, final Object evtData) {
 
         //  There's always one listener for EOM -- itself.
         if (listenerList.size() > 0 || evt == PlayerListener.END_OF_MEDIA) {
@@ -235,6 +248,50 @@ public abstract class BasicPlayer implements Player {
 
                 }
             });
+        }
+    }
+
+    void doPlayerEvent(final String evt, final Object evtData) throws MediaException {
+        if (evt == "doRealize") {
+            doRealize();
+        }
+        else if (evt == "doPrefetch") {
+            doPrefetch();
+        }
+        else if (evt == "doStart") {
+            doStart();
+        }
+        else if (evt == "doStop") {
+            doStop();
+        }
+        else if (evt == "doDeallocate") {
+            doDeallocate();
+        }
+        else if (evt == "doClose") {
+            doClose();
+        }
+    }
+
+    Throwable playerException;
+    void sendPlayerEvent(final String evt, final Object evtData) throws MediaException {
+        playerException = null;
+
+        toolKit.invokeAndWait(new Runnable() {
+            public void run() {
+                try {
+                    doPlayerEvent(evt, evtData);
+                } catch (Throwable e) {
+                    playerException = e;
+                }
+            }
+        });
+
+        if (playerException != null) {
+            if (playerException instanceof MediaException) {
+                throw (MediaException) playerException;
+            } else {
+                playerException.printStackTrace();
+            }
         }
     }
 

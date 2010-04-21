@@ -10,10 +10,6 @@ public interface Toolkit {
 
     View inflate(int resourceId);
 
-    void addOverlayView(View v);
-
-    void removeOverlayView(View v);
-
     int getScreenWidth();
 
     int getScreenHeight();
