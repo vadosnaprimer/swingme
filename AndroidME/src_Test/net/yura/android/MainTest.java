@@ -16,6 +16,7 @@ public class MainTest extends Section {
         add(new Label("Android Tests"));
 
         addSection("PIM", new PimTest());
+        addSection("Multimedia", new MultimediaTest());
     }
 
 //    @Override

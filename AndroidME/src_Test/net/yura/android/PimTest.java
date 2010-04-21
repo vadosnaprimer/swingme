@@ -6,7 +6,6 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.pim.Contact;
 import javax.microedition.pim.ContactList;
 import javax.microedition.pim.PIM;
-import javax.microedition.pim.PIMException;
 import javax.microedition.pim.PIMItem;
 
 import net.yura.mobile.gui.components.Button;

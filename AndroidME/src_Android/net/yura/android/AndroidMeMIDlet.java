@@ -146,10 +146,25 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         showWaitingView(false);
 
         Properties properties = new Properties();
-        System.setProperty("microedition.platform", "microemulator-android");
+        System.setProperty("microedition.platform", "androidMe");
         System.setProperty("microedition.locale", Locale.getDefault().toString());
         System.setProperty("microedition.configuration", "CLDC-1.1");
         System.setProperty("microedition.profiles", "MIDP-2.0");
+
+        // Multimedia Properties
+        System.setProperty("microedition.media.version", "1.2");
+        System.setProperty("supports.mixing", "false");
+        System.setProperty("supports.audio.capture", "false");
+        System.setProperty("supports.video.capture", "false ");
+        System.setProperty("supports.recording", "false");
+        System.setProperty("audio.encodings", "");
+        System.setProperty("video.encodings", "");
+        System.setProperty("video.snapshot.encodings", "encoding=image/jpeg encoding=image/jpg");
+        System.setProperty("streamable.contents", "");
+
+        // PIM and File (Note: "file.separator" already setup by Android OS)
+        System.setProperty("microedition.pim.version", "1.0");
+        System.setProperty("microedition.io.file.FileConnection.version", "1.0");
 
         try {
             String[] assetList = getResources().getAssets().list("");
