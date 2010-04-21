@@ -3,101 +3,82 @@ package javax.microedition.media.player;
 import javax.microedition.media.Control;
 import javax.microedition.media.Controllable;
 import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
-import javax.microedition.media.PlayerListener;
 import javax.microedition.media.control.VideoControl;
 
-public class CameraPlayer implements Player, VideoControl, Controllable {
+import net.yura.android.lcdui.Toolkit;
 
-    // @Override
-    public Control getControl(String controlType) {
-        if ("VideoControl".equalsIgnoreCase(controlType) ||
-            "GUIControl".equalsIgnoreCase(controlType)) {
+public class CameraPlayer extends BasicPlayer implements VideoControl, Controllable {
+
+
+    public CameraPlayer(Toolkit toolKit) {
+        super(toolKit);
+    }
+
+    @Override
+    protected void doClose() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void doDeallocate() {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected Control doGetControl(String type) {
+        if ("VideoControl".equalsIgnoreCase(type) ||
+            "GUIControl".equalsIgnoreCase(type)) {
             return this;
-        } else {
-            return null;
         }
-    }
 
-    // @Override
-    public Control[] getControls() {
-        return new Control[] { this };
-    }
-
-    // @Override
-    public void addPlayerListener(PlayerListener playerListener) {
-        // TODO Auto-generated method stub
-
-    }
-
-    // @Override
-    public void close() {
-        // TODO Auto-generated method stub
-
-    }
-
-    // @Override
-    public void deallocate() {
-        // TODO Auto-generated method stub
-    }
-
-    // @Override
-    public String getContentType() {
-        // TODO Auto-generated method stub
         return null;
     }
 
-    // @Override
-    public long getDuration() {
+    @Override
+    protected Control[] doGetControls() {
+        return new Control[] { this };
+    }
+
+    @Override
+    protected long doGetDuration() {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    // @Override
-    public long getMediaTime() {
+    @Override
+    protected long doGetMediaTime() {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    // @Override
-    public int getState() {
+    @Override
+    protected void doPrefetch() throws MediaException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected void doRealize() throws MediaException {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    protected long doSetMediaTime(long now) throws MediaException {
         // TODO Auto-generated method stub
         return 0;
     }
 
-    // @Override
-    public void prefetch() {
+    @Override
+    protected boolean doStart() throws MediaException {
         // TODO Auto-generated method stub
+        return false;
     }
 
-    // @Override
-    public void realize() {
-        // TODO Auto-generated method stub
-    }
-
-    // @Override
-    public void removePlayerListener(PlayerListener playerListener) {
-        // TODO Auto-generated method stub
-    }
-
-    // @Override
-    public void setLoopCount(int count) {
-        // TODO Auto-generated method stub
-    }
-
-    // @Override
-    public long setMediaTime(long now) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    // @Override
-    public void start() {
-        // TODO Auto-generated method stub
-    }
-
-    // @Override
-    public void stop() {
+    @Override
+    protected void doStop() {
         // TODO Auto-generated method stub
     }
 
@@ -156,4 +137,11 @@ public class CameraPlayer implements Player, VideoControl, Controllable {
     public void setVisible(boolean flag) {
         // TODO Auto-generated method stub
     }
+
+    public String getContentType() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
 }

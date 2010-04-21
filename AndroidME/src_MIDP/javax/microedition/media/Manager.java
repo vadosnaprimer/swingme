@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import javax.microedition.media.player.CameraPlayer;
 
+import net.yura.android.AndroidMeMIDlet;
+
 public class Manager {
     public static final String TONE_DEVICE_LOCATOR = "tone_device";
 
@@ -19,7 +21,7 @@ public class Manager {
             player = null;
         }
         else if (locator.startsWith("capture://video")) {
-            player = new CameraPlayer();
+            player = new CameraPlayer(AndroidMeMIDlet.DEFAULT_ACTIVITY);
         }
         else if (TONE_DEVICE_LOCATOR.equals(locator)) {
             player = new TonePlayer();
