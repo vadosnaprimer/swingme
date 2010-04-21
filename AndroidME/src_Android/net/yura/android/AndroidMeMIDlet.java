@@ -34,6 +34,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     private Handler handler;
     private Thread eventThread;
     private Object lock = new Object();
+    private Vector<View> overlayViews = new Vector<View>();
 
     public static AndroidMeMIDlet DEFAULT_ACTIVITY;
 
@@ -94,6 +95,26 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
 //        PrintStream log = new PrintStream(new LogOutputStream("AndroidMe"));
 //        System.setErr(log);
 //        System.setOut(log);
+    }
+
+
+    @Override
+    public void setContentView(View view) {
+        super.setContentView(view);
+
+        for (int i = 0; i < overlayViews.size(); i++) {
+            super.addContentView(overlayViews.elementAt(i), null);
+        }
+    }
+
+    public void addOverlayView(View v) {
+        if (!overlayViews.contains(v)) {
+            overlayViews.add(v);
+        }
+    }
+
+    public void removeOverlayView(View v) {
+        overlayViews.remove(v);
     }
 
     private void showContentView(final View view) {
@@ -233,7 +254,6 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
                 showContentView(listView);
             }
         }
-
 
         if (midletClassName != null) {
             showWaitingView(true);
@@ -376,8 +396,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         return this.getLayoutInflater().inflate(resourceId, null, false);
     }
 
-    public static InputStream getResourceAsStream(Class origClass, String name)
-             {
+    public static InputStream getResourceAsStream(Class origClass, String name) {
 
         long time = System.currentTimeMillis();
         System.out.println(">>> getResourceAsStream (" + origClass.getName() + ")" + name);
