@@ -138,24 +138,33 @@ public abstract class MIDlet {
         }
 
 
+        private static void setProperty(String prop, String value) {
+            if (value == null) {
+                System.out.println("CellLocation: " + prop + " not found...");
+                value = "";
+            }
+
+            System.setProperty(prop, value);
+        }
+
         @Override
         public void onCellLocationChanged(CellLocation location) {
             super.onCellLocationChanged(location);
 
             try {
                 GsmCellLocation gsmLocation = (GsmCellLocation) location;
-                System.setProperty("CellID", "" + gsmLocation.getCid());
-                System.setProperty("LAC", "" + gsmLocation.getLac());
+                setProperty("CellID", "" + gsmLocation.getCid());
+                setProperty("LAC", "" + gsmLocation.getLac());
 
                 TelephonyManager tm = getTelephonyManager();
-                System.setProperty("CMCC", tm.getNetworkCountryIso());
-                System.setProperty("MCC", tm.getSimCountryIso());
-                System.setProperty("IMSI", tm.getSubscriberId());
+                setProperty("CMCC", tm.getNetworkCountryIso());
+                setProperty("MCC", tm.getSimCountryIso());
+                setProperty("IMSI", tm.getSubscriberId());
 
                 // Network Operator = MMC + MNC
                 String op = tm.getNetworkOperator();
-                System.setProperty("MMC", op.substring(0, 3));
-                System.setProperty("MNC", op.substring(3));
+                setProperty("MMC", op.substring(0, 3));
+                setProperty("MNC", op.substring(3));
             } catch (Throwable e) {
                 e.printStackTrace();
             }
