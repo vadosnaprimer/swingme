@@ -97,9 +97,17 @@ public class Camera extends Component implements Runnable, PlayerListener {
         g.setColor(foreground);
         g.drawString(waitingMessage, msgPosX, msgPosY);
 
-        if (cameraThread == null && running) {
-            cameraThread = new Thread(this);
-            cameraThread.start();
+        if (running) {
+            if (cameraThread == null) {
+                cameraThread = new Thread(this);
+                cameraThread.start();
+            }
+            else {
+                // Location and size, may change... notify the player thread
+                synchronized (uiLock) {
+                    uiLock.notifyAll();
+                }
+            }
         }
     }
 
@@ -248,6 +256,25 @@ public class Camera extends Component implements Runnable, PlayerListener {
                         }
                     }
 
+                    if (videoCtrl != null) {
+                        int dispX = getXOnScreen();
+                        int dispY = getYOnScreen();
+                        int dispW = getWidth();
+                        int dispH = getHeight();
+
+                        if (videoCtrl.getDisplayX() != dispX ||
+                            videoCtrl.getDisplayY() != dispY) {
+
+                            videoCtrl.setDisplayLocation(dispX, dispY);
+                        }
+
+                        if (videoCtrl.getDisplayWidth() != dispW ||
+                            videoCtrl.getDisplayHeight() != dispW) {
+
+                            videoCtrl.setDisplaySize(dispW, dispH);
+                        }
+                    }
+
                     if (requestCapture && actionListener != null) {
                         requestCapture = false;
 
@@ -368,7 +395,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             synchronized (uiLock) {
                 uiLock.notifyAll();
             }
-            // by the time we receive the close event 
+            // by the time we receive the close event
             // the camera might not belong to a window
             getDesktopPane().fullRepaint();
         }
