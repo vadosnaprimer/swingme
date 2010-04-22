@@ -344,4 +344,8 @@ public class Graphics2D {
         setClip(clip[0], clip[1], clip[2], clip[3]);
     }
 
+    public Font getFont() {
+        return font;
+    }
+
 }
