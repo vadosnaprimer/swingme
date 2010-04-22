@@ -77,7 +77,7 @@ public class ImageUtil {
 
         for (int i=0; i< rgba.length;i++) {
             int alpha = ((rgba[i] >> 24) & 0xFF);
-            rgba[i] = (newColor | (alpha << 24));
+            rgba[i] = ( (newColor & 0xFFFFFF) | (alpha << 24));
         }
 
         return Image.createRGBImage(rgba, original.getWidth(), original.getHeight(), true);

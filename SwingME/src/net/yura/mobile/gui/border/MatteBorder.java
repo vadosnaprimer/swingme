@@ -24,6 +24,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Properties;
 
@@ -127,7 +128,7 @@ public class MatteBorder extends EmptyBorder {
 
             String c =newborder.getProperty("color");
 
-            color = (c==null)?-1:Integer.parseInt(c, 16);
+            color = (c==null)?Style.NO_COLOR:Integer.parseInt(c, 16);
 
             return new MatteBorder(activeimage,top,left,bottom,right,
                     imageTop,imageLeft,imageBottom,imageRight,back,color);
@@ -166,7 +167,7 @@ public class MatteBorder extends EmptyBorder {
         public void paintBorder(Component c, Graphics2D g, int width,int height) {
             
             if (activeimage==null) {
-                // color can NOT be -1 here
+                // color can NOT be Style.NO_COLOR here
                 g.setColor(color);
                 if (back) {
                     g.fillRect(-left, -top, width+left+right, height+top+bottom);
@@ -180,7 +181,7 @@ public class MatteBorder extends EmptyBorder {
             }
             // we will have a image, but its not loaded yet or we can not use it for some reason
             else if (activeimage.getImage() == null) {
-                if (color!=-1) {
+                if (color!=Style.NO_COLOR) {
                     g.setColor(color);
                     g.fillRect(-left, -top, width+left+right, height+top+bottom);
                 }
@@ -218,7 +219,7 @@ public class MatteBorder extends EmptyBorder {
                         width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff,
                         Sprite.TRANS_NONE); // right
 
-                if (!back && color==-1) {
+                if (!back && color==Style.NO_COLOR) {
                     
                     // TODO matte tileing the border with the whole image
                     // check that if there is NO bckground that the Diff values are not negative
@@ -233,7 +234,7 @@ public class MatteBorder extends EmptyBorder {
                             Sprite.TRANS_NONE); // centre
                 }
                 
-                else if (color!=-1) {
+                else if (color!=Style.NO_COLOR) {
                     boolean fillsides = (imageHeight-imageTop-imageBottom) == 0;
                     boolean filltop = (imageWidth-imageRight-imageLeft) == 0;
                     g.setColor(color);
@@ -262,7 +263,7 @@ public class MatteBorder extends EmptyBorder {
 
     
     public boolean isBorderOpaque() {
-        return back || (activeimage!=null && color!=-1);
+        return back || (activeimage!=null && color!=Style.NO_COLOR);
     }
         
     public void setColor(int c) {

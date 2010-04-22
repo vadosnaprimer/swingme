@@ -70,6 +70,8 @@ public class SynthLookAndFeel extends LookAndFeel {
     }
     protected int parseInt(String value,int base) {
 
+        boolean addAlpha=false;
+
         if (value.startsWith("#")) {
             base=16;
             value=value.substring(1);
@@ -79,7 +81,12 @@ public class SynthLookAndFeel extends LookAndFeel {
             value=value.substring(2);
         }
 
-        return Integer.parseInt(value, base);
+        if (base==16) {
+            addAlpha = value.length()==6;
+        }
+
+        int r = Integer.parseInt(value, base);
+        return addAlpha?(0xFF000000|r):r;
     }
 
     /**
@@ -181,7 +188,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                         int st = workOutState( parser.getAttributeValue(null, "value") );
                         
                         // vars local to this state
-                        int borderfill=-1;
+                        int borderfill=Style.NO_COLOR;
                         MatteBorder border = null;
                         
                         // read start tag
@@ -232,7 +239,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String cvalue = parser.getAttributeValue(null, "value");
                                     String type = parser.getAttributeValue(null, "type");
                                     String id = parser.getAttributeValue(null, "id");
-                                    int color = -1;
+                                    int color = Style.NO_COLOR;
                                     if (cvalue!=null) {
                                         color = parseInt(cvalue, 16);
                                     }
@@ -299,7 +306,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                                 String value = parser.getAttributeValue(null, "value");
 				if ("false".equals(value)) {
-					newStyle.addBackground(-1, Style.ALL);
+					newStyle.addBackground(Style.NO_COLOR, Style.ALL);
 				}
 
 			}

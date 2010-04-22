@@ -316,7 +316,7 @@ public class Font {
 
 				Image fontimage = Image.createImage(imageName);
 
-				f.colors[c] = Integer.parseInt(colorsText[c],16);
+				f.colors[c] = Integer.parseInt(colorsText[c],16) | 0xFF000000;
 
                                 f.characterImage[c] = fontimage;
 				//imageTable.put( new Integer(colors[c])	, fontimage);
@@ -616,7 +616,7 @@ public class Font {
                         Image glyph = getGlyph(index,defaultColor);
                         Image coloured;
 
-                        if (defaultColor==0x00000000) {
+                        if (defaultColor==0xFF000000) { // black
                             coloured = ImageUtil.colorize(glyph, color);
                         }
                         else {
