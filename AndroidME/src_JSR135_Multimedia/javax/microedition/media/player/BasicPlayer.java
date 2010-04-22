@@ -212,7 +212,7 @@ public abstract class BasicPlayer implements Player {
         //  There's always one listener for EOM -- itself.
         if (listenerList.size() > 0 || evt == PlayerListener.END_OF_MEDIA) {
 
-            toolKit.invokeAndWait(new Runnable() {
+            toolKit.getHandler().post(new Runnable() {
 
                 public void run() {
                     if (evt == PlayerListener.END_OF_MEDIA) {

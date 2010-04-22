@@ -8,16 +8,12 @@ import javax.microedition.media.MediaException;
 import javax.microedition.media.control.VideoControl;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
 
-import net.yura.android.AndroidMeMIDlet;
 import net.yura.android.lcdui.Toolkit;
 
 public class CameraPlayer extends BasicPlayer implements VideoControl, Controllable {
@@ -35,9 +31,8 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
     @Override
     protected void doClose() {
-        if (preview != null) {
+        if (camera != null) {
             preview.close();
-            preview = null;
         }
     }
 
@@ -123,12 +118,41 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
         return dispY;
     }
 
+    private byte[] snapshotBytes;
+    private Object snapshotLock = new Object();
     public byte[] getSnapshot(String s) throws MediaException {
         checkDisplayState();
 
+        System.out.println("Camera: getSnapshot " + camera);
 
-        // TODO Auto-generated method stub
-        return null;
+        synchronized (snapshotLock) {
+            if (camera != null) {
+
+                // Create a call back, that stores jpeg data and wakes up thread
+                Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
+                    public void onPictureTaken(byte[] data, Camera camera) {
+                        System.out.println("Camera: Got Picture");
+                        synchronized (snapshotLock) {
+                            snapshotBytes = data;
+                            camera.startPreview();
+                            snapshotLock.notifyAll();
+                        }
+                    }
+                };
+
+                System.out.println("Camera: Request Picture");
+                snapshotBytes = null;
+                camera.takePicture(null, null, jpegCallback);
+                try {
+                    snapshotLock.wait();
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return snapshotBytes;
     }
 
     public int getSourceHeight() {
