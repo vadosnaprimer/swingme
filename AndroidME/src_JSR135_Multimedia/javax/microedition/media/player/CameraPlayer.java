@@ -9,6 +9,7 @@ import javax.microedition.media.control.VideoControl;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
@@ -327,6 +328,11 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
             if (camera == null) {
                 camera = Camera.open();
+
+                //TODO: Need to get this from the snapshot locator...
+                Parameters params = camera.getParameters();
+                params.setPictureSize(640, 480);
+                camera.setParameters(params);
             }
 
             try {
