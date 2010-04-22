@@ -399,4 +399,8 @@ public class Graphics {
 
         canvas.drawBitmap(rgbData, offset, scanlength, x, y, width, height, processAlpha, null);
     }
+
+    public void scale(double sx, double sy) {
+        canvas.scale((float)sx, (float)sy);
+    }
 }

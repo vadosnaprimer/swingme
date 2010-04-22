@@ -3,8 +3,8 @@
     
     <!-- Eclipse uses "bin" for its own output, so we do the same. -->
     <property name="outdir" location="bin" />
-	<property name="AndroidFixResourceAsStream.jar" value="/Dev/workspace_Android/AndroidFixResourceAsStream/lib/AndroidFixResourceAsStream.jar" />
-   
+	<property name="AndroidFixResourceAsStream.jar" value="lib/AndroidFixResourceAsStream.jar" />
+
 	<target name="fix-build">
 		<echo>Fixing build....</echo>
 		<echo message="ClassPath: ${AndroidFixResourceAsStream.jar}"/>

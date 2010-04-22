@@ -215,4 +215,8 @@ public class Image
 	public boolean isMutable() {
 		return bitmap.isMutable();
 	}
+
+	public void setRGB(int x,int y,int color) {
+	    bitmap.setPixel(x, y, color);
+	}
 }
