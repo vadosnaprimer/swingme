@@ -34,23 +34,23 @@ public class NimbusLookAndFeel extends LookAndFeel {
         if (styles!=null) uiSettings = styles;
 
 
-        Integer noColor = new Integer(-1);
+        Integer noColor = new Integer(Style.NO_COLOR);
 
         // Primary Colors
-        setUIDefault("control", new Integer(0x00d6d9df));
-        setUIDefault("info", new Integer(0x00f2f2bd));
-        setUIDefault("nimbusAlertYellow", new Integer(0x00ffdc23));
-        setUIDefault("nimbusBase", new Integer(0x0033628c));
-        setUIDefault("nimbusDisabledText", new Integer(0x008e8f91));
-        setUIDefault("nimbusFocus", new Integer(0x0073a4d1));
-        setUIDefault("nimbusGreen", new Integer(0x00b0b332));
-        setUIDefault("nimbusInfoBlue", new Integer(0x002f5cb4));
-        setUIDefault("nimbusLightBackground", new Integer(0x00ffffff));
-        setUIDefault("nimbusOrange", new Integer(0x00bf6204));
-        setUIDefault("nimbusRed", new Integer(0x00a92e22));
-        setUIDefault("nimbusSelectedText", new Integer(0x00ffffff));
-        setUIDefault("nimbusSelectionBackground", new Integer(0x0039698a));
-        setUIDefault("text", new Integer(0x00000000));
+        setUIDefault("control", new Integer(0xFFd6d9df));
+        setUIDefault("info", new Integer(0xFFf2f2bd));
+        setUIDefault("nimbusAlertYellow", new Integer(0xFFffdc23));
+        setUIDefault("nimbusBase", new Integer(0xFF33628c));
+        setUIDefault("nimbusDisabledText", new Integer(0xFF8e8f91));
+        setUIDefault("nimbusFocus", new Integer(0xFF73a4d1));
+        setUIDefault("nimbusGreen", new Integer(0xFFb0b332));
+        setUIDefault("nimbusInfoBlue", new Integer(0xFF2f5cb4));
+        setUIDefault("nimbusLightBackground", new Integer(0xFFffffff));
+        setUIDefault("nimbusOrange", new Integer(0xFFbf6204));
+        setUIDefault("nimbusRed", new Integer(0xFFa92e22));
+        setUIDefault("nimbusSelectedText", new Integer(0xFFffffff));
+        setUIDefault("nimbusSelectionBackground", new Integer(0xFF39698a));
+        setUIDefault("text", new Integer(0xFF000000));
         setUIDefault("info",new Integer(NimbusBorder.getRGB(242, 242, 189)));
         
         // Secondary Colors
@@ -117,7 +117,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("foreground",uiSettings.get("text"));
 
         // Window
-        Border windowBorder = new LineBorder(decodeColor("desktop"),-1,1,true,1);
+        Border windowBorder = new LineBorder(decodeColor("desktop"),Style.NO_COLOR,1,true,1);
         setUIDefault("Frame.border", windowBorder);
 
         // OptionPane
@@ -185,19 +185,19 @@ public class NimbusLookAndFeel extends LookAndFeel {
         int[] leftCorners = {3,0,3,0};
         int[] leftInnerCorners = {2,0,2,0};
         Vector buttonLeftSettings = new Vector();
-        buttonLeftSettings.addElement(new NimbusBorderSetting(-1, -1, 1, leftCorners, 1));
+        buttonLeftSettings.addElement(new NimbusBorderSetting(Style.NO_COLOR, Style.NO_COLOR, 1, leftCorners, 1));
         buttonLeftSettings.addElement(new NimbusBorderSetting(color5, color5, new int[] {0,1,0,0}, leftCorners, 1));
         buttonLeftSettings.addElement(new NimbusBorderSetting(color7, color8, 1, leftInnerCorners, 0.65));
 
         Vector buttonLeftSelectedSettings = new Vector();
-        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(-1, -1, 1, leftCorners, 1));
+        buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(Style.NO_COLOR, Style.NO_COLOR, 1, leftCorners, 1));
         buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color13, color13, new int[] {0,1,0,0}, leftCorners, 1));
         buttonLeftSelectedSettings.addElement(new NimbusBorderSetting(color15, color16, 1, leftInnerCorners, 0.65));
 
         int[] rightCorners = {0,3,0,3};
         int[] rightInnerCorners = {0,2,0,2};
         Vector buttonRightSettings = new Vector();
-        buttonRightSettings.addElement(new NimbusBorderSetting(-1, -1, 1, rightCorners, 1));
+        buttonRightSettings.addElement(new NimbusBorderSetting(Style.NO_COLOR, Style.NO_COLOR, 1, rightCorners, 1));
         buttonRightSettings.addElement(new NimbusBorderSetting(color5, color5, new int[] {0,0,0,1}, rightCorners, 1));
         buttonRightSettings.addElement(new NimbusBorderSetting(color7, color8, 1, rightInnerCorners, 0.65));
 
@@ -341,7 +341,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         Border nullBorder = new LineBorder(decodeColor("background"));
 
         setUIDefault("CheckBox.border",nullBorder);
-        setUIDefault("CheckBox[focused].border",new LineBorder(decodeColor("nimbusBorder"),-1,1,false,Graphics.DOTTED));
+        setUIDefault("CheckBox[focused].border",new LineBorder(decodeColor("nimbusBorder"),Style.NO_COLOR,1,false,Graphics.DOTTED));
         setUIDefault("CheckBox.property[icon]",checkboxIcon);
         //setUIDefault("CheckBox[focused].property[icon]",checkboxFocusedIcon);
         setUIDefault("CheckBox[selected].property[icon]",checkboxSelectedIcon);
@@ -362,7 +362,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         Icon radioFocusedIcon = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_RADIO, radioSelectedSettings, decodeColor("text"));
 
         setUIDefault("RadioButton.border",nullBorder);
-        setUIDefault("RadioButton[focused].border",new LineBorder(decodeColor("nimbusBorder"),-1,1,false,Graphics.DOTTED));
+        setUIDefault("RadioButton[focused].border",new LineBorder(decodeColor("nimbusBorder"),Style.NO_COLOR,1,false,Graphics.DOTTED));
         setUIDefault("RadioButton.property[icon]",radioIcon);
         setUIDefault("RadioButton[selected].property[icon]",radioIcon);
 
@@ -758,8 +758,8 @@ public class NimbusLookAndFeel extends LookAndFeel {
         tmp[0] = clamp(tmp[0] + hOffset);
         tmp[1] = clamp(tmp[1] + sOffset);
         tmp[2] = clamp(tmp[2] + bOffset);
-        //int alpha = clamp(src.getAlpha() + aOffset);
-        int newColor = (HSBtoRGB(tmp[0], tmp[1], tmp[2]) & 0xFFFFFF); // | (alpha << 24);
+        int alpha = (int)(clamp( ((c >> 24) & 0xff)/255f  + aOffset) * 255f);
+        int newColor = HSBtoRGB(tmp[0], tmp[1], tmp[2]) | (alpha << 24);
         return new Integer(newColor);
     }
 

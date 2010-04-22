@@ -50,7 +50,7 @@ public class MetalIcon extends Icon {
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
 
-        g.setColor( foreground==-1?c.getCurrentForeground():foreground );
+        g.setColor( foreground==Style.NO_COLOR?c.getCurrentForeground():foreground );
 
         if (type == LookAndFeel.ICON_CHECKBOX) {
 

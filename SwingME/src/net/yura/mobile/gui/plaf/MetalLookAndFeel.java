@@ -46,9 +46,9 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             int iconSize = font.getHeight()-1;
 
-            MetalIcon radioIcon = new MetalIcon(iconSize,LookAndFeel.ICON_RADIO,-1,getSecondary3());
-            MetalIcon checkboxIcon = new MetalIcon(iconSize,LookAndFeel.ICON_CHECKBOX,-1,getSecondary3());
-            MetalIcon comboIcon = new MetalIcon(iconSize,LookAndFeel.ICON_COMBO,-1,getSecondary3());
+            MetalIcon radioIcon = new MetalIcon(iconSize,LookAndFeel.ICON_RADIO,Style.NO_COLOR,getSecondary3());
+            MetalIcon checkboxIcon = new MetalIcon(iconSize,LookAndFeel.ICON_CHECKBOX,Style.NO_COLOR,getSecondary3());
+            MetalIcon comboIcon = new MetalIcon(iconSize,LookAndFeel.ICON_COMBO,Style.NO_COLOR,getSecondary3());
             MetalIcon spinnerLeftIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_LEFT,getBlack(),getSecondary3());
             MetalIcon spinnerRightIcon = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_RIGHT,getBlack(),getSecondary3());
             MetalIcon spinnerLeftIconSelected = new MetalIcon(iconSize, LookAndFeel.ICON_SPINNER_LEFT,getPrimary1(),getSecondary3());
@@ -63,7 +63,7 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             Style listCellRenderer = new Style(defaultStyle);
             listCellRenderer.addBorder(new EmptyBorder(1,1,1,1),Style.ALL);
-            Border darkline = new LineBorder( getPrimary2() ,-1,1,false,Graphics.DOTTED);
+            Border darkline = new LineBorder( getPrimary2() ,Style.NO_COLOR,1,false,Graphics.DOTTED);
             listCellRenderer.addBorder(darkline,Style.FOCUSED | Style.SELECTED);
             listCellRenderer.addBorder(darkline,Style.FOCUSED);
             listCellRenderer.addBorder(new LineBorder( getPrimary3() ),Style.SELECTED);
@@ -157,28 +157,28 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("ScrollPane",scrollStyle);
 
             Style labelStyle = new Style(defaultStyle);
-            labelStyle.addBackground(-1, Style.ALL);
+            labelStyle.addBackground(Style.NO_COLOR, Style.ALL);
             setStyleFor("Label",labelStyle);
             setStyleFor("TitleBarLabel",labelStyle);
             
             Style tabTop = new Style(defaultStyle);
             tabTop.addBorder(new CompoundBorder( new MatteBorder(0, 0, 1, 0, getWhite() ), new EmptyBorder(0,0,-1,0)),Style.ALL);
-            tabTop.addBackground(-1, Style.ALL);
+            tabTop.addBackground(Style.NO_COLOR, Style.ALL);
             setStyleFor("TabTop",tabTop);
 
             Style tabLeft = new Style(defaultStyle);
             tabLeft.addBorder(new CompoundBorder( new MatteBorder(0, 0, 0, 1, getWhite() ), new EmptyBorder(0,0,0,-1)),Style.ALL);
-            tabLeft.addBackground(-1, Style.ALL);
+            tabLeft.addBackground(Style.NO_COLOR, Style.ALL);
             setStyleFor("TabLeft",tabLeft);
 
             Style tabRight = new Style(defaultStyle);
             tabRight.addBorder(new CompoundBorder( new MatteBorder(0, 1, 0, 0, getSecondary1() ), new EmptyBorder(0,-1,0,0)),Style.ALL);
-            tabRight.addBackground(-1, Style.ALL);
+            tabRight.addBackground(Style.NO_COLOR, Style.ALL);
             setStyleFor("TabRight",tabRight);
 
             Style tabBottom = new Style(defaultStyle);
             tabBottom.addBorder(new CompoundBorder( new MatteBorder(1, 0, 0, 0, getSecondary1() ), new EmptyBorder(-1,0,0,0)),Style.ALL);
-            tabBottom.addBackground(-1, Style.ALL);
+            tabBottom.addBackground(Style.NO_COLOR, Style.ALL);
             setStyleFor("TabBottom",tabBottom);
 
             
@@ -215,7 +215,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             toptb,
                             new EmptyBorder(0, 1, 0, 1))
                     ),Style.ALL);
-            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
+            tabRendererTop.addBorder(new CompoundBorder(toptb, new LineBorder(getPrimary1(),Style.NO_COLOR, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererTop.addBorder(new CompoundBorder(toptb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererTop",tabRendererTop);
 
@@ -226,7 +226,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             lefttb,
                             new EmptyBorder(1, 0, 1, 0))
                     ),Style.ALL);
-            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
+            tabRendererLeft.addBorder(new CompoundBorder(lefttb, new LineBorder(getPrimary1(),Style.NO_COLOR, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererLeft.addBorder(new CompoundBorder(lefttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererLeft",tabRendererLeft);
 
@@ -237,7 +237,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             righttb,
                             new EmptyBorder(1, 0, 1, 0))
                     ),Style.ALL);
-            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
+            tabRendererRight.addBorder(new CompoundBorder(righttb, new LineBorder(getPrimary1(),Style.NO_COLOR, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererRight.addBorder(new CompoundBorder(righttb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererRight",tabRendererRight);
 
@@ -248,7 +248,7 @@ public class MetalLookAndFeel extends LookAndFeel {
                             bottomtb,
                             new EmptyBorder(0, 1, 0, 1))
                     ),Style.ALL);
-            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(getPrimary1(),-1, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
+            tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new LineBorder(getPrimary1(),Style.NO_COLOR, 1,false, Graphics.DOTTED)),Style.SELECTED|Style.FOCUSED);
             tabRendererBottom.addBorder(new CompoundBorder(bottomtb, new EmptyBorder(1, 1, 1, 1)),Style.SELECTED);
             setStyleFor("TabRendererBottom",tabRendererBottom);
             
@@ -297,16 +297,16 @@ public class MetalLookAndFeel extends LookAndFeel {
         }
 
     // the color colors
-    protected int getPrimary1() { return 0x00666699; } // the dark color
-    protected int getPrimary2() { return 0x009999CC; } // lighter
-    protected int getPrimary3() { return 0x00CCCCFF; } // very light
+    protected int getPrimary1() { return 0xFF666699; } // the dark color
+    protected int getPrimary2() { return 0xFF9999CC; } // lighter
+    protected int getPrimary3() { return 0xFFCCCCFF; } // very light
 
     // the gray colors
-    protected int getSecondary1() { return 0x00666666; } // dark
-    protected int getSecondary2() { return 0x00999999; } // lighter
-    protected int getSecondary3() { return 0x00CCCCCC; } // light
+    protected int getSecondary1() { return 0xFF666666; } // dark
+    protected int getSecondary2() { return 0xFF999999; } // lighter
+    protected int getSecondary3() { return 0xFFCCCCCC; } // light
 
-    protected int getBlack() { return 0x00000000; }
-    protected int getWhite() { return 0x00FFFFFF; }
+    protected int getBlack() { return 0xFF000000; }
+    protected int getWhite() { return 0xFFFFFFFF; }
 
 }

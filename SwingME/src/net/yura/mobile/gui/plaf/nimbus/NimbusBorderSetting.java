@@ -1,5 +1,7 @@
 package net.yura.mobile.gui.plaf.nimbus;
 
+import net.yura.mobile.gui.plaf.Style;
+
 /**
  * @author Nathan
  */
@@ -64,8 +66,8 @@ public class NimbusBorderSetting {
     }
 
     NimbusBorderSetting() {
-        color1 = -1;
-        color2 = -1;
+        color1 = Style.NO_COLOR;
+        color2 = Style.NO_COLOR;
         int[] thicknesses = {0,0,0,0};
         int[] corners = {0,0,0,0};
         thickness = thicknesses;

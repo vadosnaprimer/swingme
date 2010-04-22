@@ -30,6 +30,8 @@ import net.yura.mobile.util.SystemUtil;
  */
 public class Style {
 
+    public static final int NO_COLOR = 0;
+
     public static final int ALL = 0;
     public static final int SELECTED = 8;
     //public static final int ENABLED = 1;
@@ -39,8 +41,8 @@ public class Style {
     
     private Font font;
     private Border border;
-    private int background=-1;
-    private int foreground=-1;
+    private int background=NO_COLOR;
+    private int foreground=NO_COLOR;
     private Hashtable properties;
 
     private Hashtable fontStates;
@@ -64,10 +66,10 @@ public class Style {
         if (st.border!=null) {
             border = st.border;
         }
-        if (st.background!=-1) {
+        if (st.background!=NO_COLOR) {
             background = st.background;
         }
-        if (st.foreground!=-1) {
+        if (st.foreground!=NO_COLOR) {
             foreground = st.foreground;
         }
         if (st.properties!=null) {
@@ -228,8 +230,8 @@ public class Style {
     protected void reset() {
         font = null;
         border= null;
-        background = -1;
-        foreground = -1;
+        background = NO_COLOR;
+        foreground = NO_COLOR;
         properties = null;
 
         fontStates = null;

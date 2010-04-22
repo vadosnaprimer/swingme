@@ -4,6 +4,7 @@ import java.util.Vector;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Nathan
@@ -139,7 +140,7 @@ public class NimbusBorder implements Border {
         r = ((r & 0xFF) << 16);
         g = ((g & 0xFF) << 8);
         b = ((b & 0xFF) << 0);
-        return (r|g|b);
+        return r|g|b | 0xFF000000;
     }
 
     public static int[] getGradientColors(int c1, int c2, int total, double reflection) {
@@ -220,7 +221,7 @@ public class NimbusBorder implements Border {
 
         //Logger.debug("-----------------------");
 
-        if ((c1 == -1) && (c2 == -1)) {
+        if ((c1 == Style.NO_COLOR) && (c2 == Style.NO_COLOR)) {
             return;
         }
 

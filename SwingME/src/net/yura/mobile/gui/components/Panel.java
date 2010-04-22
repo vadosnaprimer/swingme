@@ -20,7 +20,6 @@ package net.yura.mobile.gui.components;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.layout.Layout;
 

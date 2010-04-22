@@ -39,8 +39,8 @@ public abstract class Component {
     private String name;
     protected Style theme;
 
-    protected int background=-1;
-    protected int foreground=-1;
+    protected int background=Style.NO_COLOR;
+    protected int foreground=Style.NO_COLOR;
     private Border border;
 
     private String tooltip;
@@ -278,7 +278,7 @@ public abstract class Component {
             paintBorder(g);
 
             int back = getCurrentBackground();
-            if (back!=-1) {
+            if (back!=Style.NO_COLOR) {
                 g.setColor(back);
                 g.fillRect(0, 0, width, height);
             }
@@ -309,7 +309,7 @@ public abstract class Component {
     }
 
     public final int getCurrentBackground() {
-        if (background != -1) {
+        if (background != Style.NO_COLOR) {
             return background;
         }
         else {
@@ -327,7 +327,7 @@ public abstract class Component {
     }
 
     public final int getCurrentForeground() {
-            if (foreground!=-1) {
+            if (foreground!=Style.NO_COLOR) {
                 return foreground;
             }
             else {
@@ -453,7 +453,7 @@ public abstract class Component {
      * @see javax.swing.JComponent#isOpaque() JComponent.isOpaque
      */
     public boolean isOpaque() {
-        if (getCurrentBackground()!=-1) return true;
+        if (getCurrentBackground()!=Style.NO_COLOR) return true;
         Border b = getCurrentBorder();
         if (b!=null) {
             return b.isBorderOpaque();
