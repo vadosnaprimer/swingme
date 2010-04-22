@@ -99,7 +99,7 @@ public class GraphicsTest extends Section {
                 int x = (i % 3) * (getWidth() / 3);
                 int y = (i / 3) * (getHeight() / 3);
 
-                g.setColor(0);
+                g.setColor(0xFF000000);
                 g.drawString(ANCHORS_STRS[i], x, y);
 
                 x += (getWidth() / 6);

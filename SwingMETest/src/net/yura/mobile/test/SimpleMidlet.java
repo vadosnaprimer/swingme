@@ -17,9 +17,11 @@
 
 package net.yura.mobile.test;
 
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
@@ -27,6 +29,8 @@ import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.gui.layout.GridLayout;
+import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 
 /**
@@ -101,6 +105,56 @@ public class SimpleMidlet extends Midlet implements ActionListener {
             frame.setMenuBar(menubar);
             frame.pack();
             frame.setVisible(true);
+
+
+        Frame f = new Frame("hello");
+        Panel p = new Panel(new FlowLayout());
+        p.add(new Button("hello 1"));
+        p.add(new Button("hello 2"));
+        f.setSize(100, 100);
+        f.add(p);
+        f.setVisible(true);
+
+          Frame maps = new Frame("Maps");
+
+          Button featured = new Button("Local"); // Featured
+          Button catagories = new Button("Catagories", null);
+          Button top25 = new Button("Top 25", null);
+          Button search = new Button("Search", null);
+          Button update = new Button("Updates", null);
+
+          Panel top = new Panel( new GridLayout(1, 0, 0) );
+          top.add(featured);
+          top.add(catagories);
+          top.add(top25);
+          top.add(search);
+          top.add(update);
+
+          Panel bottom = new Panel(new GridLayout(1, 0) );
+
+          Button cancel = new Button("Cancel");
+          cancel.setMnemonic(KeyEvent.KEY_SOFTKEY1);
+          Button defauIt = new Button("Default");
+          Button select = new Button("Select");
+          select.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+
+          bottom.add(cancel);
+          bottom.add(defauIt);
+          bottom.add(select);
+
+          maps.getContentPane().add(top,Graphics.TOP);
+          maps.getContentPane().add(bottom,Graphics.BOTTOM);
+
+          maps.setMaximum(true);
+          maps.setVisible(true);
+
+            try {
+                XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/maps.xml"), this);
+                loader.getRoot().setVisible(true);
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
 
 	}
 

@@ -55,7 +55,7 @@ public class MainPane extends DesktopPane {
         //setLookAndFeel( metal );
         //                Hashtable settings = new Hashtable();
         //                settings.put("font", new Font("/font/test_0.png", "/font/test.fnt"));
-        //                settings.put("Button.foreground", new Integer(0x00ff0000));
+        //                settings.put("Button.foreground", new Integer(0xFFff0000));
         setLookAndFeel( new NimbusLookAndFeel(16) );
 
         mainWindow = new Frame();

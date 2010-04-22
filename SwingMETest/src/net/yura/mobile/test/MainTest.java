@@ -183,21 +183,21 @@ public class MainTest extends Section {
         }
         else if ("aether2".equals(actionCommand)) {
             Hashtable styles = new Hashtable();
-            styles.put("nimbusBase", new Integer(0x008c3533));
+            styles.put("nimbusBase", new Integer(0xFF8c3533));
             NimbusLookAndFeel red = new NimbusLookAndFeel(javax.microedition.lcdui.Font.SIZE_MEDIUM,styles);
             setupNewLookAndFeel( red );
         }
         else if ("aetherGreen".equals(actionCommand)) {
             Hashtable styles = new Hashtable();
-            styles.put("nimbusBase", new Integer(0x00358c33));
+            styles.put("nimbusBase", new Integer(0xFF358c33));
             NimbusLookAndFeel green = new NimbusLookAndFeel(javax.microedition.lcdui.Font.SIZE_MEDIUM,styles);
             setupNewLookAndFeel( green );
         }
         else if ("aetherCharcoal".equals(actionCommand)) {
             Hashtable styles = new Hashtable();
-            styles.put("nimbusBase", new Integer(0x00666666));
-            styles.put("nimbusGreyBlue", new Integer(0x00999999));
-            styles.put("control", new Integer(0x00bbbbbb));
+            styles.put("nimbusBase", new Integer(0xFF666666));
+            styles.put("nimbusGreyBlue", new Integer(0xFF999999));
+            styles.put("control", new Integer(0xFFbbbbbb));
             NimbusLookAndFeel charcoal = new NimbusLookAndFeel(javax.microedition.lcdui.Font.SIZE_MEDIUM,styles);
             setupNewLookAndFeel( charcoal );
         }
@@ -347,10 +347,10 @@ public class MainTest extends Section {
                 border = new Panel( new FlowLayout(Graphics.VCENTER) );
                 Label test1 = new Label("CompoundBorder test");
                 test1.setBorder( new CompoundBorder(
-                        new BevelBorder(4,0x00FF0000,0x0000FFFF),
+                        new BevelBorder(4,0xFFFF0000,0xFF00FFFF),
                         new CompoundBorder(
-                                new LineBorder( 0x0000FF00, 0x00FFFFFF,4,true),
-                                new LineBorder(0x000000FF, 3))) );
+                                new LineBorder( 0xFF00FF00, 0xFFFFFFFF,4,true),
+                                new LineBorder(0xFF0000FF, 3))) );
                 border.add(test1);
 
 
@@ -402,8 +402,8 @@ public class MainTest extends Section {
             };
 
             Font[] fonts = {
-                    Font.getFont("/font/test.fnt",new String[] { "/font/test.png" }, new int[] {0x00FFFFFF }),
-                    Font.getFont("/font/calibri.fnt", new String[] { "/font/calibri.png" },new int[] {0x00000000 } ),
+                    Font.getFont("/font/test.fnt",new String[] { "/font/test.png" }, new int[] {0xFFFFFFFF }),
+                    Font.getFont("/font/calibri.fnt", new String[] { "/font/calibri.png" },new int[] {0xFF000000 } ),
 
                     Font.getFont("/basicfont/font1-small.font"),
                     Font.getFont("/basicfont/font1-med.font"),
@@ -418,13 +418,13 @@ public class MainTest extends Section {
 
             int colors[] = {
 
-                    0x00000000,
-                    0x00FFFFFF,
-                    0x00FF0000,
-                    0x0000FF00,
-                    0x000000FF,
-                    0x00FF00FF,
-                    0x00FFFF00
+                    0xFF000000,
+                    0xFFFFFFFF,
+                    0xFFFF0000,
+                    0xFF00FF00,
+                    0xFF0000FF,
+                    0xFFFF00FF,
+                    0xFFFFFF00
 
             };
 

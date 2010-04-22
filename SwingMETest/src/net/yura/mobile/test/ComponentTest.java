@@ -151,7 +151,7 @@ public class ComponentTest  extends Section{
                                 email.add(new Label("@"));
                                 email.add(t2);
 
-                                email.setBorder( new BevelBorder(1, 0x00FFFFFF, 0x00000000) );
+                                email.setBorder( new BevelBorder(1, 0xFFFFFFFF, 0xFF000000) );
 
                                 componentTest.add(email);
                                 componentTest.add(new TextField(TextField.PASSWORD));
@@ -188,12 +188,12 @@ public class ComponentTest  extends Section{
                     //test1.add( new TitleBar("Window Title",image,true,true,true,true,true),Graphics.TOP);
 
                     //test1.add(new Label("LALAL TEST 1"));
-                    //test1.setBackground(0x00FFFFFF);
+                    //test1.setBackground(0xFFFFFFFF);
 
                     try {
                         XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/calculator.xml"), this);
                         test1.add( loader.getRoot() );
-                        loader.getRoot().setBackground(0x0000FF00);
+                        loader.getRoot().setBackground(0xFF00FF00);
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -216,7 +216,7 @@ public class ComponentTest  extends Section{
                 close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
 
                 Panel p = new Panel( new FlowLayout() );
-                p.setBackground(0x000000FF);
+                p.setBackground(0xFF0000FF);
                 p.add(foo);
                 p.add(close);
 
@@ -266,7 +266,7 @@ public class ComponentTest  extends Section{
 
                                 Panel tab1 = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 tab1.setName("Tab 1");
-                                tab1.setBackground(0x00FF0000);
+                                tab1.setBackground(0xFFFF0000);
                                 tab1.add( new Label("This is tab ONE") );
 
                                 final RadioButton top = new RadioButton("Top",true);
@@ -310,7 +310,7 @@ public class ComponentTest  extends Section{
                                 tab1.add(left);
 
                                 Panel tab2 = new Panel( new FlowLayout() );
-                                tab2.setBackground(0x0000FF00);
+                                tab2.setBackground(0xFF00FF00);
 
                                 TabbedPane level2 = new TabbedPane();
                                 level2.addTab("one", new Button("too?") );
@@ -320,7 +320,7 @@ public class ComponentTest  extends Section{
 
                                 Panel tab3 = new Panel( new FlowLayout(Graphics.VCENTER) );
                                 List l3 = new List( new DefaultListCellRenderer() );
-                                tab3.setBackground(0x000000FF);
+                                tab3.setBackground(0xFF0000FF);
 
                                 Vector anotherlist = new Vector();
 
@@ -436,11 +436,20 @@ public class ComponentTest  extends Section{
 
                 }
                 else if ("optionPaneTest".equals(actionCommand)) {
-
+/*
+                    FileChooser.GridList grid = new FileChooser.GridList(20);
+                    grid.setPreferredSize(100, -1);
+                    Vector stuff = new Vector();
+                    for (int c='a';c<'h';c++) {
+                        stuff.addElement(String.valueOf((char)c));
+                    }
+                    grid.setListData(stuff);
+*/
                     OptionPane.showMessageDialog(null,new Object[] {
                         "hi", //"Hello, whats your name?",
                         //new TextArea("bob the builder"),
-                        new TextField(TextField.ANY)
+                        //grid,
+                        new TextField()
                     },"Title",OptionPane.QUESTION_MESSAGE);
                 }
                 else if ("fileChooser".equals(actionCommand)) {

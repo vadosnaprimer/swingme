@@ -180,7 +180,7 @@ for (int c=0;c<4;c++) {
 
                     TextPane html = new TextPane();
                     html.setActionListener(this);
-                    html.setBackground(0x00FFAAAA); // pink
+                    html.setBackground(0xFFFFAAAA); // pink
                     html.setText("<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a> some very very long text here, lalalala, bob the builder, ok, now i cant think of anything to write</center></html>");
 
                     Panel p = new Panel(new BorderLayout());
@@ -188,7 +188,7 @@ for (int c=0;c<4;c++) {
                     //TextArea ta = new TextArea("START sdfgjkh sdf jlghsfdgh sfh gjdflkj ghdlf jghdjl kfhgdlf jghdkf lghdl fghdl kfgh dlfkgh dlfkghdflgk jhdlfkgh");
                     //ta.setLineWrap(true);
                     Label ta = new Label("READ ME!!");
-                    ta.setBackground(0x00FFFFFF);
+                    ta.setBackground(0xFFFFFFFF);
                     ta.setHorizontalAlignment(Graphics.HCENTER);
 
                     p.add(html, Graphics.TOP);
@@ -272,24 +272,24 @@ finally {
 
                     TextStyle underline = new TextStyle();
                     underline.setUnderline(true);
-                    underline.setForeground(0x0000FF);
+                    underline.setForeground(0xFF0000FF);
 
-                    underline.addForeground(0xFF0000, Style.FOCUSED);
-                    underline.addBackground(0xFFFF00, Style.FOCUSED);
-                    underline.addBorder(new LineBorder(0x000000,3), Style.ALL);
-                    underline.addBorder(new LineBorder(0x0000FF,3), Style.FOCUSED);
+                    underline.addForeground(0xFFFF0000, Style.FOCUSED);
+                    underline.addBackground(0xFFFFFF00, Style.FOCUSED);
+                    underline.addBorder(new LineBorder(0xFF000000,3), Style.ALL);
+                    underline.addBorder(new LineBorder(0xFF0000FF,3), Style.FOCUSED);
                     underline.setAction("SomeAction");
 
                     TextStyle blue = new TextStyle();
-                    blue.setForeground(0x0000FF);
+                    blue.setForeground(0xFF0000FF);
 
                     TextStyle alignRight = new TextStyle();
                     alignRight.setAlignment(TextStyle.ALIGN_RIGHT);
-                    alignRight.setForeground(0xFF0000);
+                    alignRight.setForeground(0xFFFF0000);
 
                     TextStyle alignCenter = new TextStyle();
                     alignCenter.setAlignment(TextStyle.ALIGN_CENTER);
-                    alignCenter.setForeground(0x00FF00);
+                    alignCenter.setForeground(0xFF00FF00);
 
                     TextStyle iconStyle = null;
                     try {
@@ -329,8 +329,8 @@ finally {
                     p.add(textPane);
                     p.add(bx, Graphics.BOTTOM);
 
-                    p.setBackground(0xFFFFFF);
-                    textPane.setBackground(0xFFFFFF);
+                    p.setBackground(0xFFFFFFFF);
+                    textPane.setBackground(0xFFFFFFFF);
 
                     ScrollPane tmp = new ScrollPane( p );
                     tmp.setBorder( new EmptyBorder(10,10,10,10) );
