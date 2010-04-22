@@ -32,7 +32,7 @@ public class TitledBorder implements Border {
     protected String title;
     protected Border border;
     protected Font   titleFont;
-    protected int  titleColor;
+    protected int  titleColor = 0xFF000000; // default black
 
     /**
      * @see javax.swing.border.TitledBorder#TitledBorder(javax.swing.border.Border, java.lang.String) TitledBorder.TitledBorder

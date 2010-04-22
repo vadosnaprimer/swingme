@@ -128,11 +128,16 @@ public class MatteBorder extends EmptyBorder {
 
             String c =newborder.getProperty("color");
 
-            color = (c==null)?Style.NO_COLOR:Integer.parseInt(c, 16);
+            color = Style.NO_COLOR;
+            if (c!=null) {
+                color = Integer.parseInt(c, 16);
+                if (c.length()==6) { // add alpha
+                    color = color | 0xFF000000;
+                }
+            }
 
             return new MatteBorder(activeimage,top,left,bottom,right,
                     imageTop,imageLeft,imageBottom,imageRight,back,color);
-
 
 	}
 

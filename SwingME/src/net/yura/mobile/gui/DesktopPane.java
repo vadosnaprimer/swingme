@@ -372,7 +372,7 @@ public class DesktopPane extends Canvas implements Runnable {
         Style clear2 = theme.getStyle("ScrollPane");
         if (clear2==null) clear2 = theme.getStyle("");
         clear2 = new Style(clear2);
-        clear2.addBackground(-1, Style.ALL);
+        clear2.addBackground(Style.NO_COLOR, Style.ALL);
         theme.setStyleFor("TabScroll", clear2);
 
         if (defaultSpace == 0) {
@@ -449,7 +449,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
 
-            if (background != -1) {
+            if (background != Style.NO_COLOR) {
                 gtmp.setColor(background);
                 gtmp.fillRect(0, 0, getWidth(), getHeight());
             }
@@ -458,7 +458,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 gtmp.drawImage(splash, (getWidth() - splash.getWidth()) / 2, (getHeight() - splash.getHeight()) / 2, Graphics.TOP | Graphics.LEFT);
                 splash = null;
             }
-            else if (background != -1) {
+            else if (background != Style.NO_COLOR) {
                 gtmp.setColor(0x00FF0000);
                 gtmp.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
             }

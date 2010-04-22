@@ -20,6 +20,7 @@ package net.yura.mobile.gui.border;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.plaf.Style;
 /**
  * @author Yura Mamyrin
  * @see javax.swing.border.LineBorder
@@ -53,7 +54,7 @@ public class LineBorder implements Border {
          */
 	public LineBorder(int c,int t) {
 		
-		this(c,-1,t,false);
+		this(c,Style.NO_COLOR,t,false);
 	}
         /**
          * @param c the color of the border
@@ -109,7 +110,7 @@ public class LineBorder implements Border {
                 
                 int a = thickness*4;
 		
-                if (insideColor!=-1) {
+                if (insideColor!=Style.NO_COLOR) {
                     g.setColor(insideColor);
                     g.fillRoundRect(-thickness,-thickness,width+(2*thickness)-1,height+(2*thickness)-1,a,a);
                 }
