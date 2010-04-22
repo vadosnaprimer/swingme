@@ -25,8 +25,8 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
     private Preview preview;
     private Camera camera;
     private javax.microedition.lcdui.Canvas canvas;
-    private int displayX, displayY;
-    private int displayW, displayH;
+    private int dispX, dispY;
+    private int dispW, dispH;
     private boolean fullScreen;
 
     public CameraPlayer(Toolkit toolKit) {
@@ -36,15 +36,8 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
     @Override
     protected void doClose() {
         if (preview != null) {
-            setVisible(false);
+            preview.close();
             preview = null;
-        }
-
-        if (camera != null) {
-            camera.setPreviewCallback(null);
-            camera.stopPreview();
-            camera.release();
-            camera = null;
         }
     }
 
@@ -123,11 +116,11 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
     }
 
     public int getDisplayX() {
-        return displayX;
+        return dispX;
     }
 
     public int getDisplayY() {
-        return displayY;
+        return dispY;
     }
 
     public byte[] getSnapshot(String s) throws MediaException {
@@ -167,8 +160,6 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
         } catch (Exception e) {
         }
 
-
-
         return null;
     }
 
@@ -177,27 +168,21 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
         if (this.fullScreen != fullScreen) {
             this.fullScreen = fullScreen;
-
-            updateView();
         }
     }
 
     public void setDisplayLocation(int x, int y) {
         checkDisplayState();
 
-        displayX = x;
-        displayY = y;
-
-        updateView();
+        dispX = x;
+        dispY = y;
     }
 
     public void setDisplaySize(int w, int h) throws MediaException {
         checkDisplayState();
 
-        displayW = w;
-        displayH = h;
-
-        updateView();
+        dispW = w;
+        dispH = h;
     }
 
     public void setVisible(boolean flag) {
@@ -205,9 +190,9 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
         try {
             sendPlayerEvent("doSetVisible", flag);
-        } catch (MediaException e)
-        {
         }
+        catch (MediaException e)
+        {}
     }
 
     public String getContentType() {
@@ -221,14 +206,6 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
         }
     }
 
-    private void updateView() {
-        if (fullScreen) {
-            preview.layout(0, 0, canvas.getWidth(), canvas.getHeight());
-        } else {
-            preview.layout(displayX, displayY, displayX + displayW, displayY + displayH);
-        }
-    }
-
     @Override
     void doPlayerEvent(String evt, Object evtData) throws MediaException {
         super.doPlayerEvent(evt, evtData);
@@ -236,17 +213,17 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
         if (evt == "doInitDisplayMode") {
             Context context = canvas.getView().getContext();
             preview = new Preview(context);
-            preview.setLayoutParams(new LayoutParams(200, 100));
 
-            if (displayW <= 0) {
-                displayW = canvas.getWidth();
+            // Add a dummy layout, to later change dimensions (onPreviewFrame)
+            preview.setLayoutParams(new LayoutParams(100, 100));
+
+            if (dispW <= 0) {
+                dispW = canvas.getWidth();
             }
 
-            if (displayH <= 0) {
-                displayH = canvas.getHeight();
+            if (dispH <= 0) {
+                dispH = canvas.getHeight();
             }
-
-            updateView();
         }
         else if (evt == "doSetVisible") {
             boolean flag = (Boolean) evtData;
@@ -256,10 +233,6 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
             else {
                 canvas.removeOverlayView(preview);
             }
-
-            System.out.println(">>>>>>>>>>>>>>> Invalidate > " + flag);
-            preview.invalidate();
-            canvas.getView().getRootView().invalidate();
         }
     }
 
@@ -271,73 +244,54 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
             System.out.println(">>>> SurfaceView constructor <<<<");
 
-            // Install a SurfaceHolder.Callback so we get notified when the
-            // underlying surface is created and destroyed.
+            // Add callback to be notified of surface created/destroyed.
             SurfaceHolder mHolder = getHolder();
             mHolder.addCallback(this);
             mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         }
 
+        public void close() {
+            if (camera != null) {
+                camera.setPreviewCallback(null);
+                camera.stopPreview();
+                camera.release();
+                camera = null;
+            }
+        }
+
         public void surfaceCreated(SurfaceHolder holder) {
-            System.out.println(">>>> surfaceCreated <<<<");
+            System.out.println(">>>> Camera:surfaceCreated <<<<");
         }
 
         public void surfaceDestroyed(SurfaceHolder holder) {
-
-            System.out.println(">>>> surfaceDestroyed <<<<");
-
-            camera.setPreviewCallback(null);
-            camera.stopPreview();
-            camera.release();
-            camera = null;
+            System.out.println(">>>> Camera:surfaceDestroyed <<<<");
+            close();
         }
 
         public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
             // Now that the size is known, set up the camera parameters and begin
             // the preview.
 
-            System.out.println(">>>>1a surfaceChanged <<<<");
             if (camera == null) {
                 camera = Camera.open();
                 camera.setPreviewCallback(this);
             }
-            System.out.println(">>>>4a surfaceChanged");
-
-            System.out.println(">>>>1 surfaceChanged");
 
             try {
-                System.out.println(">>>>2a surfaceChanged");
                 camera.setPreviewDisplay(holder);
-                System.out.println(">>>>3a surfaceChanged");
-
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
-            camera.startPreview();
-            System.out.println(">>>>2 surfaceChanged");
         }
 
-        @Override
-        public void draw(Canvas canvas) {
-            System.out.println(">>>>>>>>>>>>>>> draw");
-            super.draw(canvas);
-            Paint p = new Paint(Color.RED);
-            canvas.drawText("PREVIEW", canvas.getWidth() / 2, canvas.getHeight() / 2, p);
-        }
-
-
-        int x, y;
         public void onPreviewFrame(byte[] data, Camera arg1) {
-            //invalidate();
-            //System.out.println("...");
-            x++;
-            y++;
-            if (x > 100)  x = 1;
-            if (y > 100)  y = 1;
-            super.layout(x, y, getWidth() + x, getHeight() + y);
-            //super.setPadding(x, y, 0, 0);
+            if (fullScreen) {
+                layout(0, 0, canvas.getWidth(), canvas.getHeight());
+            }
+            else {
+                layout(dispX, dispY, dispX + dispW, dispY + dispH);
+            }
         }
     }
-
-
 }
