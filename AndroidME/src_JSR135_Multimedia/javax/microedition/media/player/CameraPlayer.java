@@ -9,7 +9,6 @@ import javax.microedition.media.control.VideoControl;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.Camera.PreviewCallback;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
@@ -192,6 +191,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
         if (this.fullScreen != fullScreen) {
             this.fullScreen = fullScreen;
+            updateView();
         }
     }
 
@@ -200,6 +200,8 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
         dispX = x;
         dispY = y;
+
+        updateView();
     }
 
     public void setDisplaySize(int w, int h) throws MediaException {
@@ -207,6 +209,8 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
         dispW = w;
         dispH = h;
+
+        updateView();
     }
 
     public void setVisible(boolean flag) {
@@ -248,6 +252,8 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
             if (dispH <= 0) {
                 dispH = canvas.getHeight();
             }
+
+            updateView();
         }
         else if (evt == "doSetVisible") {
             boolean flag = (Boolean) evtData;
@@ -260,8 +266,31 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
         }
     }
 
+    void doListenerEvent(String evt, Object evtData) {
+        if (evt == "updateView") {
+            if (preview != null) {
+                if (fullScreen) {
+                    preview.layout(0, 0, canvas.getWidth(), canvas.getHeight());
+                }
+                else {
+                    preview.layout(dispX, dispY, dispX + dispW, dispY + dispH);
+                }
+            }
+        }
+        else {
+            super.doListenerEvent(evt, evtData);
+        }
+    }
 
-    class Preview extends SurfaceView implements SurfaceHolder.Callback, PreviewCallback {
+
+    private void updateView() {
+        if (preview != null) {
+            sendListenerEvent("updateView", null);
+        }
+    }
+
+
+    class Preview extends SurfaceView implements SurfaceHolder.Callback {
 
         Preview(Context context) {
             super(context);
@@ -298,7 +327,6 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
 
             if (camera == null) {
                 camera = Camera.open();
-                camera.setPreviewCallback(this);
             }
 
             try {
@@ -306,15 +334,6 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
             }
             catch (IOException e) {
                 e.printStackTrace();
-            }
-        }
-
-        public void onPreviewFrame(byte[] data, Camera arg1) {
-            if (fullScreen) {
-                layout(0, 0, canvas.getWidth(), canvas.getHeight());
-            }
-            else {
-                layout(dispX, dispY, dispX + dispW, dispY + dispH);
             }
         }
     }

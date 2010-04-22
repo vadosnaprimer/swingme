@@ -215,40 +215,47 @@ public abstract class BasicPlayer implements Player {
             toolKit.getHandler().post(new Runnable() {
 
                 public void run() {
-                    if (evt == PlayerListener.END_OF_MEDIA) {
-                        synchronized (BasicPlayer.this) {
-//JP                            EOM = true;
-//                            loopAfterEOM = false;
-
-                            if (state > Player.PREFETCHED) {
-                                state = Player.PREFETCHED;
-
-//JP                                if (loopCount > 1 || loopCount == -1) {
-//                                    loopAfterEOM = true;
-//                                }
-                            }
-                        }
-                    }
-
-                    synchronized (listenerList) {
-                        for (int i = 0; i < listenerList.size(); i++) {
-                            try {
-                                PlayerListener l = listenerList.elementAt(i);
-                                l.playerUpdate(BasicPlayer.this, evt, evtData);
-                            }
-                            catch (Exception e) {
-                                System.err.println("Error in playerUpdate: " + e);
-                            }
-                        }
-                    }
-
-//JP                    if (loopAfterEOM) {
-//                        doLoop();
-//                    }
-
+                    doListenerEvent(evt, evtData);
                 }
             });
         }
+    }
+
+    void doListenerEvent(final String evt, final Object evtData) {
+//JP
+//        if (evt == PlayerListener.END_OF_MEDIA) {
+//
+//
+//            synchronized (BasicPlayer.this) {
+//                EOM = true;
+//                loopAfterEOM = false;
+//
+//                if (state > Player.PREFETCHED) {
+//                    state = Player.PREFETCHED;
+//
+//                    if (loopCount > 1 || loopCount == -1) {
+//                        loopAfterEOM = true;
+//                    }
+//                }
+//            }
+//        }
+
+        synchronized (listenerList) {
+            for (int i = 0; i < listenerList.size(); i++) {
+                try {
+                    PlayerListener l = listenerList.elementAt(i);
+                    l.playerUpdate(BasicPlayer.this, evt, evtData);
+                }
+                catch (Exception e) {
+                    System.err.println("Error in playerUpdate: " + e);
+                }
+            }
+        }
+
+//JP      if (loopAfterEOM) {
+//            doLoop();
+//        }
+
     }
 
     void doPlayerEvent(final String evt, final Object evtData) throws MediaException {
