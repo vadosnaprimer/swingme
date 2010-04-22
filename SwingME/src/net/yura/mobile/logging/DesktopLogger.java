@@ -55,9 +55,9 @@ public class DesktopLogger extends Logger {
     // This is not needed, but just in case something
     // has gone wrong with the theme, we set some defaults
     text.setFont(Font.getDefaultSystemFont());
-    text.setForeground(0x00000000);
-    text.setBackground(0x00FFFFFF);
-    //desktop.debugwindow.setBackground(0x00FFFFFF);
+    text.setForeground(0xFF000000);
+    text.setBackground(0xFFFFFFFF);
+    //desktop.debugwindow.setBackground(0xFFFFFFFF);
     debugwindow.getContentPane().add(new ScrollPane(text));
     debugwindow.getContentPane().add(p, Graphics.BOTTOM);
     debugwindow.setBounds(10, 10, DesktopPane.getDesktopPane().getWidth() - 20, DesktopPane.getDesktopPane().getHeight() / 2);

@@ -201,8 +201,8 @@ public class XHTMLLoader {
         center.setName("center");
 
         link.setUnderline(true);
-        link.setForeground(0x0000FF);
-        link.addForeground(0xFF0000, Style.FOCUSED);
+        link.setForeground(0xFF0000FF);
+        link.addForeground(0xFFFF0000, Style.FOCUSED);
         link.setName("a");
     }
 
@@ -211,7 +211,7 @@ public class XHTMLLoader {
         //TextArea it = new TextArea(); it.setLineWrap(true);
         //#mdebug
         if (DesktopPane.debug) {
-            it.setBorder( new LineBorder(0x00FF0000) );
+            it.setBorder( new LineBorder(0xFFFF0000) );
         }
         //#enddebug
         ((Panel)currentComponent).add(it);
@@ -407,7 +407,7 @@ Logger.debug("START: "+startTag);
                 Panel p = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
                 //#mdebug
                 if (DesktopPane.debug) {
-                    p.setBorder( new LineBorder(0x0000FF00) );
+                    p.setBorder( new LineBorder(0xFF00FF00) );
                 }
                 //#enddebug
                 insertComponent( p );
@@ -454,7 +454,7 @@ Logger.debug("START: "+startTag);
                 Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
                 //#mdebug
                 if (DesktopPane.debug) {
-                    p.setBorder( new LineBorder(0x000000FF) );
+                    p.setBorder( new LineBorder(0xFF0000FF) );
                 }
                 //#enddebug
                 GridBagConstraints c = new GridBagConstraints();

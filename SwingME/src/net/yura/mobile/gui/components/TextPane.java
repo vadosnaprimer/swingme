@@ -82,7 +82,7 @@ public class TextPane extends Component {
                 g.translate(-lineFrag.x, -lineFrag.y);
             }
 
-            if (bgColor != bgStyleColor) {
+            if (bgColor != bgStyleColor && bgStyleColor!=Style.NO_COLOR) {
                 g.setColor(bgStyleColor);
                 g.fillRect(lineFrag.x, lineFrag.y, lineFrag.w, lineFrag.h);
             }
