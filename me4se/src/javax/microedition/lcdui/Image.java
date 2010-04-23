@@ -20,6 +20,7 @@
 
 package javax.microedition.lcdui;
 
+import android.graphics.ColorMatrix;
 import java.awt.image.*;
 import java.io.*;
 
@@ -46,7 +47,6 @@ public class Image {
 	private static final int TRANS_ROT270 = 6;
 	private static final int TRANS_MIRROR_ROT90 = 7;
 
-    
 	/** 
 	 * Required for Siemens and Nokia API support. 
 	 * Please note: Drawing operations on images with transparentcy 
@@ -605,4 +605,25 @@ public class Image {
 		// TODO convert device colors back to RGB values(!)
 
 	}
+
+    public void setRGB(int x, int y, int rgb) {
+        _image.setRGB(x, y, rgb);
+    }
+
+    public static Image createImage(Image source, ColorMatrix cm) {
+
+        FilteredImageSource filteredSrc = new FilteredImageSource(source._image.getSource(), cm);
+        java.awt.Image image = java.awt.Toolkit.getDefaultToolkit().createImage(filteredSrc);
+
+        Image img = Image.createImage(source.getWidth(),source.getHeight());
+
+        java.awt.Graphics g = img._image.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+
+        return img;
+    }
+
+
+
 }

@@ -20,6 +20,9 @@
 
 package javax.microedition.lcdui;
 
+import and.awt.Polygon;
+import and.awt.geom.Ellipse2D;
+import java.awt.Color;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
 
@@ -406,7 +409,8 @@ public class Graphics {
 	 * @API MIDP-1.0
 	 */
 	public int getColor() {
-		return _argbColor & 0x0ffffff;
+		//return _argbColor & 0x0ffffff;
+            return _getAwtGraphics().getColor().getRGB();
 	}
 
 	/**
@@ -448,10 +452,11 @@ public class Graphics {
 	 */
 	public void setColor(int c) {
 
-		if((c | 0x0ff000000) != _argbColor){
-			_argbColor = c | 0x0ff000000;
-			_getAwtGraphics().setColor(new java.awt.Color(ApplicationManager.getInstance().getDeviceColor(c) & 0x0ffffff));
-		}
+//		if((c | 0x0ff000000) != _argbColor){
+//			_argbColor = c | 0x0ff000000;
+//			_getAwtGraphics().setColor(new java.awt.Color(ApplicationManager.getInstance().getDeviceColor(c) & 0x0ffffff));
+//		}
+            _getAwtGraphics().setColor(new Color(c, true));
 	}
 
 	/**
@@ -676,5 +681,17 @@ public class Graphics {
 	public int getDisplayColor(int color) {
 		return ApplicationManager.getInstance().getDeviceColor(color);
 	}
+
+        public void scale(double sx, double sy) {
+            ((java.awt.Graphics2D)_getAwtGraphics()).scale(sx, sy);
+        }
+
+        public void fillPolygon(Polygon p1) {
+            java.awt.Polygon p2 = new java.awt.Polygon();
+            p2.npoints = p1.npoints;
+            p2.xpoints = p1.xpoints;
+            p2.ypoints = p1.ypoints;
+            _getAwtGraphics().fillPolygon(p2);
+        }
 
 }
