@@ -20,7 +20,6 @@
 
 package javax.microedition.lcdui;
 
-import and.awt.Polygon;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
@@ -683,14 +682,6 @@ public class Graphics {
 
         public void scale(double sx, double sy) {
             ((java.awt.Graphics2D)_getAwtGraphics()).scale(sx, sy);
-        }
-
-        public void fillPolygon(Polygon p1) {
-            java.awt.Polygon p2 = new java.awt.Polygon();
-            p2.npoints = p1.npoints;
-            p2.xpoints = p1.xpoints;
-            p2.ypoints = p1.ypoints;
-            _getAwtGraphics().fillPolygon(p2);
         }
 
 }

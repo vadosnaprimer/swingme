@@ -374,6 +374,17 @@ class DirectGraphicsImpl implements DirectGraphics {
             g._getAwtGraphics().fillPolygon(x, y, nPoints);
             setARGBColor(save);
         }
+
+/*
+        public void fillPolygon(Polygon p1) {
+            java.awt.Polygon p2 = new java.awt.Polygon();
+            p2.npoints = p1.npoints;
+            p2.xpoints = p1.xpoints;
+            p2.ypoints = p1.ypoints;
+            _getAwtGraphics().fillPolygon(p2);
+        }
+*/
+
 	}
 
 	/** 
