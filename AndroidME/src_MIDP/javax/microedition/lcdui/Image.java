@@ -8,6 +8,7 @@ import javax.microedition.lcdui.game.Sprite;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
 import android.graphics.Bitmap.Config;
 
 
@@ -216,7 +217,21 @@ public class Image
 		return bitmap.isMutable();
 	}
 
-	public void setRGB(int x,int y,int color) {
-	    bitmap.setPixel(x, y, color);
-	}
+    public void setRGB(int x,int y,int color) {
+	bitmap.setPixel(x, y, color);
+    }
+
+    public static Image createImage(Image source, ColorMatrix cm) {
+
+        Image bm = createImage(source.getWidth(), source.getHeight());
+
+        android.graphics.Paint paint = new android.graphics.Paint();
+        paint.setColorFilter( new android.graphics.ColorMatrixColorFilter(cm) );
+
+        //bm.getGraphics().getCanvas().drawBitmap(source.bitmap, 0, 0, paint);
+        new Canvas(bm.bitmap).drawBitmap(source.bitmap, 0, 0, paint);
+
+        return bm;
+    }
+
 }

@@ -5,6 +5,7 @@ import javax.microedition.lcdui.game.Sprite;
 
 import net.yura.android.lcdui.FontManager;
 
+import and.awt.Polygon;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -403,4 +404,17 @@ public class Graphics {
     public void scale(double sx, double sy) {
         canvas.scale((float)sx, (float)sy);
     }
+
+    public void fillPolygon(Polygon polygon) {
+        Path path = new Path();
+
+        path.moveTo(polygon.xpoints[0], polygon.ypoints[0]);
+        for (int c=1;c<polygon.npoints;c++) {
+            path.lineTo(polygon.xpoints[c], polygon.ypoints[c]);
+        }
+        path.close();
+
+        canvas.drawPath(path, paint);
+    }
+
 }
