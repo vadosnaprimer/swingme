@@ -21,7 +21,6 @@
 package javax.microedition.lcdui;
 
 import and.awt.Polygon;
-import and.awt.geom.Ellipse2D;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;

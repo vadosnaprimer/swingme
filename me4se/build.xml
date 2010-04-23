@@ -72,10 +72,9 @@
 	</target>
 	-->
 	
-	<target name="build-jars">
+	<target name="build-jars" depends="clean">
 		<mkdir dir="dist" />
 
-		<delete dir="tmpclasses" />
 		<mkdir dir="tmpclasses" />
 
 		<unzip src="lib/kobjects-j2se.jar" dest="tmpclasses" overwrite="true">
@@ -90,7 +89,7 @@
 			</patternset>
 		</unzip>
 
-		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt" source="1.5" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar" destdir="tmpclasses" debug="on" target="1.5">
+		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt;../../UIUtilME/src" source="1.5" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar" destdir="tmpclasses" debug="on" target="1.5">
 
 		</javac>
 
@@ -181,8 +180,14 @@
         <copy file="dist/midletrunner.jar" todir="../../ToolsME/lib"/>
     </target>
 
-	<target name="demo" description="demo compile">
+        <target name="clean">
 		<delete dir="tmpclasses" />
+        </target>
+        <target name="jar" depends="build-jars">
+        </target>
+
+	<target name="demo" depends="clean" description="demo compile">
+
 		<mkdir dir="tmpclasses" />
 
 		<mkdir dir="dist" />
