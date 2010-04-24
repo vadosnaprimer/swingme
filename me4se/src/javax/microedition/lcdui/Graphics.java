@@ -91,6 +91,9 @@ public class Graphics {
 	 */
 	public int translateY = 0;
 
+        private double scaleX=1;
+        private double scaleY=1;
+
 	/**
 	 * @ME4SE INTERNAL
 	 */
@@ -392,7 +395,7 @@ public class Graphics {
 	 */
 	public int getClipWidth() {
 		java.awt.Rectangle r = _getAwtGraphics().getClipBounds();
-		return r == null ? (canvas == null ? image.getWidth() : canvas.getWidth()) : r.width;
+		return r == null ? (int)((canvas == null ? image.getWidth() : canvas.getWidth())/scaleX) : r.width;
 	}
 
 	/**
@@ -400,7 +403,7 @@ public class Graphics {
 	 */
 	public int getClipHeight() {
 		java.awt.Rectangle r = _getAwtGraphics().getClipBounds();
-		return r == null ? (canvas == null ? image.getHeight() : canvas.getHeight()) : r.height;
+		return r == null ? (int)((canvas == null ? image.getHeight() : canvas.getHeight())/scaleY) : r.height;
 	}
 
 	/**
@@ -682,6 +685,11 @@ public class Graphics {
 
         public void scale(double sx, double sy) {
             ((java.awt.Graphics2D)_getAwtGraphics()).scale(sx, sy);
+
+            scaleX = scaleX*sx;
+            scaleY = scaleY*sy;
+            translateX = (int)(translateX/scaleX);
+            translateY = (int)(translateY/scaleY);
         }
 
 }

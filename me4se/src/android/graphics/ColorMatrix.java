@@ -238,12 +238,23 @@ public class ColorMatrix extends RGBImageFilter {
 	int B = (rgb >> 0) & 0xFF;
         int A = (rgb >> 24) & 0xff;
 
-        int r = (int)(mArray[0]*R + mArray[1]*G + mArray[2]*B + mArray[3]*A + mArray[4]);
-        int g = (int)(mArray[5]*R + mArray[6]*G + mArray[7]*B + mArray[8]*A + mArray[9]);
-        int b = (int)(mArray[10]*R + mArray[11]*G + mArray[12]*B + mArray[13]*A + mArray[14]);
-        int a = (int)(mArray[15]*R + mArray[16]*G + mArray[17]*B + mArray[18]*A + mArray[19]);
+        int r = clamp(mArray[0]*R + mArray[1]*G + mArray[2]*B + mArray[3]*A + mArray[4]);
+        int g = clamp(mArray[5]*R + mArray[6]*G + mArray[7]*B + mArray[8]*A + mArray[9]);
+        int b = clamp(mArray[10]*R + mArray[11]*G + mArray[12]*B + mArray[13]*A + mArray[14]);
+        int a = clamp(mArray[15]*R + mArray[16]*G + mArray[17]*B + mArray[18]*A + mArray[19]);
 
         return ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | ((b & 0xFF) << 0);
     }
+
+    private static int clamp(float value) {
+        if (value < 0) {
+            value = 0;
+        }
+        else if (value > 255) {
+            value = 255;
+        }
+        return (int)value;
+    }
+
 }
 
