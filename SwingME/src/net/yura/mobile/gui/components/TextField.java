@@ -17,10 +17,9 @@
 
 package net.yura.mobile.gui.components;
 
-import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Midlet;
 
 /**
  * @author Yura Mamyrin
@@ -29,6 +28,7 @@ import net.yura.mobile.gui.Midlet;
 public class TextField extends TextComponent {
 
         private int offset;
+        private ActionListener al;
     
         public TextField() {
             this(TextComponent.ANY);
@@ -113,7 +113,19 @@ public class TextField extends TextComponent {
             return "TextField";
         }
 
-        public boolean allowNewLine() {
-            return false;
+        public boolean allowChar(char keyCode) {
+            boolean r = keyCode!='\n';
+            if (!r) {
+                al.actionPerformed(null);
+            }
+            return r;
         }
+
+        /**
+         * @see javax.swing.JTextField#addActionListener(java.awt.event.ActionListener) JTextField.addActionListener
+         */
+        public void addActionListener(ActionListener a) {
+            al = a;
+        }
+
 }

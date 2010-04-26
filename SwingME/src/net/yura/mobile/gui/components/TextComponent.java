@@ -124,7 +124,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             preferredPercentWidth = d;
         }*/
 
-        public boolean allowNewLine() {
+        public boolean allowChar(char ch) {
             return true;
         }
 
@@ -248,7 +248,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
             if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
 
-                if (keyCode=='\n' && !allowNewLine()) {
+                if (!allowChar((char)keyCode)) {
                     return false;
                 }
 

@@ -423,9 +423,10 @@ public abstract class Component {
      */
     public final void workoutSize() {
 
-        if (preferredWidth==-1 || preferredHeight==-1) {
+        // we still need to do this as we may need to workout lines
+        //if (preferredWidth==-1 || preferredHeight==-1) {
             workoutMinimumSize();
-        }
+        //}
 
         if (preferredWidth!=-1) {
             width = preferredWidth;

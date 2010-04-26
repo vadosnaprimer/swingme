@@ -40,7 +40,7 @@ public class ComboBox extends Button implements ActionListener{
 
         // the model, has all the elements
 	private List list;
-        
+
         // the scroller for the list
 	private ScrollPane scroll;
 
@@ -142,10 +142,10 @@ public class ComboBox extends Button implements ActionListener{
                         Graphics.TOP
                         );
                 dropDown.setVisible(true);
-                
+
                 setSelected(true);
         }
-	
+
 	private void createList() {
             if (list==null) {
                 List l = new List();
@@ -207,7 +207,7 @@ public class ComboBox extends Button implements ActionListener{
 
         public void updateUI() {
                 super.updateUI();
-                
+
                 nonSelectedImage = (Icon)theme.getProperty("icon", Style.ALL);
                 selectedImage = (Icon)theme.getProperty("icon", Style.SELECTED);
 
@@ -254,7 +254,7 @@ public class ComboBox extends Button implements ActionListener{
 	public void setItems(Vector items) {
 		createList();
 		list.setListData(items);
-		
+
 		if (list.getSize()>0) {
 			setSelectedIndex(0);
 		}
@@ -327,7 +327,7 @@ public class ComboBox extends Button implements ActionListener{
                     super.setText(" ");
                 }
 	}
-	
+
 	/**
          * @return an integer specifying the currently selected list item
          * @see javax.swing.JComboBox#getSelectedIndex() JComboBox#getSelectedIndex
@@ -336,15 +336,15 @@ public class ComboBox extends Button implements ActionListener{
             createList();
             return list.getSelectedIndex();
 	}
-	
+
 	/**
-	 * This throws an IllegalArgumentException and you should use the 
+	 * This throws an IllegalArgumentException and you should use the
 	 * setIndex method instead
 	 */
 	public void setText(String a) {
             throw new IllegalArgumentException();
 	}
-	
+
 	public void setScrollMode(int m) {
             createScrollPane();
             scroll.setMode(m);
@@ -357,4 +357,11 @@ public class ComboBox extends Button implements ActionListener{
             return getSelectedItem();
         }
 
+        /**
+         * @see javax.swing.JComboBox#addItem(java.lang.Object) JComboBox.addItem
+         */
+        public void addItem(Object obj) {
+            createList();
+            list.addElement(obj);
+        }
 }
