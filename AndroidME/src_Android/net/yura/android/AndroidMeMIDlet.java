@@ -386,7 +386,19 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
             if (name.startsWith("/")) {
                 name = name.substring(1);
             }
-
+            else {
+                return origClass.getResourceAsStream(name);
+            }
+/*
+            // THIS DOES NOT WORK
+            else {
+                String dir = origClass.getName();
+                dir = dir.substring(0, dir.lastIndexOf('.')+1 );
+                dir = dir.replace('.', '/');
+                name = dir+name;
+System.out.println("name="+name);
+            }
+*/
             is = DEFAULT_ACTIVITY.getAssets().open(name);
         } catch (Throwable e) {
             // e.printStackTrace();
