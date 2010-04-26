@@ -658,22 +658,23 @@ public class Graphics {
 	  if(width == 0 || height == 0) return;
 
 //        System.out.println("drawRGB x="+x+" y="+y +"w="+width+" h="+height);
-		
-		if(image != null && !processAlpha){
-			image.setRGB(x, y, width, height, rgbData, 0, scanlength);
-		}
-		else{
-        if(tmpImg == null || tmpImg.getWidth() < width || tmpImg.getHeight() < height){
-        	tmpImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        }
-        tmpImg.setRGB(0, 0, width, height, rgbData, offset, scanlength);
 
-        java.awt.Graphics g = _getAwtGraphics();
-        Shape clip = g.getClip();
-        g.clipRect(x, y, width, height);
-        g.drawImage(tmpImg, x, y, null);
-        g.setClip(clip);
-		}
+          // THIS DOES NOT ALWAYS WORK AS PART OF THE IMAGE CAN BE OFF SCREEN
+//		if(image != null && !processAlpha){
+//			image.setRGB(x+translateX, y+translateY, width, height, rgbData, 0, scanlength);
+//		}
+//		else{
+                    if(tmpImg == null || tmpImg.getWidth() < width || tmpImg.getHeight() < height){
+                            tmpImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    }
+                    tmpImg.setRGB(0, 0, width, height, rgbData, offset, scanlength);
+
+                    java.awt.Graphics g = _getAwtGraphics();
+                    Shape clip = g.getClip();
+                    g.clipRect(x, y, width, height);
+                    g.drawImage(tmpImg, x, y, null);
+                    g.setClip(clip);
+//		}
 	}
 
 	/**
