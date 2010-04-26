@@ -1,11 +1,15 @@
 package net.yura.mobile.test;
 
+import java.io.IOException;
+
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Panel;
@@ -26,6 +30,7 @@ public class GraphicsTest extends Section {
     public void createTests() {
         // service link
         addTest("Graphics Draw Region", "drawRegion");
+        addTest("Water Ripple", "waterRipple");
     }
 
     public void openTest(String actionCommand) {
@@ -52,6 +57,14 @@ public class GraphicsTest extends Section {
             topPanel.add(nextButton);
 
             info.add(topPanel, Graphics.TOP);
+            info.add(drawRegionPanel);
+
+            addToScrollPane(info, null );
+        }
+        else if ("waterRipple".equals(actionCommand)) {
+            System.out.println(">>> waterRipple");
+
+            WaterPanel drawRegionPanel = new WaterPanel();
             info.add(drawRegionPanel);
 
             addToScrollPane(info, null );
@@ -141,4 +154,117 @@ public class GraphicsTest extends Section {
         }
     }
 
+
+    class WaterPanel extends Panel {
+
+        private Image img;
+        private short ripplemap1[], ripplemap2[];
+        private int texture[];
+        private int ripple[];
+
+        private int imgWidth, imgHeight;
+
+
+        WaterPanel() {
+            try {
+                img = Image.createImage("/swingme_logo.png");
+                imgWidth = img.getWidth();
+                imgHeight = img.getHeight();
+
+                ripplemap1 = new short[imgWidth * imgHeight];
+                ripplemap2 = new short[imgWidth * imgHeight];
+                ripple = new int[imgWidth * imgHeight];
+
+                texture = new int[imgWidth * imgHeight];
+                img.getRGB(texture, 0, imgWidth, 0, 0, imgWidth, imgHeight);
+
+                disturb(100, 100);
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+            System.out.println("img = " + img);
+        }
+
+        private void disturb(int dx, int dy) {
+            int riprad = 3;
+
+            for (int j = dy - riprad; j < dy + riprad; j++) {
+                for (int k = dx - riprad; k < dx + riprad; k++) {
+                    if (j >= 0 && j < imgHeight && k >= 0 && k < imgWidth) {
+                        ripplemap1[(j * imgWidth) + k] += 512;
+                    }
+                }
+            }
+        }
+
+        private void newframe() {
+
+            short[] tmp = ripplemap1;
+            ripplemap1 = ripplemap2;
+            ripplemap2 = tmp;
+
+            for (int y = 1; y < imgHeight - 1; y++) {
+                int i = y * imgWidth;
+                for (int x = 1; x < imgWidth - 1; x++) {
+                    i++;
+                    int data =
+                        ripplemap2[i-1]+
+                        ripplemap2[i+1]+
+                        ripplemap2[i-imgWidth]+
+                        ripplemap2[i+imgWidth];
+
+                    data = (data >> 1) - ripplemap1[i];
+                    data -= (data >> 5);
+                    ripplemap1[i] = (short) data;
+
+                    data = data >> 4;
+                    // offsets
+                    int a = x + data;
+                    int b = y + data;
+
+                    // bounds check
+                    if (data > 0) {
+                        if (a >= imgWidth)
+                            a = imgWidth - 1;
+
+                        if (b >= imgHeight)
+                            b = imgHeight - 1;
+                    } else {
+                        if (a < 0)
+                            a = 0;
+                        if (b < 0)
+                            b = 0;
+                    }
+
+                    ripple[i] = texture[a + (b * imgWidth)];
+                }
+            }
+        }
+
+        public boolean isOpaque() {
+            return true;
+        }
+
+        public void paintComponent(Graphics2D g) {
+            // TODO Auto-generated method stub
+//            super.paintComponent(g);
+
+//            long t0 = System.currentTimeMillis();
+            newframe();
+//            long t1 = System.currentTimeMillis();
+            g.getGraphics().drawRGB(ripple, 0, imgWidth, 0, 0, imgWidth, imgHeight, false);
+//            long t2 = System.currentTimeMillis();
+
+//            System.out.println("t1 = " + (t1 - t0) + " t2 = " + (t2 - t1));
+
+            repaint();
+        }
+
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
+                disturb(x, y);
+            }
+        }
+    }
 }
