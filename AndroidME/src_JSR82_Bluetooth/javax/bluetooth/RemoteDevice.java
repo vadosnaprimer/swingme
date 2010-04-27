@@ -1,11 +1,11 @@
 /**
  *  Java docs licensed under the Apache License, Version 2.0
- *  http://www.apache.org/licenses/LICENSE-2.0 
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *   (c) Copyright 2001, 2002 Motorola, Inc.  ALL RIGHTS RESERVED.
  *
  *
  *  @version $Id: RemoteDevice.java 1379 2007-10-13 02:00:43Z vlads $
- */ 
+ */
 
 package javax.bluetooth;
 
@@ -22,6 +22,16 @@ import javax.microedition.io.Connection;
  * @version 1.0 February 11, 2002
  */
 public class RemoteDevice {
+
+    private String address;
+    private String friendlyName;
+
+
+    // Android Only!
+    public RemoteDevice(String address, String friendlyName) {
+        this(address);
+        this.friendlyName = friendlyName;
+    }
 
 	/**
 	 * Creates a Bluetooth device based upon its address.  The Bluetooth
@@ -45,7 +55,8 @@ public class RemoteDevice {
 		if(address == null) {
             throw new NullPointerException("address is null");
 		}
-		throw new RuntimeException("Can't initialize bluetooth support");
+
+		this.address = address;
 	}
 
 	/**
@@ -80,7 +91,7 @@ public class RemoteDevice {
 	 * remote device could not provide its name
 	 */
 	public String getFriendlyName(boolean alwaysAsk) throws IOException {
-		return null;
+		return friendlyName;
 	}
 
 	/**
@@ -91,7 +102,7 @@ public class RemoteDevice {
 	 * @return the Bluetooth address of the remote device
 	 */
 	public final String getBluetoothAddress() {
-	    return null;
+	    return address;
 	}
 
 	/**
@@ -107,6 +118,7 @@ public class RemoteDevice {
 	 * <code>RemoteDevice</code>
 	 */
 	public boolean equals(Object obj) {
+	    // TODO:
 		return false;
 	}
 
@@ -117,6 +129,7 @@ public class RemoteDevice {
 	 * @return the hash code for this object
 	 */
 	public int hashCode() {
+	    // TODO:
 		return 0;
 	}
 
@@ -172,6 +185,7 @@ public class RemoteDevice {
 	 * the local device and this <code>RemoteDevice</code>
 	 */
 	public boolean authenticate() throws IOException {
+	    // TODO:
 		return false;
 	}
 
@@ -321,6 +335,7 @@ public class RemoteDevice {
 	 * local device and this <code>RemoteDevice</code>
 	 */
 	public boolean isAuthenticated() {
+	    // TODO:
 		return false;
 	}
 
@@ -374,6 +389,7 @@ public class RemoteDevice {
 	 * between the local device and this <code>RemoteDevice</code>
 	 */
 	public boolean isEncrypted() {
+	    // TODO:
 		return false;
 	}
 

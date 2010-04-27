@@ -216,6 +216,11 @@ public abstract class Canvas extends Displayable {
             setFocusableInTouchMode(true);
         }
 
+        // @Override > 2.1 only
+        public boolean isOpaque() {
+            return true;
+        }
+
         long time = System.currentTimeMillis();
 
         @Override

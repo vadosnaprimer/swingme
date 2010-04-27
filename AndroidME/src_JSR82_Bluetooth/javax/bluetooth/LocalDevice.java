@@ -1,14 +1,15 @@
 /**
  *  Java docs licensed under the Apache License, Version 2.0
- *  http://www.apache.org/licenses/LICENSE-2.0 
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *   (c) Copyright 2001, 2002 Motorola, Inc.  ALL RIGHTS RESERVED.
  *
  *
  *  @version $Id: LocalDevice.java 1379 2007-10-13 02:00:43Z vlads $
- */ 
+ */
 
 package javax.bluetooth;
 
+import android.bluetooth.BluetoothAdapter;
 import javax.microedition.io.Connection;
 
 /**
@@ -24,6 +25,10 @@ import javax.microedition.io.Connection;
  * @version 1.1 September 2, 2005
  */
 public class LocalDevice {
+
+    private static LocalDevice deviceInstance;
+    private static DiscoveryAgent discoveryInstance;
+
 
 	/**
 	 * The default constructor is hidden so that no one can create a new
@@ -47,7 +52,12 @@ public class LocalDevice {
 	 * initialized
 	 */
 	public static LocalDevice getLocalDevice() throws BluetoothStateException {
-		throw new BluetoothStateException("This is not JSR-82 implementation");
+
+	    if (deviceInstance == null) {
+	        deviceInstance = new LocalDevice();
+	    }
+
+	    return deviceInstance;
 	}
 
 	/**
@@ -59,7 +69,11 @@ public class LocalDevice {
 	 *
 	 */
 	public DiscoveryAgent getDiscoveryAgent() {
-		return null;
+	    if (discoveryInstance == null) {
+	        discoveryInstance = new DiscoveryAgent();
+        }
+
+        return discoveryInstance;
 	}
 
 	/**
@@ -71,7 +85,7 @@ public class LocalDevice {
 	 * name could not be retrieved
 	 */
 	public String getFriendlyName() {
-	    return null;
+	    return BluetoothAdapter.getDefaultAdapter().getName();
 	}
 
 	/**
@@ -138,7 +152,7 @@ public class LocalDevice {
 	 *
 	 */
 	public boolean setDiscoverable(int mode) throws BluetoothStateException {
-		if ((mode != DiscoveryAgent.GIAC) && (mode != DiscoveryAgent.LIAC) && (mode != DiscoveryAgent.NOT_DISCOVERABLE) 
+		if ((mode != DiscoveryAgent.GIAC) && (mode != DiscoveryAgent.LIAC) && (mode != DiscoveryAgent.NOT_DISCOVERABLE)
 				&& (mode < 0x9E8B00 || mode > 0x9E8B3F)) {
 			throw new IllegalArgumentException("Invalid discoverable mode");
 		}
@@ -147,7 +161,7 @@ public class LocalDevice {
 
 	/**
 	 * Retrieves the power state of the local Bluetooth device.
-	 * 
+	 *
 	 * @since 1.1
 	 * @return <code>true</code> if the local Bluetooth device is powered on,
 	 *         <code>false</code> if the local Bluetooth device is off.
@@ -234,7 +248,7 @@ public class LocalDevice {
 	 * @return the Bluetooth address of the local device
 	 */
 	public String getBluetoothAddress() {
-	    return null;
+	    return BluetoothAdapter.getDefaultAdapter().getAddress();
 	}
 
 	/**
@@ -390,7 +404,7 @@ public class LocalDevice {
 	 * @exception ServiceRegistrationException if the local SDDB could
 	 * not be updated successfully due to
 	 * insufficient disk space, database locks, etc.
-	 * 
+	 *
 	 */
 	public void updateRecord(ServiceRecord srvRecord) throws ServiceRegistrationException {
 		if (srvRecord == null) {

@@ -1,13 +1,16 @@
 /**
  *  Java docs licensed under the Apache License, Version 2.0
- *  http://www.apache.org/licenses/LICENSE-2.0 
+ *  http://www.apache.org/licenses/LICENSE-2.0
  *   (c) Copyright 2001, 2002 Motorola, Inc.  ALL RIGHTS RESERVED.
  *
  *
  *  @version $Id: DiscoveryAgent.java 1379 2007-10-13 02:00:43Z vlads $
- */ 
+ */
 
 package javax.bluetooth;
+
+import net.yura.android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothAdapter;
 
 /**
  * The <code>DiscoveryAgent</code> class provides methods to perform
@@ -105,7 +108,7 @@ public class DiscoveryAgent {
 	/**
 	 * Creates a <code>DiscoveryAgent</code> object.
 	 */
-	private DiscoveryAgent() {
+	DiscoveryAgent() {
 	}
 
 	/**
@@ -174,7 +177,22 @@ public class DiscoveryAgent {
 		if ((accessCode != LIAC) && (accessCode != GIAC) && ((accessCode < 0x9E8B00) || (accessCode > 0x9E8B3F))) {
 			throw new IllegalArgumentException("Invalid accessCode " + accessCode);
 		}
-		return false;
+
+		// TODO: should support multi listeners...
+        BluetoothManager.getBluetoothManager().setDiscoveryListener(listener);
+
+		// Get local Bluetooth adapter
+	    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+		// If we're already discovering, stop it
+        if (mBluetoothAdapter.isDiscovering()) {
+            mBluetoothAdapter.cancelDiscovery();
+        }
+
+        // Request discover from BluetoothAdapter
+        mBluetoothAdapter.startDiscovery();
+
+		return true;
 	}
 
 	/**

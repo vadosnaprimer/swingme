@@ -1,9 +1,10 @@
-- Blue tooth
+- setCurrentDisplay to null, should set app to background
 - SMS
 - Photo browser being able to go to next and previous image
 
 
 --- DONE ---
+- Blue tooth
 - Camera
 - PIM 2 versions (on Android 2.* uses the deprecated API from 1.6, but can read/write contacts)
 - Location: cellId, MMC, etc

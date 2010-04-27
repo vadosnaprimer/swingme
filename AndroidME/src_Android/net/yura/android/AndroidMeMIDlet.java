@@ -166,6 +166,9 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         System.setProperty("microedition.pim.version", "1.0");
         System.setProperty("microedition.io.file.FileConnection.version", "1.0");
 
+        // BlueTooth
+        System.setProperty("bluetooth.api.version", "1.1");
+
         try {
             String[] assetList = getResources().getAssets().list("");
             for (int i = 0; i < assetList.length; i++) {
