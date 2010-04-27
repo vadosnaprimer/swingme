@@ -194,7 +194,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public DesktopPane(Midlet m, int back, Image sph) {
 
-        SOFT_KEYS = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
+        SOFT_KEYS = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE && Midlet.getPlatform() != Midlet.PLATFORM_ANDROID && Midlet.getPlatform() != Midlet.PLATFORM_BLACKBERRY;
         VERY_BIG_SCREEN = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
         MAX_CLOSE_BUTTONS = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
         IPHONE_SCROLL = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
@@ -226,6 +226,10 @@ public class DesktopPane extends Canvas implements Runnable {
         UIManager.put("viewText", "View");
         UIManager.put("listText", "List");
         UIManager.put("gridText", "Grid");
+
+        UIManager.put("backText", "Back");
+        UIManager.put("closeText", "Close");
+        UIManager.put("exitText", "Exit");
 
         //      // check if we want to be in debug mode
         //      String s;
@@ -382,11 +386,13 @@ public class DesktopPane extends Canvas implements Runnable {
             defaultSpace = (maxSize <= 128) ? 3 : (maxSize <= 208) ? 5 : 7;
         }
 
-        MenuItemRenderer m = new MenuItemRenderer();
-        m.setName("SoftkeyRenderer");
-        softkeyRenderer = m;
+        if (SOFT_KEYS) {
+            MenuItemRenderer m = new MenuItemRenderer();
+            m.setName("SoftkeyRenderer");
+            softkeyRenderer = m;
 
-        menuHeight = DefaultListCellRenderer.setPrototypeCellValue(new Button("test"), softkeyRenderer);
+            menuHeight = DefaultListCellRenderer.setPrototypeCellValue(new Button("test"), softkeyRenderer);
+        }
 
         // this is a hack
         // to make sure that EVERYTHING on screen has a parent window and DesktopPane

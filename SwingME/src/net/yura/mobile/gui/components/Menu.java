@@ -142,7 +142,9 @@ public class Menu extends Button {
                     y = y+height;
                 }
 
-                if (right==0) {
+                // if the menu is on the right softkey, but does not touch the right side
+                // when its open as its narrower then the softkey, its pushed to the edge
+                if (x>0 && right==0) {
                     x = dp.getWidth() - w;
                 }
                 //else {

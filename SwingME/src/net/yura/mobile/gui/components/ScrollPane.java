@@ -541,17 +541,17 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         }
          */
         // add squidge!
-        if ((starty+extenth) < (box+MINIMUM_THUMB_SIZE)) {
+        if ((starty+extenth) < (box+min)) {
             starty = box;
-            extenth = MINIMUM_THUMB_SIZE;
+            extenth = min;
         }
         else if (starty < box) {
             extenth = starty+extenth-box;
             starty = box;
         }
-        else if (starty > (box+space1-MINIMUM_THUMB_SIZE)) {
-            starty = box+space1-MINIMUM_THUMB_SIZE;
-            extenth = MINIMUM_THUMB_SIZE;
+        else if (starty > (box+space1-min)) {
+            starty = box+space1-min;
+            extenth = min;
         }
         else if ((starty+extenth) > (box+space1)) {
             extenth = box+space1-starty;

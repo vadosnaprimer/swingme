@@ -24,6 +24,7 @@ import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
@@ -44,7 +45,7 @@ public class Button extends Label implements ActionListener {
 //	public static void setSelectButtonText(String a) {
 //		selectButton.setText(a);
 //	}
-//	
+//
 //	protected Border activeBorder;
 //        protected Border disabledBorder;
 //        protected Border selectedBorder;
@@ -54,13 +55,13 @@ public class Button extends Label implements ActionListener {
 //        protected int selectedFocusedForeground;
 //        protected int activeForeground;
 //        protected int disabledForeground;
-        
+
 	private ActionListener al;
 	private String actionCommand;
-	
+
 	private boolean selected;
 	protected ButtonGroup buttonGroup;
-	
+
 	private boolean useSelectButton;
         private int mneonic;
 
@@ -70,7 +71,7 @@ public class Button extends Label implements ActionListener {
 	public Button() {
             this(null);
         }
-        
+
         /**
          * @param label the text of the button
          * @see javax.swing.JButton#JButton(java.lang.String) JButton.JButton
@@ -80,7 +81,7 @@ public class Button extends Label implements ActionListener {
                 focusable = true;
                 setHorizontalAlignment(Graphics.HCENTER);
 	}
-	
+
         /**
          * @param label the text of the button
          * @param img the Icon image to display on the button
@@ -103,6 +104,21 @@ public class Button extends Label implements ActionListener {
                 // is this isVisible() is called by the layout manager
 
                 if (dp.SOFT_KEYS) return false;
+
+                if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY) {
+                    String[] strings = new String[] {
+                            (String)DesktopPane.get("backText"),
+                            (String)DesktopPane.get("cancelText"),
+                            (String)DesktopPane.get("closeText"),
+                            (String)DesktopPane.get("menuText"),
+                            (String)DesktopPane.get("exitText")
+                    };
+                    for (int c=0;c<strings.length;c++) {
+                        if (getText().equals(strings[c])) {
+                            return false;
+                        }
+                    }
+                }
             }
             return super.isVisible();
         }
@@ -147,9 +163,9 @@ public class Button extends Label implements ActionListener {
                 if (old!=selected) {
                     repaint();
                 }
-                
+
 	}
-        
+
         /**
          * @see javax.swing.AbstractButton#addActionListener(java.awt.event.ActionListener) AbstractButton.addActionListener
          */
@@ -166,7 +182,7 @@ public class Button extends Label implements ActionListener {
                 //#enddebug
 		al = l;
 	}
-        
+
         /**
          * @see javax.swing.AbstractButton#removeActionListener(java.awt.event.ActionListener) AbstractButton.removeActionListener
          */
@@ -198,7 +214,7 @@ public class Button extends Label implements ActionListener {
 	public void setActionCommand(String ac) {
 		actionCommand=ac;
 	}
-        
+
         /**
          * @return The Action Command for this button
          * @see javax.swing.AbstractButton#getActionCommand() AbstractButton.getActionCommand
@@ -206,7 +222,7 @@ public class Button extends Label implements ActionListener {
         public String getActionCommand() {
             return actionCommand;
         }
-        
+
         /**
          * @see javax.swing.AbstractButton#getActionListeners() AbstractButton.getActionListeners
          */
@@ -215,15 +231,15 @@ public class Button extends Label implements ActionListener {
         }
 
 	public boolean processKeyEvent(KeyEvent keyEvent) {
-            
+
             	if (keyEvent.justPressedAction(Canvas.FIRE) || keyEvent.justPressedKey('\n')) {
-                    
+
 			fireActionPerformed();
-			
+
 			return true;
 		}
 		return false;
-    
+
         }
 
         private boolean oldState;
@@ -262,7 +278,7 @@ public class Button extends Label implements ActionListener {
             }
 
         }
-        
+
         /**
          * @see javax.swing.AbstractButton#fireActionPerformed(java.awt.event.ActionEvent) AbstractButton.fireActionPerformed
          */
@@ -288,7 +304,7 @@ public class Button extends Label implements ActionListener {
         protected void toggleSelection() {
             setSelected(false);
         }
-        
+
 //        public void setNormalBorder(Border b) {
 //            normalBorder = b;
 //        }
@@ -299,18 +315,18 @@ public class Button extends Label implements ActionListener {
 
 	public void focusLost() {
                 super.focusLost();
-		
+
 		if (useSelectButton) {
                     selectButton.getWindow().removeCommand(selectButton);
                     selectButton = null;
 		}
-		
+
 		repaint();
 	}
 
 	public void focusGained() {
                 super.focusGained();
-		
+
 		if (useSelectButton) {
                     selectButton = new Button( (String)DesktopPane.get("selectText") );
                     selectButton.addActionListener(this);
@@ -318,7 +334,7 @@ public class Button extends Label implements ActionListener {
                     selectButton.setMnemonic(KeyEvent.KEY_SOFTKEY1);
                     getWindow().addCommand(selectButton);
 		}
-		
+
 		repaint();
 	}
 
@@ -344,7 +360,7 @@ public class Button extends Label implements ActionListener {
 	public void setButtonGroup(ButtonGroup buttonGroup) {
 		this.buttonGroup = buttonGroup;
 	}
-	
+
 	public void actionPerformed(String actionCommand) {
 		if(selectButton.getActionCommand().equals(actionCommand)) {
 			fireActionPerformed();

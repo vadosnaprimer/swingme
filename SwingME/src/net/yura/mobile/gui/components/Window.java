@@ -23,6 +23,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.logging.Logger;
 
@@ -476,10 +477,15 @@ public class Window extends Panel {
         public Button findMneonicButton(int mn) {
 
             Button b = getSoftkeyForMneonic(mn);
-            if (getDesktopPane().SOFT_KEYS && b!=null) {
+            if (b!=null && !b.isVisible() && getDesktopPane().SOFT_KEYS) {
                     Component comp = getRendererComponentOnScreen(b);
                     b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
             }
+
+            if (b!=null && !b.isVisible() && (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY)) {
+                b.setBoundsWithBorder(0, getDesktopPane().getHeight(), getDesktopPane().getWidth(), b.getHeightWithBorder());
+            }
+
             return b;
 
         }

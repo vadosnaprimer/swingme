@@ -40,6 +40,7 @@ public abstract class Midlet extends MIDlet {
     public static final int PLATFORM_ME4SE = 8;
     public static final int PLATFORM_WTK = 9;
     public static final int PLATFORM_ANDROID = 10;
+    public static final int PLATFORM_BLACKBERRY = 11;
 
     private static int platform = detectPlatform();
 
@@ -155,6 +156,8 @@ public abstract class Midlet extends MIDlet {
         if (hasClass("android.app.Activity")) {
             return PLATFORM_ANDROID;
         }
+
+        // TODO blackberry
 
         return PLATFORM_NOT_DEFINED;
     }
