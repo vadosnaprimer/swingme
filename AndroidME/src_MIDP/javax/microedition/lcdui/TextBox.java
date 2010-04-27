@@ -1,5 +1,7 @@
 package javax.microedition.lcdui;
 
+import java.util.ArrayList;
+
 import javax.microedition.midlet.MIDlet;
 import net.yura.android.AndroidMeMIDlet;
 
@@ -21,6 +23,7 @@ public class TextBox extends Screen {
     private int maxSize;
     private int constraints;
     private Canvas.CanvasView currentCanvasView;
+    private View oldView;
     private TextBoxView textBoxView;
 
     public TextBox(String title, String text, int maxSize, int constraints) {
@@ -30,13 +33,30 @@ public class TextBox extends Screen {
 
         // Hack: Current view could change...
         MIDlet midlet = AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet();
-        View view = Display.getDisplay(midlet).getCurrent().getView();
 
-        if (view instanceof Canvas.CanvasView) {
-            this.currentCanvasView = (Canvas.CanvasView) view;
-        }
+        this.oldView = Display.getDisplay(midlet).getCurrent().getView();
+        this.currentCanvasView = getCanvasView(oldView);
 
         textBoxView = new TextBoxView(AndroidMeMIDlet.DEFAULT_ACTIVITY);
+    }
+
+    private Canvas.CanvasView getCanvasView(View view) {
+
+        if (view == null || view instanceof Canvas.CanvasView) {
+            return (Canvas.CanvasView) view;
+        }
+
+        ArrayList<View> viewList = view.getFocusables(View.FOCUSABLES_ALL);
+        for (View childView : viewList) {
+            if (childView != view) {
+                Canvas.CanvasView childCanvasView = getCanvasView(childView);
+                if (childCanvasView != null) {
+                    return childCanvasView;
+                }
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -48,7 +68,7 @@ public class TextBox extends Screen {
         if (currentCanvasView != null) {
             currentCanvasView.setInputConnectionView(textBoxView);
         }
-        return currentCanvasView;
+        return oldView;
     }
 
     @Override
