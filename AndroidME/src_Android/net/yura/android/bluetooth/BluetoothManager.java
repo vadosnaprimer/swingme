@@ -43,11 +43,10 @@ public class BluetoothManager {
             instance = new BluetoothManager(AndroidMeMIDlet.DEFAULT_ACTIVITY);
 
             // Attempt to use older Bluetooth Android 1.6 API's
-            // If it failed, attempt Bluetooth Android 2.0 API's
+            // If it fails, attempt Android 2.0 API's
             try {
                 instance.start_1_6();
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Throwable e) {
 
                 instance.start_2_0();
             }
@@ -62,6 +61,8 @@ public class BluetoothManager {
     }
 
     private void start_1_6() throws Exception {
+        System.out.println(">>> Bluetooth trying 1.6 API...");
+
         // If we are not running on Android 1.6, this will fail
         localBT = LocalBluetoothDevice.initLocalDevice(activity);
         System.out.println("localBT = " + localBT);
@@ -75,6 +76,8 @@ public class BluetoothManager {
     }
 
     private void start_2_0() {
+        System.out.println(">>> Bluetooth trying 2.0 API...");
+
         eventReceiver_2_0 = new EventReceiver_2_0();
 
         // Get local Bluetooth adapter

@@ -53,9 +53,17 @@ public class LocalDevice {
 	 */
 	public static LocalDevice getLocalDevice() throws BluetoothStateException {
 
-	    if (deviceInstance == null) {
-	        deviceInstance = new LocalDevice();
-	    }
+	    try {
+
+	        // Make sure we have a valid BluetoothAdapter...
+	        BluetoothAdapter.getDefaultAdapter();
+
+    	    if (deviceInstance == null) {
+    	        deviceInstance = new LocalDevice();
+    	    }
+	    } catch (Throwable e) {
+            throw new BluetoothStateException(e.getMessage());
+        }
 
 	    return deviceInstance;
 	}
