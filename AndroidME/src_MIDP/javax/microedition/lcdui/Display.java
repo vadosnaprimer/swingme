@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import javax.microedition.midlet.MIDlet;
 
+import android.app.Activity;
 import android.view.View;
 
 public class Display
@@ -104,12 +105,14 @@ public class Display
                         current.initDisplayable(Display.this.midlet);
                     }
 
+                    Activity activity = Display.this.midlet.getActivity();
                     View view = (current == null) ? null : current.getView();
                     if (view != null) {
-                        Display.this.midlet.getActivity().setContentView(view);
+                        activity.setContentView(view);
                         view.requestFocus();
                     } else {
-                        // Set Application to background?!
+                        // Set Application to background
+                        activity.moveTaskToBack(true);
                     }
                 }
             });
