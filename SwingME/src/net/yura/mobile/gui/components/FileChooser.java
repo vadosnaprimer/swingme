@@ -535,20 +535,20 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         public Object getValueAt(int rowIndex, int columnIndex) {
 
             int i = convertLin(rowIndex, columnIndex);
-            if (i >= dataVector.size()) {
+            if (i >= getSize()) {
                 return null;
             }
 
-            return dataVector.elementAt(i);
+            return getElementAt(i);
         }
 
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             int index = convertLin(rowIndex, columnIndex);
-            return index < dataVector.size(); // true by default
+            return index < getSize(); // true by default
         }
 
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            dataVector.setElementAt(aValue, convertLin(rowIndex, columnIndex));
+            setElementAt(aValue, convertLin(rowIndex, columnIndex));
         }
 
         public int getColumnCount() {
@@ -558,7 +558,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         public int getRowCount() {
             int c = getColumnCount();
-            return (dataVector.size() + (c - 1)) / c;
+            return (getSize() + (c - 1)) / c;
         }
 
         public void setRowHeight(int h) {
@@ -619,6 +619,41 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 setSelectedCell( a/getColumnCount(), a%getColumnCount() );
             }
         }
+
+
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== DefaultListModel ====================================================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+        /**
+         * @param index
+         * @return the element
+         * @see List#getElementAt(int) List.getElementAt
+         * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
+         */
+        public Object getElementAt(int index) {
+            return dataVector.elementAt(index);
+        }
+
+        /**
+         * @return the size of the list
+         * @see List#getSize() List.getSize
+         * @see javax.swing.ListModel#getSize() ListModel.getSize
+         */
+        public int getSize() {
+            return dataVector.size();
+        }
+
+        /**
+         * @param index
+         * @return the element
+         * @see List#setElementAt(java.lang.Object, int) List.setElementAt
+         * @see javax.swing.DefaultListModel#setElementAt(int) ListModel.setElementAt
+         */
+        public void setElementAt(Object object, int index) {
+            dataVector.setElementAt(object, index);
+        }
+
     }
 
     class SelectableFile {

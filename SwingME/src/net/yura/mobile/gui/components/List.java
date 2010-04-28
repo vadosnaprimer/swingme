@@ -908,7 +908,7 @@ public class List extends Component implements ActionListener {
     /**
      * @param index
      * @return the element
-     * @see javax.swing.ListModel#setElementAt(int) ListModel.setElementAt
+     * @see javax.swing.DefaultListModel#setElementAt(int) ListModel.setElementAt
      */
     public void setElementAt(Object object, int index) {
         items.setElementAt(object, index);
@@ -917,7 +917,7 @@ public class List extends Component implements ActionListener {
     /**
      * @param index
      * @return the element
-     * @see javax.swing.ListModel#insertElementAt(int) ListModel.insertElementAt
+     * @see javax.swing.DefaultListModel#insertElementAt(int) ListModel.insertElementAt
      */
     public void insertElementAt(Object object, int index) {
         items.insertElementAt(object, index);
