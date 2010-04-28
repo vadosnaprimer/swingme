@@ -1,21 +1,14 @@
 package net.yura.tools.mobilegen;
 
-import net.yura.tools.mobilegen.model.TestObject;
-import net.yura.tools.mobilegen.model.Test;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
-import java.util.Vector;
 
 /**
  * @author Lenin
@@ -54,7 +47,7 @@ int n = 0;
 
 
 
-ps.println("package net.yura.mobile.gen;");
+ps.println("package "+getOutputPackage()+";");
 
 for (Class c:classes) {
 ps.println("import "+c.getName().replaceAll("\\$", "\\.")+";");
@@ -70,7 +63,7 @@ ps.println("import java.io.DataInputStream;");
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
 ps.println(" */");
-ps.println("public class BinAccess extends BinUtil {");
+ps.println("public class "+getOutputClass()+" extends BinUtil {");
 
 n = 0;
 for (Class c:classes) {

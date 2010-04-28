@@ -55,18 +55,24 @@
 
         <taskdef classname="net.yura.tools.mobilegen.MobileXmlGen" classpathref="class.path" name="gen-xml"/>
         <gen-xml
-            generatedFile="${basedir}/src/net/yura/mobile/gen/XMLAccess.java"
-            classNamesFile="${basedir}/generate.properties"/>
+            classNamesFile="${basedir}/generate.properties"
+            outputPackage="net.yura.mobile.gen"
+            outputClass="XMLAccess"
+            sourceRoot="${basedir}/src"/>
 
         <taskdef classname="net.yura.tools.mobilegen.MobileBinGen" classpathref="class.path" name="gen-bin"/>
         <gen-bin
-            generatedFile="${basedir}/src/net/yura/mobile/gen/BinAccess.java"
-            classNamesFile="${basedir}/generate.properties"/>
+            classNamesFile="${basedir}/generate.properties"
+            outputPackage="net.yura.mobile.gen"
+            outputClass="BinAccess"
+            sourceRoot="${basedir}/src"/>
 
         <taskdef classname="net.yura.tools.mobilegen.MobileJsonGen" classpathref="class.path" name="gen-json"/>
         <gen-json
-            generatedFile="${basedir}/src/net/yura/mobile/gen/JSONAccess.java"
-            classNamesFile="${basedir}/generate.properties"/>
+            classNamesFile="${basedir}/generate.properties"
+            outputPackage="net.yura.mobile.gen"
+            outputClass="JSONAccess"
+            sourceRoot="${basedir}/src"/>
 
         <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpathref="class.path" name="gen-proto"/>
         <gen-proto
@@ -75,6 +81,7 @@
             outputPackage="net.yura.mobile.gen"
             outputClass="ProtoAccess"
             sourceRoot="${basedir}/src"/>
+
     </target>
 
 </project>

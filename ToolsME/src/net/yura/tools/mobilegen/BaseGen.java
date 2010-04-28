@@ -4,6 +4,7 @@
  */
 package net.yura.tools.mobilegen;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
 import java.lang.reflect.Method;
@@ -21,8 +22,18 @@ import org.apache.tools.ant.Task;
  */
 public abstract class BaseGen extends Task {
 
-    private String generatedFile;
     private String classNamesFile;
+    String outputClass;
+    String sourceRoot;
+    String outputPackage;
+
+    public String getOutputClass() {
+        return outputClass;
+    }
+
+    public String getOutputPackage() {
+        return outputPackage;
+    }
 
     public String getClassNamesFile() {
         return classNamesFile;
@@ -33,11 +44,24 @@ public abstract class BaseGen extends Task {
     }
 
     public String getGeneratedFile() {
-        return generatedFile;
+        StringBuffer tmp = new StringBuffer();
+        tmp.append( sourceRoot );
+        tmp.append( File.separator ); // TODO may not work on mac?????
+        tmp.append( this.outputPackage.replace( "." , File.separator ) );
+        tmp.append( File.separator );
+        tmp.append( this.outputClass );
+        tmp.append( ".java" );
+        return tmp.toString();
     }
 
-    public void setGeneratedFile(String generatedFile) {
-        this.generatedFile = generatedFile;
+    public void setOutputPackage( String argument ) {
+	    this.outputPackage = argument;
+    }
+    public void setOutputClass( String argument ) {
+	    this.outputClass   = argument;
+    }
+    public void setSourceRoot( String argument ) {
+	    this.sourceRoot    = argument;
     }
 
     @Override

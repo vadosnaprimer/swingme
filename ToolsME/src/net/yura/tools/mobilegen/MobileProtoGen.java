@@ -22,9 +22,6 @@ public class MobileProtoGen extends BaseGen {
 
     String protoSource    = null;
     String[] objectPackage  = null;
-    String outputPackage  = null;
-    String outputClass    = null;
-    String sourceRoot     = null;
 
     public void setProtoSource( String argument ) {
 	    this.protoSource   = argument;
@@ -36,15 +33,6 @@ public class MobileProtoGen extends BaseGen {
         else {
             objectPackage = argument.split("\\,");
         }
-    }
-    public void setOutputPackage( String argument ) {
-	    this.outputPackage = argument;
-    }
-    public void setOutputClass( String argument ) {
-	    this.outputClass   = argument;
-    }
-    public void setSourceRoot( String argument ) {
-	    this.sourceRoot    = argument;
     }
 
     @Override
@@ -60,14 +48,7 @@ enumDefs = loader.getEnumDefs();
 messageDefs = loader.getMessageDefs();
 
 
-StringBuffer tmp = new StringBuffer();
-tmp.append( sourceRoot );
-tmp.append( File.separator );
-tmp.append( this.outputPackage.replace( "." , File.separator ) );
-tmp.append( File.separator );
-tmp.append( this.outputClass );
-tmp.append( ".java" );
-PrintStream ps = new PrintStream( new File( tmp.toString() ) ) {
+PrintStream ps = new PrintStream( new File( getGeneratedFile() ) ) {
     private int indent=0;
     @Override
     public void println(String string) {
@@ -86,7 +67,7 @@ PrintStream ps = new PrintStream( new File( tmp.toString() ) ) {
 };
 
 
-ps.println("package net.yura.mobile.gen;");
+ps.println("package "+getOutputPackage()+";");
 
 for (String c:this.objectPackage) {
     ps.println("import "+c+".*;");
@@ -103,7 +84,7 @@ ps.println("import net.yura.mobile.io.proto.WireFormat;");
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
 ps.println(" */");
-ps.println("public class ProtoAccess extends ProtoUtil {");
+ps.println("public class "+getOutputClass()+" extends ProtoUtil {");
 
 printBody(ps);
 

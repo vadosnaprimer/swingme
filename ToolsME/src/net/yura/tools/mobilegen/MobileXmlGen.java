@@ -48,7 +48,7 @@ int n = 0;
 
 
 
-ps.println("package net.yura.mobile.gen;");
+ps.println("package "+getOutputPackage()+";");
 
 for (Class c:classes) {
 ps.println("import "+c.getName().replaceAll("\\$", "\\.")+";");
@@ -64,7 +64,7 @@ ps.println("import net.yura.mobile.io.XMLUtil;");
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
 ps.println(" */");
-ps.println("public class XMLAccess extends XMLUtil {");
+ps.println("public class "+getOutputClass()+" extends XMLUtil {");
 
 ps.println("    public XMLAccess() {");
 ps.println("    }");
