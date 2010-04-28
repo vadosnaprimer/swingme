@@ -16,7 +16,7 @@ import net.yura.mobile.logging.Logger;
  * @author MarkH
  */
 public abstract class BTDiscovery implements DiscoveryListener {
-    private DiscoveryAgent discoveryAgent;
+
     public BTDiscovery() {
     }
     public boolean start(int accessCode) {
@@ -25,7 +25,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
               String address = LocalDevice.getLocalDevice().getBluetoothAddress();
               handleMyId(name, address);
               if (isSupported()) {
-                discoveryAgent = LocalDevice.getLocalDevice().getDiscoveryAgent();
+                DiscoveryAgent discoveryAgent = LocalDevice.getLocalDevice().getDiscoveryAgent();
                 discoveryAgent.startInquiry(accessCode, this);
                 return true;
               }
@@ -75,10 +75,8 @@ public abstract class BTDiscovery implements DiscoveryListener {
     abstract public void handleInquiryCompleted();
 
     protected static boolean isSupported() {
-        if (System.getProperty( "bluetooth.api.version" ) == null) {
-            if (javax.bluetooth.LocalDevice.getProperty("bluetooth.api.version") == null)
-                return false;
-        }
-        return true;
+        String btVersion = System.getProperty("bluetooth.api.version");
+
+        return (btVersion != null && !"".equals(btVersion.trim()));
     }
 }
