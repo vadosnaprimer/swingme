@@ -11,66 +11,71 @@ import net.yura.android.io.AndroidURLConnection;
 import net.yura.android.io.file.AndroidFileConnection;
 import net.yura.android.io.socket.ServerSocketConnection;
 import net.yura.android.io.socket.SocketConnection;
+import net.yura.android.messaging.MessageConnectionImpl;
 
 public class Connector {
-	public static final int READ = 0x01;
-	public static final int WRITE = 0x02;
-	public static final int READ_WRITE = READ | WRITE;
+    public static final int READ = 0x01;
+    public static final int WRITE = 0x02;
+    public static final int READ_WRITE = READ | WRITE;
 
-	private static final String PROTOCOL_FILE = "file:";
-	private static final String PROTOCOL_SOCKET = "socket:";
-	private static final String PROTOCOL_HTTP = "http:";
+    private static final String PROTOCOL_FILE = "file:";
+    private static final String PROTOCOL_SOCKET = "socket:";
+    private static final String PROTOCOL_HTTP = "http:";
+    private static final String PROTOCOL_SMS = "sms:";
 
-	public static final Connection open(String name) throws IOException {
-		return open(name, READ_WRITE);
-	}
+    public static final Connection open(String name) throws IOException {
+        return open(name, READ_WRITE);
+    }
 
-	public static final Connection open(String name, int mode)
-			throws IOException {
-		Connection connection;
-		if (name.startsWith(PROTOCOL_FILE)) {
-			connection = new AndroidFileConnection(name);
-			// TODO : http should have a separate connection type
-		} else if (name.startsWith(PROTOCOL_SOCKET)) {
-			connection = getSocketConnection(name);
-		} else {
-			connection = new AndroidURLConnection(name);
-		}
-		return connection;
-	}
+    public static final Connection open(String name, int mode)
+            throws IOException {
+        Connection connection;
+        if (name.startsWith(PROTOCOL_FILE)) {
+            connection = new AndroidFileConnection(name);
+            // TODO : http should have a separate connection type
+        } else if (name.startsWith(PROTOCOL_SOCKET)) {
+            connection = getSocketConnection(name);
+        }
+        else if (name.startsWith(PROTOCOL_SMS)) {
+            connection =  new MessageConnectionImpl(name);
+        } else {
+            connection = new AndroidURLConnection(name);
+        }
+        return connection;
+    }
 
-	public static final DataInputStream openDataInputStream(String name)
-			throws IOException {
-		return new DataInputStream(openInputStream(name));
-	}
+    public static final DataInputStream openDataInputStream(String name)
+            throws IOException {
+        return new DataInputStream(openInputStream(name));
+    }
 
-	public static final DataOutputStream openDataOutputStream(String name)
-			throws IOException {
-		return new DataOutputStream(openOutputStream(name));
-	}
+    public static final DataOutputStream openDataOutputStream(String name)
+            throws IOException {
+        return new DataOutputStream(openOutputStream(name));
+    }
 
-	public static final InputStream openInputStream(String name)
-			throws IOException {
-		Connection connection = open(name, READ);
-		return ((InputConnection) connection).openInputStream();
-	}
+    public static final InputStream openInputStream(String name)
+            throws IOException {
+        Connection connection = open(name, READ);
+        return ((InputConnection) connection).openInputStream();
+    }
 
-	public static final OutputStream openOutputStream(String name)
-			throws IOException {
-		Connection connection = open(name, WRITE);
-		return ((OutputConnection) connection).openOutputStream();
-	}
+    public static final OutputStream openOutputStream(String name)
+            throws IOException {
+        Connection connection = open(name, WRITE);
+        return ((OutputConnection) connection).openOutputStream();
+    }
 
 
-	private static Connection getSocketConnection(String name) throws IOException {
-		int portSepIndex = name.lastIndexOf(':');
-		int port = Integer.parseInt(name.substring(portSepIndex + 1));
-		String host = name.substring("socket://".length(), portSepIndex);
+    private static Connection getSocketConnection(String name) throws IOException {
+        int portSepIndex = name.lastIndexOf(':');
+        int port = Integer.parseInt(name.substring(portSepIndex + 1));
+        String host = name.substring("socket://".length(), portSepIndex);
 
-		if (host.length() > 0) {
-			return new SocketConnection(host, port);
-		} else {
-			return new ServerSocketConnection(port);
-		}
-	}
+        if (host.length() > 0) {
+            return new SocketConnection(host, port);
+        } else {
+            return new ServerSocketConnection(port);
+        }
+    }
 }

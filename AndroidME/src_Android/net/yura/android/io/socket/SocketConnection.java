@@ -31,8 +31,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import javax.microedition.io.StreamConnection;
-
 public class SocketConnection implements javax.microedition.io.SocketConnection {
 
 	protected Socket socket;
