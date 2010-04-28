@@ -107,10 +107,10 @@ public class List extends Component implements ActionListener {
      */
     public void contentsChanged() {
 
-        if (items == null || current >= items.size()){
+        if ( current >= getSize()){
             setSelectedIndex(-1);
         }
-        else if (current==-1 && items.size() > 0 && isFocusOwner()) {
+        else if (current==-1 && getSize() > 0 && isFocusOwner()) {
             setSelectedIndex(0);
         }
     }
@@ -900,9 +900,27 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.ListModel#getElementAt(int) ListModel.getElementAt
      */
     public Object getElementAt(int index) {
-    	
+
         return (items != null) ? items.elementAt(index) : null;
 	// && items.size()>index // this method SHOULD throw array index out of bounds if it is
+    }
+
+    /**
+     * @param index
+     * @return the element
+     * @see javax.swing.ListModel#setElementAt(int) ListModel.setElementAt
+     */
+    public void setElementAt(Object object, int index) {
+        items.setElementAt(object, index);
+    }
+
+    /**
+     * @param index
+     * @return the element
+     * @see javax.swing.ListModel#insertElementAt(int) ListModel.insertElementAt
+     */
+    public void insertElementAt(Object object, int index) {
+        items.insertElementAt(object, index);
     }
 
     /**
@@ -910,7 +928,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.ListModel#getSize() ListModel.getSize
      */
     public int getSize() {
-        return items.size();
+        return (items != null) ? items.size() : -1;
     }
 
     /**
