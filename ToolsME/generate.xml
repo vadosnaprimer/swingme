@@ -25,12 +25,18 @@
     <property name="lib.dir" value="./lib"/>
     <property name="src.dir" value="./src"/>
 
+<!--
+    ./dist/${ant.project.name}.jar
+    this does not work as it gives
+    \dist\UtilMEGen.jar
+    but the dist file is actually
+    \dist\ToolsME.jar
+-->
     <path id="class.path">
-        <fileset dir="${lib.dir}">
+        <fileset dir="./dist/">
             <include name="**/*.jar" />
         </fileset>
     </path>
-
 
 
     <target name="build-generate" description="build first then generate the persistance manager class">
@@ -44,24 +50,25 @@
 
     <target name="generate" description="generate the persistance manager class">
         <echo message="libs =${lib.dir}"/>
-        <echo message="class.path =${class.path}"/>
+        <property name="cp" refid="class.path"/>
+        <echo message="class path = ${cp}"/>
 
-        <taskdef classname="net.yura.tools.mobilegen.MobileXmlGen" classpath="./dist/${ant.project.name}.jar" name="gen-xml"/>
+        <taskdef classname="net.yura.tools.mobilegen.MobileXmlGen" classpathref="class.path" name="gen-xml"/>
         <gen-xml
             generatedFile="${basedir}/src/net/yura/mobile/gen/XMLAccess.java"
             classNamesFile="${basedir}/generate.properties"/>
 
-        <taskdef classname="net.yura.tools.mobilegen.MobileBinGen" classpath="./dist/${ant.project.name}.jar" name="gen-bin"/>
+        <taskdef classname="net.yura.tools.mobilegen.MobileBinGen" classpathref="class.path" name="gen-bin"/>
         <gen-bin
             generatedFile="${basedir}/src/net/yura/mobile/gen/BinAccess.java"
             classNamesFile="${basedir}/generate.properties"/>
 
-        <taskdef classname="net.yura.tools.mobilegen.MobileJsonGen" classpath="./dist/${ant.project.name}.jar" name="gen-json"/>
+        <taskdef classname="net.yura.tools.mobilegen.MobileJsonGen" classpathref="class.path" name="gen-json"/>
         <gen-json
             generatedFile="${basedir}/src/net/yura/mobile/gen/JSONAccess.java"
             classNamesFile="${basedir}/generate.properties"/>
 
-        <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpath="./dist/${ant.project.name}.jar" name="gen-proto"/>
+        <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpathref="class.path" name="gen-proto"/>
         <gen-proto
             protoSource="${basedir}/test.proto"
             objectPackage="net.yura.tools.mobilegen.model"

@@ -21,7 +21,7 @@ import net.yura.tools.mobilegen.ProtoLoader.MessageDefinition;
 public class MobileProtoGen extends BaseGen {
 
     String protoSource    = null;
-    String objectPackage  = null;
+    String[] objectPackage  = null;
     String outputPackage  = null;
     String outputClass    = null;
     String sourceRoot     = null;
@@ -30,7 +30,12 @@ public class MobileProtoGen extends BaseGen {
 	    this.protoSource   = argument;
     }
     public void setObjectPackage( String argument ) {
-	    this.objectPackage = argument;
+        if (argument==null) {
+            objectPackage = new String[0];
+        }
+        else {
+            objectPackage = argument.split("\\,");
+        }
     }
     public void setOutputPackage( String argument ) {
 	    this.outputPackage = argument;
@@ -83,9 +88,9 @@ PrintStream ps = new PrintStream( new File( tmp.toString() ) ) {
 
 ps.println("package net.yura.mobile.gen;");
 
-//for (Class c:classes) {
-ps.println("import "+this.objectPackage+".*;");
-//}
+for (String c:this.objectPackage) {
+    ps.println("import "+c+".*;");
+}
 
 ps.println("import java.util.Hashtable;");
 ps.println("import java.util.Vector;");

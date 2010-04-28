@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class ProtoLoader {
 
-        private String objectPackage;
+        private String[] objectPackage;
 
         private Hashtable<String,EnumDefinition> enumDefs = new Hashtable<String,EnumDefinition>();
         private Hashtable<String,MessageDefinition> messageDefs = new Hashtable<String,MessageDefinition>();
@@ -24,7 +24,7 @@ public class ProtoLoader {
             return messageDefs;
         }
 
-    	public void process(String name,String objectPackage) throws IOException {
+    	public void process(String name,String[] objectPackage) throws IOException {
 
             this.objectPackage = objectPackage;
 
@@ -159,16 +159,23 @@ public class ProtoLoader {
             MessageDefinition md = new MessageDefinition( name );
 
             // Attempt to get a class definition
-
-            try {
-                System.out.println( "Looking for class " + this.objectPackage + "." + name);
-                Class c = Class.forName( this.objectPackage + "." + name );
-                md.setImplementation(c);
+            boolean found=false;
+            for (String op:this.objectPackage) {
+                System.out.println( "Looking for class " + op + "." + name);
+                try {
+                    Class c = Class.forName( op + "." + name );
+                    md.setImplementation(c);
+                    System.out.println( " - Found class " + op + "." + name);
+                    found = true;
+                    break;
+                }
+                catch( ClassNotFoundException cnfe ) {
+                    //cnfe.printStackTrace();
+                }
             }
-            catch( ClassNotFoundException cnfe ) {
-                //cnfe.printStackTrace();
-                System.out.println( "Warning - Unable to find class " + this.objectPackage + "." + name);
-                md.setImplementation(Hashtable.class);
+            if (!found) {
+                    System.out.println( " - Unable to find class for " + name);
+                    md.setImplementation(Hashtable.class);
             }
 
             // Split fields
