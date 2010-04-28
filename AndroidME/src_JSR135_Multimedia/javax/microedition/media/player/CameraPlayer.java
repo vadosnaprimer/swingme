@@ -332,7 +332,12 @@ public class CameraPlayer extends BasicPlayer implements VideoControl, Controlla
                 //TODO: Need to get this from the snapshot locator...
                 Parameters params = camera.getParameters();
                 params.setPictureSize(640, 480);
-                camera.setParameters(params);
+
+                try {
+                    camera.setParameters(params);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
 
             try {
