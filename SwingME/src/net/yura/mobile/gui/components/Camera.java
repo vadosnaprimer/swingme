@@ -121,18 +121,20 @@ public class Camera extends Component implements Runnable, PlayerListener {
         super.focusGained();
     }
 
-    public void focusLost() {
-        super.focusLost();
-        //#debug debug
-        Logger.debug(">> focusLost()");
-        cameraThread = null;
-        running = false;
-        synchronized (uiLock) {
-            uiLock.notifyAll();
-        }
-        //#debug debug
-        Logger.debug("focusLost2");
-    }
+// TODO: JP - Cannot rely on  focusGained/focusLost. If "capture" is done by a
+// Button instead of a soft-key (like Android), the panel will lose focus...
+//    public void focusLost() {
+//        super.focusLost();
+//        //#debug debug
+//        Logger.debug(">> focusLost()");
+//        cameraThread = null;
+//        running = false;
+//        synchronized (uiLock) {
+//            uiLock.notifyAll();
+//        }
+//        //#debug debug
+//        Logger.debug("focusLost2");
+//    }
 
     // Overloads Component.processKeyEvent
     public boolean processKeyEvent(KeyEvent keypad) {
@@ -155,14 +157,14 @@ public class Camera extends Component implements Runnable, PlayerListener {
         cameraThread = null;
         running = false;
         closePlayer();
-        synchronized (uiLock) {
-            uiLock.notifyAll();
-            try {
-                uiLock.wait(5000);
-            } catch (InterruptedException ex) {
-                Logger.info(ex);
-            }
-        }
+//JP        synchronized (uiLock) {
+//            uiLock.notifyAll();
+//            try {
+//                uiLock.wait(5000);
+//            } catch (InterruptedException ex) {
+//                Logger.info(ex);
+//            }
+//        }
     }
 
     public void setActionListener(ActionListener l) {
