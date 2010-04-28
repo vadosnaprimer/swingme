@@ -22,6 +22,7 @@ public class MobileProtoGen extends BaseGen {
 
     String protoSource    = null;
     String[] objectPackage  = null;
+    String extendClass = "ProtoUtil";
 
     public void setProtoSource( String argument ) {
 	    this.protoSource   = argument;
@@ -33,6 +34,9 @@ public class MobileProtoGen extends BaseGen {
         else {
             objectPackage = argument.split("\\,");
         }
+    }
+    public void setExtendClass(String cl) {
+        extendClass = cl;
     }
 
     @Override
@@ -76,7 +80,7 @@ for (String c:this.objectPackage) {
 ps.println("import java.util.Hashtable;");
 ps.println("import java.util.Vector;");
 ps.println("import java.io.IOException;");
-ps.println("import net.yura.mobile.io.ProtoUtil;");
+ps.println("import net.yura.mobile.io."+extendClass+";");
 ps.println("import net.yura.mobile.io.proto.CodedOutputStream;");
 ps.println("import net.yura.mobile.io.proto.CodedInputStream;");
 ps.println("import net.yura.mobile.io.proto.WireFormat;");
@@ -84,7 +88,7 @@ ps.println("import net.yura.mobile.io.proto.WireFormat;");
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
 ps.println(" */");
-ps.println("public class "+getOutputClass()+" extends ProtoUtil {");
+ps.println("public class "+getOutputClass()+" extends "+extendClass+" {");
 
 printBody(ps);
 

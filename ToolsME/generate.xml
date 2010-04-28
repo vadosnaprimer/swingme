@@ -78,6 +78,7 @@
         <gen-proto
             protoSource="${basedir}/test.proto"
             objectPackage="net.yura.tools.mobilegen.model"
+            extendClass="ProtoFileUtil"
             outputPackage="net.yura.mobile.gen"
             outputClass="ProtoAccess"
             sourceRoot="${basedir}/src"/>
