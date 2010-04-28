@@ -12,6 +12,8 @@ package javax.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import javax.microedition.io.Connection;
 
+import net.yura.android.bluetooth.BluetoothManager;
+
 /**
  * The <code>LocalDevice</code> class defines the basic functions of the
  * Bluetooth manager.  The
@@ -55,8 +57,9 @@ public class LocalDevice {
 
 	    try {
 
-	        // Make sure we have a valid BluetoothAdapter...
+	        // Make sure we have a valid BluetoothAdapter and BluetoothManager...
 	        BluetoothAdapter.getDefaultAdapter();
+	        BluetoothManager.getBluetoothManager();
 
     	    if (deviceInstance == null) {
     	        deviceInstance = new LocalDevice();
