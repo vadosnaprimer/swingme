@@ -266,7 +266,7 @@ public abstract class Canvas extends Displayable {
 
                     // Notify Canvas clients
                     try {
-                        sizeChanged(this.getWidth(), canvasH);
+                        sizeChanged(Canvas.this.getWidth(), Canvas.this.getHeight());
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
