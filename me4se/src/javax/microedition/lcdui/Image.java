@@ -610,18 +610,18 @@ public class Image {
         _image.setRGB(x, y, rgb);
     }
 
-    public static Image createImage(Image source, ColorMatrix cm) {
+    public static void filter(Image source, Image img, ColorMatrix cm) {
 
         FilteredImageSource filteredSrc = new FilteredImageSource(source._image.getSource(), cm);
         java.awt.Image image = java.awt.Toolkit.getDefaultToolkit().createImage(filteredSrc);
 
-        Image img = Image.createImage(source.getWidth(),source.getHeight());
+        //Image img = Image.createImage(source.getWidth(),source.getHeight());
 
         java.awt.Graphics g = img._image.getGraphics();
         g.drawImage(image, 0, 0, null);
         g.dispose();
 
-        return img;
+        //return img;
     }
 
 
