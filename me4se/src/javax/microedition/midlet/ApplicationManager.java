@@ -1037,12 +1037,11 @@ public class ApplicationManager {
 
     boolean swapNumPad = getBooleanProperty("me4se.swapNumPad", true);
 
-    // YURA FIX
-    if (vk == KeyEvent.VK_TAB) {
-        return e.isShiftDown()?"UP":"DOWN";
-    }
-
     switch (vk) {
+        // YURA FIX
+        case KeyEvent.VK_TAB:
+            return e.isShiftDown()?"UP":"DOWN";
+
     case KeyEvent.VK_NUMPAD1:
       return swapNumPad ? "7" : "1";
     case KeyEvent.VK_NUMPAD2:
@@ -1192,9 +1191,11 @@ public class ApplicationManager {
 
     // YURA FIX
     if (buttonName.equals("DELETE"))
-        return -9;
+        return 127; // ascii code for DEL, same as in WTK3
     if (buttonName.equals("CONTROL"))
         return -50;
+    if (buttonName.equals("BACK"))
+        return -11;
 
     return i;
   }
