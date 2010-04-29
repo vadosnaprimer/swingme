@@ -244,12 +244,14 @@ public class Window extends Panel {
                     int x = xclick + getXOnScreen();
                     int y = yclick + getYOnScreen();
 
-                    for (int i=0; i< 3; i++) {
+                    for (int i=0; i< 5; i++) {
                         int key=0;
                         switch (i) {
                             case 0: key = KeyEvent.KEY_SOFTKEY1; break;
                             case 1: key = KeyEvent.KEY_SOFTKEY2; break;
                             case 2: key = KeyEvent.KEY_SOFTKEY3; break;
+                            case 3: key = KeyEvent.KEY_MENU; break;
+                            case 4: key = KeyEvent.KEY_END; break;
                         }
 
                         Button b = findMneonicButton(key);
@@ -290,12 +292,14 @@ public class Window extends Panel {
                 int offsetY = g.getTranslateY();
                 g.translate(-offsetX,-offsetY);
 
-                for (int i=0; i< 3; i++) {
+                for (int i=0; i< 5; i++) {
                     int key=0;
                     switch (i) {
                         case 0: key = KeyEvent.KEY_SOFTKEY1; break;
                         case 1: key = KeyEvent.KEY_SOFTKEY2; break;
                         case 2: key = KeyEvent.KEY_SOFTKEY3; break;
+                        case 3: key = KeyEvent.KEY_MENU; break;
+                        case 4: key = KeyEvent.KEY_END; break;
                     }
 
                     Button b = getSoftkeyForMneonic(key);
@@ -363,12 +367,12 @@ public class Window extends Panel {
 
             int x = 0, y = 0;
 
-            if (mnemonic == KeyEvent.KEY_SOFTKEY1 && (!sideSoftKeys)) {
+            if ((mnemonic == KeyEvent.KEY_SOFTKEY1 || mnemonic == KeyEvent.KEY_MENU) && (!sideSoftKeys)) {
                 // Bottom left
                 x=0;
                 y=bottom;
             }
-            else if ((mnemonic == KeyEvent.KEY_SOFTKEY2 && (!sideSoftKeys)) || (mnemonic == KeyEvent.KEY_SOFTKEY1 && sideSoftKeys)) {
+            else if (((mnemonic == KeyEvent.KEY_SOFTKEY2 || mnemonic == KeyEvent.KEY_END) && (!sideSoftKeys)) || ((mnemonic == KeyEvent.KEY_SOFTKEY1 || mnemonic == KeyEvent.KEY_MENU) && sideSoftKeys)) {
                 // Bottom right
                 x = right;
                 y = bottom;
@@ -378,7 +382,7 @@ public class Window extends Panel {
                 x = (desktopWidth/2)-(componentWidth/2);
                 y = bottom;
             }
-            else if (mnemonic == KeyEvent.KEY_SOFTKEY2 && sideSoftKeys) {
+            else if ((mnemonic == KeyEvent.KEY_SOFTKEY2 || mnemonic == KeyEvent.KEY_END) && sideSoftKeys) {
                 // Top right
                 x = right;
                 y = 0;

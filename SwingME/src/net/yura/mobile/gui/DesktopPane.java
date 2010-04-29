@@ -955,17 +955,42 @@ public class DesktopPane extends Canvas implements Runnable {
                 Button mneonicButton = null;
                 int key = keyevent.getJustPressedKey();
                 if (key != 0) {
-                    if ( key==KeyEvent.KEY_END && (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ) { // for sony-ericson, back is save as softkey 2
-                        key = KeyEvent.KEY_SOFTKEY2;
+                    if ( key==KeyEvent.KEY_MENU || key==KeyEvent.KEY_END ) {
+                        if (Midlet.getPlatform() != Midlet.PLATFORM_NOKIA_S60) {
+                            mneonicButton = currentWindow.findMneonicButton(key);
+                            if ( mneonicButton==null ) {
+                                if ( key==KeyEvent.KEY_MENU ) {
+                                    key = KeyEvent.KEY_SOFTKEY1;
+                                }
+                                else if ( key==KeyEvent.KEY_END ) {
+                                    key = KeyEvent.KEY_SOFTKEY2; // for sony-ericson, back is save as softkey 2
+                                }
+                                mneonicButton = currentWindow.findMneonicButton(key);
+                            }
+                        }
+                        //else
+                        // on S60 MENU and END should not do anything
                     }
-                    mneonicButton = currentWindow.findMneonicButton(key);
+                    else {
+                        mneonicButton = currentWindow.findMneonicButton(key);
+                        if ( mneonicButton==null && ( key==KeyEvent.KEY_SOFTKEY1 || key==KeyEvent.KEY_SOFTKEY2 ) ) {
+                            if ( key==KeyEvent.KEY_SOFTKEY1 ) {
+                                key = KeyEvent.KEY_MENU;
+                            }
+                            else if ( key==KeyEvent.KEY_SOFTKEY2 ) {
+                                key = KeyEvent.KEY_END;
+                            }
+                            mneonicButton = currentWindow.findMneonicButton(key);
+                        }
+                    }
                 }
-                Component focusedComponent = currentWindow.getFocusOwner();
 
                 if (mneonicButton != null) {
                     mneonicButton.fireActionPerformed();
                 }
                 else {
+                    Component focusedComponent = currentWindow.getFocusOwner();
+
                     boolean consumed=false;
 
                     if (focusedComponent != null) {

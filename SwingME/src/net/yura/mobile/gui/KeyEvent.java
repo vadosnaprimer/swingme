@@ -29,15 +29,15 @@ public class KeyEvent {
 
 	public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value
 	public static final int KEY_SOFTKEY2 = -7;	//Default Softkey right value
-        public static final int KEY_SOFTKEY3 = -5;	//Default Softkey right value
+        public static final int KEY_SOFTKEY3 = -5;	//Default Softkey center value
         public static final int KEY_CLEAR = -8;         //Default Clear value, this NEEDS to be negative
 
-        public static final int KEY_DELETE = -9; // for me4se
+        public static final int KEY_DELETE = -9; // is the right 'clear' key in WTK3
 
-        public static final int KEY_CALL = -10;
-        public static final int KEY_END  = -11; // back button on some sony ericsons
-        public static final int KEY_MENU = -12;
-        public static final int KEY_EDIT = -50;
+        public static final int KEY_CALL = -10; // green key
+        public static final int KEY_END  = -11; // back button on some sony ericsons, android
+        public static final int KEY_MENU = -12; // 'app menu' on S60, 'inapp menu' on android
+        public static final int KEY_EDIT = -50; // S60 pensil button
         //public static final int KEY_WEB = -20; // SonyE
         //public static final int KEY_PHOTO = -24 or -25 or -26; // SonyE
         //public static final int KEY_UP = -36; // SonyE

@@ -118,7 +118,7 @@ public class MenuBar extends List implements ActionListener {
                     // TODO make sure this mnemonic is not used for another button
                     case 0: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
                     case 1: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
-                    case 2: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
+                    //case 2: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
                 }
             }
         }
@@ -194,10 +194,15 @@ public class MenuBar extends List implements ActionListener {
         int off = 0;
         // if we are on a phone, and the window is not maximised, this bar is not visible
         if (dp.SOFT_KEYS && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
-            Button b = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
-            if (b!=null) {
-                off = b.getWidthWithBorder();
+            Button b1 = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
+            if (b1!=null) {
+                off = b1.getWidthWithBorder();
             }
+            Button b2 = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_MENU);
+            if (b2!=null) {
+                off = b2.getWidthWithBorder();
+            }
+
             if (dp.isSideSoftKeys()) {
                 int minWidth=0;
                 ListCellRenderer renderer = getCellRenderer();

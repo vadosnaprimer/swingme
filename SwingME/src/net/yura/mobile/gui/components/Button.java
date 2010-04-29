@@ -94,7 +94,11 @@ public class Button extends Label implements ActionListener {
 
         public boolean isVisible() {
 
-            if (mneonic == KeyEvent.KEY_SOFTKEY1 || mneonic == KeyEvent.KEY_SOFTKEY2 || mneonic == KeyEvent.KEY_SOFTKEY3) {
+            if (    mneonic == KeyEvent.KEY_SOFTKEY1 ||
+                    mneonic == KeyEvent.KEY_SOFTKEY2 ||
+                    mneonic == KeyEvent.KEY_SOFTKEY3 ||
+                    mneonic == KeyEvent.KEY_MENU ||
+                    mneonic == KeyEvent.KEY_END) {
 
                 DesktopPane dp = getDesktopPane();
 
@@ -106,16 +110,35 @@ public class Button extends Label implements ActionListener {
                 if (dp.SOFT_KEYS) return false;
 
                 if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY) {
-                    String[] strings = new String[] {
+
+                    if (mneonic == KeyEvent.KEY_MENU || mneonic == KeyEvent.KEY_END) return false;
+
+                    // this whole block should be later removed
+                    if (mneonic == KeyEvent.KEY_SOFTKEY1) {
+                        String[] strings1 = new String[] {
+                            (String)DesktopPane.get("menuText"),
+                        };
+                        for (int c=0;c<strings1.length;c++) {
+                            if (getText().equals(strings1[c])) {
+                                //#debug info
+                                Logger.info("BUTTON HAS MNEONIC SOFTKEY1 BUT SHOULD HAVE KEY_MENU: "+this);
+                                return false;
+                            }
+                        }
+                    }
+                    if (mneonic == KeyEvent.KEY_SOFTKEY2) {
+                        String[] strings2 = new String[] {
                             (String)DesktopPane.get("backText"),
                             (String)DesktopPane.get("cancelText"),
                             (String)DesktopPane.get("closeText"),
-                            (String)DesktopPane.get("menuText"),
                             (String)DesktopPane.get("exitText")
-                    };
-                    for (int c=0;c<strings.length;c++) {
-                        if (getText().equals(strings[c])) {
-                            return false;
+                        };
+                        for (int c=0;c<strings2.length;c++) {
+                            if (getText().equals(strings2[c])) {
+                                //#debug info
+                                Logger.info("BUTTON HAS MNEONIC SOFTKEY2 BUT SHOULD HAVE KEY_END: "+this);
+                                return false;
+                            }
                         }
                     }
                 }

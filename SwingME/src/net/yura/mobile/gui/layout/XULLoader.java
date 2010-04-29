@@ -62,6 +62,9 @@ import org.kxml2.io.KXmlParser;
  */
 public class XULLoader {
 
+    public static final int VK_ALT = 18; // open the menu
+    public static final int VK_ESC = 27; // go back
+
     public static final int VK_F1 = 112;
     public static final int VK_F2 = 113;
 
@@ -566,6 +569,8 @@ public class XULLoader {
                 else if ("mnemonic".equals(key)) {
                     int mnemonic = Integer.parseInt(value);
                     switch (mnemonic) {
+                        case VK_ALT:  mnemonic=KeyEvent.KEY_MENU; break;
+                        case VK_ESC:  mnemonic=KeyEvent.KEY_END; break;
                         case VK_F1: mnemonic=KeyEvent.KEY_SOFTKEY1; break;
                         case VK_F2: mnemonic=KeyEvent.KEY_SOFTKEY2; break;
                     }
@@ -576,7 +581,7 @@ public class XULLoader {
                         button.setMnemonic(KeyEvent.KEY_SOFTKEY1);
                     }
                     else if ("cancel".equals(value)) {
-                        button.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                        button.setMnemonic(KeyEvent.KEY_END);
                     }
                     else if ("link".equals(value)) {
                         button.setName("Link");
