@@ -221,9 +221,9 @@ public class Image
 	bitmap.setPixel(x, y, color);
     }
 
-    public static Image createImage(Image source, ColorMatrix cm) {
+    public static void filter(Image source, Image bm, ColorMatrix cm) {
 
-        Image bm = createImage(source.getWidth(), source.getHeight());
+        //Image bm = createImage(source.getWidth(), source.getHeight());
 
         android.graphics.Paint paint = new android.graphics.Paint();
         paint.setColorFilter( new android.graphics.ColorMatrixColorFilter(cm) );
@@ -231,7 +231,7 @@ public class Image
         //bm.getGraphics().getCanvas().drawBitmap(source.bitmap, 0, 0, paint);
         new Canvas(bm.bitmap).drawBitmap(source.bitmap, 0, 0, paint);
 
-        return bm;
+        //return bm;
     }
 
 }
