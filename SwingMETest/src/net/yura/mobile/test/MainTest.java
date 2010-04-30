@@ -95,7 +95,12 @@ public class MainTest extends Section {
 
         mainMenu = new Menu("Menu");
         //mainMenu.addActionListener(this);
-        addMenuItem(mainMenu,"metalTheme", "Metal Theme");
+
+        Button b1 = makeButton("Metal Theme [0]", "metalTheme");
+        b1.setMnemonic('0');
+        mainMenu.add(b1);
+
+        //addMenuItem(mainMenu,"metalTheme", "Metal Theme");
         addMenuItem(mainMenu,"aether1", "Nimbus Default Theme");
         addMenuItem(mainMenu,"aetherGreen", "Nimbus Green Theme");
         addMenuItem(mainMenu,"aether2", "Nimbus Red Theme");
@@ -118,6 +123,8 @@ public class MainTest extends Section {
             //bar.insert(new Label("b"), 2);
             //bar.insert(new Label("c"), 4);
             bar.addElement( new Label(mainPane.image) );
+            getMainWindow().revalidate();
+            getMainWindow().repaint();
         }
         else if ("exit".equals(actionCommand)) {
             Midlet.exit();

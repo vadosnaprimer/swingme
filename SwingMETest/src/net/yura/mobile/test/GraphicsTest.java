@@ -9,6 +9,7 @@ import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
@@ -31,6 +32,7 @@ public class GraphicsTest extends Section {
         // service link
         addTest("Graphics Draw Region", "drawRegion");
         addTest("Water Ripple", "waterRipple");
+        addTest("Draw Offscreen", "drawOffscreen");
     }
 
     public void openTest(String actionCommand) {
@@ -68,6 +70,20 @@ public class GraphicsTest extends Section {
             info.add(drawRegionPanel);
 
             addToScrollPane(info, null );
+        }
+        else if ("drawOffscreen".equals(actionCommand)) {
+
+            Image img = Image.createImage(50, 50);
+
+            Graphics g = img.getGraphics();
+
+            g.drawImage( mainPane.image.getImage() , 5, 5, 0);
+            g.setColor(0xFFFF0000);
+            g.drawLine(0, 0, 50, 50);
+
+            Label drawRegionPanel = new Label(new Icon(img));
+            addToScrollPane(drawRegionPanel, null );
+            
         }
     }
 
