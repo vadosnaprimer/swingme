@@ -137,8 +137,18 @@ public class List extends Component implements ActionListener {
 
     public void workoutMinimumSize() {
 
-        //if (items!=null) {
-
+        if (fixedCellWidth!=-1 && fixedCellHeight!=-1) {
+            int s = getSize();
+            if (horizontal) {
+                width = fixedCellWidth*s;
+                height = fixedCellHeight;
+            }
+            else {
+                width = fixedCellWidth;
+                height = fixedCellHeight*s;
+            }
+        }
+        else {
             int totalHeight = 0;
             int totalWidth = 0;
 
@@ -172,8 +182,7 @@ public class List extends Component implements ActionListener {
 
             width = totalWidth;
             height = totalHeight;
-        //}
-
+        }
     }
 
     public void setSize(int w,int h) {
