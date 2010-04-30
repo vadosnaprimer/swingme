@@ -89,7 +89,7 @@ public class ApplicationManager {
   static final int DEFAULT_KEYCODE_CLEAR = -8;
 
   // -9, -10: additional softkeys (check with 9300 or similar)
-  static public final int DEFAULT_KEYCODE_MENU = -100;
+  static public final int DEFAULT_KEYCODE_MENU = -12; // -100;
 
   static final int DEFAULT_KEYCODE_MODE = -101;
 
@@ -1041,6 +1041,8 @@ public class ApplicationManager {
         // YURA FIX
         case KeyEvent.VK_TAB:
             return e.isShiftDown()?"UP":"DOWN";
+        case KeyEvent.VK_ALT:
+            return "MENU";
 
     case KeyEvent.VK_NUMPAD1:
       return swapNumPad ? "7" : "1";

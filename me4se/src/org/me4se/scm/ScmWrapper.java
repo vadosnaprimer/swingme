@@ -295,6 +295,11 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
         component.keyPressed(name);
       }
     }
+
+    // Alt+F4 should still work to close app
+    if (ev.getKeyCode() != KeyEvent.VK_F4) {
+        ev.consume();
+    }
   }
 
   /**
@@ -316,6 +321,11 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 //      System.out.println("Button Name2: " + name);
 
       component.keyReleased(name);
+    }
+
+    // Alt+F4 should still work to close app
+    if (ev.getKeyCode() != KeyEvent.VK_F4) {
+        ev.consume();
     }
   }
 
