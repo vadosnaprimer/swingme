@@ -25,6 +25,7 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -116,8 +117,16 @@ public class MenuBar extends List implements ActionListener {
             if (button instanceof Button && ((Button)button).getMnemonic() == 0) {
                 switch(c) {
                     // TODO make sure this mnemonic is not used for another button
-                    case 0: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY1); break;
-                    case 1: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY2); break;
+                    case 0:
+                        //#debug debug
+                        Logger.debug("Button 1 should already have Mnemonic "+button);
+                        ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                        break;
+                    case 1:
+                        //#debug debug
+                        Logger.debug("Button 2 should already have Mnemonic "+button);
+                        ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                        break;
                     //case 2: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
                 }
             }

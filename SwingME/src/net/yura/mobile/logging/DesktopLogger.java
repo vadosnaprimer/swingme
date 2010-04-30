@@ -47,7 +47,7 @@ public class DesktopLogger extends Logger {
     close.setActionCommand(Frame.CMD_CLOSE);
     // hack to avoid having to make a new action listoner
     close.addActionListener(debugwindow.getTitleBar());
-    close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+    close.setMnemonic(KeyEvent.KEY_END);
     //menubar.add(close);
     //desktop.debugwindow.setMenuBar(menubar);
     Panel p = new Panel(new FlowLayout());

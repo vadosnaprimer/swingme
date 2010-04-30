@@ -242,7 +242,7 @@ public class Menu extends Button {
             Button cancel = new Button( (String)DesktopPane.get("cancelText") );
             cancel.setActionCommand(Frame.CMD_CLOSE);
             cancel.addActionListener(this);
-            cancel.setMnemonic(KeyEvent.KEY_SOFTKEY2);
+            cancel.setMnemonic(KeyEvent.KEY_END);
             popup.addCommand(cancel);
 
             menuItems = new MenuBar();
