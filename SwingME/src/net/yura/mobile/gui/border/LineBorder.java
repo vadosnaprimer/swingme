@@ -37,7 +37,7 @@ public class LineBorder implements Border {
          * creates a black border
          */
 	public LineBorder() {
-		this(0);
+		this(0xFF000000); // default black
 	}
 	/**
          * @param c the color for the border

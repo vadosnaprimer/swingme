@@ -1,26 +1,18 @@
 TODO:
 
-bug: when a window has only 1 focusable component and u move up, it loses focus then gains it again
-bug: when u first go into the edit panel, its wrapped as if there is a scrollbar there, even though there is none
-
-fix: rotate
+fix: when a window has only 1 focusable component and u move up, it loses focus then gains it again
+fix: rotate, windows need to be placed better after rotate
 fix: when clicking on a button, but when you actually need to scroll, it should send a event to the button to say the click was cancelled
-fix: in window.java the softkey bar should be hidden, menu should pop up when clicking menu, back should activate back, all other actions should show up as buttons where ever they were placed
+fix: menu smudge on me4se mode when opeing a menu
+fix: menu getting stuck in loop when u open and close it really quickly
+fix: when scrolling with the scrollbars, when the curser is dragged from the track or arrows, it should stop scrolling
 
-fix menu smudge on me4se mode when opeing a menu
-fix menu bars not skinned in any theme
-fix its not clear what menu item is selected when the menu is open in metalTheme
-fix menu getting stuck in loop when u open and close it really quickly
-fix when scrolling with the scrollbars, when the curser is dragged from the track or arrows, it should stop scrolling
-fix when switching orientation the textbox indicator does not update on the phone
-
-make a good theme for the demo app
+THEME: menu bars not skinned in any synth theme (make a good theme for the demo app)
 
 make windows not drag outside of application area.
 make window resizing work with the mouse
-make bitmap Font support Unicode text
-make sure softkey mapping for strange devices works
-make strange sofkeys like the blackberry work, where softKeys are not really softKeys
+make sure softkey mapping for strange devices works, like *motorola*
+make strange sofkeys on *blackberry* work
 
 make TextField different models have different mapping for 0 *
 make TextField catch 2 letter button codes, and allow a choice of 2 letters (blackberry SureType)
