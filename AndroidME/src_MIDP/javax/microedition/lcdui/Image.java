@@ -12,226 +12,142 @@ import android.graphics.ColorMatrix;
 import android.graphics.Bitmap.Config;
 
 
-public class Image
-{
+public class Image {
 
-	public static Image createImage(Image image, int x, int y, int width, int height, int transform) {
-		// TODO AndroidDisplayGraphics.drawRegion code is similar
-		if (image == null)
-			throw new NullPointerException();
-		if (x + width > image.getWidth() || y + height > image.getHeight() || width <= 0 || height <= 0 || x < 0
-				|| y < 0)
-			throw new IllegalArgumentException("Area out of Image");
+    private Bitmap bitmap;
 
-		int[] rgbData = new int[height * width];
-		int[] rgbTransformedData = new int[height * width];
-		image.getRGB(rgbData, 0, width, x, y, width, height);
+    public static Image createImage(Image image, int x, int y, int width, int height, int transform) {
+        if (image == null) {
+            throw new NullPointerException();
+        }
 
-		int colIncr, rowIncr, offset;
+        if (x + width > image.getWidth() || y + height > image.getHeight() ||
+            width <= 0 || height <= 0 || x < 0 || y < 0) {
+            throw new IllegalArgumentException("Area out of Image");
+        }
 
-		switch (transform) {
-		case Sprite.TRANS_NONE: {
-			offset = 0;
-			colIncr = 1;
-			rowIncr = 0;
-			break;
-		}
-		case Sprite.TRANS_ROT90: {
-			offset = (height - 1) * width;
-			colIncr = -width;
-			rowIncr = (height * width) + 1;
-			int temp = width;
-			width = height;
-			height = temp;
-			break;
-		}
-		case Sprite.TRANS_ROT180: {
-			offset = (height * width) - 1;
-			colIncr = -1;
-			rowIncr = 0;
-			break;
-		}
-		case Sprite.TRANS_ROT270: {
-			offset = width - 1;
-			colIncr = width;
-			rowIncr = -(height * width) - 1;
-			int temp = width;
-			width = height;
-			height = temp;
-			break;
-		}
-		case Sprite.TRANS_MIRROR: {
-			offset = width - 1;
-			colIncr = -1;
-			rowIncr = width << 1;
-			break;
-		}
-		case Sprite.TRANS_MIRROR_ROT90: {
-			offset = (height * width) - 1;
-			colIncr = -width;
-			rowIncr = (height * width) - 1;
-			int temp = width;
-			width = height;
-			height = temp;
-			break;
-		}
-		case Sprite.TRANS_MIRROR_ROT180: {
-			offset = (height - 1) * width;
-			colIncr = 1;
-			rowIncr = -(width << 1);
-			break;
-		}
-		case Sprite.TRANS_MIRROR_ROT270: {
-			offset = 0;
-			colIncr = width;
-			rowIncr = -(height * width) + 1;
-			int temp = width;
-			width = height;
-			height = temp;
-			break;
-		}
-		default:
-			throw new IllegalArgumentException("Bad transform");
-		}
+        // MIDP: the result image width/height depends on the transform
+        Image res;
+        switch (transform) {
+            case Sprite.TRANS_ROT90:
+            case Sprite.TRANS_ROT270:
+            case Sprite.TRANS_MIRROR_ROT90:
+            case Sprite.TRANS_MIRROR_ROT270: {
+                res = Image.createImage(height, width);
+                break;
+            }
+            default: {
+                res = Image.createImage(width, height);
+            }
+        }
 
-		// now the loops!
-		for (int row = 0, i = 0; row < height; row++, offset += rowIncr) {
-			for (int col = 0; col < width; col++, offset += colIncr, i++) {
-/*			    int a = (rgbData[offset] & 0xFF000000);
-			    int b = (rgbData[offset] & 0x00FF0000) >>> 16;
-			    int g = (rgbData[offset] & 0x0000FF00) >>> 8;
-			    int r = (rgbData[offset] & 0x000000FF);
+        Graphics g = res.getGraphics();
+        g.drawRegion(image, x, y, width, height, transform, 0, 0, 0);
 
-			    rgbTransformedData[i] = a | (r << 16) | (g << 8) | b;*/
-				rgbTransformedData[i] = rgbData[offset];
-			}
-		}
-		// to aid gc
-		rgbData = null;
-		image = null;
+        return res;
+    }
 
-		return createRGBImage(rgbTransformedData, width, height, true);
-	}
+    public static Image createImage(InputStream stream) throws IOException {
+        Bitmap bitmap = BitmapFactory.decodeStream(stream);
+        return new Image(bitmap);
+    }
 
+    public static Image createImage(int width, int height) {
+        Image res;
 
+        try {
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+            res = new Image(bitmap);
 
+            // MIDP: All pixels should be white
+            Graphics g = res.getGraphics();
+            g.setColor(0xFFFFFFFF);
+            g.fillRect(0, 0, width, height);
+        } catch (Exception e) {
+            res = null;
+        }
 
+        return res;
+    }
 
+    public static Image createImage(String resource) throws IOException {
+        return createImage(Image.class.getResourceAsStream(resource));
+    }
 
-    public static Image createImage( InputStream stream )
-	    throws IOException
-	{
-	    Bitmap bitmap = BitmapFactory.decodeStream( stream );
-	    return new Image(bitmap);
-	}
+    public static Image createImage(byte[] imgData, int offset, int length) {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
+        try {
+            return new Image(bitmap);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-	public static Image createImage( int width, int height )
-	{
-	    Bitmap bitmap = Bitmap.createBitmap( width, height, Config.ARGB_8888 );
-	    try {
-	    	return new Image(bitmap);
-		} catch (Exception e) {
-			return null;
-		}
-	}
+    public static final Image createRGBImage(int[] rgb, int width, int height, boolean processAlpha) {
 
-	public static Image createImage( String resource )
-	    throws IOException
-	{
-	    return createImage( Image.class.getResourceAsStream( resource ) );
-	}
+        Bitmap.Config config = (processAlpha) ? Bitmap.Config.ARGB_4444 : Bitmap.Config.RGB_565;
+        Bitmap bitmap = Bitmap.createBitmap(rgb, width, height, config);
+        try {
+            return new Image(bitmap);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-	public static Image createImage( byte[] imageData, int imageOffset, int imageLength )
-	{
-	    Bitmap bitmap = BitmapFactory.decodeByteArray( imageData, imageOffset, imageLength );
-	    try {
-	    	return new Image(bitmap);
-		} catch (Exception e) {
-			return null;
-		}
-	}
+    private Image(Bitmap bitmap) throws IOException {
+        if (bitmap == null) {
+            throw new IOException();
+        }
+        this.bitmap = bitmap;
+    }
 
-	public static final Image createRGBImage( int[] rgb, int width, int height, boolean processAlpha )
-	{
-		Bitmap.Config config;
-		if( processAlpha )
-		{
-			config = Bitmap.Config.ARGB_4444;
-		}
-		else
-		{
-			config = Bitmap.Config.RGB_565;
-		}
-	    Bitmap bitmap = Bitmap.createBitmap( rgb, width, height, config );
-	    try {
-	    	return new Image(bitmap);
-		} catch (Exception e) {
-			return null;
-		}
-	}
+    public Bitmap getBitmap() {
+        return bitmap;
+    }
 
-	private Bitmap bitmap;
+    public int getWidth() {
+        return bitmap.getWidth();
+    }
 
-	private Image(Bitmap bitmap) throws IOException
-	{
-		if (bitmap == null) throw new IOException();
-	    this.bitmap = bitmap;
-	}
+    public int getHeight() {
+        return bitmap.getHeight();
+    }
 
-	public Bitmap getBitmap()
-	{
-	    return this.bitmap;
-	}
+    public Graphics getGraphics() {
 
-	public int getWidth()
-	{
-	    return this.bitmap.getWidth();
-	}
+        if (!bitmap.isMutable()) {
+            throw new IllegalStateException("Image is immutable");
+        }
 
-	public int getHeight()
-	{
-	    return this.bitmap.getHeight();
-	}
-
-	public Graphics getGraphics()
-	{
-		if (!bitmap.isMutable()) {
-			throw new IllegalStateException("Image is immutable");
-		}
-
-		Canvas canvas = new Canvas(bitmap);
-        canvas.clipRect(0, 0, getWidth(), getHeight());
+        Canvas canvas = new Canvas(bitmap);
         Graphics displayGraphics = new Graphics(canvas);
-		displayGraphics.setColor(0x00000000);
-		displayGraphics.translate(-displayGraphics.getTranslateX(), -displayGraphics.getTranslateY());
+        displayGraphics.setColor(0xFF000000);
 
-		return displayGraphics;
-	}
+        return displayGraphics;
+    }
 
-	public void getRGB( int[] rgb, int offset, int scanlength, int x, int y, int width, int height )
-	{
-	    this.bitmap.getPixels( rgb, offset, scanlength, x, y, width, height );
-	}
+    public void getRGB(int[] rgb, int offset, int scanlength, int x, int y, int width, int height) {
+        bitmap.getPixels(rgb, offset, scanlength, x, y, width, height);
+    }
 
-	public boolean isMutable() {
-		return bitmap.isMutable();
-	}
+    public boolean isMutable() {
+        return bitmap.isMutable();
+    }
 
-    public void setRGB(int x,int y,int color) {
-	bitmap.setPixel(x, y, color);
+    public void setRGB(int x, int y, int color) {
+        bitmap.setPixel(x, y, color);
     }
 
     public static void filter(Image source, Image bm, ColorMatrix cm) {
 
-        //Image bm = createImage(source.getWidth(), source.getHeight());
+        // Image bm = createImage(source.getWidth(), source.getHeight());
 
         android.graphics.Paint paint = new android.graphics.Paint();
-        paint.setColorFilter( new android.graphics.ColorMatrixColorFilter(cm) );
+        paint.setColorFilter(new android.graphics.ColorMatrixColorFilter(cm));
 
-        //bm.getGraphics().getCanvas().drawBitmap(source.bitmap, 0, 0, paint);
+        // bm.getGraphics().getCanvas().drawBitmap(source.bitmap, 0, 0, paint);
         new Canvas(bm.bitmap).drawBitmap(source.bitmap, 0, 0, paint);
 
-        //return bm;
+        // return bm;
     }
-
 }

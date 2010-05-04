@@ -94,8 +94,12 @@ public class Graphics {
     }
 
     public void drawImage(javax.microedition.lcdui.Image image, int x, int y, int anchor) {
+
+        if (anchor == 0) {
+            anchor = TOP | LEFT;
+        }
+
         int ax;
-        int ay;
         if ((anchor & LEFT) != 0) {
             ax = x;
         } else if ((anchor & HCENTER) != 0) {
@@ -103,6 +107,8 @@ public class Graphics {
         } else {
             ax = x - image.getWidth();
         }
+
+        int ay;
         if ((anchor & TOP) != 0) {
             ay = y;
         } else if ((anchor & VCENTER) != 0) {
@@ -281,6 +287,10 @@ public class Graphics {
         if (xSrc + width > src.getWidth() || ySrc + height > src.getHeight() ||
             width < 0 || height < 0 || xSrc < 0 || ySrc < 0) {
             throw new IllegalArgumentException("Area out of Image");
+        }
+
+        if (anchor == 0) {
+            anchor = TOP | LEFT;
         }
 
         // Create a matrix and apply the rotation and mirroring (scale == -1)
