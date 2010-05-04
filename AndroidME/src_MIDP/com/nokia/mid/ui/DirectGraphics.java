@@ -31,4 +31,8 @@ public class DirectGraphics {
         g.getCanvas().drawPath(path, paint);
     }
 
+    public void setARGBColor(int rgb) {
+        g.getPaint().setColor(rgb);
+    }
+
 }

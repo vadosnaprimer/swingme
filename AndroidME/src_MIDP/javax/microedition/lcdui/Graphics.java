@@ -38,6 +38,9 @@ public class Graphics {
     public android.graphics.Canvas getCanvas() {
         return canvas;
     }
+    public Paint getPaint() {
+        return paint;
+    }
 
     public void setCanvas(android.graphics.Canvas canvas) {
         this.canvas = canvas;
