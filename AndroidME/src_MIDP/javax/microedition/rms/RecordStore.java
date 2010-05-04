@@ -1,444 +1,416 @@
 package javax.microedition.rms;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import net.yura.android.rms.SqlDao;
+import net.yura.android.rms.SqlRecordEnumeration;
+
+
+public class RecordStore extends Object {
+
+    public static final int AUTHMODE_PRIVATE = 0;
+    public static final int AUTHMODE_ANY = 1;
+
+
+    private static SqlDao sqlDao;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-
-import javax.microedition.midlet.MIDlet;
-import javax.microedition.rms.InvalidRecordIDException;
-import javax.microedition.rms.RecordComparator;
-import javax.microedition.rms.RecordEnumeration;
-import javax.microedition.rms.RecordFilter;
-import javax.microedition.rms.RecordListener;
-import javax.microedition.rms.RecordStore;
-import javax.microedition.rms.RecordStoreException;
-import javax.microedition.rms.RecordStoreFullException;
-import javax.microedition.rms.RecordStoreNotOpenException;
-
-import net.yura.android.rms.RecordEnumerationImpl;
-
-import android.app.Activity;
-import android.content.Context;
-
-public class RecordStore {
-	public static final int AUTHMODE_PRIVATE = 0;
-
-	public static final int AUTHMODE_ANY = 1;
-
-	private final static String RECORD_STORE_SUFFIX = ".rs";
-
-	public Hashtable records = new Hashtable();
-
-	private String recordStoreName;
-	private int version = 0;
-	private long lastModified = 0;
-	private int nextRecordID = 1;
-
-	// TODO - Jose
-	private static Activity activity = MIDlet.DEFAULT_MIDLET.getActivity();
-
-	private transient boolean open;
-
-	private transient Vector recordListeners = new Vector();
-
-	public RecordStore(String recordStoreName) {
-		if (recordStoreName.length() <= 32) {
-			this.recordStoreName = recordStoreName;
-		} else {
-			this.recordStoreName = recordStoreName.substring(0, 32);
-		}
-		this.open = false;
-	}
-
-	public RecordStore(DataInputStream dis) throws IOException {
-		this.recordStoreName = dis.readUTF();
-		this.version = dis.readInt();
-		this.lastModified = dis.readLong();
-		this.nextRecordID = dis.readInt();
-
-		try {
-			while (true) {
-				int recordId = dis.readInt();
-				byte[] data = new byte[dis.readInt()];
-				dis.read(data, 0, data.length);
-				this.records.put(new Integer(recordId), data);
-			}
-		} catch (EOFException ex) {
-		}
-	}
-
-	public void write(DataOutputStream dos) throws IOException {
-		dos.writeUTF(recordStoreName);
-		dos.writeInt(version);
-		dos.writeLong(lastModified);
-		dos.writeInt(nextRecordID);
-
-		Enumeration en = records.keys();
-		while (en.hasMoreElements()) {
-			Integer key = (Integer) en.nextElement();
-			dos.writeInt(key.intValue());
-			byte[] data = (byte[]) records.get(key);
-			dos.writeInt(data.length);
-			dos.write(data);
-		}
-	}
-
-	public boolean isOpen() {
-		return open;
-	}
-
-	public void setOpen(boolean open) {
-		this.open = open;
-	}
-
-	public void closeRecordStore() throws RecordStoreNotOpenException,
-			RecordStoreException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		if (recordListeners != null) {
-			recordListeners.removeAllElements();
-		}
-
-		open = false;
-	}
-
-	public String getName() throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		return recordStoreName;
-	}
-
-	public int getVersion() throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		synchronized (this) {
-			return version;
-		}
-	}
-
-	public int getNumRecords() throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		synchronized (this) {
-			return records.size();
-		}
-	}
-
-	public int getSize() throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		int size = 0;
-		for (Enumeration keys = records.keys(); keys.hasMoreElements();) {
-
-			size += ((byte[]) records.get(keys.nextElement())).length;
-		}
-		return size;
-	}
-
-	public int getSizeAvailable() throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		try {
-			String storeDir = activity.getFilesDir().getPath();
-			android.os.StatFs fs = new android.os.StatFs(storeDir);
-			long fsSize = fs.getFreeBlocks() * fs.getBlockSize();
-
-			fsSize = (fsSize / 100) * 80;
-			fsSize = Math.min(fsSize, Integer.MAX_VALUE);
-
-			return (int) fsSize;
-		} catch (Throwable e) {
-
-		}
-
-		return 4 * 1024 * 1024;
-	}
-
-	public long getLastModified() throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		synchronized (this) {
-			return lastModified;
-		}
-	}
-
-	public void addRecordListener(RecordListener listener) {
-		if (!recordListeners.contains(listener)) {
-			recordListeners.addElement(listener);
-		}
-	}
-
-	public void removeRecordListener(RecordListener listener) {
-		recordListeners.removeElement(listener);
-	}
-
-	public int getNextRecordID() throws RecordStoreNotOpenException,
-			RecordStoreException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		synchronized (this) {
-			return nextRecordID;
-		}
-	}
-
-	public int addRecord(byte[] data, int offset, int numBytes)
-			throws RecordStoreNotOpenException, RecordStoreException,
-			RecordStoreFullException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-		if (data == null && numBytes > 0) {
-			throw new NullPointerException();
-		}
-		if (numBytes > getSizeAvailable()) {
-			throw new RecordStoreFullException();
-		}
-
-		byte[] recordData = new byte[numBytes];
-		if (data != null) {
-			System.arraycopy(data, offset, recordData, 0, numBytes);
-		}
-
-		int curRecordID;
-		synchronized (this) {
-			records.put(new Integer(nextRecordID), recordData);
-			version++;
-			curRecordID = nextRecordID;
-			nextRecordID++;
-			lastModified = System.currentTimeMillis();
-		}
-
-		saveChanges(this);
-
-		return curRecordID;
-	}
-
-	public void deleteRecord(int recordId) throws RecordStoreNotOpenException,
-			InvalidRecordIDException, RecordStoreException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		synchronized (this) {
-			if (records.remove(new Integer(recordId)) == null) {
-				throw new InvalidRecordIDException();
-			}
-			version++;
-			lastModified = System.currentTimeMillis();
-		}
-
-		saveChanges(this);
-	}
-
-	public int getRecordSize(int recordId) throws RecordStoreNotOpenException,
-			InvalidRecordIDException, RecordStoreException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		synchronized (this) {
-			byte[] data = (byte[]) records.get(new Integer(recordId));
-			if (data == null) {
-				throw new InvalidRecordIDException();
-			}
-
-			return data.length;
-		}
-	}
-
-	public int getRecord(int recordId, byte[] buffer, int offset)
-			throws RecordStoreNotOpenException, InvalidRecordIDException,
-			RecordStoreException {
-		int recordSize;
-		synchronized (this) {
-			recordSize = getRecordSize(recordId);
-			System.arraycopy(records.get(new Integer(recordId)), 0, buffer,
-					offset, recordSize);
-		}
-
-		return recordSize;
-	}
-
-	public byte[] getRecord(int recordId) throws RecordStoreNotOpenException,
-			InvalidRecordIDException, RecordStoreException {
-		byte[] data;
-
-		synchronized (this) {
-			data = new byte[getRecordSize(recordId)];
-			getRecord(recordId, data, 0);
-		}
-
-		return data.length < 1 ? null : data;
-	}
-
-	public void setRecord(int recordId, byte[] newData, int offset, int numBytes)
-			throws RecordStoreNotOpenException, InvalidRecordIDException,
-			RecordStoreException, RecordStoreFullException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		// FIXME fixit
-		if (numBytes > getSizeAvailable()) {
-			throw new RecordStoreFullException();
-		}
-
-		byte[] recordData = new byte[numBytes];
-		System.arraycopy(newData, offset, recordData, 0, numBytes);
-
-		synchronized (this) {
-			Integer id = new Integer(recordId);
-			if (records.remove(id) == null) {
-				throw new InvalidRecordIDException();
-			}
-			records.put(id, recordData);
-			version++;
-			lastModified = System.currentTimeMillis();
-		}
-
-		saveChanges(this);
-	}
-
-	public RecordEnumeration enumerateRecords(RecordFilter filter,
-			RecordComparator comparator, boolean keepUpdated)
-			throws RecordStoreNotOpenException {
-		if (!open) {
-			throw new RecordStoreNotOpenException();
-		}
-
-		return new RecordEnumerationImpl(this, filter, comparator, keepUpdated);
-	}
-
-	// TODO there should be a public constructors
-	// private RecordStore() {
-	//
-	// }
-
-	public static void deleteRecordStore(String recordStoreName)
-			throws RecordStoreException, RecordStoreNotFoundException {
-		String storeFileName = getSuiteName() + "." + recordStoreName
-				+ RECORD_STORE_SUFFIX;
-		activity.deleteFile(storeFileName);
-	}
-
-	public static String[] listRecordStores() {
-		String[] result = activity.fileList();
-		if (result != null) {
-			if (result.length == 0) {
-				result = null;
-			} else {
-				String prefix = getSuiteName() + ".";
-				for (int i = 0; i < result.length; i++) {
-					int startIdx = (result[i].startsWith(prefix)) ? prefix
-							.length() : 0;
-					int endIdx = result[i].length()
-							- RECORD_STORE_SUFFIX.length();
-
-					result[i] = result[i].substring(startIdx, endIdx);
-				}
-			}
-		}
-		return result;
-	}
-
-	public static RecordStore openRecordStore(String recordStoreName,
-			boolean createIfNecessary) throws RecordStoreException,
-			RecordStoreFullException, RecordStoreNotFoundException {
-		String storeFileName = getSuiteName() + "." + recordStoreName
-				+ RECORD_STORE_SUFFIX;
-
-		RecordStore recordStore;
-		try {
-			recordStore = loadFromDisk(storeFileName);
-		} catch (FileNotFoundException e) {
-			if (!createIfNecessary) {
-				throw new RecordStoreNotFoundException(recordStoreName);
-			}
-			recordStore = new RecordStore(recordStoreName);
-			saveToDisk(getSuiteName() + "." + recordStoreName
-					+ RECORD_STORE_SUFFIX, recordStore);
-		}
-		recordStore.setOpen(true);
-
-		return recordStore;
-	}
-
-	public static RecordStore openRecordStore(String recordStoreName,
-			boolean createIfNecessary, int authmode, boolean writable)
-			throws RecordStoreException, RecordStoreFullException,
-			RecordStoreNotFoundException {
-		// TODO Not yet implemented
-		return openRecordStore(recordStoreName, createIfNecessary);
-	}
-
-	public static RecordStore openRecordStore(String recordStoreName,
-			String vendorName, String suiteName) throws RecordStoreException,
-			RecordStoreNotFoundException {
-		// TODO Not yet implemented
-		return openRecordStore(recordStoreName, false);
-	}
-
-	private static void saveToDisk(String recordStoreFileName,
-			final RecordStore recordStore) throws RecordStoreException {
-		try {
-			DataOutputStream dos = new DataOutputStream(activity
-					.openFileOutput(recordStoreFileName, Context.MODE_PRIVATE));
-			recordStore.write(dos);
-			dos.close();
-		} catch (IOException e) {
-			throw new RecordStoreException(e.getMessage());
-		}
-	}
-
-	private static RecordStore loadFromDisk(String recordStoreFileName)
-			throws FileNotFoundException {
-		RecordStore store = null;
-		try {
-			DataInputStream dis = new DataInputStream(activity
-					.openFileInput(recordStoreFileName));
-			store = new RecordStore(dis);
-			dis.close();
-		} catch (FileNotFoundException e) {
-			throw e;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		catch (Throwable e) {
-			e.printStackTrace();
-		}
-		return store;
-	}
-
-	private static String getSuiteName() {
-		return activity.getComponentName().getPackageName();
-	}
-
-	private void saveChanges(RecordStore recordStore)
-			throws RecordStoreNotOpenException, RecordStoreException {
-		saveToDisk(getSuiteName() + "." + recordStore.getName()
-				+ RECORD_STORE_SUFFIX, recordStore);
-	}
+    // This mapping contains all open record stores by name. If a record store is not in this mapping, it is not open.
+    private static HashMap<String, RecordStore> openedRecordStores = new HashMap<String, RecordStore>();
+
+    // The unique name of this record store.
+    private String name;
+
+    // The version of this object. It changes whenever it is modified.
+    private int version;
+
+    // The id of this record store in the database.
+    private long recordStorePk;
+    // TODO: Use the next to field.
+//    private String vendorName;
+//    private String suiteName;
+    private int numRecords;
+    private int size;
+    private long sizeAvailable = 4 * 1024 * 1024;
+
+    // TODO: Manage lastModified everywhere.
+    private long lastModified;
+    private int nextRecordID = 1;
+
+    /**
+     * The number of times this record store was opened. If this number is 0 then this record store is closed.
+     */
+    private int openCount = 0;
+    // TODO: Manage authMode everywhere.
+    private int authMode;
+    // TODO: Manage writable everywhere.
+//    private boolean writable = false;
+
+    private List<RecordListener> listeners = new ArrayList<RecordListener>();
+
+    /**
+     * @param name the unique name of this record store within a midlet suite
+     * @param pk the database primary key of this store
+     */
+    public RecordStore(String name, long pk) {
+        this.name = name;
+        this.recordStorePk = pk;
+    }
+
+
+    public static void deleteRecordStore(String recordStoreName) throws RecordStoreException, RecordStoreNotFoundException {
+        RecordStore recordStore = getOpenedRecordStoreFromCache(recordStoreName);
+        if (recordStore != null) {
+            throw new RecordStoreException("The record store '" + recordStoreName + "' is not closed.");
+        }
+        sqlDao.deleteRecordStore(recordStoreName);
+
+    }
+
+
+    public static RecordStore openRecordStore(String recordStoreName, boolean createIfNecessary) throws RecordStoreException, RecordStoreFullException, RecordStoreNotFoundException {
+        init();
+        if (recordStoreName == null) {
+            throw new IllegalArgumentException("Parameter 'recordStoreName' must not be null or empty.");
+        }
+
+        if (recordStoreName.length() < 1 || recordStoreName.length() > 32) {
+            throw new IllegalArgumentException("Parameter 'recordStoreName' must have a length between 1 and 32.");
+        }
+
+        // Try the cache.
+        RecordStore recordStore = openRecordStoreFromCache(recordStoreName);
+        if (recordStore != null) {
+            return recordStore;
+        }
+
+        // Try the datadabase.
+        recordStore = sqlDao.getRecordStore(recordStoreName);
+        if (recordStore != null) {
+            cacheRecordStore(recordStoreName,recordStore);
+            return recordStore;
+        }
+        if (!createIfNecessary) {
+            throw new RecordStoreNotFoundException("No record store with name '" + recordStoreName + "' found.");
+        }
+
+        // Create the database.
+        recordStore = sqlDao.createRecordStore(recordStoreName);
+        if (recordStore == null) {
+            throw new RecordStoreException("Could not create record store with name '" + recordStoreName + "'. Reason: The method 'SqlDao.createRecordStore' returned null although it is not allowed to do so.");
+        }
+        cacheRecordStore(recordStoreName, recordStore);
+        return recordStore;
+    }
+
+
+    public static RecordStore openRecordStore(String recordStoreName, boolean createIfNecessary, int authmode, boolean writable) throws RecordStoreException, RecordStoreFullException, RecordStoreNotFoundException {
+        return openRecordStore(recordStoreName, createIfNecessary);
+    }
+
+
+    public static RecordStore openRecordStore(String recordStoreName, String vendorName, String suiteName) throws RecordStoreException, RecordStoreNotFoundException {
+        return openRecordStore(recordStoreName, true);
+    }
+
+
+    public void setMode(int authmode, boolean writable) throws RecordStoreException {
+        // TODO implement setMode
+    }
+
+
+    public void closeRecordStore() throws RecordStoreNotOpenException, RecordStoreException {
+        if(isClosed()) {
+            return;
+        }
+        boolean closed = closeChachedRecordStore();
+
+        // When there are no more open instances of this record store around, inform the listeners.
+        if(closed) {
+            synchronized (this.listeners) {
+                this.listeners.clear();
+            }
+        }
+    }
+
+
+    public static String[] listRecordStores() {
+        init();
+        String[] listRecordStores = sqlDao.listRecordStores();
+        if (listRecordStores.length == 0) {
+            return null;
+        }
+        return listRecordStores;
+    }
+
+
+    public String getName() throws RecordStoreNotOpenException {
+        return this.name;
+    }
+
+
+    public int getVersion() throws RecordStoreNotOpenException {
+        return this.version;
+    }
+
+
+    public int getNumRecords() throws RecordStoreNotOpenException {
+        return this.numRecords;
+    }
+
+
+    public int getSize() throws RecordStoreNotOpenException {
+        return this.size;
+    }
+
+
+    public int getSizeAvailable() throws RecordStoreNotOpenException {
+
+        if (this.sizeAvailable > Integer.MAX_VALUE) {
+            return Integer.MAX_VALUE;
+        }
+        return (int) this.sizeAvailable;
+    }
+
+
+    public long getLastModified() throws RecordStoreNotOpenException {
+        return this.lastModified;
+    }
+
+
+    public void addRecordListener(RecordListener listener) {
+        synchronized (this.listeners) {
+            if (!this.listeners.contains(listener)) {
+                this.listeners.add(listener);
+            }
+        }
+    }
+
+
+    public void removeRecordListener(RecordListener listener) {
+        synchronized (this.listeners) {
+            if (!this.listeners.contains(listener)) {
+                this.listeners.remove(listener);
+            }
+        }
+    }
+
+
+    public int getNextRecordID() throws RecordStoreNotOpenException, RecordStoreException {
+        if (isClosed()) {
+            throw new RecordStoreNotOpenException("");
+        }
+        return this.nextRecordID;
+    }
+
+
+    public int addRecord(byte[] data, int offset, int numBytes) throws RecordStoreNotOpenException, RecordStoreException, RecordStoreFullException {
+
+        if (isClosed()) {
+            throw new RecordStoreNotOpenException("The record store is not open because it was closed. This RecordStore object is invalid and will stay so.");
+        }
+        if (data == null) {
+            data = new byte[0];
+        }
+        if (data.length != 0 && offset >= data.length) {
+            throw new RecordStoreException("The offset '" + offset + "' is beyond the size of the data array of '" + data.length + "'");
+        }
+        if (numBytes < 0) {
+            throw new RecordStoreException("The number of bytes '" + numBytes + "' must not be negative.");
+        }
+        if (offset < 0) {
+            throw new RecordStoreException("The offset '" + offset + "' must not be negative.");
+        }
+        if (offset + numBytes > data.length) {
+            throw new RecordStoreException("The Parameter numBytes with value '" + numBytes + "' exceeds the number of available bytes if counted from offset '" + offset + "'");
+        }
+        byte[] actualData = new byte[numBytes];
+        System.arraycopy(data, offset, actualData, 0, numBytes);
+        int recordId = sqlDao.addRecord(getPk(), actualData);
+        // The addRecord method will increment the nextRecordId in the database.
+        // So we update the cache accordingly.
+        RecordStore recordStore = sqlDao.getRecordStore(getPk());
+        updateRecordStoreInstance(recordStore);
+        fireRecordAddedEvent(recordId);
+        return recordId;
+    }
+
+    // TODO: What about concurrent updates?
+    private void updateRecordStoreInstance(RecordStore recordStore) throws RecordStoreException {
+        this.name = recordStore.name;
+        this.nextRecordID = recordStore.nextRecordID;
+        this.numRecords = recordStore.numRecords;
+        this.size = recordStore.size;
+        this.version = recordStore.version;
+        this.recordStorePk = recordStore.recordStorePk;
+        this.authMode = recordStore.authMode;
+    }
+
+
+    public void deleteRecord(int recordId) throws RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
+        if (isClosed()) {
+            throw new RecordStoreNotOpenException();
+        }
+        if (recordId < 0) {
+            throw new InvalidRecordIDException();
+        }
+        sqlDao.removeRecord(getPk(), recordId);
+        RecordStore recordStore = sqlDao.getRecordStore(getPk());
+        updateRecordStoreInstance(recordStore);
+        fireRecordDeletedEvent(recordId);
+    }
+
+
+    public int getRecordSize(int recordId) throws RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
+
+        byte[] data = getRecord(recordId);
+        return (data == null) ? 0 : data.length;
+    }
+
+
+    public int getRecord(int recordId, byte[] buffer, int offset) throws RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
+        byte[] data = getRecord(recordId);
+
+        System.arraycopy(data, 0, buffer, offset, data.length);
+
+        return data.length - offset;
+    }
+
+
+    public byte[] getRecord(int recordId) throws RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
+        if (isClosed()) {
+            throw new RecordStoreNotOpenException();
+        }
+        if (recordId < 0) {
+            throw new InvalidRecordIDException();
+        }
+        byte[] record = sqlDao.getRecord(getPk(), recordId);
+        return record;
+    }
+
+    public void setRecord(int recordId, byte[] newData, int offset, int numBytes) throws RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException, RecordStoreFullException {
+        if (isClosed()) {
+            throw new RecordStoreNotOpenException();
+        }
+        if (recordId < 0) {
+            throw new InvalidRecordIDException("The parameter 'recordId' must not be negative.");
+        }
+        if (newData == null) {
+            newData = new byte[0];
+        }
+
+        byte[] data = new byte[numBytes];
+        System.arraycopy(newData, offset, data, 0, numBytes);
+
+        sqlDao.setRecord(getPk(), recordId, data);
+        RecordStore recordStore = sqlDao.getRecordStore(getPk());
+        updateRecordStoreInstance(recordStore);
+        fireRecordChangedEvent(recordId);
+    }
+
+
+    public RecordEnumeration enumerateRecords(RecordFilter filter, RecordComparator comparator, boolean keepUpdated) throws RecordStoreNotOpenException {
+        SqlRecordEnumeration sqlRecordEnumeration = new SqlRecordEnumeration(this, filter, comparator, keepUpdated);
+        return sqlRecordEnumeration;
+    }
+
+    private static void init() {
+        if (sqlDao == null) {
+            sqlDao = SqlDao.getInstance();
+        }
+    }
+
+
+    private void fireRecordAddedEvent(int recordId) {
+        synchronized (this.listeners) {
+            for (Iterator<RecordListener> iterator = this.listeners.iterator(); iterator.hasNext();) {
+                RecordListener recordListener = iterator.next();
+                recordListener.recordAdded(this, recordId);
+            }
+        }
+    }
+
+    private void fireRecordChangedEvent(int recordId) {
+        synchronized (this.listeners) {
+            for (Iterator<RecordListener> iterator = this.listeners.iterator(); iterator.hasNext();) {
+                RecordListener recordListener = iterator.next();
+                recordListener.recordChanged(this, recordId);
+            }
+        }
+    }
+
+    private void fireRecordDeletedEvent(int recordId) {
+        synchronized (this.listeners) {
+            for (Iterator<RecordListener> iterator = this.listeners.iterator(); iterator.hasNext();) {
+                RecordListener recordListener = iterator.next();
+                recordListener.recordDeleted(this, recordId);
+            }
+        }
+    }
+
+    // Android Only
+    public synchronized boolean isClosed() {
+        return this.openCount <= 0;
+    }
+
+
+    // Android Only
+    public long getPk() {
+        return this.recordStorePk;
+    }
+
+    // Android Only
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    // Android Only
+    public void setNextId(int nextRecordId) {
+        this.nextRecordID = nextRecordId;
+    }
+
+    // Android Only
+    public void setNumberOfRecords(int numberOfRecords) {
+        this.numRecords = numberOfRecords;
+    }
+
+    // Android Only
+    public void setSize(int size) {
+        this.size = size;
+    }
+
+    private static RecordStore getOpenedRecordStoreFromCache(String recordStoreName) {
+        return openedRecordStores.get(recordStoreName);
+    }
+
+
+    private static void cacheRecordStore(String recordStoreName,RecordStore recordStore) {
+        openedRecordStores.put(recordStoreName, recordStore);
+        recordStore.openCount++;
+    }
+
+    /**
+     * Returns a cached record store and increases the open count.
+     * @param recordStoreName
+     * @return
+     */
+    private static RecordStore openRecordStoreFromCache(String recordStoreName) {
+        RecordStore recordStore = openedRecordStores.get(recordStoreName);
+        if(recordStore != null) {
+            recordStore.openCount++;
+        }
+        return recordStore;
+    }
+
+    private boolean closeChachedRecordStore() {
+        this.openCount--;
+        if (this.openCount > 0) {
+            return false;
+        }
+        openedRecordStores.remove(this.name);
+        return true;
+    }
 
 }
