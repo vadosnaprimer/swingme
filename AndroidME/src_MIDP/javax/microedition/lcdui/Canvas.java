@@ -384,10 +384,10 @@ public abstract class Canvas extends Displayable {
                 resultKeyCode = -5;
                 break;
             case KeyEvent.KEYCODE_MENU :
-                resultKeyCode = -6; // Left Soft-Key
+                resultKeyCode = -12;
                 break;
             case KeyEvent.KEYCODE_BACK :
-                resultKeyCode = -7; // Right Soft-Key
+                resultKeyCode = -11;
                 break;
             case KeyEvent.KEYCODE_DEL :
                 resultKeyCode = -8; // Backspace ascii
@@ -396,7 +396,7 @@ public abstract class Canvas extends Displayable {
                 resultKeyCode = -10;
                 break;
             case KeyEvent.KEYCODE_ENDCALL :
-                resultKeyCode = -11;
+                resultKeyCode = -11; // Never called on Android...
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP :
                 resultKeyCode = -36;
