@@ -71,6 +71,9 @@ public class MetalLookAndFeel extends LookAndFeel {
             listCellRenderer.addBackground( getPrimary3() , Style.SELECTED);
             setStyleFor("ListRenderer",listCellRenderer);
 
+            Style progressBar = new Style(defaultStyle);
+            progressBar.addForeground( getPrimary2() , Style.ALL);
+            setStyleFor("ProgressBar",progressBar);
 
             Style abstractButtonStyle = new Style(defaultStyle);
             abstractButtonStyle.addForeground( getBlack() , Style.FOCUSED);

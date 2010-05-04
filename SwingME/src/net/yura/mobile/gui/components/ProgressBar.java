@@ -18,7 +18,6 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.game.Sprite;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 
 /**
@@ -64,8 +63,8 @@ public class ProgressBar extends Component {
         }
         else {
 
-            g.setColor(foreground);
-            
+            g.setColor( getCurrentForeground() );
+
             if (go) {
                 int thickness = 20;
                 
