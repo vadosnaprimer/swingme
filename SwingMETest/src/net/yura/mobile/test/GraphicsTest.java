@@ -1,7 +1,5 @@
 package net.yura.mobile.test;
 
-import java.io.IOException;
-
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -31,6 +29,7 @@ public class GraphicsTest extends Section {
     public void createTests() {
         // service link
         addTest("Graphics Draw Region", "drawRegion");
+        addTest("Graphics Draw Image", "drawImage");
         addTest("Water Ripple", "waterRipple");
         addTest("Draw Offscreen", "drawOffscreen");
     }
@@ -42,8 +41,10 @@ public class GraphicsTest extends Section {
             info.removeAll();
         }
 
-        if ("drawRegion".equals(actionCommand)) {
-            DrawRegionPanel drawRegionPanel = new DrawRegionPanel();
+        boolean isDrawRegion = "drawRegion".equals(actionCommand);
+        if (isDrawRegion || "drawImage".equals(actionCommand)) {
+
+            DrawRegionPanel drawRegionPanel = new DrawRegionPanel(isDrawRegion);
 
             Button prevButton = new Button("< Prev");
             prevButton.setActionCommand("Prev");
@@ -77,13 +78,12 @@ public class GraphicsTest extends Section {
 
             Graphics g = img.getGraphics();
 
-            g.drawImage( mainPane.image.getImage() , 5, 5, 0);
+            g.drawImage(mainPane.image.getImage(), 5, 5, 0);
             g.setColor(0xFFFF0000);
             g.drawLine(0, 0, 50, 50);
 
             Label drawRegionPanel = new Label(new Icon(img));
-            addToScrollPane(drawRegionPanel, null );
-            
+            addToScrollPane(drawRegionPanel, null);
         }
     }
 
@@ -91,6 +91,7 @@ public class GraphicsTest extends Section {
         Image img;
         int transfIdx = 0;
         Label title = new Label("NONE");
+        boolean isDrawRegion;
 
         final int[] ANCHORS = {
                 Graphics.TOP | Graphics.LEFT, Graphics.TOP | Graphics.HCENTER, Graphics.TOP | Graphics.RIGHT,
@@ -112,6 +113,9 @@ public class GraphicsTest extends Section {
                 "MIRROR", "MIRROR_90", "MIRROR_180", "MIRROR_270",
         };
 
+        DrawRegionPanel(boolean isDrawRegion) {
+            this.isDrawRegion = isDrawRegion;
+        }
 
         public void paint(Graphics2D g) {
             super.paint(g);
@@ -139,7 +143,12 @@ public class GraphicsTest extends Section {
 
         private void drawImage(Graphics2D g, int x, int y, Image img, int transform, int anchor) {
 
-            g.getGraphics().drawRegion(img, 4, 4, img.getWidth() - 8, img.getHeight() - 8, transform, x, y, anchor);
+            if (isDrawRegion) {
+                g.getGraphics().drawRegion(img, 4, 4, img.getWidth() - 8, img.getHeight() - 8, transform, x, y, anchor);
+            } else {
+                Image img1 = Image.createImage(img, 4, 4, img.getWidth() - 8, img.getHeight() - 8, transform);
+                g.getGraphics().drawImage(img1, x, y, anchor);
+            }
 
             g.drawLine(x, y - 5, x, y + 5);
             g.drawLine(x - 5, y, x + 5, y);
@@ -216,44 +225,61 @@ public class GraphicsTest extends Section {
 
         private void newframe() {
 
-            short[] tmp = ripplemap1;
-            ripplemap1 = ripplemap2;
-            ripplemap2 = tmp;
+            // Speed up: access all class fields, using local method variables
+            int imgW = imgWidth;
+            int imgH = imgHeight;
+            int imgWMax = imgWidth - 1;
+            int imgHMax = imgHeight - 1;
+            int[] ripple = this.ripple;
+            int[] texture = this.texture;
 
-            for (int y = 1; y < imgHeight - 1; y++) {
-                int i = y * imgWidth;
-                for (int x = 1; x < imgWidth - 1; x++) {
+            // Swap
+            short[] map1 = ripplemap2;
+            short[] map2 = ripplemap1;
+            ripplemap1 = map1;
+            ripplemap2 = map2;
+
+            for (int y = 1; y < imgHMax; y++) {
+                int i = y * imgW;
+                for (int x = 1; x < imgWMax; x++) {
                     i++;
-                    int data =
-                        ripplemap2[i-1]+
-                        ripplemap2[i+1]+
-                        ripplemap2[i-imgWidth]+
-                        ripplemap2[i+imgWidth];
+                    int data = map2[i-1] + map2[i+1] + map2[i-imgW] + map2[i+imgW];
 
-                    data = (data >> 1) - ripplemap1[i];
+                    data = (data >> 1) - map1[i];
                     data -= (data >> 5);
-                    ripplemap1[i] = (short) data;
+                    map1[i] = (short) data;
 
                     data = data >> 4;
                     // offsets
                     int a = x + data;
                     int b = y + data;
 
-                    // bounds check
-                    if (data > 0) {
-                        if (a >= imgWidth)
-                            a = imgWidth - 1;
 
-                        if (b >= imgHeight)
-                            b = imgHeight - 1;
-                    } else {
-                        if (a < 0)
-                            a = 0;
-                        if (b < 0)
-                            b = 0;
+                    try {
+                        // Speed up: by default assume we will be in bounds...
+                        ripple[i] = texture[a + (b * imgW)];
                     }
+                    catch (IndexOutOfBoundsException e) {
+                        // We were wrong... Do bounds checking
+                        if (data > 0) {
+                            if (a >= imgW) {
+                                a = imgWMax;
+                            }
 
-                    ripple[i] = texture[a + (b * imgWidth)];
+                            if (b >= imgH) {
+                                b = imgHMax;
+                            }
+                        } else {
+                            if (a < 0) {
+                                a = 0;
+                            }
+                            if (b < 0) {
+                                b = 0;
+                            }
+                        }
+
+                        ripple[i] = texture[a + (b * imgW)];
+                    }
                 }
             }
         }
