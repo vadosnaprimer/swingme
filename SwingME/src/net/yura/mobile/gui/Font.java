@@ -40,7 +40,7 @@ public class Font {
 	private Hashtable characters; // maps unicode chars to their index
 	private int height;
         private int characterSpacing;
-       
+
 
 	private int startX[];
 	private int startY[];
@@ -68,7 +68,7 @@ public class Font {
          * make new default font
          */
 	private Font() {
-            
+
 	}
 
         /**
@@ -126,7 +126,7 @@ public class Font {
 	}
 
         public static Font getFont(InputStream is, Image[] imagesArray, int[] colorsArray) throws IOException {
-		
+
             Font f = new Font();
 	    f.characterImage = imagesArray;
 
@@ -208,7 +208,7 @@ public class Font {
                             Integer charPairIdentifier = getCharPairId(first,second);
 
                             int amount = getShortSigned(dis);
-                            
+
                             Integer kerningValue = getInteger(amount);
                             f.kerning.put(charPairIdentifier, kerningValue);
 
@@ -221,7 +221,7 @@ public class Font {
 
             integers = null;
             return f;
-            
+
         }
 
 	public static int getShortUnsigned(DataInputStream dis) throws IOException {
@@ -262,7 +262,7 @@ public class Font {
         }
 
 	public static Font getFont(String name) {
-		
+
 		try {
 
                         Font f = new Font();
@@ -428,7 +428,7 @@ public class Font {
 	 * @return The width of the requested charIndex when rendered using this font.
 	 */
 	public int getWidth(char c) {
-		
+
 		if (systemFont != null) {
 			return systemFont.charWidth(c);
 		}
@@ -575,7 +575,7 @@ public class Font {
 
 		Image[] glyphs = (Image[]) imageTable.get(new Integer(color));
 
-		
+
                 if (glyphs == null ) { // color not found?
                         glyphs = new Image[characters.size()];
                         imageTable.put(new Integer(color), glyphs);
@@ -606,11 +606,11 @@ public class Font {
 					characterHeight[index],
 					Sprite.TRANS_NONE
 					);
-				
+
                                 return glyphs[index];
                             }
                         }
-			
+
                         int defaultColor = colors[0];
 
                         Image glyph = getGlyph(index,defaultColor);
@@ -663,7 +663,7 @@ public class Font {
 			return getWidth(s);
 		} else {
 
-                        int color = g.getColor();
+                        int color = g.getColor() | 0xFF000000;
 
 			if (numbermode) {
 
@@ -740,9 +740,9 @@ public class Font {
 				// Render each charIndex of the string.
 				for (i = 0; i < length; i++) {
 					character = s.charAt(i);
-					
+
 					charIndex = getCharIndex(character);
-					
+
 					if(charIndex > -1) {
 						// Kerning
 						Integer kerningModifier = (Integer) kerning.get(getCharPairId((char)prevCharacter, (char)charIndex));
@@ -780,7 +780,7 @@ public class Font {
 						// Swap fonts
 						systemFont = javax.microedition.lcdui.Font.getDefaultFont();
 						javax.microedition.lcdui.Font savedFont = g.getFont();
-						
+
 						g.setFont(systemFont);
 						g.drawChar(character, x, y, alignment);
 						x += getWidth(character); // Do advance
@@ -789,7 +789,7 @@ public class Font {
 						systemFont = null;
 						g.setFont(savedFont);
 					}
-					
+
 					prevCharacter = charIndex;
 				}
 
