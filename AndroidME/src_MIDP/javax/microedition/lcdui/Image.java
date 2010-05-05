@@ -29,6 +29,10 @@ public class Image {
         // MIDP: the result image width/height depends on the transform
         Image res;
         switch (transform) {
+            case Sprite.TRANS_NONE:
+                Bitmap bmp = Bitmap.createBitmap(image.bitmap, x, y, width, height);
+                res = new Image(bmp);
+                break;
             case Sprite.TRANS_ROT90:
             case Sprite.TRANS_ROT270:
             case Sprite.TRANS_MIRROR_ROT90:
@@ -41,39 +45,34 @@ public class Image {
             }
         }
 
-        Graphics g = res.getGraphics();
-        g.drawRegion(image, x, y, width, height, transform, 0, 0, 0);
+        if (transform!=Sprite.TRANS_NONE) {
+            Graphics g = res.getGraphics();
+            g.drawRegion(image, x, y, width, height, transform, 0, 0, 0);
+        }
 
         return res;
     }
 
     public static Image createImage(InputStream stream) throws IOException {
         Bitmap bitmap = BitmapFactory.decodeStream(stream);
+        if (bitmap==null) {
+            throw new IOException();
+        }
         return new Image(bitmap);
     }
 
     private static Image createTransparentImage(int width, int height) {
-        try {
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
-            return new Image(bitmap);
-        } catch (Exception e) {
-            return null;
-        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        return new Image(bitmap);
     }
 
     public static Image createImage(int width, int height) {
-        Image res;
+        Image res = createTransparentImage(width, height);
 
-        try {
-            res = createTransparentImage(width, height);
-
-            // MIDP: All pixels should be white
-            Graphics g = res.getGraphics();
-            g.setColor(0xFFFFFFFF);
-            g.fillRect(0, 0, width, height);
-        } catch (Exception e) {
-            res = null;
-        }
+        // MIDP: All pixels should be white
+        Graphics g = res.getGraphics();
+        g.setColor(0xFFFFFFFF);
+        g.fillRect(0, 0, width, height);
 
         return res;
     }
@@ -84,27 +83,21 @@ public class Image {
 
     public static Image createImage(byte[] imgData, int offset, int length) {
         Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
-        try {
-            return new Image(bitmap);
-        } catch (Exception e) {
+        if (bitmap==null) {
             return null;
         }
+        return new Image(bitmap);
     }
 
     public static final Image createRGBImage(int[] rgb, int width, int height, boolean processAlpha) {
-
         Bitmap.Config config = (processAlpha) ? Bitmap.Config.ARGB_4444 : Bitmap.Config.RGB_565;
         Bitmap bitmap = Bitmap.createBitmap(rgb, width, height, config);
-        try {
-            return new Image(bitmap);
-        } catch (Exception e) {
-            return null;
-        }
+        return new Image(bitmap);
     }
 
-    private Image(Bitmap bitmap) throws IOException {
+    private Image(Bitmap bitmap) {
         if (bitmap == null) {
-            throw new IOException();
+            throw new NullPointerException();
         }
         this.bitmap = bitmap;
     }
