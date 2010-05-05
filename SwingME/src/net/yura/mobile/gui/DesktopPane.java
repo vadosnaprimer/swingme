@@ -96,7 +96,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // if this method is being called from a thread other then the event thread
         // we dont want it to mess with whats currently happening in the paint
-        synchronized(dp.repaintComponent) {
+        synchronized(dp.uiLock) {
 
             // while it chooses what array to add the component to
             // the validating turn id can NOT be changed
@@ -160,6 +160,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public int defaultSpace;
     private int menuHeight;
     final private Vector windows = new Vector();
+    final private Object uiLock = windows;
     private Window currentWindow;
     private ToolTip tooltip;
     private ToolTip indicator;
@@ -271,10 +272,6 @@ public class DesktopPane extends Canvas implements Runnable {
         getDesktopPane().UIManager.put(key, value);
     }
 
-    public Component getAnimatedComponent() {
-        return currentAnimatedComponent;
-    }
-
     public final void run() {
 
         try {
@@ -296,13 +293,13 @@ public class DesktopPane extends Canvas implements Runnable {
                 return;
             }
 
-            synchronized (this) {
+            synchronized (uiLock) {
                 currentAnimatedComponent = nextAnimatedComponent;
                 nextAnimatedComponent = null;
 
                 if (currentAnimatedComponent == null) {
                     try {
-                        wait();
+                        uiLock.wait();
                     }
                     catch (InterruptedException e) {
                         Logger.info(e);
@@ -330,20 +327,30 @@ public class DesktopPane extends Canvas implements Runnable {
      * This will call the animate() method on a component from the animation thread
      * @param com The Component to call animte() on
      */
-    public synchronized void animateComponent(Component com) {
-        currentAnimatedComponent = null;
-        nextAnimatedComponent = com;
+    public void animateComponent(Component com) {
+        synchronized(uiLock) {
+            currentAnimatedComponent = null;
+            nextAnimatedComponent = com;
 
-        // in case this is called from initialize
-        // like when a textfield is added to the main window at starttime
-        if (Thread.currentThread() == animationThread) {
-            return;
+            // in case this is called from initialize
+            // like when a textfield is added to the main window at starttime
+            if (Thread.currentThread() == animationThread) {
+                return;
+            }
+
+            // does not work on N70
+            //animationThread.interrupt();
+            uiLock.notify();
         }
-
-        // does not work on N70
-        //animationThread.interrupt();
-        notify();
     }
+
+    public void aniWait(Object component,int a) throws InterruptedException{
+        uiLock.wait(a);
+        if (currentAnimatedComponent != component) {
+            throw new InterruptedException();
+        }
+    }
+
     // called by destroyApp
 
     void kill() {
@@ -475,7 +482,7 @@ public class DesktopPane extends Canvas implements Runnable {
             // Initialize wideScreen for the first time
             wideScreen = (oldw > oldh);
 
-            animationThread = new Thread(this);
+            animationThread = new Thread(this, "SwingME-Animation");
             animationThread.start();
 
             paintdone = true;
@@ -488,35 +495,36 @@ public class DesktopPane extends Canvas implements Runnable {
         try {
 
             // can not add or remove windows while this is happening
-            synchronized(windows) {
+            synchronized(uiLock) {
 
                 boolean doFullRepaint;
 
                 // if we have started revalidating, we do not want any random reval and repaint happening
                 // as if they do happen half way though, we would get a component being repainted
                 // even though it did not get revalidated
-                synchronized (repaintComponent) {
+                //synchronized (repaintComponent) {
 
-                    // now we need to layout all the components
-                    // we use a 3 pass system, as 3 passes is the maximum needed to layout even
-                    // the most complex layout with flexable components inside scrollpanes
-                    validating = 1;
-                    validateComponents(revalidateComponents1);
-                    validating = 2;
-                    validateComponents(revalidateComponents2);
-                    validating = 3;
-                    validateComponents(revalidateComponents3);
-                    validating = 0;
+                // now we need to layout all the components
+                // we use a 3 pass system, as 3 passes is the maximum needed to layout even
+                // the most complex layout with flexable components inside scrollpanes
+                validating = 1;
+                validateComponents(revalidateComponents1);
+                validating = 2;
+                validateComponents(revalidateComponents2);
+                validating = 3;
+                validateComponents(revalidateComponents3);
+                validating = 0;
 
-                    // For thread safety, we cache the components to repaint
-                    SystemUtil.addAll(repaintComponent2, repaintComponent);
-                    repaintComponent.removeAllElements();
+                // For thread safety, we cache the components to repaint
+                // and as a component can call repaint from inside its paint method
+                SystemUtil.addAll(repaintComponent2, repaintComponent);
+                repaintComponent.removeAllElements();
 
-                    // For thread safety, we cache fullrepaint now, and clean it
-                    doFullRepaint = fullrepaint;
-                    fullrepaint = false;
+                // For thread safety, we cache fullrepaint now, and clean it
+                doFullRepaint = fullrepaint;
+                fullrepaint = false;
 
-                }
+                //}
 
                 Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
 
@@ -602,7 +610,7 @@ public class DesktopPane extends Canvas implements Runnable {
     */
                     }
                 }
-            }
+            } // end synchronized
 
             //                if (!windows.isEmpty()) {
             //                    drawSoftkeys(graphics);
@@ -699,7 +707,7 @@ public class DesktopPane extends Canvas implements Runnable {
      * @param rc The Component to repaint
      */
     public void repaintComponent(Component rc) {
-        synchronized(repaintComponent) {
+        synchronized(uiLock) {
             addToComponentVector(rc, repaintComponent);
         }
         repaint();
@@ -716,7 +724,7 @@ public class DesktopPane extends Canvas implements Runnable {
         //#debug
         Logger.debug("FULL REPAINT!!! this method should NOT normally be called");
 
-        synchronized(repaintComponent) {
+        synchronized(uiLock) {
             fullrepaint = true;
         }
 
@@ -739,7 +747,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         //#enddebug
 
-        synchronized (repaintComponent) {
+        synchronized (uiLock) {
             addToComponentVector(rc, revalidateComponents1);
         }
     }
@@ -802,7 +810,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void add(Window w) {
         // we dont want to add half way though a repaint, as it could be using this vector
-        synchronized (windows) {
+        synchronized (uiLock) {
             if (w!=null && !windows.contains(w)) {
                 w.setDesktopPane(this);
                 windows.addElement(w);
@@ -827,7 +835,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void remove(Window w) {
         // dont want to change the windows Vector while we are painting
-        synchronized (windows) {
+        synchronized (uiLock) {
             if (windows.contains(w)) {
                 windows.removeElement(w);
                 pointerComponent = null;
@@ -848,7 +856,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void setSelectedFrame(Window w) {
         // dont want to change the windows Vector while we are painting
-        synchronized (windows) {
+        synchronized (uiLock) {
             if ( w != null && windows.contains(w) ) {
                 if (currentWindow == w) {
                     return;
@@ -1196,7 +1204,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
             // if there is a tooltip up or ready to go up,
             // then kill it!
-            synchronized (this) {
+            synchronized (uiLock) {
                 if ((tooltip.isWaiting() && nextAnimatedComponent == null) || nextAnimatedComponent == tooltip) {
                     animateComponent(null);
                 }

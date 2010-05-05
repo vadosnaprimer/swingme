@@ -158,18 +158,20 @@ public class Graphics2D {
 
 
             //#mdebug info
-            int tile = ((dest_w/a)*(dest_h/b));
-            if ( tile>15 ) {
-                Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
+            if (Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
+                int tile = ((dest_w/a)*(dest_h/b));
+                if ( tile>15 ) {
+                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
 
-                if ( tile>30 ) {
-                  Logger.info("###########################################################");
-                    g.setColor( new Random().nextInt() );
-                    for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
-                        g.drawLine(pos_x, dest_y, pos_x, (dest_y+dest_h));
-                    }
-                    for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
-                        g.drawLine(dest_x, pos_y, (dest_x+dest_w), pos_y);
+                    if ( tile>30 ) {
+                      Logger.info("###########################################################");
+                        g.setColor( new Random().nextInt() );
+                        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
+                            g.drawLine(pos_x, dest_y, pos_x, (dest_y+dest_h));
+                        }
+                        for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
+                            g.drawLine(dest_x, pos_y, (dest_x+dest_w), pos_y);
+                        }
                     }
                 }
             }

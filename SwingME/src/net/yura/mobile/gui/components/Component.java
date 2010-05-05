@@ -592,11 +592,7 @@ public abstract class Component {
     }
 
     public void wait(int a) throws InterruptedException {
-        DesktopPane dp = getDesktopPane();
-        dp.wait(a);
-        if (dp.getAnimatedComponent()!=this) {
-            throw new InterruptedException();
-        }
+        getDesktopPane().aniWait(this,a);
     }
 
     /**

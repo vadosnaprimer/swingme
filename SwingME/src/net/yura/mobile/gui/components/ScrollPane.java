@@ -838,7 +838,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         ScrollPane.dragScrollPane = dragScrollPane;
 
         if (startThread) {
-            new Thread(dragScrollPane).start();
+            new Thread(dragScrollPane,"SwingME-Scroll").start();
         }
 
         ScrollPane.class.notifyAll();
