@@ -189,6 +189,10 @@ public class GraphicsTest extends Section {
 
         private int imgWidth, imgHeight;
 
+        long lastDrawTime;
+        int fps;
+        int nFrames;
+
 
         WaterPanel() {
             try {
@@ -216,7 +220,7 @@ public class GraphicsTest extends Section {
 
             for (int j = dy - riprad; j < dy + riprad; j++) {
                 for (int k = dx - riprad; k < dx + riprad; k++) {
-                    if (j >= 0 && j < imgHeight && k >= 0 && k < imgWidth) {
+                    if (j > 0 && j < imgHeight - 1 && k > 0 && k < imgWidth - 1) {
                         ripplemap1[(j * imgWidth) + k] += 512;
                     }
                 }
@@ -299,6 +303,23 @@ public class GraphicsTest extends Section {
 //            long t2 = System.currentTimeMillis();
 
 //            System.out.println("t1 = " + (t1 - t0) + " t2 = " + (t2 - t1));
+
+            nFrames++;
+            long timeNow = System.currentTimeMillis();
+            int timeDiff = (int) (timeNow - lastDrawTime);
+            if (timeDiff > 1000) {
+                fps = nFrames * 10000 / timeDiff;
+                lastDrawTime = timeNow;
+                nFrames = 0;
+            }
+
+            String s = (fps / 10) + "." + (fps % 10) + "fps";
+            int w = g.getFont().getWidth(s) + 2;
+            int h = g.getFont().getHeight() + 2;
+            g.setColor(0xFF000000);
+            g.fillRect(2, 5, w, h);
+            g.setColor(0xFFFFFFFF);
+            g.drawString(s, 3, 6);
 
             repaint();
         }
