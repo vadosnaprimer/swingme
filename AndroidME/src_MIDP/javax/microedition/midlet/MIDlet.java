@@ -73,6 +73,11 @@ public abstract class MIDlet {
 
     public final void notifyDestroyed() {
         this.activity.finish();
+        try {
+            System.exit(0);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     public final void doDestroyApp(boolean unconditional)
