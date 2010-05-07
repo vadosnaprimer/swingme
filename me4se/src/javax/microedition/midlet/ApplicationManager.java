@@ -1041,8 +1041,10 @@ public class ApplicationManager {
         // YURA FIX
         case KeyEvent.VK_TAB:
             return e.isShiftDown()?"UP":"DOWN";
-        case KeyEvent.VK_ALT:
-            return "MENU";
+        // this can not go here as alt when used with modifires can
+        // mean too many different things, Alt-F4, Alt-Tab
+        //case KeyEvent.VK_ALT:
+        //    return "MENU";
 
     case KeyEvent.VK_NUMPAD1:
       return swapNumPad ? "7" : "1";

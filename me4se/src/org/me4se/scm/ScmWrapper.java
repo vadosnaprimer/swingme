@@ -284,7 +284,7 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
   public void keyPressed(KeyEvent ev) {
     String name = manager.getButtonName(ev);
-//    System.out.println("Pressed Button Name: " + name + " event: " + ev);
+    //System.out.println("Pressed Button Name: " + name + " event: " + ev);
     if (name != null) {
 //      System.out.println("Button Name1: " + name);
 
@@ -295,13 +295,9 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
         component.keyPressed(name);
       }
     }
-
-    // Alt+F4 should still work to close app
-    if (ev.getKeyCode() != KeyEvent.VK_F4) {
-        ev.consume();
-    }
+    menu = ev.getKeyCode() == KeyEvent.VK_ALT;
   }
-
+  boolean menu;
   /**
    * Dont do anything here...
    */
@@ -310,23 +306,23 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
   public void keyReleased(KeyEvent ev) {
     String name = manager.getButtonName(ev);
-
+    //System.out.println("Released Button Name: " + name + " event: " + ev);
     if (name == null) {
       name = pressing;
     }
     pressing = null;
 
     if (name != null) {
-
-//      System.out.println("Button Name2: " + name);
-
       component.keyReleased(name);
     }
 
     // Alt+F4 should still work to close app
-    if (ev.getKeyCode() != KeyEvent.VK_F4) {
+    if (menu && ev.getKeyCode() == KeyEvent.VK_ALT) {
+        component.keyPressed("MENU");
+        component.keyReleased("MENU");
         ev.consume();
     }
+    menu = false;
   }
 
   public void mouseEntered(MouseEvent ev) {
