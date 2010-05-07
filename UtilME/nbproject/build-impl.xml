@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- *** GENERATED FROM project.xml - DO NOT EDIT *** -->
-<project name="UtilME-impl" default="jar" basedir="..">
+<project name="UtilME-impl" default="pre-load-properties" basedir="..">
     <!--load-properties-->
+	<!--property name="config.active" value="DEBUG"/>
+	<property name="netbeans.user" value="C:\Users\Gavin\.netbeans\6.7"/-->
+	
     <target name="pre-load-properties">
-        <property file="nbproject/private/private.properties"/>
+		<echo>running pre-load-properties..</echo>
+        <property file="../nbproject/private/private.properties"/>
         <property name="user.properties.file" location="${netbeans.user}/build.properties"/>
         <available property="user.properties.file.exists" file="${user.properties.file}"/>
     </target>
@@ -350,6 +354,24 @@
         <property name="debug.level" value="debug"/>
         <mkdir dir="${preprocessed.dir}"/>
         <echo message="ignore me" file="${build.dir}/.timestamp"/>
+		
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement path="${libs.ant-contrib.classpath}"/>
+            </classpath>
+        </taskdef>
+		
+		<!-- if no environment debug level defined then take from the netbeans configuration -->
+		<if>
+			<contains string="${env.debug.level}" subString="env.debug.level"/>
+			<then>
+				<var name="mutable.debug.level" value="${debug.level}"/>
+			</then>
+			<else>
+				<var name="mutable.debug.level" value="${env.debug.level}"/>
+			</else>
+		</if>
+		
         <nb-prep destdir="${preprocessed.dir}" preprocessfor="${config.active.name},${abilities},DebugLevel=${debug.level}" encoding="${javac.encoding}">
             <fileset dir="${buildsystem.baton}" defaultexcludes="${filter.use.standard}" excludes="${filter.excludes.evaluated}"/>
         </nb-prep>
