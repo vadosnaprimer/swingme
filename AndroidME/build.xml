@@ -97,6 +97,7 @@
             <arg value="${outdir}"/>            
         </java>
         
+<!--
         <move file="${outdir}" tofile="${outdir}.tmp"/>
         
         <jar destfile="${outdir}.tmp/app.jar" basedir="${outdir}.tmp/classes/"/>
@@ -111,6 +112,7 @@
        </java>
         
        <unzip src="${outdir}.tmp/app2.jar" dest="${outdir}/classes/"/>
+-->
     </target>
         
     <target name="-dex" depends="compile, fix-build	">
@@ -170,7 +172,7 @@
          </echo>
          <apply executable="${dx}" failonerror="true" parallel="true">
              <arg value="--dex" />
-             <arg value="--no-strict" />
+             <arg value="--no-locals" />
              <arg value="--output=${intermediate.dex.file}" />
              <extra-parameters />
              <arg line="${verbose.option}" />
