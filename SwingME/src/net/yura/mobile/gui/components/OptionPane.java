@@ -302,14 +302,17 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         if (options==null) {
             switch (optionType) {
                 case YES_NO_OPTION:
-                    options = new Button[] {makeButton("Yes","yes"),makeButton("No","no")};
+                    options = new Button[] {makeButton("yesText","yes",KeyEvent.KEY_SOFTKEY1),makeButton("noText","no",KeyEvent.KEY_SOFTKEY2)};
                     break;
                 case OK_CANCEL_OPTION:
-                    options = new Button[] {makeButton("OK","ok"),makeButton("Cancel","cancel")};
+                    options = new Button[] {makeButton("okText","ok",KeyEvent.KEY_SOFTKEY1),makeButton("cancelText","cancel",KeyEvent.KEY_SOFTKEY2)};
                     break;
                 case OK_OPTION:
                 default:
-                    options = new Button[] {makeButton("OK","ok")};
+                    // it is not clear if this should be SOFT1 or SOFT2
+                    // as when u are showing a about box, u will want it on SOFT2
+                    // and if you are showing a question/input dialog then SOFT1
+                    options = new Button[] {makeButton("okText","ok",KeyEvent.KEY_SOFTKEY2)};
                     break;
             }
             initialValue = options[0];
@@ -336,9 +339,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         
     }
 
-    public static Button makeButton(String label,String actionCommand) {
-        Button button = new Button(label);
+    public static Button makeButton(String label,String actionCommand,int m) {
+        Button button = new Button((String)DesktopPane.get(label));
         button.setActionCommand(actionCommand);
+        button.setMnemonic(m);
         return button;
     }
     

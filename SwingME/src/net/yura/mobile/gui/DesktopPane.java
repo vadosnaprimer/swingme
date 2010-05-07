@@ -232,6 +232,9 @@ public class DesktopPane extends Canvas implements Runnable {
         UIManager.put("closeText", "Close");
         UIManager.put("exitText", "Exit");
 
+        UIManager.put("yesText", "Yes");
+        UIManager.put("noText", "No");
+
         //      // check if we want to be in debug mode
         //      String s;
         //      if ((s = midlet.getAppProperty("Debug-Mode")) != null && ( s.toUpperCase().equals("OFF") || s.toUpperCase().equals("NO") || s.toUpperCase().equals("FALSE") || s.toUpperCase().equals("F") ) ) {
