@@ -215,17 +215,17 @@ public class NimbusLookAndFeel extends LookAndFeel {
         textareaBorderSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusBorder"), decodeColor("nimbusBorder"), 1, 0, 1));
         textareaBorderSettings.addElement(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), decodeColor("nimbusLightBackground"), 1, 0, 1));
 
-        Vector textareaSelectedSettings = new Vector();
-        copyBorders(textareaBorderSettings, textareaSelectedSettings);
-        textareaSelectedSettings.setElementAt(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), colorLightYellow, 1, 0, 1), 1);
+        Vector textareaFocusedSettings = new Vector();
+        copyBorders(textareaBorderSettings, textareaFocusedSettings);
+        textareaFocusedSettings.setElementAt(new NimbusBorderSetting(decodeColor("nimbusLightBackground"), colorLightYellow, 1, 0, 1), 1);
 
         Vector textareaDisabledSettings = new Vector();
         copyBorders(textareaBorderSettings, textareaDisabledSettings);
 
         setUIDefault("TextField.background",noColor);
         setUIDefault("TextField.border",new NimbusBorder(textareaBorderSettings));
-        setUIDefault("TextField[focused].border",new NimbusBorder(textareaSelectedSettings));
-        setUIDefault("TextField[selected].border",new NimbusBorder(textareaSelectedSettings));
+        setUIDefault("TextField[focused].border",new NimbusBorder(textareaFocusedSettings));
+        //setUIDefault("TextField[selected].border",new NimbusBorder(textareaSelectedSettings));
         setUIDefault("TextField[disabled].border",new NimbusBorder(textareaDisabledSettings));
         //setUIDefault("TextField.foreground",uiSettings.get("nimbusDisabledText"));
 

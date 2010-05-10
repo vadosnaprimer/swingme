@@ -767,7 +767,12 @@ public abstract class TextComponent extends Component implements ActionListener,
             setText( String.valueOf(obj) );
         }
         public Object getValue() {
-            return getText();
+            String x = getText();
+            if ((constraints & javax.microedition.lcdui.TextField.CONSTRAINT_MASK) == javax.microedition.lcdui.TextField.NUMERIC) {
+                if ("".equals(x)) return null;
+                return Integer.valueOf( x );
+            }
+            return x;
         }
 
 }
