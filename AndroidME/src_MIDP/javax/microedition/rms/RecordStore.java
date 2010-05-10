@@ -132,6 +132,11 @@ public class RecordStore extends Object {
             synchronized (this.listeners) {
                 this.listeners.clear();
             }
+
+            for (int i = 0; i < CACHE_SIZE; i++) {
+                cachedIds[i] = 0;
+                cachedValues[i] = null;
+            }
         }
     }
 
@@ -278,6 +283,10 @@ public class RecordStore extends Object {
         return data.length - offset;
     }
 
+    private final int CACHE_SIZE = 5;
+    private int cachedIdx;
+    private int[] cachedIds = new int[CACHE_SIZE];
+    private byte[][] cachedValues = new byte[CACHE_SIZE][];
 
     public byte[] getRecord(int recordId) throws RecordStoreNotOpenException, InvalidRecordIDException, RecordStoreException {
         if (isClosed()) {
@@ -286,7 +295,19 @@ public class RecordStore extends Object {
         if (recordId < 0) {
             throw new InvalidRecordIDException();
         }
+
+        for (int i = 0; i < CACHE_SIZE; i++) {
+            if (recordId == cachedIds[i]) {
+                return cachedValues[i];
+            }
+        }
+
         byte[] record = sqlDao.getRecord(getPk(), recordId);
+
+        cachedValues[cachedIdx] = record;
+        cachedIds[cachedIdx] = recordId;
+        cachedIdx = (cachedIdx + 1) % CACHE_SIZE;
+
         return record;
     }
 

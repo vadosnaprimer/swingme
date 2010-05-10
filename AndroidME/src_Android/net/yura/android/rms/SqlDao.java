@@ -44,11 +44,13 @@ public class SqlDao {
                     COLUMNNAME_RECORDSTORE_VERSION + " INT DEFAULT 0," +
                     COLUMNNAME_RECORDSTORE_NUMBER_OF_RECORDS + " INT DEFAULT 0," +
                     "timestamp INT DEFAULT 0);";
+
             String b = "CREATE TABLE " + TABLENAME_RECORD + " (" +
-                    COLUMNNAME_RECORD_RECORD_PK + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT," +
                     COLUMNNAME_RECORD_RECORDSTORE_FK + " INT NOT NULL," +
+                    COLUMNNAME_RECORD_RECORDNUMBER + " INT NOT NULL," +
                     COLUMNNAME_RECORD_DATA + " BLOB," +
-                    COLUMNNAME_RECORD_RECORDNUMBER + " INT NOT NULL);";
+                    "PRIMARY KEY(" + COLUMNNAME_RECORD_RECORDSTORE_FK + "," + COLUMNNAME_RECORD_RECORDNUMBER + "));";
+
             database2.beginTransaction();
             database2.execSQL(a);
             database2.execSQL(b);
@@ -310,17 +312,19 @@ public class SqlDao {
      */
     public synchronized byte[] getRecord(long recordStorePk, int recordId) {
         Cursor resultCursor = database.query(TABLENAME_RECORD,new String[] {COLUMNNAME_RECORD_DATA},COLUMNNAME_RECORD_RECORDNUMBER+"=? AND "+COLUMNNAME_RECORD_RECORDSTORE_FK+"=?",new String[] {Long.toString(recordId),Long.toString(recordStorePk)},null,null,null);
-        byte[] data;
         try {
-            if(resultCursor.getCount() == 0) {
-                return null;
+            if (resultCursor.moveToFirst()) {
+                return resultCursor.getBlob(0);
             }
-            resultCursor.moveToFirst();
-            data = resultCursor.getBlob(0);
-        } finally {
+        }
+        catch (Exception e) {
+            // Do nothing. Just return null...
+        }
+        finally {
             resultCursor.close();
         }
-        return data;
+
+        return null;
     }
 
     /**
