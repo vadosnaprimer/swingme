@@ -339,7 +339,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         
     }
 
-    public static Button makeButton(String label,String actionCommand,int m) {
+    private static Button makeButton(String label,String actionCommand,int m) {
         Button button = new Button((String)DesktopPane.get(label));
         button.setActionCommand(actionCommand);
         button.setMnemonic(m);
