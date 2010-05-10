@@ -268,58 +268,31 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         return midlet;
     }
 
-// JP - TODO
-//    @Override
-//    protected void onDestroy() {
-//        try {
-//            if (this.midlet != null) {
-//                this.midlet.doDestroyApp(true);
-//                this.midlet = null;
-//            }
-//        } catch (Exception ex) {
-//            throw new RuntimeException("unable to destroy", ex);
-//        }
-//        // this.resources.getAssets().release();
-//        super.onDestroy();
-//    }
-//
-//    @Override
-//    protected void onPause() {
-//        try {
-//            if (this.midlet != null) {
-//                this.midlet.doPauseApp();
-//            }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            throw new RuntimeException("unable to freeze app", ex);
-//        }
-//        super.onPause();
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        // TODO: JP
-////JP        onDestroy();
-//
-//        super.onStop();
-//    }
-//
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//
-//        try {
-//            if (midlet == null) {
-//                startMIDlet(null);
-//            }
-//            else {
-//                midlet.doStartApp();
-//            }
-//        } catch (Throwable ex) {
-//            ex.printStackTrace();
-//        }
-//    }
+    private void closeMIDlet() {
+        try {
+            if (this.midlet != null) {
+                this.midlet.doDestroyApp(true);
+                this.midlet = null;
+            }
+        }
+        catch (Throwable ex) {
+        }
+    }
+
+    @Override
+    public void finish() {
+        closeMIDlet();
+        super.finish();
+    }
+
+
+    @Override
+    protected void onDestroy() {
+
+        closeMIDlet();
+        super.onDestroy();
+    }
+
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
