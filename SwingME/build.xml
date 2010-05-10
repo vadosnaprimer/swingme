@@ -36,6 +36,39 @@
         <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
     </target>
 
+	<target name="do-preprocess" unless="no.preprocess">
+        <fail unless="preprocessed.dir">Must set preprocessed.dir</fail>
+        <property name="abilities" value=""/>
+        <property name="debug.level" value="debug"/>
+        <mkdir dir="${preprocessed.dir}"/>
+        <echo message="ignore me" file="${build.dir}/.timestamp"/>
+		
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+            <classpath>
+                <pathelement path="${libs.ant-contrib.classpath}"/>
+            </classpath>
+        </taskdef>
+		
+		<!-- if no environment debug level defined then take from the netbeans configuration -->
+		<if>
+			<contains string="${env.debug.level}" subString="env.debug.level"/>
+			<then>
+				<var name="mutable.debug.level" value="${debug.level}"/>
+			</then>
+			<else>
+				<var name="mutable.debug.level" value="${env.debug.level}"/>
+			</else>
+		</if>
+		
+        <nb-prep destdir="${preprocessed.dir}" preprocessfor="${config.active.name},${abilities},DebugLevel=${mutable.debug.level}" encoding="${javac.encoding}">
+            <fileset dir="${buildsystem.baton}" defaultexcludes="${filter.use.standard}" excludes="${filter.excludes.evaluated}"/>
+        </nb-prep>
+        <copy todir="${preprocessed.dir}">
+            <fileset dir="${buildsystem.baton}" defaultexcludes="${filter.use.standard}" excludes="${filter.excludes.evaluated},${build.classes.excludes}"/>
+        </copy>
+        <nb-overrideproperty name="buildsystem.baton" value="${preprocessed.dir}"/>
+    </target>
+	
     <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6,d7"/>
 
 
