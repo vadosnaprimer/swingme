@@ -5,14 +5,8 @@
 <project name="UtilME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
 	
-	<property file="nbproject/private/private.properties"/>
-    <import file="nbproject/build-impl.xml"/>
-	<property file="hudson/${user.name}.properties"/>
-	<property file="hudson/build.properties"/>
 
-	
-	<!--property name="user.properties.file" value="C:\Users\Gavin\.netbeans\6.7"/-->
-		
+    <import file="nbproject/build-impl.xml"/>
 	
     <available file="../SwingME" type="dir" property="SwingME"/>
     <available file="../AgentLib" type="dir" property="AgentLib"/>
