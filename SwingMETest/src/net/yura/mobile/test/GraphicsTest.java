@@ -208,6 +208,8 @@ public class GraphicsTest extends Section {
                 img.getRGB(texture, 0, imgWidth, 0, 0, imgWidth, imgHeight);
 
                 disturb(100, 100);
+
+                lastDrawTime = System.currentTimeMillis();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
@@ -231,7 +233,6 @@ public class GraphicsTest extends Section {
 
             // Speed up: access all class fields, using local method variables
             int imgW = imgWidth;
-            int imgH = imgHeight;
             int imgWMax = imgWidth - 1;
             int imgHMax = imgHeight - 1;
             int[] ripple = this.ripple;
@@ -253,36 +254,18 @@ public class GraphicsTest extends Section {
                     data -= (data >> 5);
                     map1[i] = (short) data;
 
+                    // Calculate refraction
                     data = data >> 4;
-                    // offsets
                     int a = x + data;
                     int b = y + data;
-
 
                     try {
                         // Speed up: by default assume we will be in bounds...
                         ripple[i] = texture[a + (b * imgW)];
                     }
                     catch (IndexOutOfBoundsException e) {
-                        // We were wrong... Do bounds checking
-                        if (data > 0) {
-                            if (a >= imgW) {
-                                a = imgWMax;
-                            }
-
-                            if (b >= imgH) {
-                                b = imgHMax;
-                            }
-                        } else {
-                            if (a < 0) {
-                                a = 0;
-                            }
-                            if (b < 0) {
-                                b = 0;
-                            }
-                        }
-
-                        ripple[i] = texture[a + (b * imgW)];
+                        // We were wrong... Don't use refraction
+                        ripple[i] = texture[i];
                     }
                 }
             }
