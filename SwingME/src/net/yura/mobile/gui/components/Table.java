@@ -106,13 +106,13 @@ public class Table extends Panel {
     
     // the current editor has finished editing
     public void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
-        
+
         boolean done = (editorComp!=null && component==editorComp)?moveSelection(direction): false;
-        
+
         if (!done) {
             super.breakOutAction(component, direction, scrolltothere,forceFocus);
         }
-        
+
     }
     
     private boolean moveSelection(int d) {
@@ -267,7 +267,6 @@ public class Table extends Panel {
                 editorComp.processKeyEvent(event);
             }
         }
-
         return true;
     }
 
@@ -330,19 +329,22 @@ public class Table extends Panel {
     public void removeEditor() {
         
         if (cellEditor!=null) {
-            removeAll();
+
             setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
-            
-            if (getWindow()!=null && getWindow().getFocusOwner() == editorComp) {
-                editorComp = null;
+
+            Window w = getWindow();
+            boolean editorCurrentlyFocused = w!=null && w.getFocusOwner() == editorComp;
+
+            // this NEEDS to be before requestFocusInWindow, or focusGained will go wrong
+            editorComp = null;
+            cellEditor = null;
+
+            if (editorCurrentlyFocused) {
                 requestFocusInWindow();
             }
-            else {
-                editorComp = null;
-            }
-            //selectable = true;
 
-            cellEditor = null;
+            // this NEEDS to be after requestFocusInWindow, or focus will go somewhere else
+            removeAll();
 
         }
         
