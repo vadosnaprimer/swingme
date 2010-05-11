@@ -82,6 +82,10 @@ public class GraphicsTest extends Section {
             g.setColor(0xFFFF0000);
             g.drawLine(0, 0, 50, 50);
 
+            // testing Nokia DirectGraphics
+            //com.nokia.mid.ui.DirectGraphics g2 = com.nokia.mid.ui.DirectUtils.getDirectGraphics(g);
+            //g2.fillPolygon(new int[] { 25,35,45,25,5},0,new int[] { 25,5,25,45,35},0,5,0xAA115599);
+
             Label drawRegionPanel = new Label(new Icon(img));
             addToScrollPane(drawRegionPanel, null);
         }
