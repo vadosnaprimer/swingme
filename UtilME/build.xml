@@ -7,8 +7,8 @@
 	
 	<property file="nbproject/private/private.properties"/>
     <import file="nbproject/build-impl.xml"/>
-	<property file="${user.name}.properties"/>
-	<property file="build.properties"/>
+	<property file="hudson/${user.name}.properties"/>
+	<property file="hudson/build.properties"/>
 
 	
 	<!--property name="user.properties.file" value="C:\Users\Gavin\.netbeans\6.7"/-->
