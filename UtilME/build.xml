@@ -14,13 +14,13 @@
 	<!--property name="user.properties.file" value="C:\Users\Gavin\.netbeans\6.7"/-->
 		
 	
-    <available file="../SwingMETest" type="dir" property="SwingMETest"/>
+    <available file="../SwingME" type="dir" property="SwingME"/>
     <available file="../AgentLib" type="dir" property="AgentLib"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
 
 
-    <target name="d1" if="SwingMETest">
-        <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
+    <target name="d1" if="SwingME">
+        <copy file="${deployment.jar}" todir="../SwingME/lib"/>
     </target>
     <target name="d2" if="AgentLib">
         <copy file="${deployment.jar}" todir="../AgentLib/lib"/>
