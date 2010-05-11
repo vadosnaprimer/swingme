@@ -226,101 +226,100 @@ public class Camera extends Component implements Runnable, PlayerListener {
                     if (Thread.currentThread() != cameraThread) {
                         break;
                     }
+                    uiLock.wait(1000);
+                }
 
-                    if (player == null) {
-                        Thread.yield();
-                        init();
+                if (player == null) {
+                    Thread.yield();
+                    init();
 
-                        player = Manager.createPlayer(playerLocator);
+                    player = Manager.createPlayer(playerLocator);
 
-                        // WORK-AROUND1: Some SE phones, rotate the view finder
-                        // if init video is called with player state bigger than
-                        // realise (i.e. prefetch())
-                        // WORK-AROUND2: Nokia S40 hangs for a long time, if
-                        // prefetch() is not called before start()
+                    // WORK-AROUND1: Some SE phones, rotate the view finder
+                    // if init video is called with player state bigger than
+                    // realise (i.e. prefetch())
+                    // WORK-AROUND2: Nokia S40 hangs for a long time, if
+                    // prefetch() is not called before start()
 
-                        if (seBug) {
-                            player.realize();
-                        } else {
-                            player.prefetch();
-                        }
-
-                        videoCtrl = initVideoControl(player);
-                        player.addPlayerListener(this);
-
-                        System.gc();
-                        player.start();
-
-                        // WORK-AROUND: WTK don't display the view
-                        // finder, if there is no "Canvas transition"
-                        if (Midlet.getPlatform() == Midlet.PLATFORM_WTK) {
-                            Display.getDisplay(Midlet.getMidlet()).setCurrent(new DummyCanvas());
-                        }
+                    if (seBug) {
+                        player.realize();
+                    } else {
+                        player.prefetch();
                     }
+
+                    videoCtrl = initVideoControl(player);
+                    player.addPlayerListener(this);
+
+                    System.gc();
+                    player.start();
+
+                    // WORK-AROUND: WTK don't display the view
+                    // finder, if there is no "Canvas transition"
+                    if (Midlet.getPlatform() == Midlet.PLATFORM_WTK) {
+                        Display.getDisplay(Midlet.getMidlet()).setCurrent(new DummyCanvas());
+                    }
+                }
+
+                if (videoCtrl != null) {
+                    int dispX = getXOnScreen();
+                    int dispY = getYOnScreen();
+                    int dispW = getWidth();
+                    int dispH = getHeight();
+
+                    if (videoCtrl.getDisplayX() != dispX ||
+                        videoCtrl.getDisplayY() != dispY) {
+
+                        videoCtrl.setDisplayLocation(dispX, dispY);
+                    }
+
+                    if (videoCtrl.getDisplayWidth() != dispW ||
+                        videoCtrl.getDisplayHeight() != dispW) {
+
+                        videoCtrl.setDisplaySize(dispW, dispH);
+                    }
+                }
+
+                if (requestCapture && actionListener != null) {
+                    requestCapture = false;
 
                     if (videoCtrl != null) {
-                        int dispX = getXOnScreen();
-                        int dispY = getYOnScreen();
-                        int dispW = getWidth();
-                        int dispH = getHeight();
+                        photoData = null;
+                        // some devices will not return the supported size even though its supported
+                        if (snapshotEncoding.indexOf("width") < 0) {
 
-                        if (videoCtrl.getDisplayX() != dispX ||
-                            videoCtrl.getDisplayY() != dispY) {
+                            String encodingString = getEncodingStringFromRMS();
 
-                            videoCtrl.setDisplayLocation(dispX, dispY);
-                        }
-
-                        if (videoCtrl.getDisplayWidth() != dispW ||
-                            videoCtrl.getDisplayHeight() != dispW) {
-
-                            videoCtrl.setDisplaySize(dispW, dispH);
-                        }
-                    }
-
-                    if (requestCapture && actionListener != null) {
-                        requestCapture = false;
-
-                        if (videoCtrl != null) {
-                            photoData = null;
-                            // some devices will not return the supported size even though its supported
-                            if (snapshotEncoding.indexOf("width") < 0) {
-
-                                String encodingString = getEncodingStringFromRMS();
-
-                                if (encodingString == null || encodingString.length() < 1) {
-                                    encodingString = snapshotEncoding + "&width=" + defaultCaptureWidth + "&height=" + defaultCaptureHeight;
-                                }
-
-                                photoData = getSnapshot(encodingString);
-                                if (photoData == null) {
-                                    // Worst case scenario. Need to cycle through all
-                                    // possible encoding configurations and see which one works
-                                    photoData = discoverEncodingDimensions(videoCtrl);
-                                }
+                            if (encodingString == null || encodingString.length() < 1) {
+                                encodingString = snapshotEncoding + "&width=" + defaultCaptureWidth + "&height=" + defaultCaptureHeight;
                             }
 
+                            photoData = getSnapshot(encodingString);
                             if (photoData == null) {
-                                photoData = getSnapshot(snapshotEncoding);
+                                // Worst case scenario. Need to cycle through all
+                                // possible encoding configurations and see which one works
+                                photoData = discoverEncodingDimensions(videoCtrl);
                             }
                         }
 
-                        // If camera permission is -1, we just took a dummy
-                        // picture, to show the security prompt
-                        if (cameraPermission < 0) {
-                            photoData = null;
-                        } else {
-                            try {
-                                actionListener.actionPerformed(actionCommand);
-                            } catch (Exception e) {
-                              Logger.warn(e);
-                            }
+                        if (photoData == null) {
+                            photoData = getSnapshot(snapshotEncoding);
                         }
-
-                        // From now on, we don't take any more "dummy pictures"
-                        cameraPermission = 1;
                     }
 
-                    uiLock.wait(1000);
+                    // If camera permission is -1, we just took a dummy
+                    // picture, to show the security prompt
+                    if (cameraPermission < 0) {
+                        photoData = null;
+                    } else {
+                        try {
+                            actionListener.actionPerformed(actionCommand);
+                        } catch (Exception e) {
+                          Logger.warn(e);
+                        }
+                    }
+
+                    // From now on, we don't take any more "dummy pictures"
+                    cameraPermission = 1;
                 }
             }
         }
@@ -563,12 +562,14 @@ public class Camera extends Component implements Runnable, PlayerListener {
     private static int getEncodingParameterInteger(String encoding, String prefix) {
         try {
             String s = getEncodingParamString(encoding, prefix);
-            return Integer.parseInt(s);
+            if (s!= null && s.length() > 0) {
+                return Integer.parseInt(s);
+            }
         }
         catch (Exception e) {
             Logger.warn(e);
-            return 0;
         }
+        return 0;
     }
 
     private static class DummyCanvas extends Canvas {
