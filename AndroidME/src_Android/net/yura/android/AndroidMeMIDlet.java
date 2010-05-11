@@ -16,13 +16,16 @@ import net.yura.android.lcdui.Toolkit;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickListener {
@@ -109,7 +112,13 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
 
     private void showWaitingView(boolean wait) {
         if (waitingView == null) {
-            waitingView = this.getLayoutInflater().inflate(R.layout.main, null, false);
+            TextView textView = new TextView(this);
+            textView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+            textView.setDrawingCacheBackgroundColor(0xFF000000);
+            textView.setBackgroundColor(0xFF000000);
+            textView.setText("Please Wait...");
+
+            waitingView = textView;
         }
 
         showContentView(waitingView);
@@ -142,10 +151,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         thread.start();
     }
 
-    private MIDlet createMIDlet(String midletClassName) {
-        showWaitingView(false);
-
-        Properties properties = new Properties();
+    private void setSystemProperties() {
         System.setProperty("microedition.platform", "androidMe");
         System.setProperty("microedition.locale", Locale.getDefault().toString());
         System.setProperty("microedition.configuration", "CLDC-1.1");
@@ -166,34 +172,56 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         System.setProperty("microedition.pim.version", "1.0");
         System.setProperty("microedition.io.file.FileConnection.version", "1.0");
 
-        // BlueTooth
-        System.setProperty("bluetooth.api.version", "1.1");
-
+        String extDir, privDir;
         try {
-            String[] assetList = getResources().getAssets().list("");
-            for (int i = 0; i < assetList.length; i++) {
-                System.out.println("> > >" + assetList[i]);
-                if (assetList[i].endsWith(".jad")) {
-                    System.out.println("Found a Jad File: " + assetList[i]);
-
-                    InputStream is = getAssets().open(assetList[i]);
-                    properties.load(is);
-                    break;
-                }
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
+            privDir = "file://" + getFilesDir().getCanonicalPath() + "/";
+            extDir = "file://" + Environment.getExternalStorageDirectory().getCanonicalPath() + "/";
+        }
+        catch (Exception e) {
+            privDir = "file:///";
+            extDir = "file:///";
         }
 
-        System.out.println(">>>1 " + System.getProperty("microedition.platform"));
+        System.setProperty("fileconn.dir.photos",  extDir + "DCIM/");
+        System.setProperty("fileconn.dir.videos",  extDir);
+        System.setProperty("fileconn.dir.graphics",  extDir);
+        System.setProperty("fileconn.dir.tones",  extDir);
+        System.setProperty("fileconn.dir.music",  extDir);
+        System.setProperty("fileconn.dir.recordings",  extDir);
+        System.setProperty("fileconn.dir.private",  privDir);
+
+        // BlueTooth
+        System.setProperty("bluetooth.api.version", "1.1");
+    }
+
+    private MIDlet createMIDlet(String midletClassName) {
+        showWaitingView(false);
 
         // midletClassName = "net.yura.mobile.test.MyMidlet";
         // midletClassName = "com.badoo.locator.BadooMidlet";
         // midletClassName = "net.java.dev.lwuit.speed.SpeedMIDlet";
 
-
         jadMidlets = new Vector<String[]>();
         if (midletClassName == null) {
+
+            Properties properties = new Properties();
+            MIDlet.DEFAULT_APPLICATION_PROPERTIES = properties;
+
+            try {
+                String[] assetList = getResources().getAssets().list("");
+                for (int i = 0; i < assetList.length; i++) {
+                    System.out.println("> > >" + assetList[i]);
+                    if (assetList[i].endsWith(".jad")) {
+                        System.out.println("Found a Jad File: " + assetList[i]);
+
+                        InputStream is = getAssets().open(assetList[i]);
+                        properties.load(is);
+                        break;
+                    }
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
 
             int count = 0;
             while (true) {
@@ -240,12 +268,13 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         if (midletClassName != null) {
             showWaitingView(true);
 
+            setSystemProperties();
+
             // create a new class loader that correctly handles getResourceAsStream!
             final ClassLoader classLoader = this.getClassLoader();
 
             MIDlet.DEFAULT_ACTIVITY = this;
             MIDlet.DEFAULT_TOOLKIT = this;
-            MIDlet.DEFAULT_APPLICATION_PROPERTIES = properties;
 
             final String className = midletClassName;
             invokeAndWait(new Runnable() {
