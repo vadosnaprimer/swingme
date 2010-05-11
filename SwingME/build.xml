@@ -5,9 +5,7 @@
 <project name="SwingME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
-	<property file="hudson/${user.name}.properties"/>
-	<property file="hudson/build.properties"/>
-
+	
     <available file="../SwingMETest" type="dir" property="SwingMETest"/>
     <available file="../VistoJ2ME" type="dir" property="VistoJ2ME"/>
     <available file="../vauchacha" type="dir" property="vauchacha"/>
