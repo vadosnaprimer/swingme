@@ -165,7 +165,7 @@ public class XHTMLLoader {
             else if(eventType == KXmlParser.ENTITY_REF) {
                 currentTag.processRef(parser);
             }
-            //#mdebug
+            //#mdebug debug
             else if(eventType == KXmlParser.START_DOCUMENT) {
                 Logger.debug("Start document");
             }

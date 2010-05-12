@@ -41,7 +41,7 @@ public class MatteBorder extends EmptyBorder {
     private int imageLeft;
     private boolean back;
     private int color;
-    
+
     /**
      * @param top the top inset of the border
      * @param left the left inset of the border
@@ -54,7 +54,7 @@ public class MatteBorder extends EmptyBorder {
             super(top,left,bottom,right);
             this.color = color;
         }
-        
+
         /**
          * @param top the top inset of the border
          * @param left the left inset of the border
@@ -68,30 +68,30 @@ public class MatteBorder extends EmptyBorder {
               activeimage = tileIcon;
               back=true;
         }
- 
+
         /**
          * This wil create a border with a Image skin
          * The skin file is a text file with the following values
          * <ul>
          * <li>active=skin1.png</li>
-         * 
+         *
          * <li>top=23</li>
          * <li>bottom=14</li>
          * <li>right=12</li>
          * <li>left=12</li>
-         * 
+         *
          * <li>itop=23</li>
          * <li>ibottom=14</li>
          * <li>iright=12</li>
          * <li>ileft=12</li>
-         * 
+         *
          * <li>back=Y (Optional)</li>
          * <li>color=FF0000 (Optional)</li>
          * </ul>
          * @param name name of file to load skin from
          */
         public static MatteBorder load(String name) throws Exception {
-            
+
             int top,bottom,left,right;
             Icon activeimage;
             int imageTop;
@@ -100,7 +100,7 @@ public class MatteBorder extends EmptyBorder {
             int imageLeft;
             boolean back;
             int color;
-			
+
             Properties newborder = new Properties();
 
             newborder.load( DesktopPane.class.getResourceAsStream(name) );
@@ -159,9 +159,9 @@ public class MatteBorder extends EmptyBorder {
         public Icon getTileIcon() {
             return activeimage;
         }
-        
-        
-        
+
+
+
         /**
          * @param c
          * @param g
@@ -170,7 +170,7 @@ public class MatteBorder extends EmptyBorder {
          * @see javax.swing.border.MatteBorder#paintBorder(java.awt.Component, java.awt.Graphics, int, int, int, int) MatteBorder.paintBorder
          */
         public void paintBorder(Component c, Graphics2D g, int width,int height) {
-            
+
             if (activeimage==null) {
                 // color can NOT be Style.NO_COLOR here
                 g.setColor(color);
@@ -192,10 +192,10 @@ public class MatteBorder extends EmptyBorder {
                 }
             }
             else {
-                
+
                 int imageWidth=activeimage.getIconWidth();
                 int imageHeight=activeimage.getIconHeight();
-                
+
                 int topDiff = imageTop-top;
                 int rightDiff= imageRight-right;
                 int leftDiff= imageLeft-left;
@@ -225,20 +225,20 @@ public class MatteBorder extends EmptyBorder {
                         Sprite.TRANS_NONE); // right
 
                 if (!back && color==Style.NO_COLOR) {
-                    
+
                     // TODO matte tileing the border with the whole image
                     // check that if there is NO bckground that the Diff values are not negative
                     // as if they r negative we need to fill in those aras
                 }
-                
+
                 else if (back) {
-                    //#debug
+                    //#debug debug
                     Logger.debug("filling background with tiled image!");
                     g.drawImage(image,imageLeft,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
                             leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff,
                             Sprite.TRANS_NONE); // centre
                 }
-                
+
                 else if (color!=Style.NO_COLOR) {
                     boolean fillsides = (imageHeight-imageTop-imageBottom) == 0;
                     boolean filltop = (imageWidth-imageRight-imageLeft) == 0;
@@ -263,14 +263,14 @@ public class MatteBorder extends EmptyBorder {
                 }
                 //#enddebug
             }
-            
+
         }
 
-    
+
     public boolean isBorderOpaque() {
         return back || (activeimage!=null && color!=Style.NO_COLOR);
     }
-        
+
     public void setColor(int c) {
         color =c;
     }

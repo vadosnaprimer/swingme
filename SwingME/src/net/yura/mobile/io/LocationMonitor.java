@@ -268,7 +268,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
               double lat = c.getLatitude();
               double lng = c.getLongitude();
 
-              //#debug
+              //#debug debug
               Logger.debug("lat:"+lat+" lng:"+lng);
             }
 

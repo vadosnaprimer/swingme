@@ -385,6 +385,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
         if (PlayerListener.STARTED.equals(event)) {
             if (cameraPermission < 0) {
+                //#debug debug
                 Logger.debug("cameraPermission: " + cameraPermission);
                 if (getCameraPermission() < 0) {
                     // Take dummy picture, to show user the security prompt
@@ -534,12 +535,13 @@ public class Camera extends Component implements Runnable, PlayerListener {
                 prevHighResHeight = encodingHeight;
             }
         }
-        //#debug debug
+        //#mdebug debug
         Logger.debug("getHighestResolutionEncoding - determined highest resolution encoding format \"" +
                 (format == null ? "UNSPECIFIED" : format) +
                 "\" to be \"" +
                 highestResEncoding +
                 "\"");
+        //#enddebug
 
         return highestResEncoding;
     }

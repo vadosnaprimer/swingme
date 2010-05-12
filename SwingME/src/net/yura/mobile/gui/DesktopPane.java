@@ -105,12 +105,12 @@ public class DesktopPane extends Canvas implements Runnable {
                 p.repaint();
             }
             else if (dp.validating==1) {
-    //#debug
+    //#debug debug
     Logger.debug("thats some complex layout");
                 addToComponentVector(p, dp.revalidateComponents2);
             }
             else if (dp.validating==2) {
-    //#debug
+    //#debug debug
     Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
                 addToComponentVector(p, dp.revalidateComponents3);
             }
@@ -314,6 +314,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     currentAnimatedComponent.animate();
                 }
                 catch (InterruptedException e) {
+                    //#debug debug
                     Logger.debug("Interrupted during animation");
                 }
             }
@@ -724,7 +725,7 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void fullRepaint() {
         // this is here coz this method should NOT be used
-        //#debug
+        //#debug debug
         Logger.debug("FULL REPAINT!!! this method should NOT normally be called");
 
         synchronized(uiLock) {
@@ -1248,7 +1249,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private int oldw,  oldh;
 
     protected void sizeChanged(int w, int h) {
-        //#debug
+        //#debug debug
         Logger.debug("sizeChanged!! " + paintdone + " w=" + w + " h=" + h);
 
         sizeChangedImpl();

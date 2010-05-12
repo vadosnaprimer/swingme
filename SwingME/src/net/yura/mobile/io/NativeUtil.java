@@ -522,7 +522,7 @@ public class NativeUtil {
             if (ROOT_PREX.equals(dir)) {
                 // add root folder
                 for (Enumeration e = FileSystemRegistry.listRoots(); e.hasMoreElements();) {
-                    files.addElement( (String)e.nextElement()  );
+                    files.addElement( e.nextElement()  );
                 }
             }
             else {
@@ -556,7 +556,7 @@ public class NativeUtil {
 
         }
         catch(Exception ex) {
-          //#mdebug
+          //#mdebug debug
           Logger.warn("error moving dir: "+ex.toString());
           Logger.warn(ex);
           //#enddebug

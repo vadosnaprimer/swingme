@@ -337,7 +337,7 @@ Logger.info("[SocketClient] sending object: "+object);
         }
     }
 
-    //#mdebug
+    //#mdebug debug
     public void setDisconnected(boolean b){
         this.disconnected = b;
     }

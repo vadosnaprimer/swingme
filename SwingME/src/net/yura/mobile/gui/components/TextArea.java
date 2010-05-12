@@ -164,7 +164,7 @@ public class TextArea extends TextComponent {
                     g.drawString(line , x, y);
 
                     if (showCaret && caretPosition >= beginIndex && caretPosition <= lastCaretIndex) {
-                      
+
                         int w = getStringWidth(font, text.substring(beginIndex, caretPosition) );
 
                         g.drawLine(w, y, w, y+lineHeight-1);
@@ -462,7 +462,7 @@ public class TextArea extends TextComponent {
         if (oldh != height ||
                 // we may need to make the TextArea wider or thinner
                 (!wrap && getMinWidth() != width)) {
-            
+
             DesktopPane.mySizeChanged(this);
         }
     }
@@ -507,7 +507,7 @@ public class TextArea extends TextComponent {
 	 */
         public int[] getLines(String str,Font f,int startPos,int startW, int w) {
 
-  //#debug
+  //#debug debug
   Logger.debug("getLines start="+startPos +" w="+w+" stringLength="+str.length());
 // this is here as this is quite a CPU intensive method
 
