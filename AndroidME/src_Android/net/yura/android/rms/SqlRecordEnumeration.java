@@ -1,4 +1,3 @@
-//#condition polish.android
 package net.yura.android.rms;
 
 import javax.microedition.rms.InvalidRecordIDException;

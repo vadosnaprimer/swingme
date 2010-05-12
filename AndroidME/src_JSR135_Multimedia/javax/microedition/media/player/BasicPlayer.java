@@ -194,7 +194,7 @@ public abstract class BasicPlayer implements Player {
         return doGetDuration();
     }
 
-    // @Override
+    // Override
     public void addPlayerListener(PlayerListener playerListener) {
         chkClosed(false);
         if (playerListener != null && !listenerList.contains(playerListener)) {

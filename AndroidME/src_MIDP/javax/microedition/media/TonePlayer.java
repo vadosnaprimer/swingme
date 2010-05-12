@@ -4,9 +4,9 @@ import javax.microedition.media.control.ToneControl;
 
 public class TonePlayer implements Player, ToneControl, Controllable {
 
-	
-	
-//	@Override
+
+
+    //Override
 	public Control getControl(String controlType) {
 		if( controlType.equals( "ToneControl" ) )
 		{
@@ -18,97 +18,97 @@ public class TonePlayer implements Player, ToneControl, Controllable {
 		}
 	}
 
-//	@Override
+    //Override
 	public Control[] getControls() {
 		// TODO Auto-generated method stub
 		return new Control[]{ this };
 	}
 
-//	@Override
+    //Override
 	public void addPlayerListener(PlayerListener playerListener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void close() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void deallocate() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public String getContentType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-//	@Override
+    //Override
 	public long getDuration() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-//	@Override
+    //Override
 	public long getMediaTime() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-//	@Override
+    //Override
 	public int getState() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-//	@Override
+    //Override
 	public void prefetch() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void realize() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void removePlayerListener(PlayerListener playerListener) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void setLoopCount(int count) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public long setMediaTime(long now) {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
-//	@Override
+    //Override
 	public void start() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-//	@Override
+    //Override
 	public void setSequence(byte[] sequence) {
 
 	}

@@ -417,7 +417,7 @@ System.out.println("name="+name);
         return is;
     }
 
-    //@Override
+    //Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (position >= 0) {
             String midletClassName = jadMidlets.elementAt(position)[2];

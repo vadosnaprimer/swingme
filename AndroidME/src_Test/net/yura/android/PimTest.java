@@ -25,7 +25,7 @@ public class PimTest extends Section {
     TextField tfNumber;
 
 
-//    @Override
+    //Override
     public void createTests() {
         add(new Label("Android Tests"));
 
@@ -33,7 +33,7 @@ public class PimTest extends Section {
         addTest("List contacts", "listContacts");
     }
 
-//    @Override
+    //Override
     public void openTest(String actionCommand) {
         System.out.println(">>>>> " + actionCommand);
 

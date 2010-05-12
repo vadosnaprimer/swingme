@@ -13,7 +13,7 @@ import net.yura.mobile.test.MainPane.Section;
 public class MultimediaTest extends Section {
 
 
-//    @Override
+    //Override
     public void createTests() {
         add(new Label("Android Tests"));
 
@@ -23,7 +23,7 @@ public class MultimediaTest extends Section {
         addTest("Content Types", "showContentTypes");
     }
 
-//    @Override
+    //Override
     public void openTest(String actionCommand) {
 
         String text = "";

@@ -28,7 +28,7 @@ public class MainTest extends Section {
         super(mainPane);
     }
 
-//    @Override
+    //Override
     public void createTests() {
         add(new Label("Android Tests"));
 
@@ -37,7 +37,7 @@ public class MainTest extends Section {
         addTest("Send SMS", "sms");
     }
 
-//    @Override
+    //Override
     public void openTest(String actionCommand) {
         if ("mainmenu".equals(actionCommand)) {
             addToScrollPane(this, null, makeButton("Exit", "exit"));
@@ -83,7 +83,7 @@ public class MainTest extends Section {
                 MessageConnection conn = (MessageConnection) Connector.open("sms://" + phoneNumber);
                 TextMessage msg = (TextMessage) conn.newMessage(MessageConnection.TEXT_MESSAGE);
                 msg.setPayloadText(message);
-                //#debug
+                //#debug debug
                 Logger.debug("Sending SMS message with body " + message + " to phone number " + phoneNumber);
                 conn.send(msg);
             }

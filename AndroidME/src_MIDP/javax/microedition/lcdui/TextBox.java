@@ -153,31 +153,31 @@ public class TextBox extends Screen {
         }
 
 
-        //@Override
+        //Override
         public boolean beginBatchEdit() {
             // System.out.println("beginBatchEdit");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean endBatchEdit() {
             // System.out.println("endBatchEdit");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean clearMetaKeyStates(int states) {
             // System.out.println("clearMetaKeyStates");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean commitCompletion(CompletionInfo text) {
             // System.out.println("commitCompletion");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean commitText(CharSequence text, int newCursorPosition) {
             // System.out.println("commitText");
             sendComposingText(text, true);
@@ -186,28 +186,28 @@ public class TextBox extends Screen {
 
 
 
-        //@Override
+        //Override
         public boolean deleteSurroundingText(int leftLength, int rightLength) {
             // System.out.println("deleteSurroundingText");
             return true;
         }
 
 
-        //@Override
+        //Override
         public boolean finishComposingText() {
             // System.out.println("finishComposingText");
             sendComposingText(composingText, true);
             return true;
         }
 
-        //@Override
+        //Override
         public boolean setComposingText(CharSequence text, int newCursorPosition) {
             // System.out.println("setComposingText: " + text);
             sendComposingText(text, false);
             return true;
         }
 
-        //@Override
+        //Override
         public int getCursorCapsMode(int reqModes) {
             // System.out.println("getCursorCapsMode");
             int capitalize;
@@ -223,26 +223,26 @@ public class TextBox extends Screen {
             return capitalize;
         }
 
-        //@Override
+        //Override
         public ExtractedText getExtractedText(ExtractedTextRequest request, int flags) {
             // System.out.println("getExtractedText");
             sendComposingText(composingText, true);
             return null;
         }
 
-        //@Override
+        //Override
         public CharSequence getTextAfterCursor(int n, int flags) {
             // System.out.println("getTextAfterCursor");
             return " ";
         }
 
-        //@Override
+        //Override
         public CharSequence getTextBeforeCursor(int n, int flags) {
             // System.out.println("getTextBeforeCursor");
             return " ";
         }
 
-        //@Override
+        //Override
         public boolean performEditorAction(int actionCode) {
             // System.out.println("performEditorAction");
             if(actionCode == EditorInfo.IME_ACTION_UNSPECIFIED) {
@@ -252,19 +252,19 @@ public class TextBox extends Screen {
             return true;
         }
 
-        //@Override
+        //Override
         public boolean performContextMenuAction(int id) {
             // System.out.println("performContextMenuAction");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean performPrivateCommand(String action, Bundle data) {
             // System.out.println("performPrivateCommand");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean sendKeyEvent(KeyEvent event) {
             // System.out.println("sendKeyEvent");
             if (currentCanvasView != null) {
@@ -280,13 +280,13 @@ public class TextBox extends Screen {
             return true;
         }
 
-        //@Override
+        //Override
         public boolean setSelection(int start, int end) {
             // System.out.println("setSelection");
             return true;
         }
 
-        //@Override
+        //Override
         public boolean reportFullscreenMode(boolean enabled) {
             // System.out.println("reportFullscreenMode");
             sendComposingText(composingText, true);

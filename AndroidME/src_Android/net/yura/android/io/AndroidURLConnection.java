@@ -18,42 +18,42 @@ public class AndroidURLConnection implements StreamConnection,
 		OutputConnection, InputConnection, Connection {
 
 	protected URLConnection connection;
-	
-	public AndroidURLConnection( String url ) 
+
+	public AndroidURLConnection( String url )
 		throws MalformedURLException, IOException{
 		this( new URL( url ) );
 	}
-	
-	public AndroidURLConnection( URL url ) 
+
+	public AndroidURLConnection( URL url )
 		throws IOException {
 		this( url.openConnection() );
 	}
-	
+
 	public AndroidURLConnection( URLConnection connection ) {
-		
+
 	}
-	
-	// @Override
+
+	// Override
 	public DataInputStream openDataInputStream() throws IOException {
 		return new DataInputStream( this.openInputStream() );
 	}
 
-	// @Override
+	// Override
 	public InputStream openInputStream() throws IOException {
 		return this.connection.getInputStream();
 	}
 
-	// @Override
+	// Override
 	public void close() throws IOException {
 		this.connection = null;
 	}
 
-	// @Override
+	// Override
 	public DataOutputStream openDataOutputStream() throws IOException {
 		return new DataOutputStream( openOutputStream() );
 	}
 
-	// @Override
+	// Override
 	public OutputStream openOutputStream() throws IOException {
 		return this.connection.getOutputStream();
 	}

@@ -28,8 +28,8 @@ import javax.microedition.io.file.FileConnection;
 
 public class AndroidFileConnection implements FileConnection {
 
-	private static final String SPECIAL_CHARACTERS = "*.^?[]\\"; 
-	
+	private static final String SPECIAL_CHARACTERS = "*.^?[]\\";
+
 	public static final File getParentDirectory( File file ) {
 		String path = file.getAbsolutePath();
 		if( path.endsWith( File.separator ) ) {
@@ -45,7 +45,7 @@ public class AndroidFileConnection implements FileConnection {
 		}
 		return result;
 	}
-	
+
 	private static final String escape( String s ) {
 		StringBuffer result = new StringBuffer( s.length() );
 		for( int i=0; i<s.length(); i++ ) {
@@ -62,56 +62,56 @@ public class AndroidFileConnection implements FileConnection {
 		URI uri = URI.create( url );
 		return new File( uri );
 	}
-	
+
 	private File file;
 	private boolean open;
-	
-	
+
+
 	public AndroidFileConnection( String url ) {
 		this(getFile( url ));
 	}
-	
+
 	public AndroidFileConnection( File file ) {
 		this.file = file;
 		this.open = true;
 	}
-	
-	// @Override
+
+	@Override
 	public long availableSize() {
 		// this isn't available
 		return -1;
 	}
 
-	// @Override
+	// Override
 	public boolean canRead() {
 		return this.file.canRead();
 	}
 
-	// @Override
+	// Override
 	public boolean canWrite() {
 		return this.file.canWrite();
 	}
 
-	// @Override
+	// Override
 	public void create() throws IOException {
 		if( !this.file.createNewFile() ) {
 			throw new IOException( "file creation failed" );
 		}
 	}
 
-	// @Override
+	// Override
 	public void delete() throws IOException {
 		if( !this.file.delete() ) {
 			throw new IOException( "file deletion failed" );
 		}
 	}
 
-	// @Override
+	// Override
 	public long directorySize(boolean includeSubDirs) throws IOException {
 		// why is this in the interface?
 		return getDirectorySize( this.file, includeSubDirs );
 	}
-	
+
 	private long getDirectorySize( File file, boolean recursive ) {
 		long size = 0;
 		File[] children = file.listFiles();
@@ -127,57 +127,57 @@ public class AndroidFileConnection implements FileConnection {
 		return size;
 	}
 
-	// @Override
+	// Override
 	public boolean exists() {
 		return this.file.exists();
 	}
 
-	// @Override
+	// Override
 	public long fileSize() throws IOException {
 		return this.file.length();
 	}
 
-	// @Override
+	// Override
 	public String getName() {
 		return this.file.getName();
 	}
 
-	// @Override
+	// Override
 	public String getPath() {
 		return this.file.getPath();
 	}
 
-	// @Override
+	// Override
 	public String getURL() {
 		return this.file.toURI().toString();
 	}
 
-	// @Override
+	// Override
 	public boolean isDirectory() {
 		return this.file.isDirectory();
 	}
 
-	// @Override
+	// Override
 	public boolean isHidden() {
 		return this.file.isHidden();
 	}
 
-	// @Override
+	// Override
 	public boolean isOpen() {
 		return this.open;
 	}
 
-	// @Override
+	// Override
 	public long lastModified() {
 		return this.file.lastModified();
 	}
 
-	// @Override
+	// Override
 	public Enumeration list() throws IOException {
 		return list( null, false );
 	}
 
-	// @Override
+	// Override
 	public Enumeration list(String filter, boolean includeHidden)
 			throws IOException {
 		Pattern pattern;
@@ -199,18 +199,18 @@ public class AndroidFileConnection implements FileConnection {
 		final Pattern filterPattern = pattern;
 		String[] a = this.file.list( new FilenameFilter() {
 
-			// @Override
+			// Override
 			public boolean accept(File dir, String name) {
 				return filterPattern.matcher(name).matches();
 			}
-			
+
 		});
 		List<String> list = Arrays.asList( a );
 		Vector<String> v = new Vector<String>( list );
 		return v.elements();
 	}
 
-	// @Override
+	// Override
 	public void mkdir() throws IOException {
 		if( !this.file.mkdir() ) {
 			throw new IOException( "unable to create directory" );
@@ -218,27 +218,27 @@ public class AndroidFileConnection implements FileConnection {
 
 	}
 
-	// @Override
+	// Override
 	public DataInputStream openDataInputStream() throws IOException {
 		return new DataInputStream( this.openInputStream() );
 	}
 
-	// @Override
+	// Override
 	public DataOutputStream openDataOutputStream() throws IOException {
 		return new DataOutputStream( this.openOutputStream() );
 	}
 
-	// @Override
+	// Override
 	public InputStream openInputStream() throws IOException {
 		return new FileInputStream( this.file );
 	}
 
-	// @Override
+	// Override
 	public OutputStream openOutputStream() throws IOException {
 		return openOutputStream( 0 );
 	}
 
-	// @Override
+	// Override
 	public OutputStream openOutputStream(long byteOffset) throws IOException {
 		boolean append;
 		if( byteOffset == 0 ) {
@@ -252,14 +252,14 @@ public class AndroidFileConnection implements FileConnection {
 		return fos;
 	}
 
-	// @Override
+	// Override
 	public void rename(String newName) throws IOException {
 		File directory = getParentDirectory( this.file );
 		File targetFile = new File( directory, newName );
 		this.file.renameTo( targetFile );
 	}
 
-	// @Override
+	// Override
 	public void setFileConnection(String fileName) throws IOException {
 		if( fileName.equals( ".." ) ) {
 			File directory = getParentDirectory( this.file );
@@ -272,37 +272,37 @@ public class AndroidFileConnection implements FileConnection {
 		}
 	}
 
-	// @Override
+	// Override
 	public void setHidden(boolean hidden) throws IOException {
 		throw new IOException( "unsupported" );
 	}
 
-	// @Override
+	// Override
 	public void setReadable(boolean readable) throws IOException {
 		throw new IOException( "unsupported" );
 	}
 
-	// @Override
+	// Override
 	public void setWritable(boolean writable) throws IOException {
 		throw new IOException( "unsupported" );
 	}
 
-	// @Override
+	// Override
 	public long totalSize() {
 		return this.file.length();
 	}
 
-	// @Override
+	// Override
 	public void truncate(long byteOffset) throws IOException {
 		throw new IOException( "unsupported" );
 	}
 
-	// @Override
+	// Override
 	public long usedSize() {
 		return this.file.length();
 	}
 
-	// @Override
+	// Override
 	public void close() throws IOException {
 		this.open = false;
 	}
