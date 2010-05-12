@@ -59,7 +59,7 @@ public class MainTest extends Section {
         super(mainPane);
     }
 
-//    @Override
+    // Override
     public void createTests() {
         Label helloWorld = new Label("Test App Menu");
         add(helloWorld);
@@ -112,7 +112,7 @@ public class MainTest extends Section {
         addMenuItem(mainMenu,"synthTheme5", "Synth LG");
     }
 
-//    @Override
+    // Override
     public void openTest(String actionCommand) {
 
         if ("mainmenu".equals(actionCommand)) {
