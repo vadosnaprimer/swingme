@@ -11,6 +11,7 @@
     <available file="../SwingME" type="dir" property="SwingME"/>
     <available file="../AgentLib" type="dir" property="AgentLib"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
+    <available file="../Abba" type="dir" property="Abba"/>
 
 
     <target name="d1" if="SwingME">
@@ -21,6 +22,9 @@
     </target>
     <target name="d3" if="ToolsME">
         <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
+    </target>
+    <target name="d4" if="Abba">
+        <copy file="${deployment.jar}" todir="../Abba/lib"/>
     </target>
     
 	<target name="do-preprocess" unless="no.preprocess">

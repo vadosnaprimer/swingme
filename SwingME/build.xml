@@ -13,6 +13,7 @@
     <available file="E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk" type="dir" property="BadooMobile"/>
     <available file="../iPhoneRace" type="dir" property="iPhoneRace"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
+    <available file="../Abba" type="dir" property="Abba"/>
 
     <target name="d1" if="SwingMETest">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
@@ -34,6 +35,9 @@
     </target>
     <target name="d7" if="ToolsME">
         <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
+    </target>
+    <target name="d8" if="Abba">
+        <copy file="${deployment.jar}" todir="../Abba/lib"/>
     </target>
 
 	<target name="do-preprocess" unless="no.preprocess">
@@ -69,7 +73,7 @@
         <nb-overrideproperty name="buildsystem.baton" value="${preprocessed.dir}"/>
     </target>
 	
-    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6,d7"/>
+    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6,d7,d8"/>
 
 
     <!--
