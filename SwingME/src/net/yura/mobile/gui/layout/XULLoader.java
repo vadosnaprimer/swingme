@@ -90,7 +90,7 @@ public class XULLoader {
     private Hashtable groups = new Hashtable();
     private Component root;
     private Properties i18nProperties;
-    
+
     public void swapComponent(String name,Component comp) {
         Component old = find(name);
 
@@ -471,7 +471,7 @@ public class XULLoader {
             }
 
             Component textarea = (Component)theclass.newInstance();
-               
+
             readTextComponent(parser,textarea,listener);
 
             return readUIObject(parser, textarea,listener);
@@ -573,7 +573,16 @@ public class XULLoader {
                         case VK_ESC:  mnemonic=KeyEvent.KEY_END; break;
                         case VK_F1: mnemonic=KeyEvent.KEY_SOFTKEY1; break;
                         case VK_F2: mnemonic=KeyEvent.KEY_SOFTKEY2; break;
+                        default:
+                            // in swing mnemonic are in upper case, e.g. VK_A = 65
+                            // but when we get the key event we get it as lower case
+                            // unless shift is pressed, but then we don't care
+                            if (mnemonic >= 'A' && mnemonic <= 'Z') {
+                                mnemonic = Character.toLowerCase( (char)mnemonic);
+                            }
+                            break;
                     }
+
                     button.setMnemonic(mnemonic);
                 }
                 else if ("type".equals(key)) {
