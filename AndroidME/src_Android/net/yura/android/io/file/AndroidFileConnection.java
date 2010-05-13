@@ -76,7 +76,7 @@ public class AndroidFileConnection implements FileConnection {
 		this.open = true;
 	}
 
-	@Override
+	// Override
 	public long availableSize() {
 		// this isn't available
 		return -1;
