@@ -313,6 +313,11 @@ public abstract class Canvas extends Displayable {
                     toggleNativeTextInput();
                 }
             }
+            else if (keyCode == KeyEvent.KEYCODE_BACK && keyCount == 1) {
+                // kill the application on a "long back key" press
+                // TODO: Should show some native Android UI for confirmation
+                AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+            }
             else {
                 int meKeyCode = getKeyCode(event);
                 if (keyCount == 0) {
