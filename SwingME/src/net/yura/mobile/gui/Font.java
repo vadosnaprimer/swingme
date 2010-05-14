@@ -17,6 +17,7 @@
 package net.yura.mobile.gui;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
@@ -203,6 +204,7 @@ public class Font {
                     dis.skipBytes(4);
                     //Logger.debug("FONT: Starting kerning reading");
                     while (dis.available() > 0) {
+                        try {
                             char first = (char) getLong(dis);
                             char second = (char) getLong(dis);
                             Integer charPairIdentifier = getCharPairId(first,second);
@@ -213,6 +215,10 @@ public class Font {
                             f.kerning.put(charPairIdentifier, kerningValue);
 
                             //Logger.debug("FONT: Kerning for "+first+"-"+second+" = "+amount);
+                        } catch (EOFException e) {
+                            //#debug debug
+                            e.printStackTrace();
+                        }
                     }
             }
             else {
