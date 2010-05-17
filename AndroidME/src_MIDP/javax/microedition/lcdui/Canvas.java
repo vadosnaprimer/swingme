@@ -7,9 +7,11 @@ import net.yura.android.AndroidMeMIDlet;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -202,12 +204,43 @@ public abstract class Canvas extends Displayable {
         return (h > 0) ? h : super.getHeight();
     }
 
+
+    class MyGestureDetector extends SimpleOnGestureListener {
+        private static final int SWIPE_MIN_DISTANCE = 120;
+        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            int keyCode = -1;
+
+            if (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+
+                int dist = (int) (e1.getX() - e2.getX());
+
+                if (dist > SWIPE_MIN_DISTANCE) {
+                    keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
+                } else if (-dist > SWIPE_MIN_DISTANCE) {
+                    keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
+                }
+
+                if (keyCode != -1) {
+                    canvasView.onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
+                    canvasView.onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode));
+                }
+            }
+
+            return (keyCode != -1);
+        }
+    }
+
+
     class CanvasView extends View {
         javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());
         private int canvasY;
         private int canvasH;
         private int keyMenuCount;
         private View inputConnectionView;
+        private GestureDetector gestureDetector = new GestureDetector(new MyGestureDetector());
 
         public CanvasView(Context context) {
             super(context);
@@ -348,6 +381,11 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
+
+           if (gestureDetector.onTouchEvent(event)) {
+               return true;
+           }
+
             int x = Math.round(event.getX());
             int y = Math.round(event.getY() - getHeight() + canvasH);
 
