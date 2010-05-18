@@ -172,88 +172,92 @@ Hashtable<String,MessageDefinition> messageDefs;
 
     public void printSaveComputeMethod(PrintStream ps,MessageDefinition message,boolean calc) {
 
-Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
-for (ProtoLoader.FieldDefinition field:fields) {
+        Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
+        for (ProtoLoader.FieldDefinition field:fields) {
 
-        final String type;
-        
-        if (message.getImplementation() == Hashtable.class) {
-            if (field.getEnumeratedType()!=null) {
-                type = "String";
-            }
-            else if (isPrimitive(field.getType())) {
-                type = primitiveToJavaType(field.getType(),false);
-            }
-            else {
-                MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
-                if (mesDef!=null) {
-                    type = mesDef.getImplementation().getSimpleName();
-                }
-                else {
-                    type = field.getType();
-                }
-            }
-        }
-        else {
-            if (field.repeated) {
-                if (field.getImplementation().isArray()) {
-                    type = field.getImplementation().getComponentType().getSimpleName();
-                }
-                else if (isPrimitive(field.getType())) { // vector
-                    type = primitiveToJavaType(field.getType(),false);
-                }
-                else {
-                    MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
-                    if (mesDef!=null) {
-                        type = mesDef.getImplementation().getSimpleName();
+            try {
+
+                final String type;
+
+                if (message.getImplementation() == Hashtable.class) {
+                    if (field.getEnumeratedType()!=null) {
+                        type = "String";
+                    }
+                    else if (isPrimitive(field.getType())) {
+                        type = primitiveToJavaType(field.getType(),false);
                     }
                     else {
-                        type = "Hashtable";
+                        MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                        if (mesDef!=null) {
+                            type = mesDef.getImplementation().getSimpleName();
+                        }
+                        else {
+                            type = field.getType();
+                        }
                     }
                 }
-            }
-            else {
-                type = field.getImplementation().getSimpleName();
-            }
-        }
+                else {
+                    if (field.repeated) {
+                        if (field.getImplementation().isArray()) {
+                            type = field.getImplementation().getComponentType().getSimpleName();
+                        }
+                        else if (isPrimitive(field.getType())) { // vector
+                            type = primitiveToJavaType(field.getType(),false);
+                        }
+                        else {
+                            MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                            if (mesDef!=null) {
+                                type = mesDef.getImplementation().getSimpleName();
+                            }
+                            else {
+                                type = "Hashtable";
+                            }
+                        }
+                    }
+                    else {
+                        type = field.getImplementation().getSimpleName();
+                    }
+                }
 
 
-        if (field.repeated) {
-            if (field.getImplementation() == null || field.getImplementation() == Vector.class) {
-                if (field.getImplementation() == null) {
-ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+field.getName()+"\");");
+                if (field.repeated) {
+                    if (field.getImplementation() == null || field.getImplementation() == Vector.class) {
+                        if (field.getImplementation() == null) {
+        ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+field.getName()+"\");");
+                        }
+                        else {
+        ps.println("        Vector "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
+                        }
+        ps.println("        if ("+field.getName()+"Vector!=null) {");
+        ps.println("            for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
+        ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector.elementAt(c);");
+                    }
+                    else { // must be a array
+        ps.println("        "+type+"[] "+field.getName()+"Array = object.get"+firstUp(field.getName())+"();");
+        ps.println("        if ("+field.getName()+"Array!=null) {");
+        ps.println("            for (int c=0;c<"+field.getName()+"Array.length;c++) {");
+        ps.println("            "+type+" "+field.getName()+"Value = "+field.getName()+"Array[c];");
+                    }
+                                    printSaveCalcField(ps,field,message,calc);
+        ps.println("            }");
+        ps.println("        }");
                 }
                 else {
-ps.println("        Vector "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
+
+                    if (message.getImplementation() == Hashtable.class) {
+                        ps.println(type+" "+field.getName()+"Value = ("+type+")object.get(\""+field.getName()+"\");");
+                    }
+                    else {
+                        ps.println(type+" "+field.getName()+"Value = object.get"+firstUp(field.getName())+"();");
+                    }
+                    printSaveCalcField(ps,field,message,calc);
                 }
-ps.println("        if ("+field.getName()+"Vector!=null) {");
-ps.println("            for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
-ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector.elementAt(c);");
             }
-            else { // must be a array
-ps.println("        "+type+"[] "+field.getName()+"Array = object.get"+firstUp(field.getName())+"();");
-ps.println("        if ("+field.getName()+"Array!=null) {");
-ps.println("            for (int c=0;c<"+field.getName()+"Array.length;c++) {");
-ps.println("            "+type+" "+field.getName()+"Value = "+field.getName()+"Array[c];");
+            catch (RuntimeException ex) {
+                System.err.println("ERROR with "+(calc?"compute":"encode")+" message="+message.getName()+" field="+field.getName()+" type="+field.getType()+" implementation="+message.getImplementation());
+                throw ex;
             }
-                            printSaveCalcField(ps,field,message,calc);
-ps.println("            }");
-ps.println("        }");
         }
-        else {
-
-            if (message.getImplementation() == Hashtable.class) {
-                ps.println(type+" "+field.getName()+"Value = ("+type+")object.get(\""+field.getName()+"\");");
-            }
-            else {
-                ps.println(type+" "+field.getName()+"Value = object.get"+firstUp(field.getName())+"();");
-            }
-            printSaveCalcField(ps,field,message,calc);
-        }
-
-}
-
-
     }
 
     private void printSaveCalcField(PrintStream ps, FieldDefinition field,MessageDefinition message,boolean calc) {
