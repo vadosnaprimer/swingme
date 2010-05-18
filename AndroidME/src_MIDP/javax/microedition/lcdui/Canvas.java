@@ -313,7 +313,7 @@ public abstract class Canvas extends Displayable {
                 // Help the GC to collect any previous graphicsBitmap
                 graphics.setCanvas(null);
 
-                graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
+                graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.RGB_565);
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }
 
