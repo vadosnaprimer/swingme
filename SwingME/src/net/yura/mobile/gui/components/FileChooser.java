@@ -276,7 +276,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             new Thread(this).start();
         }
     }
-    
+
     final private Vector requestImage = new Vector();
 
     private void yield() {
@@ -731,9 +731,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     /**
      * * Renders ThumbOption object
-     * 
+     *
      * @author emarcato
-     * 
+     *
      */
     class SelectableFileRenderer extends CheckBox implements ListCellRenderer, TableCellEditor {
 
@@ -772,8 +772,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             boolean dir = false;
             String name = tbOption.getName();
-            int i = name.lastIndexOf('/');
-            if (i == name.length() - 1) {
+            int lastCharIdx = name.length() - 1;
+            if (lastCharIdx >= 1 && name.charAt(lastCharIdx) == '/') {
                 dir = true;
                 name = name.substring(0, name.length() - 1);
             }
