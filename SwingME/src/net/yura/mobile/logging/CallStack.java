@@ -114,7 +114,7 @@ public class CallStack
 		}
 	}
 
-  public String createStacktrace()
+  public static String createStacktrace()
   {
     CallStack callStack = getCallStack();
     callStack.printStacktrace(Thread.currentThread());

@@ -230,6 +230,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         cmdPanel.removeAll();
         for (int c=0;c<options.length;c++) {
             Button button = (Button)options[c];
+            ActionListener[] actionListeners = button.getActionListeners();
+            for(int i = 0; i < actionListeners.length; i++){
+              button.removeActionListener(actionListeners[i]);
+            }
             button.addActionListener(this);
             cmdPanel.add(button);
         }
