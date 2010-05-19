@@ -13,8 +13,10 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.layout.BorderLayout;
+import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.test.MainPane.Section;
+import net.yura.mobile.util.ImageUtil;
 
 
 /**
@@ -32,6 +34,7 @@ public class GraphicsTest extends Section {
         addTest("Graphics Draw Image", "drawImage");
         addTest("Water Ripple", "waterRipple");
         addTest("Draw Offscreen", "drawOffscreen");
+        addTest("Scale Image", "scaleImage");
     }
 
     public void openTest(String actionCommand) {
@@ -88,6 +91,22 @@ public class GraphicsTest extends Section {
 
             Label drawRegionPanel = new Label(new Icon(img));
             addToScrollPane(drawRegionPanel, null);
+        }
+        else if ("scaleImage".equals(actionCommand)) {
+
+            Panel scaleImagePanel = new Panel(new BoxLayout(Graphics.VCENTER));
+            try {
+                Image img = Image.createImage("/swingme_logo.png");
+                Image icon = ImageUtil.scaleImage(img, img.getWidth() / 3, img.getHeight() / 3);
+
+                scaleImagePanel.add(new Label(new Icon(img)));
+                scaleImagePanel.add(new Label(new Icon(icon)));
+
+            } catch (Exception e) {
+                scaleImagePanel.add(new Label("Can't load image..."));
+            }
+
+            addToScrollPane(scaleImagePanel, null);
         }
     }
 
