@@ -55,8 +55,6 @@ public final class Graphics3D {
             Rect dst = new Rect(vpX, vpY, vpX + vpW, vpY + vpH);
 
             canvas.drawBitmap(bitmap, src, dst, null);
-
-            System.out.println(">>>>>>>>>>>>>>>>>>>> Graphics3D clear!");
         }
     }
 
