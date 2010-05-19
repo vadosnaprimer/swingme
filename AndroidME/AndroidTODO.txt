@@ -1,7 +1,7 @@
 - Photo browser being able to go to next and previous image
-- Image scalling using 3D API
 
 --- DONE ---
+- Image scalling using 3D API
 - SMS
 - setCurrentDisplay to null, should set app to background
 - Blue tooth
