@@ -28,13 +28,12 @@ import net.yura.mobile.gui.components.Component;
  */
 public class Icon {
 
-    protected int height;
-    protected int width;
+    protected int px,py,width,height;
 
     private Object image;
 
     public Icon() {
-        
+
     }
 
     /**
@@ -73,7 +72,7 @@ public class Icon {
      */
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
         if (image instanceof Image) {
-            g.drawImage((Image)image, x, y);
+            g.drawRegion((Image)image, px, py, width, height, 0, x, y);
         }
     }
 
@@ -84,9 +83,26 @@ public class Icon {
      */
     public Image getImage() {
         if (image instanceof Image) {
-            return (Image)image;
+            Image img = (Image)image;
+            if (px==0&&py==0&&width==img.getWidth()&&height==img.getHeight()) {
+                return img;
+            }
+            else {
+                return Image.createImage(img, px, py, width, height, 0);
+            }
         }
         return null;
     }
 
+    /**
+     * @see java.awt.image.BufferedImage#getSubimage(int, int, int, int)
+     */
+    public Icon getSubimage(int x, int y, int w, int h) {
+        Icon i = new Icon( (Image)image );
+        i.px = px + x;
+        i.py = py + y;
+        i.width = w;
+        i.height = h;
+        return i;
+    }
 }
