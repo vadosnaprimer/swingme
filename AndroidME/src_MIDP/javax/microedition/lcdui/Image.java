@@ -1,5 +1,6 @@
 package javax.microedition.lcdui;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,8 +31,16 @@ public class Image {
         Image res;
         switch (transform) {
             case Sprite.TRANS_NONE:
-                Bitmap bmp = Bitmap.createBitmap(image.bitmap, x, y, width, height);
+                Bitmap bmp;
+                try {
+                    bmp = Bitmap.createBitmap(image.bitmap, x, y, width, height);
+
+                } catch (OutOfMemoryError e) {
+                    cleanMem();
+                    bmp = Bitmap.createBitmap(image.bitmap, x, y, width, height);
+                }
                 res = new Image(bmp);
+
                 break;
             case Sprite.TRANS_ROT90:
             case Sprite.TRANS_ROT270:
@@ -54,15 +63,33 @@ public class Image {
     }
 
     public static Image createImage(InputStream stream) throws IOException {
-        Bitmap bitmap = BitmapFactory.decodeStream(stream);
-        if (bitmap==null) {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int nRead;
+
+        while ((nRead = stream.read(buffer)) > 0) {
+            bout.write(buffer, 0, nRead);
+        }
+
+        byte[] imgData = bout.toByteArray();
+        Image res = createImage(imgData, 0, imgData.length);
+
+        if (res == null) {
             throw new IOException();
         }
-        return new Image(bitmap);
+
+        return res;
     }
 
     private static Image createTransparentImage(int width, int height) {
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        Bitmap bitmap;
+        try {
+            bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+
+        } catch (OutOfMemoryError e) {
+
+            bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        }
         return new Image(bitmap);
     }
 
@@ -82,7 +109,13 @@ public class Image {
     }
 
     public static Image createImage(byte[] imgData, int offset, int length) {
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
+        } catch (OutOfMemoryError e) {
+            cleanMem();
+            bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
+        }
         if (bitmap==null) {
             return null;
         }
@@ -91,7 +124,14 @@ public class Image {
 
     public static final Image createRGBImage(int[] rgb, int width, int height, boolean processAlpha) {
         Bitmap.Config config = (processAlpha) ? Bitmap.Config.ARGB_4444 : Bitmap.Config.RGB_565;
-        Bitmap bitmap = Bitmap.createBitmap(rgb, width, height, config);
+        Bitmap bitmap;
+        try {
+            bitmap = Bitmap.createBitmap(rgb, width, height, config);
+        } catch (OutOfMemoryError e) {
+            cleanMem();
+            bitmap = Bitmap.createBitmap(rgb, width, height, config);
+        }
+
         return new Image(bitmap);
     }
 
@@ -150,5 +190,13 @@ public class Image {
         new Canvas(bm.bitmap).drawBitmap(source.bitmap, 0, 0, paint);
 
         // return bm;
+    }
+
+    private static void cleanMem() {
+        System.gc();
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+        }
     }
 }

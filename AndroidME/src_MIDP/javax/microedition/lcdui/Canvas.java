@@ -304,6 +304,7 @@ public abstract class Canvas extends Displayable {
                         e.printStackTrace();
                     }
 
+                    graphicsBitmap.recycle();
                     graphicsBitmap = null;
                 }
             }
@@ -313,7 +314,16 @@ public abstract class Canvas extends Displayable {
                 // Help the GC to collect any previous graphicsBitmap
                 graphics.setCanvas(null);
 
-                graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.RGB_565);
+                try {
+                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.RGB_565);
+                } catch (OutOfMemoryError e) {
+                    System.gc();
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e1) {
+                    }
+                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.RGB_565);
+                }
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }
 
