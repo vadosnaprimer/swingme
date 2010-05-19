@@ -1,6 +1,7 @@
 package net.yura.android;
 
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
@@ -15,6 +16,10 @@ import javax.microedition.midlet.MIDlet;
 import net.yura.android.lcdui.Toolkit;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -151,6 +156,40 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         thread.start();
     }
 
+    private void setFileSystemProperties() {
+
+        final String URL_FILE_ROOT = "file:///";
+        String extDir = URL_FILE_ROOT + "/";
+        String privDir = extDir;
+        String photosDir = extDir;
+
+        try {
+            privDir = URL_FILE_ROOT + getFilesDir().getCanonicalPath() + "/";
+            String storageDir = Environment.getExternalStorageDirectory().getCanonicalPath() + "/";
+            if (new File(storageDir + "DCIM").exists()) {
+                extDir = URL_FILE_ROOT + storageDir;
+                photosDir = extDir + "DCIM/";
+            }
+        }
+        catch (Exception e) {
+            // Do nothing. Use defaults.
+        }
+
+        //#mdebug debug
+        System.out.println("extDir = " + extDir);
+        System.out.println("privDir = " + privDir);
+        System.out.println("photosDir = " + photosDir);
+        //#enddebug
+
+        System.setProperty("fileconn.dir.photos", photosDir);
+        System.setProperty("fileconn.dir.videos",  extDir);
+        System.setProperty("fileconn.dir.graphics",  extDir);
+        System.setProperty("fileconn.dir.tones",  extDir);
+        System.setProperty("fileconn.dir.music",  extDir);
+        System.setProperty("fileconn.dir.recordings",  extDir);
+        System.setProperty("fileconn.dir.private",  privDir);
+    }
+
     private void setSystemProperties() {
         System.setProperty("microedition.platform", "androidMe");
         System.setProperty("microedition.locale", Locale.getDefault().toString());
@@ -172,23 +211,17 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         System.setProperty("microedition.pim.version", "1.0");
         System.setProperty("microedition.io.file.FileConnection.version", "1.0");
 
-        String extDir, privDir;
-        try {
-            privDir = "file://" + getFilesDir().getCanonicalPath() + "/";
-            extDir = "file://" + Environment.getExternalStorageDirectory().getCanonicalPath() + "/";
-        }
-        catch (Exception e) {
-            privDir = "file:///";
-            extDir = "file:///";
-        }
+        // Listen for External Storage events
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
+        intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
+        intentFilter.addDataScheme("file");
+        registerReceiver(new FileBroadcastReceiver(), intentFilter);
 
-        System.setProperty("fileconn.dir.photos",  extDir + "DCIM/");
-        System.setProperty("fileconn.dir.videos",  extDir);
-        System.setProperty("fileconn.dir.graphics",  extDir);
-        System.setProperty("fileconn.dir.tones",  extDir);
-        System.setProperty("fileconn.dir.music",  extDir);
-        System.setProperty("fileconn.dir.recordings",  extDir);
-        System.setProperty("fileconn.dir.private",  privDir);
+        setFileSystemProperties();
 
         // BlueTooth
         System.setProperty("bluetooth.api.version", "1.1");
@@ -280,7 +313,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
             invokeAndWait(new Runnable() {
                 public void run() {
                     try {
-                        Class midletClass = Class.forName(className, true, classLoader);
+                        Class<?> midletClass = Class.forName(className, true, classLoader);
                         midlet = (MIDlet) midletClass.newInstance();
 
                         if (midlet != null) {
@@ -422,6 +455,16 @@ System.out.println("name="+name);
         if (position >= 0) {
             String midletClassName = jadMidlets.elementAt(position)[2];
             startMIDlet(midletClassName);
+        }
+    }
+
+    class FileBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //#debug debug
+            System.out.println(">>> FileBroadcastReceiver: received " + intent.getAction());
+            setFileSystemProperties();
         }
     }
 }
