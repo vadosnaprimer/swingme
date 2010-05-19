@@ -104,7 +104,7 @@ public class ImageUtil {
 
         Image2D image2D = new Image2D(Image2D.RGB, img);
         Background background = new Background();
-        background.setColor(0xffffcc); // set the background color
+        background.setColor(0xffffffcc); // set the background color
         background.setImage(image2D);
 
         // get the singleton Graphics3D instance
