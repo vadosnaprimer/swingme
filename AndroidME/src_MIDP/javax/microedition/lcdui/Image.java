@@ -105,7 +105,11 @@ public class Image {
     }
 
     public static Image createImage(String resource) throws IOException {
-        return createImage(Image.class.getResourceAsStream(resource));
+        InputStream in = Image.class.getResourceAsStream(resource);
+        if (in == null) {
+            throw new IOException();
+        }
+        return createImage(in);
     }
 
     public static Image createImage(byte[] imgData, int offset, int length) {
