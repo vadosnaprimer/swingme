@@ -1101,6 +1101,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     pointerComponent = currentWindow.getComponentAt(x - currentWindow.getX(), y - currentWindow.getY());
 
                     if (IPHONE_SCROLL) {
+                        pointerScrollPane = null;
                         ScrollPane sp = getScrollPaneParent(pointerComponent);
                         if (sp != null) {
                             if (sp.getViewPortHeight() < sp.getView().getHeight() ||
