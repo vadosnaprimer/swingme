@@ -259,10 +259,6 @@ public class Panel extends Component {
                 ((Component)components.elementAt(i)).workoutSize();
         }
         doLayout();
-        Window w1 = getWindow();
-        if (w1!=null) {
-            w1.setupFocusedComponent();
-        }
     }
 
     // BREAK OUT!!!

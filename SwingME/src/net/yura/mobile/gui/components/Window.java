@@ -99,29 +99,19 @@ public class Window extends Panel {
         /**
          * Only used by requestFocusInWindow() in Component
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+         * this is a scheduled event, it will happen on the next repaint
          * @see Component#requestFocusInWindow()
          */
 	protected void setFocusedComponent(Component ac) {
-            if (focusedComponent == ac) return;
-
-            if (isFocused() && focusedComponent != null) {
-                // if we call focusLost on focusedComponent it still thinks its state is that is has focused
-                // and when it decides what to repaint, it bases it on
-                Component old = focusedComponent;
-                focusedComponent = null;
-                old.focusLost();
-            }
-	    focusedComponent = ac;
-            if (isFocused() && focusedComponent != null) {
-                    focusedComponent.focusGained();
-            }
+            focusedComponent = ac;
+            getDesktopPane().repaint();
 	}
 
         /**
          * called by pack and revalidate
          * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
          */
-        protected void setupFocusedComponent() {
+        public void setupFocusedComponent() {
                 Component c = getMostRecentFocusOwner();
                 if (c!=null) {
                     if (c.getWindow()!=this || !c.isShowing() || !c.isFocusable()) {

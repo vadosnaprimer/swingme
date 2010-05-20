@@ -454,6 +454,8 @@ public class DesktopPane extends Canvas implements Runnable {
     //#debug
     private String mem;
 
+    private Component focusedComponent;
+
 
     /**
      * @param gtmp The Graphics object
@@ -519,6 +521,16 @@ public class DesktopPane extends Canvas implements Runnable {
                 validateComponents(revalidateComponents3);
                 validating = 0;
 
+                for (int c=0;c<revalidateComponents1.size();c++) {
+                    Window w1 = ((Component)revalidateComponents1.elementAt(c)).getWindow();
+                    if (w1!=null) {
+                        w1.setupFocusedComponent();
+                    }
+                }
+                revalidateComponents1.removeAllElements();
+                revalidateComponents2.removeAllElements();
+                revalidateComponents3.removeAllElements();
+
                 // For thread safety, we cache the components to repaint
                 // and as a component can call repaint from inside its paint method
                 SystemUtil.addAll(repaintComponent2, repaintComponent);
@@ -533,18 +545,16 @@ public class DesktopPane extends Canvas implements Runnable {
                 Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
 
                 if (newWindow!=currentWindow) {
-                    if (currentWindow != null) {
-                        Component focusedComponent = currentWindow.getFocusOwner();
-                        if (focusedComponent != null) {
-                            focusedComponent.focusLost();
-                        }
+                    if (focusedComponent != null) {
+                        focusedComponent.focusLost();
+                        focusedComponent=null;
                     }
                     currentWindow = newWindow;
                     if (currentWindow != null) {
                         // this needs to be done after all revalidates have finished
                         // as revalidates can change what component can be focusable
-                        Component focusedComponent = newWindow.getMostRecentFocusOwner();
-                        if (focusedComponent != null) {
+                        Component newFocusedComponent = newWindow.getMostRecentFocusOwner();
+                        if (newFocusedComponent != null) {
                             // even though MOST focusGained call a repaint
                             // we can NOT allow a repaint here to actually be added
                             // to the list of components to be repainted as then
@@ -552,6 +562,23 @@ public class DesktopPane extends Canvas implements Runnable {
                             // and the layout may not be valid yet for that component.
                             // e.g. If focusGained calls revalidate on its parent too
                             // that will not get done and yet it will still paint
+                            focusedComponent = newFocusedComponent;
+                            focusedComponent.focusGained();
+                        }
+                    }
+                }
+                else {
+                    Component currentFocusedComponent=null;
+                    if (currentWindow != null) {
+                        currentFocusedComponent = currentWindow.getFocusOwner();
+                    }
+                    if (focusedComponent != currentFocusedComponent) {
+                        if (focusedComponent != null) {
+                            focusedComponent.focusLost();
+                            focusedComponent=null;
+                        }
+                        if (currentFocusedComponent != null) {
+                            focusedComponent = currentFocusedComponent;
                             focusedComponent.focusGained();
                         }
                     }
@@ -559,7 +586,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 if (sizeChanged) {
                     if (currentWindow != null) {
-                        Component focusedComponent = currentWindow.getFocusOwner();
+                        //Component focusedComponent = currentWindow.getFocusOwner();
                         if (focusedComponent!=null) {
                             focusedComponent.makeVisible();
                         }
@@ -697,7 +724,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         Component panel = (Component) v.elementAt(c);
                         panel.validate();
                     }
-                    v.removeAllElements();
+                    //v.removeAllElements();
 
             //}
     }
