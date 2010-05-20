@@ -41,7 +41,9 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     private View waitingView;
     private Handler handler;
     private Thread eventThread;
-    private Object lock = new Object();
+    private final Object lock = new Object();
+    private boolean closed;
+    private FileBroadcastReceiver fileBroadcastReceiver;
 
     public static AndroidMeMIDlet DEFAULT_ACTIVITY;
 
@@ -219,7 +221,9 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         intentFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
         intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
-        registerReceiver(new FileBroadcastReceiver(), intentFilter);
+
+        fileBroadcastReceiver = new FileBroadcastReceiver();
+        registerReceiver(fileBroadcastReceiver, intentFilter);
 
         setFileSystemProperties();
 
@@ -332,9 +336,14 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
 
     private void closeMIDlet() {
         try {
-            if (this.midlet != null) {
-                this.midlet.doDestroyApp(true);
-                this.midlet = null;
+            if (fileBroadcastReceiver != null) {
+                unregisterReceiver(fileBroadcastReceiver);
+                fileBroadcastReceiver = null;
+            }
+
+            if (midlet != null) {
+                midlet.doDestroyApp(true);
+                midlet = null;
             }
         }
         catch (Throwable ex) {
@@ -343,14 +352,17 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
 
     @Override
     public void finish() {
-        closeMIDlet();
-        super.finish();
+        // Ignore multiple calls to finish()
+        if (!closed) {
+            closed = true;
+            closeMIDlet();
+            super.finish();
+        }
     }
 
 
     @Override
     protected void onDestroy() {
-
         closeMIDlet();
         super.onDestroy();
     }
