@@ -8,9 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import net.yura.android.io.AndroidURLConnection;
-import net.yura.android.io.file.AndroidFileConnection;
-import net.yura.android.io.socket.ServerSocketConnection;
-import net.yura.android.io.socket.SocketConnection;
+import net.yura.android.io.AndroidFileConnection;
+import net.yura.android.io.ServerSocketConnection;
+import net.yura.android.io.SocketConnection;
 import net.yura.android.messaging.MessageConnectionImpl;
 
 public class Connector {

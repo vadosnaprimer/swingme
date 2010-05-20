@@ -1,4 +1,4 @@
-package net.yura.android.io.file;
+package net.yura.android.io;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

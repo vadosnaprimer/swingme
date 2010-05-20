@@ -23,7 +23,7 @@
  */
 
 
-package net.yura.android.io.socket;
+package net.yura.android.io;
 
 import java.io.IOException;
 import java.net.InetAddress;

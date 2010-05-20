@@ -22,7 +22,7 @@
  *  limitations.
  */
 
-package net.yura.android.io.socket;
+package net.yura.android.io;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
