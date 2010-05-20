@@ -1,6 +1,6 @@
 package javax.microedition.lcdui;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -63,22 +63,24 @@ public class Image {
     }
 
     public static Image createImage(InputStream stream) throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int nRead;
 
-        while ((nRead = stream.read(buffer)) > 0) {
-            bout.write(buffer, 0, nRead);
+        int size = Math.max(stream.available(), 8 * 1024);
+        BufferedInputStream buffInput = new BufferedInputStream(stream, size);
+
+        Bitmap bitmap;
+        try {
+            bitmap = BitmapFactory.decodeStream(buffInput);
+        } catch (OutOfMemoryError e) {
+            cleanMem();
+            buffInput.reset();
+            buffInput.mark(1024);
+            bitmap = BitmapFactory.decodeStream(buffInput);
         }
-
-        byte[] imgData = bout.toByteArray();
-        Image res = createImage(imgData, 0, imgData.length);
-
-        if (res == null) {
+        if (bitmap==null) {
             throw new IOException();
         }
 
-        return res;
+        return new Image(bitmap);
     }
 
     private static Image createTransparentImage(int width, int height) {
@@ -87,7 +89,7 @@ public class Image {
             bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 
         } catch (OutOfMemoryError e) {
-
+            cleanMem();
             bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
         }
         return new Image(bitmap);
