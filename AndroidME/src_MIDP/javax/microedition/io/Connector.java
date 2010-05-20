@@ -9,6 +9,8 @@ import java.io.OutputStream;
 
 import net.yura.android.io.AndroidURLConnection;
 import net.yura.android.io.AndroidFileConnection;
+import net.yura.android.io.HttpConnectionImpl;
+import net.yura.android.io.HttpsConnectionImpl;
 import net.yura.android.io.ServerSocketConnection;
 import net.yura.android.io.SocketConnection;
 import net.yura.android.messaging.MessageConnectionImpl;
@@ -21,6 +23,7 @@ public class Connector {
     private static final String PROTOCOL_FILE = "file:";
     private static final String PROTOCOL_SOCKET = "socket:";
     private static final String PROTOCOL_HTTP = "http:";
+    private static final String PROTOCOL_HTTPS = "https:";
     private static final String PROTOCOL_SMS = "sms:";
 
     public static final Connection open(String name) throws IOException {
@@ -38,7 +41,14 @@ public class Connector {
         }
         else if (name.startsWith(PROTOCOL_SMS)) {
             connection =  new MessageConnectionImpl(name);
-        } else {
+        }
+        else if (name.startsWith(PROTOCOL_HTTP)) {
+            connection =  new HttpConnectionImpl(name, mode);
+        }
+        else if (name.startsWith(PROTOCOL_HTTPS)) {
+            connection =  new HttpsConnectionImpl(name, mode);
+        }
+        else {
             connection = new AndroidURLConnection(name);
         }
         return connection;
