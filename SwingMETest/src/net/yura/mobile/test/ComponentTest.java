@@ -108,7 +108,9 @@ public class ComponentTest  extends Section{
 
                 testMain.add(testMain2);
 
-                componentTest.add( new Label("a Label") );
+                Label l = new Label("a Label");
+                l.setToolTipText("a label can have a tool tip too");
+                componentTest.add( l );
                 if (mainPane.image!=null) { componentTest.add( new Label( mainPane.image ) ); }
                 Button b = new Button("a Button");
                 b.setToolTipText("A ToolTip for a button");
