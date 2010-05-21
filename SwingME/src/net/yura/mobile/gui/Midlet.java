@@ -109,6 +109,12 @@ public abstract class Midlet extends MIDlet {
             return PLATFORM_NOKIA_S60;
         }
 
+        // detecting BLACKBERRY
+        // NOTE: Needs to be before SAMSUNG, otherwise will reset black berry
+        if (hasClass("net.rim.device.api.ui.UiApplication")) {
+            return PLATFORM_BLACKBERRY;
+        }
+
         // detecting SONY ERICSSON
         if (currentPlatform.indexOf("SonyEricsson") >= 0 ||
             System.getProperty("com.sonyericsson.java.platform") != null) {
