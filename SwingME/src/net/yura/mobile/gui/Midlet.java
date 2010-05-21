@@ -49,51 +49,61 @@ public abstract class Midlet extends MIDlet {
         Logger.setLogger( new DesktopLogger(Logger.WARN) );
     }
 
-	private DesktopPane rootpane;
+    private DesktopPane rootpane;
 
-	public Midlet() {
+    public Midlet() {
 
-		rootpane = makeNewRootPane();
+            rootpane = makeNewRootPane();
 
-	}
-	/**
-	 * THIS METHOD WILL MAKE A NEW ROOTPANE
-	 * but nothing can be set up here as things like getHeight wont work
-	 */
-	protected abstract DesktopPane makeNewRootPane();
+    }
+    /**
+     * THIS METHOD WILL MAKE A NEW ROOTPANE
+     * but nothing can be set up here as things like getHeight wont work
+     */
+    protected abstract DesktopPane makeNewRootPane();
 
-	/**
-	 * this will set up everything needed to start the
-	 * app like the size and stuff
-	 */
-	protected abstract void initialize(DesktopPane rootpane);
+    /**
+     * this will set up everything needed to start the
+     * app like the size and stuff
+     */
+    protected abstract void initialize(DesktopPane rootpane);
 
-	protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
+    protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
 
-		rootpane.kill();
+            rootpane.kill();
 
-		Display.getDisplay(this).setCurrent((Displayable)null);
+            Display.getDisplay(this).setCurrent((Displayable)null);
 
-		notifyDestroyed();
+            notifyDestroyed();
 
-	}
+    }
 
 
-	protected void pauseApp() {
-		// TODO
-		//Logger.debug("pauseApp");
-	}
+    protected void pauseApp() {
+            // TODO
+            //Logger.debug("pauseApp");
+    }
 
-	protected void startApp() {
-		// TODO come out of pause
-		//Logger.debug("startApp");
-	}
+    protected void startApp() {
+            // TODO come out of pause
+            //Logger.debug("startApp");
+    }
 
-	public static int getPlatform() {
-	    return platform;
-	}
+    public static int getPlatform() {
+        return platform;
+    }
 
-	private static int detectPlatform() {
+    private static int detectPlatform() {
+
+        // detecting BLACKBERRY
+        if (hasClass("net.rim.device.api.ui.UiApplication")) {
+            return PLATFORM_BLACKBERRY;
+        }
+
+        // detecting ME4SE
+        if (hasClass("org.me4se.MIDletRunner")) {
+            return PLATFORM_ME4SE;
+        }
 
         String currentPlatform = System.getProperty("microedition.platform");
         if (currentPlatform == null) {
@@ -107,12 +117,6 @@ public abstract class Midlet extends MIDlet {
                 return PLATFORM_NOKIA_S40;
             }
             return PLATFORM_NOKIA_S60;
-        }
-
-        // detecting BLACKBERRY
-        // NOTE: Needs to be before SAMSUNG, otherwise will reset black berry
-        if (hasClass("net.rim.device.api.ui.UiApplication")) {
-            return PLATFORM_BLACKBERRY;
         }
 
         // detecting SONY ERICSSON
@@ -146,11 +150,6 @@ public abstract class Midlet extends MIDlet {
             hasClass("mmpp.lang.MathFP") ||
             hasClass("mmpp.media.BackLight")) {
                 return PLATFORM_LG;
-        }
-
-        // detecting ME4SE
-        if (hasClass("org.me4se.MIDletRunner")) {
-            return PLATFORM_ME4SE;
         }
 
         // detecting WTK
