@@ -1047,7 +1047,8 @@ public class DesktopPane extends Canvas implements Runnable {
                 keyevent.justReleasedAction(Canvas.RIGHT) ||
                 keyevent.justReleasedAction(Canvas.DOWN) ||
                 keyevent.justReleasedAction(Canvas.LEFT) ||
-                keyevent.justReleasedAction(Canvas.UP));
+                keyevent.justReleasedAction(Canvas.UP),
+                focusedComponent);
 
 
     }
@@ -1171,20 +1172,20 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // if dragged by only a little bit, should not hide the tooltip
 
-        showHideToolTip(type == PRESSED);
+        showHideToolTip(type == PRESSED,pointerComponent);
     }
 
-    private void showHideToolTip(boolean show) {
+    private void showHideToolTip(boolean show,Component comp) {
 
         //Component focusedComponent;
 
         // if a tooltip should be setup
-        if (show && focusedComponent != null && focusedComponent.getToolTipText() != null) {
+        if (show && comp != null && comp.getToolTipText() != null) {
 
-            tooltip.setText(focusedComponent.getToolTipText());
+            tooltip.setText(comp.getToolTipText());
             tooltip.workoutSize();
-            int x = focusedComponent.getToolTipLocationX() + focusedComponent.getXOnScreen();
-            int y = focusedComponent.getToolTipLocationY() + focusedComponent.getYOnScreen();
+            int x = comp.getToolTipLocationX() + comp.getXOnScreen();
+            int y = comp.getToolTipLocationY() + comp.getYOnScreen();
             int w = tooltip.getWidthWithBorder();
             int h = tooltip.getHeightWithBorder();
             Border offset = tooltip.getBorder();
