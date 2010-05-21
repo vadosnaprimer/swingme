@@ -1013,6 +1013,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 }
             }
 
+            // this is for when you click on the scrollbar arrows
             if (dragVelocityX != 0 || dragVelocityY != 0) {
                 setDragScrollPane(this);
             }

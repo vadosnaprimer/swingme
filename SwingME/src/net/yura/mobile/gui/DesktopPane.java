@@ -161,7 +161,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private int menuHeight;
     final private Vector windows = new Vector();
     final private Object uiLock = windows;
-    private Window currentWindow;
+    //private Window currentWindow;
     private ToolTip tooltip;
     private ToolTip indicator;
     private final Vector repaintComponent = new Vector();
@@ -505,11 +505,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 boolean doFullRepaint;
 
-                // if we have started revalidating, we do not want any random reval and repaint happening
-                // as if they do happen half way though, we would get a component being repainted
-                // even though it did not get revalidated
-                //synchronized (repaintComponent) {
-
                 // now we need to layout all the components
                 // we use a 3 pass system, as 3 passes is the maximum needed to layout even
                 // the most complex layout with flexable components inside scrollpanes
@@ -521,6 +516,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 validateComponents(revalidateComponents3);
                 validating = 0;
 
+                // this needs to be done after all revalidates have finished
+                // as revalidates can change what component can be focusable
+                // also revalidate can change what components are visible,
+                // and if they become hidden, they should not gain focus
                 for (int c=0;c<revalidateComponents1.size();c++) {
                     Window w1 = ((Component)revalidateComponents1.elementAt(c)).getWindow();
                     if (w1!=null) {
@@ -540,47 +539,22 @@ public class DesktopPane extends Canvas implements Runnable {
                 doFullRepaint = fullrepaint;
                 fullrepaint = false;
 
-                //}
+                Window currentWindow = getSelectedFrame();
 
-                Window newWindow = windows.size()==0?null:(Window)windows.lastElement();
-
-                if (newWindow!=currentWindow) {
+                // ALL focus changed events HAVE to happen after the revalidate and before the repaint!!!
+                // if they dont, then a layout can not be valid and so they should not be made visible
+                Component currentFocusedComponent=null;
+                if (currentWindow != null) {
+                    currentFocusedComponent = currentWindow.getMostRecentFocusOwner();
+                }
+                if (focusedComponent != currentFocusedComponent) {
                     if (focusedComponent != null) {
                         focusedComponent.focusLost();
                         focusedComponent=null;
                     }
-                    currentWindow = newWindow;
-                    if (currentWindow != null) {
-                        // this needs to be done after all revalidates have finished
-                        // as revalidates can change what component can be focusable
-                        Component newFocusedComponent = newWindow.getMostRecentFocusOwner();
-                        if (newFocusedComponent != null) {
-                            // even though MOST focusGained call a repaint
-                            // we can NOT allow a repaint here to actually be added
-                            // to the list of components to be repainted as then
-                            // any thred could repaint at this point
-                            // and the layout may not be valid yet for that component.
-                            // e.g. If focusGained calls revalidate on its parent too
-                            // that will not get done and yet it will still paint
-                            focusedComponent = newFocusedComponent;
-                            focusedComponent.focusGained();
-                        }
-                    }
-                }
-                else {
-                    Component currentFocusedComponent=null;
-                    if (currentWindow != null) {
-                        currentFocusedComponent = currentWindow.getFocusOwner();
-                    }
-                    if (focusedComponent != currentFocusedComponent) {
-                        if (focusedComponent != null) {
-                            focusedComponent.focusLost();
-                            focusedComponent=null;
-                        }
-                        if (currentFocusedComponent != null) {
-                            focusedComponent = currentFocusedComponent;
-                            focusedComponent.focusGained();
-                        }
+                    if (currentFocusedComponent != null) {
+                        focusedComponent = currentFocusedComponent;
+                        focusedComponent.focusGained();
                     }
                 }
 
@@ -889,7 +863,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // dont want to change the windows Vector while we are painting
         synchronized (uiLock) {
             if ( w != null && windows.contains(w) ) {
-                if (currentWindow == w) {
+                if ( getSelectedFrame() == w) {
                     return;
                 }
                 windows.removeElement(w);
@@ -919,7 +893,7 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see javax.swing.JDesktopPane#getSelectedFrame() JDesktopPane.getSelectedFrame
      */
     public Window getSelectedFrame() {
-        return currentWindow;
+        return windows.isEmpty()?null:(Window)windows.lastElement();
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
@@ -983,13 +957,15 @@ public class DesktopPane extends Canvas implements Runnable {
                 message = null;
             }
 
+            Window currentWindow = getSelectedFrame();
+
             // we keep the current window seperate so that we know if a new window
             // has been opened and we need to reworkout the new focused component
             // and that NEEDs to be done after the valiating, and before the painting
             // but sometimes we can get a event after a new window has been opened
             // but before it has become the new window, and we dont even know what
             // component will be focused on this window
-            if (currentWindow != null && currentWindow == windows.lastElement()) {
+            if (currentWindow != null) {
 
                 Button mneonicButton = null;
                 int key = keyevent.getJustPressedKey();
@@ -1028,7 +1004,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     mneonicButton.fireActionPerformed();
                 }
                 else {
-                    Component focusedComponent = currentWindow.getFocusOwner();
+                    //Component focusedComponent = currentWindow.getFocusOwner();
 
                     boolean consumed=false;
 
@@ -1121,7 +1097,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private void pointerEvent(int type, int x, int y) {
         try {
-            if (currentWindow != null && currentWindow == windows.lastElement()) {
+
+            Window currentWindow = getSelectedFrame();
+
+            if (currentWindow != null) {
 
                 // When pointer pressed, initialize pointer Component/ScrollPane
                 if (type == PRESSED) {
@@ -1197,10 +1176,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private void showHideToolTip(boolean show) {
 
-        Component focusedComponent;
+        //Component focusedComponent;
 
         // if a tooltip should be setup
-        if (show && currentWindow != null && (focusedComponent = currentWindow.getFocusOwner()) != null && focusedComponent.getToolTipText() != null) {
+        if (show && focusedComponent != null && focusedComponent.getToolTipText() != null) {
 
             tooltip.setText(focusedComponent.getToolTipText());
             tooltip.workoutSize();
