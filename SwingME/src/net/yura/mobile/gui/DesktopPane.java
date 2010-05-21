@@ -186,6 +186,10 @@ public class DesktopPane extends Canvas implements Runnable {
     private boolean sideSoftKeys;
     private byte[] message;
 
+    // this is the currently focused component in the whole system
+    // each window also has its own focused component
+    private Component focusedComponent;
+
     /**
      * nothing should ever call serviceRepaints()
      * or repaint() in this class.
@@ -450,12 +454,8 @@ public class DesktopPane extends Canvas implements Runnable {
     // cant do this
     //}
     private Graphics2D graphics;
-    private Vector repaintComponent2 = new Vector();
     //#debug
     private String mem;
-
-    private Component focusedComponent;
-
 
     /**
      * @param gtmp The Graphics object
@@ -532,6 +532,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 // For thread safety, we cache the components to repaint
                 // and as a component can call repaint from inside its paint method
+                Vector repaintComponent2 = new Vector(repaintComponent.size());
                 SystemUtil.addAll(repaintComponent2, repaintComponent);
                 repaintComponent.removeAllElements();
 
@@ -584,8 +585,6 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
                 }
-
-                repaintComponent2.removeAllElements();
 
                 if (doFullRepaint) {
                     int startC = 0;
@@ -1036,20 +1035,20 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                 }
             }
+
+            showHideToolTip(
+                    keyevent.justReleasedAction(Canvas.RIGHT) ||
+                    keyevent.justReleasedAction(Canvas.DOWN) ||
+                    keyevent.justReleasedAction(Canvas.LEFT) ||
+                    keyevent.justReleasedAction(Canvas.UP),
+                    focusedComponent);
+
         }
         catch (Throwable th) {
             //#debug warn
             Logger.warn("Error in KeyEvent: " + th.toString());
             Logger.error(th);
         }
-
-        showHideToolTip(
-                keyevent.justReleasedAction(Canvas.RIGHT) ||
-                keyevent.justReleasedAction(Canvas.DOWN) ||
-                keyevent.justReleasedAction(Canvas.LEFT) ||
-                keyevent.justReleasedAction(Canvas.UP),
-                focusedComponent);
-
 
     }
 
@@ -1163,6 +1162,10 @@ public class DesktopPane extends Canvas implements Runnable {
                     pointerComponent = null;
                 }
             }
+
+            // TODO: if dragged by only a little bit, should not hide the tooltip
+            showHideToolTip(type == PRESSED,pointerComponent);
+
         }
         catch (Throwable th) {
             //#debug warn
@@ -1170,14 +1173,9 @@ public class DesktopPane extends Canvas implements Runnable {
             Logger.error(th);
         }
 
-        // if dragged by only a little bit, should not hide the tooltip
-
-        showHideToolTip(type == PRESSED,pointerComponent);
     }
 
     private void showHideToolTip(boolean show,Component comp) {
-
-        //Component focusedComponent;
 
         // if a tooltip should be setup
         if (show && comp != null && comp.getToolTipText() != null) {
