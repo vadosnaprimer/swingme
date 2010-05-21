@@ -163,8 +163,6 @@ public abstract class Midlet extends MIDlet {
             return PLATFORM_ANDROID;
         }
 
-        // TODO blackberry
-
         return PLATFORM_NOT_DEFINED;
     }
 
