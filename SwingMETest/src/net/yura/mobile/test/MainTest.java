@@ -345,7 +345,7 @@ public class MainTest extends Section {
             }
             loadPanel.append(message+"\n");
 
-            getWindow().repaint();
+            loadPanel.getParent().repaint();
         }
         else if ("borderTest".equals(actionCommand)) {
 
