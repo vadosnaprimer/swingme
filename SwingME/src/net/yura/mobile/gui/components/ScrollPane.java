@@ -1031,7 +1031,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         viewWidth,
                         dragStartX-pointX
                   );
-                dragScrollBars(0);
+                dragScrollBarsSync(true);
             }
             else if (dragScrollBarMode == DRAG_SLIDER_VERT) {
 
@@ -1046,15 +1046,14 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         dragStartY-pointY
                   );
 
-                dragScrollBars(0);
+                dragScrollBarsSync(true);
             }
             else if (dragScrollBarMode == DRAG_NONE) {
                 if (getDesktopPane().IPHONE_SCROLL) {
                     dragLastX = pointX;
                     dragLastY = pointY;
 
-                    dragFriction = 0;
-                    dragScrollBars(0);
+                    dragScrollBarsSync(false);
                 }
             }
         }
@@ -1081,6 +1080,67 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         }
     }
 
+    private void dragScrollBarsSync(boolean forceBound) {
+        int viewPortX = getViewPortX();
+        int viewPortY = getViewPortY();
+        int cX = getView().getX() - viewPortX;
+        int cY = getView().getY() - viewPortY;
+        int cW = getView().getWidth();
+        int cH = getView().getHeight();
+
+        int viewPortHeight = getViewPortHeight();
+        int viewPortWidth = getViewPortWidth(viewPortHeight);
+
+        if (cW > viewPortWidth) {
+            cX = dragScrollBarSync(forceBound,
+                                   dragStartX, dragLastX, dragStartViewX,
+                                   cX, cW, viewPortX, viewPortWidth);
+        }
+
+        if (cH > viewPortHeight) {
+            cY = dragScrollBarSync(forceBound,
+                                   dragStartY, dragLastY, dragStartViewY,
+                                   cY, cH, viewPortY, viewPortHeight);
+        }
+
+        makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
+    }
+
+    private int dragScrollBarSync(boolean bound,
+                                int dragStartY, int dragLastY, int dragStartViewY,
+                                int cY, int cH, int viewPortY, int viewPortHeight) {
+
+        int diffBottomY =  viewPortHeight - cY - cH;
+
+        // How far are we from the desire position?
+        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - (cY + viewPortY));
+
+        if (jumpY != 0 || bound) {
+
+            cY -= jumpY;
+            diffBottomY += jumpY;
+
+            if (cY >= 0) {
+                if (bound) {
+                    cY = 0;
+                }
+                else {
+                    cY = cY / 2;
+                }
+            }
+            else if (diffBottomY >= 0) {
+                if (bound) {
+                    cY += diffBottomY;
+                }
+                else {
+                    cY += diffBottomY / 2;
+                }
+            }
+        }
+
+        return -cY;
+    }
+
     private boolean dragScrollBars(int time) {
         boolean res = false;
         int viewPortX = getViewPortX();
@@ -1098,26 +1158,22 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         if (cW > viewPortWidth) {
             int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
-                                          dragStartX, dragLastX, dragStartViewX,
                                           cX, cW, viewPortX, viewPortWidth,
                                           time, dragTimeX);
             cX = newPosX[0];
-            dragLastX = newPosX[1];
-            dragVelocityX = newPosX[2];
-            res |= (newPosX[3] != 0);
-            dragTimeX = newPosX[4];
+            dragVelocityX = newPosX[1];
+            res |= (newPosX[2] != 0);
+            dragTimeX = newPosX[3];
         }
 
         if (cH > viewPortHeight) {
             int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
-                                          dragStartY, dragLastY, dragStartViewY,
                                           cY, cH, viewPortY, viewPortHeight,
                                           time, dragTimeY);
             cY = newPosY[0];
-            dragLastY = newPosY[1];
-            dragVelocityY = newPosY[2];
-            res |= (newPosY[3] != 0);
-            dragTimeY = newPosY[4];
+            dragVelocityY = newPosY[1];
+            res |= (newPosY[2] != 0);
+            dragTimeY = newPosY[3];
         }
 
         makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
@@ -1126,24 +1182,14 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     }
 
     private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
-                                int dragStartY, int dragLastY, int dragStartViewY,
                                 int cY, int cH, int viewPortY, int viewPortHeight,
                                 int time, int springBackTime) {
 
         int diffBottomY =  viewPortHeight - cY - cH;
 
 
-        boolean springBack = (dragVelocityY == 0 && dragFriction != 0);
-
-        if (springBack) {
-            if (cY >= 0) {
-                dragLastY = dragStartY - dragStartViewY + viewPortY;
-            }
-            else if (diffBottomY >= 0) {
-                dragLastY = dragStartY - dragStartViewY + (viewPortHeight - cH) + viewPortY;
-            }
-        }
-        else if (dragVelocityY != 0) {
+        int jumpY = 0;
+        if (dragVelocityY != 0) {
             // Friction is always opposite to velocity, and never changes its direction
             int velocityInc = dragFriction / DRAG_FRAME_RATE;
             if (Math.abs(dragVelocityY) < velocityInc) {
@@ -1156,11 +1202,21 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 dragVelocityY += velocityInc;
             }
 
-            dragLastY += (dragVelocityY / DRAG_FRAME_RATE);
+            jumpY = -(dragVelocityY / DRAG_FRAME_RATE);
+            if (jumpY == 0) {
+                dragVelocityY = 0;
+            }
         }
 
-        // How far are we from the desire position?
-        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - (cY + viewPortY));
+        boolean springBack = (dragVelocityY == 0 && dragFriction != 0);
+        if (springBack) {
+            if (cY >= 0) {
+                jumpY = cY;
+            }
+            else if (diffBottomY >= 0) {
+                jumpY = -diffBottomY;
+            }
+        }
 
         if (springBack && jumpY != 0) {
             // Quadratic motion equations:
@@ -1207,12 +1263,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         jumpY = 0;
                         cY = 0;
                     }
-                    else if (dragVelocityY != 0 && cY >= viewPortHeight) {
+                    else if (dragVelocityY != 0 && cY >= viewPortHeight / 2) {
                         dragVelocityY = 0;
                         cY = viewPortHeight / 2;
-                    }
-                    else {
-                        cY = cY / 2;
                     }
                 }
                 else if (diffBottomY >= 0) {
@@ -1220,18 +1273,15 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         jumpY = 0;
                         cY += diffBottomY;
                     }
-                    else if (dragVelocityY != 0 && diffBottomY >= viewPortHeight) {
+                    else if (dragVelocityY != 0 && diffBottomY >= viewPortHeight / 2) {
                         dragVelocityY = 0;
                         cY += diffBottomY - (viewPortHeight / 2);
-                    }
-                    else {
-                        cY += diffBottomY / 2;
                     }
                 }
             }
         }
 
-        return new int[] {-cY, dragLastY, dragVelocityY, jumpY, springBackTime, dragFriction};
+        return new int[] {-cY, dragVelocityY, jumpY, springBackTime};
     }
 
     private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
