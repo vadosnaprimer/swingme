@@ -1106,6 +1106,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
     }
 
+    /**
+     * this is called from the event thread
+     * @return the new Y or X position of the view (the component inside the scrollpane)
+     */
     private int dragScrollBarSync(boolean bound,
                                 int dragStartY, int dragLastY, int dragStartViewY,
                                 int cY, int cH, int viewPortY, int viewPortHeight) {
@@ -1143,10 +1147,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     private boolean dragScrollBars(int time) {
         boolean res = false;
-        int viewPortX = getViewPortX();
-        int viewPortY = getViewPortY();
-        int cX = getView().getX() - viewPortX;
-        int cY = getView().getY() - viewPortY;
+        //int viewPortX = getViewPortX();
+        //int viewPortY = getViewPortY();
+        int cX = getView().getX() - getViewPortX();
+        int cY = getView().getY() - getViewPortY();
         int cW = getView().getWidth();
         int cH = getView().getHeight();
 
@@ -1158,7 +1162,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         if (cW > viewPortWidth) {
             int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
-                                          cX, cW, viewPortX, viewPortWidth,
+                                          cX, cW, viewPortWidth,
                                           time, dragTimeX);
             cX = newPosX[0];
             dragVelocityX = newPosX[1];
@@ -1168,7 +1172,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         if (cH > viewPortHeight) {
             int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
-                                          cY, cH, viewPortY, viewPortHeight,
+                                          cY, cH, viewPortHeight,
                                           time, dragTimeY);
             cY = newPosY[0];
             dragVelocityY = newPosY[1];
@@ -1182,7 +1186,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     }
 
     private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
-                                int cY, int cH, int viewPortY, int viewPortHeight,
+                                int cY, int cH, int viewPortHeight,
                                 int time, int springBackTime) {
 
         int diffBottomY =  viewPortHeight - cY - cH;
