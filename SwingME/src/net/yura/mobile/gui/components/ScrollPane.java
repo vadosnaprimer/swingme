@@ -948,13 +948,13 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
             dragLastX = pointX;
             dragStartX = pointX;
-            dragStartViewX = viewX;
+            dragStartViewX = viewX - viewPortX;
             dragVelocityX = 0;
             dragTimeX = -1;
 
             dragLastY = pointY;
             dragStartY = pointY;
-            dragStartViewY = viewY;
+            dragStartViewY = viewY - viewPortY;
             dragVelocityY = 0;
             dragTimeY = -1;
 
@@ -1081,10 +1081,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     }
 
     private void dragScrollBarsSync(boolean forceBound) {
-        int viewPortX = getViewPortX();
-        int viewPortY = getViewPortY();
-        int cX = getView().getX() - viewPortX;
-        int cY = getView().getY() - viewPortY;
+
+        int cX = getView().getX() - getViewPortX();
+        int cY = getView().getY() - getViewPortY();
         int cW = getView().getWidth();
         int cH = getView().getHeight();
 
@@ -1094,13 +1093,13 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         if (cW > viewPortWidth) {
             cX = dragScrollBarSync(forceBound,
                                    dragStartX, dragLastX, dragStartViewX,
-                                   cX, cW, viewPortX, viewPortWidth);
+                                   cX, cW, viewPortWidth);
         }
 
         if (cH > viewPortHeight) {
             cY = dragScrollBarSync(forceBound,
                                    dragStartY, dragLastY, dragStartViewY,
-                                   cY, cH, viewPortY, viewPortHeight);
+                                   cY, cH, viewPortHeight);
         }
 
         makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
@@ -1112,12 +1111,12 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
      */
     private int dragScrollBarSync(boolean bound,
                                 int dragStartY, int dragLastY, int dragStartViewY,
-                                int cY, int cH, int viewPortY, int viewPortHeight) {
+                                int cY, int cH, int viewPortHeight) {
 
         int diffBottomY =  viewPortHeight - cY - cH;
 
         // How far are we from the desire position?
-        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - (cY + viewPortY));
+        int jumpY = (dragStartY - dragLastY) - (dragStartViewY - cY);
 
         if (jumpY != 0 || bound) {
 
@@ -1147,8 +1146,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     private boolean dragScrollBars(int time) {
         boolean res = false;
-        //int viewPortX = getViewPortX();
-        //int viewPortY = getViewPortY();
+
         int cX = getView().getX() - getViewPortX();
         int cY = getView().getY() - getViewPortY();
         int cW = getView().getWidth();
