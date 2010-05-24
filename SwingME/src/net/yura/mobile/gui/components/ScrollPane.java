@@ -1060,18 +1060,17 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         }
         else if (type == DesktopPane.RELEASED) {
 
-            // Stop animation...
-            dragVelocityX = 0;
-            dragVelocityY = 0;
-            dragStartViewX = viewX;
-            dragStartViewY = viewY;
-
             if (dragScrollBarMode == DRAG_NONE) {
                 if (getDesktopPane().IPHONE_SCROLL) {
                     dragVelocityX = getDragVelocity(dragBufferX);
                     dragVelocityY = getDragVelocity(dragBufferY);
                 }
                 //System.out.println("SPEEDX = " + dragVelocityX + " SPEEDY = " + dragVelocityY);
+            }
+            else {
+                // Stop animation...
+                dragVelocityX = 0;
+                dragVelocityY = 0;
             }
 
             dragFriction = 1000;
