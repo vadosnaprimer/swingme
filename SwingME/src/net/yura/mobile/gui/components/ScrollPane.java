@@ -1258,14 +1258,16 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             diffBottomY += jumpY;
 
             if (!springBack) {
+                final int MAX_SPRING = (viewPortHeight / 4);
+
                 if (cY >= 0) {
                     if (bound) {
                         jumpY = 0;
                         cY = 0;
                     }
-                    else if (dragVelocityY != 0 && cY >= viewPortHeight / 2) {
+                    else if (dragVelocityY != 0 && cY >= MAX_SPRING) {
                         dragVelocityY = 0;
-                        cY = viewPortHeight / 2;
+                        cY = MAX_SPRING;
                     }
                 }
                 else if (diffBottomY >= 0) {
@@ -1273,9 +1275,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         jumpY = 0;
                         cY += diffBottomY;
                     }
-                    else if (dragVelocityY != 0 && diffBottomY >= viewPortHeight / 2) {
+                    else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING) {
                         dragVelocityY = 0;
-                        cY += diffBottomY - (viewPortHeight / 2);
+                        cY += diffBottomY - MAX_SPRING;
                     }
                 }
             }
