@@ -25,6 +25,7 @@ import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -89,9 +90,35 @@ public abstract class Component {
      * @see java.awt.Component#addFocusListener(java.awt.event.FocusListener) Component.addFocusListener
      */
     public void addFocusListener(ChangeListener lis) {
+        //#mdebug warn
+        if (focusListener!=null) {
+            Logger.warn("trying to add a FocusListener when there is already one registered");
+            Logger.dumpStack();
+        }
+        if (lis==null) {
+            Logger.warn("trying to add a null FocusListener");
+            Logger.dumpStack();
+        }
+        //#enddebug
         focusListener = lis;
     }
 
+    public void removeFocusListener(ChangeListener lis) {
+    	if (lis == focusListener) {
+    		focusListener = null;
+    	}
+        //#mdebug warn
+        else {
+            Logger.warn("trying to remove a FocusListener that is not registered");
+            Logger.dumpStack();
+        }
+        if (lis==null) {
+            Logger.warn("trying to remove a null FocusListener");
+            Logger.dumpStack();
+        }
+        //#enddebug
+    }
+    
     /**
      * @param w The preferred Width (can be -1 for no preference)
      * @param h The preferred Height (can be -1 for no preference)
