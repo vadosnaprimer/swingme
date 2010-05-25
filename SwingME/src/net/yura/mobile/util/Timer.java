@@ -16,7 +16,7 @@ public class Timer extends Thread{
     public void schedule(String id, Runnable task, long delay){
 
         //#debug debug
-        Logger.debug("Setting schedule for {" + id + "} with delay of: " + delay);
+        Logger.debug("Setting schedule for (" + id + ") with delay of: " + delay);
         
         this.id = id;
         this.delay = delay;
@@ -39,12 +39,12 @@ public class Timer extends Thread{
               if (cancelled) break;
 
               //#debug debug
-              Logger.debug("Running task {" + id + "} after a schedule of: " + delay);
+              Logger.debug("Running task (" + id + ") after a schedule of: " + delay);
               task.run();
             }
             catch (Throwable t) {
               //#debug warn
-              Logger.warn("error in {"+id+"} timer: "+t.toString());
+              Logger.warn("error in ("+id+") timer: "+t.toString());
               Logger.error(t);
             }
         }
@@ -54,7 +54,7 @@ public class Timer extends Thread{
     public void cancel(){
 
         //#debug debug
-        Logger.debug("Cancelling task {" + id + "}");
+        Logger.debug("Cancelling task (" + id + ")");
 
         cancelled = true;
     }
