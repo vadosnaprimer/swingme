@@ -84,8 +84,8 @@ public class SynthLookAndFeel extends LookAndFeel {
         if (base==16) {
             addAlpha = value.length()==6;
         }
-
-        int r = Integer.parseInt(value, base);
+        // need to use long instead of int coz #FFFFFFFF throws NumberFormatException
+        int r = (int)Long.parseLong(value, base);
         return addAlpha?(0xFF000000|r):r;
     }
 
@@ -108,9 +108,9 @@ public class SynthLookAndFeel extends LookAndFeel {
             while (parser.nextTag() != KXmlParser.END_TAG) {
 
                 String name = parser.getName();
-                
+
                 if ("style".equals(name)){
-                    
+
                     String id=parser.getAttributeValue(null, "id");
                     Style newStyle = readStyle(parser);
                     styleList.put(id, newStyle);
@@ -123,7 +123,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                         String style=parser.getAttributeValue(null, "style");
                         String key=parser.getAttributeValue(null, "key");
                         if (".*".equals(key)) { key =""; }
-                        
+
                         Style newStyle = (Style)styleList.get(style);
                         Style oldStyle = getStyle(key);
 
@@ -140,7 +140,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                         if ("".equals(key)){
                             defaultStyle = theStyle;
                         }
-                        
+
                         setStyleFor(key,theStyle);
 
                     }
@@ -148,10 +148,10 @@ public class SynthLookAndFeel extends LookAndFeel {
                         //#debug warn
                         Logger.warn("unknown found: "+name);
                     }
-                    
+
                     // read end tag
                     parser.skipSubTree();
-                    
+
                 }
 
 
@@ -160,14 +160,14 @@ public class SynthLookAndFeel extends LookAndFeel {
             fonts = null;
 
         }
-        
-        
-        
-        
+
+
+
+
         private Style readStyle(KXmlParser parser) throws Exception {
-            
+
             Hashtable params = new Hashtable();
-            
+
             Style newStyle;
             if (defaultStyle==null) {
                 newStyle = new Style();
@@ -178,7 +178,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             // vars local to this style
             EmptyBorder insets = null;
-            
+
             // read start tag
             while (parser.nextTag() != KXmlParser.END_TAG) {
                     String name = parser.getName();
@@ -186,16 +186,16 @@ public class SynthLookAndFeel extends LookAndFeel {
                     if ("state".equals(name)) {
 
                         int st = workOutState( parser.getAttributeValue(null, "value") );
-                        
+
                         // vars local to this state
                         int borderfill=Style.NO_COLOR;
                         MatteBorder border = null;
-                        
+
                         // read start tag
                         //parser.getEventType();
                         while (parser.nextTag() != KXmlParser.END_TAG) {
                             String name2 = parser.getName();
-                            
+
                             if ("font".equals(name2)) {
                                 newStyle.addFont(loadFont(parser,fonts),st);
                             }
@@ -210,7 +210,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         String[] split = StringUtil.split(sourceInsets, ' ');
                                         border = new MatteBorder(activeimage,
                                                 insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
-                                                Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]), 
+                                                Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]),
                                                 "true".equals(paintCenter) || "Y".equals(paintCenter)
                                                 , borderfill);
                                         newStyle.addBorder(border, st);
@@ -272,20 +272,20 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 parser.skipSubTree();
                             }
                         }
-                        
+
                     }
                     else if ("font".equals(name)) {
-                            
+
                            loadFont(parser,fonts);
                     }
                     else {
-                        
+
                         if ("insets".equals(name)) {
                                 String top = parser.getAttributeValue(null, "top");
                                 String left = parser.getAttributeValue(null, "left");
                                 String bottom = parser.getAttributeValue(null, "bottom");
                                 String right = parser.getAttributeValue(null, "right");
-                                
+
                                 insets = new EmptyBorder(Integer.parseInt(top), Integer.parseInt(left), Integer.parseInt(bottom), Integer.parseInt(right));
                                 newStyle.addBorder(insets, Style.ALL);
                         }
@@ -314,15 +314,15 @@ public class SynthLookAndFeel extends LookAndFeel {
                             //#debug warn
                             Logger.warn("unknown found: "+name);
                         }
-                        
+
                         // read end tag
                         parser.skipSubTree();
                     }
 
             }
-            
+
             return newStyle;
-            
+
         }
 
 
@@ -330,7 +330,7 @@ public class SynthLookAndFeel extends LookAndFeel {
         private int workOutState(String value) {
 
             int result=Style.ALL;
-            
+
             if (value==null) {
                 return result;
             }
@@ -346,7 +346,7 @@ public class SynthLookAndFeel extends LookAndFeel {
             if (value.indexOf("SELECTED")!=-1) {
                 result |= Style.SELECTED;
             }
-            
+
             return result;
 
         }
@@ -434,7 +434,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                     //#debug debug
                     Logger.debug("oooo: "+name);
-                    
+
                     parser.skipSubTree();
                 }
                 if (path!=null) {
@@ -464,6 +464,6 @@ public class SynthLookAndFeel extends LookAndFeel {
                 return font;
 
         }
-        
-    
+
+
 }
