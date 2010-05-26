@@ -123,7 +123,10 @@ public class CallStack
 
 	public static String getStacktrace()
 	{
-		return getCallStack().stacktrace.toString();
+    CallStack stack = getCallStack();
+		if(stack.intPtr==0)
+      callStacks[stack.index] = null;
+		return stack.stacktrace.toString();
 	}
 
 	private static CallStack getCallStack()
