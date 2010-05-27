@@ -113,8 +113,15 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                     String id=parser.getAttributeValue(null, "id");
                     Style newStyle = readStyle(parser);
-                    styleList.put(id, newStyle);
+                    
+                    //#mdebug debug
+                    if (styleList.get(id)!=null) {
+                        // this is the error swing would throw
+                        throw new Exception("ID "+id+" is already defined");
+                    }
+                    //#enddebug
 
+                    styleList.put(id, newStyle);
                 }
                 else {
 
