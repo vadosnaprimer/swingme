@@ -541,12 +541,14 @@ public abstract class Component {
             }
     }
 
+    //#mdebug debug
     /**
      * @see java.awt.Component#toString() Component.toString
      */
     public String toString() {
             return getName();
     }
+    //#enddebug
 
     /**
      * @return the border object for this component

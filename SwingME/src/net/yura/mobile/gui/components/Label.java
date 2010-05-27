@@ -422,8 +422,10 @@ public class Label extends Component {
             return "Label";
         }
 
+        //#mdebug debug
 	public String toString() {
             return super.toString() +"("+ getText()+")";
         }
+        //#enddebug
 
 }

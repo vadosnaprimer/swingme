@@ -374,10 +374,11 @@ public class Panel extends Component {
         }
     }
 
-
+    //#mdebug debug
     public String toString() {
         return super.toString() + " "+ components;
     }
+    //#enddebug
 
     /**
      * @param x the x coordinate

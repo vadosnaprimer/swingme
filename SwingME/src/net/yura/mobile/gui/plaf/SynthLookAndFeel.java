@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.plaf;
 
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Image;
@@ -103,6 +104,7 @@ public class SynthLookAndFeel extends LookAndFeel {
             parser.nextTag();
 
             Hashtable styleList = new Hashtable();
+            Vector bound = new Vector();
 
             // read start tag
             while (parser.nextTag() != KXmlParser.END_TAG) {
@@ -129,27 +131,25 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                         String style=parser.getAttributeValue(null, "style");
                         String key=parser.getAttributeValue(null, "key");
-                        if (".*".equals(key)) { key =""; }
 
                         Style newStyle = (Style)styleList.get(style);
                         Style oldStyle = getStyle(key);
 
                         Style theStyle;
                         if (oldStyle!=null) {
-                            theStyle = new Style();
-                            theStyle.putAll(oldStyle);
-                            theStyle.putAll(newStyle);
+                            theStyle = new Style(newStyle);
+                            theStyle.softPutAll(oldStyle);
                         }
                         else {
                             theStyle = newStyle;
                         }
 
-                        if ("".equals(key)){
+                        if (".*".equals(key)) {
+                            key =""; // empty string used as default in DesktopPane.getDefaultTheme
                             defaultStyle = theStyle;
                         }
-
                         setStyleFor(key,theStyle);
-
+                        bound.addElement(theStyle);
                     }
                     else {
                         //#debug warn
@@ -166,6 +166,13 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             fonts = null;
 
+            if (defaultStyle!=null) {
+                Enumeration enu = bound.elements();
+                while (enu.hasMoreElements()) {
+                    Style theStyle = (Style)enu.nextElement();
+                    theStyle.softPutAll( defaultStyle );
+                }
+            }
         }
 
 
@@ -175,13 +182,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             Hashtable params = new Hashtable();
 
-            Style newStyle;
-            if (defaultStyle==null) {
-                newStyle = new Style();
-            }
-            else {
-                newStyle = new Style(defaultStyle);
-            }
+            Style newStyle = new Style();
 
             // vars local to this style
             EmptyBorder insets = null;

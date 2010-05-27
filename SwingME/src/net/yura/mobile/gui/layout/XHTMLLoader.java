@@ -287,9 +287,9 @@ Logger.debug("START: "+startTag);
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                     inlineText.setText( inlineText.getText()+"\n" );
                 }
-                //#mdebug warn
+                //#mdebug info
                 else {
-                    Logger.warn("strange place for br tag, br can not go here");
+                    Logger.info("strange place for br tag, br can not go here");
                 }
                 //#enddebug
             }
@@ -341,9 +341,9 @@ Logger.debug("START: "+startTag);
                         inlineText.setSelectedValues(selectedValues);
                     }
                 }
-                //#mdebug warn
+                //#mdebug info
                 else {
-                    Logger.warn("strange place for option, should be inside select");
+                    Logger.info("strange place for option, should be inside select");
                 }
                 //#enddebug
             }
@@ -424,9 +424,9 @@ Logger.debug("START: "+startTag);
                 if (parent!=null && parent.rows!=null) {
                     parent.row++;
                 }
-                //#mdebug warn
+                //#mdebug info
                 else {
-                    Logger.warn("strange place for tr tag, tr can not go here");
+                    Logger.info("strange place for tr tag, tr can not go here");
                 }
                 //#enddebug
             }
@@ -445,9 +445,9 @@ Logger.debug("START: "+startTag);
                         parent.parent.addToRow(a,colspani);
                     }
                 }
-                //#mdebug warn
+                //#mdebug info
                 else {
-                    Logger.warn("strange place for th/td tag, th/td can not go here");
+                    Logger.info("strange place for th/td tag, th/td can not go here");
                 }
                 //#enddebug
 
@@ -465,7 +465,7 @@ Logger.debug("START: "+startTag);
                 insertPanel(p, c);
 
             }
-            //#mdebug warn
+            //#mdebug info
             else if ("b".equals(startTag)) {
 
             }
@@ -494,7 +494,7 @@ Logger.debug("START: "+startTag);
                 // do nothing
             }
             else {
-                Logger.warn("unknwon start: "+startTag);
+                Logger.info("unknwon start: "+startTag);
             }
             //#enddebug
 
@@ -550,7 +550,7 @@ Logger.debug("START: "+startTag);
             else if ("ul".equals(endTag) || "ol".equals(endTag)) {
                 endComponent();
             }
-            //#mdebug warn
+            //#mdebug info
             else if ("b".equals(endTag)) {
 
             }
@@ -588,7 +588,7 @@ Logger.debug("START: "+startTag);
                 // do nothing
             }
             else {
-                Logger.warn("unknown end: "+endTag);
+                Logger.info("unknown end: "+endTag);
             }
             //#enddebug
         }
@@ -621,9 +621,9 @@ Logger.debug("START: "+startTag);
                 TextArea inlineText = (TextArea)XHTMLLoader.this.currentComponent;
                 inlineText.append( string );
             }
-            //#mdebug warn
+            //#mdebug info
             else {
-                Logger.warn("strange place for text");
+                Logger.info("strange place for text");
             }
             //#enddebug
         }
@@ -635,9 +635,9 @@ Logger.debug("START: "+startTag);
                 TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                 inlineText.setText( inlineText.getText()+parser.getName() );
             }
-            //#mdebug warn
+            //#mdebug info
             else {
-                Logger.warn("strange place for ref");
+                Logger.info("strange place for ref");
             }
             //#enddebug
         }

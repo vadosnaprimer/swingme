@@ -17,9 +17,9 @@
 
 package net.yura.mobile.gui.plaf;
 
-import net.yura.mobile.gui.*;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.util.SystemUtil;
 
@@ -41,8 +41,8 @@ public class Style {
     
     private Font font;
     private Border border;
-    private int background=NO_COLOR;
-    private int foreground=NO_COLOR;
+    private Integer background;
+    private Integer foreground;
     private Hashtable properties;
 
     private Hashtable fontStates;
@@ -57,29 +57,86 @@ public class Style {
     public Style(Style st) {
         putAll(st);
     }
-    
-    public void putAll(Style st) {
+
+    public static Hashtable softPutAll(Hashtable current,Hashtable newvals) {
+        if (newvals!=null) {
+            if (current==null) current = new Hashtable();
+            Enumeration en = newvals.keys();
+            while (en.hasMoreElements()) {
+                Object key = en.nextElement();
+                if (current.get(key)==null) {
+                    current.put(key, newvals.get(key));
+                }
+            }
+        }
+        return current;
+    }
+
+    /**
+     * this will only copy a style if it is not already set
+     * a kind of soft push
+     */
+    public void softPutAll(Style st) {
         
+        if (font==null) {
+            font = st.font;
+        }
+        if (border==null) {
+            border = st.border;
+        }
+        if (background==null) {
+            background = st.background;
+        }
+        if (foreground==null) {
+            foreground = st.foreground;
+        }
+
+        properties=softPutAll(properties,st.properties);
+
+        fontStates=softPutAll(fontStates,st.fontStates);
+        borderStates=softPutAll(borderStates,st.borderStates);
+        backgroundStates=softPutAll(backgroundStates,st.backgroundStates);
+        foregroundStates=softPutAll(foregroundStates,st.foregroundStates);
+
+        if (st.propertiesStates!=null) {
+            if (propertiesStates==null) propertiesStates = new Hashtable();
+            Enumeration en = st.propertiesStates.keys();
+            while (en.hasMoreElements()) {
+                Object key = en.nextElement();
+                Hashtable current = (Hashtable)propertiesStates.get(key);
+                Hashtable newvals = (Hashtable)st.propertiesStates.get(key);
+                current=softPutAll(current,newvals);
+                if (current!=null) {
+                    propertiesStates.put(key, current);
+                }
+            }
+        }
+
+    }
+
+
+    public void putAll(Style st) {
+
         if (st.font!=null) {
             font = st.font;
         }
         if (st.border!=null) {
             border = st.border;
         }
-        if (st.background!=NO_COLOR) {
+        if (st.background!=null) {
             background = st.background;
         }
-        if (st.foreground!=NO_COLOR) {
+        if (st.foreground!=null) {
             foreground = st.foreground;
         }
         if (st.properties!=null) {
             if (properties==null) properties = new Hashtable();
             SystemUtil.hashtablePutAll(st.properties,properties);
         }
-        
-        
-        
-        
+
+
+
+
         if (st.fontStates!=null) {
             if (fontStates==null) fontStates = new Hashtable();
             SystemUtil.hashtablePutAll(st.fontStates,fontStates);
@@ -110,9 +167,10 @@ public class Style {
                 SystemUtil.hashtablePutAll(src,dest);
             }
         }
-        
+
     }
-    
+
+
     private Object getValueFromMap(Hashtable t,int state,Object defaultObject) {
         if (state==ALL || t==null) return defaultObject;
         Object a;
@@ -156,25 +214,29 @@ public class Style {
     
     
     public void addBackground(int b, int state) {
-        if (state==ALL) { background=b; return; }
+        Integer i = new Integer(b);
+        if (state==ALL) { background=i; return; }
         if (backgroundStates==null) {
             backgroundStates = new Hashtable();
         }
-        backgroundStates.put(new Integer(state), new Integer(b));
+        backgroundStates.put(new Integer(state), i);
     }
     public int getBackground(int state) {
-        return ((Integer)getValueFromMap(backgroundStates,state,new Integer(background))).intValue();
+        Integer i = (Integer)getValueFromMap(backgroundStates,state,background);
+        return i==null?NO_COLOR:i.intValue();
     }
     
     public void addForeground(int b, int state) {
-        if (state==ALL) { foreground=b; return; }
+        Integer i = new Integer(b);
+        if (state==ALL) { foreground=i; return; }
         if (foregroundStates==null) {
             foregroundStates = new Hashtable();
         }
-        foregroundStates.put(new Integer(state), new Integer(b));
+        foregroundStates.put(new Integer(state), i);
     }
     public int getForeground(int state) {
-        return ((Integer)getValueFromMap(foregroundStates,state,new Integer(foreground))).intValue();
+        Integer i = (Integer)getValueFromMap(foregroundStates,state,foreground);
+        return i==null?NO_COLOR:i.intValue();
     }
     
     public void addProperty(Object b, String key, int state) {
@@ -230,8 +292,8 @@ public class Style {
     protected void reset() {
         font = null;
         border= null;
-        background = NO_COLOR;
-        foreground = NO_COLOR;
+        background = null;
+        foreground = null;
         properties = null;
 
         fontStates = null;
@@ -240,4 +302,11 @@ public class Style {
         foregroundStates = null;
         propertiesStates = null;
     }
+
+    //#mdebug debug
+    public String toString() {
+        return "Style "+font+" "+border+" "+background+" "+foreground+" "+properties+" "+fontStates+" "+borderStates+" "+backgroundStates+" "+foregroundStates+" "+propertiesStates;
+    }
+    //#enddebug
+
 }

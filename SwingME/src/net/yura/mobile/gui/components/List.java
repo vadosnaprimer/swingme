@@ -130,10 +130,11 @@ public class List extends Component implements ActionListener {
         return items;
     }
 
+    //#mdebug debug
     public String toString() {
         return super.toString() + items;
     }
-
+    //#enddebug
 
     public void workoutMinimumSize() {
 
