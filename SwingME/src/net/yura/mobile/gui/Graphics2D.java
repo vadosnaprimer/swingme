@@ -117,8 +117,15 @@ public class Graphics2D {
                         h = src.getHeight();
                 }
 
-                g.drawRegion(src, x, y, w, h, trans , x1, y1, Graphics.TOP|Graphics.LEFT );
+                //#mdebug info
+                if (w <= 0 || h <= 0) {
+                    Logger.info("trying to draw Region with width="+w+" height="+h);
+                    Logger.dumpStack();
+                }
+                //#enddebug
 
+                if (w > 0 && h > 0)
+                g.drawRegion(src, x, y, w, h, trans , x1, y1, Graphics.TOP|Graphics.LEFT );
         }
 
         /**
