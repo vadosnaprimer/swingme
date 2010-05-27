@@ -203,10 +203,23 @@ public class MatteBorder extends EmptyBorder {
 
                 Image image = activeimage.getImage();
 
-                g.drawRegion(image, 0,  0, imageLeft, imageTop, Sprite.TRANS_NONE, -left, -top);
-                g.drawRegion(image, imageWidth-imageRight,  0, imageRight, imageTop, Sprite.TRANS_NONE, width-rightDiff, -top);
-                g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff);
-                g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff);
+                // on blackberry we can not draw a image of 0 width or 0 height, so we have to check
+                if (imageTop>0) {
+                    if (imageLeft>0) {
+                        g.drawRegion(image, 0,  0, imageLeft, imageTop, Sprite.TRANS_NONE, -left, -top);
+                    }
+                    if (imageRight>0) {
+                        g.drawRegion(image, imageWidth-imageRight,  0, imageRight, imageTop, Sprite.TRANS_NONE, width-rightDiff, -top);
+                    }
+                }
+                if (imageBottom>0) {
+                    if (imageLeft>0) {
+                        g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff);
+                    }
+                    if (imageRight>0) {
+                        g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff);
+                    }
+                }
 
                 g.drawImage(image,imageLeft,0,imageWidth-imageRight-imageLeft,imageTop,
                         leftDiff,-top,width-leftDiff-rightDiff,imageTop,

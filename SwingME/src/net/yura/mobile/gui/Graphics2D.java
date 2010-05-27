@@ -128,7 +128,6 @@ public class Graphics2D {
                 }
                 //#enddebug
 
-                if (w > 0 && h > 0)
                 g.drawRegion(src, x, y, w, h, trans , x1, y1, Graphics.TOP|Graphics.LEFT );
         }
 
