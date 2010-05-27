@@ -155,13 +155,13 @@ public class RadioButton extends Button {
 
                 int cState = getCurrentState();
 
-		if (isSelected() && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
+		if ((cState&Style.SELECTED)!=0 && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
 			disabledSelectedImage.paintIcon(this, g, x, y);
 		}
-                else if(isSelected() && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
+                else if((cState&Style.SELECTED)!=0 && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
 			focusedSelectedImage.paintIcon(this, g, x, y);
 		}
-                else if (isSelected() && selectedImage!=null) {
+                else if ((cState&Style.SELECTED)!=0 && selectedImage!=null) {
 			selectedImage.paintIcon(this, g, x, y);
 		}
                 else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {

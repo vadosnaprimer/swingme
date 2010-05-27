@@ -49,9 +49,13 @@ public class Graphics2D {
         }
 
         public void setColor(int c) {
-
+                //#mdebug warn
+                if (isTransparent(c)) {
+                    Logger.warn("trying to set a transparent color: "+Integer.toHexString(c));
+                    Logger.dumpStack();
+                }
+                //#enddebug
                 g.setColor(c);
-
         }
 
         public void drawRect(int x,int y,int w,int h) {
@@ -117,9 +121,9 @@ public class Graphics2D {
                         h = src.getHeight();
                 }
 
-                //#mdebug info
+                //#mdebug warn
                 if (w <= 0 || h <= 0) {
-                    Logger.info("trying to draw Region with width="+w+" height="+h);
+                    Logger.warn("trying to draw Region with width="+w+" height="+h);
                     Logger.dumpStack();
                 }
                 //#enddebug
@@ -355,6 +359,13 @@ public class Graphics2D {
 
     public Font getFont() {
         return font;
+    }
+
+    public static boolean isTransparent(int color) {
+        return ((color >> 24) & 0xff) == 0;
+    }
+    public static boolean isOpaque(int color) {
+        return ((color >> 24) & 0xff) == 0xFF;
     }
 
 }

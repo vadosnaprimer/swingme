@@ -305,7 +305,7 @@ public abstract class Component {
             paintBorder(g);
 
             int back = getCurrentBackground();
-            if (back!=Style.NO_COLOR) {
+            if ( !Graphics2D.isTransparent(back) ) {
                 g.setColor(back);
                 g.fillRect(0, 0, width, height);
             }
@@ -481,7 +481,7 @@ public abstract class Component {
      * @see javax.swing.JComponent#isOpaque() JComponent.isOpaque
      */
     public boolean isOpaque() {
-        if (getCurrentBackground()!=Style.NO_COLOR) return true;
+        if (Graphics2D.isOpaque( getCurrentBackground() )) return true;
         Border b = getCurrentBorder();
         if (b!=null) {
             return b.isBorderOpaque();

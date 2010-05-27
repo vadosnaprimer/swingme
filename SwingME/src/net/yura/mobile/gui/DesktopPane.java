@@ -478,7 +478,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 splash = null;
             }
             else if (background != Style.NO_COLOR) {
-                gtmp.setColor(0x00FF0000);
+                gtmp.setColor(0xFFFF0000); // red
                 gtmp.drawString("yura.net mobile Loading...", 0, 0, Graphics.TOP | Graphics.LEFT);
             }
 
