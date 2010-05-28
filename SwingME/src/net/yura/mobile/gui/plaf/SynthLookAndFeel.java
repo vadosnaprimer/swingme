@@ -104,7 +104,6 @@ public class SynthLookAndFeel extends LookAndFeel {
             parser.nextTag();
 
             Hashtable styleList = new Hashtable();
-            Vector bound = new Vector();
 
             // read start tag
             while (parser.nextTag() != KXmlParser.END_TAG) {
@@ -136,12 +135,12 @@ public class SynthLookAndFeel extends LookAndFeel {
                         Style oldStyle = getStyle(key);
 
                         Style theStyle;
-                        if (oldStyle!=null) {
-                            theStyle = new Style(newStyle);
-                            theStyle.softPutAll(oldStyle);
+                        if (oldStyle==null && defaultStyle==null) {
+                            theStyle = newStyle;
                         }
                         else {
-                            theStyle = newStyle;
+                            theStyle = new Style(oldStyle!=null?oldStyle:defaultStyle);
+                            theStyle.putAll(newStyle);
                         }
 
                         if (".*".equals(key)) {
@@ -149,7 +148,6 @@ public class SynthLookAndFeel extends LookAndFeel {
                             defaultStyle = theStyle;
                         }
                         setStyleFor(key,theStyle);
-                        bound.addElement(theStyle);
                     }
                     else {
                         //#debug warn
@@ -166,13 +164,6 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             fonts = null;
 
-            if (defaultStyle!=null) {
-                Enumeration enu = bound.elements();
-                while (enu.hasMoreElements()) {
-                    Style theStyle = (Style)enu.nextElement();
-                    theStyle.softPutAll( defaultStyle );
-                }
-            }
         }
 
 
