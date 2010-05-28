@@ -18,7 +18,6 @@
 package net.yura.mobile.gui.plaf;
 
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Image;
@@ -36,9 +35,6 @@ import org.kxml2.io.KXmlParser;
  * @see javax.swing.plaf.synth.SynthLookAndFeel
  */
 public class SynthLookAndFeel extends LookAndFeel {
-
-    private Style defaultStyle;
-    private Hashtable fonts;
 
     protected Icon getIcon( String path ,int x,int y,int w,int h) {
         try {
@@ -97,13 +93,15 @@ public class SynthLookAndFeel extends LookAndFeel {
      */
         public void load(InputStream input) throws Exception {
 
-            fonts = new Hashtable();
+            Hashtable fonts = new Hashtable();
 
             KXmlParser parser = new KXmlParser();
             parser.setInput(input, null);
             parser.nextTag();
 
             Hashtable styleList = new Hashtable();
+
+            Style defaultStyle=null;
 
             // read start tag
             while (parser.nextTag() != KXmlParser.END_TAG) {
@@ -113,7 +111,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                 if ("style".equals(name)){
 
                     String id=parser.getAttributeValue(null, "id");
-                    Style newStyle = readStyle(parser);
+                    Style newStyle = readStyle(parser,fonts);
                     
                     //#mdebug debug
                     if (styleList.get(id)!=null) {
@@ -158,18 +156,11 @@ public class SynthLookAndFeel extends LookAndFeel {
                     parser.skipSubTree();
 
                 }
-
-
             }
-
-            fonts = null;
-
         }
 
 
-
-
-        private Style readStyle(KXmlParser parser) throws Exception {
+        private Style readStyle(KXmlParser parser,Hashtable fonts) throws Exception {
 
             Hashtable params = new Hashtable();
 
@@ -323,7 +314,6 @@ public class SynthLookAndFeel extends LookAndFeel {
             return newStyle;
 
         }
-
 
 
         private int workOutState(String value) {
