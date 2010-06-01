@@ -401,15 +401,16 @@ public abstract class Canvas extends Displayable {
 
             // System.out.println("(" + x + "," + y + "," + event.getAction() + ")");
             switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Canvas.this.pointerPressed(x, y);
-                break;
-            case MotionEvent.ACTION_UP:
-                Canvas.this.pointerReleased(x, y);
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Canvas.this.pointerDragged(x, y);
-                break;
+                case MotionEvent.ACTION_DOWN:
+                    Canvas.this.pointerPressed(x, y);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Canvas.this.pointerDragged(x, y);
+                    break;
+                default:
+                    // Handles ACTION_UP, ACTION_CANCEL and ACTION_OUTSIDE...
+                    Canvas.this.pointerReleased(x, y);
+                    break;
             }
 
             return true;
