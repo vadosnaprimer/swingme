@@ -558,6 +558,15 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("ScrollPane.property[leftArrow]", arrowLeft);
         setUIDefault("ScrollPane.property[rightArrow]", arrowRight);
 
+
+        setUIDefault("Slider.property[thumbTop]", thumbTop);
+        setUIDefault("Slider.property[thumbBottom]", thumbBottom);
+        setUIDefault("Slider.property[thumbFill]", thumbFill);
+        setUIDefault("Slider.property[trackTop]", trackTop);
+        setUIDefault("Slider.property[trackBottom]", trackBottom);
+        setUIDefault("Slider.property[trackFill]", trackFill);
+
+
         // ToolTip
 
         setUIDefault("ToolTip.background",uiSettings.get("nimbusAlertYellow"));

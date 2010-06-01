@@ -43,6 +43,7 @@ import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.ScrollPane;
+import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.Table;
@@ -505,6 +506,20 @@ public class XULLoader {
         else if (name.equals("table")) {
             Table table = new Table();
             return readUIObject(parser, table,listener);
+        }
+        else if (name.equals("slider")) {
+            Slider slider = new Slider();
+
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
+                if ("orientation".equals(key)) {
+                    slider.setHorizontal( !"vertical".equals(value) );
+                }
+            }
+
+            return readUIObject(parser, slider,listener);
         }
         else { // if (name.equals("slider")) {
             //#debug debug

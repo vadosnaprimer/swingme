@@ -33,8 +33,6 @@ import net.yura.mobile.logging.Logger;
  */
 public class ScrollPane extends Panel implements Runnable {
 
-    public static final int MINIMUM_THUMB_SIZE=5;
-
     public static final int MODE_NONE=-1;
     public static final int MODE_SCROLLBARS=0;
     public static final int MODE_SCROLLARROWS=1;
@@ -43,18 +41,12 @@ public class ScrollPane extends Panel implements Runnable {
     private int mode;
     private int barThickness;
 
-    private Icon thumbTop;
-    private Icon thumbBottom;
-    private Icon thumbFill;
-    private Icon trackTop;
-    private Icon trackBottom;
-    private Icon trackFill;
-
     private Icon rightArrow;
     private Icon leftArrow;
     private Icon upArrow;
     private Icon downArrow;
 
+    private Slider slider;
 
     /**
      * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
@@ -75,6 +67,9 @@ public class ScrollPane extends Panel implements Runnable {
         super(null);
         setMode(m);
         super.setName("ScrollPane");
+
+        slider = new Slider();
+        slider.setName("ScrollPane");
     }
 
     public void setLayout(Layout lt) {
@@ -93,6 +88,10 @@ public class ScrollPane extends Panel implements Runnable {
         mode = m;
     }
 
+    public int getBarThickness() {
+        return slider.getHeight();
+    }
+
     public void setSize(int w, int h) {
 
         switch (mode) {
@@ -108,12 +107,6 @@ public class ScrollPane extends Panel implements Runnable {
         // Size of the scroll changed, we need to reset the component location
         // this is NOT how Swing does it, need to find a better method!
         //getComponent().setLocation(getViewPortX(), getViewPortY());
-    }
-
-    public int getBarThickness() {
-
-        return (trackTop != null) ? trackTop.getIconWidth() : 0;
-
     }
 
     /**
@@ -303,6 +296,8 @@ public class ScrollPane extends Panel implements Runnable {
 
     public void workoutMinimumSize() {
 
+        slider.workoutSize();
+
         super.workoutMinimumSize();
         width = getView().getWidthWithBorder();
         height = getView().getHeightWithBorder();
@@ -410,7 +405,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         // NEEDS to be same check as in getViewPortWidth
         if ( viewHeight > viewPortHeight ) { // vertical
-            drawScrollBar(g,
+            slider.drawScrollBar(g,
                     viewPortX + viewPortWidth,
                     viewPortY,
                     width - viewPortX - viewPortWidth,
@@ -428,7 +423,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             int t = g.getTransform();
             g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
 
-            drawScrollBar(g,
+            slider.drawScrollBar(g,
                     viewPortY + viewPortHeight,
                     viewPortX,
                     height - viewPortY - viewPortHeight,
@@ -441,139 +436,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             g.setTransform( t );
         }
 
-
-    }
-
-    /**
-     * @see javax.swing.JScrollBar#JScrollBar(int, int, int, int, int) JScrollBar.JScrollBar
-     */
-    public void drawScrollBar(Graphics2D g, int x,int y,int w,int h,int value,int extent, int max) {
-
-        int starty = 0;
-        int extenth = h;
-
-        // DRAW ARROWS
-        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-
-        if (trackTop!=null) {
-
-            int x1 = x + (w-trackTop.getIconWidth())/2;
-            trackTop.paintIcon(this, g, x1, y);
-            trackBottom.paintIcon(this, g, x1, y+h-trackBottom.getIconHeight() );
-
-            starty = trackTop.getIconHeight();
-            extenth = h - starty - trackBottom.getIconHeight();
-
-        }
-
-        // draw the track fill color
-        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-
-        if (trackFill!=null) {
-            tileIcon(g, trackFill, x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
-        }
-
-        // draw the thumb!
-        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-
-        int[] tmp = getOffsets(x,y,w,h,value,extent,max);
-        starty = tmp[1];
-        extenth = tmp[2];
-
-        if (thumbTop!=null) {
-            int x1 = x + (w-thumbTop.getIconWidth())/2;
-            thumbTop.paintIcon(this, g, x1, starty);
-            thumbBottom.paintIcon(this, g, x1, starty+extenth-thumbBottom.getIconHeight());
-            starty = starty + thumbTop.getIconHeight();
-            extenth = extenth - (thumbTop.getIconHeight()+thumbBottom.getIconHeight());
-        }
-
-        if (thumbFill!=null) {
-            tileIcon(g, thumbFill, x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
-        }
-
-    }
-
-    /**
-     * @param x - Ignored?
-     * @param y - Start of bar
-     * @param w - width of bar
-     * @param h - viewPort Height/Width
-     * @param value - Desired view X/Y
-     * @param extent - viewPort Height/Width > same as h?
-     * @param max - view Height/Width
-     * @return
-     */
-    private int[] getOffsets(int x,int y,int w, int h, int value,int extent, int max) {
-
-        final int box;
-        final int topBotton;
-        if (trackTop!=null) {
-            box = (trackTop.getIconHeight() >w)?w:trackTop.getIconHeight();
-            topBotton = (thumbTop==null)?0:thumbTop.getIconHeight()+thumbBottom.getIconHeight();
-        }
-        else {
-            box = 0;
-            topBotton = 0;
-        }
-        final int space1 = h - box * 2;
-
-        int extenth = (int) ( (extent*space1)/(double)max + 0.5);
-        int min = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
-        min = min>(space1/2)?space1/2:min;
-
-        int space = space1;
-        if (extenth < min) {
-            extenth = min;
-            space = space-extenth;
-            max = max-extent;
-        }
-        int starty = box+ (int)( (space*value)/(double)max + 0.5 );
-
-        // make sure the thumb value is bound
-        /*
-         // this works but is not that nice
-        if (starty < box) {
-            starty = box;
-        }
-        else if ((starty+extenth) > (box+space1)) {
-            starty = box + space1 - extenth;
-        }
-         */
-        // add squidge!
-        if ((starty+extenth) < (box+min)) {
-            starty = box;
-            extenth = min;
-        }
-        else if (starty < box) {
-            extenth = starty+extenth-box;
-            starty = box;
-        }
-        else if (starty > (box+space1-min)) {
-            starty = box+space1-min;
-            extenth = min;
-        }
-        else if ((starty+extenth) > (box+space1)) {
-            extenth = box+space1-starty;
-        }
-
-        return new int[] {box,y+starty,extenth};
-    }
-
-    private void tileIcon(Graphics2D g, Icon icon,int dest_x,int dest_y,int dest_w,int dest_h) {
-        int h = icon.getIconHeight();
-
-        final int[] c = g.getClip();
-
-        g.clipRect(dest_x,dest_y,dest_w,dest_h);
-
-        for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+h) {
-            icon.paintIcon(this, g, dest_x, pos_y);
-        }
-
-        icon.paintIcon(this, g, 0, 0);
-
-        g.setClip(c);
 
     }
 
@@ -707,20 +569,13 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     public void updateUI() {
         super.updateUI();
 
-
-        thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
-        thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
-        thumbFill = (Icon)theme.getProperty("thumbFill", Style.ALL);
-        trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
-        trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
-        trackFill = (Icon)theme.getProperty("trackFill", Style.ALL);
-
-
-
         rightArrow = (Icon)theme.getProperty("rightArrow", Style.ALL);
         leftArrow = (Icon)theme.getProperty("leftArrow", Style.ALL);
         upArrow = (Icon)theme.getProperty("upArrow", Style.ALL);
         downArrow = (Icon)theme.getProperty("downArrow", Style.ALL);
+
+        if (slider!=null)
+        slider.updateUI();
     }
 
 
@@ -745,8 +600,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         return this;
     }
 
-    private boolean isPointInsideRect(int x,int y,int recX,int recY,int recWidth,int recHeight) {
-
+    public static boolean isPointInsideRect(int x,int y,int recX,int recY,int recWidth,int recHeight) {
         return x>=recX && x<(recX+recWidth) && y>=recY && y<(recY+recHeight);
     }
 
@@ -782,49 +636,40 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     // Index of the most recent entry.
     private int dragBufferPos;
 
-    private int doClickInScrollbar(int x1,int y1,int w1,int h1,int value1,int extent1, int max1,
-            int pointX,int pointY,
-            int dragSlider)
-    {
+    private int doClickInScrollbar(int click,int dragSlider,int extent1) {
+
         if (dragScrollBarMode != DRAG_NONE) {
             return 0;
         }
 
-        int[] tmp = getOffsets(x1,y1,w1,h1,value1,extent1,max1);
-        int box = tmp[0];
-        int starty = tmp[1];
-        int extenth = tmp[2];
-
         int dragMode;
         int velocity;
-        if (isPointInsideRect(pointX, pointY, x1, y1, w1, box)) {
 
-            dragMode = DRAG_CLICKED_ARROW;
-            velocity = 200;
-        }
-        else if (isPointInsideRect(pointX, pointY, x1, y1+box, w1, starty-y1-box)) {
-
-            dragMode = DRAG_CLICKED_TRACK;
-            velocity = extent1 * DRAG_FRAME_RATE;
-        }
-        else if (isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth)) { // thumb on the right
-
-            velocity = 0;
-            dragMode = dragSlider;
-        }
-        else if (isPointInsideRect(pointX, pointY, x1, starty+extenth, w1, h1 - box - (starty-y1) - extenth)) {
-
-            dragMode = DRAG_CLICKED_TRACK;
-            velocity = -extent1 * DRAG_FRAME_RATE;
-        }
-        else if (isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box)) {
-
-            dragMode = DRAG_CLICKED_ARROW;
-            velocity = -200;
-        }
-        else {
-            velocity = 0;
-            dragMode = DRAG_NONE;
+        switch(click) {
+            case Slider.CLICK_UP:
+                dragMode = DRAG_CLICKED_ARROW;
+                velocity = 200;
+                break;
+            case Slider.CLICK_PGUP:
+                dragMode = DRAG_CLICKED_TRACK;
+                velocity = extent1 * DRAG_FRAME_RATE;
+                break;
+            case Slider.CLICK_THUMB:
+                velocity = 0;
+                dragMode = dragSlider;
+                break;
+            case Slider.CLICK_PGDOWN:
+                dragMode = DRAG_CLICKED_TRACK;
+                velocity = -extent1 * DRAG_FRAME_RATE;
+                break;
+            case Slider.CLICK_DOWN:
+                dragMode = DRAG_CLICKED_ARROW;
+                velocity = -200;
+                break;
+            default: // same as CLICK_NONE
+                velocity = 0;
+                dragMode = DRAG_NONE;
+                break;
         }
 
         dragScrollBarMode = dragMode;
@@ -960,7 +805,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
             if (mode == MODE_SCROLLBARS) {
 
-                dragVelocityX = doClickInScrollbar(
+                int clickX = slider.doClickInScrollbar(
                       viewPortY + viewPortHeight,
                       viewPortX,
                       height - viewPortY - viewPortHeight,
@@ -968,11 +813,12 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                       viewPortX-viewX,
                       viewPortWidth,
                       viewWidth,
-                      pointY,pointX,
-                      DRAG_SLIDER_HORZ
+                      pointY,pointX
                 );
 
-                dragVelocityY = doClickInScrollbar(
+                dragVelocityX = doClickInScrollbar(clickX,DRAG_SLIDER_HORZ,viewPortWidth);
+
+                int clickY = slider.doClickInScrollbar(
                         viewPortX + viewPortWidth,
                         viewPortY,
                         width - viewPortX - viewPortWidth,
@@ -980,9 +826,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         viewPortY - viewY,
                         viewPortHeight,
                         viewHeight,
-                        pointX, pointY,
-                        DRAG_SLIDER_VERT
+                        pointX, pointY
                 );
+
+                dragVelocityY = doClickInScrollbar(clickY,DRAG_SLIDER_VERT,viewPortHeight);
+
             }
             else if (mode == MODE_SCROLLARROWS) {
 
@@ -1021,7 +869,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         else if (type == DesktopPane.DRAGGED) {
 
             if (dragScrollBarMode == DRAG_SLIDER_HORZ) {
-                dragLastX = getNewValue(
+                dragLastX = slider.getNewValue(
                         viewPortY + viewHeight,
                         viewPortX,
                         height - viewPortY - viewPortHeight,
@@ -1035,7 +883,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             }
             else if (dragScrollBarMode == DRAG_SLIDER_VERT) {
 
-                dragLastY = getNewValue(
+                dragLastY = slider.getNewValue(
                         viewPortX + viewWidth,
                         viewPortY,
                         width - viewPortX - viewPortWidth,
@@ -1288,10 +1136,4 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         return new int[] {-cY, dragVelocityY, jumpY, springBackTime};
     }
 
-    private int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
-
-        int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
-
-        return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
-    }
 }
