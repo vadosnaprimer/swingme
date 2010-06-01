@@ -413,4 +413,10 @@ public abstract class Canvas extends Displayable {
         container.doLayout();
 		container.updateButtons();        
 	}
+
+
+        public void pointerEvent(int[] type, int[] x, int[] y) {
+
+        }
+
 }

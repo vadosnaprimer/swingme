@@ -7,6 +7,8 @@ package javax.microedition.lcdui;
  * @ME4SE INTERNAL
  */
 
+import java.awt.Color;
+import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 
 import org.me4se.impl.Log;
@@ -97,6 +99,13 @@ class ScmCanvas extends ScmComponent {
 					0,
 					manager.awtContainer);
 				}
+
+                                if (pointx!=0&&pointy!=0) {
+                                    g.setColor(Color.RED);
+                                    drawPoint(g,pointx, pointy);
+                                    drawPoint(g,getWidth() - pointx, getHeight() - pointy);
+                                }
+
 				repaintLock.notify();
 			}
 		}
@@ -108,10 +117,27 @@ class ScmCanvas extends ScmComponent {
 		//g.drawLine (0, 0, 999, 999);
 	}
 
+    private void drawPoint(java.awt.Graphics g,int x,int y) {
+        g.drawLine(x, y+5, x, y-5);
+        g.drawLine(x+5, y, x-5, y);
+    }
 
+        // copy from DesktopPane in SwingME
+    public static final int DRAGGED = 0;
+    public static final int PRESSED = 1;
+    public static final int RELEASED = 2;
 
+    int pointx,pointy;
 
 	public boolean mouseDragged(int x, int y, int modifiers) {
+
+            if (pointx!=0||pointy!=0) {
+                pointx = x;
+                pointy = y;
+                repaint();
+                canvas.pointerEvent(new int[] {DRAGGED,DRAGGED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
+            }
+
 		if(canvas.hasPointerEvents)
 			canvas.pointerDragged(x, y);
 		return true;
@@ -119,6 +145,14 @@ class ScmCanvas extends ScmComponent {
 
 	public boolean mousePressed(int button, int x, int y, int modifiers) {
 		if (button != 1) return false;
+
+            if ((modifiers & InputEvent.ALT_MASK) == InputEvent.ALT_MASK) {
+                pointx = x;
+                pointy = y;
+                repaint();
+                canvas.pointerEvent(new int[] {PRESSED,PRESSED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
+            }
+
 	//	if(canvas.hasPointerEvents)
 			canvas.pointerPressed(x, y);
 		return true;
@@ -126,6 +160,14 @@ class ScmCanvas extends ScmComponent {
 
 	public boolean mouseReleased(int button, int x, int y, int modifiers) {
 		if (button != 1) return false;
+
+            if (pointx!=0||pointy!=0) {
+                pointx = 0;
+                pointy = 0;
+                repaint();
+                canvas.pointerEvent(new int[] {RELEASED,RELEASED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
+            }
+
 	//	if(canvas.hasPointerEvents)
 			canvas.pointerReleased(x, y);
 		return true;

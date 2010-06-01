@@ -245,6 +245,8 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
         (int) (ev.getY() / scale), ev.getModifiers());
     pressedX = ev.getX();
     pressedY = ev.getY();
+
+    menu = false;
   }
 
   public void mouseReleased(MouseEvent ev) {
@@ -295,8 +297,12 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
         component.keyPressed(name);
       }
     }
-    menu = ev.getKeyCode() == KeyEvent.VK_ALT;
+    if (!keyDown) {
+        keyDown = true;
+        menu = ev.getKeyCode() == KeyEvent.VK_ALT;
+    }
   }
+  boolean keyDown;
   boolean menu;
   /**
    * Dont do anything here...
@@ -323,6 +329,7 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
         ev.consume();
     }
     menu = false;
+    keyDown = false;
   }
 
   public void mouseEntered(MouseEvent ev) {
