@@ -297,9 +297,15 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
         component.keyPressed(name);
       }
     }
+
     if (!keyDown) {
         keyDown = true;
-        menu = ev.getKeyCode() == KeyEvent.VK_ALT;
+        if (ev.getKeyCode() == KeyEvent.VK_ALT) {
+            menu = true;
+        }
+    }
+    if (ev.getKeyCode() != KeyEvent.VK_ALT) {
+        menu = false;
     }
   }
   boolean keyDown;
