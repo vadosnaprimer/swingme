@@ -60,7 +60,9 @@ public abstract class Midlet extends MIDlet {
      * THIS METHOD WILL MAKE A NEW ROOTPANE
      * but nothing can be set up here as things like getHeight wont work
      */
-    protected abstract DesktopPane makeNewRootPane();
+    protected DesktopPane makeNewRootPane() {
+        return new DesktopPane(this, 0xFF000000, null);
+    }
 
     /**
      * this will set up everything needed to start the

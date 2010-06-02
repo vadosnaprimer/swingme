@@ -391,6 +391,8 @@ public abstract class Component {
         //}
     }
 
+    public void pointerEvent(int[] type, int[] x, int[] y) { }
+
     public void animate() throws InterruptedException { }
 
     /**

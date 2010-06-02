@@ -1083,6 +1083,12 @@ public class DesktopPane extends Canvas implements Runnable {
         pointerEvent(RELEASED, x, y);
     }
 
+    public void pointerEvent(int[] type, int[] x, int[] y) {
+        if (pointerComponent!=null) {
+            pointerComponent.pointerEvent(type,x,y);
+        }
+    }
+
     private ScrollPane getScrollPaneParent(Component comp) {
         Component parent = comp;
         while (parent != null) {
