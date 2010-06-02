@@ -173,6 +173,11 @@ public abstract class Canvas extends Displayable {
 
     }
 
+    // Multi-touch. Not available in MIDP
+    public void pointerEvent(int[] type, int[] x, int[] y) {
+
+    }
+
     protected void sizeChanged(int w, int h) {
 
     }
@@ -389,31 +394,127 @@ public abstract class Canvas extends Displayable {
             return true;
         }
 
+        private static final int POINTER_DRAGGED = 0;
+        private static final int POINTER_PRESSED = 1;
+        private static final int POINTER_RELEASED = 2;
+
+        private int eventX;
+        private int eventY;
+        private int eventType = -1;
+
+        private int[] multiEventType;
+        private int[] multiEventX;
+        private int[] multiEventY;
+
         @Override
         public boolean onTouchEvent(MotionEvent event) {
 
-           if (gestureDetector.onTouchEvent(event)) {
-               return true;
-           }
+            if (gestureDetector.onTouchEvent(event)) {
+                return true;
+            }
 
-            int x = Math.round(event.getX());
-            int y = Math.round(event.getY() - getHeight() + canvasH);
+            int actionCode = event.getAction() & 0xFF;
 
-            // System.out.println("(" + x + "," + y + "," + event.getAction() + ")");
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    Canvas.this.pointerPressed(x, y);
+            int action;
+            switch (actionCode) {
+                case MotionEvent.ACTION_DOWN: //$FALL-THROUGH$
+                case 0x5:                     // ACTION_POINTER_DOWN (API Level 5)
+                    action = POINTER_PRESSED;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    Canvas.this.pointerDragged(x, y);
+                    action = POINTER_DRAGGED;
                     break;
                 default:
-                    // Handles ACTION_UP, ACTION_CANCEL and ACTION_OUTSIDE...
-                    Canvas.this.pointerReleased(x, y);
+                    // Handles ACTION_UP, ACTION_CANCEL, ACTION_OUTSIDE, etc...
+                    action = POINTER_RELEASED;
                     break;
             }
 
+            int ySlide = getHeight() - canvasH;
+            int x = Math.round(event.getX());
+            int y = Math.round(event.getY() - ySlide);
+
+            // Rounding can create "repeated" events... Ignore them.
+            if (action != eventType || x != eventX || y != eventY) {
+
+                eventType = action;
+                eventX = x;
+                eventY = y;
+
+                try {
+                    switch (action) {
+                        case POINTER_PRESSED:
+                            Canvas.this.pointerPressed(x, y);
+                            break;
+                        case POINTER_DRAGGED:
+                            Canvas.this.pointerDragged(x, y);
+                            break;
+                        default:
+                            Canvas.this.pointerReleased(x, y);
+                            break;
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+            }
+
+            int pointerCount = getPointerCount(event);
+            if (pointerCount > 1) {
+                boolean fwEvent = false;
+                try {
+                    if (multiEventType == null ||
+                        multiEventType.length != pointerCount) {
+
+                        fwEvent = true;
+                        multiEventType = new int[pointerCount];
+                        multiEventX = new int[pointerCount];
+                        multiEventY = new int[pointerCount];
+                    }
+
+                    for (int i = 0; i < pointerCount; i++) {
+                        int pX = Math.round(getX(event, i));
+                        int pY = Math.round(getY(event, i) - ySlide);
+
+                        if (multiEventType[i] != eventType ||
+                            multiEventX[i] != pX ||
+                            multiEventY[i] != pY) {
+
+                            fwEvent = true;
+                            multiEventType[i] = eventType;
+                            multiEventX[i] = pX;
+                            multiEventY[i] = pY;
+                        }
+                    }
+
+                    if (fwEvent) {
+                        Canvas.this.pointerEvent(multiEventType, multiEventX, multiEventY);
+                    }
+                }
+                catch (Throwable e) {
+                }
+            }
+
             return true;
+        }
+
+        // Android 1.6 helper method (getPointerCount() is API Level 5)
+        private int getPointerCount(MotionEvent event) {
+            try {
+                return (Integer) event.getClass().getMethod("getPointerCount").invoke(event);
+            }
+            catch (Throwable ex) {
+                return 1;
+            }
+        }
+
+        // Android 1.6 helper method (getX(int) is API Level 5)
+        private float getX(MotionEvent event, int pointerIndex) throws Exception {
+            return (Float) MotionEvent.class.getMethod("getX", Integer.TYPE).invoke(event, pointerIndex);
+        }
+
+        // Android 1.6 helper method (getY(int) is API Level 5)
+        private float getY(MotionEvent event, int pointerIndex) throws Exception {
+            return (Float) MotionEvent.class.getMethod("getY", Integer.TYPE).invoke(event, pointerIndex);
         }
 
         private int getKeyCode(KeyEvent keyEvent) {
