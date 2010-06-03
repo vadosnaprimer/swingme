@@ -26,14 +26,14 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.GridLayout;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
+ * @see javax.swing.plaf.basic.BasicInternalFrameTitlePane
  */
-public class TitleBar extends Panel implements ActionListener {
-
-    public static int align = Graphics.LEFT; // Graphics.HCENTER;
+public class FrameTitlePane extends Panel implements ActionListener {
 
     private static String[] icons = new String[] {"#","+","_","[]","X"};
     private static String[] commands = new String[] {"resize","move",Frame.CMD_MIN,Frame.CMD_MAX,Frame.CMD_CLOSE};
@@ -41,7 +41,7 @@ public class TitleBar extends Panel implements ActionListener {
     private Label title;
     private Panel buttonPanel;
     
-    public TitleBar() {
+    public FrameTitlePane() {
         super(new BorderLayout());
         setName("TitleBar");
         
@@ -52,12 +52,28 @@ public class TitleBar extends Panel implements ActionListener {
         
         title = new Label();
         title.setName("TitleBarLabel");
-
-        title.setHorizontalAlignment(align);
         
         add(title);
         add(buttonPanel,Graphics.RIGHT);
 
+        updateUI();
+    }
+
+    public void updateUI() {
+        super.updateUI();
+
+        if (title!=null) {
+            String titleAlignment = (String)theme.getProperty("titleAlignment", Style.ALL);
+            if ("center".equals(titleAlignment)) {
+                title.setHorizontalAlignment(Graphics.HCENTER);
+            }
+            else if ("trailing".equals(titleAlignment)) {
+                title.setHorizontalAlignment(Graphics.RIGHT);
+            }
+            else { // default is leading
+                title.setHorizontalAlignment(Graphics.LEFT);
+            }
+        }
     }
 
     public void setButtonVisable(String action,boolean vis) {

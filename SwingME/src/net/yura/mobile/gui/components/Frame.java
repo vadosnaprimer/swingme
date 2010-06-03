@@ -61,7 +61,7 @@ public class Frame extends Window {
          * @see javax.swing.JInternalFrame#setClosable(boolean) JInternalFrame.setClosable
          */
         public void setClosable(boolean b) {
-            TitleBar title = getTitleBar();
+            FrameTitlePane title = getTitlePane();
             if (title!=null) {
                 title.setButtonVisable(CMD_CLOSE, b);
             }
@@ -71,7 +71,7 @@ public class Frame extends Window {
          * @see javax.swing.JInternalFrame#setMaximizable(boolean) JInternalFrame.setMaximizable
          */
         public void setMaximizable(boolean b) {
-            TitleBar title = getTitleBar();
+            FrameTitlePane title = getTitlePane();
             if (title!=null) {
                 title.setButtonVisable(CMD_MAX, b);
             }
@@ -85,9 +85,9 @@ public class Frame extends Window {
          * @see java.awt.Frame#setUndecorated(boolean) Frame.setUndecorated
          */
         public void setUndecorated(boolean un) {
-            TitleBar tb = getTitleBar();
+            FrameTitlePane tb = getTitlePane();
             if (tb==null && !un) {
-                super.add(new TitleBar());
+                super.add(new FrameTitlePane());
             }
             else if (tb!=null && un) {
                 super.remove(tb);
@@ -98,7 +98,7 @@ public class Frame extends Window {
          * @see java.awt.Frame#setTitle(java.lang.String) Frame.setTitle
          */
         public void setTitle(String newTitle) {
-            TitleBar tb = getTitleBar();
+            FrameTitlePane tb = getTitlePane();
             if (tb!=null) {
                 tb.setTitle(newTitle);
             }
@@ -108,7 +108,7 @@ public class Frame extends Window {
          * @see java.awt.Frame#setIconImage(java.awt.Image) Frame.setIconImage
          */
         public void setIconImage(Icon icon) {
-            TitleBar tb = getTitleBar();
+            FrameTitlePane tb = getTitlePane();
             if (tb!=null) {
                 tb.setIconImage(icon);
             }
@@ -166,12 +166,12 @@ public class Frame extends Window {
         /**
          * not swing
          */
-        public TitleBar getTitleBar() {
+        public FrameTitlePane getTitlePane() {
             Vector components = getComponents();
             for (int c=0;c<components.size();c++) {
                 Object obj = components.elementAt(c);
-                if (obj instanceof TitleBar) {
-                    return (TitleBar)obj;
+                if (obj instanceof FrameTitlePane) {
+                    return (FrameTitlePane)obj;
                 }
             }
             return null;
@@ -184,7 +184,7 @@ public class Frame extends Window {
             Vector components = getComponents();
             for (int c=0;c<components.size();c++) {
                 Object obj = components.elementAt(c);
-                if (!(obj instanceof MenuBar) && !(obj instanceof TitleBar)) {
+                if (!(obj instanceof MenuBar) && !(obj instanceof FrameTitlePane)) {
                     return (Panel)obj;
                 }
             }
@@ -196,7 +196,7 @@ public class Frame extends Window {
             int w=0;
             int h=0;
 
-            TitleBar titleBar = getTitleBar();
+            FrameTitlePane titleBar = getTitlePane();
             if (titleBar!=null && titleBar.isVisible()) {
                 titleBar.workoutSize();
                 int tw = titleBar.getWidthWithBorder();
@@ -233,7 +233,7 @@ public class Frame extends Window {
 
         public void doLayout() {
 
-            TitleBar titleBar = getTitleBar();
+            FrameTitlePane titleBar = getTitlePane();
             int th=0;
             if (titleBar!=null && titleBar.isVisible()) {
                 th = titleBar.getHeightWithBorder();

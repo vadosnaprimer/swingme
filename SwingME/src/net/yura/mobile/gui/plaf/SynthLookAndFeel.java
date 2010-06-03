@@ -215,14 +215,25 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         int i = parseInt(value, 10);
                                         newStyle.addProperty(new Integer(i), key, st);
                                     }
+                                    else if ("string".equals(type)) {
+                                        newStyle.addProperty(value, key, st);
+                                    }
                                     else if (type==null || "idref".equals(type)) {
-
                                         Object obj = params.get(value);
                                         if (obj!=null) {
                                             newStyle.addProperty(obj, key, st);
                                         }
-
+                                        //#mdebug
+                                        else {
+                                            throw new Exception("object with idref "+value+" not found");
+                                        }
+                                        //#enddebug
                                     }
+                                    //#mdebug
+                                    else {
+                                        throw new Exception("unknown property type "+type);
+                                    }
+                                    //#enddebug
 
                                 }
                                 else if ("color".equals(name2)) {
