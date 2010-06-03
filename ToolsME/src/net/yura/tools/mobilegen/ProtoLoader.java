@@ -32,7 +32,7 @@ public class ProtoLoader {
             parseRaw(raw);
 	}
 
-        private String[] ignoreNames = new String[] {"Object","Vector","Array","Hashtable","KeyValue","String","Integer","Double","Float","Boolean","Short","Long","Character","Byte"};
+        private String[] ignoreNames = new String[] {"Object","Vector","Array","Hashtable","KeyValue","String","Integer","Double","Float","Boolean","Short","Long","Character","Byte","ByteArray"};
 
         private boolean ignoreMessage(String name) {
 
