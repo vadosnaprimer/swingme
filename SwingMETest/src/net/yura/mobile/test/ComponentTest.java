@@ -225,7 +225,7 @@ public class ComponentTest  extends Section{
             Button close = new Button("Close");
             close.setActionCommand(Frame.CMD_CLOSE);
             // hack to avoid having to make a new action listoner
-            close.addActionListener(test1.getTitleBar());
+            close.addActionListener(test1.getTitlePane());
             close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
 
             Panel p = new Panel( new FlowLayout() );

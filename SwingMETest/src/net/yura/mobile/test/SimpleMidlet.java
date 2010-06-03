@@ -40,10 +40,6 @@ public class SimpleMidlet extends Midlet implements ActionListener {
 
 	private DesktopPane rootpane;
 
-	protected DesktopPane makeNewRootPane() {
-		return new DesktopPane(this,0,null);
-	}
-
 	protected void initialize(DesktopPane rp) {
 
 		this.rootpane = rp;
