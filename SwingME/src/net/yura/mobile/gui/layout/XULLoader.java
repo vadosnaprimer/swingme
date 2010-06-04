@@ -360,10 +360,26 @@ public class XULLoader {
         else if (name.equals("spinbox")) {
             Spinner spinner = new Spinner();
 
+            String minimum = parser.getAttributeValue(null, "minimum");
+            String maximum = parser.getAttributeValue(null, "maximum");
+            String text = parser.getAttributeValue(null, "text");
+
+            if (minimum!=null) {
+                spinner.setMinimum( Integer.parseInt(minimum) );
+            }
+            if (maximum!=null) {
+                spinner.setMaximum( Integer.parseInt(maximum) );
+            }
+            if (text!=null) {
+                spinner.setValue( Integer.valueOf(text) );
+            }
+
             return readUIObject(parser, spinner,listener);
         }
         else if (name.equals("datespinbox")) {
             Spinner spinner = new Spinner();
+
+            // TODO do a date spinner
 
             return readUIObject(parser, spinner,listener);
         }

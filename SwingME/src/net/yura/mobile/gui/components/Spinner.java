@@ -40,16 +40,10 @@ public class Spinner extends Label {
 	private Icon leftUnselectedIcon;
 	private Icon rightSelectedIcon;
 	private Icon rightUnselectedIcon;
-        
-	private int index = 0;
-	
-	private Vector list;
 
 //	private Border normalBorder;
 //	private Border activeBorder;
-        
-	private boolean continuous = false;
-        
+     
 	private boolean leftPress = false;
 	private boolean rightPress = false;
 
@@ -63,18 +57,21 @@ public class Spinner extends Label {
          * @see javax.swing.JSpinner#JSpinner() JSpinner.JSpinner
          */
 	public Spinner() {
-		this(new Vector(), false);
+		this(null, false);
 	}
 	
 	public Spinner(Vector vec, boolean cont) {
 		super((String)null);
-		continuous = cont;
-		setData(vec);
-
-		focusable = true;
-
+                focusable = true;
                 setHorizontalAlignment(Graphics.HCENTER);
 
+		continuous = cont;
+                if (vec!=null) {
+                    setList(vec);
+                }
+                else {
+                    super.setValue(new Integer(index));
+                }
 	}
 
         public void addChangeListener(ChangeListener aThis) {
@@ -133,19 +130,18 @@ public class Spinner extends Label {
                         Object obj = list.elementAt(i);
 
                         Icon img = (obj instanceof Option)?((Option)obj).getIcon():null;
-                        
+
                         int len = getCombinedWidth(String.valueOf(obj),img!=null?img.getIconWidth():0);
 
                         if (maxWidth < len){
                             maxWidth = len;
                         }
-                        
+
                         int hi = getCombinedHeight( img!=null?img.getIconHeight():0 );
-                                
+
                         if (maxHeight < hi){
                             maxHeight = hi;
                         }
-                                
 
                     }
 
@@ -163,11 +159,11 @@ public class Spinner extends Label {
                         width = dp.getWidth();
                     }
                     
-                    setIndex(index);
+                    //setIndex(index); ????
             }
             else {
-                height = getFont().getHeight() + (padding*2);
-                width = 10;
+                height = getFont().getHeight() + padding*2;
+                width = getFont().getWidth("999") + padding*2;
             }
 
 	}
@@ -206,23 +202,18 @@ public class Spinner extends Label {
 	}
 
         private void fire() {
-            	if (leftPress && index == 0) {
-			if (continuous == true){
-				setIndex(list.size()-1);
+            Object newVal=null;
 
-			}
-		}
-		else if (leftPress) {
-			setIndex(index-1);
-		}
-		else if (rightPress && index == list.size()-1) {
-			if (continuous == true){
-				setIndex(0);
-			}
-		}
-		else if (rightPress){
-			setIndex(index+1);
-		}
+            if (leftPress && !rightPress) {
+                newVal = getPreviousValue();
+            }
+            if (rightPress && !leftPress) {
+                newVal = getNextValue();
+            }
+
+            if (newVal!=null) {
+                setValue(newVal);
+            }
         }
 
 	public void paintComponent(Graphics2D g){
@@ -284,21 +275,7 @@ public class Spinner extends Label {
 //            }
 
 	}
-
-	
-	public void setData(Vector data) {
-		this.list = data;
-		index=0;
-	}
-	
-        /**
-         * @return the current value
-         * @see javax.swing.JSpinner#getValue() JSpinner.getValue
-         */
-        public Object getValue() {
-            return list.elementAt(index);
-        }
-        
+/*
 	public void setIndex(int i) {
 
             int old = index;
@@ -315,15 +292,7 @@ public class Spinner extends Label {
 
 	    repaint();
 	}
-
-        /**
-         * @param value
-         * @see javax.swing.JSpinner#setValue(java.lang.Object) JSpinner.setValue
-         */
-        public void setValue(Object value) {
-            setIndex( list.indexOf(value) );
-        }
-        
+*/
 	public void focusLost() {
                 super.focusLost();
 //		foreground = normalForeground;
@@ -363,9 +332,11 @@ public class Spinner extends Label {
 		throw new IllegalArgumentException();
 	}
         //#enddebug
+
         public String getDefaultName() {
             return "Spinner";
         }
+
         public void updateUI() {
                 super.updateUI();
                 //Style theme = DesktopPane.getDefaultTheme(this);
@@ -381,5 +352,127 @@ public class Spinner extends Label {
                 rightSelectedIcon = (Icon) theme.getProperty("iconRight", Style.SELECTED);
                 rightUnselectedIcon = (Icon) theme.getProperty("iconRight", Style.ALL);
                 
+        }
+
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== SpinnerListModel == SpinnerNumberModel ==============================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+        private Vector list;
+        private boolean continuous = false;
+        private int index=0,max=Integer.MAX_VALUE,min=Integer.MIN_VALUE;
+
+        /**
+         * @see javax.swing.SpinnerModel#getNextValue() SpinnerModel.getNextValue
+         */
+        public Object getNextValue() {
+            if (list!=null) {
+                if (index < (list.size()-1)) {
+                    return list.elementAt(index+1);
+                }
+                if (!list.isEmpty() && continuous) {
+                    return list.elementAt(0);
+                }
+                return null;
+            }
+            else {
+                if (index < max) {
+                    return new Integer(index+1);
+                }
+                if (max!=min && continuous) {
+                    return new Integer(min);
+                }
+                return null;
+            }
+        }
+
+        /**
+         * @see javax.swing.SpinnerModel#getPreviousValue() SpinnerModel.getPreviousValue
+         */
+        public Object getPreviousValue() {
+            if (list!=null) {
+                if (index>0) {
+                    return list.elementAt(index-1);
+                }
+                if (!list.isEmpty() && continuous) {
+                    return list.elementAt(list.size()-1);
+                }
+                return null;
+            }
+            else {
+                if (index > min) {
+                    return new Integer(index-1);
+                }
+                if (max!=min && continuous) {
+                    return new Integer(max);
+                }
+                return null;
+            }
+        }
+
+        /**
+         * @return the current value
+         * @see javax.swing.JSpinner#getValue() JSpinner.getValue
+         * @see javax.swing.SpinnerModel#getValue() SpinnerModel.getValue
+         */
+        public Object getValue() {
+            if (list!=null) {
+                return list.elementAt(index);
+            }
+            return new Integer(index);
+        }
+
+        /**
+         * @param value
+         * @see javax.swing.JSpinner#setValue(java.lang.Object) JSpinner.setValue
+         * @see javax.swing.SpinnerModel#setValue(java.lang.Object) SpinnerModel.setValue
+         */
+        public void setValue(Object value) {
+
+            int old = index;
+
+            if (list!=null) {
+                index = list.indexOf(value);
+            }
+            else if (value instanceof Integer) {
+                index = ((Integer)value).intValue();
+            }
+
+            if (old!=index) {
+                super.setValue(value);
+                if (chl!=null) {
+                    chl.changeEvent(this,index);
+                }
+                repaint();
+            }
+        }
+
+	/**
+         * @see javax.swing.SpinnerListModel#setList(java.util.List) SpinnerListModel.setList
+         */
+	public void setList(Vector data) {
+		list = data;
+                if (!list.isEmpty() && list.firstElement()!=null) {
+                    setValue(list.firstElement());
+                }
+                //#mdebug debug
+                else {
+                    throw new IllegalArgumentException(); // same as Swing
+                }
+                //#enddebug
+	}
+
+        /**
+         * @see javax.swing.SpinnerNumberModel#setMaximum(java.lang.Comparable) SpinnerNumberModel.setMaximum
+         */
+        public void setMaximum(int maximum) {
+            max=maximum;
+        }
+
+        /**
+         * @see javax.swing.SpinnerNumberModel#setMinimum(java.lang.Comparable) SpinnerNumberModel.setMinimum
+         */
+        public void setMinimum(int minimum) {
+            min=minimum;
         }
 }
