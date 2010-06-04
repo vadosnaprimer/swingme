@@ -1,5 +1,7 @@
 package javax.microedition.lcdui;
 
+import java.util.Arrays;
+
 import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.AndroidMeMIDlet;
@@ -339,6 +341,13 @@ public abstract class Canvas extends Displayable {
             int graphicsY = getHeight() - canvasH;
             androidCanvas.drawBitmap(graphicsBitmap, 0, graphicsY, null);
 
+//            if (touchDebug != null) {
+//                Paint paint = new Paint();
+//                paint.setStyle(Paint.Style.STROKE);
+//                androidCanvas.drawCircle(touchDebug[0], touchDebug[1] + 0*graphicsY, 50, paint);
+//                androidCanvas.drawCircle(touchDebug[2], touchDebug[3] + 0*graphicsY, 50, paint);
+//            }
+
             time = System.currentTimeMillis();
         }
 
@@ -398,13 +407,17 @@ public abstract class Canvas extends Displayable {
         private static final int POINTER_PRESSED = 1;
         private static final int POINTER_RELEASED = 2;
 
+        private static final int MULTI_TOUCH_MIN_DIST = 5;
+
         private int eventX;
         private int eventY;
         private int eventType = -1;
 
-        private int[] multiEventType;
-        private int[] multiEventX;
-        private int[] multiEventY;
+        private int[]  touchType;
+        private int[]  touchX;
+        private int[]  touchY;
+
+//        private int[] touchDebug;
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
@@ -430,6 +443,7 @@ public abstract class Canvas extends Displayable {
                     break;
             }
 
+            int pointerCount = getPointerCount(event);
             int ySlide = getHeight() - canvasH;
             int x = Math.round(event.getX());
             int y = Math.round(event.getY() - ySlide);
@@ -444,13 +458,17 @@ public abstract class Canvas extends Displayable {
                 try {
                     switch (action) {
                         case POINTER_PRESSED:
-                            Canvas.this.pointerPressed(x, y);
+                            if (pointerCount == 1) {
+                                Canvas.this.pointerPressed(x, y);
+                            }
                             break;
                         case POINTER_DRAGGED:
                             Canvas.this.pointerDragged(x, y);
                             break;
                         default:
-                            Canvas.this.pointerReleased(x, y);
+                            if (pointerCount == 1) {
+                                Canvas.this.pointerReleased(x, y);
+                            }
                             break;
                     }
                 } catch (Throwable e) {
@@ -458,36 +476,52 @@ public abstract class Canvas extends Displayable {
                 }
             }
 
-            int pointerCount = getPointerCount(event);
             if (pointerCount > 1) {
-                boolean fwEvent = false;
                 try {
-                    if (multiEventType == null ||
-                        multiEventType.length != pointerCount) {
+                    // TODO: This code is hardcoded to only handle the first two points
+                    // The HTC hardware for Nexus and Desire have serious limitation,
+                    // sinse they are NOT true multitouch displays. They suffer from
+                    // "shadowing" and are unreliable if the pressure between the two
+                    // fingers are different...  Sensibility in x/y is also diferent.
+                    // See: http://goo.gl/PMX9, http://goo.gl/g7it and http://goo.gl/RfWN
 
+                    if (touchType == null) {
+
+                        touchType = new int[2];
+                        touchX = new int[2];
+                        touchY = new int[2];
+
+                        Arrays.fill(touchType, POINTER_RELEASED);
+                    }
+
+                    int pX0 = Math.round(getX(event, 0));
+                    int pY0 = Math.round(getY(event, 0) - ySlide);
+
+                    int pX1 = Math.round(getX(event, 1));
+                    int pY1 = Math.round(getY(event, 1) - ySlide);
+
+//                    touchDebug = new int[] {pX0, pY0, pX1, pY1};
+//                    invalidate();
+
+                    boolean fwEvent = false;
+
+                    if (action == POINTER_DRAGGED &&  touchType[0] == POINTER_RELEASED) {
+                        // POINTER_PRESSED was ignored
+                        action = POINTER_PRESSED;
+                    }
+                    else if (action == POINTER_RELEASED &&  touchType[0] != POINTER_RELEASED) {
+                        // POINTER_RELEASED can not be ignored, if there was a POINTER_PRESSED
                         fwEvent = true;
-                        multiEventType = new int[pointerCount];
-                        multiEventX = new int[pointerCount];
-                        multiEventY = new int[pointerCount];
                     }
 
-                    for (int i = 0; i < pointerCount; i++) {
-                        int pX = Math.round(getX(event, i));
-                        int pY = Math.round(getY(event, i) - ySlide);
-
-                        if (multiEventType[i] != eventType ||
-                            multiEventX[i] != pX ||
-                            multiEventY[i] != pY) {
-
-                            fwEvent = true;
-                            multiEventType[i] = eventType;
-                            multiEventX[i] = pX;
-                            multiEventY[i] = pY;
-                        }
-                    }
+                    fwEvent |= updateMultitouch(touchX, pX0, pX1);
+                    fwEvent |= updateMultitouch(touchY, pY0, pY1);
 
                     if (fwEvent) {
-                        Canvas.this.pointerEvent(multiEventType, multiEventX, multiEventY);
+                        touchType[0] = action;
+                        touchType[1] = action;
+                        Canvas.this.pointerEvent(clone(touchType),
+                                clone(touchX), clone(touchY));
                     }
                 }
                 catch (Throwable e) {
@@ -495,6 +529,37 @@ public abstract class Canvas extends Displayable {
             }
 
             return true;
+        }
+
+        private boolean updateMultitouch(int[] touchPos, int p0, int p1) {
+
+            // WORK-ARROUD: Nexus, Desire, etc.
+            // 1 - Close points are unreliable. Any difference bigger than
+            //     MIN_DIST automatically makes the points valid.
+            // 2 - If both points (fingers) move at the same time, then they
+            //     are also valid.
+            boolean fwEvent = false;
+            if (touchPos[0] != p0 || touchPos[1] != p1) {
+                if (Math.abs(p0 - p1) > MULTI_TOUCH_MIN_DIST ||
+                   (Math.abs(touchPos[0] - p0) > MULTI_TOUCH_MIN_DIST  &&
+                    Math.abs(touchPos[1] - p1) > MULTI_TOUCH_MIN_DIST)) {
+
+                    fwEvent = true;
+                    touchPos[0] = p0;
+                    touchPos[1] = p1;
+                }
+            }
+
+            return fwEvent;
+        }
+
+        private int[] clone(int[] a) {
+
+            int[] b = new int[a.length];
+            for (int i = 0; i < b.length; i++) {
+                b[i] = a[i];
+            }
+            return b;
         }
 
         // Android 1.6 helper method (getPointerCount() is API Level 5)
@@ -562,7 +627,7 @@ public abstract class Canvas extends Displayable {
             default:
                 resultKeyCode = keyEvent.getUnicodeChar();
                 if (resultKeyCode == 0) {
-                     resultKeyCode = -deviceKeyCode;
+                    resultKeyCode = -deviceKeyCode;
                 }
             }
 
