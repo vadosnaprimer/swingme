@@ -23,6 +23,7 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.ImageView;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Menu;
@@ -70,6 +71,7 @@ public class ComponentTest  extends Section{
         addTest("Multi File Chooser","fileChooser2");
         addTest("Test Camera","testCamera");
         addTest("Test Progress","testProgress");
+        addTest("Test Gallery","testGallery");
     }
 
     public void actionPerformed(String actionCommand) {
@@ -541,6 +543,15 @@ public class ComponentTest  extends Section{
                 }
             }.start();
 
+        }
+        else if ("testGallery".equals(actionCommand)) {
+            try {
+                ImageView imgView = new ImageView();
+                imgView.setBackgroundImage(new Icon("/world_link.png"));
+                addToScrollPane(imgView, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         else {
 
