@@ -1085,6 +1085,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
     public void pointerEvent(int[] type, int[] x, int[] y) {
         if (pointerComponent!=null) {
+            int pcX = pointerComponent.getXOnScreen();
+            int pcY = pointerComponent.getYOnScreen();
+            for (int c=0;c<type.length;c++) {
+                x[c] = x[c] - pcX;
+                y[c] = y[c] - pcY;
+            }
             pointerComponent.pointerEvent(type,x,y);
         }
     }
