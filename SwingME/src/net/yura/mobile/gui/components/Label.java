@@ -31,26 +31,26 @@ import net.yura.mobile.util.Option;
  * @see javax.swing.JLabel
  */
 public class Label extends Component {
-    
+
 	public static String extension = "...";
-    
+
 	protected Font font;
-	
+
 	protected String string;
 	protected Icon icon;
-	protected int padding=2;	
+	protected int padding=2;
 	protected int gap=2;
-	
+
         protected int alignment;
         protected int textPosition;
-	
+
         /**
          * @see javax.swing.JLabel#JLabel() JLabel.JLabel
          */
         public Label() {
             this((String)null);
         }
-        
+
         /**
          * @param text The text to be displayed by the label
          * @see javax.swing.JLabel#JLabel(java.lang.String) JLabel.JLabel
@@ -64,13 +64,13 @@ public class Label extends Component {
                 // but it will still display as a empty string)
                 // in J2SE Swing this does NOT call setText(), so here it does not either!
 		string = text==null?"":text;
-                
+
                 alignment = Graphics.VCENTER | Graphics.LEFT;
 
                 textPosition = Graphics.VCENTER | Graphics.RIGHT;
-		
+
 	}
-	
+
         /**
          * @param icon The image to be displayed by the label
          * @see javax.swing.JLabel#JLabel(javax.swing.Icon) JLabel.JLabel
@@ -80,7 +80,7 @@ public class Label extends Component {
                 setIcon(icon);
 		setHorizontalAlignment(Graphics.HCENTER);
 	}
-        
+
         /**
          * @param text The text to be displayed by the label
          * @param icon The image to be displayed by the label
@@ -104,7 +104,7 @@ public class Label extends Component {
         }
 
 	public void workoutMinimumSize() {
-		
+
 		int w = getCombinedWidth();
 		int h = getCombinedHeight();
 
@@ -123,13 +123,13 @@ public class Label extends Component {
 		}
 
 	}
-	
+
 	public void paintComponent(Graphics2D g) {
 
 		int x=padding;
 		int y=padding;
                 int iconWidth = getIconWidth();
-		
+
                 String drawString = this.string;
 		int combinedwidth = getCombinedWidth();
 
@@ -139,82 +139,82 @@ public class Label extends Component {
                     int a = TextArea.searchStringCharOffset(drawString, font, w);
                     drawString = drawString.substring(0, a)+extension;
                 }
-                
+
 		int combinedheight = getCombinedHeight();
-		
-		if ((alignment & Graphics.HCENTER) != 0) {	
+
+		if ((alignment & Graphics.HCENTER) != 0) {
 			x = (width - combinedwidth)/2;
 		}
-		else if ((alignment & Graphics.RIGHT) != 0) {	
+		else if ((alignment & Graphics.RIGHT) != 0) {
 			x = (width - combinedwidth) -padding;
 		}
 
-		if ((alignment & Graphics.VCENTER) != 0) {	
+		if ((alignment & Graphics.VCENTER) != 0) {
 			y = (height - combinedheight)/2;
 		}
-		else if ((alignment & Graphics.BOTTOM) != 0) {	
+		else if ((alignment & Graphics.BOTTOM) != 0) {
 			y = (height - combinedheight) -padding;
 		}
-		
-		
+
+
 		if (iconWidth>0) {
 
 			int ix=x;
 			int iy=y;
-			
+
 			if ((textPosition & Graphics.HCENTER) != 0) {
-				
+
 				ix = x + (combinedwidth - iconWidth)/2;
-				
+
 			}
 			else if ((textPosition & Graphics.LEFT) != 0 && font!=null && drawString!=null) {
-				
+
 				ix = x + font.getWidth(drawString)+gap;
-				
+
 			}
 
 			if ((textPosition & Graphics.VCENTER) != 0) {
-				
+
 				iy = y + (combinedheight - getIconHeight())/2;
-				
+
 			}
 			else if ((textPosition & Graphics.TOP) != 0 && font!=null && drawString!=null) {
-				
+
 				iy = y + font.getHeight()+gap;
-				
+
 			}
-			
+
 			paintIcon( g, ix, iy  );
 		}
-		
+
 		if (font!=null && drawString!=null) {
-			
+
 			int tx = x;
 			int ty = y;
-			
+
 			if ((textPosition & Graphics.HCENTER) != 0) {
-				
+
 				tx = x + (combinedwidth - font.getWidth(drawString))/2;
-				
+
 			}
 			else if ((textPosition & Graphics.RIGHT) != 0 && iconWidth>0) {
-				
+
 				tx = x + iconWidth+gap;
-				
+
 			}
 
 			if ((textPosition & Graphics.VCENTER) != 0) {
-				
+
 				ty = y + (combinedheight - font.getHeight())/2;
-				
+
 			}
 			else if ((textPosition & Graphics.BOTTOM) != 0 && iconWidth>0) {
-				
+
 				ty = y + getIconHeight()+gap;
-				
+
 			}
-			
-			
+
+
 			g.setColor( getCurrentForeground() );
                         g.setFont(font);
 			g.drawString( drawString, tx,ty );
@@ -229,7 +229,7 @@ public class Label extends Component {
 	protected int getCombinedWidth() {
             return getCombinedWidth(string,getIconWidth());
 	}
-        
+
         protected int getCombinedWidth(String string,int iconWidth) {
             	int fw = (font!=null&&string!=null)?font.getWidth(string):0;
 		if ((textPosition & Graphics.HCENTER) != 0) {
@@ -244,11 +244,11 @@ public class Label extends Component {
 			return fw;
 		}
         }
-	
+
         protected int getCombinedHeight() {
             return getCombinedHeight(getIconHeight());
         }
-        
+
 	protected int getCombinedHeight(int iconHeight) {
 		int fw = (font!=null && !"".equals(string) && string != null)?font.getHeight():0;
 		if ((textPosition & Graphics.VCENTER)!= 0) {
@@ -263,7 +263,7 @@ public class Label extends Component {
 			return fw;
 		}
 	}
-	
+
         /**
          * @param a The text of the label
          * @see javax.swing.JLabel#setText(java.lang.String) JLabel.setText
@@ -271,7 +271,7 @@ public class Label extends Component {
 	public void setText(String a) {
 		string = a;
 	}
-        
+
         /**
          * @return The text of the label
          * @see javax.swing.JLabel#getText() JLabel.getText
@@ -279,7 +279,7 @@ public class Label extends Component {
         public String getText() {
 		return string;
 	}
-        
+
         /**
          * @return The font of the label
          * @see java.awt.Component#getFont() Component.getFont
@@ -321,7 +321,7 @@ public class Label extends Component {
 	public void setHorizontalTextPosition(int a) {
 		textPosition = ((textPosition&Graphics.TOP)!=0?Graphics.TOP:((textPosition&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER)) | a;
 	}
-	
+
         /**
          * @param a One of the following constants defined in Graphics: TOP, VCENTER (the default), or BOTTOM
          * @see javax.swing.JLabel#setVerticalTextPosition(int) JLabel.setVerticalTextPosition
@@ -329,7 +329,7 @@ public class Label extends Component {
 	public void setVerticalTextPosition(int a) {
 		textPosition = a | ((textPosition&Graphics.LEFT)!=0?Graphics.LEFT:((textPosition&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
 	}
-	
+
         /**
          * @param a One of the following constants defined in Graphics: LEFT (the default for text-only labels), HCENTER (the default for image-only labels), RIGHT
          * @see javax.swing.JLabel#setHorizontalAlignment(int) JLabel.setHorizontalAlignment
@@ -353,10 +353,10 @@ public class Label extends Component {
         public void setIconTextGap(int iconTextGap) {
             gap = iconTextGap;
         }
-        
+
 
         public void setValue(Object obj) {
-            
+
             String drawString=null;
             Icon image=null;
             String tip=null;
@@ -370,7 +370,7 @@ public class Label extends Component {
             else if (obj!=null) {
                 drawString = String.valueOf(obj);
             }
-            
+
 //            if (drawString!=null) {
 //                int a = getCombinedWidth(drawString, image!=null?image.getWidth():0);
 //                int w = getMaxTextWidth();
@@ -381,15 +381,15 @@ public class Label extends Component {
 //                }
 //            }
 
-            // caling setText causes thing like spinner that throw in the setText to stop working
+            // calling setText causes thing like spinner that throw in the setText to stop working
             string = drawString; // dont want to recalc everything twice
             setIcon(image);
             setToolTipText(tip);
         }
-        
+
         public int getMaxWidth() {
-            
-            // if the width has not beed set yet
+
+            // if the width has not been set yet
             // we will assume as can take the default amount
 
             int borderOffset=0;
