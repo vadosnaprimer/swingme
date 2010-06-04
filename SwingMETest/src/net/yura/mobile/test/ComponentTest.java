@@ -45,6 +45,7 @@ import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.io.NativeUtil;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.Option;
+import net.yura.mobile.util.SystemUtil;
 
 /**
  *
@@ -133,22 +134,26 @@ public class ComponentTest  extends Section{
                 componentTest.add( rb );
 
                 Vector items = new Vector();
-                items.addElement(null);
                 items.addElement("");
                 items.addElement("One");
                 items.addElement(new Option("2","Two",mainPane.image));
                 items.addElement(new Option("3","Three option"));
                 items.addElement(new Option("4",null,mainPane.image,"(no text)"));
 
+                Vector itemsNoNull = new Vector();
+                SystemUtil.addAll(itemsNoNull, items);
+
+                items.addElement(null);
+
                 ComboBox disabledCombo = new ComboBox(items);
                 disabledCombo.setFocusable(false);
 
-                Spinner disabledSpinner = new Spinner(items, false);
+                Spinner disabledSpinner = new Spinner(itemsNoNull, false);
                 disabledSpinner.setFocusable(false);
 
                 componentTest.add( new ComboBox(items) );
                 componentTest.add( disabledCombo );
-                componentTest.add( new Spinner(items, false));
+                componentTest.add( new Spinner(itemsNoNull, true));
                 componentTest.add(disabledSpinner);
 
                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more than 1 line");
