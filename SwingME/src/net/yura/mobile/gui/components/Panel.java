@@ -110,6 +110,11 @@ public class Panel extends Component {
     * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
     */
    protected void addImpl(Component component,Object cons,int index) {
+       //#mdebug debug
+       if (component instanceof Window) {
+           throw new RuntimeException("trying to add a window to a panel "+component+" to "+this);
+       }
+       //#enddebug
         components.insertElementAt(component,index);
         if (cons!=null) {
             constraints.put(component, cons);
