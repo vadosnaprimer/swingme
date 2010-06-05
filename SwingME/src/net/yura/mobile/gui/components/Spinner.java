@@ -28,6 +28,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 
 /**
@@ -77,9 +78,39 @@ public class Spinner extends Label {
                 }
 	}
 
-        public void addChangeListener(ChangeListener aThis) {
-            chl = aThis;
-        }
+        /**
+         * @see javax.swing.JSpinner#addChangeListener(javax.swing.event.ChangeListener) JSpinner.addChangeListener
+         */
+	public void addChangeListener(ChangeListener l) {
+                //#mdebug warn
+                if (chl!=null) {
+                    Logger.warn("trying to add a ChangeListener when there is already one registered");
+                    Logger.dumpStack();
+                }
+                if (l==null) {
+                    Logger.warn("trying to add a null ChangeListener");
+                    Logger.dumpStack();
+                }
+                //#enddebug
+		chl = l;
+	}
+
+        /**
+         * @see javax.swing.JSpinner#removeChangeListener(javax.swing.event.ChangeListener) JSpinner.removeChangeListener
+         */
+	public void removeChangeListener(ChangeListener l) {
+		if (chl == l) { chl = null; }
+                //#mdebug warn
+                else {
+                    Logger.warn("trying to remove a ChangeListener that is not registered");
+                    Logger.dumpStack();
+                }
+                if (l==null) {
+                    Logger.warn("trying to remove a null ChangeListener");
+                    Logger.dumpStack();
+                }
+                //#enddebug
+	}
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             super.processMouseEvent(type, x, y, keys);

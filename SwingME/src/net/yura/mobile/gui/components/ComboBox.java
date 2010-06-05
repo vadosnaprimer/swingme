@@ -318,6 +318,7 @@ public class ComboBox extends Button implements ActionListener{
                     Label l = (Label)c;
                     super.setText( l.getText() );
                     super.setIcon( l.getIcon() );
+                    // TODO what about tooltip???
                 }
                 else {
                     super.setValue( list.getElementAt(i) );
