@@ -59,7 +59,10 @@ public class Spinner extends Label {
 	public Spinner() {
 		this(null, false);
 	}
-	
+
+        /**
+         * @see javax.swing.SpinnerListModel#SpinnerListModel(java.util.List) SpinnerListModel.SpinnerListModel
+         */
 	public Spinner(Vector vec, boolean cont) {
 		super((String)null);
                 focusable = true;
@@ -363,6 +366,7 @@ public class Spinner extends Label {
         private int index=0,max=Integer.MAX_VALUE,min=Integer.MIN_VALUE;
 
         /**
+         * @see javax.swing.JSpinner#getNextValue() JSpinner.getNextValue
          * @see javax.swing.SpinnerModel#getNextValue() SpinnerModel.getNextValue
          */
         public Object getNextValue() {
@@ -373,7 +377,6 @@ public class Spinner extends Label {
                 if (!list.isEmpty() && continuous) {
                     return list.elementAt(0);
                 }
-                return null;
             }
             else {
                 if (index < max) {
@@ -382,11 +385,12 @@ public class Spinner extends Label {
                 if (max!=min && continuous) {
                     return new Integer(min);
                 }
-                return null;
             }
+            return null;
         }
 
         /**
+         * @see javax.swing.JSpinner#getPreviousValue() JSpinner.getPreviousValue
          * @see javax.swing.SpinnerModel#getPreviousValue() SpinnerModel.getPreviousValue
          */
         public Object getPreviousValue() {
@@ -397,7 +401,6 @@ public class Spinner extends Label {
                 if (!list.isEmpty() && continuous) {
                     return list.elementAt(list.size()-1);
                 }
-                return null;
             }
             else {
                 if (index > min) {
@@ -406,8 +409,8 @@ public class Spinner extends Label {
                 if (max!=min && continuous) {
                     return new Integer(max);
                 }
-                return null;
             }
+            return null;
         }
 
         /**
@@ -437,14 +440,14 @@ public class Spinner extends Label {
             else if (value instanceof Integer) {
                 index = ((Integer)value).intValue();
             }
+            // else must be using a custom model for this spinner
 
-            if (old!=index) {
-                super.setValue(value);
-                if (chl!=null) {
-                    chl.changeEvent(this,index);
-                }
-                repaint();
+            super.setValue(value);
+            if (old!=index && chl!=null) {
+                chl.changeEvent(this,index);
             }
+            repaint();
+
         }
 
 	/**
@@ -452,14 +455,17 @@ public class Spinner extends Label {
          */
 	public void setList(Vector data) {
 		list = data;
-                if (!list.isEmpty() && list.firstElement()!=null) {
-                    setValue(list.firstElement());
+                if (data!=null) {
+                    if (!list.isEmpty() && list.firstElement()!=null) {
+                        setValue(list.firstElement());
+                    }
+                    //#mdebug debug
+                    else {
+                        throw new IllegalArgumentException(); // same as Swing
+                    }
+                    //#enddebug
                 }
-                //#mdebug debug
-                else {
-                    throw new IllegalArgumentException(); // same as Swing
-                }
-                //#enddebug
+                // else go back to being a number spinner
 	}
 
         /**
