@@ -21,7 +21,7 @@ public class ImageView extends Panel {
         return bgImage;
     }
 
-    // @Override
+    // Override
     public void paintComponent(Graphics2D g) {
 
         if (bgScaledImage != null) {
@@ -45,7 +45,7 @@ public class ImageView extends Panel {
         super.paintComponent(g);
     }
 
-    // @Override
+    // Override
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
         System.out.println("ImageView: processMouseEvent");
         // TODO Auto-generated method stub
@@ -59,7 +59,7 @@ public class ImageView extends Panel {
     int[] px = new int[2];
     int[] py = new int[2];
 
-    // @Override
+    // Override
     public void pointerEvent(int[] type, int[] x, int[] y) {
         System.out.println("ImageView: pointerEvent");
 
