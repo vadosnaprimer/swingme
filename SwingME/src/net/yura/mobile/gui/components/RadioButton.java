@@ -155,13 +155,18 @@ public class RadioButton extends Button {
 
                 int cState = getCurrentState();
 
-		if ((cState&Style.SELECTED)!=0 && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
+                // we need to do the check for isSelected()
+                // instead of (cState&Style.SELECTED)!=0
+                // as setState that is used by cell renderers
+                // should not affect the "value" of this item
+                // is this case the selected state is a display of the value
+		if (isSelected() && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
 			disabledSelectedImage.paintIcon(this, g, x, y);
 		}
-                else if((cState&Style.SELECTED)!=0 && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
+                else if(isSelected() && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
 			focusedSelectedImage.paintIcon(this, g, x, y);
 		}
-                else if ((cState&Style.SELECTED)!=0 && selectedImage!=null) {
+                else if (isSelected() && selectedImage!=null) {
 			selectedImage.paintIcon(this, g, x, y);
 		}
                 else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {
