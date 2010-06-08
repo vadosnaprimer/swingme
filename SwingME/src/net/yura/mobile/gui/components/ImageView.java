@@ -9,6 +9,7 @@ public class ImageView extends Panel {
     private Icon bgImage;
     private Icon bgScaledImage;
     private int imgX, imgY;
+    private int imgW, imgH;
     private int imgScaledW, imgScaledH;
 
     public void setBackgroundImage(Icon backgroundImage) {
@@ -31,11 +32,13 @@ public class ImageView extends Panel {
         if (bgScaledImage == null && bgImage != null) {
             this.bgScaledImage = bgImage;
 
-            imgScaledW = bgImage.getIconWidth();
-            imgScaledH = bgImage.getIconHeight();
+            imgW = bgImage.getIconWidth();
+            imgH = bgImage.getIconHeight();
+            imgScaledW = imgW;
+            imgScaledH = imgH;
 
-            imgX = (getWidth() - imgScaledW) / 2;
-            imgY = (getHeight() - imgScaledH) / 2;
+//            imgX = (getWidth() - imgScaledW) / 2;
+//            imgY = (getHeight() - imgScaledH) / 2;
         }
 
         if (bgScaledImage != null) {
@@ -46,7 +49,7 @@ public class ImageView extends Panel {
         g.drawRect(0, 0, 100, 100);
         g.setColor(0xFF00FF00);
 
-        g.drawRect(0, 0, imagePinchChange + 100, imagePinchChange + 100);
+        g.drawRect(imgX, imgY, imgScaledW, imgScaledH);
 
         if (px != null) {
             g.setColor(0xFFFF0000);
@@ -67,7 +70,6 @@ public class ImageView extends Panel {
     }
 
     int startPinchSize;
-    int imagePinchChange;
 
     int[] px;
     int[] py;
@@ -88,16 +90,24 @@ public class ImageView extends Panel {
             }
             else {
                 int pinchSize = getDistance(x, y);
-                imagePinchChange += (pinchSize - startPinchSize);
-                startPinchSize = pinchSize;
+                int pinchDiff = (pinchSize - startPinchSize);
 
+                if (pinchDiff > 2 || pinchDiff < -2) {
+
+                    int newW = imgScaledW + pinchDiff;
+                    int newH = (imgH * newW) / imgW;
+
+                    if (newW > 20 && newW < getWidth() &&
+                        newH > 20 && newW < getHeight()) {
+
+                        imgScaledW = newW;
+                        imgScaledH = newH;
+                    }
+                    startPinchSize = pinchSize;
+                }
 
                 System.out.println("DRAGGED/RELEASED " + pinchSize);
             }
-
-            //TODO: needs upper/lower limit
-            imagePinchChange = Math.min(imagePinchChange, getWidth() - 110);
-            imagePinchChange = Math.max(imagePinchChange, 0);
         }
 
         repaint();
