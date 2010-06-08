@@ -247,28 +247,64 @@ public class MainTest extends Section {
 
                 info = new Panel( new BorderLayout() ) {
                     { focusable=true; }
-                    public void processMouseEvent(int type, int x, int y,KeyEvent keys) {
-                        super.processMouseEvent(type, x, y, keys);
-                        infoLabel.setText("pointerEvent: "+x+","+y+"\n");
+
+                    private String getType(int type) {
                         switch(type) {
-                        case DesktopPane.DRAGGED: infoLabel.append("DRAGGED"); break;
-                        case DesktopPane.PRESSED: infoLabel.append("PRESSED"); break;
-                        case DesktopPane.RELEASED: infoLabel.append("RELEASED"); break;
-                        default: infoLabel.append("Unknown"); break;
+                            case DesktopPane.DRAGGED: return "DRAGGED";
+                            case DesktopPane.PRESSED: return "PRESSED";
+                            case DesktopPane.RELEASED: return "RELEASED";
+                            default: return "Unknown";
+                        }
+                    }
+
+                    boolean a1,a2,a3;
+                    private void clear(int a) {
+                        if (
+                                (a==1 && a1) ||
+                                (a==2 && a2) ||
+                                (a==3 && a3)
+                                ) {
+                            infoLabel.setText("");
+                            a1=false;
+                            a2=false;
+                            a3=false;
+                        }
+
+                        switch(a) {
+                            case 1: a1=true; break;
+                            case 2: a2=true; break;
+                            case 3: a3=true; break;
+                        }
+
+                    }
+
+                    public void processMouseEvent(int type, int x, int y,KeyEvent keys) {
+                        clear(1);
+                        super.processMouseEvent(type, x, y, keys);
+                        infoLabel.append("pointerEvent: "+x+","+y+"\n");
+                        infoLabel.append( getType(type)+"\n" );
+                        infoLabel.setParagraphAttributes(0, infoLabel.getText().length(), center);
+                        infoLabel.getParent().revalidate();
+                        infoLabel.getParent().repaint();
+                    }
+                    public void pointerEvent(int[] type, int[] x, int[] y) {
+                        clear(2);
+                        infoLabel.append("Multi "+type.length +"\n");
+                        for (int c=0;c<type.length;c++) {
+                            infoLabel.append("type: "+getType(type[c])+" x: "+x[c]+" y: "+y[c]+"\n" );
                         }
                         infoLabel.setParagraphAttributes(0, infoLabel.getText().length(), center);
                         infoLabel.getParent().revalidate();
                         infoLabel.getParent().repaint();
-
                     }
                     public boolean processKeyEvent(KeyEvent keypad) {
-
+                        clear(3);
                         int code1 = keypad.getJustPressedKey();
                         int code2 = keypad.getJustReleasedKey();
                         int code3 = keypad.getIsDownKey();
                         int code = (code3==0)?code2:code3;
                         if (code!=0) {
-                            infoLabel.setText("keyEvent: "+code +"\nKeyText: "+keypad.getKeyText(code));
+                            infoLabel.append("keyEvent: "+code +"\nKeyText: "+keypad.getKeyText(code));
                             if (code>0) {
                                 infoLabel.append("\nchar: "+(char)code);
 
@@ -297,10 +333,13 @@ public class MainTest extends Section {
                             if (code2!=0) { infoLabel.append("\nJustReleased"); }
                             if (code3!=0) { infoLabel.append("\nIsDown"); }
                             if (code1==0 && code3!=0) { infoLabel.append("\nHeldDown"); }
-
+                            infoLabel.append("\n");
                             infoLabel.setParagraphAttributes(0, infoLabel.getText().length(), center);
                             infoLabel.getParent().revalidate();
                             infoLabel.getParent().repaint();
+                        }
+                        else {
+                            throw new RuntimeException(); // should never happen
                         }
                         return true;
                     }
