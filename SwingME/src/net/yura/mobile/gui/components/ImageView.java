@@ -36,11 +36,13 @@ public class ImageView extends Panel {
 
         g.drawRect(0, 0, imagePinchChange + 100, imagePinchChange + 100);
 
-        g.setColor(0xFFFF0000);
-        g.drawRect(Math.min(px[0], px[1]),
-                   Math.min(py[0], py[1]),
-                   Math.max(1, Math.abs(px[1] - px[0])),
-                   Math.max(1, Math.abs(py[1] - py[0])));
+        if (px != null) {
+            g.setColor(0xFFFF0000);
+            g.drawRect(Math.min(px[0], px[1]),
+                       Math.min(py[0], py[1]),
+                       Math.max(1, Math.abs(px[1] - px[0])),
+                       Math.max(1, Math.abs(py[1] - py[0])));
+        }
 
         super.paintComponent(g);
     }
@@ -56,19 +58,16 @@ public class ImageView extends Panel {
     int startPinchChange;
     int imagePinchChange;
 
-    int[] px = new int[2];
-    int[] py = new int[2];
+    int[] px;
+    int[] py;
 
     // Override
     public void pointerEvent(int[] type, int[] x, int[] y) {
         System.out.println("ImageView: pointerEvent");
 
         if (type.length >= 2) {
-            px[0] = x[0];
-            px[1] = x[1];
-
-            py[0] = y[0];
-            py[1] = y[1];
+            px = x;
+            py = y;
 
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
@@ -77,17 +76,11 @@ public class ImageView extends Panel {
 
                 System.out.println("PRESSED " + startPinchSize);
             }
-            else if (type[0] == DesktopPane.RELEASED || type[1] == DesktopPane.RELEASED) {
+            else {
                 int pinchSize = getDistance(x, y);
                 imagePinchChange = startPinchChange + (pinchSize - startPinchSize);
 
-                System.out.println("RELEASED " + pinchSize);
-            }
-            else { // DRAGGED
-                int pinchSize = getDistance(x, y);
-                imagePinchChange = startPinchChange + (pinchSize - startPinchSize);
-
-                System.out.println("DRAGGED " + pinchSize);
+                System.out.println("DRAGGED/RELEASED " + pinchSize);
             }
 
             //TODO: needs upper/lower limit
