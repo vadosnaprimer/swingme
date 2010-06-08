@@ -111,8 +111,6 @@ public class ImageView extends Panel {
         }
 
         repaint();
-        // TODO Auto-generated method stub
-        super.pointerEvent(type, x, y);
     }
 
     private int getDistance(int[] x, int[] y) {
