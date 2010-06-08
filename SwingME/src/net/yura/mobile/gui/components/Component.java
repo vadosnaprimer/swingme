@@ -391,7 +391,15 @@ public abstract class Component {
         //}
     }
 
-    public void pointerEvent(int[] type, int[] x, int[] y) { }
+    public void pointerEvent(int[] type, int[] x, int[] y) {
+        if (parent!=null) {
+            for (int c=0;c<type.length;c++) {
+                x[c] = x[c]+posX;
+                y[c] = y[c]+posY;
+            }
+            parent.pointerEvent(type,x,y);
+        }
+    }
 
     public void animate() throws InterruptedException { }
 
