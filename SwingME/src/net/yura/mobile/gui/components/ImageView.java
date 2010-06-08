@@ -8,10 +8,12 @@ import net.yura.mobile.gui.KeyEvent;
 public class ImageView extends Panel {
     private Icon bgImage;
     private Icon bgScaledImage;
+    private int imgX, imgY;
+    private int imgScaledW, imgScaledH;
 
     public void setBackgroundImage(Icon backgroundImage) {
         this.bgImage = backgroundImage;
-        this.bgScaledImage = backgroundImage;
+        this.bgScaledImage = null;
 
         //DELETE:
         setBackground(0xFF0000FF);
@@ -24,10 +26,20 @@ public class ImageView extends Panel {
     // Override
     public void paintComponent(Graphics2D g) {
 
+        // TODO: bgScaledImage is not thread safe...
+
+        if (bgScaledImage == null && bgImage != null) {
+            this.bgScaledImage = bgImage;
+
+            imgScaledW = bgImage.getIconWidth();
+            imgScaledH = bgImage.getIconHeight();
+
+            imgX = (getWidth() - imgScaledW) / 2;
+            imgY = (getHeight() - imgScaledH) / 2;
+        }
+
         if (bgScaledImage != null) {
-            int x = (getWidth() - bgScaledImage.getIconWidth()) / 2;
-            int y = (getHeight() - bgScaledImage.getIconHeight()) / 2;
-            bgScaledImage.paintIcon(this, g, x, y);
+            bgScaledImage.paintIcon(this, g, imgX, imgY);
         }
 
         g.setColor(0xFF000000);
@@ -55,7 +67,6 @@ public class ImageView extends Panel {
     }
 
     int startPinchSize;
-    int startPinchChange;
     int imagePinchChange;
 
     int[] px;
@@ -72,13 +83,14 @@ public class ImageView extends Panel {
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
                 startPinchSize = getDistance(x, y);
-                startPinchChange = imagePinchChange;
 
                 System.out.println("PRESSED " + startPinchSize);
             }
             else {
                 int pinchSize = getDistance(x, y);
-                imagePinchChange = startPinchChange + (pinchSize - startPinchSize);
+                imagePinchChange += (pinchSize - startPinchSize);
+                startPinchSize = pinchSize;
+
 
                 System.out.println("DRAGGED/RELEASED " + pinchSize);
             }
