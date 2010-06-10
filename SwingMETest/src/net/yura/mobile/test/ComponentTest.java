@@ -23,6 +23,7 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.Gallery;
 import net.yura.mobile.gui.components.ImageView;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
@@ -231,7 +232,7 @@ public class ComponentTest  extends Section{
 
             Button close = new Button("Close");
             close.setActionCommand(Frame.CMD_CLOSE);
-            // hack to avoid having to make a new action listoner
+            // hack to avoid having to make a new action listener
             close.addActionListener(test1.getTitlePane());
             close.setMnemonic(KeyEvent.KEY_SOFTKEY2);
 
@@ -267,7 +268,9 @@ public class ComponentTest  extends Section{
             }
 
             scrollTest.add(areas[0]);
-            scrollTest.add(new Button("BOB1") );
+            Button bobButton = new Button("BOB1");
+            bobButton.setPreferredSize(750, -1);
+            scrollTest.add(bobButton);
             scrollTest.add(areas[1]);
             scrollTest.add(new Button("BOB2") );
             scrollTest.add(areas[2]);
@@ -551,9 +554,22 @@ public class ComponentTest  extends Section{
         }
         else if ("testGallery".equals(actionCommand)) {
             try {
+                Gallery gallery = new Gallery();
+                Button close = new Button("Close");
+                close.setActionCommand(Frame.CMD_CLOSE);
+                // hack to avoid having to make a new action listener
+                close.addActionListener(gallery.getTitlePane());
+                close.setMnemonic(KeyEvent.KEY_END);
+
+
                 ImageView imgView = new ImageView();
                 imgView.setBackgroundImage(new Icon("/world_link.png"));
-                addToScrollPane(imgView, null);
+
+
+                gallery.setCellRenderer(imgView);
+                gallery.getContentPane().add(close, Graphics.BOTTOM);
+                gallery.setMaximum(true);
+                gallery.setVisible(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }
