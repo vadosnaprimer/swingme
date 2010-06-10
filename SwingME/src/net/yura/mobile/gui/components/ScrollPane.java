@@ -399,8 +399,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int viewPortY = getViewPortY();
         int viewPortHeight=getViewPortHeight();
         int viewPortWidth=getViewPortWidth(viewPortHeight);
-        int viewWidth = getView().getWidth();
-        int viewHeight = getView().getHeight();
+        Component view = getView();
+        int viewWidth = view.getWidth();
+        int viewHeight = view.getHeight();
 
 
         // NEEDS to be same check as in getViewPortWidth
@@ -410,7 +411,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                     viewPortY,
                     width - viewPortX - viewPortWidth,
                     viewPortHeight,
-                    viewPortY-getView().getY(),
+                    viewPortY-view.getY(),
                     viewPortHeight,
                     viewHeight
             );
@@ -428,7 +429,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                     viewPortX,
                     height - viewPortY - viewPortHeight,
                     viewPortWidth,
-                    viewPortX-getView().getX(),
+                    viewPortX-view.getX(),
                     viewPortWidth,
                     viewWidth
             );
@@ -448,13 +449,15 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int viewX=getViewPortX();
         int viewY=getViewPortY();
 
+        Component view = getView();
+
         int d = barThickness*2;
         int gap=2;
         boolean canScroll;
 
-        if (getView().getWidth() > width) {
+        if (view.getWidth() > width) {
 
-            canScroll = getView().getX() < viewX;
+            canScroll = view.getX() < viewX;
 
             if (indicator) {
                 drawArrow(g, width/2 -gap-d, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.LEFT);
@@ -463,7 +466,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 drawArrow(g, 0, (height-d)/2, barThickness, d,canScroll,Graphics.LEFT);
             }
 
-            canScroll = (getView().getWidth()+getView().getX()-viewX) > viewWidth;
+            canScroll = (view.getWidth()+view.getX()-viewX) > viewWidth;
 
             if (indicator) {
                 drawArrow(g, width/2 +gap+barThickness, height+(d+3*gap)/2-barThickness, barThickness, d,canScroll,Graphics.RIGHT);
@@ -474,9 +477,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         }
 
-        if (getView().getHeight() > height) {
+        if (view.getHeight() > height) {
 
-            canScroll = getView().getY() < viewY;
+            canScroll = view.getY() < viewY;
 
             if (indicator) {
                 drawArrow(g, (width-d)/2, height+gap, d, barThickness,canScroll,Graphics.TOP);
@@ -485,7 +488,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 drawArrow(g, (width-d)/2, 0, d, barThickness,canScroll,Graphics.TOP);
             }
 
-            canScroll = (getView().getHeight()+getView().getY()-viewY) > viewHeight;
+            canScroll = (view.getHeight()+view.getY()-viewY) > viewHeight;
 
             if (indicator) {
                 drawArrow(g, (width-d)/2,height+barThickness+gap*2, d, barThickness,canScroll,Graphics.BOTTOM);
@@ -930,10 +933,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     private void dragScrollBarsSync(boolean forceBound) {
 
-        int cX = getView().getX() - getViewPortX();
-        int cY = getView().getY() - getViewPortY();
-        int cW = getView().getWidth();
-        int cH = getView().getHeight();
+        Component view = getView();
+        int cX = view.getX() - getViewPortX();
+        int cY = view.getY() - getViewPortY();
+        int cW = view.getWidth();
+        int cH = view.getHeight();
 
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
@@ -995,10 +999,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     private boolean dragScrollBars(int time) {
         boolean res = false;
 
-        int cX = getView().getX() - getViewPortX();
-        int cY = getView().getY() - getViewPortY();
-        int cW = getView().getWidth();
-        int cH = getView().getHeight();
+        Component view = getView();
+        int cX = view.getX() - getViewPortX();
+        int cY = view.getY() - getViewPortY();
+        int cW = view.getWidth();
+        int cH = view.getHeight();
 
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
@@ -1007,11 +1012,13 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         // viewPort (if it's smaller). Needs to be animated...
         if (cW < viewPortWidth) {
             res = true;
-            getView().width = viewPortWidth;
+            view.width = viewPortWidth;
+            view.posX = getViewPortX();
         }
         if (cH < viewPortHeight){
             res = true;
-            getView().height = viewPortHeight;
+            view.height = viewPortHeight;
+            view.posY = getViewPortY();
         }
 
         if (res) {
