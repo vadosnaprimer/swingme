@@ -7,16 +7,17 @@ import net.yura.mobile.gui.Icon;
 public class ImageView extends Component {
 
     private Icon bgImage;
-    private Icon bgScaledImage;
-    private int imgX, imgY;
     private int imgW, imgH;
-    private int imgScaledW, imgScaledH;
     boolean consumingMotionEvents;
 
 
     public void setBackgroundImage(Icon backgroundImage) {
         this.bgImage = backgroundImage;
-        this.bgScaledImage = null;
+
+        if (bgImage != null) {
+            imgW = bgImage.getIconWidth();
+            imgH = bgImage.getIconHeight();
+        }
 
         //DELETE:
         setBackground(0xFF0000FF);
@@ -29,8 +30,8 @@ public class ImageView extends Component {
     // Override
     public void workoutMinimumSize() {
         // TODO Auto-generated method stub
-        width = 1000;
-        height = 1000;
+        width = 100;
+        height = 100;
     }
 
     // Override
@@ -41,26 +42,21 @@ public class ImageView extends Component {
     // Override
     public void paintComponent(Graphics2D g) {
 
-        // TODO: bgScaledImage is not thread safe...
+        double ratio = Math.min(getHeight()/imgH,getWidth()/imgW);
 
-        if (bgScaledImage == null && bgImage != null) {
-            this.bgScaledImage = bgImage;
+        int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
+        int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
 
-            imgW = bgImage.getIconWidth();
-            imgH = bgImage.getIconHeight();
-            imgScaledW = imgW;
-            imgScaledH = imgH;
+        g.translate(imgX, imgY);
+        g.getGraphics().scale(ratio, ratio);
 
-//            imgX = (getWidth() - imgScaledW) / 2;
-//            imgY = (getHeight() - imgScaledH) / 2;
-        }
+        bgImage.paintIcon(this, g, 0, 0);
 
-        if (bgScaledImage != null) {
-            bgScaledImage.paintIcon(this, g, imgX, imgY);
-        }
+        g.getGraphics().scale(1 / ratio, 1 / ratio);
+        g.translate(-imgX, -imgY);
 
         g.setColor(0xFF00FF00);
-        g.drawRect(imgX, imgY, imgScaledW, imgScaledH);
+        g.drawRect(0, 0, width, height);
 
         if (px != null) {
             g.setColor(0xFFFF0000);
@@ -78,9 +74,10 @@ public class ImageView extends Component {
 
     // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
-        System.out.println("ImageView: pointerEvent");
 
         consumingMotionEvents = (type[0] != DesktopPane.RELEASED);
+
+        System.out.println("ImageView: pointerEvent " + " consumingMotionEvents = " + consumingMotionEvents);
 
         if (type.length >= 2) {
             px = x;
@@ -98,26 +95,34 @@ public class ImageView extends Component {
 
                 if (pinchDiff > 2 || pinchDiff < -2) {
 
-                    int newW = imgScaledW + pinchDiff;
+                    int newW = width + pinchDiff;
                     int newH = (imgH * newW) / imgW;
 
-                    if (newW > 20 && newW < getWidth() &&
-                        newH > 20 && newW < getHeight()) {
+                    // TODO: How to get the max/min of this?
+//                    if (newW > 20 && newW < 1000 &&
+//                        newH > 20 && newH < 1000) {
 
-                        imgScaledW = newW;
-                        imgScaledH = newH;
-                        //imgX += pinchDiff / 2;
-                        //imgY += pinchDiff;
-                    }
+                        width = newW;
+                        height = newH;
+//                    }
                     startPinchSize = pinchSize;
                 }
 
                 System.out.println("DRAGGED/RELEASED " + pinchSize);
             }
+
+            if (type[0] == DesktopPane.RELEASED || type[1] == DesktopPane.RELEASED) {
+
+                if (getParent() instanceof ScrollPane) {
+                    ((ScrollPane)getParent()).animateToFit();
+                }
+
+            }
         }
 
         // TODO: Remove?
-        repaint();
+        Component cmp = (getParent() == null) ? this : getParent();
+        cmp.repaint();
     }
 
     private int getDistance(int[] x, int[] y) {

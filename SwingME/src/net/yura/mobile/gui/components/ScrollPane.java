@@ -677,7 +677,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         return velocity;
     }
 
-    private synchronized static void setDragScrollPane(ScrollPane dragScrollPane) {
+    private synchronized static void animateScrollPane(ScrollPane dragScrollPane) {
         boolean startThread = (ScrollPane.dragScrollPane != dragScrollPane);
 
         ScrollPane.dragScrollPane = dragScrollPane;
@@ -863,7 +863,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
             // this is for when you click on the scrollbar arrows
             if (dragVelocityX != 0 || dragVelocityY != 0) {
-                setDragScrollPane(this);
+                animateScrollPane(this);
             }
         }
         else if (type == DesktopPane.DRAGGED) {
@@ -921,7 +921,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             }
 
             dragFriction = 1000;
-            setDragScrollPane(this);
+            animateScrollPane(this);
 
             // Reset drag speed (0 is a very "old" time)
             updateDragSpeed(pointX, pointY, 0);
@@ -1002,6 +1002,22 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
+
+        // TODO: This will make the Scroll Pane view, grow to the size of the
+        // viewPort (if it's smaller). Needs to be animated...
+        if (cW < viewPortWidth) {
+            res = true;
+            getView().width = viewPortWidth;
+        }
+        if (cH < viewPortHeight){
+            res = true;
+            getView().height = viewPortHeight;
+        }
+
+        if (res) {
+            repaint();
+            return res;
+        }
 
         boolean forceBound = (dragScrollBarMode != DRAG_NONE ||
                              (ScrollPane.dragScrollPane != null && ScrollPane.dragScrollPane != this));
@@ -1134,6 +1150,16 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         }
 
         return new int[] {-cY, dragVelocityY, jumpY, springBackTime};
+    }
+
+    public void animateToFit() {
+        // Stop any animation and "springBack".
+        dragVelocityX = 0;
+        dragVelocityY = 0;
+        dragFriction = 1000;
+
+        // Start new animation
+        animateScrollPane(this);
     }
 
 }

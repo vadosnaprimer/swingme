@@ -1140,12 +1140,17 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 // Start forwarding events to pointer ScrollPane?
-                if (pointerComponent != null && type == DRAGGED && pointerScrollPane != null && !pointerComponent.consumesMotionEvents()) {
-                    // check its dragged more then 5px
-                    if (Math.abs(pointerFristX - x) > inaccuracy ||
-                        Math.abs(pointerFristY - y) > inaccuracy) {
+                if (pointerComponent != null && type == DRAGGED && pointerScrollPane != null) {
+                    if (pointerComponent.consumesMotionEvents()) {
+                        pointerScrollPane = null;
 
-                        pointerComponent = null;
+                    }
+                    else {
+                        // check its dragged more then 5px
+                        if (Math.abs(pointerFristX - x) > inaccuracy ||
+                            Math.abs(pointerFristY - y) > inaccuracy) {
+                            pointerComponent = null;
+                        }
                     }
                 }
 
