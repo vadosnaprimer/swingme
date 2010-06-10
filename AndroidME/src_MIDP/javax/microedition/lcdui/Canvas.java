@@ -176,7 +176,7 @@ public abstract class Canvas extends Displayable {
     }
 
     // Multi-touch. Not available in MIDP
-    public void pointerEvent(int[] type, int[] x, int[] y) {
+    public void multitouchEvent(int[] type, int[] x, int[] y) {
 
     }
 
@@ -422,9 +422,9 @@ public abstract class Canvas extends Displayable {
         @Override
         public boolean onTouchEvent(MotionEvent event) {
 
-            if (gestureDetector.onTouchEvent(event)) {
-                return true;
-            }
+//            if (gestureDetector.onTouchEvent(event)) {
+//                return true;
+//            }
 
             int actionCode = event.getAction() & 0xFF;
 
@@ -520,7 +520,7 @@ public abstract class Canvas extends Displayable {
                     if (fwEvent) {
                         touchType[0] = action;
                         touchType[1] = action;
-                        Canvas.this.pointerEvent(clone(touchType),
+                        Canvas.this.multitouchEvent(clone(touchType),
                                 clone(touchX), clone(touchY));
                     }
                 }
