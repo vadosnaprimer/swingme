@@ -391,14 +391,18 @@ public abstract class Component {
         //}
     }
 
-    public void pointerEvent(int[] type, int[] x, int[] y) {
+    public void processMultitouchEvent(int[] type, int[] x, int[] y) {
         if (parent!=null) {
             for (int c=0;c<type.length;c++) {
                 x[c] = x[c]+posX;
                 y[c] = y[c]+posY;
             }
-            parent.pointerEvent(type,x,y);
+            parent.processMultitouchEvent(type,x,y);
         }
+    }
+
+    public boolean consumesMotionEvents() {
+        return false;
     }
 
     public void animate() throws InterruptedException { }

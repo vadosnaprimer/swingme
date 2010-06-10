@@ -185,6 +185,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private boolean wideScreen;
     private boolean sideSoftKeys;
     private byte[] message;
+    private int inaccuracy;
 
     // this is the currently focused component in the whole system
     // each window also has its own focused component
@@ -395,9 +396,7 @@ public class DesktopPane extends Canvas implements Runnable {
         theme.setStyleFor("TabScroll", clear2);
 
         if (defaultSpace == 0) {
-
             int maxSize = Math.max(getWidth(), getHeight());
-
             defaultSpace = (maxSize <= 128) ? 3 : (maxSize <= 208) ? 5 : 7;
         }
 
@@ -408,6 +407,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
             menuHeight = DefaultListCellRenderer.setPrototypeCellValue(new Button("test"), softkeyRenderer);
         }
+
+        inaccuracy = theme.getStyle("").getFont(Style.ALL).getHeight();
 
         // this is a hack
         // to make sure that EVERYTHING on screen has a parent window and DesktopPane
@@ -1083,7 +1084,7 @@ public class DesktopPane extends Canvas implements Runnable {
         pointerEvent(RELEASED, x, y);
     }
 
-    public void pointerEvent(int[] type, int[] x, int[] y) {
+    public void multitouchEvent(int[] type, int[] x, int[] y) {
         if (pointerComponent!=null) {
             int pcX = pointerComponent.getXOnScreen();
             int pcY = pointerComponent.getYOnScreen();
@@ -1091,7 +1092,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 x[c] = x[c] - pcX;
                 y[c] = y[c] - pcY;
             }
-            pointerComponent.pointerEvent(type,x,y);
+            pointerComponent.processMultitouchEvent(type,x,y);
         }
     }
 
@@ -1139,23 +1140,21 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 // Start forwarding events to pointer ScrollPane?
-                if (pointerComponent != null) {
-                    if (type == DRAGGED && pointerScrollPane != null) {
-                        // check its dragged more then 5px
-                        if (Math.abs(pointerFristX - x) > 5 ||
-                            Math.abs(pointerFristY - y) > 5) {
+                if (pointerComponent != null && type == DRAGGED && pointerScrollPane != null && !pointerComponent.consumesMotionEvents()) {
+                    // check its dragged more then 5px
+                    if (Math.abs(pointerFristX - x) > inaccuracy ||
+                        Math.abs(pointerFristY - y) > inaccuracy) {
 
-                            pointerComponent = null;
-                        }
-                     }
+                        pointerComponent = null;
+                    }
                 }
 
                 // Handle events for pointer component
-               if (pointerComponent != null) {
+                if (pointerComponent != null) {
                         int pcX = x - pointerComponent.getXOnScreen();
                         int pcY = y - pointerComponent.getYOnScreen();
                         pointerComponent.processMouseEvent(type, pcX, pcY, keypad);
-                    }
+                }
 
                 // Handle events for pointer ScrollPane
                 if (pointerScrollPane != null) {
