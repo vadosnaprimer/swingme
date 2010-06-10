@@ -131,45 +131,48 @@ class ScmCanvas extends ScmComponent {
 
 	public boolean mouseDragged(int x, int y, int modifiers) {
 
+		if(canvas.hasPointerEvents)
+			canvas.pointerDragged(x, y);
+
             if (pointx!=0||pointy!=0) {
                 pointx = x;
                 pointy = y;
                 repaint();
-                canvas.pointerEvent(new int[] {DRAGGED,DRAGGED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
+                canvas.multitouchEvent(new int[] {DRAGGED,DRAGGED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
             }
 
-		if(canvas.hasPointerEvents)
-			canvas.pointerDragged(x, y);
 		return true;
 	}
 
 	public boolean mousePressed(int button, int x, int y, int modifiers) {
 		if (button != 1) return false;
 
+	//	if(canvas.hasPointerEvents)
+			canvas.pointerPressed(x, y);
+
             if ((modifiers & InputEvent.ALT_MASK) == InputEvent.ALT_MASK) {
                 pointx = x;
                 pointy = y;
                 repaint();
-                canvas.pointerEvent(new int[] {PRESSED,PRESSED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
+                canvas.multitouchEvent(new int[] {PRESSED,PRESSED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
             }
 
-	//	if(canvas.hasPointerEvents)
-			canvas.pointerPressed(x, y);
 		return true;
 	}
 
 	public boolean mouseReleased(int button, int x, int y, int modifiers) {
 		if (button != 1) return false;
 
+	//	if(canvas.hasPointerEvents)
+			canvas.pointerReleased(x, y);
+
             if (pointx!=0||pointy!=0) {
                 pointx = 0;
                 pointy = 0;
                 repaint();
-                canvas.pointerEvent(new int[] {RELEASED,RELEASED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
+                canvas.multitouchEvent(new int[] {RELEASED,RELEASED}, new int[]{x,getWidth()-x}, new int[]{y,getHeight()-y});
             }
 
-	//	if(canvas.hasPointerEvents)
-			canvas.pointerReleased(x, y);
 		return true;
 	}
 
