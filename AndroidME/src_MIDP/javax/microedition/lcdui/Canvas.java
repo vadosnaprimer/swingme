@@ -276,7 +276,7 @@ public abstract class Canvas extends Displayable {
 
             if (elapsed < 10) {
                 try {
-                    System.out.println("paint: elapsed " + elapsed);
+//                    System.out.println("paint: elapsed " + elapsed);
                     Thread.sleep(10 - elapsed);
                 } catch (InterruptedException e) {
                 }
