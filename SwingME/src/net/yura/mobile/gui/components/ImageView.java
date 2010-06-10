@@ -42,8 +42,7 @@ public class ImageView extends Component {
     // Override
     public void paintComponent(Graphics2D g) {
 
-        double ratio = Math.min(getHeight()/imgH,getWidth()/imgW);
-
+        double ratio = Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
         int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
         int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
 
@@ -83,33 +82,39 @@ public class ImageView extends Component {
             px = x;
             py = y;
 
+            int pinchDiff = 0;
+
+            double ratio = Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
+
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
                 startPinchSize = getDistance(x, y);
+
+                int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
+                int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
+
+                posX = posX + imgX;
+                posY = posY + imgY;
 
                 System.out.println("PRESSED " + startPinchSize);
             }
             else {
                 int pinchSize = getDistance(x, y);
-                int pinchDiff = (pinchSize - startPinchSize);
-
-                if (pinchDiff > 2 || pinchDiff < -2) {
-
-                    int newW = width + pinchDiff;
-                    int newH = (imgH * newW) / imgW;
-
-                    // TODO: How to get the max/min of this?
-//                    if (newW > 20 && newW < 1000 &&
-//                        newH > 20 && newH < 1000) {
-
-                        width = newW;
-                        height = newH;
-//                    }
-                    startPinchSize = pinchSize;
-                }
+                pinchDiff = (pinchSize - startPinchSize);
+                startPinchSize = pinchSize;
 
                 System.out.println("DRAGGED/RELEASED " + pinchSize);
             }
+
+            int newW = (int)(imgW*ratio) + pinchDiff;
+            int newH = (imgH * newW) / imgW;
+
+            // TODO: Should check the new w/h bounds... e.g. not zooming more
+            // than 2x screen size, or img size... and less than 90% of the
+            // sreen?
+
+            width = newW;
+            height = newH;
 
             if (type[0] == DesktopPane.RELEASED || type[1] == DesktopPane.RELEASED) {
 
