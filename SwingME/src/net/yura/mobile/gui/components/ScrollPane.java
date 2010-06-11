@@ -629,6 +629,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     private int dragVelocityY, dragVelocityX;
     private int dragFriction;
     private int dragTimeY, dragTimeX;
+    private int fitSizeTime;
+
 
     // Keep a history of drag events, so we can later calculate the average speed.
     // These are circular buffers
@@ -697,6 +699,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     public void run() {
         //System.out.println("START ScrollPane Thread...");
         long startAnimTime = System.currentTimeMillis();
+//        int count = 0;
 
         while (true) {
 
@@ -706,6 +709,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
                 long time = System.currentTimeMillis();
                 boolean animate = dragScrollBars((int)(time - startAnimTime));
+
+//                boolean animate = dragScrollBars(count * 20);
+//                count++;
                 if (!animate) {
                     if (ScrollPane.dragScrollPane == this) {
                         ScrollPane.dragScrollPane = null;
@@ -997,7 +1003,14 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     }
 
     private boolean dragScrollBars(int time) {
-        boolean res = false;
+
+        boolean endThread = (ScrollPane.dragScrollPane != this);
+
+        if (!endThread) {
+            if (animateToFit(time)) {
+                return true;
+            }
+        }
 
         Component view = getView();
         int cX = view.getX() - getViewPortX();
@@ -1008,26 +1021,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
 
-        // TODO: This will make the Scroll Pane view, grow to the size of the
-        // viewPort (if it's smaller). Needs to be animated...
-        if (cW < viewPortWidth) {
-            res = true;
-            view.width = viewPortWidth;
-            view.posX = getViewPortX();
-        }
-        if (cH < viewPortHeight){
-            res = true;
-            view.height = viewPortHeight;
-            view.posY = getViewPortY();
-        }
-
-        if (res) {
-            repaint();
-            return res;
-        }
-
-        boolean forceBound = (dragScrollBarMode != DRAG_NONE ||
-                             (ScrollPane.dragScrollPane != null && ScrollPane.dragScrollPane != this));
+        boolean res = false;
+        boolean forceBound = (dragScrollBarMode != DRAG_NONE || endThread);
 
         if (cW > viewPortWidth) {
             int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
@@ -1092,37 +1087,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         }
 
         if (springBack && jumpY != 0) {
-            // Quadratic motion equations:
-            // (1) position = acceleration * time * time;
-            // (2) time = sqrt(position / acceleration)
-            // (3) acceleration = distance / (time * time)
 
-            // Acceleration (3): Is a constant
-            // Time is in milli's... Drag needs to be divided by (1000 * 1000)
-            final float springDrag = 300.0f / (1000 * 1000);
+            int[] vals = calculateSpringBack(time, springBackTime, jumpY);
 
-            // Animation runs "backward"... De-accelerates, and ends at zero.
-            if (springBackTime < 0) {
-                // When would it finish, if it run forward? (2)
-                springBackTime = time + (int)(Math.sqrt(Math.abs(jumpY) / springDrag));
-            }
-
-            // Animation runs "backward"...  Re-map time.
-            time = springBackTime - time;
-            int newCy = (int)(springDrag * time * time);
-            if (jumpY < 0) {
-                // If animate bottom,
-                newCy = -newCy;
-            }
-
-            int newJump = jumpY - newCy ;
-            // New jump can never be zero, or bigger than the initial jump...
-            if (newJump == 0) {
-                jumpY = (jumpY < 0) ? -1 : 1;
-            }
-            else if (Math.abs(newJump) < Math.abs(jumpY)) {
-                jumpY = newJump;
-            }
+            jumpY = jumpY - vals[0];
+            springBackTime = vals[1];
         }
 
         if (jumpY != 0 || bound) {
@@ -1159,14 +1128,102 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         return new int[] {-cY, dragVelocityY, jumpY, springBackTime};
     }
 
-    public void animateToFit() {
+    private int[] calculateSpringBack(int time, int springBackTime, int dist) {
+        // Quadratic motion equations:
+        // (1) position = acceleration * time * time;
+        // (2) time = sqrt(position / acceleration)
+        // (3) acceleration = distance / (time * time)
+
+        // Acceleration (3): Is a constant
+        // Time is in milli's... Drag needs to be divided by (1000 * 1000)
+        final float springDrag = 300.0f / (1000 * 1000);
+
+        // Animation runs "backward"... De-accelerates, and ends at zero.
+        if (springBackTime < 0) {
+            // When would it finish, if it run forward? (2)
+            springBackTime = time + (int)(Math.sqrt(Math.abs(dist) / springDrag));
+        }
+
+        // Animation runs "backward"...  Re-map time.
+        time = springBackTime - time;
+
+        int newDist = (time >= 0) ? (int)(springDrag * time * time) : 0;
+        if (dist < 0) {
+            // If animate bottom,
+            newDist = -newDist;
+        }
+
+        // New dist can never be bigger than the initial dist...
+        if (newDist == dist && newDist != 0) {
+            newDist = (dist > 0) ? dist - 1 : dist + 1;
+        }
+        else if (Math.abs(newDist) > Math.abs(dist)) {
+            newDist = dist;
+        }
+
+        return new int[] {newDist, springBackTime};
+    }
+
+    private boolean animateToFit(int time) {
+
+        boolean res = false;
+        Component view = getView();
+        int cW = view.getWidth();
+        int cH = view.getHeight();
+
+        int viewPortHeight = getViewPortHeight();
+        int viewPortWidth = getViewPortWidth(viewPortHeight);
+
+        int diffW = (viewPortWidth - cW);
+        int diffH = (viewPortHeight - cH);
+
+        if (diffW > 0 && diffH > 0) {
+            int minDiff = (diffW < diffH) ? diffW : diffH;
+            double ratioW = (diffW < diffH) ? 1.0 : (viewPortWidth / (double)viewPortHeight);
+            double ratioH = (diffW < diffH) ? (viewPortHeight / (double)viewPortWidth) : 1.0;
+
+            int[] vals = calculateSpringBack(time, fitSizeTime, minDiff);
+
+            int newMaxDiff = vals[0];
+            fitSizeTime = vals[1];
+
+            // TODO: This will make the Scroll Pane view, grow to the size of the
+            // viewPort (if it's smaller). Needs to be animated...
+
+            view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
+            view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
+
+            view.posX = getViewPortX();
+            view.posY = getViewPortY();
+
+            res = true;
+        }
+        else if (diffW > 0) {
+            view.width = viewPortWidth;
+            view.posX = getViewPortX();
+            res = true;
+        }
+        else if (diffH > 0) {
+            view.height = viewPortHeight;
+            view.posY = getViewPortY();
+            res = true;
+        }
+
+        if (res) {
+            repaint();
+        }
+
+        return res;
+    }
+
+    public void animateToFit(boolean startAnimation) {
         // Stop any animation and "springBack".
         dragVelocityX = 0;
         dragVelocityY = 0;
         dragFriction = 1000;
 
         // Start new animation
-        animateScrollPane(this);
+        fitSizeTime = -1;
+        animateScrollPane(startAnimation ? this : null);
     }
-
 }

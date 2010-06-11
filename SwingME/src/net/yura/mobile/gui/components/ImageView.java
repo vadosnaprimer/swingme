@@ -10,6 +10,10 @@ public class ImageView extends Component {
     private int imgW, imgH;
     boolean consumingMotionEvents;
 
+    // TODO: Animate the resize to the size of SP
+    // TODO: Center the zoom on the bit that is being zoomed.
+    // BUGS: While SP is animating > pinch > release
+
 
     public void setBackgroundImage(Icon backgroundImage) {
         this.bgImage = backgroundImage;
@@ -88,6 +92,9 @@ public class ImageView extends Component {
 
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
+                // Stop any animation
+                animateToFit(false);
+
                 startPinchSize = getDistance(x, y);
 
                 int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
@@ -117,11 +124,8 @@ public class ImageView extends Component {
             height = newH;
 
             if (type[0] == DesktopPane.RELEASED || type[1] == DesktopPane.RELEASED) {
-
-                if (getParent() instanceof ScrollPane) {
-                    ((ScrollPane)getParent()).animateToFit();
-                }
-
+                // Start animation
+                animateToFit(true);
             }
         }
 
@@ -139,5 +143,12 @@ public class ImageView extends Component {
     // Override
     protected String getDefaultName() {
         return "ImageView";
+    }
+
+    private void animateToFit(boolean startAnimation) {
+        Component sp = getParent();
+        if (sp instanceof ScrollPane) {
+            ((ScrollPane)sp).animateToFit(startAnimation);
+        }
     }
 }
