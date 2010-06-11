@@ -1044,9 +1044,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragTimeY = newPosY[3];
         }
 
-        makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
+        if (cW > viewPortWidth || cH > viewPortHeight) {
+            makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
+        }
 
-        return res;
+        return endThread ? false : res;
     }
 
     private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
@@ -1104,7 +1106,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
                 if (cY >= 0) {
                     if (bound) {
-                        jumpY = 0;
                         cY = 0;
                     }
                     else if (dragVelocityY != 0 && cY >= MAX_SPRING) {
@@ -1114,7 +1115,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 }
                 else if (diffBottomY >= 0) {
                     if (bound) {
-                        jumpY = 0;
                         cY += diffBottomY;
                     }
                     else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING) {
@@ -1123,6 +1123,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                     }
                 }
             }
+        }
+
+        if (bound) {
+            jumpY = 0;
         }
 
         return new int[] {-cY, dragVelocityY, jumpY, springBackTime};
