@@ -176,6 +176,11 @@ class ScmCanvas extends ScmComponent {
 		return true;
 	}
 
+        public boolean mouseMoved(int x, int y, int modifiers) {
+            canvas.pointerMoved(x, y);
+            return true;
+        }
+
 	public boolean keyPressed(String code) {
 		//System.out.println ("key: "+code);
         

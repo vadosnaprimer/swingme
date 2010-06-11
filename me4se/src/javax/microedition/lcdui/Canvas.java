@@ -416,7 +416,7 @@ public abstract class Canvas extends Displayable {
 
 
         public void multitouchEvent(int[] type, int[] x, int[] y) {
-
         }
-
+        public void pointerMoved(int x, int y) {
+        }
 }
