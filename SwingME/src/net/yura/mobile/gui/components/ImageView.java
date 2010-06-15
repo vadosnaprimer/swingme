@@ -55,11 +55,23 @@ public class ImageView extends Component {
 
         bgImage.paintIcon(this, g, 0, 0);
 
+        g.setColor(0xFF00FF00);
+        int mx = startPinchX;
+        int my = startPinchY;
+        g.drawLine(mx - 5, my, mx + 5, my);
+        g.drawLine(mx, my - 5, mx, my + 5);
+
+
         g.getGraphics().scale(1 / ratio, 1 / ratio);
-        g.translate(-imgX, -imgY);
+
+
+
 
         g.setColor(0xFF00FF00);
         g.drawRect(0, 0, width, height);
+
+
+        g.translate(-imgX, -imgY);
 
         if (px != null) {
             g.setColor(0xFFFF0000);
@@ -71,11 +83,14 @@ public class ImageView extends Component {
     }
 
     int startPinchSize;
+    int startPinchX, startPinchY;
+    int newPinchX, newPinchY; // TODO: can be local
 
     int[] px;
     int[] py;
 
     double ratio = 1.0;
+    int imgX, imgY;
 
     // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
@@ -102,6 +117,9 @@ public class ImageView extends Component {
                 int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
                 int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
 
+                startPinchX = (int) ((((x[0] + x[1]) / 2) - imgX)/ratio);
+                startPinchY = (int) ((((y[0] + y[1]) / 2) - imgY)/ratio);
+
                 posX = posX + imgX;
                 posY = posY + imgY;
 
@@ -123,6 +141,22 @@ public class ImageView extends Component {
 
             width = newW;
             height = newH;
+
+            if (type[0] != DesktopPane.PRESSED && type[1] != DesktopPane.PRESSED) {
+
+                // here we assume that the panel is already the same size as the image!!
+
+                double nratio = width/(double)imgW;
+
+                int endPinchX = (x[0] + x[1]) / 2;
+                int endPinchY = (y[0] + y[1]) / 2;
+
+                int difx = (int)(startPinchX*nratio - endPinchX);
+                int dify = (int)(startPinchY*nratio - endPinchY);
+
+                posX = posX - difx;
+                posY = posY - dify;
+            }
 
             if (type[0] == DesktopPane.RELEASED || type[1] == DesktopPane.RELEASED) {
                 // Start animation
