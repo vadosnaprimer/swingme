@@ -1191,14 +1191,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             int newMaxDiff = vals[0];
             fitSizeTime = vals[1];
 
-            // TODO: This will make the Scroll Pane view, grow to the size of the
-            // viewPort (if it's smaller). Needs to be animated...
-
             view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
             view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
 
-            view.posX = getViewPortX();
-            view.posY = getViewPortY();
+            view.posX = getViewPortX() + (viewPortWidth - view.width) / 2;
+            view.posY = getViewPortY() + (viewPortHeight - view.height) / 2;
 
             res = true;
         }
