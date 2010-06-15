@@ -185,7 +185,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private boolean wideScreen;
     private boolean sideSoftKeys;
     private byte[] message;
-    private int inaccuracy;
+    public int inaccuracy;
 
     // this is the currently focused component in the whole system
     // each window also has its own focused component
@@ -1084,6 +1084,10 @@ public class DesktopPane extends Canvas implements Runnable {
         pointerEvent(RELEASED, x, y);
     }
 
+    // ME4SE events
+    public void pointerMoved(int x, int y) {
+    }
+
     public void multitouchEvent(int[] type, int[] x, int[] y) {
         if (pointerComponent!=null) {
             int pcX = pointerComponent.getXOnScreen();
@@ -1106,6 +1110,10 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         return null;
+    }
+
+    public boolean isAccurate(int oldx,int oldy,int x,int y) {
+        return (Math.abs(oldx - x) <= inaccuracy && Math.abs(oldy - y) <= inaccuracy);
     }
 
     private void pointerEvent(int type, int x, int y) {
@@ -1143,14 +1151,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (pointerComponent != null && type == DRAGGED && pointerScrollPane != null) {
                     if (pointerComponent.consumesMotionEvents()) {
                         pointerScrollPane = null;
-
                     }
-                    else {
-                        // check its dragged more then 5px
-                        if (Math.abs(pointerFristX - x) > inaccuracy ||
-                            Math.abs(pointerFristY - y) > inaccuracy) {
-                            pointerComponent = null;
-                        }
+                    // check its dragged more then 5px
+                    else if (!isAccurate(pointerFristX, pointerFristY, x, y)) {
+                        pointerComponent = null;
                     }
                 }
 

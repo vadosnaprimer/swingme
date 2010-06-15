@@ -5,12 +5,26 @@
 <project name="SwingME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
-	
+
+	<target name="demo" description="demo compile">
+		<delete dir="build" includeemptydirs="true"/>
+		<delete dir="dist" includeemptydirs="true"/>
+
+		<mkdir dir="build"/>
+		<mkdir dir="dist"/>
+
+		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="../SwingMETest/lib/midletrunner.jar:../SwingMETest/lib/opt.jar:../SwingMETest/lib/me4se3d.jar:lib/UtilME.jar"/>
+
+                <unzip src="lib/UtilME.jar" dest="build"/>
+
+		<jar destfile="dist/SwingME.jar" basedir="build"/>
+	</target>
+
     <available file="../SwingMETest" type="dir" property="SwingMETest"/>
     <available file="../VistoJ2ME" type="dir" property="VistoJ2ME"/>
     <available file="../vauchacha" type="dir" property="vauchacha"/>
     <available file="../AgentClient" type="dir" property="AgentClient"/>
-    <available file="E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk" type="dir" property="BadooMobile"/>
+    <available file="E:/My_World/6_Yura/Work/java/badoo/repo/Abba" type="dir" property="BadooMobile"/>
     <available file="../iPhoneRace" type="dir" property="iPhoneRace"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
     <available file="../Abba" type="dir" property="Abba"/>
@@ -28,7 +42,7 @@
         <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
     </target>
     <target name="d5" if="BadooMobile">
-        <copy file="${deployment.jar}" todir="E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk/lib"/>
+        <copy file="${deployment.jar}" todir="E:/My_World/6_Yura/Work/java/badoo/repo/Abba/lib"/>
     </target>
     <target name="d6" if="iPhoneRace">
         <copy file="${deployment.jar}" todir="../iPhoneRace/lib"/>
