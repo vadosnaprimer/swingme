@@ -10,9 +10,12 @@ public class ImageView extends Component {
     private int imgW, imgH;
     boolean consumingMotionEvents;
 
-    // TODO: Animate the resize to the size of SP
-    // TODO: Center the zoom on the bit that is being zoomed.
-    // BUGS: While SP is animating > pinch > release
+    private int startPinchSize;
+    private double startPinchX, startPinchY;
+    private double ratio = 1.0;
+
+    private int[] px;
+    private int[] py;
 
 
     public void setBackgroundImage(Icon backgroundImage) {
@@ -56,20 +59,13 @@ public class ImageView extends Component {
         bgImage.paintIcon(this, g, 0, 0);
 
         g.setColor(0xFF00FF00);
-        int mx = startPinchX;
-        int my = startPinchY;
+        int mx = (int) startPinchX;
+        int my = (int) startPinchY;
         g.drawLine(mx - 5, my, mx + 5, my);
         g.drawLine(mx, my - 5, mx, my + 5);
 
 
         g.getGraphics().scale(1 / ratio, 1 / ratio);
-
-
-
-
-        g.setColor(0xFF00FF00);
-        g.drawRect(0, 0, width, height);
-
 
         g.translate(-imgX, -imgY);
 
@@ -82,16 +78,6 @@ public class ImageView extends Component {
         }
     }
 
-    int startPinchSize;
-    int startPinchX, startPinchY;
-    int newPinchX, newPinchY; // TODO: can be local
-
-    int[] px;
-    int[] py;
-
-    double ratio = 1.0;
-    int imgX, imgY;
-
     // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
 
@@ -102,8 +88,6 @@ public class ImageView extends Component {
         if (type.length >= 2) {
             px = x;
             py = y;
-
-            int pinchDiff = 0;
 
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
@@ -117,35 +101,34 @@ public class ImageView extends Component {
                 int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
                 int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
 
-                startPinchX = (int) ((((x[0] + x[1]) / 2) - imgX)/ratio);
-                startPinchY = (int) ((((y[0] + y[1]) / 2) - imgY)/ratio);
+                startPinchX = (((x[0] + x[1]) / 2) - imgX) / ratio;
+                startPinchY = (((y[0] + y[1]) / 2) - imgY) / ratio;
 
                 posX = posX + imgX;
                 posY = posY + imgY;
+
+                width = (int) (imgW * ratio);
+                height = (int) (imgH * ratio);
 
                 System.out.println("PRESSED " + startPinchSize);
             }
             else {
                 int pinchSize = getDistance(x, y);
-                pinchDiff = (pinchSize - startPinchSize);
+                int pinchDiff = (pinchSize - startPinchSize);
 
                 System.out.println("DRAGGED/RELEASED " + pinchSize);
-            }
 
-            int newW = (int)(imgW*ratio) + pinchDiff;
-            int newH = (imgH * newW) / imgW;
+                int newW = (int)(imgW*ratio) + pinchDiff;
+                int newH = (imgH * newW) / imgW;
 
-            // TODO: Should check the new w/h bounds... e.g. not zooming more
-            // than 2x screen size, or img size... and less than 90% of the
-            // sreen?
+                // TODO: Should check the new w/h bounds... e.g. not zooming more
+                // than 2x screen size, or img size... and less than 90% of the
+                // sreen?
 
-            width = newW;
-            height = newH;
-
-            if (type[0] != DesktopPane.PRESSED && type[1] != DesktopPane.PRESSED) {
+                width = newW;
+                height = newH;
 
                 // here we assume that the panel is already the same size as the image!!
-
                 double nratio = width/(double)imgW;
 
                 int endPinchX = (x[0] + x[1]) / 2;
