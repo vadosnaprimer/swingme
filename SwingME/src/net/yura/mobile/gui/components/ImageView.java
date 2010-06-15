@@ -75,6 +75,8 @@ public class ImageView extends Component {
     int[] px;
     int[] py;
 
+    double ratio = 1.0;
+
     // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
 
@@ -88,12 +90,12 @@ public class ImageView extends Component {
 
             int pinchDiff = 0;
 
-            double ratio = Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
-
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
                 // Stop any animation
                 animateToFit(false);
+
+                ratio = Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
 
                 startPinchSize = getDistance(x, y);
 
@@ -108,7 +110,6 @@ public class ImageView extends Component {
             else {
                 int pinchSize = getDistance(x, y);
                 pinchDiff = (pinchSize - startPinchSize);
-                startPinchSize = pinchSize;
 
                 System.out.println("DRAGGED/RELEASED " + pinchSize);
             }
