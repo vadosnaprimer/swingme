@@ -428,6 +428,11 @@ public abstract class Canvas extends Displayable {
 
             int actionCode = event.getAction() & 0xFF;
 
+            int pointerCount = getPointerCount(event);
+            int ySlide = getHeight() - canvasH;
+            int x = Math.round(event.getX());
+            int y = Math.round(event.getY() - ySlide);
+
             int action;
             switch (actionCode) {
                 case MotionEvent.ACTION_DOWN: //$FALL-THROUGH$
@@ -437,16 +442,19 @@ public abstract class Canvas extends Displayable {
                 case MotionEvent.ACTION_MOVE:
                     action = POINTER_DRAGGED;
                     break;
+                case MotionEvent.ACTION_CANCEL:
+                    // A cancel can happen if the virtual keyboard is displayed.
+                    // x & y will be zero, so we simulate a POINTER_RELEASED
+                    // using the last known x/y values.
+                    action = POINTER_RELEASED;
+                    x = eventX;
+                    y = eventY;
+                    break;
                 default:
                     // Handles ACTION_UP, ACTION_CANCEL, ACTION_OUTSIDE, etc...
                     action = POINTER_RELEASED;
                     break;
             }
-
-            int pointerCount = getPointerCount(event);
-            int ySlide = getHeight() - canvasH;
-            int x = Math.round(event.getX());
-            int y = Math.round(event.getY() - ySlide);
 
             // Rounding can create "repeated" events... Ignore them.
             if (action != eventType || x != eventX || y != eventY) {
