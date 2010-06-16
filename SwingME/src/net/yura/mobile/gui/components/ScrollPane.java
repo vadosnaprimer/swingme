@@ -683,7 +683,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     }
 
     private synchronized static void animateScrollPane(ScrollPane dragScrollPane) {
-        boolean startThread = (ScrollPane.dragScrollPane != dragScrollPane);
+        boolean startThread = (dragScrollPane != null && ScrollPane.dragScrollPane != dragScrollPane);
 
         ScrollPane.dragScrollPane = dragScrollPane;
 
@@ -1107,6 +1107,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (cY >= 0) {
                     if (bound) {
                         cY = 0;
+                        jumpY = 0;
                     }
                     else if (dragVelocityY != 0 && cY >= MAX_SPRING) {
                         dragVelocityY = 0;
@@ -1116,6 +1117,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 else if (diffBottomY >= 0) {
                     if (bound) {
                         cY += diffBottomY;
+                        jumpY = 0;
                     }
                     else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING) {
                         dragVelocityY = 0;
@@ -1123,10 +1125,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                     }
                 }
             }
-        }
-
-        if (bound) {
-            jumpY = 0;
         }
 
         return new int[] {-cY, dragVelocityY, jumpY, springBackTime};
