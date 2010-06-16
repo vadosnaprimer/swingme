@@ -155,7 +155,17 @@
 			<include name="javax/microedition/m3g/**"/>
           </fileset>
         </jar>
-		
+
+
+        <!-- this is used in SwingME to scale images -->
+        <mkdir dir="build" />
+        <javac srcdir="opt/m3g_basic" source="1.5" classpath="dist/midletrunner.jar" destdir="build" debug="on" target="1.5"/>
+	<jar jarfile="dist/m3gbasic.jar">
+	  <fileset dir="build">
+	    <include name="javax/microedition/m3g/**"/>
+          </fileset>
+        </jar>
+
 		<copy file="dist/midletrunner.jar" tofile="www/samples/me4se_applet.zip" overwrite="true" />		
 		
 		<!--delete dir="tmpclasses" /-->

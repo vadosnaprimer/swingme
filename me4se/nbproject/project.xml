@@ -6,7 +6,6 @@
             <name>me4se</name>
             <source-roots>
                 <root id="src.m3g_basic.dir"/>
-                <root id="src.src2.dir"/>
                 <root id="src.src.dir" name="src_GeomME"/>
                 <root id="src.dir"/>
             </source-roots>
