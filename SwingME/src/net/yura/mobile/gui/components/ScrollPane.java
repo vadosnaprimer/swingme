@@ -812,6 +812,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragVelocityY = 0;
             dragTimeY = -1;
 
+            if (ScrollPane.dragScrollPane == this) {
+                animateScrollPane(null);
+            }
+
             if (mode == MODE_SCROLLBARS) {
 
                 int clickX = slider.doClickInScrollbar(
@@ -1006,10 +1010,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         boolean endThread = (ScrollPane.dragScrollPane != this);
 
-        if (!endThread) {
-            if (animateToFit(time)) {
-                return true;
-            }
+        if (animateToFit(time, endThread) && !endThread) {
+            return true;
         }
 
         Component view = getView();
@@ -1166,7 +1168,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         return new int[] {newDist, springBackTime};
     }
 
-    private boolean animateToFit(int time) {
+    private boolean animateToFit(int time, boolean force) {
 
         boolean res = false;
         Component view = getView();
@@ -1175,36 +1177,46 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
+        int viewPortX = getViewPortX();
+        int viewPortY = getViewPortY();
 
         int diffW = (viewPortWidth - cW);
         int diffH = (viewPortHeight - cH);
 
         if (diffW > 0 && diffH > 0) {
-            int minDiff = (diffW < diffH) ? diffW : diffH;
-            double ratioW = (diffW < diffH) ? 1.0 : (viewPortWidth / (double)viewPortHeight);
-            double ratioH = (diffW < diffH) ? (viewPortHeight / (double)viewPortWidth) : 1.0;
+            if (force) {
+                view.width = viewPortWidth;
+                view.posX = viewPortX;
+                view.height = viewPortHeight;
+                view.posY = viewPortY;
+            }
+            else {
+                int minDiff = (diffW < diffH) ? diffW : diffH;
+                double ratioW = (diffW < diffH) ? 1.0 : (viewPortWidth / (double)viewPortHeight);
+                double ratioH = (diffW < diffH) ? (viewPortHeight / (double)viewPortWidth) : 1.0;
 
-            int[] vals = calculateSpringBack(time, fitSizeTime, minDiff);
+                int[] vals = calculateSpringBack(time, fitSizeTime, minDiff);
 
-            int newMaxDiff = vals[0];
-            fitSizeTime = vals[1];
+                int newMaxDiff = vals[0];
+                fitSizeTime = vals[1];
 
-            view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
-            view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
+                view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
+                view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
 
-            view.posX = getViewPortX() + (viewPortWidth - view.width) / 2;
-            view.posY = getViewPortY() + (viewPortHeight - view.height) / 2;
+                view.posX = viewPortX + (viewPortWidth - view.width) / 2;
+                view.posY = viewPortY + (viewPortHeight - view.height) / 2;
+            }
 
             res = true;
         }
         else if (diffW > 0) {
             view.width = viewPortWidth;
-            view.posX = getViewPortX();
+            view.posX = viewPortX;
             res = true;
         }
         else if (diffH > 0) {
             view.height = viewPortHeight;
-            view.posY = getViewPortY();
+            view.posY = viewPortY;
             res = true;
         }
 

@@ -3,6 +3,7 @@ package net.yura.mobile.gui.components;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.util.ImageUtil;
 
 public class ImageView extends Component {
 
@@ -53,21 +54,25 @@ public class ImageView extends Component {
         int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
         int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
 
-        g.translate(imgX, imgY);
-        g.getGraphics().scale(ratio, ratio);
-
-        bgImage.paintIcon(this, g, 0, 0);
-
-        g.setColor(0xFF00FF00);
-        int mx = (int) startPinchX;
-        int my = (int) startPinchY;
-        g.drawLine(mx - 5, my, mx + 5, my);
-        g.drawLine(mx, my - 5, mx, my + 5);
+        ImageUtil.drawScaledImage(g.getGraphics(), bgImage.getImage(), imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
 
 
-        g.getGraphics().scale(1 / ratio, 1 / ratio);
 
-        g.translate(-imgX, -imgY);
+//        g.translate(imgX, imgY);
+//        g.getGraphics().scale(ratio, ratio);
+//
+//        bgImage.paintIcon(this, g, 0, 0);
+//
+//        g.setColor(0xFF00FF00);
+//        int mx = (int) startPinchX;
+//        int my = (int) startPinchY;
+//        g.drawLine(mx - 5, my, mx + 5, my);
+//        g.drawLine(mx, my - 5, mx, my + 5);
+//
+//
+//        g.getGraphics().scale(1 / ratio, 1 / ratio);
+//
+//        g.translate(-imgX, -imgY);
 
         if (px != null) {
             g.setColor(0xFFFF0000);

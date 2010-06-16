@@ -1176,6 +1176,16 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                 }
 
+                //#mdebug
+                // Simulate multi touch, when zero is pressed...
+                if (keypad.getIsDownKey() == '0') {
+                    multitouchEvent(
+                            new int[] {type, type},
+                            new int[] {x, 2 * pointerFristX - x - 100},
+                            new int[] {y, 2 * pointerFristY - y - 100});
+                }
+                //#enddebug
+
                 // When pointer released, reset pointer Component/ScrollPane
                 if (type == RELEASED) {
                     pointerScrollPane = null;
