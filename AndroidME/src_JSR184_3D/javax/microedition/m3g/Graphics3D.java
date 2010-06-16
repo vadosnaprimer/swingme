@@ -1,5 +1,7 @@
 package javax.microedition.m3g;
 
+import java.util.Hashtable;
+
 import javax.microedition.lcdui.Graphics;
 
 import android.graphics.Bitmap;
@@ -63,5 +65,10 @@ public final class Graphics3D {
         this.vpY = y;
         this.vpW = width;
         this.vpH = height;
+    }
+
+    public static Hashtable getProperties() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
