@@ -134,6 +134,8 @@ public class ImageUtil {
         }
         catch (Throwable e) {
             // Do nothing. Converting with 3D API failed. Use sampling.
+            //#debug debug
+            e.printStackTrace();
         }
     }
 

@@ -8,7 +8,7 @@ import net.yura.mobile.util.ImageUtil;
 public class ImageView extends Component {
 
     private Icon bgImage;
-    private int imgW, imgH;
+    protected int imgW, imgH;
     boolean consumingMotionEvents;
 
     private int startPinchSize;
@@ -47,31 +47,32 @@ public class ImageView extends Component {
         return consumingMotionEvents;
     }
 
+    public double getScale() {
+        return Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
+    }
+    public int getImgX(double s) {
+        return (int) (getWidth() - (imgW * s)) / 2;
+    }
+    public int getImgY(double s) {
+        return (int) (getHeight() - (imgH * s)) / 2;
+    }
+
     // Override
     public void paintComponent(Graphics2D g) {
 
-        double ratio = Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
-        int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
-        int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
+        double ratio = getScale();
+        int imgX = getImgX(ratio);
+        int imgY = getImgY(ratio);
 
-        ImageUtil.drawScaledImage(g.getGraphics(), bgImage.getImage(), imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
-
+        if (bgImage != null) {
+            ImageUtil.drawScaledImage(g.getGraphics(), bgImage.getImage(), imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
+        }
 
 
 //        g.translate(imgX, imgY);
 //        g.getGraphics().scale(ratio, ratio);
-//
 //        bgImage.paintIcon(this, g, 0, 0);
-//
-//        g.setColor(0xFF00FF00);
-//        int mx = (int) startPinchX;
-//        int my = (int) startPinchY;
-//        g.drawLine(mx - 5, my, mx + 5, my);
-//        g.drawLine(mx, my - 5, mx, my + 5);
-//
-//
 //        g.getGraphics().scale(1 / ratio, 1 / ratio);
-//
 //        g.translate(-imgX, -imgY);
 
         if (px != null) {
@@ -99,12 +100,12 @@ public class ImageView extends Component {
                 // Stop any animation
                 animateToFit(false);
 
-                ratio = Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
+                ratio = getScale();
 
                 startPinchSize = getDistance(x, y);
 
-                int imgX = (int) (getWidth() - (imgW * ratio)) / 2;
-                int imgY = (int) (getHeight() - (imgH * ratio)) / 2;
+                int imgX = getImgX(ratio);
+                int imgY = getImgY(ratio);
 
                 startPinchX = (((x[0] + x[1]) / 2) - imgX) / ratio;
                 startPinchY = (((y[0] + y[1]) / 2) - imgY) / ratio;
@@ -134,7 +135,7 @@ public class ImageView extends Component {
                 height = newH;
 
                 // here we assume that the panel is already the same size as the image!!
-                double nratio = width/(double)imgW;
+                double nratio = getScale(); // TODO ????  width/(double)imgW;
 
                 int endPinchX = (x[0] + x[1]) / 2;
                 int endPinchY = (y[0] + y[1]) / 2;
