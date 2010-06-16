@@ -87,7 +87,12 @@ public class ImageUtil {
         try {
             // Ensure we have 3D API, otherwise throws exception
             Class.forName("javax.microedition.m3g.Background");
-            return scaleImage3D(img, newW, newH);
+
+            // Create a mutable image with the requested size
+            Image resImg = Image.createImage(newW, newH);
+            drawScaledImage(resImg.getGraphics(), img, 0, 0, newW, newH);
+
+            return resImg;
         }
         catch (Throwable e) {
             // Do nothing. Converting with 3D API failed. Use sampling.
@@ -131,42 +136,6 @@ public class ImageUtil {
             // Do nothing. Converting with 3D API failed. Use sampling.
         }
     }
-
-    private static Image scaleImage3D(Image img, int newW, int newH) {
-
-        // Create a mutable image with the requested size
-        Image resImg = Image.createImage(newW, newH);
-        Graphics g = resImg.getGraphics();
-
-        Image2D image2D = new Image2D(Image2D.RGB, img);
-        Background background = new Background();
-        background.setColor(0xffffffcc); // set the background color
-        background.setImage(image2D);
-
-        // get the singleton Graphics3D instance
-        Graphics3D iG3D = Graphics3D.getInstance();
-        try {
-            iG3D.bindTarget(g, true, Graphics3D.TRUE_COLOR);
-            iG3D.setViewport(0, 0, newW, newH);
-            // clear the color and depth buffers
-            iG3D.clear(background);
-        }
-        finally {
-            // flush
-            iG3D.releaseTarget();
-        }
-
-        return resImg;
-    }
-
-
-
-
-
-
-
-
-
 
 
 
