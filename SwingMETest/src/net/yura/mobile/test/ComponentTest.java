@@ -8,6 +8,8 @@ package net.yura.mobile.test;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.game.Sprite;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.ChangeListener;
@@ -73,7 +75,8 @@ public class ComponentTest  extends Section{
         addTest("Multi File Chooser","fileChooser2");
         addTest("Test Camera","testCamera");
         addTest("Test Progress","testProgress");
-        addTest("Test Gallery","testGallery");
+        addTest("Test Gallery w > h", "testGallery1");
+        addTest("Test Gallery h > w", "testGallery2");
     }
 
     public void actionPerformed(String actionCommand) {
@@ -552,7 +555,8 @@ public class ComponentTest  extends Section{
             }.start();
 
         }
-        else if ("testGallery".equals(actionCommand)) {
+        else if ("testGallery1".equals(actionCommand) ||
+                 "testGallery2".equals(actionCommand)) {
             try {
                 Gallery gallery = new Gallery();
                 Button close = new Button("Close");
@@ -561,10 +565,12 @@ public class ComponentTest  extends Section{
                 close.addActionListener(gallery.getTitlePane());
                 close.setMnemonic(KeyEvent.KEY_END);
 
-
+                Image img = Image.createImage("/swingme_logo.png");
+                if ("testGallery2".equals(actionCommand)) {
+                    img = Image.createImage(img, 0, 0, img.getWidth(), img.getHeight(), Sprite.TRANS_ROT90);
+                }
                 ImageView imgView = new ImageView();
-                imgView.setBackgroundImage(new Icon("/world_link.png"));
-
+                imgView.setBackgroundImage(new Icon(img));
 
                 gallery.setCellRenderer(imgView);
                 gallery.getContentPane().add(close, Graphics.BOTTOM);
