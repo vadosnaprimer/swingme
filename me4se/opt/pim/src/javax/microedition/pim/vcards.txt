@@ -1,0 +1,114 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Dun;Alec
+FN:Alec Dun
+ORG:Microsoft Corporation
+ADR;WORK;POSTAL;PARCEL:;;One Microsoft Way;
+ Redmond;WA;98052-6399;USA
+TEL;WORK;MSG:+1-206-936-4544
+TEL;WORK;FAX:+1-206-936-7329
+EMAIL;INTERNET:user@host1.com
+CALADRURI;PREF:mailto:user@host1.com
+CALURI;PREF:http://cal.host1.com/user/cal.ics
+FBURL;PREF:http://cal.host1.com/user/fb.ifb
+CALURI:http://cal.company.com/projectA/pjtA.ics
+FBURL:http://cal.company.com/projectA/pjtAfb.ifb
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N:Dawson;Frank
+FN:Frank Dawson
+ORG:Lotus Development Corporation
+ADR;WORK;POSTAL;PARCEL:;;6544 Battleford Drive;Raleigh;NC;27613-
+ 3502;USA
+TEL;TYPE=WORK,MSG:+1-919-676-9515
+TEL;TYPE=WORK,FAX:+1-919-676-9564
+EMAIL;TYPE=PREF,INTERNET:Frank_Dawson@Lotus.com
+EMAIL;TYPE=INTERNET:fdawson@earthlink.net
+URL:http://home.earthlink.net/~fdawson
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N:Hopson;Ross
+FN:Ross Hopson
+ORG:On Technology, Inc.
+ADR;TYPE=WORK,POSTAL,PARCEL:;Suite 1600;434 Fayetteville St.
+ Mall\, Two Hannover Square;Raleigh;NC;27601
+TEL;TYPE=WORK,MSG:+1-919-890-4036
+TEL;TYPE=WORK,FAX:+1-919-890-4100
+EMAIL;TYPE=INTERNET:rhopson@on.com
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N:Mansour;Steve
+FN:Steve Mansour
+ORG:Netscape Communications Corporation
+ADR;TYPE=WORK,POSTAL,PARCEL:;;501 East Middlefield Road;Mountain
+ View;CA;94043;USA
+TEL;TYPE=WORK,MSG:+1-650-937-2378
+TEL;TYPE=WORK,FAX:+1-650-937-2103
+EMAIL;TYPE=INTERNET:sman@netscape.com
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N:Silverberg;Steve
+FN:Steve Silverberg
+ORG:Microsoft Corporation
+ADR;TYPE=WORK,POSTAL,PARCEL:;;One Microsoft Way;
+ Redmond;WA;98052-6399;USA
+TEL;TYPE=WORK,MSG:+1-425-936-9277
+TEL;TYPE=WORK,FAX:+1-425-936-8019
+EMAIL;INTERNET:stevesil@Microsoft.com
+END:VCARD
+
+
+BEGIN:VCARD
+VERSION:3.0
+N:Ganguly;Anik
+FN:Anik Ganguly
+ORG:Open Text Inc.
+ADR;TYPE=WORK,POSTAL,PARCEL:;Suite 101;38777 West Six Mile Road;
+ Livonia;MI;48152;USA
+TEL;TYPE=WORK,MSG:+1-734-542-5955
+EMAIL;TYPE=INTERNET:ganguly@acm.org
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N:Moskowitz;Robert
+FN:Robert Moskowitz
+NICKNAME:Bob
+EMAIL; TYPE=INTERNET:rgm-ietf@htt-consult.com
+END:VCARD
+
+
+BEGIN:VCARD
+VERSION:3.0
+N:Small;Tony
+FN:Tony Small
+ORG:XpertSite.Com
+ADR;TYPE=WORK,POSTAL,PARCEL:;;4700 42nd Ave. SW, Suite 440;
+ Seattle;WA;98116;USA
+TEL;TYPE=WORK,MSG:+1-206-937-9972
+TEL;TYPE=WORK,FAX:+1-206-936-7329
+EMAIL;TYPE=INTERNET:tony@xpertsite.com
+CALADRURI:MAILTO:tony@xpertsite.com
+END:VCARD
+
+BEGIN:VCARD
+VERSION:3.0
+N:Hennessy;Denis
+FN:Denis Hennessy
+ORG:ISOCOR
+ADR;TYPE=WORK,POSTAL,PARCEL:;;42-47 Lower Mount St;
+ Dublin 2;Ireland
+TEL;TYPE=WORK,MSG:+353-1-676-0366
+TEL;TYPE=WORK,FAX:+353-1-676-0856
+EMAIL;TYPE=INTERNET:denis.hennessy@isocor.com
+CALADRURI:MAILTO:denis.hennessy@isocor.com
+END:VCARD
+
