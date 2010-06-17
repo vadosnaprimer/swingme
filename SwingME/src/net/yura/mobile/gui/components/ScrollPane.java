@@ -88,6 +88,15 @@ public class ScrollPane extends Panel implements Runnable {
         mode = m;
     }
 
+    final int BOUNCE_HORIZONTAL = 0x01;
+    final int BOUNCE_VERTICAL = 0x02;
+
+    private int bounceMode;
+
+    public void setBounceMode(int bounceMode) {
+        this.bounceMode = bounceMode;
+    }
+
     public int getBarThickness() {
         return slider.getHeight();
     }
@@ -96,7 +105,7 @@ public class ScrollPane extends Panel implements Runnable {
 
         switch (mode) {
             case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
-            case MODE_SCROLLARROWS: // fall though
+        case MODE_SCROLLARROWS: // fall though
             case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : 0; break;
             case MODE_NONE: barThickness = 0; break;
             default: throw new RuntimeException();
@@ -126,7 +135,7 @@ public class ScrollPane extends Panel implements Runnable {
         //component = a;
         //a.setOwner(owner);
         //if (a instanceof Panel) {
-        //    ((Panel)a).setScrollPanel(this);
+        // ((Panel)a).setScrollPanel(this);
         //}
 
         a.setLocation(getViewPortX(), getViewPortY());
@@ -257,7 +266,7 @@ public class ScrollPane extends Panel implements Runnable {
         switch (mode) {
             case MODE_SCROLLBARS: return height-getViewPortY()-((getView().getWidth()> (width-getViewPortX()) )?barThickness:0);
             case MODE_SCROLLARROWS: return (getView().getHeight() > height)?height-(barThickness*2):height;
-            case MODE_NONE:
+        case MODE_NONE:
             case MODE_INDICATOR: return height;
             default: throw new RuntimeException();
         }
@@ -270,7 +279,7 @@ public class ScrollPane extends Panel implements Runnable {
         switch (mode) {
             case MODE_SCROLLBARS: return width-getViewPortX()-((getView().getHeight()>vph)?barThickness:0);
             case MODE_SCROLLARROWS: return (getView().getWidth() > width)?width-(barThickness*2):width;
-            case MODE_NONE:
+        case MODE_NONE:
             case MODE_INDICATOR: return width;
             default: throw new RuntimeException();
         }
@@ -278,8 +287,8 @@ public class ScrollPane extends Panel implements Runnable {
     public int getViewPortX() {
         switch (mode) {
             case MODE_SCROLLARROWS: return (getView().getWidth() > width)?barThickness:0;
-            case MODE_SCROLLBARS:
-            case MODE_NONE:
+        case MODE_SCROLLBARS:
+        case MODE_NONE:
             case MODE_INDICATOR: return 0;
             default: throw new RuntimeException();
         }
@@ -287,8 +296,8 @@ public class ScrollPane extends Panel implements Runnable {
     public int getViewPortY() {
         switch (mode) {
             case MODE_SCROLLARROWS: return (getView().getHeight() > height)?barThickness:0;
-            case MODE_SCROLLBARS:
-            case MODE_NONE:
+        case MODE_SCROLLBARS:
+        case MODE_NONE:
             case MODE_INDICATOR: return 0;
             default: throw new RuntimeException();
         }
@@ -503,50 +512,50 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     public void drawArrow(Graphics2D g, int x, int y, int w, int h,boolean canScroll,int direction) {
 
         switch (direction) {
-            case Graphics.LEFT: {
+        case Graphics.LEFT: {
                 if (leftArrow!=null) {
-                    if (canScroll) {
+                if (canScroll) {
                         leftArrow.paintIcon(this, g,  x+(w-leftArrow.getIconWidth())/2, y+(h-leftArrow.getIconHeight())/2 );
                     }
                 }
                 else {
                     //drawLeftArrow(g, x, y, w, h);
-                }
-                break;
             }
-            case Graphics.RIGHT: {
+            break;
+        }
+        case Graphics.RIGHT: {
                 if (rightArrow!=null) {
-                    if (canScroll) {
+                if (canScroll) {
                         rightArrow.paintIcon(this, g,x+(w-rightArrow.getIconWidth())/2, y+(h-rightArrow.getIconHeight())/2 );
                     }
                 }
                 else {
                     //drawRightArrow(g, x, y, w, h);
-                }
-                break;
             }
-            case Graphics.TOP: {
+            break;
+        }
+        case Graphics.TOP: {
                 if (upArrow!=null) {
-                    if (canScroll) {
+                if (canScroll) {
                         upArrow.paintIcon(this, g, x+(w-upArrow.getIconWidth())/2, y+(h-upArrow.getIconHeight())/2 );
                     }
                 }
                 else {
                     //drawUpArrow(g, x, y, w, h);
-                }
-                break;
             }
-            case Graphics.BOTTOM: {
+            break;
+        }
+        case Graphics.BOTTOM: {
                 if (downArrow!=null) {
-                    if (canScroll) {
+                if (canScroll) {
                         downArrow.paintIcon(this, g, x+(w-downArrow.getIconWidth())/2, y+(h-downArrow.getIconHeight())/2 );
                     }
                 }
                 else {
                     //drawDownArrow(g, x, y, w, h);
-                }
-                break;
             }
+            break;
+        }
         }
     }
 
@@ -578,7 +587,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         downArrow = (Icon)theme.getProperty("downArrow", Style.ALL);
 
         if (slider!=null)
-        slider.updateUI();
+            slider.updateUI();
     }
 
 
@@ -651,30 +660,30 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int velocity;
 
         switch(click) {
-            case Slider.CLICK_UP:
-                dragMode = DRAG_CLICKED_ARROW;
-                velocity = 200;
-                break;
-            case Slider.CLICK_PGUP:
-                dragMode = DRAG_CLICKED_TRACK;
-                velocity = extent1 * DRAG_FRAME_RATE;
-                break;
-            case Slider.CLICK_THUMB:
-                velocity = 0;
-                dragMode = dragSlider;
-                break;
-            case Slider.CLICK_PGDOWN:
-                dragMode = DRAG_CLICKED_TRACK;
-                velocity = -extent1 * DRAG_FRAME_RATE;
-                break;
-            case Slider.CLICK_DOWN:
-                dragMode = DRAG_CLICKED_ARROW;
-                velocity = -200;
-                break;
-            default: // same as CLICK_NONE
-                velocity = 0;
-                dragMode = DRAG_NONE;
-                break;
+        case Slider.CLICK_UP:
+            dragMode = DRAG_CLICKED_ARROW;
+            velocity = 200;
+            break;
+        case Slider.CLICK_PGUP:
+            dragMode = DRAG_CLICKED_TRACK;
+            velocity = extent1 * DRAG_FRAME_RATE;
+            break;
+        case Slider.CLICK_THUMB:
+            velocity = 0;
+            dragMode = dragSlider;
+            break;
+        case Slider.CLICK_PGDOWN:
+            dragMode = DRAG_CLICKED_TRACK;
+            velocity = -extent1 * DRAG_FRAME_RATE;
+            break;
+        case Slider.CLICK_DOWN:
+            dragMode = DRAG_CLICKED_ARROW;
+            velocity = -200;
+            break;
+        default: // same as CLICK_NONE
+            velocity = 0;
+            dragMode = DRAG_NONE;
+            break;
         }
 
         dragScrollBarMode = dragMode;
@@ -729,7 +738,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         ScrollPane.class.wait(timeToWait);
                     }
                     catch(InterruptedException e) {
-                      Logger.info(e);
+                        Logger.info(e);
                     }
                 }
             }
@@ -952,13 +961,13 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
 
-        if (cW > viewPortWidth) {
+        if (cW > viewPortWidth || (bounceMode & BOUNCE_HORIZONTAL) != 0) {
             cX = dragScrollBarSync(forceBound,
                                    dragStartX, dragLastX, dragStartViewX,
                                    cX, cW, viewPortWidth);
         }
 
-        if (cH > viewPortHeight) {
+        if (cH > viewPortHeight || (bounceMode & BOUNCE_VERTICAL) != 0) {
             cY = dragScrollBarSync(forceBound,
                                    dragStartY, dragLastY, dragStartViewY,
                                    cY, cH, viewPortHeight);
@@ -975,7 +984,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                                 int dragStartY, int dragLastY, int dragStartViewY,
                                 int cY, int cH, int viewPortHeight) {
 
-        int diffBottomY =  viewPortHeight - cY - cH;
+        int diffBottomY = viewPortHeight - cY - cH;
+        //TODO: THIS IS WRONG... This should be a parameter of this method...
+        boolean springBack = ((bounceMode & BOUNCE_HORIZONTAL) == 0 && (bounceMode & BOUNCE_VERTICAL) == 0);
 
         // How far are we from the desire position?
         int jumpY = (dragStartY - dragLastY) - (dragStartViewY - cY);
@@ -989,7 +1000,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (bound) {
                     cY = 0;
                 }
-                else {
+                else if (springBack) {
                     cY = cY / 2;
                 }
             }
@@ -997,7 +1008,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (bound) {
                     cY += diffBottomY;
                 }
-                else {
+                else if (springBack) {
                     cY += diffBottomY / 2;
                 }
             }
@@ -1026,7 +1037,15 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         boolean res = false;
         boolean forceBound = (dragScrollBarMode != DRAG_NONE || endThread);
 
-        if (cW > viewPortWidth) {
+        if ((cW == viewPortWidth) && (bounceMode & BOUNCE_HORIZONTAL) == 0) {
+            dragVelocityX = 0;
+        }
+
+        if ((cH == viewPortHeight) && (bounceMode & BOUNCE_VERTICAL) == 0) {
+            dragVelocityY = 0;
+        }
+
+        /* if (cW >= viewPortWidth) */{
             int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
                                           cX, cW, viewPortWidth,
                                           time, dragTimeX);
@@ -1036,7 +1055,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragTimeX = newPosX[3];
         }
 
-        if (cH > viewPortHeight) {
+        /* if (cH > viewPortHeight) */{
             int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
                                           cY, cH, viewPortHeight,
                                           time, dragTimeY);
@@ -1055,7 +1074,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                                 int cY, int cH, int viewPortHeight,
                                 int time, int springBackTime) {
 
-        int diffBottomY =  viewPortHeight - cY - cH;
+        int diffBottomY = viewPortHeight - cY - cH;
 
 
         int jumpY = 0;
@@ -1146,7 +1165,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             springBackTime = time + (int)(Math.sqrt(Math.abs(dist) / springDrag));
         }
 
-        // Animation runs "backward"...  Re-map time.
+        // Animation runs "backward"... Re-map time.
         time = springBackTime - time;
 
         int newDist = (time >= 0) ? (int)(springDrag * time * time) : 0;
@@ -1200,12 +1219,12 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             view.posY = viewPortY + (viewPortHeight - view.height) / 2;
         }
         else {
-            if (diffW >= 0) {
+            if (diffW > 0) {
                 view.width = viewPortWidth;
                 view.posX = viewPortX;
             }
 
-            if (diffH >= 0) {
+            if (diffH > 0) {
                 view.height = viewPortHeight;
                 view.posY = viewPortY;
             }
