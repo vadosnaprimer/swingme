@@ -1046,9 +1046,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragTimeY = newPosY[3];
         }
 
-        if (cW > viewPortWidth || cH > viewPortHeight) {
-            makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
-        }
+        makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
 
         return endThread ? false : res;
     }
@@ -1170,10 +1168,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     private boolean animateToFit(int time, boolean force) {
 
-        boolean res = false;
         Component view = getView();
         int cW = view.getWidth();
         int cH = view.getHeight();
+        int cX = view.getX();
+        int cY = view.getY();
 
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
@@ -1183,43 +1182,37 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int diffW = (viewPortWidth - cW);
         int diffH = (viewPortHeight - cH);
 
-        if (diffW > 0 && diffH > 0) {
-            if (force) {
+        if (!force && diffW > 0 && diffH > 0) {
+
+            int minDiff = (diffW < diffH) ? diffW : diffH;
+            double ratioW = (diffW < diffH) ? 1.0 : (viewPortWidth / (double)viewPortHeight);
+            double ratioH = (diffW < diffH) ? (viewPortHeight / (double)viewPortWidth) : 1.0;
+
+            int[] vals = calculateSpringBack(time, fitSizeTime, minDiff);
+
+            int newMaxDiff = vals[0];
+            fitSizeTime = vals[1];
+
+            view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
+            view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
+
+            view.posX = viewPortX + (viewPortWidth - view.width) / 2;
+            view.posY = viewPortY + (viewPortHeight - view.height) / 2;
+        }
+        else {
+            if (diffW >= 0) {
                 view.width = viewPortWidth;
                 view.posX = viewPortX;
+            }
+
+            if (diffH >= 0) {
                 view.height = viewPortHeight;
                 view.posY = viewPortY;
             }
-            else {
-                int minDiff = (diffW < diffH) ? diffW : diffH;
-                double ratioW = (diffW < diffH) ? 1.0 : (viewPortWidth / (double)viewPortHeight);
-                double ratioH = (diffW < diffH) ? (viewPortHeight / (double)viewPortWidth) : 1.0;
-
-                int[] vals = calculateSpringBack(time, fitSizeTime, minDiff);
-
-                int newMaxDiff = vals[0];
-                fitSizeTime = vals[1];
-
-                view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
-                view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
-
-                view.posX = viewPortX + (viewPortWidth - view.width) / 2;
-                view.posY = viewPortY + (viewPortHeight - view.height) / 2;
-            }
-
-            res = true;
-        }
-        else if (diffW > 0) {
-            view.width = viewPortWidth;
-            view.posX = viewPortX;
-            res = true;
-        }
-        else if (diffH > 0) {
-            view.height = viewPortHeight;
-            view.posY = viewPortY;
-            res = true;
         }
 
+        boolean res = (cW != view.getWidth() || cH != view.getHeight() ||
+                       cX != view.getX() || cY != view.getY());
         if (res) {
             repaint();
         }
