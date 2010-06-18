@@ -16,6 +16,7 @@ import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.BevelBorder;
+import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.components.Button;
@@ -31,6 +32,7 @@ import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.OptionPane;
+import net.yura.mobile.gui.components.PageView;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.RadioButton;
@@ -75,6 +77,7 @@ public class ComponentTest  extends Section{
         addTest("Multi File Chooser","fileChooser2");
         addTest("Test Camera","testCamera");
         addTest("Test Progress","testProgress");
+        addTest("Page View", "pageView");
         addTest("Test Gallery w > h", "testGallery1");
         addTest("Test Gallery h > w", "testGallery2");
     }
@@ -580,8 +583,50 @@ public class ComponentTest  extends Section{
                 e.printStackTrace();
             }
         }
-        else {
+        else if ("pageView".equals(actionCommand)) {
+            System.out.println("pageView");
 
+            Vector panels = new Vector();
+
+            for (int c=0;c<8;c++) {
+                Panel p = new Panel( new FlowLayout( Graphics.VCENTER ) );
+
+                p.setBackground((c % 2 == 0) ? 0xFF0000FF : 0xFF00FFFF);
+                p.setBorder(new LineBorder(0xFF000000));
+                p.add( new Button("button1 "+c) );
+                p.add( new Button("button2 "+c) );
+
+                panels.addElement(p);
+
+                if (c == 2) {
+                    Label l = new Label("TEST");
+                    l.setBackground(0xFFFFFF00);
+                    panels.addElement(l);
+                }
+
+                if (c == 4) {
+                    try {
+                        Image img = Image.createImage("/swingme_logo.png");
+                        ImageView imgView = new ImageView();
+                        imgView.setBackgroundImage(new Icon(img));
+
+                        imgView.setBackground(0xFFFFFF00);
+                        panels.addElement(imgView);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            PageView pg = new PageView(panels);
+            pg.setBackground(0xFF000000);
+
+            addToContentPane(pg,null);
+
+        }
+        else {
+            System.out.println("Unknown action... " + actionCommand);
         }
     }
 }
