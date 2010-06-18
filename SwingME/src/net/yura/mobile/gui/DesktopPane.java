@@ -78,17 +78,25 @@ public class DesktopPane extends Canvas implements Runnable {
         return style;
     }
 
+    /**
+     * this method is used in {@link Component#getWindow()} and so needs to return the component you pass into it as the result if it is of class c
+     * @see javax.swing.SwingUtilities#getAncestorOfClass(java.lang.Class, java.awt.Component) SwingUtilities.getAncestorOfClass
+     */
+    public static Component getAncestorOfClass(Class c, Component p) {
+        while (p!=null) {
+            if (c.isInstance(p)) {
+                return p;
+            }
+            p = p.getParent();
+        }
+        return null;
+    }
+
     public static void mySizeChanged(Component aThis) {
 
-        Component p = aThis.getParent();
+        Component p = getAncestorOfClass(ScrollPane.class, aThis);
+        if (p==null) { p = aThis.getWindow(); }
         if (p==null) return;
-        while (!(p instanceof ScrollPane)) {
-            Component pp = p.getParent();
-            if (pp==null) {
-                break;
-            }
-            p=pp;
-        }
 
         DesktopPane dp = aThis.getDesktopPane();
         // if a window is not yet visable it still needs the
@@ -1100,18 +1108,6 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
-    private ScrollPane getScrollPaneParent(Component comp) {
-        Component parent = comp;
-        while (parent != null) {
-            if (parent instanceof ScrollPane) {
-                return (ScrollPane) parent;
-            }
-            parent = parent.getParent();
-        }
-
-        return null;
-    }
-
     public boolean isAccurate(int oldx,int oldy,int x,int y) {
         return (Math.abs(oldx - x) <= inaccuracy && Math.abs(oldy - y) <= inaccuracy);
     }
@@ -1129,16 +1125,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
                     if (IPHONE_SCROLL) {
                         pointerScrollPane = null;
-                        ScrollPane sp = getScrollPaneParent(pointerComponent);
+                        ScrollPane sp = (ScrollPane)getAncestorOfClass(ScrollPane.class,pointerComponent);
                         if (sp != null) {
-                            if (sp.getViewPortHeight() < sp.getView().getHeight() ||
-                                sp.getViewPortWidth() < sp.getView().getWidth()) {
-
-                                pointerScrollPane = sp;
-
-                                if (pointerComponent == sp) {
-                                    pointerComponent = null;
-                                }
+                            pointerScrollPane = sp;
+                            // if the click was already on the scrollcomp, then we can clear the pointerComponent
+                            if (pointerComponent == sp) {
+                                pointerComponent = null;
                             }
                         }
                     }

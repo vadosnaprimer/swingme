@@ -136,6 +136,7 @@ public class Panel extends Component {
     public void remove(int c) {
         Component component = (Component)components.elementAt(c);
 
+        // TODO this is not good enough as one of its children may be the current focus owner
         if (component.isFocusOwner()) {
             component.getWindow().setFocusedComponent(null);
         }

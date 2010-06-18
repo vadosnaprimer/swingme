@@ -62,14 +62,14 @@ public class List extends Component implements ActionListener {
 
     private int fixedCellHeight = -1;
     private int fixedCellWidth = -1;
-  
+
     /**
      * @see javax.swing.JList#JList() JList.JList
      */
     public List() {
         this((Vector)null);
     }
-  
+
 	/**
      * @param a
      * @see javax.swing.JList#JList(java.util.Vector) JList.JList
@@ -81,7 +81,7 @@ public class List extends Component implements ActionListener {
     public List(ListCellRenderer a) {
         this(null,a,false);
     }
-    
+
     // real constructor!
     public List(Vector a,ListCellRenderer b,boolean h) {
         items = a;
@@ -489,6 +489,11 @@ public class List extends Component implements ActionListener {
 
     }
 
+    public boolean consumesMotionEvents() {
+        ScrollPane sp = (ScrollPane)DesktopPane.getAncestorOfClass(ScrollPane.class, this);
+        return (sp==null || (sp.getViewPortHeight() >= sp.getView().getHeight() && sp.getViewPortWidth() >= sp.getView().getWidth()));
+    }
+
     private boolean clearSelectionOnClick=false;
     private void selectNewPointer(int i,KeyEvent keys) {
         if (keys.isDownKey(KeyEvent.KEY_EDIT)) {
@@ -719,11 +724,11 @@ public class List extends Component implements ActionListener {
      * modified to make the newly selected index visible
      */
     public void setSelectedIndex(int a, boolean moveScroll) {
-    	
+
         int old = current;
 
         current = a;
-        
+
         if (current!=-1) {
 
             if (moveScroll) {
@@ -736,7 +741,7 @@ public class List extends Component implements ActionListener {
             // TODO as scroll to always does a repaint
             // we dont need it here
             // BUT what if we are not in a scrollPane??
-            repaint();            
+            repaint();
         }
     }
 
@@ -745,7 +750,7 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#ensureIndexIsVisible(int) JList.ensureIndexIsVisible
      */
     public void ensureIndexIsVisible(int i) {
-    
+
             Component c = getRendererComponentFor(i);
             // good, but too simple
             // what if we are scrolled right already?

@@ -118,7 +118,7 @@ public abstract class Component {
         }
         //#enddebug
     }
-    
+
     /**
      * @param w The preferred Width (can be -1 for no preference)
      * @param h The preferred Height (can be -1 for no preference)
@@ -237,10 +237,10 @@ public abstract class Component {
 
     /**
      * @see javax.swing.SwingUtilities#windowForComponent(java.awt.Component) SwingUtilities.windowForComponent
+     * @see javax.swing.SwingUtilities#getWindowAncestor(java.awt.Component) SwingUtilities.getWindowAncestor
      */
     public Window getWindow() {
-        if (parent == null) { return (this instanceof Window)?(Window)this : null; }
-        return parent.getWindow();
+        return (Window)DesktopPane.getAncestorOfClass(Window.class, this);
     }
 
     /**
