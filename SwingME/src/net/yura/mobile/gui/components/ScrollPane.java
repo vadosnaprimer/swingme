@@ -730,18 +730,18 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
                 int rate = (dragScrollBarMode == DRAG_CLICKED_TRACK) ? DRAG_PAGE_RATE : DRAG_FRAME_RATE;
                 long timeToWait = time - System.currentTimeMillis() + (1000L / rate);
-                if (timeToWait > 0) {
+                    if (timeToWait > 0) {
 
-                    //System.out.println("--- ScrollPane timeToWait = " + timeToWait);
+                        //System.out.println("--- ScrollPane timeToWait = " + timeToWait);
 
                     try {
                         ScrollPane.class.wait(timeToWait);
                     }
-                    catch(InterruptedException e) {
-                        Logger.info(e);
-                    }
+                catch(InterruptedException e) {
+                    Logger.info(e);
                 }
             }
+        }
         }
 
         //System.out.println("END ScrollPane Thread... (" + (System.currentTimeMillis() - startAnimTime) + "ms)");
@@ -771,23 +771,37 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         int lastPos = dragBufferPos;
         int pos = lastPos;
-        int firstPos;
+        int firstPos = lastPos;
+        long oldestTime = dragTimes[lastPos] - 200;
 
-        do {
+        while (dragTimes[pos] > 0 && dragTimes[pos] >= oldestTime) {
             firstPos = pos;
 
             pos--;
             if (pos < 0) {
                 pos = DRAG_BUFFER_SIZE - 1;
             }
-        } while (dragTimes[pos] >= OLDEST_TIME && pos != lastPos);
 
+            if (pos == lastPos) {
+                // Stop over-run
+                break;
+            }
+        }
 
         // Elapsed time can't be zero... Arithmetic exception
         long elapsedTime = Math.max(dragTimes[lastPos] - dragTimes[firstPos], 1);
         int traveledPixels = dragBuffer[lastPos] - dragBuffer[firstPos];
 
         return (int) (traveledPixels * 1000 / elapsedTime);
+    }
+
+    protected int getDragVelocity(boolean horizontal) {
+        return getDragVelocity(horizontal ? dragBufferX : dragBufferY);
+    }
+
+    protected void resetDragSpeed() {
+        // Reset drag speed (0 is "stop" value)
+        updateDragSpeed(0, 0, 0);
     }
 
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
@@ -931,8 +945,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
             if (dragScrollBarMode == DRAG_NONE) {
                 if (getDesktopPane().IPHONE_SCROLL) {
-                    dragVelocityX = getDragVelocity(dragBufferX);
-                    dragVelocityY = getDragVelocity(dragBufferY);
+                    dragVelocityX = getDragVelocity(true);
+                    dragVelocityY = getDragVelocity(false);
                 }
                 //System.out.println("SPEEDX = " + dragVelocityX + " SPEEDY = " + dragVelocityY);
             }
@@ -945,8 +959,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragFriction = 1000;
             animateScrollPane(this);
 
-            // Reset drag speed (0 is a very "old" time)
-            updateDragSpeed(pointX, pointY, 0);
+            resetDragSpeed();
         }
     }
 
@@ -1244,6 +1257,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         dragVelocityX = 0;
         dragVelocityY = 0;
         dragFriction = 1000;
+        resetDragSpeed();
 
         // Start new animation
         fitSizeTime = -1;
