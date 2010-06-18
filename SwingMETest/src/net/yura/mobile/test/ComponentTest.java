@@ -26,7 +26,6 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.FileChooser;
 import net.yura.mobile.gui.components.Frame;
-import net.yura.mobile.gui.components.Gallery;
 import net.yura.mobile.gui.components.ImageView;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.List;
@@ -78,8 +77,8 @@ public class ComponentTest  extends Section{
         addTest("Test Camera","testCamera");
         addTest("Test Progress","testProgress");
         addTest("Page View", "pageView");
-        addTest("Test Gallery w > h", "testGallery1");
-        addTest("Test Gallery h > w", "testGallery2");
+        addTest("Test Gallery w > h", "testImageView1");
+        addTest("Test Gallery h > w", "testImageView2");
     }
 
     public void actionPerformed(String actionCommand) {
@@ -558,27 +557,21 @@ public class ComponentTest  extends Section{
             }.start();
 
         }
-        else if ("testGallery1".equals(actionCommand) ||
-                 "testGallery2".equals(actionCommand)) {
+        else if ("testImageView1".equals(actionCommand) ||
+                 "testImageView2".equals(actionCommand)) {
             try {
-                Gallery gallery = new Gallery();
-                Button close = new Button("Close");
-                close.setActionCommand(Frame.CMD_CLOSE);
-                // hack to avoid having to make a new action listener
-                close.addActionListener(gallery.getTitlePane());
-                close.setMnemonic(KeyEvent.KEY_END);
-
                 Image img = Image.createImage("/swingme_logo.png");
-                if ("testGallery2".equals(actionCommand)) {
+                if ("testImageView2".equals(actionCommand)) {
                     img = Image.createImage(img, 0, 0, img.getWidth(), img.getHeight(), Sprite.TRANS_ROT90);
                 }
                 ImageView imgView = new ImageView();
                 imgView.setBackgroundImage(new Icon(img));
 
-                gallery.setCellRenderer(imgView);
-                gallery.getContentPane().add(close, Graphics.BOTTOM);
-                gallery.setMaximum(true);
-                gallery.setVisible(true);
+                ScrollPane sp = new ScrollPane();
+                sp.setBackground(0xff000000);
+                sp.add(imgView);
+
+                addToContentPane(sp, null);
             } catch (Exception e) {
                 e.printStackTrace();
             }
