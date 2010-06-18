@@ -3,6 +3,7 @@ package net.yura.mobile.gui.components;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.util.ImageUtil;
 
 public class ImageView extends Component {
@@ -17,6 +18,10 @@ public class ImageView extends Component {
 
     private int[] px;
     private int[] py;
+
+    public ImageView() {
+        focusable = false;
+    }
 
 
     public void setBackgroundImage(Icon backgroundImage) {
@@ -47,13 +52,15 @@ public class ImageView extends Component {
         return consumingMotionEvents;
     }
 
-    public double getScale() {
+    protected double getScale() {
         return Math.min(getHeight()/(double)imgH,getWidth()/(double)imgW);
     }
-    public int getImgX(double s) {
+
+    protected int getImgX(double s) {
         return (int) (getWidth() - (imgW * s)) / 2;
     }
-    public int getImgY(double s) {
+
+    protected int getImgY(double s) {
         return (int) (getHeight() - (imgH * s)) / 2;
     }
 
@@ -85,11 +92,14 @@ public class ImageView extends Component {
     }
 
     // Override
+    public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+        // We handle all our Mouse events
+    }
+
+    // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
 
         consumingMotionEvents = (type[0] != DesktopPane.RELEASED);
-
-        System.out.println("ImageView: pointerEvent " + " consumingMotionEvents = " + consumingMotionEvents);
 
         if (type.length >= 2) {
             px = x;
