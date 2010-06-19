@@ -9,6 +9,9 @@ SwingME
 	ListGrid uses ListModel methods like List
 	support for android menu and esc keys with AndroidME
 	android: in window.java the softkey bar should be hidden, menu should pop up when clicking menu, back should activate back, all other actions should show up as buttons where ever they were placed
+	new mode added to scrollpane to support floating scrollbars
+	multi-touch added for AndroidME to call into
+	Xwing components added ImageView, PageView, gallery (but not finished yet)
 
 1.1
 

@@ -32,8 +32,6 @@ public class ImageView extends Component {
             imgH = bgImage.getIconHeight();
         }
 
-        //DELETE:
-        setBackground(0xFF0000FF);
     }
 
     public Icon getBackgroundImage() {

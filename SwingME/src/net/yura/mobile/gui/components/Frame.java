@@ -144,7 +144,9 @@ public class Frame extends Window {
                 if (mbar!=null) {
                     super.remove(mbar);
                 }
-                super.add(p);
+                // we insert at 0 as if everything is transpaent, we want the
+                // contentPane to draw first as it may have scoll clip set to false
+                super.insert(p,0);
             }
 
         }

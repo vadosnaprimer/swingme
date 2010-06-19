@@ -48,6 +48,7 @@ public class ScrollPane extends Panel implements Runnable {
     private Icon downArrow;
 
     private Slider slider;
+    private boolean clip = true;
 
     /**
      * @see javax.swing.JScrollPane#JScrollPane() JScrollPane.JScrollPane
@@ -74,9 +75,10 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
     public void setLayout(Layout lt) {
-
         if (lt!=null) throw new IllegalArgumentException();
-
+    }
+    public void setClip(boolean c) {
+        clip = c;
     }
 
     public ScrollPane(Component view,int a) {
@@ -105,10 +107,10 @@ public class ScrollPane extends Panel implements Runnable {
     public void setSize(int w, int h) {
 
         switch (mode) {
+            case MODE_FLOATING_SCROLLBARS: // fall though
             case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
             case MODE_SCROLLARROWS: // fall though
             case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : 0; break;
-            case MODE_FLOATING_SCROLLBARS:
             case MODE_NONE: barThickness = 0; break;
             default: throw new RuntimeException();
         }
@@ -375,20 +377,23 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     public void paintChildren(Graphics2D g) {
 
-        int[] a=g.getClip();
+        int[] a=null;
+        if (clip) {
+            a=g.getClip();
 
-        int viewX=getViewPortX();
-        int viewY=getViewPortY();
-        int viewHeight=getViewPortHeight();
-        int viewWidth=getViewPortWidth(viewHeight);
+            int viewX=getViewPortX();
+            int viewY=getViewPortY();
+            int viewHeight=getViewPortHeight();
+            int viewWidth=getViewPortWidth(viewHeight);
 
-        // dont care about clipping for the
-        // scrollbars as they r painted over the top
-        g.clipRect(viewX, viewY, viewWidth, viewHeight);
-
+            // dont care about clipping for the
+            // scrollbars as they r painted over the top
+            g.clipRect(viewX, viewY, viewWidth, viewHeight);
+        }
         super.paintChildren(g);
-
-        g.setClip(a);
+        if (clip) {
+            g.setClip(a);
+        }
 
         //g.setColor(0x00FF0000);
         //g.drawRect(viewX, viewY, viewWidth-1, viewHeight-1);
@@ -567,13 +572,13 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
 
     public void clip(Graphics2D g) {
-
-        int viewX=getXOnScreen()+getViewPortX();
-        int viewY=getYOnScreen()+getViewPortY();
-        int viewHeight=getViewPortHeight();
-        int viewWidth=getViewPortWidth(viewHeight);
-
-        g.clipRect(viewX, viewY, viewWidth, viewHeight);
+        if (clip) {
+            int viewX=getXOnScreen()+getViewPortX();
+            int viewY=getYOnScreen()+getViewPortY();
+            int viewHeight=getViewPortHeight();
+            int viewWidth=getViewPortWidth(viewHeight);
+            g.clipRect(viewX, viewY, viewWidth, viewHeight);
+        }
         super.clip(g);
     }
 
