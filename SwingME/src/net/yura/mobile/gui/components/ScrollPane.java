@@ -91,8 +91,12 @@ public class ScrollPane extends Panel implements Runnable {
         mode = m;
     }
 
-    final int BOUNCE_HORIZONTAL = 0x01;
-    final int BOUNCE_VERTICAL = 0x02;
+    final int BOUNCE_LEFT = 0x01;
+    final int BOUNCE_RIGHT = 0x02;
+    final int BOUNCE_TOP = 0x04;
+    final int BOUNCE_BOTTOM = 0x08;
+    final int BOUNCE_HORIZONTAL = BOUNCE_LEFT | BOUNCE_RIGHT;
+    final int BOUNCE_VERTICAL = BOUNCE_TOP | BOUNCE_BOTTOM;
 
     private int bounceMode;
 
@@ -1008,7 +1012,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         int diffBottomY = viewPortHeight - cY - cH;
         //TODO: THIS IS WRONG... This should be a parameter of this method...
-        boolean springBack = ((bounceMode & BOUNCE_HORIZONTAL) == 0 && (bounceMode & BOUNCE_VERTICAL) == 0);
+        boolean springBackLeft = ((bounceMode & BOUNCE_LEFT) == 0 && (bounceMode & BOUNCE_TOP) == 0);
+        boolean springBackRight = ((bounceMode & BOUNCE_RIGHT) == 0 && (bounceMode & BOUNCE_BOTTOM) == 0);
 
         // How far are we from the desire position?
         int jumpY = (dragStartY - dragLastY) - (dragStartViewY - cY);
@@ -1022,7 +1027,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (bound) {
                     cY = 0;
                 }
-                else if (springBack) {
+                else if (springBackLeft) {
                     cY = cY / 2;
                 }
             }
@@ -1030,7 +1035,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (bound) {
                     cY += diffBottomY;
                 }
-                else if (springBack) {
+                else if (springBackRight) {
                     cY += diffBottomY / 2;
                 }
             }

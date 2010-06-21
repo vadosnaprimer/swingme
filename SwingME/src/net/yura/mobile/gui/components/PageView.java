@@ -19,7 +19,7 @@ public class PageView extends ScrollPane {
         add((Component)model.firstElement());
         currentViewIdx = 0;
 
-        setBounceMode(BOUNCE_HORIZONTAL);
+        resetDragMode();
     }
 
     // Override
@@ -137,6 +137,18 @@ public class PageView extends ScrollPane {
 
         newComp.setLocation(newViewX, getViewPortY());
 
+        resetDragMode();
         resetDragSpeed();
+    }
+
+    private void resetDragMode() {
+        int bounceMode = 0;
+        if (currentViewIdx > 0) {
+            bounceMode |= BOUNCE_LEFT;
+        }
+        if (currentViewIdx < model.size() - 1) {
+            bounceMode |= BOUNCE_RIGHT;
+        }
+        setBounceMode(bounceMode);
     }
 }
