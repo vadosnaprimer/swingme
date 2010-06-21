@@ -11,6 +11,7 @@ public class PageView extends ScrollPane {
     private Vector model;
     private int currentViewIdx;
     private boolean animating;
+    private int gap = 50;
 
     public PageView(Vector panels) {
         model = panels;
@@ -22,6 +23,17 @@ public class PageView extends ScrollPane {
 
         resetDragMode();
     }
+
+
+    public void setGap(int gap) {
+        this.gap = gap;
+    }
+
+
+    public int getGap() {
+        return gap;
+    }
+
 
     // Override
     public void paintChildren(Graphics2D g) {
@@ -36,7 +48,7 @@ public class PageView extends ScrollPane {
             if (currentViewIdx > 0) {
                 Component prevView = (Component) model.elementAt(currentViewIdx - 1);
 
-                int prevViewPosX = currViewPosX - prevView.getWidth();
+                int prevViewPosX = currViewPosX - prevView.getWidth() - gap;
                 g.translate(prevViewPosX, 0);
                 prevView.paint(g);
                 g.translate(-prevViewPosX, 0);
@@ -44,7 +56,7 @@ public class PageView extends ScrollPane {
 
             if (currentViewIdx + 1 < model.size()) {
                 Component nextView = (Component) model.elementAt(currentViewIdx + 1);
-                int nextViewPosX = currViewPosX + currView.getWidth();
+                int nextViewPosX = currViewPosX + currView.getWidth() + gap;
                 g.translate(nextViewPosX, 0);
                 nextView.paint(g);
                 g.translate(-nextViewPosX, 0);
