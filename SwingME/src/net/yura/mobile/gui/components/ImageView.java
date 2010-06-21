@@ -1,5 +1,7 @@
 package net.yura.mobile.gui.components;
 
+import javax.microedition.lcdui.Image;
+
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
@@ -65,12 +67,19 @@ public class ImageView extends Component {
     // Override
     public void paintComponent(Graphics2D g) {
 
-        double ratio = getScale();
-        int imgX = getImgX(ratio);
-        int imgY = getImgY(ratio);
-
         if (bgImage != null) {
-            ImageUtil.drawScaledImage(g.getGraphics(), bgImage.getImage(), imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
+
+            double ratio = getScale();
+            int imgX = getImgX(ratio);
+            int imgY = getImgY(ratio);
+            Image img = bgImage.getImage();
+
+            if (img == null) {
+                bgImage.paintIcon(this, g, imgX, imgY);
+            }
+            else {
+                ImageUtil.drawScaledImage(g.getGraphics(), img, imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
+            }
         }
 
 
@@ -97,7 +106,7 @@ public class ImageView extends Component {
     // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
 
-        consumingMotionEvents = (type[0] != DesktopPane.RELEASED);
+        consumingMotionEvents = (type[0] != DesktopPane.RELEASED && hasImage());
 
         if (type.length >= 2) {
             px = x;
@@ -182,5 +191,9 @@ public class ImageView extends Component {
         if (sp instanceof ScrollPane) {
             ((ScrollPane)sp).animateToFit(startAnimation);
         }
+    }
+
+    private boolean hasImage() {
+        return (bgImage != null && bgImage.getImage() != null);
     }
 }
