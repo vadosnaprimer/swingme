@@ -778,8 +778,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
      */
     private int getDragVelocity(int[] dragBuffer) {
 
-        final long OLDEST_TIME = System.currentTimeMillis() - 200;
-
         int lastPos = dragBufferPos;
         int pos = lastPos;
         int firstPos = lastPos;

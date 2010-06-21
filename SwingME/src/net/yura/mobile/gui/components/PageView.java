@@ -61,11 +61,14 @@ public class PageView extends ScrollPane {
     public void setSize(int w, int h) {
         super.setSize(w, h);
 
+        int vpW = getViewPortWidth();
+        int vpH = getViewPortHeight();
+
         // TODO: How to calculate the size of the components that are not being displayed?
         for (int i = 0; i < model.size(); i++) {
             Component view = (Component) model.elementAt(i);
             view.validate();
-            view.setSize(getViewPortWidth(), getViewPortHeight());
+            view.setSize(vpW, vpH);
         }
     }
 
@@ -80,22 +83,18 @@ public class PageView extends ScrollPane {
 
             Component currView = (Component) model.elementAt(currentViewIdx);
 
-            System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-
             int velocityX = getDragVelocity(true);
             System.out.println("VEL = " + velocityX + " VW = " + viewPortW);
 
             if (currentViewIdx > 0) {
                 if (velocityX > viewPortW || currView.posX > viewPortW / 2) {
                     goPrev();
-                    resetDragSpeed();
                 }
             }
 
             if (currentViewIdx + 1 < model.size()) {
                 if (velocityX < -viewPortW || currView.posX + currView.getWidth() < viewPortW / 2) {
                     goNext();
-                    resetDragSpeed();
                 }
             }
         }
@@ -105,48 +104,39 @@ public class PageView extends ScrollPane {
 
     void goNext() {
 
-        Component old = (Component)model.elementAt(currentViewIdx);
-        int oldX = old.getX() + old.getWidth();
+        Component currComp = (Component)model.elementAt(currentViewIdx);
+        int newViewX = Math.min(currComp.getX() + currComp.getWidth(), getWidth());
 
-        currentViewIdx++;
-
-        Component comp = (Component)model.elementAt(currentViewIdx);
-
-
-        add(comp);
-
-        //TODO: How to reset the size of the components?
-        old.validate();
-        old.setSize(getViewPortWidth(), getViewPortHeight());
-
-        comp.validate();
-        comp.setSize(getViewPortWidth(), getViewPortHeight());
-
-
-        comp.setLocation(oldX, old.getY());
+        selectComp(currentViewIdx + 1, currComp, newViewX);
     }
 
     void goPrev() {
 
-        Component old = (Component)model.elementAt(currentViewIdx);
-        int oldX = old.getX() - getWidth();
+        Component currComp = (Component) model.elementAt(currentViewIdx);
+        int newViewX = Math.max(currComp.getX(), 0) - getWidth();
 
-        currentViewIdx--;
-
-        Component comp = (Component)model.elementAt(currentViewIdx);
-
-
-        add(comp);
-
-        //TODO: How to reset the size of the components?
-        old.validate();
-        old.setSize(getViewPortWidth(), getViewPortHeight());
-
-        comp.validate();
-        comp.setSize(getViewPortWidth(), getViewPortHeight());
-
-        comp.setLocation(oldX, old.getY());
+        selectComp(currentViewIdx - 1, currComp, newViewX);
     }
 
+    private void selectComp(int newViewIdx, Component currComp, int newViewX) {
 
+        currentViewIdx = newViewIdx;
+        Component newComp = (Component)model.elementAt(newViewIdx);
+
+        add(newComp);
+
+        int vpW = getViewPortWidth();
+        int vpH = getViewPortHeight();
+
+        //TODO: How to reset the size of the components?
+        currComp.validate();
+        currComp.setSize(vpW, vpH);
+
+        newComp.validate();
+        newComp.setSize(vpW, vpH);
+
+        newComp.setLocation(newViewX, getViewPortY());
+
+        resetDragSpeed();
+    }
 }
