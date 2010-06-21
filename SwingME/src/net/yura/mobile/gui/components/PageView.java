@@ -8,8 +8,9 @@ import net.yura.mobile.gui.KeyEvent;
 
 public class PageView extends ScrollPane {
 
-    Vector model;
-    int currentViewIdx;
+    private Vector model;
+    private int currentViewIdx;
+    private boolean animating;
 
     public PageView(Vector panels) {
         model = panels;
@@ -75,31 +76,39 @@ public class PageView extends ScrollPane {
     // Override
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
 
-        System.out.println("PageView:processMouseEvent");
+        animating = (type == DesktopPane.RELEASED);
 
-        if (type == DesktopPane.RELEASED) {
-
-            int viewPortW = getViewPortWidth();
-
-            Component currView = (Component) model.elementAt(currentViewIdx);
-
-            int velocityX = getDragVelocity(true);
-            System.out.println("VEL = " + velocityX + " VW = " + viewPortW);
-
-            if (currentViewIdx > 0) {
-                if (velocityX > viewPortW || currView.posX > viewPortW / 2) {
-                    goPrev();
-                }
-            }
-
-            if (currentViewIdx + 1 < model.size()) {
-                if (velocityX < -viewPortW || currView.posX + currView.getWidth() < viewPortW / 2) {
-                    goNext();
-                }
-            }
+        if (animating) {
+            checkViewChange();
         }
 
         super.processMouseEvent(type, pointX, pointY, keys);
+    }
+
+    // Override
+    protected void setViewLocation(int viewX, int viewY) {
+        super.setViewLocation(viewX, viewY);
+
+        if (animating) {
+            checkViewChange();
+        }
+    }
+
+    private void checkViewChange() {
+        int viewPortW = getViewPortWidth();
+        int viewX = getView().getX();
+
+        if (currentViewIdx > 0) {
+            if (viewX > viewPortW / 2) {
+                goPrev();
+            }
+        }
+
+        if (currentViewIdx + 1 < model.size()) {
+            if (viewX + getView().getWidth() < viewPortW / 2) {
+                goNext();
+            }
+        }
     }
 
     void goNext() {
@@ -119,6 +128,8 @@ public class PageView extends ScrollPane {
     }
 
     private void selectComp(int newViewIdx, Component currComp, int newViewX) {
+
+        animating = false;
 
         currentViewIdx = newViewIdx;
         Component newComp = (Component)model.elementAt(newViewIdx);

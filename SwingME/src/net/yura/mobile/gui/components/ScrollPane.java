@@ -123,7 +123,7 @@ public class ScrollPane extends Panel implements Runnable {
 
         // Size of the scroll changed, we need to reset the component location
         // this is NOT how Swing does it, need to find a better method!
-        //getComponent().setLocation(getViewPortX(), getViewPortY());
+        //setViewLocation(getViewPortX(), getViewPortY());
     }
 
     /**
@@ -146,7 +146,7 @@ public class ScrollPane extends Panel implements Runnable {
         // ((Panel)a).setScrollPanel(this);
         //}
 
-        a.setLocation(getViewPortX(), getViewPortY());
+        setViewLocation(getViewPortX(), getViewPortY());
 
         // TODO does it take into account the border?
     }
@@ -237,7 +237,7 @@ public class ScrollPane extends Panel implements Runnable {
             }
         }
 
-        component.setLocation( component.getX()+xdiff , component.getY()+ydiff );
+        setViewLocation( component.getX()+xdiff , component.getY()+ydiff );
 
         // NEVER CALL setBounds here as it will call setSize and that will cause a revalidate
         //component.setBounds(15, 15, component.getWidth(), component.getHeight());
@@ -363,16 +363,16 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             comp.setSize(cw, ch);
 
             if (comp.getX() > getViewPortX()) {
-                comp.setLocation(getViewPortX(), comp.getY());
+                setViewLocation(getViewPortX(), comp.getY());
             }
             if (comp.getY() > getViewPortY()) {
-                comp.setLocation(comp.getX(), getViewPortY());
+                setViewLocation(comp.getX(), getViewPortY());
             }
             if ((cw - getViewPortX() + comp.getX()) < getViewPortWidth()) {
-                comp.setLocation(-cw +getViewPortX() +getViewPortWidth(), comp.getY());
+                setViewLocation(-cw +getViewPortX() +getViewPortWidth(), comp.getY());
             }
             if ((ch - getViewPortY() + comp.getY()) < getViewPortHeight()) {
-                comp.setLocation(comp.getX(),-ch +getViewPortY() +getViewPortHeight());
+                setViewLocation(comp.getX(),-ch +getViewPortY() +getViewPortHeight());
             }
 
         }
@@ -815,6 +815,11 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     protected void resetDragSpeed() {
         // Reset drag speed (0 is "stop" value)
         updateDragSpeed(0, 0, 0);
+
+        // Stop animation...
+        dragFriction = 1000;
+        dragVelocityX = 0;
+        dragVelocityY = 0;
     }
 
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
@@ -848,9 +853,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragVelocityY = 0;
             dragTimeY = -1;
 
-            if (ScrollPane.dragScrollPane == this) {
-                animateScrollPane(null);
-            }
+//            if (ScrollPane.dragScrollPane == this) {
+//                animateScrollPane(null);
+//            }
 
             if (mode == MODE_SCROLLBARS) {
 
@@ -972,7 +977,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragFriction = 1000;
             animateScrollPane(this);
 
-            resetDragSpeed();
+         // Reset drag speed (0 is "stop" value)
+            updateDragSpeed(0, 0, 0);
         }
     }
 
@@ -1148,6 +1154,9 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             diffBottomY += jumpY;
 
             if (!springBack) {
+                //TODO: THIS IS WRONG... This should be a parameter of this method...
+                boolean springBackLeft = ((bounceMode & BOUNCE_LEFT) == 0 && (bounceMode & BOUNCE_TOP) == 0);
+                boolean springBackRight = ((bounceMode & BOUNCE_RIGHT) == 0 && (bounceMode & BOUNCE_BOTTOM) == 0);
                 final int MAX_SPRING = (viewPortHeight / 4);
 
                 if (cY >= 0) {
@@ -1155,7 +1164,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         cY = 0;
                         jumpY = 0;
                     }
-                    else if (dragVelocityY != 0 && cY >= MAX_SPRING) {
+                    else if (dragVelocityY != 0 && cY >= MAX_SPRING && springBackLeft) {
                         dragVelocityY = 0;
                         cY = MAX_SPRING;
                     }
@@ -1165,7 +1174,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         cY += diffBottomY;
                         jumpY = 0;
                     }
-                    else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING) {
+                    else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING && springBackRight) {
                         dragVelocityY = 0;
                         cY += diffBottomY - MAX_SPRING;
                     }
@@ -1276,5 +1285,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         // Start new animation
         fitSizeTime = -1;
         animateScrollPane(startAnimation ? this : null);
+    }
+
+    // Can be overloaded by sub-classes
+    protected void setViewLocation(int viewX, int viewY) {
+        getView().setLocation(viewX, viewY);
     }
 }
