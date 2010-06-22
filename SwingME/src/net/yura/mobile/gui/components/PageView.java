@@ -11,52 +11,57 @@ public class PageView extends ScrollPane {
     private Vector model;
     private int currentViewIdx;
     private boolean animating;
-    private int gap = 50;
+    private int spacing = 10;
 
     public PageView(Vector panels) {
         model = panels;
 
-        setMode( ScrollPane.MODE_NONE );
+        setMode(ScrollPane.MODE_NONE);
 
-        add((Component)model.firstElement());
         currentViewIdx = 0;
+        add(getCurrentView());
 
         resetDragMode();
     }
 
-
-    public void setGap(int gap) {
-        this.gap = gap;
+    public PageView() {
+        this(null);
     }
 
 
-    public int getGap() {
-        return gap;
+    public void setSpacing(int spacing) {
+        this.spacing = spacing;
+    }
+
+
+    public int getSpacing() {
+        return spacing;
     }
 
 
     // Override
     public void paintChildren(Graphics2D g) {
 
-        Component currView = (Component) model.elementAt(currentViewIdx);
+        Component currView = getCurrentView();
 
         if (!currView.consumesMotionEvents()) { // TODO: How to detect that the component is in "pinch mode"?
 
             int currViewPosX = currView.posX; //TODO: Avoid Thread access...
+            Component prevView = getPreviousView();
 
             // here we want to draw the prev or next panel in the model
-            if (currentViewIdx > 0) {
-                Component prevView = (Component) model.elementAt(currentViewIdx - 1);
-
-                int prevViewPosX = currViewPosX - prevView.getWidth() - gap;
+            if (prevView != null) {
+                int prevViewPosX = currViewPosX - prevView.getWidth() - spacing;
                 g.translate(prevViewPosX, 0);
                 prevView.paint(g);
                 g.translate(-prevViewPosX, 0);
             }
 
-            if (currentViewIdx + 1 < model.size()) {
-                Component nextView = (Component) model.elementAt(currentViewIdx + 1);
-                int nextViewPosX = currViewPosX + currView.getWidth() + gap;
+            prevView = null; // Help GC
+            Component nextView = getNextView();
+
+            if (nextView != null) {
+                int nextViewPosX = currViewPosX + currView.getWidth() + spacing;
                 g.translate(nextViewPosX, 0);
                 nextView.paint(g);
                 g.translate(-nextViewPosX, 0);
@@ -66,7 +71,7 @@ public class PageView extends ScrollPane {
         super.paintChildren(g);
 
         g.setColor(0xFF000000);
-        g.drawLine(getViewPortWidth() / 2, 0, getViewPortWidth() / 2, getHeight());
+        g.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
     }
 
 
@@ -78,11 +83,8 @@ public class PageView extends ScrollPane {
         int vpH = getViewPortHeight();
 
         // TODO: How to calculate the size of the components that are not being displayed?
-        for (int i = 0; i < model.size(); i++) {
-            Component view = (Component) model.elementAt(i);
-            view.validate();
-            view.setSize(vpW, vpH);
-        }
+        setViewSize(getPreviousView(), vpW, vpH);
+        setViewSize(getNextView(), vpW, vpH);
     }
 
     // Override
@@ -106,59 +108,101 @@ public class PageView extends ScrollPane {
         }
     }
 
+    /**
+     *  To be overridden by sub-classes. The default implementation uses an Vector.
+     * @return The next display View, or null if there is none (end of the list)
+     */
+    protected Component getNextView() {
+        return (currentViewIdx + 1 < model.size()) ? (Component) model.elementAt(currentViewIdx + 1) : null;
+    }
+
+    /**
+     *  To be overridden by sub-classes. The default implementation uses an Vector.
+     * @return The Current View. Cannot be null.
+     */
+    protected Component getCurrentView() {
+        return (Component) model.elementAt(currentViewIdx);
+    }
+
+    /**
+     *  To be overridden by sub-classes. The default implementation uses an Vector.
+     * @return The previous display View, or null if there is none (end of the list)
+     */
+    protected Component getPreviousView() {
+        return (currentViewIdx > 0) ? (Component) model.elementAt(currentViewIdx - 1) : null;
+    }
+
+    /**
+     *  To be overridden by sub-classes. Called when the central view changes.
+     */
+    protected void setCurrentView(Component view) {
+        if (getNextView() == view) {
+            currentViewIdx++;
+        }
+        else if (getPreviousView() == view) {
+            currentViewIdx--;
+        }
+    }
+
+
+    private void setViewSize(Component view, int w, int h) {
+        if (view != null) {
+            view.validate();
+            view.setSize(w, h);
+        }
+    }
+
     private void checkViewChange() {
-        int viewPortW = getViewPortWidth();
+        int viewPortW = getWidth();
         int viewX = getView().getX();
 
-        if (currentViewIdx > 0) {
+        if (getPreviousView() != null) {
             if (viewX > viewPortW / 2) {
                 goPrev();
             }
         }
 
-        if (currentViewIdx + 1 < model.size()) {
+        if (getNextView() != null) {
             if (viewX + getView().getWidth() < viewPortW / 2) {
                 goNext();
             }
         }
     }
 
-    void goNext() {
+    private void goNext() {
 
-        Component currComp = (Component)model.elementAt(currentViewIdx);
-        int newViewX = Math.min(currComp.getX() + currComp.getWidth(), getWidth());
+        Component currView = getCurrentView();
+        int newViewX = Math.min(currView.getX() + currView.getWidth(), getWidth());
 
-        selectComp(currentViewIdx + 1, currComp, newViewX);
+        selectComp(getNextView(), newViewX);
     }
 
-    void goPrev() {
+    private void goPrev() {
 
-        Component currComp = (Component) model.elementAt(currentViewIdx);
-        int newViewX = Math.max(currComp.getX(), 0) - getWidth();
+        Component currView = getCurrentView();
+        int newViewX = Math.max(currView.getX(), 0) - getWidth();
 
-        selectComp(currentViewIdx - 1, currComp, newViewX);
+        selectComp(getPreviousView(), newViewX);
     }
 
-    private void selectComp(int newViewIdx, Component currComp, int newViewX) {
+    private void selectComp(Component newComp, int newViewX) {
 
         animating = false;
 
-        currentViewIdx = newViewIdx;
-        Component newComp = (Component)model.elementAt(newViewIdx);
-
         add(newComp);
+
+        // NOTE: add() resets the location, so this call needs to be after it
+        newComp.setLocation(newViewX, getViewPortY());
+
+        setCurrentView(newComp);
 
         int vpW = getViewPortWidth();
         int vpH = getViewPortHeight();
 
         //TODO: How to reset the size of the components?
-        currComp.validate();
-        currComp.setSize(vpW, vpH);
-
-        newComp.validate();
-        newComp.setSize(vpW, vpH);
-
-        newComp.setLocation(newViewX, getViewPortY());
+        setViewSize(getPreviousView(), vpW, vpH);
+        setViewSize(newComp, vpW, vpH);
+        setViewSize(getNextView(), vpW, vpH);
 
         resetDragMode();
         resetDragSpeed();
@@ -166,10 +210,10 @@ public class PageView extends ScrollPane {
 
     private void resetDragMode() {
         int bounceMode = 0;
-        if (currentViewIdx > 0) {
+        if (getPreviousView() != null) {
             bounceMode |= BOUNCE_LEFT;
         }
-        if (currentViewIdx < model.size() - 1) {
+        if (getNextView() != null) {
             bounceMode |= BOUNCE_RIGHT;
         }
         setBounceMode(bounceMode);
