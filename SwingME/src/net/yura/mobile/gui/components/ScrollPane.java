@@ -853,9 +853,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragVelocityY = 0;
             dragTimeY = -1;
 
-//            if (ScrollPane.dragScrollPane == this) {
-//                animateScrollPane(null);
-//            }
+            // Stop any "component resize" animation
+            animateToFit(0, true);
 
             if (mode == MODE_SCROLLBARS) {
 
