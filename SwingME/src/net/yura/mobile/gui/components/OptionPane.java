@@ -43,24 +43,57 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         return allWindows;
     }
 
+    /**
+     * @see javax.swing.JOptionPane#YES_NO_OPTION JOptionPane.YES_NO_OPTION
+     */
     public static final int YES_NO_OPTION = 0;
+    /**
+     * @see javax.swing.JOptionPane#OK_OPTION JOptionPane.OK_OPTION
+     */
     public static final int OK_OPTION = 1;
+    /**
+     * @see javax.swing.JOptionPane#OK_CANCEL_OPTION JOptionPane.OK_CANCEL_OPTION
+     */
     public static final int OK_CANCEL_OPTION = 2;
-    
+
+    /**
+     * @see javax.swing.JOptionPane#ERROR_MESSAGE JOptionPane.ERROR_MESSAGE
+     */
     public static final int ERROR_MESSAGE = 0;
+    /**
+     * @see javax.swing.JOptionPane#INFORMATION_MESSAGE JOptionPane.INFORMATION_MESSAGE
+     */
     public static final int INFORMATION_MESSAGE = 1;
+    /**
+     * @see javax.swing.JOptionPane#WARNING_MESSAGE JOptionPane.WARNING_MESSAGE
+     */
     public static final int WARNING_MESSAGE = 2;
+    /**
+     * @see javax.swing.JOptionPane#QUESTION_MESSAGE JOptionPane.QUESTION_MESSAGE
+     */
     public static final int QUESTION_MESSAGE = 3;
+    /**
+     * @see javax.swing.JOptionPane#PLAIN_MESSAGE JOptionPane.PLAIN_MESSAGE
+     */
     public static final int PLAIN_MESSAGE = -1;
-    
-    
-    //private TitleBar title;
-    private Panel content;
-    private Label icon;
+
+    /**
+     * @see javax.swing.JOptionPane#initialValue JOptionPane.initialValue
+     */
     private Button defaultCommand;
+
+    /**
+     * @see javax.swing.JOptionPane#icon JOptionPane.icon
+     */
+    private Label icon;
+
     private ScrollPane scroll;
     private Panel cmdPanel;
-    
+    private Panel content;
+
+    /**
+     * @see javax.swing.JOptionPane#JOptionPane() JOptionPane.JOptionPane
+     */
     public OptionPane() {
 
 
@@ -111,13 +144,11 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     
     private ActionListener actionListener;
 
-
     public void setActionListener(ActionListener actionListener) {
             this.actionListener = actionListener;
     }
     
     public void actionPerformed(String actionCommand) {
-
         setVisible(false);
         if (actionListener!=null) {
             actionListener.actionPerformed(actionCommand);
@@ -135,7 +166,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         }
         return false;
     }
-    
+
+    /**
+     * @see javax.swing.JOptionPane#setMessage(java.lang.Object) JOptionPane.setMessage
+     */
     public void setMessage(Object newMessage) {
         
         content.removeAll();
@@ -158,8 +192,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         else {
             content.add(getComponentFromObject(newMessage),constraints);
         }
-        
-        
+
     }
     
     private Component getComponentFromObject(Object object) {
@@ -210,7 +243,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         tmp2.setPreferredSize( space, -1 );
         return tmp2;
     }
-    
+
+    /**
+     * @see javax.swing.JOptionPane#setMessageType(int) JOptionPane.setMessageType
+     */
     public void setMessageType(int messageType) {
         Icon icn=null;
         switch (messageType) {
@@ -222,10 +258,16 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         setIcon(icn);
     }
 
+    /**
+     * @see javax.swing.JOptionPane#setInitialValue(java.lang.Object) JOptionPane.setInitialValue
+     */
     public void setInitialValue(Button initialValue) {
         defaultCommand = initialValue;
     }
 
+    /**
+     * @see javax.swing.JOptionPane#setOptions(java.lang.Object[]) JOptionPane.setOptions
+     */
     public void setOptions(Button[] options) {
         cmdPanel.removeAll();
         for (int c=0;c<options.length;c++) {
@@ -237,9 +279,16 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             button.addActionListener(this);
             cmdPanel.add(button);
         }
-        MenuBar.autoMnemonic( cmdPanel.getComponents() );
+        // we only want to autoMnemonic when its a simple 2 or 1 button dialog
+        if (options.length <= 2) {
+            // this should be removed one day
+            MenuBar.autoMnemonic( cmdPanel.getComponents() );
+        }
     }
 
+    /**
+     * @see javax.swing.JOptionPane#setIcon(javax.swing.Icon) JOptionPane.setIcon
+     */
     public void setIcon(Icon icon) {
         this.icon.setIcon(icon);
     }
@@ -274,9 +323,19 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
           Logger.error(t);
         }
     }
-   
-    
+
+    private static Button makeButton(String label,String actionCommand,int m) {
+        Button button = new Button((String)DesktopPane.get(label));
+        button.setActionCommand(actionCommand);
+        button.setMnemonic(m);
+        return button;
+    }
+
     private boolean factory;
+
+    /**
+     * @see javax.swing.JOptionPane#showOptionDialog(java.awt.Component, java.lang.Object, java.lang.String, int, int, javax.swing.Icon, java.lang.Object[], java.lang.Object) JOptionPane.showOptionDialog
+     */
     public static OptionPane showOptionDialog(ActionListener parent, Object message, String title, int optionType, int messageType, Icon icon, Button[] options, Button initialValue) {
 
         Vector myselfs = getAllWindows();
@@ -331,23 +390,18 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         return myself;
     }
 
+    /**
+     * @see javax.swing.JOptionPane#showMessageDialog(java.awt.Component, java.lang.Object, java.lang.String, int) JOptionPane.showMessageDialog
+     */
     public static OptionPane showMessageDialog(ActionListener parent, Object message, String title, int messageType) {
-        
         return showOptionDialog(parent, message, title, OK_OPTION, messageType, null, null, null);
-        
     }
 
+    /**
+     * @see javax.swing.JOptionPane#showConfirmDialog(java.awt.Component, java.lang.Object, java.lang.String, int) JOptionPane.showConfirmDialog
+     */
     public static OptionPane showConfirmDialog(ActionListener parent, Object message, String title, int optionType) {
-        
         return showOptionDialog(parent, message, title, optionType, QUESTION_MESSAGE, null, null, null);
-        
-    }
-
-    private static Button makeButton(String label,String actionCommand,int m) {
-        Button button = new Button((String)DesktopPane.get(label));
-        button.setActionCommand(actionCommand);
-        button.setMnemonic(m);
-        return button;
     }
     
 }

@@ -21,6 +21,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.Layout;
 
 /**
@@ -28,6 +29,8 @@ import net.yura.mobile.gui.layout.Layout;
  * @see javax.swing.JPanel
  */
 public class Panel extends Component {
+
+    private static Layout defaultLayout = new FlowLayout();
 
     private Layout layout;
     private Vector components;
@@ -40,6 +43,7 @@ public class Panel extends Component {
         components = new Vector();
         constraints = new Hashtable(1);
         focusable = false;
+        layout = defaultLayout;
         // this is true as u need to select a panel to get to 1 of its components
     }
 
@@ -50,7 +54,6 @@ public class Panel extends Component {
     public Panel(Layout n) {
         this();
         setLayout(n);
-
     }
 
     /**
