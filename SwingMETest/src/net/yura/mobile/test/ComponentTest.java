@@ -603,7 +603,7 @@ public class ComponentTest  extends Section{
                         ImageView imgView = new ImageView();
                         imgView.setBackgroundImage(new Icon(img));
 
-                        imgView.setBackground(0xFFFFFF00);
+                        imgView.setBackground(0xFF000000);
                         panels.addElement(imgView);
 
                     } catch (Exception e) {
