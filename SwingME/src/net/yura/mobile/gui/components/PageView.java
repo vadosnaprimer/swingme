@@ -136,12 +136,26 @@ public class PageView extends ScrollPane {
      *  To be overridden by sub-classes. Called when the central view changes.
      */
     protected void setCurrentView(Component view) {
-        if (getNextView() == view) {
-            currentViewIdx++;
+
+        if (model != null) {
+            currentViewIdx = model.indexOf(view);
         }
-        else if (getPreviousView() == view) {
-            currentViewIdx--;
-        }
+
+        animating = false;
+
+        Component currView = getCurrentView();
+        add(currView);
+
+        int vpW = getViewPortWidth();
+        int vpH = getViewPortHeight();
+
+        //TODO: How to reset the size of the components?
+        setViewSize(getPreviousView(), vpW, vpH);
+        setViewSize(currView, vpW, vpH);
+        setViewSize(getNextView(), vpW, vpH);
+
+        resetDragMode();
+        resetDragSpeed();
     }
 
 
@@ -173,39 +187,26 @@ public class PageView extends ScrollPane {
 
         Component currView = getCurrentView();
         int newViewX = Math.min(currView.getX() + currView.getWidth(), getWidth());
+        currView = null; // Help GC
 
-        selectComp(getNextView(), newViewX);
+        Component nextView = getNextView();
+        setCurrentView(nextView);
+
+        // NOTE: setCurrentView calls add(), and that resets the view location,
+        // so this call needs to be after it
+        nextView.setLocation(newViewX, getViewPortY());
     }
 
     private void goPrev() {
 
-        Component currView = getCurrentView();
-        int newViewX = Math.max(currView.getX(), 0) - getWidth();
+        int newViewX = Math.max(getCurrentView().getX(), 0) - getWidth();
 
-        selectComp(getPreviousView(), newViewX);
-    }
+        Component prevView = getPreviousView();
+        setCurrentView(prevView);
 
-    private void selectComp(Component newComp, int newViewX) {
-
-        animating = false;
-
-        add(newComp);
-
-        // NOTE: add() resets the location, so this call needs to be after it
-        newComp.setLocation(newViewX, getViewPortY());
-
-        setCurrentView(newComp);
-
-        int vpW = getViewPortWidth();
-        int vpH = getViewPortHeight();
-
-        //TODO: How to reset the size of the components?
-        setViewSize(getPreviousView(), vpW, vpH);
-        setViewSize(newComp, vpW, vpH);
-        setViewSize(getNextView(), vpW, vpH);
-
-        resetDragMode();
-        resetDragSpeed();
+        // NOTE: setCurrentView calls add(), and that resets the view location,
+        // so this call needs to be after it
+        prevView.setLocation(newViewX, getViewPortY());
     }
 
     private void resetDragMode() {
