@@ -19,7 +19,12 @@ public class PageView extends ScrollPane {
         setMode(ScrollPane.MODE_NONE);
 
         currentViewIdx = 0;
-        add(getCurrentView());
+
+        Component currView = getCurrentView();
+        if (currView != null) {
+            // Add the current view, only if available
+            add(currView);
+        }
 
         resetDragMode();
     }
@@ -194,7 +199,7 @@ public class PageView extends ScrollPane {
 
         // NOTE: setCurrentView calls add(), and that resets the view location,
         // so this call needs to be after it
-        nextView.setLocation(newViewX, getViewPortY());
+        getCurrentView().setLocation(newViewX, getViewPortY());
     }
 
     private void goPrev() {
@@ -206,7 +211,7 @@ public class PageView extends ScrollPane {
 
         // NOTE: setCurrentView calls add(), and that resets the view location,
         // so this call needs to be after it
-        prevView.setLocation(newViewX, getViewPortY());
+        getCurrentView().setLocation(newViewX, getViewPortY());
     }
 
     private void resetDragMode() {
