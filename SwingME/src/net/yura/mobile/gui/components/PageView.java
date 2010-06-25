@@ -161,6 +161,8 @@ public class PageView extends ScrollPane {
 
         resetDragMode();
         resetDragSpeed();
+
+        repaint();
     }
 
 
