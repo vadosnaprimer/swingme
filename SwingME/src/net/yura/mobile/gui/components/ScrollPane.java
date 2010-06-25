@@ -992,16 +992,23 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int viewPortHeight = getViewPortHeight();
         int viewPortWidth = getViewPortWidth(viewPortHeight);
 
-        if (cW > viewPortWidth || (bounceMode & BOUNCE_HORIZONTAL) != 0) {
+        boolean springBackLeft = ((bounceMode & BOUNCE_LEFT) == 0);
+        boolean springBackRight = ((bounceMode & BOUNCE_RIGHT) == 0);
+        boolean springBackTop = ((bounceMode & BOUNCE_TOP) == 0);
+        boolean springBackBottom = ((bounceMode & BOUNCE_BOTTOM) == 0);
+
+        if (cW > viewPortWidth || !springBackLeft || !springBackRight) {
             cX = dragScrollBarSync(forceBound,
                                    dragStartX, dragLastX, dragStartViewX,
-                                   cX, cW, viewPortWidth);
+                                   cX, cW, viewPortWidth,
+                                   springBackLeft, springBackRight);
         }
 
-        if (cH > viewPortHeight || (bounceMode & BOUNCE_VERTICAL) != 0) {
+        if (cH > viewPortHeight || !springBackTop || !springBackBottom) {
             cY = dragScrollBarSync(forceBound,
                                    dragStartY, dragLastY, dragStartViewY,
-                                   cY, cH, viewPortHeight);
+                                   cY, cH, viewPortHeight,
+                                   springBackTop, springBackBottom);
         }
 
         makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
@@ -1013,12 +1020,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
      */
     private int dragScrollBarSync(boolean bound,
                                 int dragStartY, int dragLastY, int dragStartViewY,
-                                int cY, int cH, int viewPortHeight) {
+                                int cY, int cH, int viewPortHeight,
+                                boolean springBackTop, boolean springBackBottom) {
 
         int diffBottomY = viewPortHeight - cY - cH;
-        //TODO: THIS IS WRONG... This should be a parameter of this method...
-        boolean springBackLeft = ((bounceMode & BOUNCE_LEFT) == 0 && (bounceMode & BOUNCE_TOP) == 0);
-        boolean springBackRight = ((bounceMode & BOUNCE_RIGHT) == 0 && (bounceMode & BOUNCE_BOTTOM) == 0);
 
         // How far are we from the desire position?
         int jumpY = (dragStartY - dragLastY) - (dragStartViewY - cY);
@@ -1032,7 +1037,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (bound) {
                     cY = 0;
                 }
-                else if (springBackLeft) {
+                else if (springBackTop) {
                     cY = cY / 2;
                 }
             }
@@ -1040,7 +1045,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 if (bound) {
                     cY += diffBottomY;
                 }
-                else if (springBackRight) {
+                else if (springBackBottom) {
                     cY += diffBottomY / 2;
                 }
             }
@@ -1077,25 +1082,30 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             dragVelocityY = 0;
         }
 
-        /* if (cW >= viewPortWidth) */{
-            int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
-                                          cX, cW, viewPortWidth,
-                                          time, dragTimeX);
-            cX = newPosX[0];
-            dragVelocityX = newPosX[1];
-            res |= (newPosX[2] != 0);
-            dragTimeX = newPosX[3];
-        }
 
-        /* if (cH > viewPortHeight) */{
-            int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
-                                          cY, cH, viewPortHeight,
-                                          time, dragTimeY);
-            cY = newPosY[0];
-            dragVelocityY = newPosY[1];
-            res |= (newPosY[2] != 0);
-            dragTimeY = newPosY[3];
-        }
+        boolean springBackLeft = ((bounceMode & BOUNCE_LEFT) == 0);
+        boolean springBackRight = ((bounceMode & BOUNCE_RIGHT) == 0);
+        boolean springBackTop = ((bounceMode & BOUNCE_TOP) == 0);
+        boolean springBackBottom = ((bounceMode & BOUNCE_BOTTOM) == 0);
+
+        int[] newPosX = dragScrollBar(dragVelocityX, dragFriction, forceBound,
+                                      cX, cW, viewPortWidth,
+                                      time, dragTimeX,
+                                      springBackLeft, springBackRight);
+        cX = newPosX[0];
+        dragVelocityX = newPosX[1];
+        res |= (newPosX[2] != 0);
+        dragTimeX = newPosX[3];
+
+
+        int[] newPosY = dragScrollBar(dragVelocityY, dragFriction, forceBound,
+                                      cY, cH, viewPortHeight,
+                                      time, dragTimeY,
+                                      springBackTop, springBackBottom);
+        cY = newPosY[0];
+        dragVelocityY = newPosY[1];
+        res |= (newPosY[2] != 0);
+        dragTimeY = newPosY[3];
 
         makeVisible(cX, cY, viewPortWidth, viewPortHeight, false, false);
 
@@ -1104,7 +1114,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     private int[] dragScrollBar(int dragVelocityY, int dragFriction, boolean bound,
                                 int cY, int cH, int viewPortHeight,
-                                int time, int springBackTime) {
+                                int time, int springBackTime,
+                                boolean springBackTop, boolean springBackBottom) {
 
         int diffBottomY = viewPortHeight - cY - cH;
 
@@ -1153,9 +1164,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             diffBottomY += jumpY;
 
             if (!springBack) {
-                //TODO: THIS IS WRONG... This should be a parameter of this method...
-                boolean springBackLeft = ((bounceMode & BOUNCE_LEFT) == 0 && (bounceMode & BOUNCE_TOP) == 0);
-                boolean springBackRight = ((bounceMode & BOUNCE_RIGHT) == 0 && (bounceMode & BOUNCE_BOTTOM) == 0);
                 final int MAX_SPRING = (viewPortHeight / 4);
 
                 if (cY >= 0) {
@@ -1163,7 +1171,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         cY = 0;
                         jumpY = 0;
                     }
-                    else if (dragVelocityY != 0 && cY >= MAX_SPRING && springBackLeft) {
+                    else if (dragVelocityY != 0 && cY >= MAX_SPRING && springBackTop) {
                         dragVelocityY = 0;
                         cY = MAX_SPRING;
                     }
@@ -1173,7 +1181,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                         cY += diffBottomY;
                         jumpY = 0;
                     }
-                    else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING && springBackRight) {
+                    else if (dragVelocityY != 0 && diffBottomY >= MAX_SPRING && springBackBottom) {
                         dragVelocityY = 0;
                         cY += diffBottomY - MAX_SPRING;
                     }

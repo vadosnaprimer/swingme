@@ -1170,7 +1170,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 //#mdebug
                 // Simulate multi touch, when zero is pressed...
-                if (keypad.getIsDownKey() == '0') {
+                if (keypad.isDownAction(Canvas.FIRE)) {
                     multitouchEvent(
                             new int[] {type, type},
                             new int[] {x, 2 * pointerFristX - x - 100},
