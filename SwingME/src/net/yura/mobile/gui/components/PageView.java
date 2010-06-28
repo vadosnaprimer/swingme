@@ -12,6 +12,7 @@ public class PageView extends ScrollPane {
     private int currentViewIdx;
     private boolean animating;
     private int spacing = 10;
+    private boolean prevLayoutDone, nextLayoutDone;
 
     public PageView(Vector panels) {
         model = panels;
@@ -55,10 +56,15 @@ public class PageView extends ScrollPane {
 
             // here we want to draw the prev or next panel in the model
 
-            if (currViewPosX - spacing > 0) {
+            if (currViewPosX - spacing > 0 && hasPreviousView()) {
                 Component prevView = getPreviousView();
 
                 if (prevView != null) {
+                    if (!prevLayoutDone) {
+                        prevLayoutDone = true;
+                        setViewSize(prevView);
+                    }
+
                     int prevViewPosX = currViewPosX - prevView.getWidth() - spacing;
                     g.translate(prevViewPosX, 0);
                     prevView.paint(g);
@@ -67,10 +73,15 @@ public class PageView extends ScrollPane {
             }
 
             int nextViewPosX = currViewPosX + currView.getWidth() + spacing;
-            if (nextViewPosX < getWidth()) {
+            if (nextViewPosX < getWidth() && hasNextView()) {
                 Component nextView = getNextView();
 
                 if (nextView != null) {
+                    if (!nextLayoutDone) {
+                        nextLayoutDone = true;
+                        setViewSize(nextView);
+                    }
+
                     g.translate(nextViewPosX, 0);
                     nextView.paint(g);
                     g.translate(-nextViewPosX, 0);
@@ -82,19 +93,6 @@ public class PageView extends ScrollPane {
 
         g.setColor(0xFF000000);
         g.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
-    }
-
-
-    // Override
-    public void setSize(int w, int h) {
-        super.setSize(w, h);
-
-        int vpW = getViewPortWidth();
-        int vpH = getViewPortHeight();
-
-        // TODO: How to calculate the size of the components that are not being displayed?
-        setViewSize(getPreviousView(), vpW, vpH);
-        setViewSize(getNextView(), vpW, vpH);
     }
 
     // Override
@@ -147,22 +145,11 @@ public class PageView extends ScrollPane {
      */
     protected void setCurrentView(Component view) {
 
-        if (model != null) {
-            currentViewIdx = model.indexOf(view);
-        }
-
         animating = false;
+        prevLayoutDone = false;
+        nextLayoutDone = false;
 
-        Component currView = getCurrentView();
-        add(currView);
-
-        int vpW = getViewPortWidth();
-        int vpH = getViewPortHeight();
-
-        //TODO: How to reset the size of the components?
-        setViewSize(getPreviousView(), vpW, vpH);
-        setViewSize(currView, vpW, vpH);
-        setViewSize(getNextView(), vpW, vpH);
+        add(getCurrentView());
 
         resetDragMode();
         resetDragSpeed();
@@ -170,11 +157,31 @@ public class PageView extends ScrollPane {
         repaint();
     }
 
+    protected boolean hasNextView() {
+        return (getNextView() != null);
+    }
 
-    private void setViewSize(Component view, int w, int h) {
+    protected boolean hasPreviousView() {
+        return (getPreviousView() != null);
+    }
+
+    protected void changeView(int delta) {
+        if (delta < 0 && hasPreviousView()) {
+            currentViewIdx--;
+        }
+        else if (delta > 0 && hasNextView()) {
+            currentViewIdx++;
+        }
+    }
+
+
+    private void setViewSize(Component view) {
         if (view != null) {
+            int vpW = getViewPortWidth();
+            int vpH = getViewPortHeight();
+
             view.validate();
-            view.setSize(w, h);
+            view.setSize(vpW, vpH);
         }
     }
 
@@ -182,13 +189,13 @@ public class PageView extends ScrollPane {
         int viewPortW = getWidth();
         int viewX = getView().getX();
 
-        if (getPreviousView() != null) {
+        if (hasPreviousView()) {
             if (viewX > viewPortW / 2) {
                 goPrev();
             }
         }
 
-        if (getNextView() != null) {
+        if (hasNextView()) {
             if (viewX + getView().getWidth() < viewPortW / 2) {
                 goNext();
             }
@@ -201,8 +208,8 @@ public class PageView extends ScrollPane {
         int newViewX = Math.min(currView.getX() + currView.getWidth(), getWidth());
         currView = null; // Help GC
 
-        Component nextView = getNextView();
-        setCurrentView(nextView);
+        changeView(1);
+        setCurrentView(getCurrentView());
 
         // NOTE: setCurrentView calls add(), and that resets the view location,
         // so this call needs to be after it
@@ -213,8 +220,8 @@ public class PageView extends ScrollPane {
 
         int newViewX = Math.max(getCurrentView().getX(), 0) - getWidth();
 
-        Component prevView = getPreviousView();
-        setCurrentView(prevView);
+        changeView(-1);
+        setCurrentView(getCurrentView());
 
         // NOTE: setCurrentView calls add(), and that resets the view location,
         // so this call needs to be after it
@@ -223,10 +230,10 @@ public class PageView extends ScrollPane {
 
     private void resetDragMode() {
         int bounceMode = 0;
-        if (getPreviousView() != null) {
+        if (hasPreviousView()) {
             bounceMode |= BOUNCE_LEFT;
         }
-        if (getNextView() != null) {
+        if (hasNextView()) {
             bounceMode |= BOUNCE_RIGHT;
         }
         setBounceMode(bounceMode);
