@@ -144,6 +144,7 @@ public class PageView extends ScrollPane {
      *  To be overridden by sub-classes. Called when the central view changes.
      */
     protected void setCurrentView(Component view) {
+        resetDragSpeed();
 
         animating = false;
         prevLayoutDone = false;
@@ -154,9 +155,6 @@ public class PageView extends ScrollPane {
         add(currView);
 
         resetDragMode();
-        resetDragSpeed();
-
-        repaint();
     }
 
     protected boolean hasNextView() {
@@ -174,6 +172,8 @@ public class PageView extends ScrollPane {
         else if (delta > 0 && hasNextView()) {
             currentViewIdx++;
         }
+
+        setCurrentView(getCurrentView());
     }
 
 
@@ -205,28 +205,26 @@ public class PageView extends ScrollPane {
     }
 
     private void goNext() {
+        resetDragSpeed(); // Stop any animation
 
         Component currView = getCurrentView();
         int newViewX = Math.min(currView.getX() + currView.getWidth(), getWidth());
         currView = null; // Help GC
 
         changeView(1);
-        setCurrentView(getCurrentView());
 
-        // NOTE: setCurrentView calls add(), and that resets the view location,
-        // so this call needs to be after it
+        // Update the changed view to its new location
         getCurrentView().setLocation(newViewX, getViewPortY());
     }
 
     private void goPrev() {
+        resetDragSpeed(); // Stop any animation
 
         int newViewX = Math.max(getCurrentView().getX(), 0) - getWidth();
 
         changeView(-1);
-        setCurrentView(getCurrentView());
 
-        // NOTE: setCurrentView calls add(), and that resets the view location,
-        // so this call needs to be after it
+        // Update the changed view to its new location
         getCurrentView().setLocation(newViewX, getViewPortY());
     }
 
