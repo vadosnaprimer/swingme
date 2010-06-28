@@ -52,24 +52,29 @@ public class PageView extends ScrollPane {
         if (!currView.consumesMotionEvents()) { // TODO: How to detect that the component is in "pinch mode"?
 
             int currViewPosX = currView.posX; //TODO: Avoid Thread access...
-            Component prevView = getPreviousView();
 
             // here we want to draw the prev or next panel in the model
-            if (prevView != null) {
-                int prevViewPosX = currViewPosX - prevView.getWidth() - spacing;
-                g.translate(prevViewPosX, 0);
-                prevView.paint(g);
-                g.translate(-prevViewPosX, 0);
+
+            if (currViewPosX - spacing > 0) {
+                Component prevView = getPreviousView();
+
+                if (prevView != null) {
+                    int prevViewPosX = currViewPosX - prevView.getWidth() - spacing;
+                    g.translate(prevViewPosX, 0);
+                    prevView.paint(g);
+                    g.translate(-prevViewPosX, 0);
+                }
             }
 
-            prevView = null; // Help GC
-            Component nextView = getNextView();
+            int nextViewPosX = currViewPosX + currView.getWidth() + spacing;
+            if (nextViewPosX < getWidth()) {
+                Component nextView = getNextView();
 
-            if (nextView != null) {
-                int nextViewPosX = currViewPosX + currView.getWidth() + spacing;
-                g.translate(nextViewPosX, 0);
-                nextView.paint(g);
-                g.translate(-nextViewPosX, 0);
+                if (nextView != null) {
+                    g.translate(nextViewPosX, 0);
+                    nextView.paint(g);
+                    g.translate(-nextViewPosX, 0);
+                }
             }
         }
 
