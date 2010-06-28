@@ -149,7 +149,9 @@ public class PageView extends ScrollPane {
         prevLayoutDone = false;
         nextLayoutDone = false;
 
-        add(getCurrentView());
+        Component currView = getCurrentView();
+        setViewSize(currView);
+        add(currView);
 
         resetDragMode();
         resetDragSpeed();
