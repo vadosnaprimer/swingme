@@ -67,6 +67,14 @@ public class Image {
         int size = Math.max(stream.available(), 8 * 1024);
         BufferedInputStream buffInput = new BufferedInputStream(stream, size);
 
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        try {
+            BitmapFactory.Options.class.getField("inPurgeable").set(opts, true);
+        } catch (Exception e) {
+            // inPurgeable not supported
+            // http://www.droidnova.com/2d-sprite-animation-in-android-addendum,505.html
+        }
+
         Bitmap bitmap;
         try {
             bitmap = BitmapFactory.decodeStream(buffInput);
@@ -115,6 +123,15 @@ public class Image {
     }
 
     public static Image createImage(byte[] imgData, int offset, int length) {
+
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        try {
+            BitmapFactory.Options.class.getField("inPurgeable").set(opts, true);
+        } catch (Exception e) {
+            // inPurgeable not supported
+            // http://www.droidnova.com/2d-sprite-animation-in-android-addendum,505.html
+        }
+
         Bitmap bitmap;
         try {
             bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
