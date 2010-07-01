@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.game.Sprite;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
@@ -180,42 +181,45 @@ public class Slider extends Component {
     }
 
 
+    int click;
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
 
-        int click;
-
-        if (horizontal) {
-
-            click = doClickInScrollbar(
-                    0,
-                    0,
-                    height,
-                    width,
-                    value,
-                    extent,
-                    max,
-                    pointY,
-                    pointX
-            );
+        if (type==DesktopPane.RELEASED) {
+            click = 0;
         }
-        else {
+        else if (type == DesktopPane.PRESSED) {
+            if (horizontal) {
+                click = doClickInScrollbar(
+                        0,
+                        0,
+                        height,
+                        width,
+                        value,
+                        extent,
+                        max,
+                        pointY,
+                        pointX
+                );
+            }
+            else {
+                click = doClickInScrollbar(
+                        0,
+                        0,
+                        width,
+                        height,
+                        value,
+                        extent,
+                        max,
+                        pointX,
+                        pointY
+                );
+            }
 
-            click = doClickInScrollbar(
-                    0,
-                    0,
-                    width,
-                    height,
-                    value,
-                    extent,
-                    max,
-                    pointX,
-                    pointY
-            );
-
+            if (click==CLICK_UP || click == CLICK_DOWN) {
+                getDesktopPane().animateComponent(this);
+            }
         }
-
-        System.out.println("TODO click="+click);
-
+        //System.out.println("TODO click="+click);
     }
 
     public void workoutMinimumSize() {
@@ -229,6 +233,23 @@ public class Slider extends Component {
         else {
             width = thickness;
             height = 20;
+        }
+    }
+
+    public void animate() throws InterruptedException {
+
+        while (true) {
+            if (click == CLICK_UP && value > min) {
+                value--;
+            }
+            else if (click == CLICK_DOWN && value < max) {
+                value++;
+            }
+            else {
+                break;
+            }
+            repaint();
+            wait(20);
         }
     }
 
