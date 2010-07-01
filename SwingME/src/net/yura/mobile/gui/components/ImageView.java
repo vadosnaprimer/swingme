@@ -127,8 +127,7 @@ public class ImageView extends Component {
                 startPinchX = (((x[0] + x[1]) / 2) - imgX) / ratio;
                 startPinchY = (((y[0] + y[1]) / 2) - imgY) / ratio;
 
-                posX = posX + imgX;
-                posY = posY + imgY;
+                setLocation(posX + imgX, posY + imgY);
 
                 width = (int) (imgW * ratio);
                 height = (int) (imgH * ratio);
@@ -160,8 +159,7 @@ public class ImageView extends Component {
                 int difx = (int)(startPinchX*nratio - endPinchX);
                 int dify = (int)(startPinchY*nratio - endPinchY);
 
-                posX = posX - difx;
-                posY = posY - dify;
+                setLocation(posX - difx, posY - dify);
             }
 
             if (type[0] == DesktopPane.RELEASED || type[1] == DesktopPane.RELEASED) {

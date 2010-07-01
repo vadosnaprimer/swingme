@@ -1243,6 +1243,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         int diffW = (viewPortWidth - cW);
         int diffH = (viewPortHeight - cH);
+        int viewPosX = view.getX();
+        int viewPosY = view.getY();
 
         if (!force && diffW > 0 && diffH > 0) {
 
@@ -1258,20 +1260,22 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             view.width = (int) (viewPortWidth - newMaxDiff * ratioW);
             view.height = (int) (viewPortHeight - newMaxDiff * ratioH);
 
-            view.posX = viewPortX + (viewPortWidth - view.width) / 2;
-            view.posY = viewPortY + (viewPortHeight - view.height) / 2;
+            viewPosX = viewPortX + (viewPortWidth - view.width) / 2;
+            viewPosY = viewPortY + (viewPortHeight - view.height) / 2;
         }
         else {
             if (diffW > 0) {
                 view.width = viewPortWidth;
-                view.posX = viewPortX;
+                viewPosX = viewPortX;
             }
 
             if (diffH > 0) {
                 view.height = viewPortHeight;
-                view.posY = viewPortY;
+                viewPosY = viewPortY;
             }
         }
+
+        view.setLocation(viewPosX, viewPosY);
 
         boolean res = (cW != view.getWidth() || cH != view.getHeight() ||
                        cX != view.getX() || cY != view.getY());
