@@ -53,7 +53,10 @@ public class PageView extends ScrollPane {
             setCurrentView(currView);
         }
 
-        if (!currView.consumesMotionEvents()) { // TODO: How to detect that the component is in "pinch mode"?
+        // TODO: How to detect that the component is in "pinch mode"?
+        if (!currView.consumesMotionEvents() &&           // Not Pinching
+             currView.getWidth() >= getViewPortWidth() && // Not Animate to fit
+             currView.getHeight() >= getViewPortHeight()) {
 
             int currViewPosX = currView.posX; //TODO: Avoid Thread access...
 

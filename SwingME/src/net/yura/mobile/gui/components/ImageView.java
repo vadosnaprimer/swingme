@@ -18,8 +18,8 @@ public class ImageView extends Component {
     private double startPinchX, startPinchY;
     private double ratio = 1.0;
 
-    private int[] px;
-    private int[] py;
+//    private int[] px;
+//    private int[] py;
 
     public ImageView() {
         focusable = false;
@@ -88,14 +88,14 @@ public class ImageView extends Component {
 //        bgImage.paintIcon(this, g, 0, 0);
 //        g.getGraphics().scale(1 / ratio, 1 / ratio);
 //        g.translate(-imgX, -imgY);
-
-        if (px != null) {
-            g.setColor(0xFFFF0000);
-            g.drawRect(Math.min(px[0], px[1]),
-                       Math.min(py[0], py[1]),
-                       Math.max(1, Math.abs(px[1] - px[0])),
-                       Math.max(1, Math.abs(py[1] - py[0])));
-        }
+//
+//        if (px != null) {
+//            g.setColor(0xFFFF0000);
+//            g.drawRect(Math.min(px[0], px[1]),
+//                       Math.min(py[0], py[1]),
+//                       Math.max(1, Math.abs(px[1] - px[0])),
+//                       Math.max(1, Math.abs(py[1] - py[0])));
+//        }
     }
 
     // Override
@@ -109,8 +109,8 @@ public class ImageView extends Component {
         consumingMotionEvents = (type[0] != DesktopPane.RELEASED && hasImage());
 
         if (type.length >= 2) {
-            px = x;
-            py = y;
+//            px = x;
+//            py = y;
 
             if (type[0] == DesktopPane.PRESSED || type[1] == DesktopPane.PRESSED) {
 
