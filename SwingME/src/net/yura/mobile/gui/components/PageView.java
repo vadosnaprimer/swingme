@@ -49,6 +49,9 @@ public class PageView extends ScrollPane {
     public void paintChildren(Graphics2D g) {
 
         Component currView = getCurrentView();
+        if (currView != getView()) {
+            setCurrentView(currView);
+        }
 
         if (!currView.consumesMotionEvents()) { // TODO: How to detect that the component is in "pinch mode"?
 
@@ -62,7 +65,7 @@ public class PageView extends ScrollPane {
                 if (prevView != null) {
                     if (!prevLayoutDone) {
                         prevLayoutDone = true;
-                        setViewSize(prevView);
+                        resetViewSize(prevView);
                     }
 
                     int prevViewPosX = currViewPosX - prevView.getWidth() - spacing;
@@ -79,7 +82,7 @@ public class PageView extends ScrollPane {
                 if (nextView != null) {
                     if (!nextLayoutDone) {
                         nextLayoutDone = true;
-                        setViewSize(nextView);
+                        resetViewSize(nextView);
                     }
 
                     g.translate(nextViewPosX, 0);
@@ -150,9 +153,25 @@ public class PageView extends ScrollPane {
         prevLayoutDone = false;
         nextLayoutDone = false;
 
-        Component currView = getCurrentView();
-        setViewSize(currView);
-        add(currView);
+        Component oldView = null;
+        try {
+            oldView = getView();
+        } catch (Exception e) {
+        }
+
+        resetViewSize(view);
+
+        if (view != oldView) {
+            if (oldView != null) {
+                view.setLocation(oldView.getX(), oldView.getY());
+            }
+
+            add(view); // Note: add() resets the view Location...
+
+            if (oldView != null) {
+                view.setLocation(oldView.getX(), oldView.getY());
+            }
+        }
 
         resetDragMode();
     }
@@ -177,7 +196,7 @@ public class PageView extends ScrollPane {
     }
 
 
-    private void setViewSize(Component view) {
+    public void resetViewSize(Component view) {
         if (view != null) {
             int vpW = getViewPortWidth();
             int vpH = getViewPortHeight();
@@ -207,25 +226,33 @@ public class PageView extends ScrollPane {
     private void goNext() {
         resetDragSpeed(); // Stop any animation
 
-        Component currView = getCurrentView();
+        Component currView = getView();
         int newViewX = Math.min(currView.getX() + currView.getWidth(), getWidth());
+        int newViewY = getViewPortY();
+
+        currView.setLocation(newViewX, newViewY);
         currView = null; // Help GC
 
         changeView(1);
 
         // Update the changed view to its new location
-        getCurrentView().setLocation(newViewX, getViewPortY());
+        getView().setLocation(newViewX, newViewY);
     }
 
     private void goPrev() {
         resetDragSpeed(); // Stop any animation
 
-        int newViewX = Math.max(getCurrentView().getX(), 0) - getWidth();
+        Component currView = getView();
+        int newViewX = Math.max(currView.getX(), 0) - getWidth();
+        int newViewY = getViewPortY();
+
+        currView.setLocation(newViewX, newViewY);
+        currView = null; // Help GC
 
         changeView(-1);
 
         // Update the changed view to its new location
-        getCurrentView().setLocation(newViewX, getViewPortY());
+        getView().setLocation(newViewX, newViewY);
     }
 
     private void resetDragMode() {
