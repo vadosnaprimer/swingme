@@ -723,40 +723,47 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
     public void run() {
         //System.out.println("START ScrollPane Thread...");
         long startAnimTime = System.currentTimeMillis();
-//        int count = 0;
+        // int count = 0;
 
-        while (true) {
+        try {
+            while (true) {
+                synchronized (ScrollPane.class) {
 
-            synchronized (ScrollPane.class) {
+                    //System.out.println("- ScrollPane Animate -");
 
-                //System.out.println("- ScrollPane Animate -");
+                    long time = System.currentTimeMillis();
 
-                long time = System.currentTimeMillis();
-                boolean animate = dragScrollBars((int)(time - startAnimTime));
+                    // HACK: Getting the UI lock. At the moment this lock is the
+                    // same as the "windows" object
+                    Object uiLock = getWindow().getDesktopPane().getAllFrames();
+                    synchronized (uiLock) {
 
-//                boolean animate = dragScrollBars(count * 20);
-//                count++;
-                if (!animate) {
-                    if (ScrollPane.dragScrollPane == this) {
-                        ScrollPane.dragScrollPane = null;
+                        boolean animate = dragScrollBars((int)(time - startAnimTime));
+                        //  boolean animate = dragScrollBars(count * 20);
+                        //  count++;
+
+                        if (!animate) {
+                            if (ScrollPane.dragScrollPane == this) {
+                                ScrollPane.dragScrollPane = null;
+                            }
+                            break;
+                        }
                     }
-                    break;
-                }
 
-                int rate = (dragScrollBarMode == DRAG_CLICKED_TRACK) ? DRAG_PAGE_RATE : DRAG_FRAME_RATE;
-                long timeToWait = time - System.currentTimeMillis() + (1000L / rate);
+                    int rate = (dragScrollBarMode == DRAG_CLICKED_TRACK) ? DRAG_PAGE_RATE : DRAG_FRAME_RATE;
+                    long timeToWait = time - System.currentTimeMillis() + (1000L / rate);
                     if (timeToWait > 0) {
-
                         //System.out.println("--- ScrollPane timeToWait = " + timeToWait);
-
-                    try {
                         ScrollPane.class.wait(timeToWait);
                     }
-                catch(InterruptedException e) {
-                    Logger.info(e);
                 }
             }
-        }
+
+        } catch(Throwable e) {
+            Logger.error(e);
+            if (ScrollPane.dragScrollPane == this) {
+                ScrollPane.dragScrollPane = null;
+            }
         }
 
         //System.out.println("END ScrollPane Thread... (" + (System.currentTimeMillis() - startAnimTime) + "ms)");
