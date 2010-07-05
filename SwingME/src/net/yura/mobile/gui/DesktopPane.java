@@ -428,6 +428,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         dummy.add(tooltip);
         dummy.add(indicator);
+
+        Icon i = (Icon)getDefaultTheme(dummy).getProperty("dim", Style.ALL);
+        fade = i==null?null:i.getImage();
+
     //currentWindow.setSize(getWidth(),getHeight());
     }
 
@@ -669,6 +673,20 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
+    /**
+     * this method should not really be used, please use the synth xml instead:
+     * <pre>{@code
+     *<synth>
+     *    <style id="window">
+     *      <imageIcon id="dimImage" path="/dim.png"/>
+     *      <state>
+     *        <property key="dim" value="dimImage"/>
+     *      </state>
+     *    </style>
+     *    <bind style="window" type="region" key="Window"/>
+     *</synth>
+     * }</pre>
+     */
     public void setDimImage(Image a) {
         fade = a;
     }

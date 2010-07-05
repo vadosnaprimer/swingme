@@ -65,13 +65,13 @@ public class FrameTitlePane extends Panel implements ActionListener {
         if (title!=null) {
             String titleAlignment = (String)theme.getProperty("titleAlignment", Style.ALL);
             if ("center".equals(titleAlignment)) {
-                title.setHorizontalAlignment(Graphics.HCENTER);
+                setTitleAlignment(Graphics.HCENTER);
             }
             else if ("trailing".equals(titleAlignment)) {
-                title.setHorizontalAlignment(Graphics.RIGHT);
+                setTitleAlignment(Graphics.RIGHT);
             }
             else { // default is leading
-                title.setHorizontalAlignment(Graphics.LEFT);
+                setTitleAlignment(Graphics.LEFT);
             }
         }
     }
@@ -132,6 +132,23 @@ public class FrameTitlePane extends Panel implements ActionListener {
      */
     public void setIconImage(Icon img) {
         title.setIcon(img);
+    }
+
+    /**
+     * this method should not really be used, please use the synth xml instead:
+     * <pre>{@code
+     *<synth>
+     *    <style id="frameTitlePane">
+     *      <state>
+     *        <property key="titleAlignment" type="string" value="center"/>
+     *      </state>
+     *    </style>
+     *    <bind style="frameTitlePane" type="region" key="TitleBar"/>
+     *</synth>
+     * }</pre>
+     */
+    public void setTitleAlignment(int a) {
+        title.setHorizontalAlignment(a);
     }
     
     private int oldX,oldY;
