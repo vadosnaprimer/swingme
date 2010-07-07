@@ -135,7 +135,7 @@ public class Graphics2D {
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage
          */
         public void drawImage(Image src, int x,int y) {
-                drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), Sprite.TRANS_NONE , x, y);
+                drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), trans , convertTrans(x,y), convertTrans(y,x));
         }
 
         /**
@@ -193,16 +193,16 @@ public class Graphics2D {
         /**
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage
          */
-        public void drawSprite(Sprite src, int x,int y) {
-            // TODO check translate!
-            src.setPosition(x, y);
+        public void drawSprite(Sprite src, int frame, int x,int y) {
+            src.setFrame(frame);
+            src.setPosition(convertTrans(x,y), convertTrans(y,x));
+            // TODO: check what the current translate of the sprite is!
+            src.setTransform(trans);
             src.paint(g);
         }
 
         private int convertTrans(int a,int b) {
-
                 return convertTransform(a,b,trans);
-
         }
 
         private static int convertTransform(int a,int b,int transform) {

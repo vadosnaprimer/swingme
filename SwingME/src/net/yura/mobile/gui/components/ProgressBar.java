@@ -58,8 +58,7 @@ public class ProgressBar extends Component {
 
         if (sprite!=null) {
 
-            	sprite.setFrame(loading);
-		g.drawSprite(sprite, (width-sprite.getWidth())/2, (height-sprite.getHeight())/2);
+		g.drawSprite(sprite, loading, (width-sprite.getWidth())/2, (height-sprite.getHeight())/2);
         }
         else {
 
