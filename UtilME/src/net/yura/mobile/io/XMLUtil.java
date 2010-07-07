@@ -279,7 +279,7 @@ public class XMLUtil {
                 return Float.valueOf( value );
             }
             else if (TAG_BOOLEAN.equals(name)) {
-                return new Boolean( "true".equals( value ) );
+                return "true".equals( value )?Boolean.TRUE:Boolean.FALSE;
             }
             else if (TAG_SHORT.equals(name)) {
                 return new Short( Short.parseShort( value ) );

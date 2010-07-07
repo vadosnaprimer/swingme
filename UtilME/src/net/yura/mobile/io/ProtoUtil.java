@@ -129,7 +129,7 @@ public class ProtoUtil {
                 case BinUtil.TYPE_INTEGER: return new Integer( in2.readInt32() );
                 case BinUtil.TYPE_DOUBLE: return new Double(in2.readDouble());
                 case BinUtil.TYPE_STRING: return in2.readString();
-                case BinUtil.TYPE_BOOLEAN: return new Boolean(in2.readBool());
+                case BinUtil.TYPE_BOOLEAN: return in2.readBool()?Boolean.TRUE:Boolean.FALSE;
                 case BinUtil.TYPE_BYTE: return new Byte((byte)in2.readInt32());
                 case BinUtil.TYPE_CHARACTER: return new Character( (char)in2.readInt32());
                 case BinUtil.TYPE_SHORT: return new Short( (short)in2.readInt32());

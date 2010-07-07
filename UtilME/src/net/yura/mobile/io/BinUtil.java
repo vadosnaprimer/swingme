@@ -150,7 +150,7 @@ public class BinUtil {
             case TYPE_DOUBLE: return new Double(in2.readDouble());
             case TYPE_VECTOR: return readVector(in2);
             case TYPE_STRING: return in2.readUTF();
-            case TYPE_BOOLEAN: return new Boolean(in2.readBoolean());
+            case TYPE_BOOLEAN: return in2.readBoolean()?Boolean.TRUE:Boolean.FALSE;
             case TYPE_BYTE: return new Byte(in2.readByte());
             case TYPE_CHARACTER: return new Character(in2.readChar());
             case TYPE_SHORT: return new Short(in2.readShort());
