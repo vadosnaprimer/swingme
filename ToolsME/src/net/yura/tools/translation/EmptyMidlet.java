@@ -14,11 +14,6 @@ import net.yura.mobile.gui.Midlet;
 public class EmptyMidlet extends Midlet {
 
         @Override
-        protected DesktopPane makeNewRootPane() {
-            return new DesktopPane(this, -1, null);
-        }
-
-        @Override
         protected void initialize(DesktopPane arg0) {
 
         }

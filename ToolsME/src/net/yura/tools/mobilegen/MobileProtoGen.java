@@ -368,7 +368,12 @@ for (ProtoLoader.FieldDefinition field:fields) {
         }
         else {
             if (field.getRepeated() || message.getImplementation() == Hashtable.class) {
-                ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = new "+primitiveToJavaType(field.getType(),true)+"(in2.read"+firstUp(field.getType())+"() );");
+                if ("bool".equals(field.getType())) {
+                    ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = in2.read"+firstUp(field.getType())+"()?Boolean.TRUE:Boolean.FALSE;");
+                }
+                else {
+                    ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = new "+primitiveToJavaType(field.getType(),true)+"(in2.read"+firstUp(field.getType())+"() );");
+                }
             }
             else {
                 ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"();");

@@ -128,14 +128,14 @@ public class XULTranslationTool extends MessageTool {
 
             String badooHome = "E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk/";
 
-            tt.control.setBaseXULDir( new File(badooHome+"res") );
+            tt.control.setBaseXULDir( new File(badooHome+"resources/res_medium_defaults") );
 
-            LookAndFeel plaf = PLAFLoader.loadSynth(new File(badooHome+"res"),
-                                                    new File(badooHome+"res/xml/synth.xml"));
+            LookAndFeel plaf = PLAFLoader.loadSynth(new File(badooHome+"resources/res_medium_defaults"),
+                                                    new File(badooHome+"resources/res_medium_defaults/xml/synth.xml"));
             tt.control.setLookAndFeel(plaf);
 
             PropertiesComm conn = new PropertiesComm();
-            conn.load( new File(badooHome+"res_en/messages_en.txt") );
+            conn.load( new File(badooHome+"resources/res_en/messages_en.txt") );
             tt.load(conn);
 
         }
@@ -144,6 +144,51 @@ public class XULTranslationTool extends MessageTool {
         }
 
         frame.setVisible(true);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+/*
+ * // real synth test
+
+            try {
+                javax.swing.plaf.synth.SynthLookAndFeel lookAndFeel = new javax.swing.plaf.synth.SynthLookAndFeel();
+                lookAndFeel.load( new File("E:/My_World/6_Yura/linuxhome/Domination/assets/domFlash.xml").toURI().toURL() );
+                javax.swing.UIManager.setLookAndFeel(lookAndFeel);
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
+
+            JFrame f = new JFrame("hi");
+            f.add(new javax.swing.JScrollPane());
+            f.add(new javax.swing.JTextField("hi"),BorderLayout.NORTH);
+            f.setVisible(true);
+ */
     }
 
 }
