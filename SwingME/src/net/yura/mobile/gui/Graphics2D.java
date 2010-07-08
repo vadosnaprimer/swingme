@@ -33,6 +33,9 @@ public class Graphics2D {
         private Graphics g;
         private int trans;
 
+        /**
+         * @see java.awt.Graphics#Graphics() Graphics.Graphics
+         */
         Graphics2D() {
         }
 
@@ -40,6 +43,9 @@ public class Graphics2D {
             setGraphics(g);
         }
 
+        /**
+         * @see java.awt.Graphics#getColor() Graphics.getColor
+         */
         public int getColor() {
             return g.getColor();
         }
@@ -48,6 +54,9 @@ public class Graphics2D {
             trans = t;
         }
 
+        /**
+         * @see java.awt.Graphics#setColor(java.awt.Color) Graphics.setColor
+         */
         public void setColor(int c) {
                 //#mdebug warn
                 if (isTransparent(c)) {
@@ -58,6 +67,9 @@ public class Graphics2D {
                 g.setColor(c);
         }
 
+        /**
+         * @see java.awt.Graphics#drawRect(int, int, int, int) Graphics.drawRect
+         */
         public void drawRect(int x,int y,int w,int h) {
 
                 g.drawRect(
@@ -68,6 +80,9 @@ public class Graphics2D {
 
         }
 
+        /**
+         * @see java.awt.Graphics#fillRect(int, int, int, int) Graphics.fillRect
+         */
         public void fillRect(int x,int y,int w,int h) {
 
                 g.fillRect(
@@ -78,7 +93,9 @@ public class Graphics2D {
 
         }
 
-
+        /**
+         * @see java.awt.Graphics#drawLine(int, int, int, int) Graphics.drawLine
+         */
         public void drawLine(int x1,int y1,int x2,int y2) {
 
                 g.drawLine(
@@ -256,6 +273,9 @@ public class Graphics2D {
 
         }
 
+        /**
+         * @see java.awt.Graphics#clipRect(int, int, int, int) Graphics.clipRect
+         */
         public void clipRect(int x, int y, int w, int h) {
 
                 g.clipRect(
@@ -266,6 +286,9 @@ public class Graphics2D {
 
         }
 
+        /**
+         * @see java.awt.Graphics#setClip(int, int, int, int) Graphics.setClip
+         */
         public void setClip(int x, int y, int w, int h) {
 
                 g.setClip(
@@ -276,6 +299,9 @@ public class Graphics2D {
 
         }
 
+    /**
+     * @see java.awt.Graphics#translate(int, int) Graphics.translate
+     */
     public void translate(int x, int y) {
         g.translate( convertTrans(x,y), convertTrans(y,x));
     }
@@ -286,10 +312,16 @@ public class Graphics2D {
         return convertTrans(g.getTranslateY(),g.getTranslateX());
     }
 
+    /**
+     * @see java.awt.Graphics#drawString(java.lang.String, int, int) Graphics.drawString
+     */
     public void drawString(String drawString, int tx, int ty) {
         font.drawString(g,drawString, tx,ty, Graphics.TOP | Graphics.LEFT  );
     }
 
+    /**
+     * @see java.awt.Graphics#setFont(java.awt.Font) Graphics.setFont
+     */
     public void setFont(Font font) {
         this.font = font;
     }
@@ -302,6 +334,9 @@ public class Graphics2D {
         g.setStrokeStyle(stroke);
     }
 
+    /**
+     * @see java.awt.Graphics#fillRoundRect(int, int, int, int, int, int) Graphics.fillRoundRect
+     */
     public void fillRoundRect(int x, int y, int w, int h, int a1, int a2) {
                 g.fillRoundRect(
                         convertTrans(x,y),
@@ -311,6 +346,9 @@ public class Graphics2D {
                         a1,a2);
     }
 
+    /**
+     * @see java.awt.Graphics#drawRoundRect(int, int, int, int, int, int) Graphics.drawRoundRect
+     */
     public void drawRoundRect(int x, int y, int w, int h, int a1, int a2) {
                 g.drawRoundRect(
                         convertTrans(x,y),
@@ -320,6 +358,9 @@ public class Graphics2D {
                         a1,a2);
     }
 
+    /**
+     * @see java.awt.Graphics#fillArc(int, int, int, int, int, int) Graphics.fillArc
+     */
     public void fillArc(int x, int y, int width, int height, int angle, int arc) {
         g.fillArc(
                 convertTrans(x,y),
@@ -328,12 +369,29 @@ public class Graphics2D {
                 convertTrans(height,width), angle, arc);
     }
 
+    /**
+     * @see java.awt.Graphics#fillOval(int, int, int, int) Graphics.fillOval
+     */
+    public void fillOval(int x, int y, int width, int height) {
+        fillArc(x, y, width, height, 0, 360);
+    }
+
+    /**
+     * @see java.awt.Graphics#drawArc(int, int, int, int, int, int) Graphics.drawArc
+     */
     public void drawArc(int x, int y, int width, int height, int angle, int arc) {
         g.drawArc(
                 convertTrans(x,y),
                 convertTrans(y,x),
                 convertTrans(width,height),
                 convertTrans(height,width), angle, arc);
+    }
+
+    /**
+     * @see java.awt.Graphics#drawOval(int, int, int, int) Graphics.drawOval
+     */
+    public void drawOval(int x, int y, int width, int height)  {
+        drawArc(x, y, width, height, 0, 360);
     }
 
     void setGraphics(Graphics gtmp) {
@@ -348,14 +406,24 @@ public class Graphics2D {
         return trans;
     }
 
+    /**
+     * @see java.awt.Graphics#getClipBounds() Graphics.getClipBounds
+     * @see java.awt.Graphics#getClip() Graphics.getClip
+     */
     public int[] getClip() {
         return new int[] {getClipX(),getClipY(),getClipWidth(),getClipHeight()};
     }
 
+    /**
+     * @see java.awt.Graphics#setClip(java.awt.Shape) Graphics.setClip
+     */
     public void setClip(int[] clip) {
         setClip(clip[0], clip[1], clip[2], clip[3]);
     }
 
+    /**
+     * @see java.awt.Graphics#getFont() Graphics.getFont
+     */
     public Font getFont() {
         return font;
     }
