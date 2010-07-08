@@ -106,7 +106,7 @@ public class ImageView extends Component {
     // Override
     public void processMultitouchEvent(int[] type, int[] x, int[] y) {
 
-        consumingMotionEvents = (type[0] != DesktopPane.RELEASED && hasImage());
+        consumingMotionEvents = (type[0] != DesktopPane.RELEASED );
 
         if (type.length >= 2) {
 //            px = x;
@@ -191,7 +191,4 @@ public class ImageView extends Component {
         }
     }
 
-    private boolean hasImage() {
-        return (bgImage != null && bgImage.getImage() != null);
-    }
 }
