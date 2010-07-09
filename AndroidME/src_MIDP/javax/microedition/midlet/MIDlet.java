@@ -36,14 +36,6 @@ public abstract class MIDlet {
         PhoneListener.init();
     }
 
-    public Properties getApplicationProperties() {
-        return applicationProperties;
-    }
-
-    public void setApplicationProperties(Properties applicationProperties) {
-        this.applicationProperties = applicationProperties;
-    }
-
     public Handler getHandler() {
         return this.toolkit.getHandler();
     }
