@@ -225,7 +225,10 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         }
                                         //#mdebug
                                         else {
-                                            throw new Exception("object with idref "+value+" not found");
+                                            Logger.warn("object with idref "+value+" not found");
+                                            // we do not want to throw here, as a image may have failed to load
+                                            // because of some encoding issue, and this should not stop synth from working
+                                            //throw new Exception("object with idref "+value+" not found");
                                         }
                                         //#enddebug
                                     }
