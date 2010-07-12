@@ -124,6 +124,11 @@ public class XULTranslationTool extends MessageTool {
         panel.add(tt.control,BorderLayout.NORTH);
         panel.add(area);
 
+        // this HAS to be done here, as if we do it after, then the
+        // size of the desktop panes has not been setup yet,
+        // and if a error happens then the error dialog will not show
+        frame.setVisible(true);
+
         try {
 
             String badooHome = "E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk/";
@@ -143,7 +148,7 @@ public class XULTranslationTool extends MessageTool {
             ex.printStackTrace();
         }
 
-        frame.setVisible(true);
+
 
 
 
