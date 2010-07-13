@@ -191,9 +191,9 @@ public class BinUtil {
 
     }
 
-    protected static void checkType(int got,int want) {
+    protected static void checkType(int got,int want) throws IOException {
         if (want != got) {
-            throw new RuntimeException("wrong type, expected: "+want+" got: "+got);
+            throw new IOException("wrong type, expected: "+want+" got: "+got);
         }
     }
 
