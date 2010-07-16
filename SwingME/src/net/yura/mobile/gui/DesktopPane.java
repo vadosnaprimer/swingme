@@ -186,7 +186,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private Component nextAnimatedComponent;
     private Image splash;
     private int background;
-    private Image fade;
+    private Icon fade;
     private boolean paintdone;
     private boolean fullrepaint;
     private boolean killflag;
@@ -429,10 +429,8 @@ public class DesktopPane extends Canvas implements Runnable {
         dummy.add(tooltip);
         dummy.add(indicator);
 
-        Icon i = (Icon)getDefaultTheme(dummy).getProperty("dim", Style.ALL);
-        fade = i==null?null:i.getImage();
+        fade = (Icon)getDefaultTheme(dummy).getProperty("dim", Style.ALL);
 
-    //currentWindow.setSize(getWidth(),getHeight());
     }
 
     public LookAndFeel getLookAndFeel() {
@@ -614,7 +612,10 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                         paintComponent(graphics, (Window) windows.elementAt(c));
                         if (c == (windows.size() - 2) && fade != null) {
-                            graphics.drawImage(fade, 0, 0, fade.getWidth(), fade.getHeight(), 0, 0, getWidth(), getHeight(), javax.microedition.lcdui.game.Sprite.TRANS_NONE );
+                            Image i = fade.getImage();
+                            if (i!=null) {
+                                graphics.drawImage(i, 0, 0, fade.getIconWidth(), fade.getIconHeight(), 0, 0, getWidth(), getHeight(), javax.microedition.lcdui.game.Sprite.TRANS_NONE );
+                            }
                         }
     /*
                         if (c == (windows.size() - 2) && fade != null) {
@@ -687,7 +688,7 @@ public class DesktopPane extends Canvas implements Runnable {
      *</synth>
      * }</pre>
      */
-    public void setDimImage(Image a) {
+    public void setDimImage(Icon a) {
         fade = a;
     }
 
