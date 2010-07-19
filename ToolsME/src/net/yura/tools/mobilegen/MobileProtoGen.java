@@ -51,8 +51,13 @@ loader.process(protoSource, objectPackage);
 enumDefs = loader.getEnumDefs();
 messageDefs = loader.getMessageDefs();
 
+File output = new File( getGeneratedFile() );
 
-PrintStream ps = new PrintStream( new File( getGeneratedFile() ) ) {
+if (!output.getParentFile().exists()) {
+	output.getParentFile().mkdirs();
+}
+
+PrintStream ps = new PrintStream( output ) {
     private int indent=0;
     @Override
     public void println(String string) {
