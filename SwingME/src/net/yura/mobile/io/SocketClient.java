@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
@@ -29,8 +28,6 @@ public abstract class SocketClient implements Runnable {
     protected OutputStream out;
     protected InputStream in;
 
-    private final String server;
-
     //#debug debug
     private boolean disconnected = false;
 
@@ -43,8 +40,13 @@ public abstract class SocketClient implements Runnable {
     boolean pauseReconnectOnFailure = false;
 
     private int retryCount = 0;
+    protected String protocol = "socket://";
+    private final String server;
 
-
+    /**
+     * you can pass null into this method, but then you need to Override {@link #getNextServer()}
+     * @param server
+     */
     public SocketClient(String server) {
         this.server = server;
     }
@@ -61,8 +63,11 @@ public abstract class SocketClient implements Runnable {
     }
 
 
-    protected StreamConnection openConnection() throws IOException {
-        return (StreamConnection)Connector.open("socket://" + server);
+    protected StreamConnection openConnection(String serv) throws IOException {
+        return (StreamConnection)Connector.open(protocol + serv);
+    }
+    protected String getNextServer() {
+        return server;
     }
 
     public void addToOutbox(Object obj) {
@@ -79,17 +84,17 @@ public abstract class SocketClient implements Runnable {
 
                             if(!isRunning()) return;
 
-                            //#debug info
-                            Logger.info("[SocketClient] Trying to connect to: "+server);
                             try {
-
                                 retryCount++;
+
+                                String serv = getNextServer();
+                                //#debug info
+                                Logger.info("[SocketClient] Trying to connect to: "+serv);
 
                                 //#debug debug
                                 if (disconnected) throw new IOException();
 
-
-                                conn = openConnection();
+                                conn = openConnection(serv);
                                 out = conn.openOutputStream();
                                 in = conn.openInputStream();
 
