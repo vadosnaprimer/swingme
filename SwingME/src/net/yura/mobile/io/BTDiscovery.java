@@ -17,25 +17,23 @@ import net.yura.mobile.logging.Logger;
  */
 public abstract class BTDiscovery implements DiscoveryListener {
 
-    public BTDiscovery() {
-    }
     public boolean start(int accessCode) {
-            try {
-              String name = LocalDevice.getLocalDevice().getFriendlyName();
-              String address = LocalDevice.getLocalDevice().getBluetoothAddress();
-              handleMyId(name, address);
-              if (isSupported()) {
-                DiscoveryAgent discoveryAgent = LocalDevice.getLocalDevice().getDiscoveryAgent();
-                discoveryAgent.startInquiry(accessCode, this);
-                return true;
-              }
-            } catch (IOException ex) {
-              Logger.warn(ex);
-            }
-            return false;
+        try {
+          String name = LocalDevice.getLocalDevice().getFriendlyName();
+          String address = LocalDevice.getLocalDevice().getBluetoothAddress();
+          handleMyId(name, address);
+          if (isSupported()) {
+            DiscoveryAgent discoveryAgent = LocalDevice.getLocalDevice().getDiscoveryAgent();
+            discoveryAgent.startInquiry(accessCode, this);
+            return true;
+          }
+        } catch (IOException ex) {
+          Logger.warn(ex);
+        }
+        return false;
     }
-    public void deviceDiscovered(RemoteDevice device, DeviceClass deviceClass)
-    {
+    
+    public void deviceDiscovered(RemoteDevice device, DeviceClass deviceClass) {
         boolean isPhone = (deviceClass.getMajorDeviceClass() == 0x200);
         try {
             if (isPhone) {
@@ -48,6 +46,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
             Logger.error(t);
         }
     }
+    
    public void servicesDiscovered(int transId, ServiceRecord[] serviceRecords) {
         try {
             // there should only be one record

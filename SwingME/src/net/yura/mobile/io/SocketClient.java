@@ -4,8 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Vector;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
+
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
@@ -64,6 +67,15 @@ public abstract class SocketClient implements Runnable {
 
 
     protected StreamConnection openConnection(String serv) throws IOException {
+    	
+    	// TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
+        if (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY &&
+    		serv.indexOf(";") < 0) {
+            // TODO: Hack for black berry direct tcp/ip connection
+            // TODO: http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
+        	serv += ";deviceside=true";
+        }
+    	
         return (StreamConnection)Connector.open(protocol + serv);
     }
     protected String getNextServer() {
@@ -177,8 +189,8 @@ public abstract class SocketClient implements Runnable {
                     }
 
                     try {
-//#debug info
-Logger.info("[SocketClient] sending object: "+object);
+						//#debug info
+						Logger.info("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
 
                         //#debug debug
