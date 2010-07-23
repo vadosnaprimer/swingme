@@ -189,8 +189,8 @@ public abstract class SocketClient implements Runnable {
                     }
 
                     try {
-						//#debug info
-						Logger.info("[SocketClient] sending object: "+object);
+			//#debug info
+			Logger.info("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
 
                         //#debug debug
@@ -289,8 +289,8 @@ public abstract class SocketClient implements Runnable {
 
                     //#mdebug info
                     if (writeThread!=null) {
-                      Logger.info("[SocketClient] Exception during read from socket");
-                      Logger.info(ex);
+                        Logger.info("[SocketClient] Exception during read from socket");
+                        Logger.info(ex);
                     }
                     //#enddebug
 
@@ -377,16 +377,30 @@ public abstract class SocketClient implements Runnable {
         return maxRetries;
     }
 
+    /**
+     * this is called when a object is recieved from the server
+     */
     protected abstract void handleObject(Object task);
+
+    /**
+     * this is used to update a connection indicator
+     */
     protected abstract void updateState(int c);
 
     protected abstract void write(OutputStream out, Object object) throws IOException;
     protected abstract Object read(InputStream in) throws IOException;
 
+    /**
+     * this method is called when a connection is established
+     */
     protected abstract void connected(InputStream in,OutputStream out);
 
-    // this should send a new message if you want to make a connection again
-    // the message you send will be something like 'hello' or 'login'
+    /**
+     * This method is called when a connection is lost
+     *
+     * this should send a new message if you want to make a connection again
+     * the message you send will be something like 'hello' or 'login'
+     */
     protected abstract void disconnected();
 
 }
