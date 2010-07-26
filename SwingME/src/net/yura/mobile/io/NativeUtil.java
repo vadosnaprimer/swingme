@@ -506,6 +506,7 @@ public class NativeUtil {
                 }
             }
             catch(IOException ioe) {
+            	//#debug info
                       Logger.info(ioe);
             }
         }

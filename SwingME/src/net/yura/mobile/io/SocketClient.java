@@ -78,6 +78,7 @@ public abstract class SocketClient implements Runnable {
     	
         return (StreamConnection)Connector.open(protocol + serv);
     }
+    
     protected String getNextServer() {
         return server;
     }
@@ -120,17 +121,36 @@ public abstract class SocketClient implements Runnable {
                             }
                             catch (SecurityException s) {
                                 updateState(DISCONNECTED);
+                                //#debug info
                                 Logger.info(s);
 
                                 securityException();
                                 return;
                             }
                             catch (Exception x) {
-
-
+                            	//#debug info
                                 Logger.info(x);
 
-                                if (retryCount <= maxRetries){
+                                if (pauseReconnectOnFailure && retryCount > maxRetries) {
+                                    updateState(DISCONNECTED_AND_PAUSED);
+                                    // number of reconnects exhausted so wait thread
+                                    synchronized(this) {
+                                        try {
+                                            wait();
+                                        }
+                                        catch (Exception e){
+                                        	//#debug info
+                                            Logger.info(e);
+                                        }
+                                    }
+
+                                    // update listener with current state
+                                    updateState(DISCONNECTED);
+
+                                    // reset the retry count
+                                    retryCount = 0;
+                                }
+                                else {
                                     updateState(DISCONNECTED);
 
                                     try {
@@ -138,42 +158,14 @@ public abstract class SocketClient implements Runnable {
                                         Thread.sleep(wait);
 
                                         // increment the wait time between subsequent reconnect attempts
-
                                         wait = wait * retryWaitMultiplier;
                                         if (wait > maxWaitTimeMillis) {
                                             wait = maxWaitTimeMillis;
                                         }
-
                                     }
                                     catch (InterruptedException ex) {
+                                    	//#debug info
                                       Logger.info(ex);
-                                    }
-
-
-                                }
-                                else {
-
-                                    if (pauseReconnectOnFailure){
-
-                                        updateState(DISCONNECTED_AND_PAUSED);
-
-                                        // number of reconnects exhausted so wait thread
-                                        synchronized(this) {
-                                            try {
-                                                wait();
-                                            }
-                                            catch (Exception e){
-                                                Logger.info(e);
-                                            }
-                                        }
-                                    }
-                                    else {
-
-                                        // update listener with current state
-                                        updateState(DISCONNECTED);
-
-                                        // reset the retry count
-                                        retryCount = 0;
                                     }
                                 }
                             }
@@ -249,10 +241,8 @@ public abstract class SocketClient implements Runnable {
          // close the Connection, the readThread stays in the blocked state
         NativeUtil.close(in); // close on input can block???
         NativeUtil.close(out);
-
         in = null;
         out = null;
-
 
         // move anything in the inbox to the offline inbox
         if (writeThread != null){
@@ -262,7 +252,6 @@ public abstract class SocketClient implements Runnable {
             }
             writeThread.clearInbox();
         }
-
     }
 
 
@@ -276,10 +265,11 @@ public abstract class SocketClient implements Runnable {
             Object task;
             while (true) {
                 try {
-
+              
+               
                     //#debug debug
                     if (disconnected) throw new IOException();
-
+                    
                     task = read(in);
                 }
                 catch(Exception ex) {
@@ -317,6 +307,7 @@ public abstract class SocketClient implements Runnable {
                 catch (Exception x) {
                     //#debug warn
                     Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
+                    //#debug error
                     Logger.error(x);
                 }
                 //#debug info
@@ -333,15 +324,17 @@ public abstract class SocketClient implements Runnable {
             Logger.info("[SocketClient] ENDING "+ name );
         }
         catch (Throwable t){
+        	//#debug error
             Logger.error(t);
         }
     }
 
     public void disconnect() {
         shutdownConnection();
-
-        writeThread.kill();
-        writeThread = null;
+        if(writeThread != null) {
+        	writeThread.kill();
+        	writeThread = null;
+        }
     }
 
     protected void sendOfflineInboxMessages() {
