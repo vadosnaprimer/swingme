@@ -50,17 +50,17 @@ public class MetalIcon extends Icon {
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
 
-        g.setColor( foreground==Style.NO_COLOR?c.getCurrentForeground():foreground );
+        int fcolor = foreground==Style.NO_COLOR?c.getCurrentForeground():foreground;
+        g.setColor( fcolor );
 
         if (type == LookAndFeel.ICON_CHECKBOX) {
 
                 int w = getIconWidth();
                 int h = getIconHeight();
 
-                int a = g.getColor();
                 g.setColor( background );
                 g.fillRect(x, y, w, h);
-                g.setColor(a);
+                g.setColor( fcolor );
                 g.drawRect(x, y, w-1, h-1);
 
                 if (c instanceof Button) {
@@ -73,7 +73,7 @@ public class MetalIcon extends Icon {
                         }
                     }
                 }
-                
+
 
 
         }
@@ -82,10 +82,9 @@ public class MetalIcon extends Icon {
                 int w = getIconWidth();
                 int h = getIconHeight();
 
-                int a = g.getColor();
                 g.setColor( background );
                 g.fillArc(x, y, w, h, 0, 360);
-                g.setColor(a);
+                g.setColor( fcolor );
                 g.drawArc(x, y, w-1, h-1, 0, 360);
 
                 if (c instanceof Button) {
