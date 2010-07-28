@@ -210,7 +210,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
     public void getCellId() {
         ServiceLink link = ServiceLink.getInstance();
         if (!bCellRequestMade) {
-            link.addToOutbox(new ServiceLink.Task("GetCellId", null));
+            link.sendTask(new ServiceLink.Task("GetCellId", null));
             bCellRequestMade = true;
         }
         if (!link.isConnected()) {
@@ -223,13 +223,13 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     public void getWifiList() {
         ServiceLink link = ServiceLink.getInstance();
-        link.addToOutbox(new ServiceLink.Task("GetWiFiSsList", null));
+        link.sendTask(new ServiceLink.Task("GetWiFiSsList", null));
     }
 
     public void setNotifyForCellId(boolean b) {
         ServiceLink link = ServiceLink.getInstance();
         if (!bCellNotifyMade) {
-            link.addToOutbox(new ServiceLink.Task("PutOptionCellIdPush", new Boolean(b)));
+            link.sendTask(new ServiceLink.Task("PutOptionCellIdPush", new Boolean(b)));
             bCellNotifyMade = true;
         }
         if (!link.isConnected()) {
@@ -246,7 +246,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
 
     public void setNotifyForWifiList(boolean b) {
         ServiceLink link = ServiceLink.getInstance();
-        link.addToOutbox(new ServiceLink.Task("PutOptionWiFiPush", new Boolean(b)));
+        link.sendTask(new ServiceLink.Task("PutOptionWiFiPush", new Boolean(b)));
     }
 
     public javax.microedition.location.Coordinates getGPS() throws javax.microedition.location.LocationException, InterruptedException {

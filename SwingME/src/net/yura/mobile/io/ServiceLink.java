@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
+
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -21,7 +23,7 @@ public class ServiceLink extends SocketClient {
 
     public void setDetailedLogging(Boolean b) {
         if (isConnected()) {
-            addToOutbox(new ServiceLink.Task("PutOptionDetailedLog", b));
+        	sendTask(new ServiceLink.Task("PutOptionDetailedLog", b));
         }
     }
 
@@ -48,9 +50,15 @@ public class ServiceLink extends SocketClient {
             Hashtable info = new Hashtable();
             info.put("major", new Integer(majorVersion));
             info.put("minor", new Integer(minorVersion));
-            serviceLink.addToOutbox(new Task("GetVersion", (Object) info));
+            serviceLink.sendTask(new Task("GetVersion", (Object) info));
         }
         return serviceLink;
+    }
+    
+    public void sendTask(Task task) {
+    	if (Midlet.getPlatform()==Midlet.PLATFORM_NOKIA_S60) {
+    		addToOutbox(task);
+    	}
     }
 
     public void registerForTask(String method, Object handler) {

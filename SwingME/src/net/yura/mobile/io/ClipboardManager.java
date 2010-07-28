@@ -18,13 +18,13 @@ public abstract class ClipboardManager implements ServiceLink.TaskHandler {
     public void getClipboard() {
         ServiceLink link = ServiceLink.getInstance();
         if (link.isConnected())
-            link.addToOutbox(new ServiceLink.Task("GetClipboardText", null));
+            link.sendTask(new ServiceLink.Task("GetClipboardText", null));
     }
 
     public void putClipboard(String text) {
         ServiceLink link = ServiceLink.getInstance();
         if (link.isConnected())
-            link.addToOutbox(new ServiceLink.Task("PutClipboardText", text));
+            link.sendTask(new ServiceLink.Task("PutClipboardText", text));
     }
 
 }

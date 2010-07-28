@@ -20,7 +20,7 @@ public abstract class ContactManager implements ServiceLink.TaskHandler {
     public void getContactCount() {
         ServiceLink link = ServiceLink.getInstance();
         if (link.isConnected()) {
-            link.addToOutbox(new ServiceLink.Task("GetContactCount", null));
+            link.sendTask(new ServiceLink.Task("GetContactCount", null));
         }
     }
 
