@@ -112,7 +112,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                     String id=parser.getAttributeValue(null, "id");
                     Style newStyle = readStyle(parser,fonts);
-                    
+
                     //#mdebug debug
                     if (styleList.get(id)!=null) {
                         // this is the error swing would throw
@@ -223,7 +223,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         if (obj!=null) {
                                             newStyle.addProperty(obj, key, st);
                                         }
-                                        //#mdebug
+                                        //#mdebug warn
                                         else {
                                             Logger.warn("object with idref "+value+" not found");
                                             // we do not want to throw here, as a image may have failed to load
@@ -232,7 +232,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         }
                                         //#enddebug
                                     }
-                                    //#mdebug
+                                    //#mdebug debug
                                     else {
                                         throw new Exception("unknown property type "+type);
                                     }
