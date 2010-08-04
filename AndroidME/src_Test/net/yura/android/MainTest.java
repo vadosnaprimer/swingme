@@ -2,6 +2,7 @@ package net.yura.android;
 
 
 
+import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.Graphics;
 import javax.wireless.messaging.MessageConnection;
@@ -35,6 +36,7 @@ public class MainTest extends Section {
         addSection("PIM", new PimTest());
         addSection("Multimedia", new MultimediaTest());
         addTest("Send SMS", "sms");
+        addTest("Show Notification", "notification");
     }
 
     //Override
@@ -69,6 +71,15 @@ public class MainTest extends Section {
             smsPanel.add(smsSendBtn, Graphics.BOTTOM);
 
             addToScrollPane(smsPanel, null);
+        }
+        else if ("notification".equals(actionCommand)) {
+            String url = "notify://dummyServer?title=test&num=4&message=Some Message&icon=notify_new_msgs";
+            try {
+                Midlet.getMidlet().platformRequest(url);
+            } catch (Throwable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

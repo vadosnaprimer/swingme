@@ -3,8 +3,14 @@ package javax.microedition.midlet;
 
 import java.util.Properties;
 import javax.microedition.io.ConnectionNotFoundException;
+
+
+import net.yura.android.AndroidMeMIDlet;
 import net.yura.android.lcdui.Toolkit;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -20,6 +26,7 @@ public abstract class MIDlet {
     public static final String PROTOCOL_SMS = "sms:";
     public static final String PROTOCOL_PHONE = "tel:";
     public static final String PROTOCOL_EMAIL = "email:";
+    public static final String PROTOCOL_NOTIFY = "notify:";
 
     public static MIDlet DEFAULT_MIDLET;
     public static Toolkit DEFAULT_TOOLKIT;
@@ -94,15 +101,19 @@ public abstract class MIDlet {
 
     public boolean platformRequest(String url)
             throws ConnectionNotFoundException {
+
         Uri content = Uri.parse(url);
-        String action;
-        if (url.startsWith(PROTOCOL_PHONE)) {
-            action = Intent.ACTION_DIAL;
-        } else {
-            action = Intent.ACTION_DEFAULT;
+
+        if (url.startsWith(PROTOCOL_NOTIFY)) {
+            showNotification(content);
         }
-        Intent intent = new Intent(action, content);
-        this.getActivity().startActivity(intent);
+        else {
+            String action = (url.startsWith(PROTOCOL_PHONE)) ?
+                 Intent.ACTION_DIAL : Intent.ACTION_DEFAULT;
+            Intent intent = new Intent(action, content);
+            getActivity().startActivity(intent);
+        }
+
         return false;
     }
 
@@ -115,6 +126,47 @@ public abstract class MIDlet {
         return 0;
     }
 
+    private void showNotification(Uri uri) {
+        String title = uri.getQueryParameter("title");
+        String num = uri.getQueryParameter("num");
+        String message = uri.getQueryParameter("message");
+        String icon = uri.getQueryParameter("icon");
+
+        Context ctx = getActivity();
+        int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
+
+        System.out.println(">>>> showNotification:" +
+                " title = " + title +
+                " num = " + num +
+                " message = " + message +
+                " icon = " + icon +
+                " iconId = " + iconId);
+
+        Intent notifyIntent = new Intent(ctx, AndroidMeMIDlet.class);
+        PendingIntent intent = PendingIntent.getActivity(ctx, 0,
+                    notifyIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Notification notif = new Notification(iconId, title, System.currentTimeMillis());
+
+        notif.iconLevel = 3;
+        notif.vibrate = new long[] {100,100,200,300};
+        notif.defaults = Notification.DEFAULT_ALL;
+        notif.ledOnMS = 100;
+        notif.ledOffMS = 100;
+        //notif.flags = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+
+        try {
+            notif.number = Integer.parseInt(num);
+        } catch (Throwable e) {
+            // Ignore wrong or missing message number
+        }
+
+        notif.setLatestEventInfo(ctx, title, message, intent);
+
+        NotificationManager notifManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+        notifManager.notify(0, notif);
+    }
+
 
     private static class PhoneListener extends PhoneStateListener {
 
@@ -125,7 +177,7 @@ public abstract class MIDlet {
                     instance = new PhoneListener();
 
                     // Register our Telephony Listener, so we can have Cell ID's updates
-                    TelephonyManager tm = getTelephonyManager();
+                    TelephonyManager tm = instance.getTelephonyManager();
                     tm.listen(instance, PhoneListener.LISTEN_CELL_LOCATION);
                     tm.listen(instance, PhoneListener.LISTEN_SIGNAL_STRENGTH);
 
@@ -137,7 +189,7 @@ public abstract class MIDlet {
             }
         }
 
-        static private TelephonyManager getTelephonyManager() {
+        private TelephonyManager getTelephonyManager() {
             return (TelephonyManager) DEFAULT_ACTIVITY.getSystemService(Context.TELEPHONY_SERVICE);
         }
 
