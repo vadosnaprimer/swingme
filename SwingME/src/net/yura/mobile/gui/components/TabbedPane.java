@@ -56,7 +56,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             setLayout(l);
             setName("TabbedPane");
             tabLabel = new Label();
-            tabLabel.setPadding(1);
+            tabLabel.setMargin(1);
             tabList = new List( new DefaultCellEditor(tabLabel) );
             tabs = new Vector();
 
