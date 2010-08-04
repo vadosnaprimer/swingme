@@ -321,6 +321,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
                         midlet = (MIDlet) midletClass.newInstance();
 
                         if (midlet != null) {
+midlet.platformRequest("notify://dummyServer?title=title&num=4&message=hello&icon=notify_new_msgs");
                             midlet.doStartApp();
                         }
                     } catch (Exception ex) {
