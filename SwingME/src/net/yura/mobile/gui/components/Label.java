@@ -91,15 +91,18 @@ public class Label extends Component {
                 setIcon(icon);
         }
 
-        public void setPadding(int padding) {
+        /**
+         * @see javax.swing.AbstractButton#setMargin(java.awt.Insets) AbstractButton.setMargin
+         */
+        public void setMargin(int padding) {
             this.padding = padding;
         }
 
         /**
          * @return The padding of the label
-         * @see javax.swing.JComponent#getInsets() JComponent.getInsets
+         * @see javax.swing.AbstractButton#getMargin() AbstractButton.getMargin
          */
-        public int getPadding() {
+        public int getMargin() {
             return padding;
         }
 
