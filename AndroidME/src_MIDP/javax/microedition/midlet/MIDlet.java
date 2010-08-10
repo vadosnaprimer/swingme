@@ -143,8 +143,7 @@ public abstract class MIDlet {
                 " iconId = " + iconId);
 
         Intent notifyIntent = new Intent(ctx, AndroidMeMIDlet.class);
-        PendingIntent intent = PendingIntent.getActivity(ctx, 0,
-                    notifyIntent, Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent intent = PendingIntent.getActivity(ctx, 0, notifyIntent, 0);
 
         Notification notif = new Notification(iconId, title, System.currentTimeMillis());
 
