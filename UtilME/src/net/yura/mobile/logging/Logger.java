@@ -58,7 +58,7 @@ public class Logger {
      * should work at the info level most of the time to avoid all the output.
      * Expected exceptions can be reported on the debug level
      */
-    public static void debug(Exception exception) {
+    public static void debug(Throwable exception) {
       //#debug debug
       if(level<=DEBUG) logger.log(exception, DEBUG);
     }
