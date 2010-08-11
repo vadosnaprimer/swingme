@@ -43,7 +43,7 @@ public abstract class BaseGen extends Task {
         this.classNamesFile = classNamesFile;
     }
 
-    public String getGeneratedFile() {
+    public File getGeneratedFile() {
         StringBuffer tmp = new StringBuffer();
         tmp.append( sourceRoot );
         tmp.append( File.separator ); // TODO may not work on mac?????
@@ -51,7 +51,14 @@ public abstract class BaseGen extends Task {
         tmp.append( File.separator );
         tmp.append( this.outputClass );
         tmp.append( ".java" );
-        return tmp.toString();
+
+        File output = new File( tmp.toString() );
+
+        if (!output.getParentFile().exists()) {
+                output.getParentFile().mkdirs();
+        }
+
+        return output;
     }
 
     public void setOutputPackage( String argument ) {

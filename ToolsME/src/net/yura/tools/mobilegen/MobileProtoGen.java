@@ -51,11 +51,7 @@ loader.process(protoSource, objectPackage);
 enumDefs = loader.getEnumDefs();
 messageDefs = loader.getMessageDefs();
 
-File output = new File( getGeneratedFile() );
-
-if (!output.getParentFile().exists()) {
-	output.getParentFile().mkdirs();
-}
+File output = getGeneratedFile();
 
 PrintStream ps = new PrintStream( output ) {
     private int indent=0;
@@ -117,7 +113,7 @@ Hashtable<String,MessageDefinition> messageDefs;
             }
         }
 
-        ps.println("public ProtoAccess() { }"); // empty constructor
+        ps.println("public "+getOutputClass()+"() { }"); // empty constructor
 
         printEnummethod(ps);
 

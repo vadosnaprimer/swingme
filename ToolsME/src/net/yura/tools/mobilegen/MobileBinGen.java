@@ -39,8 +39,8 @@ String className = theclass.getSimpleName();
 //classes.add(TestObject.class);
 
 ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile());
-File f = new File(getGeneratedFile());
-System.out.println("saving to file: "+getGeneratedFile());
+File f = getGeneratedFile();
+System.out.println("saving to file: "+f);
 PrintStream ps = new PrintStream( f); //new File("src/net/yura/mobile/gen/BinAccess.java"));
 
 int n = 0;
@@ -71,7 +71,7 @@ ps.println("    public static final int TYPE_"+c.getSimpleName().toUpperCase()+"
 n++;
 }
 
-ps.println("    public BinAccess() {");
+ps.println("    public "+getOutputClass()+"() {");
 ps.println("    }");
 
 ps.println("    protected void writeObject(DataOutputStream out, Object object) throws IOException {");
