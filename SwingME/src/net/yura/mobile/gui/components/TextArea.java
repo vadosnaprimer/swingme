@@ -508,7 +508,7 @@ public class TextArea extends TextComponent {
         public int[] getLines(String str,Font f,int startPos,int startW, int w) {
 
   //#debug debug
-//  Logger.debug("getLines start="+startPos +" w="+w+" stringLength="+str.length());
+  Logger.debug("getLines start="+startPos +" w="+w+" stringLength="+str.length());
 // this is here as this is quite a CPU intensive method
 
 		final Vector parts = new Vector();

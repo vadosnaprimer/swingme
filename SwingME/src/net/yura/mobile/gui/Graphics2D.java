@@ -188,7 +188,7 @@ public class Graphics2D {
             if (Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
                 int tile = ((dest_w/a)*(dest_h/b));
                 if ( tile>15 ) {
-//                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
+                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
 
                     if ( tile>30 ) {
                       Logger.info("###########################################################");
