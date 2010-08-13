@@ -162,7 +162,7 @@ public class Graphics2D {
         public void drawImage(Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
 
             if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) {
-                // #debug
+                //#debug debug
                 //Logger.debug("calling tile on a area of size less then 0: src_w=" +src_w  +" src_h="+src_h +" dest_w="+ dest_w +" dest_h="+dest_h );
                 return;
             }
@@ -188,7 +188,7 @@ public class Graphics2D {
             if (Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
                 int tile = ((dest_w/a)*(dest_h/b));
                 if ( tile>15 ) {
-                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
+//                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
 
                     if ( tile>30 ) {
                       Logger.info("###########################################################");

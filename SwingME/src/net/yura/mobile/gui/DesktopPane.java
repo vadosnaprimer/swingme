@@ -754,7 +754,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public void fullRepaint() {
         // this is here coz this method should NOT be used
         //#debug debug
-        Logger.debug("FULL REPAINT!!! this method should NOT normally be called");
+//        Logger.debug("FULL REPAINT!!! this method should NOT normally be called");
 
         synchronized(uiLock) {
             fullrepaint = true;
@@ -963,6 +963,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
             //#mdebug
             if (keyevent.isDownKey(Canvas.KEY_STAR)) {
+            	System.gc();
                 mem = (Runtime.getRuntime().freeMemory() >> 10) + "K/" + (Runtime.getRuntime().totalMemory() >> 10) + "K";
                 fullRepaint();
             }
