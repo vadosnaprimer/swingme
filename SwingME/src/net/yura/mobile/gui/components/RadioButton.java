@@ -66,14 +66,14 @@ public class RadioButton extends Button {
 	/**
 	 * @see javax.swing.AbstractButton#getRolloverSelectedIcon() AbstractButton.getRolloverSelectedIcon
 	 */
-	protected Icon getRolloverSelectedIcon() {
+	public Icon getRolloverSelectedIcon() {
 		return focusedSelectedImage;
 	}
 
 	/**
 	 * @see javax.swing.AbstractButton#setRolloverSelectedIcon() AbstractButton.setRolloverSelectedIcon
 	 */
-	protected void setRolloverSelectedIcon(Icon focusedSelectedImage) {
+	public void setRolloverSelectedIcon(Icon focusedSelectedImage) {
 		this.focusedSelectedImage = focusedSelectedImage;
 	}
 
