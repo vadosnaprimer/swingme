@@ -2,6 +2,8 @@ package net.yura.tools.translation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.io.File;
 import javax.microedition.lcdui.Graphics;
 import javax.swing.JDesktopPane;
@@ -10,11 +12,13 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSplitPane;
-import javax.swing.ToolTipManager;
+//import javax.swing.ToolTipManager;
 import javax.swing.event.TreeSelectionEvent;
+import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.TextField;
+import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.translation.MessageTool;
 import net.yura.translation.MyNode;
@@ -70,6 +74,24 @@ public class XULTranslationTool extends MessageTool {
         frame.getContentPane().add(split);
 
         final ME4SEPanel me4sePanel = new ME4SEPanel();
+
+        final java.awt.Component comp = me4sePanel.getComponent();
+
+        // TODO get tooltip on hover to work
+        comp.addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent e) {
+                // nothing
+            }
+            public void mouseMoved(MouseEvent e) {
+                Window w = me4sePanel.getDesktopPane().getSelectedFrame();
+                Component c = w.getComponentAt(-w.getX()+e.getX(), -w.getY()+e.getY());
+                if (c!=null) {
+                    System.out.println("c "+c.getName());
+                }
+            }
+        });
+
+
         final Frame meFrame = new Frame("Test");
         meFrame.add( new Label("hello world") );
         meFrame.add( new TextField(), Graphics.BOTTOM );

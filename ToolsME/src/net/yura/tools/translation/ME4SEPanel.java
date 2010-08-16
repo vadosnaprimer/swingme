@@ -44,21 +44,10 @@ public class ME4SEPanel extends Container {
         // todo find this from a better place
         desktop.setLookAndFeel( new MetalLookAndFeel() );
 
-        final java.awt.Component comp = getComponents()[0];
+    }
 
-        comp.addMouseMotionListener(new MouseMotionListener() {
-            public void mouseDragged(MouseEvent e) {
-                // nothing
-            }
-            public void mouseMoved(MouseEvent e) {
-                Window w = desktop.getSelectedFrame();
-                Component c = w.getComponentAt(-w.getX()+e.getX(), -w.getY()+e.getY());
-                if (c!=null) {
-                    System.out.println("c "+c.getName());
-                }
-            }
-        });
-
+    public java.awt.Component getComponent() {
+        return getComponents()[0];
     }
 
     public void add(Panel panel) {
