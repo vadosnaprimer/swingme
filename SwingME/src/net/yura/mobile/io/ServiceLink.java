@@ -9,6 +9,7 @@ import java.util.Hashtable;
 
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
+import net.yura.mobile.util.SystemUtil;
 
 /**
  * @author Yura Mamyrin
@@ -148,9 +149,28 @@ public class ServiceLink extends SocketClient {
         public void setObject(Object object) {
             this.object = object;
         }
+
+        public int hashCode() {
+            int hash = 3;
+            hash = 37 * hash + (this.method != null ? this.method.hashCode() : 0);
+            hash = 37 * hash + (this.object != null ? this.object.hashCode() : 0);
+            return hash;
+        }
+
+        public boolean equals(Object obj) {
+            if (obj instanceof Task) {
+                Task t2 = (Task)obj;
+                return SystemUtil.equals(getMethod(),t2.getMethod()) &&
+                       SystemUtil.equals(getObject(),t2.getObject());
+            }
+            return false;
+        }
+
+        //#mdebug debug
         public String toString() {
             return method +" "+object;
         }
+        //#enddebug
     }
 
     // THIS IS GENERATED CODE! DO NOT EDIT

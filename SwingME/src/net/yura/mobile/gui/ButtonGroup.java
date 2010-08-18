@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui;
 
+import java.util.Enumeration;
 import java.util.Vector;
 
 import net.yura.mobile.gui.components.Button;
@@ -74,5 +75,12 @@ public class ButtonGroup {
 		}
 		
 	}
+
+        /**
+         * @see javax.swing.ButtonGroup#getElements() ButtonGroup.getElements
+         */
+        public Enumeration getElements() {
+            return buttons.elements();
+        }
 	
 }
