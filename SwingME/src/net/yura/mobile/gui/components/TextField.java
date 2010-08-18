@@ -29,6 +29,7 @@ public class TextField extends TextComponent {
 
         private int offset;
         private ActionListener al;
+        private String action;
     
         public TextField() {
             this(TextComponent.ANY);
@@ -116,7 +117,7 @@ public class TextField extends TextComponent {
         public boolean allowChar(char keyCode) {
             boolean r = keyCode!='\n';
             if (!r && al!=null) {
-                al.actionPerformed(null);
+                al.actionPerformed(action);
             }
             return r;
         }
@@ -124,8 +125,14 @@ public class TextField extends TextComponent {
         /**
          * @see javax.swing.JTextField#addActionListener(java.awt.event.ActionListener) JTextField.addActionListener
          */
-        public void addActionListener(ActionListener a) {
-            al = a;
+        public void addActionListener(ActionListener al) {
+            this.al = al;
         }
 
+        /**
+         * @see javax.swing.JTextField#setActionCommand(java.lang.String) JTextField.setActionCommand
+         */
+        public void setActionCommand(String action) {
+            this.action = action;
+        }
 }

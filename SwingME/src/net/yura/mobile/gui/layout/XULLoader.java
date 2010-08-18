@@ -771,7 +771,14 @@ public class XULLoader {
                         ((TextArea)text).setPreferredSize( ((TextArea)text).getPreferredWidth(), ((TextArea)text).getFont().getHeight() * Integer.parseInt(value) );
                     }
                 }
-
+                else if ("action".equals(key)) {
+                    if (text instanceof TextField) {
+                        ((TextField)text).setActionCommand(value);
+                        if (listener!=null) {
+                            ((TextField)text).addActionListener(listener);
+                        }
+                    }
+                }
             }
 
             if (text instanceof TextPane) {
