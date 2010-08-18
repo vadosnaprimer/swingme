@@ -17,7 +17,6 @@
 
 package net.yura.mobile.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
@@ -80,12 +79,12 @@ public class SystemUtil {
             Enumeration enum1 = hash1.keys();
             while (enum1.hasMoreElements())
             {
-                   Object objKey1 = (String) enum1.nextElement();
+                   Object objKey1 = enum1.nextElement();
                    Object objValue1 = hash1.get(objKey1);
                    if (!hash2.containsKey(objKey1))
                        return false;
                    Object objValue2 = hash2.get(objKey1);
-                   if (!objValue1.equals(objValue2))
+                   if (!equals(objValue1,objValue2))
                        return false;
             }
         }
@@ -95,7 +94,7 @@ public class SystemUtil {
             if (vector1.size() != vector2.size())
                 return false;
             for (int i = 0; i < vector1.size(); i++) {
-                if (!vector1.elementAt(i).equals(vector2.elementAt(i)))
+                if (!equals(vector1.elementAt(i),vector2.elementAt(i)))
                     return false;
             }
         }
@@ -104,7 +103,7 @@ public class SystemUtil {
             Object[] objArray2 = (Object[])obj2;
             if (objArray1.length != objArray2.length) return false;
             for (int i = 0; i < objArray1.length; i++) {
-                if (!SystemUtil.equals(objArray1[i], objArray2[i]))
+                if (!equals(objArray1[i], objArray2[i]))
                     return false;
             }
         }
