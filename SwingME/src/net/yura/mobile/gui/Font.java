@@ -217,7 +217,7 @@ public class Font {
                             //Logger.debug("FONT: Kerning for "+first+"-"+second+" = "+amount);
                         } catch (EOFException e) {
                             //#debug debug
-                            e.printStackTrace();
+                            Logger.error(e);
                         }
                     }
             }
