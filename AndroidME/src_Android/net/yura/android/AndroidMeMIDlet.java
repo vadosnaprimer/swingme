@@ -23,6 +23,7 @@ import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -197,6 +198,15 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         System.setProperty("microedition.locale", Locale.getDefault().toString());
         System.setProperty("microedition.configuration", "CLDC-1.1");
         System.setProperty("microedition.profiles", "MIDP-2.0");
+
+        // Screen Resolution Properties (Ad hoc, not on J2ME)
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+
+        String resDir =
+            (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "res_ldpi" :
+            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "res_hdpi" : "res_mdpi";
+        System.setProperty("resdir", resDir);
 
         // Multimedia Properties
         System.setProperty("microedition.media.version", "1.2");
