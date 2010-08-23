@@ -50,7 +50,7 @@ public class Icon {
      * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
      */
     public Icon(String imageName) throws IOException {
-        this( Image.createImage(imageName) );
+        this( Image.createImage( Midlet.getResourceAsStream(imageName) ) );
     }
 
     /**

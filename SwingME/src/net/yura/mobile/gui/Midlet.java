@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui;
 
+import java.io.InputStream;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
@@ -244,5 +245,25 @@ public abstract class Midlet extends MIDlet {
         Display.getDisplay(getMidlet()).setCurrent(null);
     }
 
+    /**
+     * name MUST start with a "/"
+     * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
+     */
+    public static InputStream getResourceAsStream(String name) {
 
+        try {
+            String resdir = System.getProperty("resdir");
+            if (resdir!=null) { // (getPlatform()==PLATFORM_ANDROID) {
+                InputStream is = Midlet.class.getResourceAsStream(resdir+name);
+                if (is!=null) {
+                    return is;
+                }
+            }
+        }
+        catch(Throwable th) {
+            th.printStackTrace();
+        }
+
+        return Midlet.class.getResourceAsStream(name);
+    }
 }

@@ -107,12 +107,12 @@ public class Font {
 
 		try {
 
-                    InputStream is = Font.class.getResourceAsStream(descriptor);
+                    InputStream is = Midlet.getResourceAsStream(descriptor);
 
                     Image[] characterImage = new Image[imagePaths.length];
                     for (int c=0;c<imagePaths.length;c++) {
 
-                        Image image = Image.createImage( Font.class.getResourceAsStream(imagePaths[c]));
+                        Image image = Image.createImage( Midlet.getResourceAsStream(imagePaths[c]));
 
                         // Set loaded character set images as default
                         characterImage[c] = image;
@@ -217,7 +217,7 @@ public class Font {
                             //Logger.debug("FONT: Kerning for "+first+"-"+second+" = "+amount);
                         } catch (EOFException e) {
                             //#debug debug
-                            Logger.error(e);
+                            Logger.debug(e);
                         }
                     }
             }
@@ -275,7 +275,7 @@ public class Font {
 
 			Properties newfont = new Properties();
 
-			newfont.load( Font.class.getResourceAsStream(name) );
+			newfont.load( Midlet.getResourceAsStream(name) );
 			String baseDir = name.substring(0, name.lastIndexOf('/') + 1);
 
 			String[] offsetsText = StringUtil.split(newfont.getProperty("offsets"), ',');

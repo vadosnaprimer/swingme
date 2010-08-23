@@ -23,6 +23,7 @@ import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
@@ -103,7 +104,7 @@ public class MatteBorder extends EmptyBorder {
 
             Properties newborder = new Properties();
 
-            newborder.load( DesktopPane.class.getResourceAsStream(name) );
+            newborder.load( Midlet.getResourceAsStream(name) );
 
             String imageName = newborder.getProperty("active");
 

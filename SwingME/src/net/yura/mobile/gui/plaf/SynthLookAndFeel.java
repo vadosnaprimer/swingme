@@ -24,6 +24,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.logging.Logger;
@@ -55,7 +56,7 @@ public class SynthLookAndFeel extends LookAndFeel {
     }
     protected InputStream getResourceAsStream(String path) {
         try {
-            return getClass().getResourceAsStream(path);
+            return Midlet.getResourceAsStream(path);
         }
         catch (Exception ex) {
             //#mdebug warn
