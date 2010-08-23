@@ -231,6 +231,12 @@ public class Graphics {
     public void drawRegion(Image src, int xSrc, int ySrc, int width,
             int height, int transform, int x_dst, int y_dst, int anchor) {
 
+        // Speed up: Handle full image painting first
+        if (src != null && transform == Sprite.TRANS_NONE && xSrc == 0 && ySrc == 0 && width == src.getWidth() && height == src.getHeight()) {
+            drawImage(src, x_dst, y_dst, anchor);
+            return;
+        }
+
         int rotate;
         boolean mirror;
 
