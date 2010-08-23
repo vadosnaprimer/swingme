@@ -8,6 +8,7 @@ import net.yura.android.AndroidMeMIDlet;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -347,6 +348,9 @@ public abstract class Canvas extends Displayable {
 //                androidCanvas.drawCircle(touchDebug[0], touchDebug[1] + 0*graphicsY, 50, paint);
 //                androidCanvas.drawCircle(touchDebug[2], touchDebug[3] + 0*graphicsY, 50, paint);
 //            }
+
+
+            showFramesPerSec(androidCanvas);
 
             time = System.currentTimeMillis();
         }
@@ -725,5 +729,34 @@ public abstract class Canvas extends Displayable {
 
     public void removeOverlayView(View v) {
         linearLayout.removeView(v);
+    }
+
+
+    // -- debug code ---
+    private long lastDrawTime;
+    private String fpsStr = "0.0fps";
+    private int nFrames;
+
+    private void showFramesPerSec(android.graphics.Canvas androidCanvas) {
+        nFrames++;
+        long timeNow = System.currentTimeMillis();
+        long timeDiff = timeNow - lastDrawTime;
+        if (timeDiff > 1000) {
+            long fps = nFrames * 10000 / timeDiff;
+            fpsStr = (fps / 10) + "." + (fps % 10) + "fps";
+            lastDrawTime = timeNow;
+            nFrames = 0;
+        }
+
+        Paint paint = new Paint();
+
+        int w = (int)(paint.measureText(fpsStr) + 2.0f);
+        int h = paint.getFontMetricsInt(paint.getFontMetricsInt()) + 2;
+
+        paint.setStyle(Paint.Style.FILL);
+        androidCanvas.drawRect(2, 5, 2 + w, 5 + h, paint);
+
+        paint.setColor(0xFFFFFFFF);
+        androidCanvas.drawText(fpsStr, 3, 1 + h, paint);
     }
 }
