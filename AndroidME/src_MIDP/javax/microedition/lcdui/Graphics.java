@@ -30,6 +30,10 @@ public class Graphics {
     private int tx, ty;
     private int stroke;
 
+    // Get clipBounds is slow, we keep a cache.
+    private Rect clipBounds = new Rect();
+    private boolean dirtyClip = true;
+
     public Graphics(android.graphics.Canvas canvas) {
         setFont(Font.getDefaultFont());
         setCanvas(canvas);
@@ -46,6 +50,7 @@ public class Graphics {
         this.canvas = canvas;
         if (canvas != null) {
             canvas.save();
+            dirtyClip = true;
         }
     }
 
@@ -56,25 +61,26 @@ public class Graphics {
         if (canvas != null) {
             canvas.restore();
             canvas.save();
+            dirtyClip = true;
         }
 
         paint.setColor(0xFF000000);
     }
 
     public int getClipX() {
-        return canvas.getClipBounds().left;
+        return getClipBounds().left;
     }
 
     public int getClipY() {
-        return canvas.getClipBounds().top;
+        return getClipBounds().top;
     }
 
     public int getClipWidth() {
-        return canvas.getClipBounds().width();
+        return getClipBounds().width();
     }
 
     public int getClipHeight() {
-        return canvas.getClipBounds().height();
+        return getClipBounds().height();
     }
 
     public int getColor() {
@@ -184,6 +190,7 @@ public class Graphics {
 
     public void clipRect(int x, int y, int w, int h) {
         canvas.clipRect(x, y, x + w, y + h);
+        dirtyClip = true;
     }
 
     public void setClip(int x, int y, int w, int h) {
@@ -191,6 +198,7 @@ public class Graphics {
         canvas.save();
         canvas.translate(tx, ty);
         canvas.clipRect(x, y, x + w, y + h);
+        dirtyClip = true;
     }
 
     public void fillArc(int x, int y, int width, int height, int startAngle,
@@ -205,6 +213,7 @@ public class Graphics {
         tx += x;
         ty += y;
         canvas.translate(x, y);
+        dirtyClip = true;
     }
 
     public int getTranslateX() {
@@ -421,6 +430,14 @@ public class Graphics {
 
     public void scale(double sx, double sy) {
         canvas.scale((float)sx, (float)sy);
+        dirtyClip = true;
     }
 
+    private Rect getClipBounds() {
+        if (dirtyClip) {
+            canvas.getClipBounds(clipBounds);
+            dirtyClip = false;
+        }
+        return clipBounds;
+    }
 }
