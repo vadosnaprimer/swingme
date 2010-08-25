@@ -1,10 +1,11 @@
 package net.yura.mobile.util;
 
 public class Url {
+    // url > protocol://host[:port][/file][?query] http://g.com/home/h?a=1
     private String protocol;
     private String host;
     private int port;
-    private String file;
+    private String path;
     private String query;
 
     public Url(String spec) {
@@ -21,13 +22,13 @@ public class Url {
 
         startIdx += hostPort.length() + 1;
         if (startIdx < spec.length() && spec.charAt(startIdx - 1) == '?') {
-            file = "";
+            path = "";
             query = spec.substring(startIdx);
         }
         else {
-            file = searchPart(spec, startIdx, "?");
+            path = searchPart(spec, startIdx, "?");
 
-            startIdx += file.length() + 1;
+            startIdx += path.length() + 1;
             query = searchPart(spec, startIdx, "");
         }
     }
@@ -36,7 +37,7 @@ public class Url {
         this.protocol = protocol;
         this.host = host;
         this.port = port;
-        this.file = file;
+        this.path = file;
         this.query = query;
     }
 
@@ -64,12 +65,12 @@ public class Url {
         this.port = port;
     }
 
-    public String getFile() {
-        return file;
+    public String getPath() {
+        return path;
     }
 
-    public void setFile(String file) {
-        this.file = file;
+    public void setPath(String file) {
+        this.path = file;
     }
 
     public String getQuery() {
@@ -104,15 +105,11 @@ public class Url {
         return "";
     }
 
-    public String getPath() {
-        return (query.length() == 0) ? file : file + '&' + query;
-    }
-
     public String getPathSegment(int idx) {
         String res = "";
         int startIdx = 0;
         for (int i = 0; i <= idx; i++) {
-            res = searchPart(file, startIdx, "/");
+            res = searchPart(path, startIdx, "/");
             startIdx += res.length() + 1;
         }
 

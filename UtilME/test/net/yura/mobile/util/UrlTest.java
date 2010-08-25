@@ -74,7 +74,7 @@ public class UrlTest {
         assertEquals(protocol, url.getProtocol());
         assertEquals(host, url.getHost());
         assertEquals(port, url.getPort());
-        assertEquals(file, url.getFile());
+        assertEquals(file, url.getPath());
         assertEquals(query, url.getQuery());
     }
 }
