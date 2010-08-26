@@ -652,15 +652,8 @@ public class XULLoader {
                     label.setIcon( loadIcon(value) );
                 }
                 else if ("alignment".equals(key)) {
-                    if ("center".equals(value)) { // default for button
-                        label.setHorizontalAlignment(Graphics.HCENTER);
-                    }
-                    else if ("right".equals(value)) {
-                        label.setHorizontalAlignment(Graphics.RIGHT);
-                    }
-                    else if ("left".equals(value)) { // default for label
-                        label.setHorizontalAlignment(Graphics.LEFT);
-                    }
+                	int pos = position(value, true);
+                    label.setHorizontalAlignment(pos);
                 }
                 else if("property".equals(key)) {
                     Hashtable properties = getProperties(value);
@@ -668,12 +661,50 @@ public class XULLoader {
                     if (gap!=null) {
                         label.setIconTextGap( Integer.parseInt(gap) );
                     }
+                    String vAlignment = (String)properties.get("valign");
+                    if (vAlignment!=null) {
+                        int pos = position(vAlignment, false);
+                        label.setVerticalAlignment(pos);
+                    }
+                    String vTextPos = (String)properties.get("vTextPos");
+                    if (vTextPos!=null) {
+                        int pos = position(vTextPos, false);
+                        label.setVerticalTextPosition(pos);
+                    }
+                    String hTextPos = (String)properties.get("hTextPos");
+                    if (hTextPos!=null) {
+                        int pos = position(hTextPos, true);
+                        label.setHorizontalTextPosition(pos);
+                    }
                 }
             }
 
             if (labelText != null) {
                 label.setText( getPropertyText(labelText,i18n) );
             }
+    }
+
+    public static int position(String pos,boolean horror) {
+    	if ("center".equals(pos)) { // defaults for button
+    		return horror?Graphics.HCENTER:Graphics.VCENTER;
+    	}
+    	else if ("right".equals(pos)) {
+    		return Graphics.RIGHT;
+    	}
+    	else if ("left".equals(pos)) { // default for label
+    		return Graphics.LEFT;
+    	}
+        else if ("top".equals(pos)) {
+            return Graphics.TOP;
+        }
+        else if ("bottom".equals(pos)) { // default for label
+            return Graphics.BOTTOM;
+        }
+        else {
+        	//#debug debug
+        	Logger.warn("unknown position "+pos);
+        	return 0;
+        }
     }
 
     public Icon loadIcon(String value) {
