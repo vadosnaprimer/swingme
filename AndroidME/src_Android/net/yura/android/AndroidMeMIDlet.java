@@ -204,8 +204,8 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
         String resDir =
-            (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "res_ldpi" :
-            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "res_hdpi" : "res_mdpi";
+            (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "/res_ldpi" :
+            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "/res_hdpi" : "/res_mdpi";
         System.setProperty("resdir", resDir);
 
         // Multimedia Properties
