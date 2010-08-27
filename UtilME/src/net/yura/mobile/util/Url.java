@@ -116,6 +116,14 @@ public class Url {
         return res;
     }
 
+    // Override
+    public String toString() {
+        return protocol + "://" + host +
+        (port > 0 ? ":" + port : "") +
+        (path.length() > 0 ? "/" + path : "") +
+        (query.length() > 0 ? "?" + query : "");
+    }
+
     // --- Internal helper methods ---
 
     private String searchPart(String spec, int startIdx, String delim) {
