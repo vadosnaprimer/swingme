@@ -116,6 +116,14 @@ public class Url {
         return res;
     }
 
+    public void addPathSegment(String newSeg) {
+
+        if (path.length() > 0) {
+            path += '/';
+        }
+        path += newSeg;
+    }
+
     // Override
     public String toString() {
         return protocol + "://" + host +
