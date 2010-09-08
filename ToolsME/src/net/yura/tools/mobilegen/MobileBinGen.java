@@ -263,12 +263,11 @@ Class param = m.getParameterTypes()[0];
 
 ps.println("        if (size>"+n+") {");
 
-//if (param == String.class) {
-//ps.println("        if (checkType(in.readInt() , TYPE_STRING)) {");
-//ps.println("            object."+m.getName()+"( in.readUTF() );");
-//ps.println("        }");
-//}
-if (param == int.class) {
+if (param == String.class) {
+ps.println("            checkType(in.readInt() , TYPE_STRING);");
+ps.println("            object."+m.getName()+"( in.readUTF() );");
+}
+else if (param == int.class) {
 ps.println("            checkType(in.readInt() , TYPE_INTEGER);");
 ps.println("            object."+m.getName()+"( in.readInt() );");
 }
