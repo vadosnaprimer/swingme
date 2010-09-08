@@ -23,6 +23,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.logging.Logger;
@@ -67,14 +68,23 @@ public class MenuBar extends List implements ActionListener {
      * @see Panel#add(net.yura.mobile.gui.components.Component)
      * @see java.awt.Container#add(java.awt.Component) Container.add
      */
-    public void add(Component button) {
+    public void addImpl(Component button,Object cons, int index) {
     	//#mdebug
     	if (getItems().contains(button)) {
     		throw new RuntimeException("can not add the same button twice: "+button);
     	}
     	//#enddebug
-        button.setParent(this);
-        addElement(button);
+
+        super.addImpl(button, cons, index);
+
+        if (index==-1) {
+            addElement(button);
+        }
+        else {
+            setSelectedIndex(-1); // TODO can be done better
+            getItems().insertElementAt(button, index);
+        }
+
         Window w = getWindow();
         if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this && button instanceof Button) {
             autoMnemonic( getItems() );
@@ -99,15 +109,6 @@ public class MenuBar extends List implements ActionListener {
         setSelectedIndex(-1); // TODO can be done better
         getItems().removeElement(c);
         c.removeParent(this);
-    }
-
-    /**
-     * @see Panel#insert(net.yura.mobile.gui.components.Component, int)
-     * @see java.awt.Container#add(java.awt.Component, int) Container.add
-     */
-    public void insert(Component component,int index) {
-        setSelectedIndex(-1); // TODO can be done better
-        getItems().insertElementAt(component, index);
     }
 
     public static void autoMnemonic(Vector items) {
@@ -258,5 +259,6 @@ public class MenuBar extends List implements ActionListener {
         }
         return count;
     }
+
 
 }

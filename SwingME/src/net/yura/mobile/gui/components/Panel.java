@@ -74,55 +74,27 @@ public class Panel extends Component {
         return constraints;
     }
 
-    /**
-     * @param component the component to be added
-     * @see java.awt.Container#add(java.awt.Component) Container.add
-     */
-    public void add(Component component){
-            addImpl(component,null,getComponentCount());
-    }
-
-    public void add(Component component,int constraint){
-        addImpl(component,new Integer(constraint),getComponentCount());
-    }
-
-    /**
-     * @param component
-     * @param constraint
-     * @see java.awt.Container#add(java.awt.Component, java.lang.Object) Container.add
-     */
-    public void add(Component component,Object constraint){
-        addImpl(component,constraint,getComponentCount());
-    }
-
-    /**
-     * @see java.awt.Container#add(java.awt.Component, int) Container.add
-     */
-    public void insert(Component component,int index) {
-            addImpl(component,null, index);
-    }
-
-    /**
-     * @see java.awt.Container#add(java.awt.Component, java.lang.Object, int) Container.add
-     */
-    public void insert(Component component,Object constraint,int index) {
-            addImpl(component,constraint, index);
-    }
-
    /**
     * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
     */
    protected void addImpl(Component component,Object cons,int index) {
-       //#mdebug debug
-       if (component instanceof Window) {
-           throw new RuntimeException("trying to add a window to a panel "+component+" to "+this);
-       }
-       //#enddebug
-        components.insertElementAt(component,index);
+        //#mdebug debug
+        if (component instanceof Window) {
+            throw new RuntimeException("trying to add a window to a panel "+component+" to "+this);
+        }
+        //#enddebug
+
+        if (index==-1) {
+            components.addElement(component);
+        }
+        else {
+            components.insertElementAt(component,index);
+        }
+
         if (cons!=null) {
             constraints.put(component, cons);
         }
-        component.setParent( this );
+        super.addImpl(component, cons, index);
    }
 
     /**

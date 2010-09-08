@@ -407,7 +407,7 @@ public class Window extends Panel {
 
             if (!softkeys.contains(softkey)) {
                 softkeys.addElement(softkey);
-                softkey.setParent(this);
+                softkey.parent = this;
             }
             //#mdebug warn
             else {
