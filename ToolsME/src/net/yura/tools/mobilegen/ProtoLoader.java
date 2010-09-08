@@ -355,7 +355,8 @@ public class ProtoLoader {
         regex.append( "\\s+?" );   // One or more whitespace characters
         regex.append( "\\=" );     // Equals
         regex.append( "\\s+?" );   // One or more whitespace characters
-        regex.append( "(\\d+)" );  // Value
+        regex.append( "(-?" );      // allow negative values
+        regex.append( "\\d+)" );  // Value
 
         Pattern parsingPattern = Pattern.compile( regex.toString() , Pattern.DOTALL );
         Matcher parsingMatcher = parsingPattern.matcher(assignment);
