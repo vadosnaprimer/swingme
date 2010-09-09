@@ -263,11 +263,12 @@ Class param = m.getParameterTypes()[0];
 
 ps.println("        if (size>"+n+") {");
 
-if (param == String.class) {
-ps.println("            checkType(in.readInt() , TYPE_STRING);");
-ps.println("            object."+m.getName()+"( in.readUTF() );");
-}
-else if (param == int.class) {
+// we can NOT do a checkType as String is a Object and CAN be of type String OR NULL!!!
+//if (param == String.class) {
+//ps.println("            checkType(in.readInt() , TYPE_STRING);");
+//ps.println("            object."+m.getName()+"( in.readUTF() );");
+//}
+if (param == int.class) {
 ps.println("            checkType(in.readInt() , TYPE_INTEGER);");
 ps.println("            object."+m.getName()+"( in.readInt() );");
 }
