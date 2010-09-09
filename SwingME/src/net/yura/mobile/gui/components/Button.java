@@ -448,7 +448,7 @@ public class Button extends Label implements ActionListener {
             }
         }
         public Object getValue() {
-            return new Boolean(isSelected());
+            return isSelected() ? Boolean.TRUE : Boolean.FALSE;
         }
 
         public void updateUI() {

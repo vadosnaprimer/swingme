@@ -429,10 +429,10 @@ public class Graphics2D {
     }
 
     public static boolean isTransparent(int color) {
-        return ((color >> 24) & 0xff) == 0;
-    }
-    public static boolean isOpaque(int color) {
-        return ((color >> 24) & 0xff) == 0xFF;
+        return (color & 0xFF000000) == 0;
     }
 
+    public static boolean isOpaque(int color) {
+        return (color & 0xFF000000) == 0xFF000000;
+    }
 }
