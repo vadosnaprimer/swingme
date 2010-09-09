@@ -397,28 +397,28 @@ public class ComponentTest  extends Section{
                 Vector row1 = new Vector();
                 row1.addElement("YURA");
                 row1.addElement(new Integer(24));
-                row1.addElement(new Boolean(false));
+                row1.addElement(Boolean.FALSE);
                 row1.addElement(options.elementAt(0));
                 rows.addElement(row1);
 
                 Vector row2 = new Vector();
                 row2.addElement("bob");
                 row2.addElement(new Integer(25));
-                row2.addElement(new Boolean(true));
+                row2.addElement(Boolean.TRUE);
                 row2.addElement(options.elementAt(1));
                 rows.addElement(row2);
 
                 Vector row3 = new Vector();
                 row3.addElement("fred");
                 row3.addElement(new Integer(30));
-                row3.addElement(new Boolean(false));
+                row3.addElement(Boolean.FALSE);
                 row3.addElement(options.elementAt(2));
                 rows.addElement(row3);
 
                 Vector row4 = new Vector();
                 row4.addElement( "thingy");
                 row4.addElement(new Integer(30));
-                row4.addElement(new Boolean(true));
+                row4.addElement(Boolean.TRUE);
                 row4.addElement(new Option("ok","OK"));
                 rows.addElement(row4);
 
