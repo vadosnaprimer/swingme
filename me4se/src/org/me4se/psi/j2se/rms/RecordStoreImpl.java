@@ -143,8 +143,11 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
 			dos.flush();
 			dos.close();
-		} catch (IOException ioe) {
-			throw new RecordStoreException("Error writing Records to file!");
+		}
+                catch (IOException ioe) {
+                    RecordStoreException r = new RecordStoreException("Error writing Records to file!");
+                    r.initCause(ioe);
+                    throw r;
 		}
 		//System.out.println ("finished.");
 	}
