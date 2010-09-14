@@ -27,6 +27,7 @@ public abstract class MIDlet {
     public static final String PROTOCOL_PHONE = "tel:";
     public static final String PROTOCOL_EMAIL = "email:";
     public static final String PROTOCOL_NOTIFY = "notify:";
+    public static final String PROTOCOL_NATIVE = "native:";
 
     public static MIDlet DEFAULT_MIDLET;
     public static Toolkit DEFAULT_TOOLKIT;
@@ -104,7 +105,17 @@ public abstract class MIDlet {
 
         Uri content = Uri.parse(url);
 
-        if (url.startsWith(PROTOCOL_NOTIFY)) {
+        if (url.startsWith(PROTOCOL_NATIVE)) {
+            try {
+                Class cls = Class.forName(content.getHost());
+                Intent i = new Intent(Intent.ACTION_DEFAULT, content, getActivity(), cls);
+                getActivity().startActivityForResult(i, 0);
+            } catch (ClassNotFoundException e) {
+                //#debug debug
+                e.printStackTrace();
+            }
+        }
+        else if (url.startsWith(PROTOCOL_NOTIFY)) {
             showNotification(content);
         }
         else {
