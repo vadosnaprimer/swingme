@@ -37,6 +37,7 @@ public class MainTest extends Section {
         addSection("Multimedia", new MultimediaTest());
         addTest("Send SMS", "sms");
         addTest("Show Notification", "notification");
+        addTest("Show Native Popup", "nativePopup");
     }
 
     //Override
@@ -74,6 +75,15 @@ public class MainTest extends Section {
         }
         else if ("notification".equals(actionCommand)) {
             String url = "notify://dummyServer?title=test&num=4&message=Some Message&icon=notify_new_msgs";
+            try {
+                Midlet.getMidlet().platformRequest(url);
+            } catch (Throwable e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        else if ("nativePopup".equals(actionCommand)) {
+            String url = "native://net.yura.android.TestTimePicker";
             try {
                 Midlet.getMidlet().platformRequest(url);
             } catch (Throwable e) {

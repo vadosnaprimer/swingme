@@ -108,7 +108,7 @@ public abstract class MIDlet {
         if (url.startsWith(PROTOCOL_NATIVE)) {
             try {
                 Class cls = Class.forName(content.getHost());
-                Intent i = new Intent(Intent.ACTION_DEFAULT, content, getActivity(), cls);
+                Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
                 getActivity().startActivityForResult(i, 0);
             } catch (ClassNotFoundException e) {
                 //#debug debug
@@ -242,5 +242,10 @@ public abstract class MIDlet {
 
            System.setProperty("NETWORKSIGNAL", "" + asu);
        }
+    }
+
+    // To be overload by children
+    public void onResult(Object object) {
+
     }
 }
