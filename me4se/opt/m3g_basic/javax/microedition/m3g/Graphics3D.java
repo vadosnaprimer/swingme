@@ -1,5 +1,6 @@
 package javax.microedition.m3g;
 
+import java.util.Hashtable;
 import javax.microedition.lcdui.Graphics;
 
 public final class Graphics3D {
@@ -56,4 +57,9 @@ public final class Graphics3D {
         this.vpW = width;
         this.vpH = height;
     }
+
+    public static Hashtable getProperties() {
+        return new Hashtable(0);
+    }
+
 }

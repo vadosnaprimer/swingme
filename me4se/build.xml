@@ -188,6 +188,7 @@
         <copy file="dist/midletrunner.jar" todir="../../cha/lib"/>
         <copy file="dist/midletrunner.jar" todir="../../AgentClient/lib"/>
         <copy file="dist/midletrunner.jar" todir="../../ToolsME/lib"/>
+        <copy file="dist/midletrunner.jar" todir="E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/lib"/>
     </target>
 
         <target name="clean">
