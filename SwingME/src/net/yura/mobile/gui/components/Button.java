@@ -109,7 +109,7 @@ public class Button extends Label implements ActionListener {
 
                 if (dp.SOFT_KEYS) return false;
 
-                if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY) {
+                if (dp.HIDDEN_MENU_AND_BACK) {
 
                     if (mneonic == KeyEvent.KEY_MENU || mneonic == KeyEvent.KEY_END) return false;
 

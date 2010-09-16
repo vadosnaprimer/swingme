@@ -476,7 +476,7 @@ public class Window extends Panel {
                     b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
             }
 
-            if (b!=null && !b.isVisible() && (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY)) {
+            if (b!=null && !b.isVisible() && getDesktopPane().HIDDEN_MENU_AND_BACK) {
                 b.setBoundsWithBorder(0, getDesktopPane().getHeight(), getDesktopPane().getWidth(), b.getHeightWithBorder());
             }
 

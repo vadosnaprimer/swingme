@@ -161,6 +161,7 @@ public class DesktopPane extends Canvas implements Runnable {
     public boolean IPHONE_SCROLL;
     public boolean QWERTY_KAYPAD; // if true the multi letter per number is disabled
     public boolean USE_SOFT_KEY_CLEAR; // Nokia S40 does not have a dedicated delete key
+    public boolean HIDDEN_MENU_AND_BACK; // on android and blackberry the menu and back are hardware buttons
 
     // object variables
     protected Midlet midlet;
@@ -214,6 +215,7 @@ public class DesktopPane extends Canvas implements Runnable {
         IPHONE_SCROLL = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
         QWERTY_KAYPAD = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE || Midlet.getPlatform() == Midlet.PLATFORM_ANDROID;
         USE_SOFT_KEY_CLEAR = Midlet.getPlatform() == Midlet.PLATFORM_NOKIA_S40;
+        HIDDEN_MENU_AND_BACK = Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY;
 
         desktop = this;
 
