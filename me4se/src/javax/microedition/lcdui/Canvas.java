@@ -362,6 +362,7 @@ public abstract class Canvas extends Displayable {
             				break;
             			}
                     try{
+                        System.out.println("DOING SLEEP 50");
                         Thread.sleep(50);
                     }   
                     catch(InterruptedException e){

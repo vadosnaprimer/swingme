@@ -175,6 +175,10 @@ public class Display {
    */
   public synchronized void setCurrent(Displayable d) {
 
+      // hack for yura
+      if (d instanceof TextBox)
+          return;
+
     if (d == null)
       return;
 
@@ -208,6 +212,7 @@ public class Display {
     current._showNotify();
     manager.wrapper.requestFocus();
     currentContainer.repaint();
+
   }
 
   /**

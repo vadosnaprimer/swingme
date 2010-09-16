@@ -1071,8 +1071,9 @@ public class ApplicationManager {
       return "DELETE";
     case KeyEvent.VK_BACK_SPACE:
       return "CLEAR";
-    case KeyEvent.VK_ENTER:
-      return "SELECT";
+    //case KeyEvent.VK_ENTER: // YURA hack so SwingME trying works in text boxes
+    //case KeyEvent.VK_F3: // to late to do this
+    //  return "SELECT";
     case KeyEvent.VK_LEFT:
       return "LEFT";
     case KeyEvent.VK_RIGHT:
