@@ -266,9 +266,10 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // TODO me4se needs to be here, or keyboard events dont come in
         // WHY WHY WHY??!!! this is very strange
-        if ( Midlet.getPlatform() == Midlet.PLATFORM_ME4SE ) {
-            serviceRepaints();
-        }
+        // hacked in my me4se so this is not needed any more
+        //if ( Midlet.getPlatform() == Midlet.PLATFORM_ME4SE ) {
+        //    serviceRepaints();
+        //}
 
     }
 
