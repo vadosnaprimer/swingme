@@ -834,7 +834,7 @@ public abstract class Component {
         return state==-1?getState():state;
     }
 
-    public int getState() {
+    protected int getState() {
         int result=Style.ALL;
 
         if (!focusable) {
