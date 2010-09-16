@@ -209,8 +209,9 @@ public abstract class TextComponent extends Component implements ActionListener,
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             boolean focusOwner = isFocusOwner();
             super.processMouseEvent(type, x, y, keys);
-            if (focusOwner && type==DesktopPane.PRESSED &&
-                    Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
+            if (focusOwner && type==DesktopPane.PRESSED 
+                //   && Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) { // hacked me4se so this would not be needed
+                    ) {
                 // TODO check if we have a qwerty keyboard
                 openNativeEditor();
             }
@@ -242,9 +243,10 @@ public abstract class TextComponent extends Component implements ActionListener,
             // if it is a letter that can be typed
             // we dont want to allow Character.MAX_VALUE as its not a real input char
 
-            if (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE && keyCode==-5) {
-                keyCode='\n';
-            }
+            // hacked me4se so this would not be needed
+            //if (Midlet.getPlatform() == Midlet.PLATFORM_ME4SE && keyCode==-5) {
+            //    keyCode='\n';
+            //}
 
             if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
 
