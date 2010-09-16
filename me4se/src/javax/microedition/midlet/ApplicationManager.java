@@ -834,6 +834,9 @@ public class ApplicationManager {
       } else
         active = new MIDletChooser();
 
+      // if setCurrent is called during midlet creation,
+      // then it will not actually be set, as 'active' will not match that midlet
+      // as 'active' is only set after the constructor has finished
       Displayable d = Display.getDisplay(active).getCurrent();
       if (d != null) {
         Display.getDisplay(active).setCurrent(d);

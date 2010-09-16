@@ -184,7 +184,7 @@ public class Display {
 
     current = d;
 
-    ApplicationManager manager = ApplicationManager.getInstance();
+    final ApplicationManager manager = ApplicationManager.getInstance();
 
     if (manager.currentlyShown == d
         || ApplicationManager.getInstance().active != midlet)
@@ -210,8 +210,20 @@ public class Display {
     manager.currentlyShown = d;
     currentContainer = d.container;
     current._showNotify();
-    manager.wrapper.requestFocus();
+    //manager.wrapper.requestFocus(); // yura, removed
     currentContainer.repaint();
+
+    // yura for SwingME to get focus from the start this needs to be in another thread
+    new Thread() {
+        public void run() {
+            try {
+                Thread.sleep(20 * 50);
+            }
+            catch (InterruptedException ex) { }
+
+            manager.wrapper.requestFocusInWindow();
+        }
+    }.start();
 
   }
 
