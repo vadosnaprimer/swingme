@@ -40,7 +40,7 @@ public class AndroidIcon extends Icon {
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
 
         int state = c.getCurrentState();
-        AndroidBorder.setStateSet(state, drawable);
+        AndroidBorder.setDrawableState(state, drawable);
 
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
         drawable.setBounds(x, y, width, height);
