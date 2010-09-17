@@ -1,11 +1,15 @@
 package net.yura.android.plaf;
 
+import java.util.Vector;
+
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import net.yura.android.AndroidMeMIDlet;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.plaf.LookAndFeel;
@@ -18,9 +22,15 @@ public class AndroidLookAndFeel extends LookAndFeel {
         Context ctx = AndroidMeMIDlet.DEFAULT_ACTIVITY.getApplicationContext();
         Resources res = ctx.getResources();
 
+        TypedArray a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorForeground});
+        int c = a2.getColor(0, 0xFF000000);
+
+
         Style defaultStyle = new Style();
         defaultStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM) , Style.ALL);
-        defaultStyle.addForeground( 0xFF000000 , Style.ALL);
+        defaultStyle.addForeground(c , Style.ALL);
+
+
 
         setStyleFor("",defaultStyle);
 
@@ -34,7 +44,13 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         Style buttonStyle = new Style(defaultStyle);
         addBorder(buttonStyle, new Button(ctx));
-        setStyleFor("Button",buttonStyle);
+
+//        TypedArray a3 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.textColor});
+//        int c2 = a3.getColor(0, 0xFF0000FF);
+//        System.out.println(">>>> "  + c2);
+//        defaultStyle.addForeground(c2 , Style.ALL);
+
+        setStyleFor("Button", buttonStyle);
 
         Style radioStyle = new Style(defaultStyle);
         radioStyle.addProperty(createIcon(android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
@@ -46,8 +62,11 @@ public class AndroidLookAndFeel extends LookAndFeel {
 //        checkboxStyle.addProperty(new AndroidIcon(res.getDrawable(checkBoxId)), "icon", Style.ALL);
 //        setStyleFor("CheckBox",checkboxStyle);
 
+        TypedArray a = ctx.getTheme().obtainStyledAttributes( new int[]{android.R.attr.windowBackground});
+        Drawable d = a.getDrawable(0);
         Style windowSkin = new Style(defaultStyle);
-        windowSkin.addBorder(new AndroidBorder(res.getDrawable(android.R.drawable.menu_frame)), Style.ALL);
+//        windowSkin.addBorder(new AndroidBorder(res.getDrawable(android.R.drawable.menu_frame)), Style.ALL);
+        windowSkin.addBorder(new AndroidBorder(d), Style.ALL);
         setStyleFor("Frame",windowSkin);
 
 //        TypedArray a = ctx.getTheme().obtainStyledAttributes( new int[]{android.R.attr.windowBackground});
@@ -83,5 +102,29 @@ public class AndroidLookAndFeel extends LookAndFeel {
     private void addBorder(Style style, View view) {
         AndroidBorder border = new AndroidBorder(view.getBackground());
         style.addBorder(border, Style.ALL);
+    }
+
+    static void setColor(Style style, TextView view, boolean isForefround) {
+        int[] map = {
+                Style.DISABLED,
+                Style.DISABLED|Style.FOCUSED,
+                Style.DISABLED|Style.SELECTED,
+                Style.DISABLED|Style.FOCUSED|Style.SELECTED,
+                Style.ALL,
+                Style.FOCUSED,
+                Style.SELECTED,
+                Style.FOCUSED|Style.SELECTED,
+        };
+
+        ColorStateList clist = view.getTextColors();
+        int defColor = clist.getDefaultColor();
+
+        for (int i = 0; i < map.length; i++) {
+
+            int swingMeStyle = map[i];
+            int[] stateSet = AndroidBorder.getDrawableState(swingMeStyle);
+            int color = clist.getColorForState(stateSet, defColor);
+            style.addForeground(color , swingMeStyle);
+        }
     }
 }

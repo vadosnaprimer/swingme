@@ -48,7 +48,7 @@ public class AndroidBorder implements Border {
         drawable.draw(canvas);
     }
 
-    static void setDrawableState(int state, Drawable drawable) {
+    static int[] getDrawableState(int state) {
         Vector stateList = new Vector(3);
 
         stateList.add(new Integer(android.R.attr.state_window_focused));
@@ -65,12 +65,16 @@ public class AndroidBorder implements Border {
             stateList.add(new Integer(android.R.attr.state_checked));
         }
 
-        int[] stateSet = new int[stateList.size()];
-        for (int i = 0; i < stateSet.length; i++) {
-            stateSet[i] = ((Integer) stateList.elementAt(i)).intValue();
+        int[] res = new int[stateList.size()];
+        for (int i = 0; i < res.length; i++) {
+            res[i] = ((Integer) stateList.elementAt(i)).intValue();
         }
 
-        drawable.setState(stateSet);
+        return res;
+    }
+
+    static void setDrawableState(int state, Drawable drawable) {
+        drawable.setState(getDrawableState(state));
     }
 
 }
