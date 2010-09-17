@@ -18,19 +18,19 @@ public class AndroidBorder implements Border {
     }
 
     public int getBottom() {
-        return 0;
+        return 20;
     }
 
     public int getLeft() {
-        return 0;
+        return 20;
     }
 
     public int getRight() {
-        return 0;
+        return 20;
     }
 
     public int getTop() {
-        return 0;
+        return 20;
     }
 
     public boolean isBorderOpaque() {
@@ -40,43 +40,36 @@ public class AndroidBorder implements Border {
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
 
-        if (c instanceof Button) {
-            System.out.println(">>>");
-        }
-
         int state = c.getCurrentState();
-        setStateSet(state, drawable);
+        setDrawableState(state, drawable);
 
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
         drawable.setBounds(-getLeft(), -getTop(), width+getRight(), height+getBottom());
         drawable.draw(canvas);
     }
 
-    static void setStateSet(int state, Drawable drawable) {
+    static void setDrawableState(int state, Drawable drawable) {
         Vector stateList = new Vector(3);
 
         stateList.add(new Integer(android.R.attr.state_window_focused));
 
-        if ((state & Style.DISABLED) != 0) {
-
-        }
-        else {
+        if ((state & Style.DISABLED) == 0) {
             stateList.add(new Integer(android.R.attr.state_enabled));
         }
 
         if ((state & Style.FOCUSED) != 0) {
             stateList.add(new Integer(android.R.attr.state_focused));
-            stateList.add(new Integer(android.R.attr.state_active));
         }
 
         if ((state & Style.SELECTED) != 0) {
-            stateList.add(new Integer(android.R.attr.state_pressed));
+            stateList.add(new Integer(android.R.attr.state_checked));
         }
 
         int[] stateSet = new int[stateList.size()];
         for (int i = 0; i < stateSet.length; i++) {
             stateSet[i] = ((Integer) stateList.elementAt(i)).intValue();
         }
+
         drawable.setState(stateSet);
     }
 
