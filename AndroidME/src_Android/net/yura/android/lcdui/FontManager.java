@@ -31,8 +31,11 @@ import java.util.HashMap;
 
 import javax.microedition.lcdui.Font;
 
+import net.yura.android.AndroidMeMIDlet;
+
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.util.DisplayMetrics;
 
 public class FontManager {
 
@@ -84,6 +87,12 @@ public class FontManager {
 			} else if (meFont.getSize() == Font.SIZE_LARGE) {
 				size = SIZE_LARGE;
 			}
+
+			// The font size is adjusted to the phone "scaled density"
+			DisplayMetrics metrics = new DisplayMetrics();
+			AndroidMeMIDlet.DEFAULT_ACTIVITY.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			size = (int) (size * metrics.scaledDensity);
+
 			result = new FontManager(Typeface.create(family, style), size,
 					underlined);
 			fonts.put(meFont, result);
