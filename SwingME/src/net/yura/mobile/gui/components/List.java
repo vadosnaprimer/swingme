@@ -150,6 +150,8 @@ public class List extends Component implements ActionListener {
             }
         }
         else {
+            //TODO should we NOT do this if pref size is set?
+            
             int totalHeight = 0;
             int totalWidth = 0;
 
@@ -242,6 +244,10 @@ public class List extends Component implements ActionListener {
             Logger.warn("trying to remove a null ActionListener");
         }
         //#enddebug
+    }
+
+    public ActionListener getActionListener() {
+        return al;
     }
 
     public void setActionCommand(String ac) {
@@ -401,7 +407,7 @@ public class List extends Component implements ActionListener {
         }
     }
 
-    private Component getComponentFor(int i,int offset) {
+    protected Component getComponentFor(int i,int offset) {
 
         Object item = getElementAt(i);
 
@@ -561,7 +567,7 @@ public class List extends Component implements ActionListener {
 
         int keyCode = keypad.getIsDownKey();
 
-        if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#') {
+        if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#' && keyCode!='\n') {
 
                 keyCode = keypad.getKeyChar(keyCode, KeyEvent.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
 

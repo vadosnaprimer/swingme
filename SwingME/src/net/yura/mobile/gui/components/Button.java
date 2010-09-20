@@ -231,6 +231,14 @@ public class Button extends Label implements ActionListener {
         }
 
         /**
+         * convenience method for {@link #getActionListeners() } that return 1 listener or null
+         * @see javax.swing.AbstractButton#getActionListeners() AbstractButton.getActionListeners
+         */
+        public ActionListener getActionListener() {
+            return al;
+        }
+
+        /**
          * @param ac The Action Command for this button
          * @see javax.swing.AbstractButton#setActionCommand(java.lang.String) AbstractButton.setActionCommand
          */
@@ -244,13 +252,6 @@ public class Button extends Label implements ActionListener {
          */
         public String getActionCommand() {
             return actionCommand;
-        }
-
-        /**
-         * @see javax.swing.AbstractButton#getActionListeners() AbstractButton.getActionListeners
-         */
-        public ActionListener getActionListener() {
-            return al;
         }
 
 	public boolean processKeyEvent(KeyEvent keyEvent) {

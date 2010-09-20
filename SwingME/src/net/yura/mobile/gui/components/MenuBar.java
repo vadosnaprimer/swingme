@@ -19,11 +19,12 @@ package net.yura.mobile.gui.components;
 
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.logging.Logger;
@@ -51,10 +52,8 @@ public class MenuBar extends List implements ActionListener {
     public boolean isVisible() {
 
         // TODO not sure if this should be here or frame
-        Window w = getWindow();
-
         // if we are on a phone, and the window is not maximised, this bar is not visible
-        if (w instanceof Frame && !((Frame)w).isMaximum() && ((Frame)w).getMenuBar() == this && getDesktopPane().SOFT_KEYS) {
+        if (getDesktopPane().SOFT_KEYS && isFrameMenuBar() && !((Frame)getWindow()).isMaximum()) {
             return false;
         }
         return super.isVisible();
@@ -85,8 +84,7 @@ public class MenuBar extends List implements ActionListener {
             getItems().insertElementAt(button, index);
         }
 
-        Window w = getWindow();
-        if (w!=null && w instanceof Frame && ((Frame)w).getMenuBar() == this && button instanceof Button) {
+        if (isFrameMenuBar() && button instanceof Button) {
             autoMnemonic( getItems() );
         }
     }
@@ -231,6 +229,11 @@ public class MenuBar extends List implements ActionListener {
         g.translate(-off, 0);
     }
 
+    private boolean isFrameMenuBar() {
+        Window w = getWindow();
+        return (w instanceof Frame && ((Frame)w).getMenuBar() == this );
+    }
+
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== MODEL ===============================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
@@ -260,5 +263,102 @@ public class MenuBar extends List implements ActionListener {
         return count;
     }
 
+
+    //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+    //==== ANDROID =============================================================
+    //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+    private int cols;
+
+    private boolean firstMenu() {
+        // HACK to work out if we should be a android grid menu
+        ActionListener al = getActionListener();
+        if (al instanceof Menu) {
+            Menu parentMenu = (Menu)al;
+            Component bar = parentMenu.getParent();
+            if (bar instanceof MenuBar && ((MenuBar)bar).isFrameMenuBar() ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    protected Component getComponentFor(int i,int offset) {
+
+        Component c = super.getComponentFor(i, offset);
+
+        if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
+
+            int size = getSize();
+
+            int topRowCols = size % cols; // items in the top row!
+            int h = getHeight()/((size/cols)+(topRowCols==0?0:1));
+
+            if (i<topRowCols) {
+                int w = getWidth()/topRowCols;
+                c.setBoundsWithBorder(w*i, 0, w, h);
+            }
+            else {
+                int x = (i-topRowCols);
+                int w = getWidth()/cols;
+                c.setBoundsWithBorder(w*(x%cols), h*(x/cols)+(topRowCols==0?0:h), w, h);
+            }
+        }
+
+        return c;
+    }
+
+    public void workoutMinimumSize() {
+        if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
+
+            ListCellRenderer renderer = getCellRenderer();
+            int size = getSize();
+
+            int in = 0;
+            for (Component p=this;p!=null;p=p.getParent()) {
+                in = p.getInsets().getRight() + p.getInsets().getLeft();
+            }
+            width = getDesktopPane().getWidth() -in;
+
+            int w=0,h=0; // max width and height
+
+            boolean icon =false;
+            for(int i = 0; i < size; i++){
+                Object item = getElementAt(i);
+                if (item instanceof Button) {
+                    Button button = ((Button)item);
+                    button.setHorizontalAlignment(Graphics.HCENTER);
+                    button.setVerticalAlignment(Graphics.VCENTER);
+                    button.setHorizontalTextPosition(Graphics.HCENTER);
+                    button.setVerticalTextPosition(Graphics.BOTTOM);
+                    if (button.getIcon()!=null) {
+                        icon = true;
+                    }
+                }
+
+                Component c = renderer.getListCellRendererComponent(this, item, i, false, false);
+                c.workoutSize();
+
+                if (w < c.getWidthWithBorder()) {
+                    w = c.getWidthWithBorder();
+                }
+                if (h < c.getHeightWithBorder()) {
+                    h = c.getHeightWithBorder();
+                }
+            }
+
+            if (!icon) { // if we have no icons, we need extra height for fat fingers
+                h = h*2;
+            }
+
+            cols = Math.max(Math.min(width / w,size),1); // TODO very long buttons will be truncated, is this ok?
+
+            height = h*((size / cols)+(size%cols==0?0:1));
+
+        }
+        else {
+            super.workoutMinimumSize();
+        }
+    }
 
 }
