@@ -44,8 +44,11 @@ public class AndroidBorder implements Border {
         setDrawableState(state, drawable);
 
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
+        canvas.save();
+        canvas.clipRect(-getLeft(), -getTop(), width+getRight(), height+getBottom());
         drawable.setBounds(-getLeft(), -getTop(), width+getRight(), height+getBottom());
         drawable.draw(canvas);
+        canvas.restore();
     }
 
     static int[] getDrawableState(int state) {
