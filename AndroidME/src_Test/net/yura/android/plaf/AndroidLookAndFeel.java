@@ -29,7 +29,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
         // --- List ---
         Style listCellRenderer = new Style(defaultStyle);
         listCellRenderer.addBorder(new AndroidBorder(res.getDrawable(android.R.drawable.list_selector_background)), Style.ALL);
-        setForegroundColor(listCellRenderer, android.R.style.Widget_TextView);
+        setForegroundColor(listCellRenderer, android.R.style.Widget_Button);
         setStyleFor("ListRenderer",listCellRenderer);
 
         Style progressBar = new Style(defaultStyle);
@@ -105,7 +105,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
         Drawable res = null;
 
         Context ctx = AndroidMeMIDlet.DEFAULT_ACTIVITY.getApplicationContext();
-        int attrsWanted[] = new int[] {android.R.attr.background, android.R.attr.button, android.R.attr.drawable };
+        int attrsWanted[] = new int[] {android.R.attr.button, android.R.attr.drawable, android.R.attr.background };
 
         for (int i = 0; res == null && i < attrsWanted.length; i++) {
             res = getDrawable(ctx, defStyle, attrsWanted[i]);
