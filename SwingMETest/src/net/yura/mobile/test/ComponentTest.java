@@ -181,7 +181,7 @@ public class ComponentTest  extends Section{
 
                 componentTest.add(email);
                 componentTest.add(new TextField(TextField.PASSWORD));
-                componentTest.add( new List(items,new DefaultListCellRenderer(),false) );
+                componentTest.add( new List(items,new DefaultListCellRenderer(),List.VERTICAL) );
 
                 menu = new Menu("Menu");
                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
@@ -365,7 +365,7 @@ public class ComponentTest  extends Section{
                 Panel tab4 = new Panel( new BorderLayout() );
                 tab4.add(new Label("Tab 4 title"),Graphics.TOP);
 
-                List l2 = new List(anotherlist,new DefaultListCellRenderer(),false);
+                List l2 = new List(anotherlist,new DefaultListCellRenderer(),List.VERTICAL);
                 l2.addChangeListener(new ChangeListener() {
                     public void changeEvent(Component arg0, int arg1) {
                         System.out.println("change "+arg1);
