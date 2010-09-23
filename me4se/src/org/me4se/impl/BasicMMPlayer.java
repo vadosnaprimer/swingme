@@ -138,7 +138,9 @@ public class BasicMMPlayer implements Player, VolumeControl {
         }
         catch(Exception e){
         	e.printStackTrace();
-        	throw new MediaException(e.toString());
+                MediaException mx = new MediaException(e.toString());
+                mx.initCause(e);
+        	throw mx;
         }
         state = PREFETCHED;
     }
@@ -152,7 +154,9 @@ public class BasicMMPlayer implements Player, VolumeControl {
         }
         catch(Exception e){
         	e.printStackTrace();
-        	throw new MediaException(e.toString());
+                MediaException mx = new MediaException(e.toString());
+                mx.initCause(e);
+        	throw mx;
         }
 
         state = REALIZED;
@@ -182,8 +186,10 @@ public class BasicMMPlayer implements Player, VolumeControl {
         	throw e;
         }
     	catch(Exception e){
-    		e.printStackTrace();
-    		throw new MediaException(e.toString());
+        	e.printStackTrace();
+                MediaException mx = new MediaException(e.toString());
+                mx.initCause(e);
+        	throw mx;
     	}
 
         state = STARTED;
@@ -204,7 +210,9 @@ public class BasicMMPlayer implements Player, VolumeControl {
         }
         catch(Exception e){
         	e.printStackTrace();
-        	throw new MediaException(e.toString());
+                MediaException mx = new MediaException(e.toString());
+                mx.initCause(e);
+        	throw mx;
         }
         state = PREFETCHED;
         if(autoNotify){

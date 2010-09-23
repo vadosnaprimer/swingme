@@ -143,7 +143,7 @@ public class Image {
 	  } catch (NullPointerException e) {
 	    throw e;
 	  } catch (Exception e) {
-	    throw new IllegalArgumentException(e.toString());
+	    throw new IllegalArgumentException(e);
 	  }
 	}
 

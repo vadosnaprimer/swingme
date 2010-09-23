@@ -96,7 +96,10 @@ public class VideoControlImpl implements VideoControl {
       }
       return baos.toByteArray();
     } catch (IOException e) {
-      throw new MediaException(e.toString());
+        e.printStackTrace();
+        MediaException mx = new MediaException(e.toString());
+        mx.initCause(e);
+        throw mx;
     }
   }
 

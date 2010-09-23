@@ -21,10 +21,8 @@
 package javax.microedition.midlet;
 
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-
 import javax.microedition.io.ConnectionNotFoundException;
 
 /**
@@ -119,39 +117,68 @@ public abstract class MIDlet {
    */
   public final boolean platformRequest(String url) throws ConnectionNotFoundException {
 
-/* YURA YURA YURA
-
-
-
+// YURA YURA YURA
 
 	if (url.startsWith("tel")) {
 		System.out.println("ME4SE: MIDlet.platformRequest('" + url + "') called in order to initiate a phone call.");
 		return false;
 	}
+        else if (url.startsWith("grasshopper")) {
+            try {
+                String params = url.substring(url.indexOf('?')+1);
+                String[] s1 = params.split("\\&");
+                String appName="Unknown me4se app",appVersion="Unknown version",locale="Unknown locale";
+                for (int c=0;c<s1.length;c++) {
+                    String[] s2 = s1[c].split("\\=");
+                    if ("name".equals(s2[0])) {
+                        appName = s2[1];
+                    }
+                    else if ("version".equals(s2[0])) {
+                        appVersion = s2[1];
+                    }
+                    else if ("locale".equals(s2[0])) {
+                        locale = s2[1];
+                    }
+                    else {
+                        System.out.println("unknown grasshopper param: "+s1[c]);
+                    }
+                }
+                net.yura.grasshopper.SimpleBug.initSimple(appName, appVersion, locale);
+                System.out.println("Grasshopper loaded");
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return false;
+        }
 	else {
-
 	    if (ApplicationManager.getInstance().applet != null) {
 		try {
 			ApplicationManager.getInstance().applet.getAppletContext().showDocument(new URL(url));
-		} catch (MalformedURLException e) {
-			throw new ConnectionNotFoundException(e.toString());
+		} catch (Exception e) {
+                    ConnectionNotFoundException ex = new ConnectionNotFoundException(e.toString());
+                    ex.initCause(e);
+                    throw ex;
 		}
 		return false; // dont let the midlet exit in order to avoid the corresp.
 			      // page reload
 	    }
 	    else {
 		try {
-			edu.stanford.ejalbert.BrowserLauncher launcher = new edu.stanford.ejalbert.BrowserLauncher();
-			launcher.openURLinBrowser( url );
+                    openURL(url);
+			//edu.stanford.ejalbert.BrowserLauncher launcher = new edu.stanford.ejalbert.BrowserLauncher();
+			//launcher.openURLinBrowser( url );
 		} catch (Exception e) {
-			throw new ConnectionNotFoundException(e.toString());
+                    ConnectionNotFoundException ex = new ConnectionNotFoundException(e.toString());
+                    ex.initCause(e);
+                    throw ex;
 		}
 		return false;
 	    }
 
 	}
 
-*/
+/*
     if (ApplicationManager.getInstance().applet != null) {
       try {
         ApplicationManager.getInstance().applet.getAppletContext().showDocument(new URL(url));
@@ -171,6 +198,7 @@ public abstract class MIDlet {
         throw new ConnectionNotFoundException(url);
       }
     }
+*/
   }
 
   /**

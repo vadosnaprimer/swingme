@@ -845,7 +845,7 @@ public class ApplicationManager {
       active.startApp();
     } catch (Exception e) {
       e.printStackTrace();
-      throw new RuntimeException(e.toString());
+      throw new RuntimeException(e);
     }
   }
 
@@ -1008,7 +1008,7 @@ public class ApplicationManager {
     try {
       return Class.forName("javax.microedition.lcdui." + custom).newInstance();
     } catch (Exception e) {
-      throw new RuntimeException(e.toString());
+      throw new RuntimeException(e);
     }
   }
 

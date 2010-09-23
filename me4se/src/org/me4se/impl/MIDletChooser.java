@@ -72,7 +72,7 @@ public class MIDletChooser extends MIDlet implements CommandListener { //, Runna
         } 
         catch (IOException ex) {
            ex.printStackTrace();
-           throw new RuntimeException(ex.toString());
+           throw new RuntimeException(ex);
         }
 
         
