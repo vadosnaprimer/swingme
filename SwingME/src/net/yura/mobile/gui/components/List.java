@@ -36,6 +36,26 @@ import net.yura.mobile.logging.Logger;
  */
 public class List extends Component implements ActionListener {
 
+    /**
+     * @see javax.swing.JList#VERTICAL JList.VERTICAL
+     */
+    public static final int VERTICAL = 0;
+
+    /**
+     * Not supported in Swing
+     */
+    public static final int HORIZONTAL = 3;
+
+    /**
+     * @see javax.swing.JList#VERTICAL_WRAP JList.VERTICAL_WRAP
+     */
+    //public static final int VERTICAL_WRAP = 1;// same as Swing
+
+    /**
+     * @see javax.swing.JList#HORIZONTAL_WRAP JList.HORIZONTAL_WRAP
+     */
+    //public static final int HORIZONTAL_WRAP = 2; // same as Swing
+
     private Button selectButton;
 //
 //    static {
@@ -57,7 +77,7 @@ public class List extends Component implements ActionListener {
     private String actionCommand;
 
     private boolean loop;
-    private boolean horizontal;
+    private int layoutOrientation;
     private boolean doubleClick;
 
     private int fixedCellHeight = -1;
@@ -70,26 +90,26 @@ public class List extends Component implements ActionListener {
         this((Vector)null);
     }
 
-	/**
+    /**
      * @param a
      * @see javax.swing.JList#JList(java.util.Vector) JList.JList
      */
     public List(Vector a) {
-        this(a,new DefaultListCellRenderer(),false);
+        this(a,new DefaultListCellRenderer(),VERTICAL);
     }
 
     public List(ListCellRenderer a) {
-        this(null,a,false);
+        this(null,a,VERTICAL);
     }
 
     // real constructor!
-    public List(Vector a,ListCellRenderer b,boolean h) {
+    public List(Vector a,ListCellRenderer b,int h) {
         items = a;
         if (items==null) {
             items = new Vector();
         }
         setCellRenderer(b);
-        horizontal = h;
+        layoutOrientation = h;
         setSelectedIndex(-1);
     }
 
@@ -140,7 +160,7 @@ public class List extends Component implements ActionListener {
 
         if (fixedCellWidth!=-1 && fixedCellHeight!=-1) {
             int s = getSize();
-            if (horizontal) {
+            if (layoutOrientation==HORIZONTAL) {
                 width = fixedCellWidth*s;
                 height = fixedCellHeight;
             }
@@ -163,7 +183,7 @@ public class List extends Component implements ActionListener {
                 int w = fixedCellWidth==-1?c.getWidthWithBorder():fixedCellWidth;
                 int h = fixedCellHeight==-1?c.getHeightWithBorder():fixedCellHeight;
 
-                if (horizontal) {
+                if (layoutOrientation==HORIZONTAL) {
                     if (totalHeight<h) {
                         totalHeight=h;
                     }
@@ -172,7 +192,7 @@ public class List extends Component implements ActionListener {
                     totalHeight = totalHeight + h;
                 }
 
-                if (horizontal) {
+                if (layoutOrientation==HORIZONTAL) {
                     totalWidth = totalWidth + w;
                 }
                 else {
@@ -208,18 +228,17 @@ public class List extends Component implements ActionListener {
     }
 
     /**
-     * @param horizontal
      * @see javax.swing.JList#setLayoutOrientation(int) JList.setLayoutOrientation
      */
-    public void setLayoutOrientation(boolean horizontal) {
-        this.horizontal = horizontal;
+    public void setLayoutOrientation(int layoutOrientation) {
+        this.layoutOrientation = layoutOrientation;
     }
 
     /**
      * @see javax.swing.JList#getLayoutOrientation() JList.getLayoutOrientation
      */
-    public boolean getLayoutOrientation() {
-        return horizontal;
+    public int getLayoutOrientation() {
+        return layoutOrientation;
     }
 
     public void addActionListener(ActionListener l) {
@@ -277,28 +296,28 @@ public class List extends Component implements ActionListener {
 
     private int[] getComponentAt(int x,int y) {
 
-        int i = -1;
-        int offset=0;
+        int ri = -1;
+        int roffset=0;
 
-        if ((horizontal && x<=0) || (!horizontal && y<=0)) {
+        if ((layoutOrientation==HORIZONTAL && x<=0) || (layoutOrientation==VERTICAL && y<=0)) {
             // dont do anything
         }
         else if (x > width || y > height) {
-            i = getSize(); // skip everything
+            ri = getSize(); // skip everything
         }
-        else if (horizontal && fixedCellWidth!=-1) {
-            i = x/fixedCellWidth;
-            offset = i*fixedCellWidth;
+        else if (layoutOrientation==HORIZONTAL && fixedCellWidth!=-1) {
+            ri = x/fixedCellWidth;
+            roffset = ri*fixedCellWidth;
         }
-        else if (!horizontal && fixedCellHeight!=-1) {
-            i = y/fixedCellHeight;
-            offset = i*fixedCellHeight;
+        else if (layoutOrientation==VERTICAL && fixedCellHeight!=-1) {
+            ri = y/fixedCellHeight;
+            roffset = ri*fixedCellHeight;
         }
         else {
 
             Component comp=null;
 
-            for(i=0; i < getSize(); i++){
+            for(int i=0,offset=0; i < getSize(); i++){
                 comp = getComponentFor(i,offset);
 
                 int cw=comp.getWidthWithBorder();
@@ -308,18 +327,20 @@ public class List extends Component implements ActionListener {
                 int cy = comp.getYWithBorder();
 
                 if (
-                        (horizontal && x>=cx && x <=(cw+cx) ) ||
-                        (!horizontal && y>=cy && y <=(ch+cy))
+                        (layoutOrientation==VERTICAL || x>=cx && x <=(cw+cx) ) &&
+                        (layoutOrientation==HORIZONTAL || y>=cy && y <=(ch+cy))
                 ) {
+                    ri = i;
+                    roffset = offset;
                     break;
                 }
 
-                offset = offset + ((horizontal)?cw:ch);
+                offset = offset + ((layoutOrientation==HORIZONTAL)?cw:ch);
             }
 
         }
 
-        return new int[] {i,offset} ;
+        return new int[] {ri,roffset} ;
     }
 
     public void paintComponent(Graphics2D g) {
@@ -338,7 +359,6 @@ public class List extends Component implements ActionListener {
             offset=0;
         }
         for(; i < getSize(); i++){
-
             Component c = getComponentFor(i,offset);
 
             //g.setColor(0x0000FF00);
@@ -365,7 +385,7 @@ public class List extends Component implements ActionListener {
                 break;
             }
 
-            offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
+            offset = offset + ((layoutOrientation==HORIZONTAL)?c.getWidthWithBorder():c.getHeightWithBorder());
 
         }
 
@@ -386,25 +406,30 @@ public class List extends Component implements ActionListener {
 
     public Component getRendererComponentFor(int a) {
 
-    	if (horizontal && fixedCellWidth!=-1) {
+    	if (layoutOrientation==HORIZONTAL && fixedCellWidth!=-1) {
             return getComponentFor(a,a*fixedCellWidth);
         }
-        else if (!horizontal && fixedCellHeight!=-1) {
+        else if (layoutOrientation==VERTICAL && fixedCellHeight!=-1) {
             return getComponentFor(a,a*fixedCellHeight);
         }
 
         int offset=0;
 
-        for(int i = 0; true; i++){
+        // only need to do this looping for HORIZONTAL or VERTICAL
+        if (layoutOrientation==HORIZONTAL || layoutOrientation==VERTICAL) {
+            for(int i = 0; true; i++){
                 Component c = getComponentFor(i,offset);
-
                 if (i==a) {
                     return c;
                 }
-
-                offset = offset + ((horizontal)?c.getWidthWithBorder():c.getHeightWithBorder());
-
+                offset = offset + ((layoutOrientation==HORIZONTAL)?c.getWidthWithBorder():c.getHeightWithBorder());
+            }
         }
+
+        // this is used by android menus and all other wrapping lists
+        // if we are not HORIZONTAL or VERTICAL
+        return getComponentFor(a,offset); // offset is ZERO
+
     }
 
     protected Component getComponentFor(int i,int offset) {
@@ -418,10 +443,10 @@ public class List extends Component implements ActionListener {
         int h = fixedCellHeight!=-1?fixedCellHeight:c.getHeightWithBorder();
 
         c.setBoundsWithBorder(
-                ((horizontal)?offset:0),
-                ((horizontal)?0:offset),
-                ((horizontal)?w:width),
-                ((horizontal)?height:h)
+                ((layoutOrientation==HORIZONTAL)?offset:0),
+                ((layoutOrientation==HORIZONTAL)?0:offset),
+                ((layoutOrientation==HORIZONTAL)?w:width),
+                ((layoutOrientation==HORIZONTAL)?height:h)
                 );
         return c;
 
@@ -590,12 +615,12 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.DOWN)) {
 
-            if (!horizontal && next>-1) {
+            if (layoutOrientation!=HORIZONTAL && next>-1) {
                 selectNewKey(next,keypad);
                 return true;
             }
             //else {
-                if (horizontal && current!=-1) {
+                if (layoutOrientation!=VERTICAL && current!=-1) {
                     Component c = getRendererComponentFor(current);
                     int y = getYOnScreen();
                     scrollRectToVisible(c.getXWithBorder(),c.getHeightWithBorder()-1,c.getWidthWithBorder(),1,true);
@@ -610,12 +635,12 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.UP)) {
 
-            if (!horizontal && prev>-1) {
+            if (layoutOrientation!=HORIZONTAL && prev>-1) {
                 selectNewKey(prev,keypad);
                 return true;
             }
             //else {
-                if (horizontal && current!=-1) {
+                if (layoutOrientation!=VERTICAL && current!=-1) {
                     Component c = getRendererComponentFor(current);
                     int y = getYOnScreen();
                     scrollRectToVisible(c.getXWithBorder(),0,c.getWidthWithBorder(),1,true);
@@ -629,14 +654,14 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.RIGHT)) {
 
-            if (horizontal && next>-1) {
+            if (layoutOrientation!=VERTICAL && next>-1) {
                 selectNewKey(next,keypad);
                 return true;
             }
             //else {
                 // TODO could get rid of this check and add the X pos to the width
                 // so you can scroll right even in horizontal mode
-                if (!horizontal && current!=-1) {
+                if (layoutOrientation!=HORIZONTAL && current!=-1) {
                     Component c = getRendererComponentFor(current);
                     int x = getXOnScreen();
                     scrollRectToVisible(c.getWidthWithBorder()-1,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
@@ -651,12 +676,12 @@ public class List extends Component implements ActionListener {
         }
         else if (keypad.isDownAction(Canvas.LEFT)) {
 
-            if (horizontal && prev>-1) {
+            if (layoutOrientation!=VERTICAL && prev>-1) {
                 selectNewKey(prev,keypad);
                 return true;
             }
             //else {
-                if (!horizontal && current!=-1) {
+                if (layoutOrientation!=HORIZONTAL && current!=-1) {
                     Component c = getRendererComponentFor(current);
                     int x = getXOnScreen();
                     scrollRectToVisible(0,c.getYWithBorder(),1,c.getHeightWithBorder(),true);
@@ -765,7 +790,7 @@ public class List extends Component implements ActionListener {
             // THIS WILL NOT WORK if list in inside a panel inside a scrollpane
             // as posX and posY will be wrong!
             // ALSO WILLNOT WORK IN BOXLAYOUT HCENTRE IF NOT THE FIRST COMPONENT
-            if (horizontal) {
+            if (layoutOrientation==HORIZONTAL) {
                 scrollRectToVisible( c.getXWithBorder(), -posY, c.getWidthWithBorder(), 1,false);
             }
             else {

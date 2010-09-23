@@ -81,7 +81,7 @@ public class TabbedPane extends Panel implements ChangeListener {
         public void setTabPlacement(int a) {
 
             tabPosition = a;
-            tabList.setLayoutOrientation( (a==Graphics.TOP || a==Graphics.BOTTOM) );
+            tabList.setLayoutOrientation( (a==Graphics.TOP || a==Graphics.BOTTOM)?List.HORIZONTAL:List.VERTICAL );
 
             String n = "TabRenderer";
             switch(a) {

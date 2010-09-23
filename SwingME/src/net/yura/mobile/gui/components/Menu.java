@@ -246,7 +246,7 @@ public class Menu extends Button {
             popup.addCommand(cancel);
 
             menuItems = new MenuBar();
-            menuItems.setLayoutOrientation(false);
+            menuItems.setLayoutOrientation(List.VERTICAL);
             menuItems.setUseSelectButton(true);
             menuItems.setLoop(true);
 

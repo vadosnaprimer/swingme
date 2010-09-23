@@ -24,7 +24,6 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.logging.Logger;
@@ -35,14 +34,14 @@ import net.yura.mobile.logging.Logger;
 public class MenuBar extends List implements ActionListener {
 
     public MenuBar() {
-        setLayoutOrientation(true);
+        setLayoutOrientation(List.HORIZONTAL);
         setCellRenderer( new MenuItemRenderer() );
         setActionCommand("activate");
         addActionListener(this);
     }
 
     public boolean processKeyEvent(KeyEvent keyEvent) {
-        if (!getLayoutOrientation() && getSelectedValue() instanceof Menu && keyEvent.justPressedAction(Canvas.RIGHT)) {
+        if (getLayoutOrientation()==List.VERTICAL && getSelectedValue() instanceof Menu && keyEvent.justPressedAction(Canvas.RIGHT)) {
             fireActionPerformed();
             return true;
         }
@@ -311,6 +310,8 @@ public class MenuBar extends List implements ActionListener {
     public void workoutMinimumSize() {
         if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
 
+            setLayoutOrientation( -1 );
+
             ListCellRenderer renderer = getCellRenderer();
             int size = getSize();
 
@@ -353,7 +354,11 @@ public class MenuBar extends List implements ActionListener {
 
             cols = Math.max(Math.min(width / w,size),1); // TODO very long buttons will be truncated, is this ok?
 
-            height = h*((size / cols)+(size%cols==0?0:1));
+            int rows = ((size / cols)+(size%cols==0?0:1));
+
+            cols = size/rows + (size%rows==0?0:1); // this is to not have a HUGE top row but if possible split the total cells into a nice grid
+
+            height = h*rows;
 
         }
         else {
