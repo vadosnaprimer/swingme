@@ -63,10 +63,24 @@ import org.kxml2.io.KXmlParser;
  */
 public class XULLoader {
 
+    /**
+     * @see java.awt.event.KeyEvent#VK_ALT KeyEvent.VK_ALT
+     */
     public static final int VK_ALT = 18; // open the menu
-    public static final int VK_ESC = 27; // go back
 
+    /**
+     * @see java.awt.event.KeyEvent#VK_ESCAPE KeyEvent.VK_ESCAPE
+     */
+    public static final int VK_ESCAPE = 27; // go back
+
+    /**
+     * @see java.awt.event.KeyEvent#VK_F1 KeyEvent.VK_F1
+     */
     public static final int VK_F1 = 112;
+
+    /**
+     * @see java.awt.event.KeyEvent#VK_F2 KeyEvent.VK_F2
+     */
     public static final int VK_F2 = 113;
 
     public static XULLoader load(InputStream is, ActionListener listener) throws Exception {
@@ -601,7 +615,7 @@ public class XULLoader {
                     int mnemonic = Integer.parseInt(value);
                     switch (mnemonic) {
                         case VK_ALT:  mnemonic=KeyEvent.KEY_MENU; break;
-                        case VK_ESC:  mnemonic=KeyEvent.KEY_END; break;
+                        case VK_ESCAPE:  mnemonic=KeyEvent.KEY_END; break;
                         case VK_F1: mnemonic=KeyEvent.KEY_SOFTKEY1; break;
                         case VK_F2: mnemonic=KeyEvent.KEY_SOFTKEY2; break;
                         default:
