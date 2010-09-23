@@ -2,7 +2,6 @@ package net.yura.android.plaf;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import net.yura.android.AndroidMeMIDlet;
@@ -15,7 +14,6 @@ public class AndroidLookAndFeel extends LookAndFeel {
     public AndroidLookAndFeel() {
 
         Context ctx = AndroidMeMIDlet.DEFAULT_ACTIVITY.getApplicationContext();
-        Resources res = ctx.getResources();
 
         TypedArray a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorForeground});
         int c = a2.getColor(0, 0xFF000000);
@@ -28,29 +26,32 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         // --- List ---
         Style listCellRenderer = new Style(defaultStyle);
-        listCellRenderer.addBorder(new AndroidBorder(res.getDrawable(android.R.drawable.list_selector_background)), Style.ALL);
-        setForegroundColor(listCellRenderer, android.R.style.Widget_Button);
+        addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector);
+
+        // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
+        // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
+        setForegroundColor(listCellRenderer, android.R.style.TextAppearance_Widget_TextView);
         setStyleFor("ListRenderer",listCellRenderer);
 
-        Style progressBar = new Style(defaultStyle);
-        addBorder(progressBar, android.R.drawable.progress_horizontal);
-        setStyleFor("ProgressBar",progressBar);
+//        Style progressBar = new Style(defaultStyle);
+//        addBorder(progressBar, android.R.drawable.progress_horizontal);
+//        setStyleFor("ProgressBar",progressBar);
 
         // --- Button ---
         Style buttonStyle = new Style(defaultStyle);
-        addBorder(buttonStyle, android.R.attr.buttonStyle);
+        addBorder(ctx, buttonStyle, android.R.attr.buttonStyle, android.R.attr.background);
         setForegroundColor(buttonStyle, android.R.style.Widget_Button);
         setStyleFor("Button", buttonStyle);
 
         // --- Radio Button ---
         Style radioStyle = new Style(defaultStyle);
-        radioStyle.addProperty(createIcon(android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
+        radioStyle.addProperty(createIcon(ctx, android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
         setForegroundColor(radioStyle, android.R.style.Widget_CompoundButton_RadioButton);
         setStyleFor("RadioButton",radioStyle);
 
         // --- Check Box ---
         Style checkboxStyle = new Style(defaultStyle);
-        checkboxStyle.addProperty(createIcon(android.R.style.Widget_CompoundButton_CheckBox), "icon", Style.ALL);
+        checkboxStyle.addProperty(createIcon(ctx, android.R.style.Widget_CompoundButton_CheckBox), "icon", Style.ALL);
         setForegroundColor(radioStyle, android.R.style.Widget_CompoundButton_CheckBox);
         setStyleFor("CheckBox",checkboxStyle);
 
@@ -62,7 +63,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
         setStyleFor("Frame",windowSkin);
 
         Style inputStyle = new Style(defaultStyle);
-        addBorder(inputStyle, android.R.attr.editTextStyle);
+        addBorder(ctx, inputStyle, android.R.attr.editTextStyle, android.R.attr.background);
         setForegroundColor(inputStyle, android.R.style.Widget_EditText);
 
         setStyleFor("TextArea",inputStyle);
@@ -77,6 +78,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
 //            Class clazz = Class.forName("com.android.internal.R$styleable");
 //            int attrs2[] = (int[]) clazz.getField("TextAppearance").get(clazz);
 //            int attrIdx = clazz.getField("TextAppearance_textColor").getInt(clazz);
+//            System.out.println("");
 //        } catch (Throwable e) {
 //            e.printStackTrace();
 //        }
@@ -100,26 +102,12 @@ public class AndroidLookAndFeel extends LookAndFeel {
         return res;
     }
 
-    private Drawable getDrawable(int defStyle) {
-
-        Drawable res = null;
-
-        Context ctx = AndroidMeMIDlet.DEFAULT_ACTIVITY.getApplicationContext();
-        int attrsWanted[] = new int[] {android.R.attr.button, android.R.attr.drawable, android.R.attr.background };
-
-        for (int i = 0; res == null && i < attrsWanted.length; i++) {
-            res = getDrawable(ctx, defStyle, attrsWanted[i]);
-        }
-
-        return res;
+    private AndroidIcon createIcon(Context ctx, int id) {
+        return new AndroidIcon(getDrawable(ctx, id, android.R.attr.button));
     }
 
-    private AndroidIcon createIcon(int id) {
-        return new AndroidIcon(getDrawable(id));
-    }
-
-    private void addBorder(Style style, int styleDef) {
-        Drawable  d0 = getDrawable(styleDef);
+    private void addBorder(Context ctx, Style style, int styleDef, int attr) {
+        Drawable  d0 = getDrawable(ctx, styleDef, attr);
         style.addBorder(new AndroidBorder(d0), Style.ALL);
     }
 
@@ -127,21 +115,30 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         ColorStateList res = null;
 
-        int attrs[] = {android.R.attr.textColor};
+        int attrs[] = {android.R.attr.textColor, android.R.attr.textAppearance};
         TypedArray a = ctx.obtainStyledAttributes(defStyle, attrs);
 
-        final int N = a.getIndexCount();
-        for (int i = 0; res == null && i < N; i++) {
-            int attr = a.getIndex(i);
+        res = a.getColorStateList(0);
 
-            res = a.getColorStateList(attr);
+        if (res == null) {
+            // If textColor is not available, we need to dig inside "text appearance"
+            // TODO: This "digging" does not seem to work...
+            TypedArray appearance = null;
+            int ap = a.getResourceId(1, -1);
+            if (ap != -1) {
+                appearance = ctx.obtainStyledAttributes(ap, new int[] {android.R.attr.textColor});
+            }
+            if (appearance != null) {
+                res = a.getColorStateList(0);
+                appearance.recycle();
+            }
         }
-
-        a.recycle();
 
         if (res == null) {
             res = ColorStateList.valueOf(0xFF000000);
         }
+
+        a.recycle();
 
         return res;
     }
