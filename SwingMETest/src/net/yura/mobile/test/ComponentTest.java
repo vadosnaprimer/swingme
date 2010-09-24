@@ -109,6 +109,10 @@ public class ComponentTest  extends Section{
                 testMain.add(new RadioButton("test ra"));
                 testMain.add(new CheckBox("test ch"));
 
+                Button off = new Button("disabled");
+                off.setFocusable(false);
+                testMain.add(off);
+
                 Menu testMain2 = new Menu("sub Menu");
 
                 testMain2.add(new Button("test 4"));
