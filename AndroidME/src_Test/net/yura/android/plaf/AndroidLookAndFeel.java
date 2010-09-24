@@ -107,6 +107,11 @@ public class AndroidLookAndFeel extends LookAndFeel {
         Style popupStyle = new Style(defaultStyle);
         addBorder(ctx, popupStyle, 0, android.R.drawable.alert_light_frame); // As defined on AlertController
         setStyleFor("Popup", popupStyle);
+
+        Style tooltipStyle = new Style(defaultStyle);
+        addBorder(ctx, tooltipStyle, 0, android.R.drawable.toast_frame);
+        setStyleFor("ToolTip", tooltipStyle);
+
     }
 
     private Drawable getDrawable(Context ctx, int defStyle, int defAttr) {
