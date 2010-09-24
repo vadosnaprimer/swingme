@@ -265,6 +265,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             Style menuSkin = new Style(defaultStyle);
             menuSkin.addBorder(new LineBorder( getPrimary1() ), Style.ALL);
             setStyleFor("Menu",menuSkin);
+            setStyleFor("Popup",menuSkin);
 
             Style windowSkin = new Style(defaultStyle);
             // TODO: windowSkin.addBorder(new LineBorder( getSecondary1(), 2 ), Style.ALL);

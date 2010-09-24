@@ -113,7 +113,7 @@ public class ComboBox extends Button implements ActionListener{
                 if (dropDown==null) {
                     dropDown = new Window();
                     dropDown.setCloseOnFocusLost(true);
-                    dropDown.setName("Menu");
+                    dropDown.setName("Popup");
                     dropDown.addWindowListener(this);
 
                     Button cancel = new Button( (String)DesktopPane.get("cancelText") );
