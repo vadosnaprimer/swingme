@@ -32,6 +32,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         Style menuStyle = new Style(defaultStyle);
         addBorder(ctx, menuStyle, 0, android.R.drawable.menu_frame);
+        setForegroundColor(menuStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
         setStyleFor("Menu", menuStyle);
 
         Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
@@ -102,6 +103,10 @@ public class AndroidLookAndFeel extends LookAndFeel {
         addBorder(ctx, comboStyle, android.R.style.Widget_Spinner, android.R.attr.background);
         setForegroundColor(comboStyle, android.R.style.Widget_Spinner);
         setStyleFor("ComboBox",comboStyle);
+
+        Style popupStyle = new Style(defaultStyle);
+        addBorder(ctx, popupStyle, 0, android.R.drawable.alert_light_frame); // As defined on AlertController
+        setStyleFor("Popup", popupStyle);
     }
 
     private Drawable getDrawable(Context ctx, int defStyle, int defAttr) {
@@ -193,7 +198,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
         }
 
         if (res == null) {
-            res = ColorStateList.valueOf(0xFF000000);
+            res = ColorStateList.valueOf(0xFFFF00FF);
         }
 
         a.recycle();
