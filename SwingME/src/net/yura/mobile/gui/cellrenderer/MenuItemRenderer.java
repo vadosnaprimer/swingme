@@ -36,7 +36,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
     public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         if (value instanceof Button) {
             component = (Component)value;
-            setupState(list, isSelected, cellHasFocus);
+            setupState(component, isSelected, cellHasFocus);
             return this;
         }
         else if (value instanceof Component) {

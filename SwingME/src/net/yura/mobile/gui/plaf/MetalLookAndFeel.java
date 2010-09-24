@@ -108,6 +108,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             menuItemStyle.addProperty(spinnerRightIcon, "icon", Style.ALL);
             menuItemStyle.addBackground( getPrimary2() , Style.SELECTED );
             //menuItemStyle.addForeground( getWhite() , Style.SELECTED );
+            menuItemStyle.addForeground( getSecondary2() , Style.DISABLED);
             setStyleFor("MenuRenderer",menuItemStyle);
             setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
