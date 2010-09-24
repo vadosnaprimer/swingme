@@ -41,7 +41,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
         setForegroundColor(menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
         setStyleFor("MenuRenderer",menuRendererStyle);
-        
+
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
@@ -52,13 +52,13 @@ public class AndroidLookAndFeel extends LookAndFeel {
         setForegroundColor(listCellRenderer, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
 
-        
+
         // com.android.internal.R.style.Theme_Dialog_Alert
         // Dialog
         Style dialogStyle = new Style(defaultStyle);
         addBorder(ctx, dialogStyle, 0, android.R.drawable.dialog_frame);
         setStyleFor("Dialog", dialogStyle);
-        
+
         Style titleBarStyle = new Style(defaultStyle);
         addBorder(ctx, titleBarStyle, 0, android.R.drawable.title_bar);
         setStyleFor("TitleBar", titleBarStyle);
@@ -90,13 +90,18 @@ public class AndroidLookAndFeel extends LookAndFeel {
         addBorder(ctx, frameStyle, 0, android.R.attr.windowBackground);
         setStyleFor("Frame",frameStyle);
 
+        // --- TextArea and TextField ---
         Style inputStyle = new Style(defaultStyle);
         addBorder(ctx, inputStyle, android.R.attr.editTextStyle, android.R.attr.background);
         setForegroundColor(inputStyle, android.R.style.Widget_EditText);
-
         setStyleFor("TextArea",inputStyle);
         setStyleFor("TextField",inputStyle);
 
+        // --- ComboBox ---
+        Style comboStyle = new Style(buttonStyle);
+        addBorder(ctx, comboStyle, android.R.style.Widget_Spinner, android.R.attr.background);
+        setForegroundColor(comboStyle, android.R.style.Widget_Spinner);
+        setStyleFor("ComboBox",comboStyle);
     }
 
     private Drawable getDrawable(Context ctx, int defStyle, int defAttr) {
@@ -111,7 +116,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
 //        } catch (Throwable e) {
 //            e.printStackTrace();
 //        }
-        
+
         // 1 - Attempt to return directly from the resources
         try {
             res = ctx.getResources().getDrawable(defAttr);
