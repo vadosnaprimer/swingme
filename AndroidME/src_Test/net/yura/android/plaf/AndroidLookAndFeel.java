@@ -3,6 +3,7 @@ package net.yura.android.plaf;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import net.yura.android.AndroidMeMIDlet;
 import net.yura.mobile.gui.Font;
@@ -32,8 +33,9 @@ public class AndroidLookAndFeel extends LookAndFeel {
         addBorder(ctx, menuStyle, 0, android.R.drawable.menu_frame);
         setStyleFor("Menu", menuStyle);
 
+        Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
         Style menuRendererStyle = new Style(defaultStyle);
-        addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector);
+        addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
         // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
         setForegroundColor(menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
@@ -41,12 +43,11 @@ public class AndroidLookAndFeel extends LookAndFeel {
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
+        Rect listExtraPadding = new Rect(10, 10, 10, 10);
         Style listCellRenderer = new Style(defaultStyle);
-        addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector);
+        addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector, listExtraPadding);
 
-        // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
-        // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
-        setForegroundColor(listCellRenderer, android.R.style.TextAppearance_Widget_TextView);
+        setForegroundColor(listCellRenderer, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
 
 //        Style progressBar = new Style(defaultStyle);
@@ -82,6 +83,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         setStyleFor("TextArea",inputStyle);
         setStyleFor("TextField",inputStyle);
+
     }
 
     private Drawable getDrawable(Context ctx, int defStyle, int defAttr) {
@@ -139,6 +141,13 @@ public class AndroidLookAndFeel extends LookAndFeel {
         Drawable  d0 = getDrawable(ctx, styleDef, attr);
         if (d0 != null) {
             style.addBorder(new AndroidBorder(d0), Style.ALL);
+        }
+    }
+
+    private void addBorder(Context ctx, Style style, int styleDef, int attr, Rect extraPadding) {
+        Drawable  d0 = getDrawable(ctx, styleDef, attr);
+        if (d0 != null) {
+            style.addBorder(new AndroidBorder(d0, extraPadding), Style.ALL);
         }
     }
 
