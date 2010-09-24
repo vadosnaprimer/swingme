@@ -17,12 +17,28 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         TypedArray a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorForeground});
         int c = a2.getColor(0, 0xFF000000);
-
+        a2.recycle();
 
         Style defaultStyle = new Style();
         defaultStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM) , Style.ALL);
         defaultStyle.addForeground(c , Style.ALL);
-        setStyleFor("",defaultStyle);
+        setStyleFor("", defaultStyle);
+
+        Style androidMenuStyle = new Style(defaultStyle);
+        addBorder(ctx, androidMenuStyle, 0, android.R.drawable.menu_full_frame);
+        setStyleFor("AndroidMenu", androidMenuStyle);
+
+        Style menuStyle = new Style(defaultStyle);
+        addBorder(ctx, menuStyle, 0, android.R.drawable.menu_frame);
+        setStyleFor("Menu", menuStyle);
+
+        Style menuRendererStyle = new Style(defaultStyle);
+        addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector);
+        // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
+        // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
+        setForegroundColor(menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
+        setStyleFor("MenuRenderer",menuRendererStyle);
+//        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
         Style listCellRenderer = new Style(defaultStyle);
@@ -56,11 +72,9 @@ public class AndroidLookAndFeel extends LookAndFeel {
         setStyleFor("CheckBox",checkboxStyle);
 
         // --- Frame ---
-        TypedArray a = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.windowBackground});
-        Drawable d = a.getDrawable(0);
-        Style windowSkin = new Style(defaultStyle);
-        windowSkin.addBorder(new AndroidBorder(d), Style.ALL);
-        setStyleFor("Frame",windowSkin);
+        Style frameStyle = new Style(defaultStyle);
+        addBorder(ctx, frameStyle, 0, android.R.attr.windowBackground);
+        setStyleFor("Frame",frameStyle);
 
         Style inputStyle = new Style(defaultStyle);
         addBorder(ctx, inputStyle, android.R.attr.editTextStyle, android.R.attr.background);
@@ -83,18 +97,33 @@ public class AndroidLookAndFeel extends LookAndFeel {
 //            e.printStackTrace();
 //        }
 
+        // 1 - Attempt to return directly from the resources
+        try {
+            res = ctx.getResources().getDrawable(defAttr);
+        } catch (Throwable e) {
+        }
+
         // NOTE: obtainStyledAttributes() fails if we request invalid attributes,
         // so we request one at a time
         int attrsWanted[] = { defAttr };
 
-        TypedArray a = ctx.obtainStyledAttributes(null, attrsWanted, defStyle, 0);
-        res = a.getDrawable(0);
-        a.recycle();
-
-        // NOTE: The two versions of obtainStyledAttributes() return different
-        // results, so if the first fails, we try the second.
+        // 2 - Try with a obtainStyledAttributes v1
         if (res == null) {
-            a = ctx.obtainStyledAttributes(defStyle, attrsWanted);
+            TypedArray a = ctx.obtainStyledAttributes(null, attrsWanted, defStyle, 0);
+            res = a.getDrawable(0);
+            a.recycle();
+        }
+
+        // 3 - Try with a obtainStyledAttributes v2
+        if (res == null) {
+            TypedArray a = ctx.obtainStyledAttributes(defStyle, attrsWanted);
+            res = a.getDrawable(0);
+            a.recycle();
+        }
+
+        // 4 - Try with a obtainStyledAttributes v3
+        if (res == null) {
+            TypedArray a = ctx.obtainStyledAttributes(attrsWanted);
             res = a.getDrawable(0);
             a.recycle();
         }
@@ -108,7 +137,9 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
     private void addBorder(Context ctx, Style style, int styleDef, int attr) {
         Drawable  d0 = getDrawable(ctx, styleDef, attr);
-        style.addBorder(new AndroidBorder(d0), Style.ALL);
+        if (d0 != null) {
+            style.addBorder(new AndroidBorder(d0), Style.ALL);
+        }
     }
 
     static ColorStateList getTextColor(Context ctx, int defStyle) {

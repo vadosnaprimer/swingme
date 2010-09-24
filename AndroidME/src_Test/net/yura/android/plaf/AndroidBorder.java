@@ -4,9 +4,9 @@ import java.util.Vector;
 
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
-import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.plaf.Style;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 
 public class AndroidBorder implements Border {
@@ -34,8 +34,7 @@ public class AndroidBorder implements Border {
     }
 
     public boolean isBorderOpaque() {
-        System.out.println("getOpacity= "+drawable.getOpacity());
-        return true;
+        return (drawable.getOpacity() == PixelFormat.OPAQUE);
     }
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
@@ -65,6 +64,7 @@ public class AndroidBorder implements Border {
         }
 
         if ((state & Style.SELECTED) != 0) {
+            stateList.add(new Integer(android.R.attr.state_selected));
             stateList.add(new Integer(android.R.attr.state_checked));
         }
 
