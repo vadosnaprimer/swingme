@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.widget.CheckBox;
 import net.yura.android.AndroidMeMIDlet;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.plaf.LookAndFeel;
@@ -40,6 +41,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
         setForegroundColor(menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
         setStyleFor("MenuRenderer",menuRendererStyle);
+        
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
@@ -49,6 +51,17 @@ public class AndroidLookAndFeel extends LookAndFeel {
 
         setForegroundColor(listCellRenderer, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
+
+        
+        // com.android.internal.R.style.Theme_Dialog_Alert
+        // Dialog
+        Style dialogStyle = new Style(defaultStyle);
+        addBorder(ctx, dialogStyle, 0, android.R.drawable.dialog_frame);
+        setStyleFor("Dialog", dialogStyle);
+        
+        Style titleBarStyle = new Style(defaultStyle);
+        addBorder(ctx, titleBarStyle, 0, android.R.drawable.title_bar);
+        setStyleFor("TitleBar", titleBarStyle);
 
 //        Style progressBar = new Style(defaultStyle);
 //        addBorder(progressBar, android.R.drawable.progress_horizontal);
@@ -98,7 +111,7 @@ public class AndroidLookAndFeel extends LookAndFeel {
 //        } catch (Throwable e) {
 //            e.printStackTrace();
 //        }
-
+        
         // 1 - Attempt to return directly from the resources
         try {
             res = ctx.getResources().getDrawable(defAttr);
