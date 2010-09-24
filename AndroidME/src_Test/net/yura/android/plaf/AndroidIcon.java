@@ -32,9 +32,8 @@ public class AndroidIcon extends Icon {
     public AndroidIcon(Drawable drawable) {
         this.drawable= drawable;
 
-        //TODO:
-        width = Math.max(20, drawable.getIntrinsicWidth());
-        height = Math.max(20, drawable.getIntrinsicHeight());
+        width = drawable.getIntrinsicWidth();
+        height = drawable.getIntrinsicHeight();
     }
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {

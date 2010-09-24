@@ -7,30 +7,44 @@ import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.plaf.Style;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 public class AndroidBorder implements Border {
 
     private Drawable drawable;
+    private Rect padding;
 
     public AndroidBorder(Drawable d) {
-        drawable = d;
+        this.drawable = d;
+        this.padding = new Rect();
+        d.getPadding(padding);
+    }
+
+    public AndroidBorder(Drawable d, Rect extraPadding) {
+        this(d);
+        padding.set(
+            padding.left + extraPadding.left,
+            padding.top + extraPadding.top,
+            padding.right + extraPadding.right,
+            padding.bottom + extraPadding.bottom
+        );
     }
 
     public int getBottom() {
-        return 20;
+        return padding.bottom;
     }
 
     public int getLeft() {
-        return 20;
+        return padding.left;
     }
 
     public int getRight() {
-        return 20;
+        return padding.right;
     }
 
     public int getTop() {
-        return 20;
+        return padding.top;
     }
 
     public boolean isBorderOpaque() {
