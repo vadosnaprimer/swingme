@@ -310,6 +310,7 @@ public class MenuBar extends List implements ActionListener {
     public void workoutMinimumSize() {
         if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
 
+            getWindow().setName("AndroidMenu");
             setLayoutOrientation( -1 );
 
             ListCellRenderer renderer = getCellRenderer();
