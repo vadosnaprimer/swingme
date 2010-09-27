@@ -616,7 +616,12 @@ public class DesktopPane extends Canvas implements Runnable {
                         paintComponent(graphics, (Window) windows.elementAt(c));
                         if (c == (windows.size() - 2) && fade != null) {
                             Image i = fade.getImage();
-                            if (i!=null) {
+                            if (i==null) {
+                                // hack for android
+                                fade.paintIcon(null, graphics, 0, 0);
+                            }
+                            else {
+                                // hack for synth and MIDP
                                 graphics.drawImage(i, 0, 0, fade.getIconWidth(), fade.getIconHeight(), 0, 0, getWidth(), getHeight(), javax.microedition.lcdui.game.Sprite.TRANS_NONE );
                             }
                         }
