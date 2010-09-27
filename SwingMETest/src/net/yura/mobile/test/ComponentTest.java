@@ -17,6 +17,7 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.BevelBorder;
 import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.border.TitledBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.components.Button;
@@ -92,6 +93,68 @@ public class ComponentTest  extends Section{
         super.actionPerformed(actionCommand);
     }
 
+    private Vector makeEnabledComponents() {
+
+        Vector components = new Vector();
+
+        Menu testMain = new Menu("Menu");
+
+        testMain.add(new Button("test 1"));
+        testMain.add(new Button("test 2 lalalalalal"));
+        testMain.add(new Button("test 3"));
+        testMain.addSeparator();
+        testMain.add(new RadioButton("test ra"));
+        testMain.add(new CheckBox("test ch"));
+
+        Button off = new Button("disabled");
+        off.setFocusable(false);
+        testMain.add(off);
+
+        Menu testMain2 = new Menu("sub Menu");
+
+        testMain2.add(new Button("test 4"));
+        testMain2.add(new Button("test 5"));
+        testMain2.add(new Button("test 6"));
+
+        testMain.add(testMain2);
+
+
+        Button b = new Button("a Button");
+        b.setToolTipText("A ToolTip for a button");
+        components.addElement( b );
+
+        components.addElement(testMain);
+
+        CheckBox cb = new CheckBox("a CheckBox");
+        cb.setUseSelectButton(true);
+        components.addElement( cb );
+
+        RadioButton rb = new RadioButton("a RadioButton");
+        rb.setUseSelectButton(true);
+        components.addElement( rb );
+
+        components.addElement( new ComboBox(getItems()) );
+        components.addElement( new Spinner(getItems(), true));
+
+        components.addElement(new TextField(TextField.ANY));
+
+        return components;
+    }
+
+    private Vector getItems() {
+
+                Vector items = new Vector();
+                items.addElement("One");
+                items.addElement(new Option("2","Two",mainPane.image));
+                items.addElement(new Option("3","Three option"));
+                items.addElement(new Option("4",null,mainPane.image,"(no text)"));
+                items.addElement("");
+                items.addElement(null);
+                return items;
+
+    }
+
+
     public void openTest(String actionCommand) {
 
         if ("componentTest".equals(actionCommand)) {
@@ -100,71 +163,28 @@ public class ComponentTest  extends Section{
 
                 componentTest = new Panel( new FlowLayout(Graphics.VCENTER) );
 
-                Menu testMain = new Menu("Menu");
+                Panel panel1 = new Panel( new FlowLayout(Graphics.VCENTER) );
+                Vector v1 = makeEnabledComponents();
+                for (int c=0;c<v1.size();c++) {
+                    panel1.add( (Component)v1.elementAt(c) );
+                }
 
-                testMain.add(new Button("test 1"));
-                testMain.add(new Button("test 2 lalalalalal"));
-                testMain.add(new Button("test 3"));
-                testMain.addSeparator();
-                testMain.add(new RadioButton("test ra"));
-                testMain.add(new CheckBox("test ch"));
+                Panel panel2 = new Panel( new FlowLayout(Graphics.VCENTER) );
+                Vector v2 = makeEnabledComponents();
+                for (int c=0;c<v2.size();c++) {
+                    Component co = (Component)v2.elementAt(c);
+                    co.setFocusable(false);
+                    panel2.add( co );
+                }
 
-                Button off = new Button("disabled");
-                off.setFocusable(false);
-                testMain.add(off);
 
-                Menu testMain2 = new Menu("sub Menu");
-
-                testMain2.add(new Button("test 4"));
-                testMain2.add(new Button("test 5"));
-                testMain2.add(new Button("test 6"));
-
-                testMain.add(testMain2);
+                componentTest.add(panel1);
+                componentTest.add(panel2);
 
                 Label l = new Label("a Label");
                 l.setToolTipText("a label can have a tool tip too");
                 componentTest.add( l );
                 if (mainPane.image!=null) { componentTest.add( new Label( mainPane.image ) ); }
-                Button b = new Button("a Button");
-                b.setToolTipText("A ToolTip for a button");
-                componentTest.add( b );
-
-                Button b2 = new Button("disabled");
-                b2.setFocusable(false);
-                componentTest.add( b2 );
-
-                componentTest.add(testMain);
-
-                CheckBox cb = new CheckBox("a CheckBox");
-                cb.setUseSelectButton(true);
-                componentTest.add( cb );
-
-                RadioButton rb = new RadioButton("a RadioButton");
-                rb.setUseSelectButton(true);
-                componentTest.add( rb );
-
-                Vector items = new Vector();
-                items.addElement("");
-                items.addElement("One");
-                items.addElement(new Option("2","Two",mainPane.image));
-                items.addElement(new Option("3","Three option"));
-                items.addElement(new Option("4",null,mainPane.image,"(no text)"));
-
-                Vector itemsNoNull = new Vector();
-                SystemUtil.addAll(itemsNoNull, items);
-
-                items.addElement(null);
-
-                ComboBox disabledCombo = new ComboBox(items);
-                disabledCombo.setFocusable(false);
-
-                Spinner disabledSpinner = new Spinner(itemsNoNull, false);
-                disabledSpinner.setFocusable(false);
-
-                componentTest.add( new ComboBox(items) );
-                componentTest.add( disabledCombo );
-                componentTest.add( new Spinner(itemsNoNull, true));
-                componentTest.add(disabledSpinner);
 
                 TextArea longText = new TextArea("a MultilineLabel with a very long bit of text that will need to go onto more than 1 line");
                 longText.setFocusable(false);
@@ -184,8 +204,8 @@ public class ComponentTest  extends Section{
                 email.setBorder( new BevelBorder(1, 0xFFFFFFFF, 0xFF000000) );
 
                 componentTest.add(email);
-                componentTest.add(new TextField(TextField.PASSWORD));
-                componentTest.add( new List(items,new DefaultListCellRenderer(),List.VERTICAL) );
+
+                componentTest.add( new List( getItems() ,new DefaultListCellRenderer(),List.VERTICAL) );
 
                 menu = new Menu("Menu");
                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
