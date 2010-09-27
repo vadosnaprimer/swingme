@@ -97,11 +97,13 @@ public class MetalLookAndFeel extends LookAndFeel {
             addMetalIcon(checkboxRendererStyle,"/unknown.gif" , "unknownIcon");
             setStyleFor("CheckBoxRenderer",checkboxRendererStyle);
 
+            Border disabledButtonBorder = new LineBorder( getSecondary2() );
+
             Style buttonStyle = new Style(abstractButtonStyle);
             buttonStyle.addBackground( getSecondary3() , Style.ALL);
             buttonStyle.addBorder(new BevelBorder( 1, getWhite(), getSecondary1() ),Style.ALL);
             buttonStyle.addBorder(new BevelBorder( 1, getSecondary1(), getWhite() ), Style.SELECTED);
-            buttonStyle.addBorder(new LineBorder( getSecondary2() ), Style.DISABLED);
+            buttonStyle.addBorder(disabledButtonBorder, Style.DISABLED);
             setStyleFor("Button",buttonStyle);
 
             Style menuItemStyle = new Style(defaultStyle);
@@ -125,6 +127,7 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             Style textStyle = new Style(inputStyle);
             textStyle.addBorder(inputBorder, Style.ALL);
+            textStyle.addBorder(disabledButtonBorder, Style.DISABLED);
             textStyle.addBackground(getSecondary3(), Style.DISABLED);
             setStyleFor("TextField",textStyle);
 
@@ -132,6 +135,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             EmptyBorder padding = new EmptyBorder(0, font.getHeight(), 0, font.getHeight());
             Style spinnerStyle = new Style(radioStyle);
             spinnerStyle.addBorder(new CompoundBorder(padding, inputBorder ),Style.ALL);
+            spinnerStyle.addBorder(new CompoundBorder(padding, disabledButtonBorder), Style.DISABLED);
             spinnerStyle.addProperty(spinnerLeftIcon, "iconLeft", Style.ALL);
             spinnerStyle.addProperty(spinnerRightIcon, "iconRight", Style.ALL);
             spinnerStyle.addProperty(spinnerLeftIconSelected, "iconLeft", Style.SELECTED);

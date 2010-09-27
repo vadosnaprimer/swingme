@@ -105,12 +105,12 @@ public class MetalIcon extends Icon {
         }
         else if (type == LookAndFeel.ICON_SPINNER_LEFT) {
 
-            g.setColor(foreground);
+            g.setColor(fcolor);
             drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(),Sprite.TRANS_MIRROR_ROT90);
         }
         else if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
 
-            g.setColor(foreground);
+            g.setColor(fcolor);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
         else if (type == LookAndFeel.ICON_THUMB_TOP) {
@@ -118,7 +118,7 @@ public class MetalIcon extends Icon {
         }
         else if (type == LookAndFeel.ICON_THUMB_FILL) {
 
-            g.setColor( foreground );
+            g.setColor( fcolor );
             g.fillRect(x+2, y, width-4, height);
 
         }
@@ -130,7 +130,7 @@ public class MetalIcon extends Icon {
             g.setColor( background );
             g.fillRect(x, y, width, height);
 
-            g.setColor(foreground);
+            g.setColor(fcolor);
             g.drawRect(x, y, width-1, height-1);
 
             int gp = 2; // gap between arrow and sides
@@ -147,7 +147,7 @@ public class MetalIcon extends Icon {
             g.fillRect(x, y, width, height);
 
             // draw the lines either side
-            g.setColor( foreground );
+            g.setColor( fcolor );
             g.drawLine( x , y, x , y+height );
             g.drawLine(x+width-1, y, x+width-1, y+height);
 
@@ -157,7 +157,7 @@ public class MetalIcon extends Icon {
             g.setColor( background );
             g.fillRect(x, y, width, height);
 
-            g.setColor(foreground);
+            g.setColor(fcolor);
             g.drawRect(x, y, width-1, height-1);
 
             int gp = 2; // gap between arrow and sides
