@@ -30,6 +30,7 @@ import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.components.Frame;
@@ -56,7 +57,14 @@ public class MainPane extends DesktopPane {
         //                Hashtable settings = new Hashtable();
         //                settings.put("font", new Font("/font/test_0.png", "/font/test.fnt"));
         //                settings.put("Button.foreground", new Integer(0xFFff0000));
-        setLookAndFeel( new NimbusLookAndFeel(16) );
+
+        //setLookAndFeel( new net.yura.android.plaf.AndroidLookAndFeel() );
+        try {
+            setLookAndFeel( (LookAndFeel)Class.forName("net.yura.android.plaf.AndroidLookAndFeel").newInstance() );
+        }
+        catch (Throwable ex) {
+            setLookAndFeel( new NimbusLookAndFeel(16) );
+        }
 
         mainWindow = new Frame();
 
