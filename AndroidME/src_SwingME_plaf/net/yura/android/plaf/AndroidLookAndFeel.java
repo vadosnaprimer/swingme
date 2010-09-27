@@ -5,13 +5,12 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.widget.CheckBox;
 import net.yura.android.AndroidMeMIDlet;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 
-public class AndroidLookAndFeel extends LookAndFeel {
+public class AndroidLookAndFeel extends SynthLookAndFeel {
 
     public AndroidLookAndFeel() {
 
