@@ -102,8 +102,6 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             Hashtable styleList = new Hashtable();
 
-            Style defaultStyle=null;
-
             // read start tag
             while (parser.nextTag() != KXmlParser.END_TAG) {
 
@@ -133,6 +131,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                         Style newStyle = (Style)styleList.get(style);
                         Style oldStyle = getStyle(key);
 
+                        Style defaultStyle = getStyle(""); // empty string is the key for default style
+
                         Style theStyle;
                         if (oldStyle==null && defaultStyle==null) {
                             theStyle = newStyle;
@@ -144,7 +144,6 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                         if (".*".equals(key)) {
                             key =""; // empty string used as default in DesktopPane.getDefaultTheme
-                            defaultStyle = theStyle;
                         }
                         setStyleFor(key,theStyle);
                     }
