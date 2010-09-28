@@ -84,11 +84,11 @@ public class Graphics {
     }
 
     public int getColor() {
-        return paint.getColor() & 0x00FFFFFF;
+        return paint.getColor(); // paint.getColor() & 0x00FFFFFF
     }
 
     public void setColor(int color) {
-        paint.setColor(0xFF000000 | color);
+        paint.setColor(color); // 0xFF000000 | color
     }
 
     public void fillRect(int x, int y, int width, int height) {
