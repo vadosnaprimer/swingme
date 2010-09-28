@@ -34,8 +34,9 @@ public abstract class QueueProcessorThread extends Thread {
 
         runLoop: while (runnning) {
 
+            Object object=null;
+
             try {
-                    Object object;
 
                     synchronized(this) {
                         while(inbox.isEmpty()) {
@@ -64,14 +65,18 @@ public abstract class QueueProcessorThread extends Thread {
 
             }
             catch (Exception ex) {
-               Logger.warn(ex);
+                //#mdebug warn
+                Logger.warn("[QueueProcessorThread] error processing "+object);
+                Logger.warn(ex);
+                //#enddebug
             }
         }
       }
       catch(Throwable t) {
-        //#debug warn
-        Logger.warn("Error in QueueProcessorThread: "+t.toString());
+        //#mdebug error
+        Logger.error("[QueueProcessorThread] fatal error: "+t.toString());
         Logger.error(t);
+        //#enddebug
       }
     }
 
