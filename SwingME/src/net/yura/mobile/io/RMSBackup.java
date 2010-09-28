@@ -77,7 +77,16 @@ public class RMSBackup extends QueueProcessorThread {
     }
 
     public void backup(Object obj) {
+        makeSureIsRunning();
+        addToInbox( new ServiceLink.Task("save", obj) );
+    }
 
+    public void remove(Object obj) {
+        makeSureIsRunning();
+        addToInbox( new ServiceLink.Task("del", obj) );
+    }
+
+    private void makeSureIsRunning() {
         if (!isRunning()) {
             try {
                 start();
@@ -86,69 +95,67 @@ public class RMSBackup extends QueueProcessorThread {
               Logger.info(ex);
             } // TODO, find a better way
         }
-        addToInbox(obj);
-
-    }
-
-    public void remove(Object obj) {
-
-            Object bookingId = helper.getObjectId(obj);
-            Integer i = (Integer)table.remove(bookingId);
-
-            try {
-                RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
-                recordStore.deleteRecord(i.intValue());
-                recordStore.closeRecordStore();
-            }
-            catch(Exception ex) {
-                // this should really never happen
-                Logger.warn(ex);
-            }
-
     }
 
     private Hashtable table = new Hashtable();
 
-    public void process(Object obj) throws Exception {
+    public void process(Object param) throws Exception {
 
+        ServiceLink.Task task = (ServiceLink.Task)param;
+        Object obj = task.getObject();
+        String method = task.getMethod();
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        helper.saveObject(baos, obj);
-        byte[] b = baos.toByteArray();
+        if ("del".equals(method)) {
 
+            Object bookingId = helper.getObjectId(obj);
+            Integer i = (Integer)table.remove(bookingId);
 
-        RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
-
-        int size = recordStore.getSizeAvailable();
-
-        if (size<=b.length) {
-
+            RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
+            recordStore.deleteRecord(i.intValue());
             recordStore.closeRecordStore();
 
-            // if this fails, god knows what will happen
-            helper.rmsSaveFailed();
-
-            // just in case we save the current record to RSM again
-            // should not need this if the save worked
-            // TODO: inbox.insertElementAt(booking, 0);
-
-            // if the rms does not have enough space for a single booking
-            // then we are screwed
         }
-        else {
-            Object bookingId = helper.getObjectId(obj);
-            Integer i = (Integer)table.get(bookingId);
-            if (i==null) {
-                Integer newRecordId = new Integer( recordStore.addRecord(b, 0, b.length) );
-                table.put(bookingId, newRecordId);
+        else if ("save".equals(method)) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            helper.saveObject(baos, obj);
+            byte[] b = baos.toByteArray();
+
+
+            RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
+
+            int size = recordStore.getSizeAvailable();
+
+            if (size<=b.length) {
+
+                recordStore.closeRecordStore();
+
+                // if this fails, god knows what will happen
+                helper.rmsSaveFailed();
+
+                // just in case we save the current record to RSM again
+                // should not need this if the save worked
+                // TODO: inbox.insertElementAt(booking, 0);
+
+                // if the rms does not have enough space for a single booking
+                // then we are screwed
             }
             else {
-                recordStore.setRecord( i.intValue() , b, 0, b.length);
+                Object bookingId = helper.getObjectId(obj);
+                Integer i = (Integer)table.get(bookingId);
+                if (i==null) {
+                    Integer newRecordId = new Integer( recordStore.addRecord(b, 0, b.length) );
+                    table.put(bookingId, newRecordId);
+                }
+                else {
+                    recordStore.setRecord( i.intValue() , b, 0, b.length);
+                }
+
+                recordStore.closeRecordStore();
             }
-
-            recordStore.closeRecordStore();
         }
-
+        else {
+            System.out.println("unknwon method in RMSBackup queue: "+method);
+        }
     }
 
 }
