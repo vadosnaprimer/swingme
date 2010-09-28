@@ -113,7 +113,8 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 		lastModified = System.currentTimeMillis();
 	}
 
-	private void writeToFile() throws RecordStoreException {
+        // YURA added synchronized as this should not be done from more then 1 thread at a time!
+	private synchronized void writeToFile() throws RecordStoreException {
 		//System.out.println ("Writing records to file...");
 
 		if (isApplet())
@@ -128,7 +129,8 @@ public class RecordStoreImpl extends AbstractRecordStore  {
                         catch (FileNotFoundException ex) {
                             // this is a crazy windows bug
                             // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6354433
-                            System.out.println("windown bug "+ex.toString());
+                            ex.printStackTrace();
+                            System.out.println("this is prob the windows bug, so trying again...");
 
                             Thread.yield();
                             System.gc();
