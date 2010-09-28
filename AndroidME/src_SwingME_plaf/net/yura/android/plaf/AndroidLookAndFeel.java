@@ -5,12 +5,16 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeMIDlet;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 
 public class AndroidLookAndFeel extends SynthLookAndFeel {
+
+    private final static EmptyBorder EMPTY_BORDER = new EmptyBorder(0,0,0,0);
 
     public AndroidLookAndFeel() {
 
@@ -76,13 +80,17 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // --- Radio Button ---
         Style radioStyle = new Style(defaultStyle);
         radioStyle.addProperty(createIcon(ctx, android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
+        // Can't use the border. The border contains (left) padding for the button! Assuming transparent
+        // addBorder(ctx, radioStyle, android.R.style.Widget_CompoundButton_RadioButton, android.R.attr.background);
         setForegroundColor(radioStyle, android.R.style.Widget_CompoundButton_RadioButton);
         setStyleFor("RadioButton",radioStyle);
 
         // --- Check Box ---
         Style checkboxStyle = new Style(defaultStyle);
         checkboxStyle.addProperty(createIcon(ctx, android.R.style.Widget_CompoundButton_CheckBox), "icon", Style.ALL);
-        setForegroundColor(radioStyle, android.R.style.Widget_CompoundButton_CheckBox);
+        // Can't use the border. The border contains (left) padding for the button! Assuming transparent
+        // addBorder(ctx, checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox, android.R.attr.background);
+        setForegroundColor(checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox);
         setStyleFor("CheckBox",checkboxStyle);
 
         // --- Frame ---
@@ -90,22 +98,37 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         addBorder(ctx, frameStyle, 0, android.R.attr.windowBackground);
         setStyleFor("Frame",frameStyle);
 
-        // --- TextArea and TextField ---
-        Style inputStyle = new Style(defaultStyle);
-        addBorder(ctx, inputStyle, android.R.attr.editTextStyle, android.R.attr.background);
-        setForegroundColor(inputStyle, android.R.style.Widget_EditText);
-        setStyleFor("TextArea",inputStyle);
-        setStyleFor("TextField",inputStyle);
+        // --- Window ---
+        Style windowStyle = new Style(defaultStyle);
+        DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
+        int size = Math.max(dm.widthPixels, dm.heightPixels);
+        windowStyle.addProperty(new FadeIcon(0x80000000, size), "dim", Style.ALL);
+        setStyleFor("Window", windowStyle);
+
+        // --- TextField ---
+        Style textFieldStyle = new Style(defaultStyle);
+        addBorder(ctx, textFieldStyle, android.R.attr.editTextStyle, android.R.attr.background);
+        setForegroundColor(textFieldStyle, android.R.style.Widget_EditText);
+        setStyleFor("TextField",textFieldStyle);
+
+        // --- TextArea ---
+        Style inputStyle1 = new Style(textFieldStyle);
+        addBorder(ctx, inputStyle1, android.R.attr.textViewStyle, android.R.attr.background, Style.DISABLED);
+        setForegroundColor(inputStyle1, android.R.style.TextAppearance_Widget_TextView, Style.DISABLED);
+        setStyleFor("TextArea",inputStyle1);
 
         // --- ComboBox ---
         Style comboStyle = new Style(buttonStyle);
         addBorder(ctx, comboStyle, android.R.style.Widget_Spinner, android.R.attr.background);
-        setForegroundColor(comboStyle, android.R.style.Widget_Spinner);
+        setForegroundColor(comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem);
         setStyleFor("ComboBox",comboStyle);
 
         Style popupStyle = new Style(defaultStyle);
         addBorder(ctx, popupStyle, 0, android.R.drawable.alert_light_frame); // As defined on AlertController
         setStyleFor("Popup", popupStyle);
+
+        // TODO: This may not be the right render
+        setStyleFor("PopupListRenderer", menuRendererStyle);
 
         Style tooltipStyle = new Style(defaultStyle);
         addBorder(ctx, tooltipStyle, 0, android.R.drawable.toast_frame);
@@ -157,6 +180,10 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
             a.recycle();
         }
 
+        if (res==null) {
+            System.out.println("no Drawable found for: defStyle="+defStyle+", defAttr="+defAttr);
+        }
+
         return res;
     }
 
@@ -165,12 +192,21 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
     }
 
     private void addBorder(Context ctx, Style style, int styleDef, int attr) {
+        addBorder(ctx, style, styleDef, attr, Style.ALL);
+    }
+
+    private void addBorder(Context ctx, Style style, int styleDef, int attr, int state) {
         Drawable  d0 = getDrawable(ctx, styleDef, attr);
-        if (d0 != null) {
-            style.addBorder(new AndroidBorder(d0), Style.ALL);
+        if (d0 == null) {
+            style.addBorder(EMPTY_BORDER, state);
+        }
+        else {
+            style.addBorder(new AndroidBorder(d0), state);
         }
     }
 
+    // TODO not sure if this is needed, this is a quick hack to make menus usable
+    // though a better solution is needed to make all menu items including radio buttons consistent in size
     private void addBorder(Context ctx, Style style, int styleDef, int attr, Rect extraPadding) {
         Drawable  d0 = getDrawable(ctx, styleDef, attr);
         if (d0 != null) {
@@ -233,4 +269,16 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
             style.addForeground(color , swingMeStyle);
         }
     }
+
+
+    static void setForegroundColor(Style style, int defStyle, int swingMeStyle) {
+
+        ColorStateList clist = getTextColor(AndroidMeMIDlet.DEFAULT_ACTIVITY, defStyle);
+        int defColor = clist.getDefaultColor();
+
+        int[] stateSet = AndroidBorder.getDrawableState(swingMeStyle);
+        int color = clist.getColorForState(stateSet, defColor);
+        style.addForeground(color , swingMeStyle);
+    }
+
 }
