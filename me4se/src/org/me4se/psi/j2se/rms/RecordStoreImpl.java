@@ -120,7 +120,23 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 			return;
 
 		try {
-			DataOutputStream dos = new DataOutputStream(new FileOutputStream(file));
+
+			DataOutputStream dos;
+                        try {
+                            dos = new DataOutputStream(new FileOutputStream(file));
+                        }
+                        catch (FileNotFoundException ex) {
+                            // this is a crazy windows bug
+                            // see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6354433
+                            System.out.println("windown bug "+ex.toString());
+
+                            Thread.yield();
+                            System.gc();
+                            try { Thread.sleep(1000); } catch(Throwable th) { }
+
+                            // try again
+                            dos = new DataOutputStream(new FileOutputStream(file));
+                        }
 
 			dos.writeInt(version);
 			dos.writeLong(lastModified);
@@ -247,8 +263,9 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
 		if (refCount > 0)
 			refCount--;
-		
-		writeToFile();
+
+                // YURA, this is not really needed here, as we write on all set and add and remove
+		//writeToFile();
 	}
 
 	public void deleteRecordStoreImpl() throws RecordStoreException {

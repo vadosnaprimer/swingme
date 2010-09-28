@@ -1144,7 +1144,7 @@ public class ApplicationManager {
       return Canvas.RIGHT;
     }
     if (buttonName.equals("5") || buttonName.equals("SELECT")
-        || buttonName.equals("SPACE")) {
+        || buttonName.equals("SPACE") || '\n'==deviceKeyCode) {
 
       return Canvas.FIRE;
     }
