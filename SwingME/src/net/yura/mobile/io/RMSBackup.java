@@ -81,9 +81,9 @@ public class RMSBackup extends QueueProcessorThread {
         addToInbox( new ServiceLink.Task("save", obj) );
     }
 
-    public void remove(Object obj) {
+    public void remove(Object objId) {
         makeSureIsRunning();
-        addToInbox( new ServiceLink.Task("del", obj) );
+        addToInbox( new ServiceLink.Task("del", objId) );
     }
 
     private void makeSureIsRunning() {
@@ -107,8 +107,8 @@ public class RMSBackup extends QueueProcessorThread {
 
         if ("del".equals(method)) {
 
-            Object bookingId = helper.getObjectId(obj);
-            Integer i = (Integer)table.remove(bookingId);
+            //Object bookingId = helper.getObjectId(obj);
+            Integer i = (Integer)table.remove(obj);
 
             RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
             recordStore.deleteRecord(i.intValue());
