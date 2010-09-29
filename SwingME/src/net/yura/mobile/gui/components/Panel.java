@@ -368,7 +368,7 @@ public class Panel extends Component {
      * @see java.awt.Container#getComponentAt(int, int) Container.getComponentAt
      */
     public Component getComponentAt(int x, int y) {
-        for(int i = 0; i < components.size(); i++){
+        for(int i = components.size()-1; i>=0; i--){
             Component component = (Component)components.elementAt(i);
             if (!component.isVisible()) {
                 continue;

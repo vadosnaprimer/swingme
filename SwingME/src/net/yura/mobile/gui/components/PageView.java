@@ -204,8 +204,10 @@ public class PageView extends ScrollPane {
             int vpW = getViewPortWidth();
             int vpH = getViewPortHeight();
 
-            view.validate();
-            view.setSize(vpW, vpH);
+            if (vpW != view.getWidth() || vpH != view.getHeight()) {
+                view.validate();
+                view.setSize(vpW, vpH);
+            }
         }
     }
 
