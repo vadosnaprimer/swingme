@@ -190,7 +190,9 @@ public class SqlDao {
             database.setTransactionSuccessful();
             database.endTransaction();
         } catch (SQLException e) {
-            throw new RecordStoreException("Could not insert record store row with name '"+recordStoreName+"'. Reason: "+e);
+            RecordStoreException r = new RecordStoreException("Could not insert record store row with name '"+recordStoreName+"'. Reason: "+e);
+            r.initCause(e);
+            throw r;
         }
         if(id == -1) {
             throw new RecordStoreException("Could not insert record store row with name '"+recordStoreName+"'. Reason: The method 'SQLiteDatabase.insertOrThrow' returned '-1' instead of throwing an exception.");
@@ -280,7 +282,9 @@ public class SqlDao {
             database.setTransactionSuccessful();
             database.endTransaction();
         } catch (SQLException e) {
-            throw new RecordStoreException(e.toString());
+            RecordStoreException r = new RecordStoreException(e.toString());
+            r.initCause(e);
+            throw r;
         }
 
         // Update record store stats.
@@ -299,7 +303,9 @@ public class SqlDao {
             database.setTransactionSuccessful();
             database.endTransaction();
         } catch (Exception e) {
-            throw new RecordStoreException(e.toString());
+            RecordStoreException r = new RecordStoreException(e.toString());
+            r.initCause(e);
+            throw r;
         }
         return nextRecordId;
 
@@ -343,7 +349,9 @@ public class SqlDao {
             database.setTransactionSuccessful();
             database.endTransaction();
         } catch (Exception e) {
-            throw new RecordStoreException(e.toString());
+            RecordStoreException r = new RecordStoreException(e.toString());
+            r.initCause(e);
+            throw r;
         }
         RecordStore recordStore = getRecordStore(recordStorePk);
         byte[] oldData = getRecord(recordStorePk,recordId);
