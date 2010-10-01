@@ -107,12 +107,19 @@ public abstract class MIDlet {
 
         if (url.startsWith(PROTOCOL_NATIVE)) {
             try {
-                Class cls = Class.forName(content.getHost());
+                String clName = content.getHost();
+                Class cls = Class.forName(clName);
                 Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
+
                 getActivity().startActivityForResult(i, 0);
-            } catch (ClassNotFoundException e) {
+            } catch (Throwable e) {
                 //#debug debug
                 e.printStackTrace();
+
+                ConnectionNotFoundException connEx = new ConnectionNotFoundException(url);
+                connEx.initCause(e);
+
+                throw connEx;
             }
         }
         else if (url.startsWith(PROTOCOL_NOTIFY)) {
@@ -247,5 +254,10 @@ public abstract class MIDlet {
     // To be overload by children
     public void onResult(int resultCode, Object result) {
 
+    }
+
+    // To be overload by children
+    public Object onGetModel() {
+        return null;
     }
 }

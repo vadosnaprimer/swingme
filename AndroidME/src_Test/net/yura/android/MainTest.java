@@ -83,7 +83,7 @@ public class MainTest extends Section {
             }
         }
         else if ("nativePopup".equals(actionCommand)) {
-            String url = "native://net.yura.android.TestTimePicker";
+            String url = "native://net.yura.android.TestTimePickerActivity";
             try {
                 Midlet.getMidlet().platformRequest(url);
             } catch (Throwable e) {
