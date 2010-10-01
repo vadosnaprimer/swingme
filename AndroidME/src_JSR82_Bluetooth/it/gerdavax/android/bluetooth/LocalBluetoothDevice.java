@@ -187,7 +187,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 		private int deviceClass;
 		private String name;
 		private short rssi;
-		private RemoteBluetoothDeviceListener listener;
+		private RemoteBluetoothDeviceListener remoteListener;
 		private Hashtable<Integer, BluetoothSocketImpl> sockets = new Hashtable<Integer, BluetoothSocketImpl>();
 		private Hashtable<Integer, Integer> services = new Hashtable<Integer, Integer>();
 		private int lastServiceUUIDqueried;
@@ -275,8 +275,8 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 		void notifyPaired() {
 			try {
-				if (listener != null) {
-					listener.paired();
+				if (remoteListener != null) {
+					remoteListener.paired();
 				}
 			} catch (Exception e) {
 				// nothing to do
@@ -328,7 +328,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 		}
 
 		public void setListener(RemoteBluetoothDeviceListener listener) {
-			this.listener = listener;
+			this.remoteListener = listener;
 		}
 
 		void dispose() {
@@ -344,8 +344,8 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 		}
 
 		void notifyPairingRequested() {
-			if (listener != null) {
-				listener.pinRequested();
+			if (remoteListener != null) {
+				remoteListener.pinRequested();
 			}
 		}
 
@@ -355,12 +355,12 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				Integer channelInteger = new Integer(channel);
 				services.put(uuid, channelInteger);
 
-				if (listener != null) {
+				if (remoteListener != null) {
 					try {
 						if (channel > 0) {
-							listener.gotServiceChannel(lastServiceUUIDqueried, channel);
+							remoteListener.gotServiceChannel(lastServiceUUIDqueried, channel);
 						} else {
-							listener.serviceChannelNotAvailable(uuid);
+							remoteListener.serviceChannelNotAvailable(uuid);
 						}
 					} catch (Exception e) {
 						// nothing to do...
