@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class TestTimePicker extends Activity implements TimePickerDialog.OnTimeSetListener, OnDismissListener {
+public class TestTimePickerActivity extends Activity implements TimePickerDialog.OnTimeSetListener, OnDismissListener {
     private Vector result = new Vector();
 
     /** Called when the activity is first created. */
