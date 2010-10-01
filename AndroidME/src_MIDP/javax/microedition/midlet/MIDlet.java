@@ -245,7 +245,7 @@ public abstract class MIDlet {
     }
 
     // To be overload by children
-    public void onResult(Object object) {
+    public void onResult(int resultCode, Object result) {
 
     }
 }
