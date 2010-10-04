@@ -25,6 +25,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
@@ -935,10 +936,10 @@ public class XULLoader {
                 uiobject.halign = value;
             }
             else if ("background".equals(key)) {
-                comp.setBackground( Integer.parseInt(value.substring(1),16) );
+                comp.setBackground( Graphics2D.parseColor(value.substring(1),16) );
             }
             else if ("foreground".equals(key)) {
-                comp.setForeground( Integer.parseInt(value.substring(1),16) );
+                comp.setForeground( Graphics2D.parseColor(value.substring(1),16) );
             }
             else if ("height".equals(key)) {
                 comp.setPreferredSize(comp.getPreferredWidth(), Integer.parseInt(value));

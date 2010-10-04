@@ -435,4 +435,26 @@ public class Graphics2D {
     public static boolean isOpaque(int color) {
         return (color & 0xFF000000) == 0xFF000000;
     }
+
+    public static int parseColor(String value,int base) {
+
+        boolean addAlpha=false;
+
+        if (value.startsWith("#")) {
+            base=16;
+            value=value.substring(1);
+        }
+        else if (value.startsWith("0x")) {
+            base=16;
+            value=value.substring(2);
+        }
+
+        if (base==16) {
+            addAlpha = value.length()==6;
+        }
+        // need to use long instead of int coz #FFFFFFFF throws NumberFormatException
+        int r = (int)Long.parseLong(value, base);
+        return addAlpha?(0xFF000000|r):r;
+    }
+
 }

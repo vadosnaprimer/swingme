@@ -23,6 +23,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.EmptyBorder;
@@ -65,26 +66,6 @@ public class SynthLookAndFeel extends LookAndFeel {
             //#enddebug
             return null;
         }
-    }
-    protected int parseInt(String value,int base) {
-
-        boolean addAlpha=false;
-
-        if (value.startsWith("#")) {
-            base=16;
-            value=value.substring(1);
-        }
-        else if (value.startsWith("0x")) {
-            base=16;
-            value=value.substring(2);
-        }
-
-        if (base==16) {
-            addAlpha = value.length()==6;
-        }
-        // need to use long instead of int coz #FFFFFFFF throws NumberFormatException
-        int r = (int)Long.parseLong(value, base);
-        return addAlpha?(0xFF000000|r):r;
     }
 
     /**
@@ -212,7 +193,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String value = parser.getAttributeValue(null, "value");
 
                                     if ("integer".equals(type)) {
-                                        int i = parseInt(value, 10);
+                                        int i = Graphics2D.parseColor(value, 10);
                                         newStyle.addProperty(new Integer(i), key, st);
                                     }
                                     else if ("string".equals(type)) {
@@ -245,7 +226,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String id = parser.getAttributeValue(null, "id");
                                     int color = Style.NO_COLOR;
                                     if (cvalue!=null) {
-                                        color = parseInt(cvalue, 16);
+                                        color = Graphics2D.parseColor(cvalue, 16);
                                     }
                                     if (type!=null) {
                                         if ("BACKGROUND".equals(type)) {
@@ -428,7 +409,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                             Image img = Image.createImage( in );
                             int color = 0; // default to black
                             if (imageColor!=null) {
-                                color = parseInt(imageColor, 16);
+                                color = Graphics2D.parseColor(imageColor, 16);
                             }
                             colors.addElement(new Integer(color));
                             images.addElement(img);
