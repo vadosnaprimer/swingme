@@ -317,6 +317,13 @@ public class XULLoader {
                 else if ("maximizable".equals(key)) {
                     frame.setMaximizable("true".equalsIgnoreCase(value));
                 }
+                else if("property".equals(key)) {
+                    Hashtable properties = getProperties(value);
+                    String undecorated = (String)properties.get("undecorated");
+                    if (undecorated!=null) {
+                        frame.setUndecorated( "true".equalsIgnoreCase(undecorated) );
+                    }
+                }
 //                else if ("iconifiable".equals(key)) {
 //                    frame.setIconifiable("true".equalsIgnoreCase(value));
 //                }
