@@ -292,7 +292,7 @@ public class MatteBorder extends EmptyBorder {
 
 
     public boolean isBorderOpaque() {
-        return back || (activeimage!=null && color!=Style.NO_COLOR);
+        return back || (activeimage!=null && Graphics2D.isOpaque(color) );
     }
 
     public void setColor(int c) {
