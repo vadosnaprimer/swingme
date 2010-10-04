@@ -246,11 +246,21 @@ public class MatteBorder extends EmptyBorder {
                 }
 
                 else if (back) {
-                    //#debug debug
-                    Logger.debug("filling background with tiled image!");
-                    g.drawImage(image,imageLeft,imageTop,imageWidth-imageRight-imageLeft,imageHeight-imageTop-imageBottom,
-                            leftDiff,topDiff,width-leftDiff-rightDiff,height-topDiff-bottomDiff,
-                            Sprite.TRANS_NONE); // centre
+
+                    int src_w = imageWidth-imageRight-imageLeft;
+                    int src_h = imageHeight-imageTop-imageBottom;
+                    int dist_w = width-leftDiff-rightDiff;
+                    int dist_h = height-topDiff-bottomDiff;
+
+                    // to make themeing more flexable we will center the image if we do not need to tile it
+                    if (src_w>=dist_w&&src_h>=dist_h) {
+                        g.drawRegion(image, imageLeft+(src_w-dist_w)/2, imageTop+(src_h-dist_h)/2, dist_w, dist_h, Sprite.TRANS_NONE, leftDiff,topDiff);
+                    }
+                    else {
+                        //#debug debug
+                        Logger.debug("filling background with tiled image!");
+                        g.drawImage(image,imageLeft,imageTop,src_w,src_h,leftDiff,topDiff,dist_w,dist_h,Sprite.TRANS_NONE); // centre
+                    }
                 }
 
                 else if (color!=Style.NO_COLOR) {
