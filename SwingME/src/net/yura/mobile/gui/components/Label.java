@@ -322,7 +322,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setHorizontalTextPosition(int) JLabel.setHorizontalTextPosition
          */
 	public void setHorizontalTextPosition(int a) {
-		textPosition = ((textPosition&Graphics.TOP)!=0?Graphics.TOP:((textPosition&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER)) | a;
+		textPosition = getVerticalTextPosition() | a;
 	}
 
         /**
@@ -330,7 +330,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setVerticalTextPosition(int) JLabel.setVerticalTextPosition
          */
 	public void setVerticalTextPosition(int a) {
-		textPosition = a | ((textPosition&Graphics.LEFT)!=0?Graphics.LEFT:((textPosition&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
+		textPosition = a | getHorizontalTextPosition();
 	}
 
         /**
@@ -338,7 +338,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setHorizontalAlignment(int) JLabel.setHorizontalAlignment
          */
         public void setHorizontalAlignment(int a) {
-            alignment = ((alignment&Graphics.TOP)!=0?Graphics.TOP:((alignment&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER)) | a;
+            alignment = getVerticalAlignment() | a;
         }
 
         /**
@@ -346,7 +346,7 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setVerticalAlignment(int) JLabel.setVerticalAlignment
          */
         public void setVerticalAlignment(int a) {
-            alignment = a | ((alignment&Graphics.LEFT)!=0?Graphics.LEFT:((alignment&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
+            alignment = a | getHorizontalAlignment();
         }
 
         /**
@@ -357,6 +357,33 @@ public class Label extends Component {
             gap = iconTextGap;
         }
 
+        /**
+         * @see javax.swing.JLabel#getHorizontalTextPosition() JLabel.getHorizontalTextPosition
+         */
+        public int getHorizontalTextPosition() {
+            return ((textPosition&Graphics.LEFT)!=0?Graphics.LEFT:((textPosition&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
+        }
+
+        /**
+         * @see javax.swing.JLabel#getVerticalTextPosition() JLabel.getVerticalTextPosition
+         */
+        public int getVerticalTextPosition() {
+            return ((textPosition&Graphics.TOP)!=0?Graphics.TOP:((textPosition&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER));
+        }
+
+        /**
+         * @see javax.swing.JLabel#getHorizontalAlignment() JLabel.getHorizontalAlignment
+         */
+        public int getHorizontalAlignment() {
+            return ((alignment&Graphics.LEFT)!=0?Graphics.LEFT:((alignment&Graphics.RIGHT)!=0?Graphics.RIGHT:Graphics.HCENTER));
+        }
+
+        /**
+         * @see javax.swing.JLabel#getVerticalAlignment() JLabel.getVerticalAlignment
+         */
+        public int getVerticalAlignment() {
+            return ((alignment&Graphics.TOP)!=0?Graphics.TOP:((alignment&Graphics.BOTTOM)!=0?Graphics.BOTTOM:Graphics.VCENTER));
+        }
 
         public void setValue(Object obj) {
 

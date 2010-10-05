@@ -23,9 +23,12 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -196,11 +199,10 @@ public class MenuBar extends List implements ActionListener {
     }
 
     public void paintComponent(Graphics2D g) {
-        Window w = getWindow();
-        DesktopPane dp = w.getDesktopPane();
+        DesktopPane dp = getDesktopPane();
         int off = 0;
         // if we are on a phone, and the window is not maximised, this bar is not visible
-        if (dp.SOFT_KEYS && w instanceof Frame && ((Frame)w).getMenuBar() == this ) {
+        if (dp.SOFT_KEYS && isFrameMenuBar() ) {
             Button b1 = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
             if (b1!=null) {
                 off = b1.getWidthWithBorder();
@@ -226,6 +228,8 @@ public class MenuBar extends List implements ActionListener {
         g.translate(off, 0);
         super.paintComponent(g);
         g.translate(-off, 0);
+
+        paintDividers(g);
     }
 
     private boolean isFrameMenuBar() {
@@ -288,39 +292,41 @@ public class MenuBar extends List implements ActionListener {
 
         if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
 
-            int size = getSize();
+            final int size = getSize();
 
-            int topRowCols = size % cols; // items in the top row!
-            int h = getHeight()/((size/cols)+(topRowCols==0?0:1));
+            final int topRowCols = size % cols; // items in the top row!
+            final int h = (getHeight()+getDividerHeight())/((size/cols)+(topRowCols==0?0:1));
+
+            final int ypos,mycols;
 
             if (i<topRowCols) {
-                int w = getWidth()/topRowCols;
-                c.setBoundsWithBorder(w*i, 0, w, h);
+                ypos = 0;
+                mycols = topRowCols;
             }
             else {
-                int x = (i-topRowCols);
-                int w = getWidth()/cols;
-                c.setBoundsWithBorder(w*(x%cols), h*(x/cols)+(topRowCols==0?0:h), w, h);
+                int x = i-topRowCols;
+                i = x%cols; // i is now being defined as meaning the current col that i am on in thie row!!!
+                mycols = cols;
+                ypos = h*(x/cols)+(topRowCols==0?0:h);
             }
+
+            final int w = (getWidth() + getDividerWidth()) /mycols;
+
+            final int widthMinusDiv = (i==(mycols-1)) ? (getWidth() - w*i) : (w - getDividerWidth() );
+            final int heightMinusDiv = h - getDividerHeight();
+
+            c.setBoundsWithBorder(w*i, ypos, widthMinusDiv, heightMinusDiv);
         }
 
         return c;
     }
 
     public void workoutMinimumSize() {
-        if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
 
-            getWindow().setName("AndroidMenu");
-            setLayoutOrientation( -1 );
+        if (getDesktopPane().HIDDEN_MENU_AND_BACK) {
 
-            ListCellRenderer renderer = getCellRenderer();
             int size = getSize();
-
-            int in = 0;
-            for (Component p=this;p!=null;p=p.getParent()) {
-                in = p.getInsets().getRight() + p.getInsets().getLeft();
-            }
-            width = getDesktopPane().getWidth() -in;
+            ListCellRenderer renderer = getCellRenderer();
 
             int w=0,h=0; // max width and height
 
@@ -329,11 +335,18 @@ public class MenuBar extends List implements ActionListener {
                 Object item = getElementAt(i);
                 if (item instanceof Button) {
                     Button button = ((Button)item);
-                    button.setHorizontalAlignment(Graphics.HCENTER);
-                    button.setVerticalAlignment(Graphics.VCENTER);
-                    button.setHorizontalTextPosition(Graphics.HCENTER);
-                    button.setVerticalTextPosition(Graphics.BOTTOM);
-                    if (button.getIcon()!=null) {
+
+                    // hack to change position of icons on buttons
+                    if ( firstMenu() ) {
+                        button.setHorizontalAlignment(Graphics.HCENTER);
+                        button.setVerticalAlignment(Graphics.VCENTER);
+                        button.setHorizontalTextPosition(Graphics.HCENTER);
+                        button.setVerticalTextPosition(Graphics.BOTTOM);
+                    }
+
+                    // this means the icon makes this item extra tall, so we will not need to
+                    // TODO the default android icons are very tall and so stretch this to be very tall even though they are positioned to the side of the text
+                    if (button.getIcon()!=null ) { // && (button.getVerticalTextPosition() == Graphics.TOP || button.getVerticalTextPosition() == Graphics.BOTTOM )) {
                         icon = true;
                     }
                 }
@@ -350,21 +363,109 @@ public class MenuBar extends List implements ActionListener {
             }
 
             if (!icon) { // if we have no icons, we need extra height for fat fingers
-                h = h*2;
+                h = h + h/2;
+            }
+            if (w<h) { // if the width is too small we want to make it wider
+                w = h;
             }
 
-            cols = Math.max(Math.min(width / w,size),1); // TODO very long buttons will be truncated, is this ok?
+            setFixedCellHeight(h);
+            setFixedCellWidth(w);
 
-            int rows = ((size / cols)+(size%cols==0?0:1));
+            if (firstMenu()) {
 
-            cols = size/rows + (size%rows==0?0:1); // this is to not have a HUGE top row but if possible split the total cells into a nice grid
+                getWindow().setName("AndroidMenu");
+                setLayoutOrientation( -1 );
 
-            height = h*rows;
+                int in = 0;
+                for (Component p=this;p!=null;p=p.getParent()) {
+                    in = p.getInsets().getRight() + p.getInsets().getLeft();
+                }
+                width = getDesktopPane().getWidth() -in;
+
+                cols = Math.max(Math.min( (width+getDividerWidth()) / (w+getDividerWidth() ),size),1); // TODO very long buttons will be truncated, is this ok?
+
+                int rows = ((size / cols)+( (size%cols==0) ?0:1));
+
+                cols = size/rows + ( (size%rows==0) ?0:1); // this is to not have a HUGE top row but if possible split the total cells into a nice grid
+
+                height = (h*rows) + ((rows-1)*getDividerHeight());
+
+                return;
+            }
+        }
+
+        super.workoutMinimumSize();
+
+    }
+
+    protected void paintDividers(Graphics2D g) {
+
+        if (divider!=null) {
+            int size = getSize();
+
+            if (size==0) return;
+
+            int rows=size;
+
+            if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
+                int topRowCols = size % cols; // items in the top row!
+                rows = ((size/cols)+(topRowCols==0?0:1));
+                int topRowHeight = 0;
+
+                if (topRowCols>0) {
+
+                    topRowHeight = getHeight()/rows;
+
+                    int w = (getWidth()+getDividerWidth())/topRowCols;
+
+                    for (int c=1;c<topRowCols;c++) {
+                        int x = c*w;
+                        int y = divider.getLeft();
+                        g.translate(x, y);
+                        divider.paintBorder(this, g, 0, topRowHeight);
+                        g.translate(-x, -y);
+                    }
+                }
+
+                int w = (getWidth()+getDividerWidth())/cols;
+
+                for (int c=1;c<cols;c++) {
+                    int x = c*w;
+                    int y = topRowHeight + divider.getLeft();
+                    g.translate(x, y);
+                    divider.paintBorder(this, g, 0, getHeight()-topRowHeight);
+                    g.translate(-x, -y);
+                }
+
+            }
+
+            int h = (getHeight()+getDividerHeight())/rows;
+
+            for (int c=1;c<rows;c++) {
+                int x = divider.getLeft();
+                int y = c*h;
+                g.translate(x, y);
+                divider.paintBorder(this, g, width, 0);
+                g.translate(-x, -y);
+            }
 
         }
-        else {
-            super.workoutMinimumSize();
-        }
+    }
+
+    private int getDividerHeight() {
+        return (divider!=null)?divider.getTop():0;
+    }
+    private int getDividerWidth() {
+        return (divider!=null)?divider.getLeft():0;
+    }
+
+    private Border divider;
+    public void updateUI() {
+        super.updateUI();
+
+        divider = (Border) theme.getProperty("divider", Style.ALL);
+
     }
 
 }
