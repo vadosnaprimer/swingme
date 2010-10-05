@@ -265,8 +265,7 @@ public abstract class SocketClient implements Runnable {
             Object task;
             while (true) {
                 try {
-              
-               
+
                     //#debug debug
                     if (disconnected) throw new IOException();
                     
@@ -277,10 +276,16 @@ public abstract class SocketClient implements Runnable {
 
                     updateState(DISCONNECTED);
 
-                    //#mdebug info
+                    //#debug warn
                     if (writeThread!=null) {
-                        Logger.info("[SocketClient] Exception during read from socket");
-                        Logger.info(ex);
+
+                        //#debug info
+                        Logger.info("[SocketClient] Disconnect (Exception) during read from socket "+ex.toString());
+
+                        //#mdebug warn
+                        if (!(ex instanceof IOException)) {
+                            Logger.warn(ex); // this is NOT a normal disconnect
+                        }
                     }
                     //#enddebug
 
@@ -291,8 +296,8 @@ public abstract class SocketClient implements Runnable {
 
                 updateState(COMMUNICATING);
 
-              //#debug info
-              Logger.info("[SocketClient] got object: "+task);
+                //#debug info
+                Logger.info("[SocketClient] got object: "+task);
                 try {
 
                     Thread.yield();
@@ -324,7 +329,7 @@ public abstract class SocketClient implements Runnable {
             Logger.info("[SocketClient] ENDING "+ name );
         }
         catch (Throwable t){
-        	//#debug error
+            //#debug error
             Logger.error(t);
         }
     }

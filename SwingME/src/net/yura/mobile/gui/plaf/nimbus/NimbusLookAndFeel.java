@@ -243,6 +243,7 @@ public class NimbusLookAndFeel extends LookAndFeel {
         int[] topBorderOnly = {1,0,0,0};
         int[] topAndBottomBorders = {1,0,1,0};
         copyBorders(textareaBorderSettings, listSettings);
+        setUIDefault("Popup.border",new NimbusBorder(listSettings)); // things like the combo box popup
         setUIDefault("Menu.border",new NimbusBorder(listSettings));
 
         int seperatorBackground = getDerivedColor("nimbusLightBackground", 0f, 0f, -0.05f, 0f).intValue();
@@ -288,12 +289,21 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("ListRenderer[focused].border",tmp3);
         setUIDefault("ListRenderer[focused+selected].border",tmp4);
 
-        setUIDefault("MenuRenderer.background", noColor);
-        setUIDefault("MenuRenderer.border", tmp1);
-        setUIDefault("MenuRenderer[selected].border",tmp2);
-        setUIDefault("MenuRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
-        setUIDefault("MenuRenderer[focused].border",tmp3);
-        setUIDefault("MenuRenderer[focused+selected].border",tmp4);
+        String componentName = "PopupListRenderer";
+
+        setUIDefault(componentName+".background", noColor);
+        setUIDefault(componentName+".border", tmp1);
+        setUIDefault(componentName+"[selected].border",tmp2);
+        setUIDefault(componentName+"[selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault(componentName+"[focused].border",tmp3);
+        setUIDefault(componentName+"[focused+selected].border",tmp4);
+
+        componentName = "MenuRenderer";
+
+        setUIDefault(componentName+".background", noColor);
+        setUIDefault(componentName+".border", new EmptyBorder(tmp2.getTop(), tmp2.getLeft(), tmp2.getBottom(), tmp2.getRight()));
+        setUIDefault(componentName+"[selected].border",tmp2);
+        setUIDefault(componentName+"[selected].foreground",uiSettings.get("nimbusSelectedText"));
 
         // COMBOS
         Vector comboBorderSettings = new Vector();
