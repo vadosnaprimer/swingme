@@ -38,6 +38,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(menuStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
         setStyleFor("Menu", menuStyle);
 
+        Style menuBarStyle = new Style(defaultStyle);
+        //Rect r = new Rect();
+        Drawable divider = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
+        //divider.getPadding(r);
+        //System.out.println("w="+divider.getIntrinsicWidth()+" h="+divider.getIntrinsicHeight()+" "+r+" "+divider.getBounds()+" minw="+divider.getMinimumWidth()+" winh="+divider.getMinimumHeight());
+        menuBarStyle.addProperty(new AndroidBorder(divider,new Rect(divider.getMinimumHeight(),divider.getIntrinsicHeight(),0,0)), "divider", Style.ALL);
+        setStyleFor("MenuBar", menuBarStyle);
+
         Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
         Style menuRendererStyle = new Style(defaultStyle);
         addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
@@ -79,7 +87,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- Radio Button ---
         Style radioStyle = new Style(defaultStyle);
-        radioStyle.addProperty(createIcon(ctx, android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
+        radioStyle.addProperty(createButtonIcon(ctx, android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
         // Can't use the border. The border contains (left) padding for the button! Assuming transparent
         // addBorder(ctx, radioStyle, android.R.style.Widget_CompoundButton_RadioButton, android.R.attr.background);
         setForegroundColor(radioStyle, android.R.style.Widget_CompoundButton_RadioButton);
@@ -87,7 +95,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- Check Box ---
         Style checkboxStyle = new Style(defaultStyle);
-        checkboxStyle.addProperty(createIcon(ctx, android.R.style.Widget_CompoundButton_CheckBox), "icon", Style.ALL);
+        checkboxStyle.addProperty(createButtonIcon(ctx, android.R.style.Widget_CompoundButton_CheckBox), "icon", Style.ALL);
         // Can't use the border. The border contains (left) padding for the button! Assuming transparent
         // addBorder(ctx, checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox, android.R.attr.background);
         setForegroundColor(checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox);
@@ -187,7 +195,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         return res;
     }
 
-    private AndroidIcon createIcon(Context ctx, int id) {
+    private AndroidIcon createButtonIcon(Context ctx, int id) {
         return new AndroidIcon(getDrawable(ctx, id, android.R.attr.button));
     }
 
