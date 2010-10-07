@@ -112,7 +112,7 @@ public class Button extends Label implements ActionListener {
                 if (dp.HIDDEN_MENU_AND_BACK) {
 
                     if (mneonic == KeyEvent.KEY_MENU || mneonic == KeyEvent.KEY_END) return false;
-
+/*
                     // this whole block should be later removed
                     if (mneonic == KeyEvent.KEY_SOFTKEY1) {
                         String[] strings1 = new String[] {
@@ -141,6 +141,7 @@ public class Button extends Label implements ActionListener {
                             }
                         }
                     }
+*/
                 }
             }
             return super.isVisible();
