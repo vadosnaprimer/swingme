@@ -51,9 +51,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
         // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
-        setForegroundColor(ctx, menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
-        setStyleFor("MenuRenderer",menuRendererStyle);
+        // setForegroundColor(ctx, menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
 
+        // TODO: Could not make it work... hard coded values for light theme.
+        menuRendererStyle.addForeground(0xFF000000, Style.ALL);
+        menuRendererStyle.addForeground(0xFFFFFFFF, Style.SELECTED | Style.FOCUSED);
+        menuRendererStyle.addForeground(0xFF808080, Style.DISABLED);
+        setStyleFor("MenuRenderer",menuRendererStyle);
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
