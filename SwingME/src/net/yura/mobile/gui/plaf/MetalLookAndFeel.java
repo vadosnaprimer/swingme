@@ -164,6 +164,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             scrollStyle.addProperty(spinnerLeftIcon,"leftArrow",Style.ALL );
             scrollStyle.addProperty(spinnerRightIcon,"rightArrow",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
+            setStyleFor("Slider",scrollStyle);
 
             Style labelStyle = new Style(defaultStyle);
             labelStyle.addBackground(Style.NO_COLOR, Style.ALL);
