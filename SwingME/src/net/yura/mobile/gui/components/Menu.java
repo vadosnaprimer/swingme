@@ -272,11 +272,7 @@ public class Menu extends Button {
 
             // from WindowListener or cancel button
             if (Frame.CMD_CLOSE.equals(actionCommand)) {
-                // cancel the parent menu
-                popup.setVisible(false);
-                if (parentMenu!=null) {
-                    parentMenu.actionPerformed(actionCommand);
-                }
+                close();
             }
             else if ("select".equals(actionCommand)) {
 
@@ -290,11 +286,7 @@ public class Menu extends Button {
 //                button.setBoundsWithBorder(menuItems.getXOnScreen() + comp.getXWithBorder(), menuItems.getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                 //}
                 if (!(button instanceof Menu)) {
-                    popup.setVisible(false);
-                    // cancel the parent menu
-                    if (parentMenu!=null) {
-                        parentMenu.actionPerformed(Frame.CMD_CLOSE);
-                    }
+                    close();
                 }
 
 //                button.fireActionPerformed();
@@ -305,6 +297,18 @@ public class Menu extends Button {
             }
             //#enddebug
 
+        }
+
+        private void close() {
+            Component c = getParent();
+            if (c instanceof MenuBar) {
+                ((MenuBar)c).unselectAndUnfocus();
+            }
+            popup.setVisible(false);
+            // cancel the parent menu
+            if (parentMenu!=null) {
+                parentMenu.actionPerformed(Frame.CMD_CLOSE);
+            }
         }
 
         /**

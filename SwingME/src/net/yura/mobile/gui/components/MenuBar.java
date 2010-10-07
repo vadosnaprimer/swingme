@@ -141,11 +141,24 @@ public class MenuBar extends List implements ActionListener {
                 Button button = (Button)getElementAt(index);
                 Component comp = getRendererComponentFor( index );
                 button.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
+                if (!(button instanceof Menu)) {
+                    unselectAndUnfocus();
+                }
                 button.fireActionPerformed();
             }
         }
         else {
             super.actionPerformed(actionCommand);
+        }
+    }
+
+    void unselectAndUnfocus() {
+        if (isFrameMenuBar()) {
+            Window w = getWindow();
+            if (w.getMostRecentFocusOwner() == this) {
+                w.setFocusedComponent(null);
+                setSelectedIndex(-1);
+            }
         }
     }
 
