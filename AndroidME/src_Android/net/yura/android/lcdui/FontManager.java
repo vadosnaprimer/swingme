@@ -89,8 +89,7 @@ public class FontManager {
 			}
 
 			// The font size is adjusted to the phone "scaled density"
-			DisplayMetrics metrics = new DisplayMetrics();
-			AndroidMeMIDlet.DEFAULT_ACTIVITY.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			DisplayMetrics metrics = AndroidMeMIDlet.DEFAULT_ACTIVITY.getResources().getDisplayMetrics();
 			size = (int) (size * metrics.scaledDensity);
 
 			result = new FontManager(Typeface.create(family, style), size,

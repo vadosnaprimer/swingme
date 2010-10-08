@@ -200,8 +200,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         System.setProperty("microedition.profiles", "MIDP-2.0");
 
         // Screen Resolution Properties (Ad hoc, not on J2ME)
-        DisplayMetrics dm = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        DisplayMetrics dm = getResources().getDisplayMetrics();
 
         String resDir =
             (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "/res_ldpi" :
