@@ -282,7 +282,30 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         // we only want to autoMnemonic when its a simple 2 or 1 button dialog
         if (options.length <= 2) {
             // this should be removed one day
-            MenuBar.autoMnemonic( cmdPanel.getComponents() );
+            autoMnemonic( cmdPanel.getComponents() );
+        }
+    }
+
+    public static void autoMnemonic(Vector items) {
+        for (int c=0;c<items.size();c++) {
+            Component button = (Component)items.elementAt(c);
+            // this is same as in optionpane
+            if (button instanceof Button && ((Button)button).getMnemonic() == 0) {
+                switch(c) {
+                    // TODO make sure this mnemonic is not used for another button
+                    case 0:
+                        //#debug debug
+                        Logger.debug("Button 1 should already have Mnemonic "+button);
+                        ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY1);
+                        break;
+                    case 1:
+                        //#debug debug
+                        Logger.debug("Button 2 should already have Mnemonic "+button);
+                        ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY2);
+                        break;
+                    //case 2: ((Button)button).setMnemonic(KeyEvent.KEY_SOFTKEY3); break;
+                }
+            }
         }
     }
 

@@ -128,7 +128,7 @@ public class Frame extends Window {
                 if (menuBar != null) {
                     super.add(menuBar);
 
-                    MenuBar.autoMnemonic( menuBar.getItems() );
+                    menuBar.autoMnemonic();
                 }
             }
 
