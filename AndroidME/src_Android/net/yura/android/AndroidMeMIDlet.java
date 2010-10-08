@@ -482,7 +482,11 @@ System.out.println("name="+name);
     //Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        midlet.onResult(resultCode, data.getExtras().get("data"));
+        Object result = null;
+        if(data != null && data.getExtras() != null) {
+        	result = data.getExtras().get("data");
+        }
+        midlet.onResult(resultCode, result);
     }
 
     class FileBroadcastReceiver extends BroadcastReceiver {
