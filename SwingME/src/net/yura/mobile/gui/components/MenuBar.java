@@ -23,13 +23,11 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -92,7 +90,7 @@ public class MenuBar extends List implements ActionListener {
     }
 
     void autoMnemonic() {
-        if (getSize()>0 && getElementAt(0) instanceof Button && ((Button)getElementAt(0)).getMnemonic()==0) {
+        if (getSize()>0 && getElementAt(0) instanceof Menu && ((Button)getElementAt(0)).getMnemonic()==0) {
             ((Button)getElementAt(0)).setMnemonic(KeyEvent.KEY_MENU);
         }
     }
