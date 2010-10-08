@@ -272,7 +272,12 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setText(java.lang.String) JLabel.setText
          */
 	public void setText(String a) {
-		string = a;
+            String oldValue = string;
+            string = a;
+            // this is taken from real Swing
+            if (string == null || oldValue == null || !string.equals(oldValue)) {
+                repaint();
+            }
 	}
 
         /**
@@ -313,8 +318,12 @@ public class Label extends Component {
          * @see javax.swing.JLabel#setIcon(javax.swing.Icon) JLabel.setIcon
          */
 	public void setIcon(Icon icon) {
-		this.icon = icon;
+            Icon oldValue = this.icon;
+            this.icon = icon;
+            // this is taken from real Swing
+            if (this.icon != oldValue) {
                 repaint();
+            }
 	}
 
 	/**
