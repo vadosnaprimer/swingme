@@ -110,6 +110,7 @@ public abstract class MIDlet {
                 String clName = content.getHost();
                 Class cls = Class.forName(clName);
                 Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
+                i.setData(content);
 
                 getActivity().startActivityForResult(i, 0);
             } catch (Throwable e) {
