@@ -395,24 +395,21 @@ public class MenuBar extends List implements ActionListener {
 
     protected void paintDividers(Graphics2D g) {
 
-        if (divider!=null) {
-            int size = getSize();
+        int size = getSize();
 
-            if (size==0) return;
+        if (size==0) return;
 
-            int rows=size;
+        int rows=size;
 
-            if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
-                int topRowCols = size % cols; // items in the top row!
-                rows = ((size/cols)+(topRowCols==0?0:1));
+        if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
+            int topRowCols = size % cols; // items in the top row!
+            rows = ((size/cols)+(topRowCols==0?0:1));
+
+            if (verticalDivider!=null) {
                 int topRowHeight = 0;
-
                 if (topRowCols>0) {
-
                     topRowHeight = getHeight()/rows;
-
                     int w = (getWidth()+getDividerWidth())/topRowCols;
-
                     for (int c=1;c<topRowCols;c++) {
                         int x = c*w;
                         int y = verticalDivider.getLeft();
@@ -423,7 +420,6 @@ public class MenuBar extends List implements ActionListener {
                 }
 
                 int w = (getWidth()+getDividerWidth())/cols;
-
                 for (int c=1;c<cols;c++) {
                     int x = c*w;
                     int y = topRowHeight + verticalDivider.getLeft();
@@ -431,11 +427,11 @@ public class MenuBar extends List implements ActionListener {
                     verticalDivider.paintBorder(this, g, 0, getHeight()-topRowHeight);
                     g.translate(-x, -y);
                 }
-
             }
+        }
 
+        if (divider!=null) {
             int h = (getHeight()+getDividerHeight())/rows;
-
             for (int c=1;c<rows;c++) {
                 int x = divider.getLeft();
                 int y = c*h;
@@ -443,7 +439,6 @@ public class MenuBar extends List implements ActionListener {
                 divider.paintBorder(this, g, width, 0);
                 g.translate(-x, -y);
             }
-
         }
     }
 
