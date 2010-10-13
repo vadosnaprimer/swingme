@@ -114,6 +114,7 @@ public class MainPane extends DesktopPane {
                  } else {
                      // Add a back button, if we have a parent test section...
                      Button bk = parentSection.makeButton("Back", "mainmenu");
+                     bk.setMnemonic(KeyEvent.KEY_END);
                      mainPane.addToScrollPane(this, null, bk);
                  }
             }
@@ -145,11 +146,15 @@ public class MainPane extends DesktopPane {
         }
 
         public void addToScrollPane(Component p,Button b) {
-            mainPane.addToScrollPane(p, b, makeButton("Back","openSection")) ;
+            Button back = makeButton("Back","openSection");
+            back.setMnemonic(KeyEvent.KEY_END);
+            mainPane.addToScrollPane(p, b, back) ;
 
         }
         public void addToContentPane(Component p,Button b) {
-            mainPane.addToContentPane(p, b, makeButton("Back","openSection")) ;
+            Button back = makeButton("Back","openSection");
+            back.setMnemonic(KeyEvent.KEY_END);
+            mainPane.addToContentPane(p, b, back) ;
         }
 
         public abstract void createTests();
@@ -200,11 +205,9 @@ public class MainPane extends DesktopPane {
         MenuBar bar = mainWindow.getMenuBar();
         bar.removeAll();
         if (b!=null) {
-            b.setMnemonic(KeyEvent.KEY_SOFTKEY1);
             bar.add(b);
         }
         if (c!=null) {
-            c.setMnemonic(KeyEvent.KEY_SOFTKEY2);
             bar.add(c);
         }
 

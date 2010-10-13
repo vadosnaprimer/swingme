@@ -110,13 +110,16 @@ public class MainTest extends Section {
         addMenuItem(mainMenu,"synthTheme3", "Synth Visto");
         addMenuItem(mainMenu,"synthTheme4", "Synth Telus");
         addMenuItem(mainMenu,"synthTheme5", "Synth LG");
+
     }
 
     // Override
     public void openTest(String actionCommand) {
 
         if ("mainmenu".equals(actionCommand)) {
-            addToScrollPane(this, mainMenu, makeButton("Exit", "exit"));
+            Button exit = makeButton("Exit", "exit");
+            exit.setMnemonic(KeyEvent.KEY_END);
+            addToScrollPane(this, mainMenu, exit);
 
             MenuBar bar = getMainWindow().getMenuBar();
             //bar.insert(new Label("a"), 0);
@@ -182,7 +185,7 @@ public class MainTest extends Section {
                 }.start();
             }
 
-            addToScrollPane(sysoutArea, null,  makeButton("Back","mainmenu") );
+            addToScrollPane(sysoutArea, null );
 
         }
         else if ("aether1".equals(actionCommand)) {
@@ -351,7 +354,7 @@ public class MainTest extends Section {
 
             }
 
-            addToScrollPane(info, null,  makeButton("Back","mainmenu") );
+            addToScrollPane(info, null );
 
         }
 
@@ -366,7 +369,7 @@ public class MainTest extends Section {
 
             }
 
-            addToScrollPane(loadPanel, makeButton("Load","load") , makeButton("Back","mainmenu") );
+            addToScrollPane(loadPanel, makeButton("Load","load") );
         }
 
         else if ("load".equals(actionCommand)) {
@@ -428,7 +431,7 @@ public class MainTest extends Section {
                 border.add(menuTest);
             }
 
-            addToScrollPane(border, null , makeButton("Back","mainmenu") );
+            addToScrollPane(border, null );
         }
 
         else if ("fontTest".equals(actionCommand)) {
@@ -507,7 +510,7 @@ public class MainTest extends Section {
             t.setLineWrap(true);
             t.setFont(treasure);
             panel.add(t);
-            addToScrollPane(panel, null, makeButton("Back","mainmenu") );
+            addToScrollPane(panel, null );
         }
         else if ("throwerror".equals(actionCommand)) {
             throw new RuntimeException("some bad error happened!");

@@ -241,7 +241,6 @@ finally {
                         Component xhtml = loader.getRoot();
                         System.out.println("obre "+xhtml);
 
-			//addToContentPane(p, makeButton("Back","mainmenu") , edit );
                         addToScrollPane( xhtml ,null);
 
 		}

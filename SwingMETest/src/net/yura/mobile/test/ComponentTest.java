@@ -406,7 +406,13 @@ public class ComponentTest  extends Section{
 
             }
 
-            addToContentPane(tabPanel, null  );
+            Menu mainMenu = new Menu("Menu");
+            for (int c=0;c<10;c++) {
+                mainMenu.add( new Button("Hello") );
+            }
+
+
+            addToContentPane(tabPanel, mainMenu  );
         }
         else if ("tableTest".equals(actionCommand)) {
 
