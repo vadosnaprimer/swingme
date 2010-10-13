@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeMIDlet;
@@ -41,9 +42,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style menuBarStyle = new Style(defaultStyle);
         //Rect r = new Rect();
         Drawable divider = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
+        Drawable vertDivider = new ColorDrawable(0xff808080);
         //divider.getPadding(r);
         //System.out.println("w="+divider.getIntrinsicWidth()+" h="+divider.getIntrinsicHeight()+" "+r+" "+divider.getBounds()+" minw="+divider.getMinimumWidth()+" winh="+divider.getMinimumHeight());
-        menuBarStyle.addProperty(new AndroidBorder(divider,new Rect(divider.getMinimumHeight(),divider.getIntrinsicHeight(),0,0)), "divider", Style.ALL);
+        int thickness = divider.getIntrinsicHeight();
+        Rect thicknessRect = new Rect(thickness,thickness,0,0);
+        menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
+        menuBarStyle.addProperty(new AndroidBorder(vertDivider, thicknessRect), "verticalDivider", Style.ALL);
         setStyleFor("MenuBar", menuBarStyle);
 
         Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
