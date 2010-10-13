@@ -415,9 +415,9 @@ public class MenuBar extends List implements ActionListener {
 
                     for (int c=1;c<topRowCols;c++) {
                         int x = c*w;
-                        int y = divider.getLeft();
+                        int y = verticalDivider.getLeft();
                         g.translate(x, y);
-                        divider.paintBorder(this, g, 0, topRowHeight);
+                        verticalDivider.paintBorder(this, g, 0, topRowHeight);
                         g.translate(-x, -y);
                     }
                 }
@@ -426,9 +426,9 @@ public class MenuBar extends List implements ActionListener {
 
                 for (int c=1;c<cols;c++) {
                     int x = c*w;
-                    int y = topRowHeight + divider.getLeft();
+                    int y = topRowHeight + verticalDivider.getLeft();
                     g.translate(x, y);
-                    divider.paintBorder(this, g, 0, getHeight()-topRowHeight);
+                    verticalDivider.paintBorder(this, g, 0, getHeight()-topRowHeight);
                     g.translate(-x, -y);
                 }
 
@@ -451,15 +451,15 @@ public class MenuBar extends List implements ActionListener {
         return (divider!=null)?divider.getTop():0;
     }
     private int getDividerWidth() {
-        return (divider!=null)?divider.getLeft():0;
+        return (verticalDivider!=null)?verticalDivider.getLeft():0;
     }
 
-    private Border divider;
+    private Border divider,verticalDivider;
     public void updateUI() {
         super.updateUI();
 
         divider = (Border) theme.getProperty("divider", Style.ALL);
-
+        verticalDivider = (Border) theme.getProperty("verticalDivider", Style.ALL);
     }
 
 }

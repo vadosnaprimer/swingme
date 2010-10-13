@@ -117,7 +117,7 @@ public class Menu extends Button {
             int w = window.getWidthWithBorder();
             int h = window.getHeightWithBorder();
 
-            int maxh = dp.getHeight() - dp.getMenuHeight()*2;
+            final int maxh = dp.getHeight() - dp.getMenuHeight()*2;
 
             if (h > maxh) {
                 h = maxh;
@@ -155,21 +155,8 @@ public class Menu extends Button {
                 x = x+width;
             }
 
-            // check we r not going off the screen if we are then move us
-            if (x+w > dp.getWidth()) {
-                x = dp.getWidth() - w;
-            }
-
-            int softkeyHeight = (dp.getHeight() - maxh)/2;
-
-            if (y<softkeyHeight) {
-                y=softkeyHeight;
-            }
-            if (y+h > maxh + softkeyHeight) {
-                y = dp.getHeight() - h - softkeyHeight;
-            }
-
             window.setBoundsWithBorder(x, y, w, h);
+            window.makeVisible();
 
         }
 

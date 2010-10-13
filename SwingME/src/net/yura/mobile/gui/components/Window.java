@@ -24,6 +24,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.logging.Logger;
 
@@ -496,6 +497,32 @@ public class Window extends Panel {
                         (dp.getHeight() - getHeight()) /2
                 );
             }
+        }
+
+        public void makeVisible() {
+
+            DesktopPane dp = getDesktopPane();
+            int x=getXWithBorder(),y=getYWithBorder(),w=getWidthWithBorder(),h=getHeightWithBorder();
+
+            final int softkeyHeight = dp.getMenuHeight();
+
+            // check we r not going off the screen if we are then move us
+            if (x+w > dp.getWidth()) {
+                x = dp.getWidth() - w;
+            }
+            if (x<0) {
+                x=0;
+            }
+
+            if (y+h > dp.getHeight() - softkeyHeight) {
+                y = dp.getHeight() - h - softkeyHeight;
+            }
+            if (y<softkeyHeight) {
+                y=softkeyHeight;
+            }
+
+            Border insets = getInsets();
+            setLocation(x+insets.getLeft(), y+insets.getTop());
         }
 
 }
