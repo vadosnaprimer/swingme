@@ -84,6 +84,10 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         addBorder(ctx, titleBarStyle, 0, android.R.drawable.title_bar);
         setStyleFor("TitleBar", titleBarStyle);
 
+        Style titleBarLabelStyle = new Style(defaultStyle);
+        setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle); // Has defined in alert_dialog.xml
+        setStyleFor("TitleBarLabel", titleBarLabelStyle);
+
 //        Style progressBar = new Style(defaultStyle);
 //        addBorder(progressBar, android.R.drawable.progress_horizontal);
 //        setStyleFor("ProgressBar",progressBar);
