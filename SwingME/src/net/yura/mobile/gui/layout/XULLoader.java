@@ -501,8 +501,8 @@ public class XULLoader {
                 String value = parser.getAttributeValue(c);
                 if("property".equals(key)) {
                     Hashtable properties = getProperties(value);
-                    String plafname = (String)properties.get("plafname");
-                    if ("TextPane".equals(plafname)) {
+                    String tp = (String)properties.get("TextPane");
+                    if ("true".equals(tp)) {
                         theclass = TextPane.class;
                     }
                 }
