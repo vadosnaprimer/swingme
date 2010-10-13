@@ -72,12 +72,7 @@ public class MainPane extends DesktopPane {
 
         //mainWindow.setActionListener(this);
 
-        try {
-            image = new Icon("/world_link.png");
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
+        image = new Icon("/world_link.png");
 
         mainWindow.setMenuBar(new MenuBar());
         mainWindow.setUndecorated(true);
