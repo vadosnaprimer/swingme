@@ -297,14 +297,8 @@ public class MetalLookAndFeel extends LookAndFeel {
 	}
 
         public void addMetalIcon(Style style, String icon,String prop) {
-            try {
                 Icon icn = new Icon(icon);
                 style.addProperty(icn, prop, Style.ALL);
-            }
-            catch (IOException ex) {
-                //#debug info
-                Logger.info("can not find icon for metal theme "+icon);
-            }
         }
 
     // the color colors

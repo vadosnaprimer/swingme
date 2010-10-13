@@ -18,6 +18,7 @@
 package net.yura.mobile.gui;
 
 import java.io.IOException;
+import java.io.InputStream;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.components.Component;
 
@@ -33,24 +34,38 @@ public class Icon {
     private Object image;
 
     public Icon() {
-
     }
 
     /**
      * @see javax.swing.ImageIcon#ImageIcon(java.awt.Image) ImageIcon.ImageIcon
      */
     public Icon(Image img) {
-        image = img;
-        height = img.getHeight();
-        width = img.getWidth();
+        initImage(img);
     }
 
     /**
+     * this constructor does not throw an exception on Image that is not found,
+     * instead it creates a Icon with 0 height and width, (in Swing height and width are -1)
+     *
      * @see javax.swing.ImageIcon#ImageIcon(java.lang.String) ImageIcon.ImageIcon
      * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
      */
-    public Icon(String imageName) throws IOException {
-        this( Image.createImage( Midlet.getResourceAsStream(imageName) ) );
+    public Icon(String imageName) {
+        InputStream in = Midlet.getResourceAsStream(imageName);
+        if (in!=null) {
+            try {
+                initImage( Image.createImage( in ) );
+            }
+            catch(IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void initImage(Image img) {
+        image = img;
+        height = img.getHeight();
+        width = img.getWidth();
     }
 
     /**
