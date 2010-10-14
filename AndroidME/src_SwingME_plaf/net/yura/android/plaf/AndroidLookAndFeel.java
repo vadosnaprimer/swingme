@@ -25,6 +25,8 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         int c = a2.getColor(0, 0xFF000000);
         a2.recycle();
 
+//        ctx.setTheme(android.R.style.Theme_Black);
+
         Style defaultStyle = new Style();
         defaultStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM) , Style.ALL);
         defaultStyle.addForeground(c , Style.ALL);
@@ -87,6 +89,12 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style titleBarLabelStyle = new Style(defaultStyle);
         setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle); // Has defined in alert_dialog.xml
         setStyleFor("TitleBarLabel", titleBarLabelStyle);
+
+        // as preference_category.xml -> theme(Theme.Light)/listSeparatorTextViewStyle -> style/Widget.TextView.ListSeparator.White -> background
+        Style preferenceSeparatorStyle = new Style(defaultStyle);
+        addBorder(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background);
+        setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle); // Has defined in alert_dialog.xml
+        setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
 //        Style progressBar = new Style(defaultStyle);
 //        addBorder(progressBar, android.R.drawable.progress_horizontal);
@@ -243,6 +251,12 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         TypedArray a = ctx.obtainStyledAttributes(defStyle, attrs);
 
         res = a.getColorStateList(0);
+
+        if (res == null) {
+            TypedArray a2 = ctx.obtainStyledAttributes(null, attrs, defStyle, 0);
+            res = a2.getColorStateList(0);
+            a2.recycle();
+        }
 
         if (res == null) {
             // If textColor is not available, we need to dig inside "text appearance"
