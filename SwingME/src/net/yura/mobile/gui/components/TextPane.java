@@ -19,8 +19,6 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Image;
-
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
@@ -72,10 +70,10 @@ public class TextPane extends Component {
             TextStyle style = lineFrag.style;
             Icon icon = style.getIcon();
 
-            int state = (style == focusElem) ? Style.FOCUSED : Style.ALL;
-            int bgStyleColor = style.getBackground(state);
+            int fragState = (style == focusElem) ? Style.FOCUSED : Style.ALL;
+            int bgStyleColor = style.getBackground(fragState);
 
-            Border boder = style.getBorder(state);
+            Border boder = style.getBorder(fragState);
             if (boder != null) {
                 g.translate(lineFrag.x, lineFrag.y);
                 boder.paintBorder(this, g, lineFrag.w, lineFrag.h);
@@ -91,9 +89,8 @@ public class TextPane extends Component {
                 String str = text.substring(lineFrag.startOffset, lineFrag.endOffset);
 
                 if (str.length() > 0) {
-                    g.setColor(style.getForeground(state));
-                    Font f = style.getFont(state);
-                    if (f==null) { f = theme.getFont(state); }
+                    g.setColor(style.getForeground(fragState));
+                    Font f = getFont(style,fragState);
                     g.setFont(f);
 
                     g.drawString(str, lineFrag.x, lineFrag.y);
@@ -470,8 +467,7 @@ public class TextPane extends Component {
 
     private void addLineTextFragments(String elemText, TextStyle style, int startIndex) {
 
-        Font f = style.getFont(Style.ALL);
-        if (f==null) { f = theme.getFont(Style.ALL); }
+        Font f = getFont(style,Style.ALL);
 
         int borderH = getBorderHeight(style);
         int borderW = getBorderWidth(style);
@@ -722,7 +718,44 @@ public class TextPane extends Component {
     // ??insertString(int offset, String str, Style a)  ?
 
 
+    private Font getFont(TextStyle ts, int state) {
 
+        Font f = ts.getFont(state);
+        if (f != null) {
+            return f;
+        }
+
+        f = theme.getFont(state);
+
+        // some default values
+        int face = javax.microedition.lcdui.Font.FACE_SYSTEM;
+        int size = javax.microedition.lcdui.Font.SIZE_MEDIUM;
+
+        javax.microedition.lcdui.Font sysf = f.getFont();
+        if (sysf!=null) {
+            face = sysf.getFace();
+            size = sysf.getSize();
+        }
+
+        int style = javax.microedition.lcdui.Font.STYLE_PLAIN;
+        if (ts.isBold()) {
+            style |= javax.microedition.lcdui.Font.STYLE_BOLD;
+        }
+        if (ts.isItalic()) {
+            style |= javax.microedition.lcdui.Font.STYLE_ITALIC;
+        }
+        if (ts.isUnderline()) {
+            style |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
+        }
+
+        // TODO: Font should take care of all this details... and use bitmaps if needed
+        if (style!=javax.microedition.lcdui.Font.STYLE_PLAIN) {
+            // TODO: creating a new Object every time...
+            return new Font(face, style, size);
+        }
+
+        return f;
+    }
 
  // ------------ Inner classes ---------------
 
@@ -872,34 +905,6 @@ public class TextPane extends Component {
                     name = a.name;
                 }
             }
-        }
-
-        public Font getFont(int state) {
-
-            Font f = super.getFont(state);
-            if (f != null) {
-                return f;
-            }
-
-            int face = javax.microedition.lcdui.Font.FACE_SYSTEM;
-            int size = javax.microedition.lcdui.Font.SIZE_MEDIUM;
-
-            int style = javax.microedition.lcdui.Font.STYLE_PLAIN;
-            if (isBold()) {
-                style |= javax.microedition.lcdui.Font.STYLE_BOLD;
-            }
-            if (isItalic()) {
-                style |= javax.microedition.lcdui.Font.STYLE_ITALIC;
-            }
-            if (isUnderline()) {
-                style |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
-            }
-
-
-
-            // TODO: Font should take care of all this details... and use bitmaps if needed
-            // TODO: creating a new Object every time...
-            return (style!=javax.microedition.lcdui.Font.STYLE_PLAIN)?new Font(face, style, size):null;
         }
 
         public void updateUI() {
