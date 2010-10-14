@@ -199,6 +199,8 @@ public class FontInfo {
 
 		boolean italic = type.indexOf(".italic") != -1;
 
+                boolean underlined = type.indexOf(".underlined") != -1;
+
 		int height;
 
 		if ("ME4SE-iPhoneEmulator".equals(ApplicationManager.getInstance().getProperty("microedition.platform"))) {
@@ -233,7 +235,7 @@ public class FontInfo {
 	      }
 	    }
 		}
-		return new AwtFont(height, bold, italic);
+		return new AwtFont(height, bold, italic,underlined);
 	}
 
 	public void drawString(Graphics g, String s, int x, int y) {

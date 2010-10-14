@@ -125,17 +125,16 @@ public class Font {
       throw new IllegalArgumentException();
     }
 
-    switch (style & 3) {
-    case STYLE_BOLD:
+    if (isBold()) {
       buf.append(".bold");
-      break;
-    case STYLE_ITALIC:
+    }
+    if (isItalic()) {
       buf.append(".italic");
-      break;
-    case STYLE_BOLD | STYLE_ITALIC:
-      buf.append(".bold.italic");
-      break;
-    default:
+    }
+    if (isUnderlined()) {
+      buf.append(".underlined");
+    }
+    if (!isBold() && !isItalic() && !isUnderlined()) {
       buf.append(".plain");
     }
 

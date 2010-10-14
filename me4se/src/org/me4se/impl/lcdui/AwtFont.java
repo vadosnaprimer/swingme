@@ -17,12 +17,14 @@ public class AwtFont extends PhysicalFont {
     
     boolean bold;
     boolean italic;
+    boolean underlined;
     boolean overprint;
  
-    AwtFont (int height, boolean bold, boolean italic) {
+    AwtFont (int height, boolean bold, boolean italic,boolean underlined) {
         this.height = height;
         this.bold = bold;
         this.italic = italic;
+        this.underlined = underlined;
         
         init ();
     }
@@ -81,6 +83,10 @@ public class AwtFont extends PhysicalFont {
     public void drawString(Graphics g, String s, int x, int y) {
         g.setFont(font);
         g.drawString(s, x, y);
+
+        if (underlined) {
+            g.drawLine(x, y+1, x+stringWidth(s), y+1);
+        }
        /* g.drawLine(x, y, x+stringWidth(s), y);
         
         if (overprint)
