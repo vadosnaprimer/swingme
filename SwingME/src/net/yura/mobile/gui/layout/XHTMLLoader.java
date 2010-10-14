@@ -285,7 +285,7 @@ Logger.debug("START: "+startTag);
             else if ("br".equals(startTag)) {
                 if (currentComponent instanceof TextPane) { // should be TextComponent
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                    inlineText.setText( inlineText.getText()+"\n" );
+                    inlineText.append( "\n" );
                 }
                 //#mdebug info
                 else {
@@ -633,7 +633,7 @@ Logger.debug("START: "+startTag);
             Logger.debug("ref: "+parser.getName());
             if (currentComponent instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                inlineText.setText( inlineText.getText()+parser.getName() );
+                inlineText.append( parser.getName() );
             }
             //#mdebug info
             else {
