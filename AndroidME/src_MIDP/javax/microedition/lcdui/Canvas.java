@@ -248,7 +248,6 @@ public abstract class Canvas extends Displayable {
         private int canvasH;
         private int keyMenuCount;
         private View inputConnectionView;
-        private GestureDetector gestureDetector = new GestureDetector(new MyGestureDetector());
 
         public CanvasView(Context context) {
             super(context);

@@ -111,35 +111,19 @@ public final class Font {
 	}
 
 	public boolean isPlain() {
-		if (style == STYLE_PLAIN) {
-			return true;
-		} else {
-			return false;
-		}
+		return (style == STYLE_PLAIN) ;
 	}
 
 	public boolean isBold() {
-		if ((style & STYLE_BOLD) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return ((style & STYLE_BOLD) != 0);
 	}
 
 	public boolean isItalic() {
-		if ((style & STYLE_ITALIC) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return ((style & STYLE_ITALIC) != 0);
 	}
 
 	public boolean isUnderlined() {
-		if ((style & STYLE_UNDERLINED) != 0) {
-			return true;
-		} else {
-			return false;
-		}
+		return ((style & STYLE_UNDERLINED) != 0);
 	}
 
 	public int getHeight() {
