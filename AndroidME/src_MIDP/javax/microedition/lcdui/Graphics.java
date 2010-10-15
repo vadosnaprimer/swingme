@@ -12,16 +12,16 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 public class Graphics {
-    public static final int BASELINE = 0x01;
-    public static final int BOTTOM = 0x02;
-    public static final int LEFT = 0x04;
-    public static final int RIGHT = 0x08;
-    public static final int TOP = 0x10;
-    public static final int VCENTER = 0x20;
-    public static final int HCENTER = 0x40;
+    public static final int BASELINE = 64;
+    public static final int BOTTOM   = 32;
+    public static final int DOTTED   = 1;
+    public static final int HCENTER  = 1;
+    public static final int LEFT     = 4;
+    public static final int RIGHT    = 8;
+    public static final int SOLID    = 0;
+    public static final int TOP      = 16;
+    public static final int VCENTER  = 2;
 
-    public static final int DOTTED = 0x01;
-    public static final int SOLID = 0x02;
 
     private android.graphics.Canvas canvas;
     private javax.microedition.lcdui.Font font;
