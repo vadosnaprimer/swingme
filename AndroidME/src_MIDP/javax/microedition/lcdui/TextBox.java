@@ -120,29 +120,34 @@ public class TextBox extends Screen {
             outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
             int inputType;
-            if ((constraints & TextField.NUMERIC) > 0 || (constraints & TextField.DECIMAL) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_NUMBER;
+            
+            switch (constraints & TextField.CONSTRAINT_MASK) {
+				case TextField.NUMERIC:
+				case TextField.DECIMAL:
+					inputType = EditorInfo.TYPE_CLASS_NUMBER;
+					break;
+				case TextField.PHONENUMBER:
+					inputType = EditorInfo.TYPE_CLASS_PHONE;
+					break;
+				case TextField.EMAILADDR:
+					inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+					break;
+				case TextField.URL:
+					inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI;
+					break;
+				default: // TextField.ANY:
+					inputType = EditorInfo.TYPE_CLASS_TEXT;
+					break;
+			}
+
+            if ((constraints & TextField.PASSWORD) > 0) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD;
             }
-            else if ((constraints & TextField.PHONENUMBER) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_PHONE;
+            if ((constraints & TextField.INITIAL_CAPS_SENTENCE) > 0) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES;
             }
-            else if ((constraints & TextField.EMAILADDR) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
-            }
-            else if ((constraints & TextField.URL) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI;
-            }
-            else if ((constraints & TextField.PASSWORD) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD;
-            }
-            else if ((constraints & TextField.INITIAL_CAPS_SENTENCE) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES;
-            }
-            else if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
-                inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
-            }
-            else {
-                inputType = EditorInfo.TYPE_CLASS_TEXT;
+            if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
             }
 
             outAttrs.inputType = inputType;
