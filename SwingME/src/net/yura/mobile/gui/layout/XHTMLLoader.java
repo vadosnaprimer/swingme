@@ -197,7 +197,7 @@ public class XHTMLLoader {
         italic.setName("i");
         underline.setUnderline(true);
         underline.setName("u");
-        center.setAlignment( Graphics.HCENTER );
+        center.setAlignment( TextStyle.ALIGN_CENTER );
         center.setName("center");
 
         link.setUnderline(true);

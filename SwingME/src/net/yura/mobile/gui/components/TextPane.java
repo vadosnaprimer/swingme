@@ -802,6 +802,11 @@ public class TextPane extends Component {
          * @see javax.swing.text.StyleConstants#getAlignment() StyleConstants.getAlignment
          */
         public void setAlignment(int alignment) {
+            //#mdebug debug
+            if (alignment < 0 ||  alignment > 3) {
+                throw new IllegalArgumentException("setAlignment");
+            }
+            //#enddebug
             this.alignment = alignment;
         }
 
