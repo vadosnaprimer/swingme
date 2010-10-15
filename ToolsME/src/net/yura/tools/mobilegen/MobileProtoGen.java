@@ -375,9 +375,12 @@ for (ProtoLoader.FieldDefinition field:fields) {
                 else {
                     ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = new "+primitiveToJavaType(field.getType(),true)+"(in2.read"+firstUp(field.getType())+"() );");
                 }
+            }   // only cast things that are not supported by protobuff
+            else if (field.getImplementation()==byte.class || field.getImplementation()==char.class || field.getImplementation()==short.class) {
+                ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"();");
             }
             else {
-                ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"();");
+                ps.println("    "+field.getImplementation().getSimpleName()+" value = in2.read"+firstUp(field.getType())+"();");
             }
         }
     }
