@@ -63,6 +63,9 @@ public class MainPane extends DesktopPane {
             setLookAndFeel( (LookAndFeel)Class.forName("net.yura.android.plaf.AndroidLookAndFeel").newInstance() );
         }
         catch (Throwable ex) {
+            if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID) {
+                ex.printStackTrace();
+            }
             setLookAndFeel( new NimbusLookAndFeel(16) );
         }
 
