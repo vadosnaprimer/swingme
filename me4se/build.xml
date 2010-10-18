@@ -89,7 +89,7 @@
 			</patternset>
 		</unzip>
 
-		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt;../../UIUtilME/src" source="1.5" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar" destdir="tmpclasses" debug="on" target="1.5">
+		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt;../../UIUtilME/src" source="1.5" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar;lib/Grasshopper.jar" destdir="tmpclasses" debug="on" target="1.5">
 
 		</javac>
 

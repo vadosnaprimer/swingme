@@ -180,10 +180,13 @@ public abstract class Canvas extends Displayable {
 	/**
 	 * @ME4SE INTERNAL
 	 */
-    void _showNotify() {
+    public void _showNotify() {
         component.requestFocus();
         showNotify();
         repaint(); // sets repaintPending to true
+    }
+    public void _hideNotify() {
+        hideNotify();
     }
 
 	  /** Internal method that allows the VideoPlayer to exchange the image and to request a screen update */

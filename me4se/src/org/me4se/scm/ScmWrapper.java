@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
+import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.ApplicationManager;
 
 import org.me4se.System;
@@ -17,7 +19,7 @@ import org.me4se.impl.Log;
  */
 
 public class ScmWrapper extends Canvas implements MouseMotionListener,
-    MouseListener, ComponentListener, KeyListener,MouseWheelListener {
+    MouseListener, ComponentListener, KeyListener,MouseWheelListener, FocusListener {
 
   public ScmComponent component;
 
@@ -99,7 +101,30 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
     // YURA FIX
     setFocusTraversalKeysEnabled(false);
+    addFocusListener(this);
   }
+
+    public void focusGained(FocusEvent e) {
+        pressing=null;
+        Displayable dis = Display.getDisplay(manager.active).getCurrent();
+        if (dis instanceof javax.microedition.lcdui.Canvas) {
+            ((javax.microedition.lcdui.Canvas)dis)._showNotify();
+        }
+    }
+
+    /**
+     * YURA to stop keys sticking, and maybe to unfocus components in case of many Canvases
+     */
+    public void focusLost(FocusEvent e) {
+        pressing=null;
+        // this is not really correct use of this method
+        // but is needed to reset any keys that may have been pressed at the time
+        // when the panel loses focus, maybe should use pauseApp() in MIDlet
+        Displayable dis = Display.getDisplay(manager.active).getCurrent();
+        if (dis instanceof javax.microedition.lcdui.Canvas) {
+            ((javax.microedition.lcdui.Canvas)dis)._hideNotify();
+        }
+    }
 
   public void componentResized(ComponentEvent ev) {
     invalid = false;

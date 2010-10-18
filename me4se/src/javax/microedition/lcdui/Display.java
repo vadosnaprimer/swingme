@@ -22,6 +22,7 @@
 
 package javax.microedition.lcdui;
 
+import java.awt.Frame;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -175,19 +176,24 @@ public class Display {
    */
   public synchronized void setCurrent(Displayable d) {
 
-      // hack for yura
-      if (d instanceof TextBox)
-          return;
-
-    if (d == null)
-      return;
-
-    current = d;
+    // hack for yura
+    if (d instanceof TextBox) {
+        return;
+    }
 
     final ApplicationManager manager = ApplicationManager.getInstance();
 
-    if (manager.currentlyShown == d
-        || ApplicationManager.getInstance().active != midlet)
+    // yura: when called with null, it means hide the app
+    if (d == null) {
+        if (manager.frame !=null) {
+            manager.frame.setExtendedState(Frame.ICONIFIED);
+        }
+        return;
+    }
+
+    current = d;
+
+    if (manager.currentlyShown == d || manager.active != midlet)
       return;
 
     if (currentContainer != null)
