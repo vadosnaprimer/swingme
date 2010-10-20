@@ -171,7 +171,7 @@ public class List extends Component implements ActionListener {
         }
         else {
             //TODO should we NOT do this if pref size is set?
-            
+
             int totalHeight = 0;
             int totalWidth = 0;
 
@@ -531,7 +531,8 @@ public class List extends Component implements ActionListener {
             toggleHelper(current,selected==null,false);
             toggleHelper(i,true,true);
         }
-        else if (selected!=null && (clearSelectionOnClick || selected.isEmpty())) {
+        // TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
+        else if (selected!=null && (clearSelectionOnClick /*|| selected.isEmpty()*/)) {
             selected = null;
         }
         setSelectedIndex(i);
@@ -542,9 +543,10 @@ public class List extends Component implements ActionListener {
             toggleHelper(current, i==current || addMode , i==current || !addMode  );
             toggleHelper(i, i!=current && addMode , i!=current && !addMode);
         }
-        else if (selected!=null && selected.isEmpty()) {
-            selected = null;
-        }
+// TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
+//        else if (selected!=null && selected.isEmpty()) {
+//            selected = null;
+//        }
         setSelectedIndex(i);
     }
     private boolean addMode;
@@ -699,9 +701,7 @@ public class List extends Component implements ActionListener {
                 selectNewKey(current,keypad);
                 return true;
             }
-            else {
-                return fireActionPerformed();
-            }
+            return fireActionPerformed();
         }
         else {
             //if we did not consume the event
