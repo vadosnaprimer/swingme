@@ -31,7 +31,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         defaultStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM) , Style.ALL);
         defaultStyle.addForeground(c , Style.ALL);
         setStyleFor("", defaultStyle);
-
+        
         Style androidMenuStyle = new Style(defaultStyle);
         addBorder(ctx, androidMenuStyle, 0, android.R.drawable.menu_full_frame);
         setStyleFor("AndroidMenu", androidMenuStyle);
@@ -87,12 +87,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("TitleBar", titleBarStyle);
 
         Style titleBarLabelStyle = new Style(defaultStyle);
+        titleBarLabelStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_LARGE) , Style.ALL);
         setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle); // Has defined in alert_dialog.xml
         setStyleFor("TitleBarLabel", titleBarLabelStyle);
 
         // as preference_category.xml -> theme(Theme.Light)/listSeparatorTextViewStyle -> style/Widget.TextView.ListSeparator.White -> background
         Style preferenceSeparatorStyle = new Style(defaultStyle);
         //TODO: HACK: OREN: the values of the padding should be pixel independent.
+        preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
         addBorder(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, new Rect(5, 2, 5, 2));
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
