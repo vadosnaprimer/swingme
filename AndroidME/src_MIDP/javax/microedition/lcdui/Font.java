@@ -147,10 +147,16 @@ public final class Font {
 	}
 
 	public int charsWidth(char[] ch, int offset, int length) {
+	    if (ch == null) {
+	        throw new NullPointerException();
+	    }
 		return FontManager.getFont(this).charsWidth(ch, offset, length);
 	}
 
 	public int stringWidth(String str) {
+	    if (str == null) {
+            throw new NullPointerException();
+        }
 		return FontManager.getFont(this).stringWidth(str);
 	}
 
