@@ -12,6 +12,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
+import net.yura.mobile.logging.Logger;
 
 public class AndroidLookAndFeel extends SynthLookAndFeel {
 
@@ -325,7 +326,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
     private static void adjustSizeToDensity(Context ctx, Rect rect) {
         float density = ctx.getResources().getDisplayMetrics().density;
-
+        //#debug
+        Logger.debug("123123 " + density);
+        
         rect.top = (int) (rect.top * density);
         rect.left = (int) (rect.left * density);
         rect.bottom = (int) (rect.bottom * density);

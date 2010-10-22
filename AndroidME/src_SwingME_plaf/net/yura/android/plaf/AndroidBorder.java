@@ -21,13 +21,16 @@ public class AndroidBorder implements Border {
         d.getPadding(padding);
     }
 
+    // OREN: we want to override the padding values as on some versions 
+    // of android the padding is part of the Drawable and on others its 
+    // part of the border padding.
     public AndroidBorder(Drawable d, Rect extraPadding) {
         this(d);
         padding.set(
-            padding.left + extraPadding.left,
-            padding.top + extraPadding.top,
-            padding.right + extraPadding.right,
-            padding.bottom + extraPadding.bottom
+            extraPadding.left,
+            extraPadding.top,
+            extraPadding.right,
+            extraPadding.bottom
         );
     }
 
