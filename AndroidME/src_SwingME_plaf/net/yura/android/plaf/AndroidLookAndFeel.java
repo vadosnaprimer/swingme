@@ -31,7 +31,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         defaultStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM) , Style.ALL);
         defaultStyle.addForeground(c , Style.ALL);
         setStyleFor("", defaultStyle);
-        
+
         Style androidMenuStyle = new Style(defaultStyle);
         addBorder(ctx, androidMenuStyle, 0, android.R.drawable.menu_full_frame);
         setStyleFor("AndroidMenu", androidMenuStyle);
@@ -54,6 +54,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("MenuBar", menuBarStyle);
 
         Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
+        adjustSizeToDensity(ctx, menuRenderExtraPadding);
         Style menuRendererStyle = new Style(defaultStyle);
         addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
         // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
@@ -69,6 +70,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- List ---
         Rect listExtraPadding = new Rect(10, 10, 10, 10);
+        adjustSizeToDensity(ctx, listExtraPadding);
         Style listCellRenderer = new Style(defaultStyle);
         addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector, listExtraPadding);
 
@@ -95,7 +97,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style preferenceSeparatorStyle = new Style(defaultStyle);
         //TODO: HACK: OREN: the values of the padding should be pixel independent.
         preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
-        addBorder(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, new Rect(5, 2, 5, 2));
+        Rect separatorPadding = new Rect(5, 2, 5, 2);
+        adjustSizeToDensity(ctx, separatorPadding);
+        addBorder(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
@@ -319,4 +323,12 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         style.addForeground(color , swingMeStyle);
     }
 
+    private static void adjustSizeToDensity(Context ctx, Rect rect) {
+        float density = ctx.getResources().getDisplayMetrics().density;
+
+        rect.top = (int) (rect.top * density);
+        rect.left = (int) (rect.left * density);
+        rect.bottom = (int) (rect.bottom * density);
+        rect.right = (int) (rect.right * density);
+    }
 }
