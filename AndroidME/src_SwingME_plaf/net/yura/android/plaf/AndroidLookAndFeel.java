@@ -326,7 +326,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
     private static void adjustSizeToDensity(Context ctx, Rect rect) {
         float density = ctx.getResources().getDisplayMetrics().density;
-        //#debug
+        //#debug debug
         Logger.debug("123123 " + density);
         
         rect.top = (int) (rect.top * density);
