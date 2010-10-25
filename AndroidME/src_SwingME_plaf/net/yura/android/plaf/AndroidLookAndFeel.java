@@ -96,7 +96,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // as preference_category.xml -> theme(Theme.Light)/listSeparatorTextViewStyle -> style/Widget.TextView.ListSeparator.White -> background
         Style preferenceSeparatorStyle = new Style(defaultStyle);
-        //TODO: HACK: OREN: the values of the padding should be pixel independent.
         preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
