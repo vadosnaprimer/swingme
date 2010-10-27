@@ -143,8 +143,13 @@ public abstract class MIDlet {
                         System.out.println("unknown grasshopper param: "+s1[c]);
                     }
                 }
-                net.yura.grasshopper.SimpleBug.initSimple(appName, appVersion, locale);
-                System.out.println("Grasshopper loaded");
+                try {
+                    net.yura.grasshopper.SimpleBug.initSimple(appName, appVersion, locale);
+                    System.out.println("Grasshopper loaded");
+                }
+                catch(Throwable th) {
+                    System.out.println("Grasshopper not loaded");
+                }
             }
             catch (Exception ex) {
                 ex.printStackTrace();
