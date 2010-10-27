@@ -97,8 +97,8 @@ public class PageView extends ScrollPane {
 
         super.paintChildren(g);
 
-        g.setColor(0xFF000000);
-        g.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
+//        g.setColor(0xFF000000);
+//        g.drawLine(getWidth() / 2, 0, getWidth() / 2, getHeight());
     }
 
     // Override
