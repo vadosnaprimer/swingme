@@ -89,18 +89,20 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         addBorder(ctx, titleBarStyle, 0, android.R.drawable.title_bar);
         setStyleFor("TitleBar", titleBarStyle);
 
+        // This a non focusable component. Just set Style.ALL
         Style titleBarLabelStyle = new Style(defaultStyle);
         titleBarLabelStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_LARGE) , Style.ALL);
-        setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle); // Has defined in alert_dialog.xml
+        setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle, Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("TitleBarLabel", titleBarLabelStyle);
 
         // as preference_category.xml -> theme(Theme.Light)/listSeparatorTextViewStyle -> style/Widget.TextView.ListSeparator.White -> background
+        // This a non focusable component. Just set Style.ALL
         Style preferenceSeparatorStyle = new Style(defaultStyle);
         preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
         addBorder(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
-        setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle); // Has defined in alert_dialog.xml
+        setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
 //        Style progressBar = new Style(defaultStyle);
@@ -327,7 +329,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         float density = ctx.getResources().getDisplayMetrics().density;
         //#debug debug
         Logger.debug("123123 " + density);
-        
+
         rect.top = (int) (rect.top * density);
         rect.left = (int) (rect.left * density);
         rect.bottom = (int) (rect.bottom * density);
