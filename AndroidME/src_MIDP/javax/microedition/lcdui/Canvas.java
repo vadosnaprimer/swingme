@@ -349,6 +349,7 @@ public abstract class Canvas extends Displayable {
 //            }
 
 
+            //#debug debug
             showFramesPerSec(androidCanvas);
 
             time = System.currentTimeMillis();
