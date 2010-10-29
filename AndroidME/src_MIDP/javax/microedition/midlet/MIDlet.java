@@ -28,6 +28,7 @@ public abstract class MIDlet {
     public static final String PROTOCOL_EMAIL = "email:";
     public static final String PROTOCOL_NOTIFY = "notify:";
     public static final String PROTOCOL_NATIVE = "native:";
+    public static final String PROTOCOL_NATIVE_NO_RESULT = "nativeNoResult:";
 
     public static MIDlet DEFAULT_MIDLET;
     public static Toolkit DEFAULT_TOOLKIT;
@@ -104,15 +105,22 @@ public abstract class MIDlet {
             throws ConnectionNotFoundException {
 
         Uri content = Uri.parse(url);
+        boolean isProtoNative = url.startsWith(PROTOCOL_NATIVE);
+        boolean isProtoNativeNoRes = url.startsWith(PROTOCOL_NATIVE_NO_RESULT);
 
-        if (url.startsWith(PROTOCOL_NATIVE)) {
+        if (isProtoNative || isProtoNativeNoRes) {
             try {
                 String clName = content.getHost();
                 Class cls = Class.forName(clName);
                 Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
                 i.setData(content);
 
-                getActivity().startActivityForResult(i, 0);
+                if (isProtoNative) {
+                    getActivity().startActivityForResult(i, 0);
+                }
+                else {
+                    getActivity().startActivity(i);
+                }
             } catch (Throwable e) {
                 //#debug debug
                 e.printStackTrace();
