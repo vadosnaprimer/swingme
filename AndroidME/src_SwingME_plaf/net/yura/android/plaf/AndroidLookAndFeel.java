@@ -7,7 +7,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
@@ -20,7 +20,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
     public AndroidLookAndFeel() {
 
-        Context ctx = AndroidMeMIDlet.DEFAULT_ACTIVITY;
+        Context ctx = AndroidMeActivity.DEFAULT_ACTIVITY;
 
         TypedArray a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorForeground});
         int c = a2.getColor(0, 0xFF000000);

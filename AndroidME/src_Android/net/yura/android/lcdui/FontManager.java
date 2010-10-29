@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 import javax.microedition.lcdui.Font;
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -89,7 +89,7 @@ public class FontManager {
 			}
 
 			// The font size is adjusted to the phone "scaled density"
-			DisplayMetrics metrics = AndroidMeMIDlet.DEFAULT_ACTIVITY.getResources().getDisplayMetrics();
+			DisplayMetrics metrics = AndroidMeActivity.DEFAULT_ACTIVITY.getResources().getDisplayMetrics();
 			size = (int) (size * metrics.scaledDensity);
 
 			result = new FontManager(Typeface.create(family, style), size,

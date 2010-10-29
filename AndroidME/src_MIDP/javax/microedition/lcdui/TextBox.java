@@ -3,7 +3,7 @@ package javax.microedition.lcdui;
 import java.util.ArrayList;
 
 import javax.microedition.midlet.MIDlet;
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 
 import android.content.Context;
@@ -32,12 +32,12 @@ public class TextBox extends Screen {
         this.constraints = constraints;
 
         // Hack: Current view could change...
-        MIDlet midlet = AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet();
+        MIDlet midlet = AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet();
 
         this.oldView = Display.getDisplay(midlet).getCurrent().getView();
         this.currentCanvasView = getCanvasView(oldView);
 
-        textBoxView = new TextBoxView(AndroidMeMIDlet.DEFAULT_ACTIVITY);
+        textBoxView = new TextBoxView(AndroidMeActivity.DEFAULT_ACTIVITY);
     }
 
     private Canvas.CanvasView getCanvasView(View view) {

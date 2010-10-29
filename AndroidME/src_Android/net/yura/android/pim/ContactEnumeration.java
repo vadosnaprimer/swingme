@@ -2,7 +2,7 @@ package net.yura.android.pim;
 
 import java.util.Enumeration;
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 import android.content.ContentResolver;
 import android.database.Cursor;
@@ -19,7 +19,7 @@ public class ContactEnumeration implements Enumeration{
 
 	public ContactEnumeration(ContactDao contactDao) {
 		this.contactDao = contactDao;
-		this.contentResolver = AndroidMeMIDlet.DEFAULT_ACTIVITY.getContentResolver();
+		this.contentResolver = AndroidMeActivity.DEFAULT_ACTIVITY.getContentResolver();
 		this.peopleCursor = this.contentResolver.query(People.CONTENT_URI, null, null, null, null);
 //JP		this.peopleCursor = this.contentResolver.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
 

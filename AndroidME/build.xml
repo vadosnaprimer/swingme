@@ -93,7 +93,7 @@
 		<echo message="ClassPath: ${AndroidFixResourceAsStream.jar}"/>
 				    	
         <java classname="net.yura.mobile.asm.AndroidFixer" classpath="${AndroidFixResourceAsStream.jar}">     
-        	<arg value="net.yura.android.AndroidMeMIDlet"/>
+        	<arg value="net.yura.android.AndroidMeActivity"/>
             <arg value="${outdir}"/>            
         </java>
         

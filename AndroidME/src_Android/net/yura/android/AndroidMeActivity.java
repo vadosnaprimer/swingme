@@ -34,7 +34,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickListener {
+public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickListener {
 
     private MIDlet midlet;
     private Vector<String[]> jadMidlets;
@@ -46,9 +46,9 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
     private boolean closed;
     private FileBroadcastReceiver fileBroadcastReceiver;
 
-    public static AndroidMeMIDlet DEFAULT_ACTIVITY;
+    public static AndroidMeActivity DEFAULT_ACTIVITY;
 
-    public AndroidMeMIDlet() {
+    public AndroidMeActivity() {
         DEFAULT_ACTIVITY = this;
     }
 
@@ -66,9 +66,9 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
         } else {
             Runnable r = new Runnable() {
                 public void run() {
-                    synchronized (AndroidMeMIDlet.this.lock) {
+                    synchronized (AndroidMeActivity.this.lock) {
                         runnable.run();
-                        AndroidMeMIDlet.this.lock.notify();
+                        AndroidMeActivity.this.lock.notify();
                     }
                 }
             };
@@ -148,7 +148,7 @@ public class AndroidMeMIDlet extends Activity implements Toolkit, OnItemClickLis
             public void run() {
                 try {
                     MIDlet midlet = createMIDlet(midletClassName);
-                    AndroidMeMIDlet.this.midlet = midlet;
+                    AndroidMeActivity.this.midlet = midlet;
 
                 } catch (Throwable ex) {
                     ex.printStackTrace();

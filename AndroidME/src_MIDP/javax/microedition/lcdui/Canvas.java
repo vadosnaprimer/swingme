@@ -4,13 +4,12 @@ import java.util.Arrays;
 
 import javax.microedition.midlet.MIDlet;
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,8 +50,8 @@ public abstract class Canvas extends Displayable {
     private Bitmap graphicsBitmap;
 
     protected Canvas() {
-        this.linearLayout = new LinearLayout(AndroidMeMIDlet.DEFAULT_ACTIVITY);
-        this.canvasView = new CanvasView(AndroidMeMIDlet.DEFAULT_ACTIVITY);
+        this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
+        this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
         canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         linearLayout.addView(canvasView);
@@ -377,7 +376,7 @@ public abstract class Canvas extends Displayable {
             else if (keyCode == KeyEvent.KEYCODE_BACK && keyCount == 1) {
                 // kill the application on a "long back key" press
                 // TODO: Should show some native Android UI for confirmation
-                AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+                AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
             }
             else {
                 int meKeyCode = getKeyCode(event);
@@ -707,7 +706,7 @@ public abstract class Canvas extends Displayable {
     }
 
     public void serviceRepaints() {
-        AndroidMeMIDlet.DEFAULT_ACTIVITY.invokeAndWait(new Thread());
+        AndroidMeActivity.DEFAULT_ACTIVITY.invokeAndWait(new Thread());
     }
 
     public String getKeyName(int keyCode) {
@@ -716,7 +715,7 @@ public abstract class Canvas extends Displayable {
     }
 
     public boolean isShown() {
-        return Display.getDisplay(AndroidMeMIDlet.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
+        return Display.getDisplay(AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
     }
 
     public void setTitle(Object object) {

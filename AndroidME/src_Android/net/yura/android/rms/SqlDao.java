@@ -4,7 +4,7 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import javax.microedition.rms.RecordStoreNotFoundException;
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -202,7 +202,7 @@ public class SqlDao {
     }
 
     private void init() {
-        Context context = AndroidMeMIDlet.DEFAULT_ACTIVITY;
+        Context context = AndroidMeActivity.DEFAULT_ACTIVITY;
         SQLiteOpenHelper recordStoreSqliteOpenHelper = new RecordStoreSqliteOpenHelper(context, "recordstoredb", null, 3);
         database = recordStoreSqliteOpenHelper.getWritableDatabase();
     }

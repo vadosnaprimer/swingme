@@ -5,7 +5,7 @@ import java.util.Properties;
 import javax.microedition.io.ConnectionNotFoundException;
 
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 import net.yura.android.lcdui.Toolkit;
 import android.app.Activity;
 import android.app.Notification;
@@ -169,7 +169,7 @@ public abstract class MIDlet {
                 " icon = " + icon +
                 " iconId = " + iconId);
 
-        Intent notifyIntent = new Intent(ctx, AndroidMeMIDlet.class);
+        Intent notifyIntent = new Intent(ctx, AndroidMeActivity.class);
         PendingIntent intent = PendingIntent.getActivity(ctx, 0, notifyIntent, 0);
 
         Notification notif = new Notification(iconId, title, System.currentTimeMillis());

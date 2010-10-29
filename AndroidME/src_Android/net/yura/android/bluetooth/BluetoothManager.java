@@ -10,7 +10,7 @@ import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -40,7 +40,7 @@ public class BluetoothManager {
 
     public static BluetoothManager getBluetoothManager() {
         if (instance == null) {
-            instance = new BluetoothManager(AndroidMeMIDlet.DEFAULT_ACTIVITY);
+            instance = new BluetoothManager(AndroidMeActivity.DEFAULT_ACTIVITY);
 
             // Attempt to use older Bluetooth Android 1.6 API's
             // If it fails, attempt Android 2.0 API's

@@ -11,7 +11,7 @@ import android.provider.Contacts;
 import android.provider.Contacts.People;
 import javax.microedition.pim.Contact;
 
-import net.yura.android.AndroidMeMIDlet;
+import net.yura.android.AndroidMeActivity;
 
 /**
  * This Data Access Object will manage JavaME PIM contact objects and talks to the sqlite3 database on android.
@@ -26,7 +26,7 @@ public class ContactDao {
 
 	public ContactDao(ContactListImpl contactListImpl) {
 		this.contactListImpl = contactListImpl;
-		this.contentResolver = AndroidMeMIDlet.DEFAULT_ACTIVITY.getContentResolver();
+		this.contentResolver = AndroidMeActivity.DEFAULT_ACTIVITY.getContentResolver();
 	}
 
 	private void addNonEmptyString(StringBuffer buffer, String str) {
