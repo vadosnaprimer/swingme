@@ -535,9 +535,8 @@ public class List extends Component implements ActionListener {
             toggleHelper(current,selected==null,false);
             toggleHelper(i,true,true);
         }
-// TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
         else if (selected!=null && (clearSelectionOnClick || selected.isEmpty())) {
-            //selected = null;
+            clearSelection();
         }
         setSelectedIndex(i);
     }
@@ -547,12 +546,12 @@ public class List extends Component implements ActionListener {
             toggleHelper(current, i==current || addMode , i==current || !addMode  );
             toggleHelper(i, i!=current && addMode , i!=current && !addMode);
         }
-// TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
         else if (selected!=null && selected.isEmpty()) {
-            //selected = null;
+            clearSelection();
         }
         setSelectedIndex(i);
     }
+
     private boolean addMode;
     private void toggleHelper(int i,boolean addTest,boolean removeTest) {
         if (i<0 || (!addTest && !removeTest)) return;
@@ -913,6 +912,9 @@ public class List extends Component implements ActionListener {
         return selected;
     }
 
+    /**
+     * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
+     */
     public void setSelectedValues(Vector v) {
         selected = v;
     }
@@ -1040,6 +1042,14 @@ public class List extends Component implements ActionListener {
      */
     public boolean isSelectedIndex(int index) {
         return selected==null?current == index:selected.contains(getElementAt(index));
+    }
+
+    /**
+     * @see javax.swing.JList#clearSelection() JList.clearSelection
+     * @see javax.swing.ListSelectionModel#clearSelection() ListSelectionModel.clearSelection
+     */
+    public void clearSelection() {
+        selected = null;
     }
 
 }
