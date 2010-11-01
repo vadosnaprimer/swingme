@@ -898,6 +898,19 @@ public class List extends Component implements ActionListener {
         fixedCellWidth = width;
     }
 
+
+    /**
+     * maybe should be in list, but is used in a few places
+     * @see javax.swing.JList#setPrototypeCellValue(java.lang.Object) JList.setPrototypeCellValue
+     */
+    public void setPrototypeCellValue(Object prototypeCellValue)  {
+
+        Component c = renderer.getListCellRendererComponent(this, prototypeCellValue, 0, false, false);
+        c.workoutSize();
+        setFixedCellHeight( c.getHeightWithBorder() );
+
+    }
+
     /**
      * @see javax.swing.JList#getSelectedValues() JList.getSelectedValues
      */

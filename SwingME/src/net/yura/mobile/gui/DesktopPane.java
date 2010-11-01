@@ -416,7 +416,10 @@ public class DesktopPane extends Canvas implements Runnable {
             m.setName("SoftkeyRenderer");
             softkeyRenderer = m;
 
-            menuHeight = DefaultListCellRenderer.setPrototypeCellValue(new Button("test"), softkeyRenderer);
+            Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test"), 0, false, false);
+            c.workoutSize();
+            menuHeight = c.getHeightWithBorder();
+
         }
 
         inaccuracy = theme.getStyle("").getFont(Style.ALL).getHeight();

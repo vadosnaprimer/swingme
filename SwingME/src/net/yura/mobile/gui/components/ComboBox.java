@@ -151,9 +151,9 @@ public class ComboBox extends Button implements ActionListener{
                 DefaultListCellRenderer render = new DefaultListCellRenderer();
                 render.setName("PopupListRenderer");
                 List l = new List(render);
-                l.setFixedCellHeight( DefaultListCellRenderer.setPrototypeCellValue("hello", l.getCellRenderer()) );
-                setModel(l);
+                l.setPrototypeCellValue("hello");
                 l.setUseSelectButton(true);
+                setModel(l);
             }
 	}
         private void createScrollPane() {
