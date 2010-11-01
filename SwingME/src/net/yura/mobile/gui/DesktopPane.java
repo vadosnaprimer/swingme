@@ -1368,9 +1368,10 @@ public class DesktopPane extends Canvas implements Runnable {
     // this is to fix buttons not being released properly on some phones
     public void showNotify() {
 
-        desktop = this;
+        //#debug debug        
+        Logger.debug("showNotify");
 
-        //Logger.debug("showNotify");
+        desktop = this;
         keypad.clear();
 
         // A landscape change can happens when we are hidden. So check it now.
@@ -1381,7 +1382,8 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     protected void hideNotify() {
-        //Logger.debug("hideNotify");
+        //#debug debug
+        Logger.debug("hideNotify");
         keypad.clear();
     }
 

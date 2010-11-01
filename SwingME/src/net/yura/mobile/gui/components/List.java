@@ -437,7 +437,11 @@ public class List extends Component implements ActionListener {
         Object item = getElementAt(i);
 
         Component c = renderer.getListCellRendererComponent(this, item, i, isSelectedIndex(i), isFocusOwner() && i == current);
-        c.workoutSize();
+
+        // if we need to put this back, someone needs to write WHY we do
+        if (fixedCellWidth==-1||fixedCellHeight==-1) {
+            c.workoutSize();
+        }
 
         int w = fixedCellWidth!=-1?fixedCellWidth:c.getWidthWithBorder();
         int h = fixedCellHeight!=-1?fixedCellHeight:c.getHeightWithBorder();
@@ -531,9 +535,9 @@ public class List extends Component implements ActionListener {
             toggleHelper(current,selected==null,false);
             toggleHelper(i,true,true);
         }
-        // TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
-        else if (selected!=null && (clearSelectionOnClick /*|| selected.isEmpty()*/)) {
-            selected = null;
+// TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
+        else if (selected!=null && (clearSelectionOnClick || selected.isEmpty())) {
+            //selected = null;
         }
         setSelectedIndex(i);
     }
@@ -544,9 +548,9 @@ public class List extends Component implements ActionListener {
             toggleHelper(i, i!=current && addMode , i!=current && !addMode);
         }
 // TODO: Jane - Commented this. If we want to set the the list in edit mode programmatically, this cleans up the empty vector
-//        else if (selected!=null && selected.isEmpty()) {
-//            selected = null;
-//        }
+        else if (selected!=null && selected.isEmpty()) {
+            //selected = null;
+        }
         setSelectedIndex(i);
     }
     private boolean addMode;
@@ -895,6 +899,9 @@ public class List extends Component implements ActionListener {
         fixedCellWidth = width;
     }
 
+    /**
+     * @see javax.swing.JList#getSelectedValues() JList.getSelectedValues
+     */
     public Vector getSelectedValues() {
         if (selected==null) {
             Vector v = new Vector(1);
