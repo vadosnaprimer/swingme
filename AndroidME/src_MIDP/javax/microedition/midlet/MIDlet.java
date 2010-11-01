@@ -264,9 +264,4 @@ public abstract class MIDlet {
     public void onResult(int resultCode, Object result) {
 
     }
-
-    // To be overload by children
-    public Object onGetModel() {
-        return null;
-    }
 }
