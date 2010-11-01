@@ -51,6 +51,7 @@ public abstract class Midlet extends MIDlet {
     }
 
     private DesktopPane rootpane;
+    private Object platformRequestParam;
 
     public Midlet() {
 
@@ -186,6 +187,22 @@ public abstract class Midlet extends MIDlet {
 
     public static Midlet getMidlet() {
         return DesktopPane.getDesktopPane().midlet;
+    }
+
+    // This will only be called on Android.
+    public void platformRequest(String url, Object arg) {
+        try {
+            this.platformRequestParam = arg;
+            platformRequest(url);
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e.toString());
+        }
+    }
+
+    // This will only be called on Android. By the "Android" side
+    public Object getPlatformRequestParam() {
+        return platformRequestParam;
     }
 
     public static void call(String number) {

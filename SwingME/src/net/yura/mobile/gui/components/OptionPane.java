@@ -116,12 +116,12 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         // * streaches components to the max width
         // * allows components of different heights
         // * has gaps round the edge
-        
+
         Panel panel = getContentPane();
-        
+
         //add(title,Graphics.TOP);
         //add(panel);
-        
+
         icon = new Label();
         icon.setHorizontalAlignment(Graphics.HCENTER);
 
@@ -141,20 +141,20 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         cmdPanel = new Panel( new FlowLayout() );
         panel.add( cmdPanel ,Graphics.BOTTOM);
     }
-    
+
     private ActionListener actionListener;
 
     public void setActionListener(ActionListener actionListener) {
             this.actionListener = actionListener;
     }
-    
+
     public void actionPerformed(String actionCommand) {
         setVisible(false);
         if (actionListener!=null) {
             actionListener.actionPerformed(actionCommand);
         }
     }
-    
+
     public boolean processKeyEvent(KeyEvent keypad) {
 
         if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey(KeyEvent.KEY_CALL)) {
@@ -171,12 +171,12 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
      * @see javax.swing.JOptionPane#setMessage(java.lang.Object) JOptionPane.setMessage
      */
     public void setMessage(Object newMessage) {
-        
+
         content.removeAll();
         scroll.getView().setLocation(0, 0);
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.weightx = 1;
-        
+
         if (newMessage instanceof Object[]) {
             Object[] objects = (Object[])newMessage;
             for (int c=0;c<objects.length;c++) {
@@ -194,7 +194,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         }
 
     }
-    
+
     private Component getComponentFromObject(Object object) {
 
         DesktopPane dp = DesktopPane.getDesktopPane();
@@ -271,7 +271,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     public void setOptions(Button[] options) {
         cmdPanel.removeAll();
         for (int c=0;c<options.length;c++) {
-            Button button = (Button)options[c];
+            Button button = options[c];
             ActionListener[] actionListeners = button.getActionListeners();
             for(int i = 0; i < actionListeners.length; i++){
               button.removeActionListener(actionListeners[i]);
@@ -284,6 +284,16 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             // this should be removed one day
             autoMnemonic( cmdPanel.getComponents() );
         }
+    }
+
+    /**
+     * @see javax.swing.JOptionPane#getOptions() JOptionPane.getOptions
+     */
+    public Button[] getOptions() {
+        Vector v = cmdPanel.getComponents();
+        Button[] buttons = new Button[v.size()];
+        v.copyInto(buttons);
+        return buttons;
     }
 
     public static void autoMnemonic(Vector items) {
@@ -337,9 +347,9 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:scroll.getBarThickness()) );
         }
         getMostRecentFocusOwner();
-        
+
         setLocationRelativeTo(null);
-        
+
         setVisible(true);
         }
         catch(Throwable t) {
@@ -363,7 +373,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
         Vector myselfs = getAllWindows();
         OptionPane myself=null;
-        
+
         for (int c=0;c<myselfs.size();c++) {
             Window op = (Window)((WeakReference)myselfs.elementAt(c)).get();
             if (op instanceof OptionPane && ((OptionPane)op).factory && !op.isVisible()) {
@@ -371,7 +381,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
                 break;
             }
         }
-        
+
         if (myself==null) {
             myself = new OptionPane();
             myself.factory = true;
@@ -403,11 +413,11 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             }
             initialValue = options[0];
         }
-        
+
         myself.setOptions(options);
 
         myself.setInitialValue(initialValue);
-        
+
         DesktopPane.invokeLater(myself);
 
         return myself;
@@ -426,5 +436,5 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     public static OptionPane showConfirmDialog(ActionListener parent, Object message, String title, int optionType) {
         return showOptionDialog(parent, message, title, optionType, QUESTION_MESSAGE, null, null, null);
     }
-    
+
 }
