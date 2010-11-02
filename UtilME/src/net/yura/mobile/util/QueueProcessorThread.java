@@ -4,14 +4,19 @@ import java.util.Vector;
 import net.yura.mobile.logging.Logger;
 
 /**
- * @author Kat
+ * @author Yura Mamyrin
  */
 public abstract class QueueProcessorThread extends Thread {
 
     private Vector inbox = new Vector();
     private boolean runnning;
 
+    /**
+     * @deprecated
+     */
     public QueueProcessorThread() {
+        //#debug debug
+        Logger.dumpStack();
     }
 
     public QueueProcessorThread(String name) {
@@ -66,7 +71,7 @@ public abstract class QueueProcessorThread extends Thread {
             }
             catch (Exception ex) {
                 //#mdebug warn
-                Logger.warn("[QueueProcessorThread] error processing "+object);
+                Logger.warn("[QueueProcessorThread-"+getName()+"] error processing "+object);
                 Logger.warn(ex);
                 //#enddebug
             }
@@ -74,7 +79,7 @@ public abstract class QueueProcessorThread extends Thread {
       }
       catch(Throwable t) {
         //#mdebug error
-        Logger.error("[QueueProcessorThread] fatal error: "+t.toString());
+        Logger.error("[QueueProcessorThread-"+getName()+"] fatal error: "+t.toString());
         Logger.error(t);
         //#enddebug
       }
