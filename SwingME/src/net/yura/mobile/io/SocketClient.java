@@ -185,8 +185,17 @@ public abstract class SocketClient implements Runnable {
 			Logger.info("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
 
-                        //#debug debug
+                        //#mdebug debug
                         if (disconnected) throw new IOException();
+                        // this is NOT good enough as a test, as right at this point the IO Exception can happen in the READ thead and not here!
+                        // maybe have something like
+                        // if (readExceptionDuringWrite) NativeUtil.close(in);
+                        // if (writeException) NativeUtil.close(out);
+                        // there are THREE things that can go wrong,
+                        // 1. exception in read
+                        // 2. exception in write
+                        // 3. exception in read during a write that then triggers a exception in the write
+                        //#enddebug
 
                         write(out, object);
 
@@ -204,6 +213,8 @@ public abstract class SocketClient implements Runnable {
 
                         // move this and any queued objects to offline inbox
                         addToOfflineBox( object );
+                        // TODO note that other objects may have already been moved into the offlineInbox
+                        // by this time by the shutdownConnection() being called from the read thread
 
                         shutdownConnection();
 
@@ -234,8 +245,13 @@ public abstract class SocketClient implements Runnable {
 
     private synchronized void shutdownConnection() {
 
-         NativeUtil.close(conn);
-         conn = null;
+        // we have already shut down the connection
+        // and if we do it again, we risk moving the "hello" message
+        // out of the current queue of things to be sent
+        if (conn==null && in==null && out==null) return;
+
+        NativeUtil.close(conn);
+        conn = null;
 
          // we HAVE to close these here, as if we do not close them, and ONLY
          // close the Connection, the readThread stays in the blocked state
@@ -268,7 +284,7 @@ public abstract class SocketClient implements Runnable {
 
                     //#debug debug
                     if (disconnected) throw new IOException();
-                    
+
                     task = read(in);
                 }
                 catch(Exception ex) {
