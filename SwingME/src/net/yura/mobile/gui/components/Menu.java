@@ -23,6 +23,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
@@ -234,8 +235,18 @@ public class Menu extends Button {
 
             menuItems = new MenuBar();
             menuItems.setLayoutOrientation(List.VERTICAL);
-            menuItems.setUseSelectButton(true);
             menuItems.setLoop(true);
+
+            if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
+                Button cancel2 = new Button( (String)DesktopPane.get("menuText") );
+                cancel2.setActionCommand(Frame.CMD_CLOSE);
+                cancel2.addActionListener(this);
+                cancel2.setMnemonic(KeyEvent.KEY_MENU);
+                popup.addCommand(cancel2);
+            }
+            else {
+                menuItems.setUseSelectButton(true);
+            }
 
             //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
             // hack, this is not the best way of doing this, but its all i can think of for now
