@@ -28,6 +28,7 @@ public class RMSBackup extends QueueProcessorThread {
     private RMSBackupHelper helper;
 
     public RMSBackup(RMSBackupHelper help,String n) {
+        super("RMSBackup-"+n);
         rmsName = n;
         helper = help;
     }

@@ -126,6 +126,14 @@ public class FrameTitlePane extends Panel implements ActionListener {
     public void setTitle(String title) {
         this.title.setText(title);
     }
+
+    /**
+     * @see java.awt.Frame#getTitle() Frame.getTitle
+     */
+    public String getTitle() {
+        return this.title.getText();
+    }
+
     /**
      * @param img the icon image to be displayed
      * @see java.awt.Frame#setIconImage(java.awt.Image) Frame.setIconImage

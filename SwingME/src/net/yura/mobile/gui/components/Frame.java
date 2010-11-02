@@ -105,6 +105,17 @@ public class Frame extends Window {
         }
 
         /**
+         * @see java.awt.Frame#getTitle() Frame.getTitle
+         */
+        public String getTitle() {
+            FrameTitlePane tb = getTitlePane();
+            if (tb!=null) {
+                return tb.getTitle();
+            }
+            return null;
+        }
+
+        /**
          * @see java.awt.Frame#setIconImage(java.awt.Image) Frame.setIconImage
          */
         public void setIconImage(Icon icon) {

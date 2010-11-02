@@ -91,6 +91,8 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     private Panel cmdPanel;
     private Panel content;
 
+    private int messageType;
+    private Object message;
     /**
      * @see javax.swing.JOptionPane#JOptionPane() JOptionPane.JOptionPane
      */
@@ -171,6 +173,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
      * @see javax.swing.JOptionPane#setMessage(java.lang.Object) JOptionPane.setMessage
      */
     public void setMessage(Object newMessage) {
+        this.message = newMessage;
 
         content.removeAll();
         scroll.getView().setLocation(0, 0);
@@ -193,6 +196,13 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             content.add(getComponentFromObject(newMessage),constraints);
         }
 
+    }
+
+    /**
+     * @see javax.swing.JOptionPane#getMessage() JOptionPane.getMessage
+     */
+    public Object getMessage() {
+        return message;
     }
 
     private Component getComponentFromObject(Object object) {
@@ -248,6 +258,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
      * @see javax.swing.JOptionPane#setMessageType(int) JOptionPane.setMessageType
      */
     public void setMessageType(int messageType) {
+        this.messageType = messageType;
         Icon icn=null;
         switch (messageType) {
             case WARNING_MESSAGE: icn = (Icon)theme.getProperty("WARNING_MESSAGE", Style.ALL); break;
@@ -256,6 +267,13 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             case QUESTION_MESSAGE: icn = (Icon)theme.getProperty("QUESTION_MESSAGE", Style.ALL); break;
         }
         setIcon(icn);
+    }
+
+    /**
+     * @see javax.swing.JOptionPane#getMessageType() JOptionPane.getMessageType
+     */
+    public int getMessageType() {
+        return messageType;
     }
 
     /**
