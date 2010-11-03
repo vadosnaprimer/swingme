@@ -142,7 +142,9 @@ public class CSVUtil {
 
                                 }
 
-                                buffer.append(",");
+                                if (c<(count-1)) {
+                                    buffer.append(",");
+                                }
                         }
 
 			writer.write( buffer.toString() );
