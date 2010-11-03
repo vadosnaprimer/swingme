@@ -25,6 +25,12 @@ public abstract class SocketClient implements Runnable {
     protected QueueProcessorThread writeThread;
     private Thread readThread;
 
+    /**
+     * not sure how useful this is, as sometimes write does NOT throw any exception
+     * when trying to send something, even though it was not able to send, and the
+     * connection is shut down right after, that message would have been lost, and
+     * will not end up in the offline inbox
+     */
     protected Vector offlineBox = new Vector();
 
     protected StreamConnection conn;
