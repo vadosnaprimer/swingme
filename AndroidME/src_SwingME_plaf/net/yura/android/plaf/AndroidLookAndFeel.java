@@ -53,7 +53,8 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
         adjustSizeToDensity(ctx, menuRenderExtraPadding);
         Style menuRendererStyle = new Style(defaultStyle);
-        menuRendererStyle.addBorder(getBorder(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding),Style.ALL);
+        Border menuBorder = getBorder(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
+        menuRendererStyle.addBorder(menuBorder,Style.ALL);
         // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
         // setForegroundColor(ctx, menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
@@ -171,8 +172,11 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("Popup", popupStyle);
 
         // TODO: This may not be the right render
-        setStyleFor("PopupListRenderer", menuRendererStyle);
+        Style popupRendererStyle = new Style(menuRendererStyle);
+        popupRendererStyle.addBorder(new BorderWithDivider( menuBorder , divider2),Style.ALL);
+        setStyleFor("PopupListRenderer", popupRendererStyle);
 
+        // --- Tooltip ---
         Style tooltipStyle = new Style(defaultStyle);
         tooltipStyle.addBorder(getBorder(ctx, 0, android.R.drawable.toast_frame),Style.ALL);
         setStyleFor("ToolTip", tooltipStyle);
