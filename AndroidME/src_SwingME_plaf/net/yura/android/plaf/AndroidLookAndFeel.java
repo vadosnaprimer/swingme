@@ -70,14 +70,20 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
-        // Removed LAF padding, because it looks like shit
-        //Rect listExtraPadding = new Rect(10, 10, 10, 10);
-        //adjustSizeToDensity(ctx, listExtraPadding);
+        Rect listExtraPadding = new Rect(10, 10, 10, 10);
+        adjustSizeToDensity(ctx, listExtraPadding);
         Style listCellRenderer = new Style(defaultStyle);
-        addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector /*, listExtraPadding*/);
+        addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector , listExtraPadding);
 
         setForegroundColor(ctx, listCellRenderer, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
+
+        // --- List (No padding)---
+        Style listCellRendererCollapsed = new Style(defaultStyle);
+        addBorder(ctx, listCellRendererCollapsed, android.R.style.Widget_ListView, android.R.attr.listSelector);
+
+        setForegroundColor(ctx, listCellRendererCollapsed, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
+        setStyleFor("ListRendererCollapsed",listCellRendererCollapsed);
 
 
         // com.android.internal.R.style.Theme_Dialog_Alert
