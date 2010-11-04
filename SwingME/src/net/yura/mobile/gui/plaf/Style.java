@@ -201,6 +201,18 @@ public class Style {
         
         table.put(key, b);
     }
+    
+    public int getIntProperty(String key, int state) {
+        
+        Integer value = (Integer)getProperty(key, state);
+        
+        if(value != null) {
+            return value.intValue();
+        }
+        
+        return 0; // Yes, its zero. If I've not set a value, it's zero. ZERO! Not (-1), its totally and utterly zero.
+    }
+    
     public Object getProperty(String key,int state) {
         if (state==ALL || propertiesStates==null) {
             if (properties==null) {
