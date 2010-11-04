@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeActivity;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
@@ -34,30 +35,25 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("", defaultStyle);
 
         Style androidMenuStyle = new Style(defaultStyle);
-        addBorder(ctx, androidMenuStyle, 0, android.R.drawable.menu_full_frame);
+        androidMenuStyle.addBorder(getBorder(ctx, 0, android.R.drawable.menu_full_frame),Style.ALL);
         setStyleFor("AndroidMenu", androidMenuStyle);
 
         Style menuStyle = new Style(defaultStyle);
-        addBorder(ctx, menuStyle, 0, android.R.drawable.menu_frame);
+        menuStyle.addBorder(getBorder(ctx, 0, android.R.drawable.menu_frame),Style.ALL);
         setForegroundColor(ctx, menuStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
         setStyleFor("Menu", menuStyle);
 
         Style menuBarStyle = new Style(defaultStyle);
-        //Rect r = new Rect();
-        Drawable divider = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
-        Drawable vertDivider = new ColorDrawable(0xff808080);
-        //divider.getPadding(r);
-        //System.out.println("w="+divider.getIntrinsicWidth()+" h="+divider.getIntrinsicHeight()+" "+r+" "+divider.getBounds()+" minw="+divider.getMinimumWidth()+" winh="+divider.getMinimumHeight());
-        int thickness = divider.getIntrinsicHeight();
-        Rect thicknessRect = new Rect(thickness,thickness,0,0);
-        menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
-        menuBarStyle.addProperty(new AndroidBorder(vertDivider, thicknessRect), "verticalDivider", Style.ALL);
+        Border divider = getListDivider(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
+        menuBarStyle.addProperty(divider, "divider", Style.ALL);
+        // TODO we do not know where to get the verticalDivider, so here is a hack to create one.
+        menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable(0xff808080), new Rect(divider.getTop(),divider.getTop(),0,0)), "verticalDivider", Style.ALL);
         setStyleFor("MenuBar", menuBarStyle);
 
         Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
         adjustSizeToDensity(ctx, menuRenderExtraPadding);
         Style menuRendererStyle = new Style(defaultStyle);
-        addBorder(ctx, menuRendererStyle, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
+        menuRendererStyle.addBorder(getBorder(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding),Style.ALL);
         // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
         // setForegroundColor(ctx, menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
@@ -72,16 +68,18 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // --- List ---
         Rect listExtraPadding = new Rect(10, 10, 10, 10);
         adjustSizeToDensity(ctx, listExtraPadding);
-        Style listCellRenderer = new Style(defaultStyle);
-        addBorder(ctx, listCellRenderer, android.R.style.Widget_ListView, android.R.attr.listSelector , listExtraPadding);
+        Border divider2 = getListDivider(ctx, android.R.style.Widget_ListView, android.R.attr.listDivider);
 
+        Style listCellRenderer = new Style(defaultStyle);
+        Border mainBorder = getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector , listExtraPadding);
+        listCellRenderer.addBorder(new BorderWithDivider(mainBorder, divider2 ),Style.ALL);
         setForegroundColor(ctx, listCellRenderer, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
 
-        // --- List (No padding)---
+        // --- List (No padding) ---
         Style listCellRendererCollapsed = new Style(defaultStyle);
-        addBorder(ctx, listCellRendererCollapsed, android.R.style.Widget_ListView, android.R.attr.listSelector);
-
+        Border mainBorder2 = getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector);
+        listCellRendererCollapsed.addBorder(new BorderWithDivider(mainBorder2, divider2 ),Style.ALL);
         setForegroundColor(ctx, listCellRendererCollapsed, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
         setStyleFor("ListRendererCollapsed",listCellRendererCollapsed);
 
@@ -89,11 +87,11 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // com.android.internal.R.style.Theme_Dialog_Alert
         // Dialog
         Style dialogStyle = new Style(defaultStyle);
-        addBorder(ctx, dialogStyle, 0, android.R.drawable.dialog_frame);
+        dialogStyle.addBorder(getBorder(ctx, 0, android.R.drawable.dialog_frame),Style.ALL);
         setStyleFor("Dialog", dialogStyle);
 
         Style titleBarStyle = new Style(defaultStyle);
-        addBorder(ctx, titleBarStyle, 0, android.R.drawable.title_bar);
+        titleBarStyle.addBorder(getBorder(ctx, 0, android.R.drawable.title_bar),Style.ALL);
         setStyleFor("TitleBar", titleBarStyle);
 
         // This a non focusable component. Just set Style.ALL
@@ -108,7 +106,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
-        addBorder(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
+        preferenceSeparatorStyle.addBorder(getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding),Style.ALL);
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
@@ -118,7 +116,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- Button ---
         Style buttonStyle = new Style(defaultStyle);
-        addBorder(ctx, buttonStyle, android.R.attr.buttonStyle, android.R.attr.background);
+        buttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
         setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button);
         setStyleFor("Button", buttonStyle);
 
@@ -140,7 +138,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- Frame ---
         Style frameStyle = new Style(defaultStyle);
-        addBorder(ctx, frameStyle, 0, android.R.attr.windowBackground);
+        frameStyle.addBorder(getBorder(ctx, 0, android.R.attr.windowBackground),Style.ALL);
         setStyleFor("Frame",frameStyle);
 
         // --- Window ---
@@ -152,36 +150,68 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- TextField ---
         Style textFieldStyle = new Style(defaultStyle);
-        addBorder(ctx, textFieldStyle, android.R.attr.editTextStyle, android.R.attr.background);
+        textFieldStyle.addBorder(getBorder(ctx, android.R.attr.editTextStyle, android.R.attr.background),Style.ALL);
         setForegroundColor(ctx, textFieldStyle, android.R.style.Widget_EditText);
         setStyleFor("TextField",textFieldStyle);
 
         // --- TextArea ---
         Style inputStyle1 = new Style(textFieldStyle);
-        addBorder(ctx, inputStyle1, android.R.attr.textViewStyle, android.R.attr.background, Style.DISABLED);
+        inputStyle1.addBorder(getBorder(ctx, android.R.attr.textViewStyle, android.R.attr.background), Style.DISABLED);
         setForegroundColor(ctx, inputStyle1, android.R.style.TextAppearance_Widget_TextView, Style.DISABLED);
         setStyleFor("TextArea",inputStyle1);
 
         // --- ComboBox ---
         Style comboStyle = new Style(buttonStyle);
-        addBorder(ctx, comboStyle, android.R.style.Widget_Spinner, android.R.attr.background);
+        comboStyle.addBorder(getBorder(ctx, android.R.style.Widget_Spinner, android.R.attr.background),Style.ALL);
         setForegroundColor(ctx, comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem);
         setStyleFor("ComboBox",comboStyle);
 
         Style popupStyle = new Style(defaultStyle);
-        addBorder(ctx, popupStyle, 0, android.R.drawable.alert_light_frame); // As defined on AlertController
+        popupStyle.addBorder(getBorder(ctx, 0, android.R.drawable.alert_light_frame),Style.ALL); // As defined on AlertController
         setStyleFor("Popup", popupStyle);
 
         // TODO: This may not be the right render
         setStyleFor("PopupListRenderer", menuRendererStyle);
 
         Style tooltipStyle = new Style(defaultStyle);
-        addBorder(ctx, tooltipStyle, 0, android.R.drawable.toast_frame);
+        tooltipStyle.addBorder(getBorder(ctx, 0, android.R.drawable.toast_frame),Style.ALL);
         setStyleFor("ToolTip", tooltipStyle);
 
     }
 
-    private Drawable getDrawable(Context ctx, int defStyle, int defAttr) {
+    private Border getListDivider(Context ctx, int styleDef, int attr) {
+        Drawable divider2 = getDrawable(ctx, styleDef, attr);
+        int thickness2 = divider2.getIntrinsicHeight();
+        Rect thicknessRect2 = new Rect(thickness2,thickness2,0,0);
+        return new AndroidBorder(divider2, thicknessRect2);
+
+    }
+
+    private AndroidIcon createButtonIcon(Context ctx, int id) {
+        return new AndroidIcon(getDrawable(ctx, id, android.R.attr.button));
+    }
+
+
+    private Border getBorder(Context ctx, int styleDef, int attr) {
+        Drawable  d0 = getDrawable(ctx, styleDef, attr);
+        if (d0 != null) {
+            return new AndroidBorder(d0);
+        }
+        return EMPTY_BORDER;
+    }
+
+    // TODO not sure if this is needed, this is a quick hack to make menus usable
+    // though a better solution is needed to make all menu items including radio buttons consistent in size
+    private Border getBorder(Context ctx, int styleDef, int attr, Rect padding) {
+        Drawable  d0 = getDrawable(ctx, styleDef, attr);
+        if (d0 != null) {
+            return new AndroidBorder(d0, padding);
+        }
+        return EMPTY_BORDER;
+    }
+
+
+    private static Drawable getDrawable(Context ctx, int defStyle, int defAttr) {
 
         Drawable res = null;
 
@@ -230,33 +260,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         }
 
         return res;
-    }
-
-    private AndroidIcon createButtonIcon(Context ctx, int id) {
-        return new AndroidIcon(getDrawable(ctx, id, android.R.attr.button));
-    }
-
-    private void addBorder(Context ctx, Style style, int styleDef, int attr) {
-        addBorder(ctx, style, styleDef, attr, Style.ALL);
-    }
-
-    private void addBorder(Context ctx, Style style, int styleDef, int attr, int state) {
-        Drawable  d0 = getDrawable(ctx, styleDef, attr);
-        if (d0 == null) {
-            style.addBorder(EMPTY_BORDER, state);
-        }
-        else {
-            style.addBorder(new AndroidBorder(d0), state);
-        }
-    }
-
-    // TODO not sure if this is needed, this is a quick hack to make menus usable
-    // though a better solution is needed to make all menu items including radio buttons consistent in size
-    private void addBorder(Context ctx, Style style, int styleDef, int attr, Rect extraPadding) {
-        Drawable  d0 = getDrawable(ctx, styleDef, attr);
-        if (d0 != null) {
-            style.addBorder(new AndroidBorder(d0, extraPadding), Style.ALL);
-        }
     }
 
     static ColorStateList getTextColor(Context ctx, int defStyle) {
