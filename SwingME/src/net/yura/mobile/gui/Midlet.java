@@ -18,6 +18,8 @@
 package net.yura.mobile.gui;
 
 import java.io.InputStream;
+import java.util.Hashtable;
+
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
@@ -51,7 +53,7 @@ public abstract class Midlet extends MIDlet {
     }
 
     private DesktopPane rootpane;
-    private Object platformRequestParam;
+    private Hashtable platformReqParams;
 
     public Midlet() {
 
@@ -192,7 +194,14 @@ public abstract class Midlet extends MIDlet {
     // This will only be called on Android.
     public void platformRequest(String url, Object arg) {
         try {
-            this.platformRequestParam = arg;
+            if (platformReqParams == null) {
+                platformReqParams = new Hashtable();
+            }
+
+            if (arg != null) {
+                platformReqParams.put(url, arg);
+            }
+
             platformRequest(url);
         }
         catch (Exception e) {
@@ -201,8 +210,9 @@ public abstract class Midlet extends MIDlet {
     }
 
     // This will only be called on Android. By the "Android" side
-    public Object getPlatformRequestParam() {
-        return platformRequestParam;
+    public Object retrievePlatformRequestParam(String url) {
+        Object res = platformReqParams.remove(url);
+        return res;
     }
 
     public static void call(String number) {
