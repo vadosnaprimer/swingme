@@ -1031,7 +1031,7 @@ public class XULLoader {
     private int adjustSizeToDensity(String value) {
         int r = Integer.parseInt(value);
 
-        String dpi = System.getProperty("dpi");
+        String dpi = System.getProperty("display.dpi");
         if (dpi!=null) {
             if ("hdpi".equals(dpi)) {
                 r = r * 2;
