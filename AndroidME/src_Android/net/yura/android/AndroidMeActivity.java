@@ -207,6 +207,10 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
             (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "/res_hdpi" : "/res_mdpi";
         System.setProperty("resdir", resDir);
 
+        // Screen density (Ad hoc, not on J2ME)
+        System.setProperty("display.density", String.valueOf(dm.density));
+        System.setProperty("display.scaledDensity", String.valueOf(dm.scaledDensity));
+
         // Multimedia Properties
         System.setProperty("microedition.media.version", "1.2");
         System.setProperty("supports.mixing", "false");
@@ -217,10 +221,6 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         System.setProperty("video.encodings", "");
         System.setProperty("video.snapshot.encodings", "encoding=image/jpeg encoding=image/jpg");
         System.setProperty("streamable.contents", "");
-
-        // Screen density
-        float density = getResources().getDisplayMetrics().density;
-        System.setProperty("display.density", String.valueOf(density));
 
         // PIM and File (Note: "file.separator" already setup by Android OS)
         System.setProperty("microedition.pim.version", "1.0");
