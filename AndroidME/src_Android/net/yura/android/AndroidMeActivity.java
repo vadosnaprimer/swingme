@@ -202,12 +202,12 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         // Screen Resolution Properties (Ad hoc, not on J2ME)
         DisplayMetrics dm = getResources().getDisplayMetrics();
 
-        String resDir =
-            (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "/res_ldpi" :
-            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "/res_hdpi" : "/res_mdpi";
-        System.setProperty("resdir", resDir);
+        String dpi =
+            (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "ldpi" :
+            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "hdpi" : "mdpi";
 
-        // Screen density (Ad hoc, not on J2ME)
+        System.setProperty("resdir", "/res_" + dpi);
+        System.setProperty("display.dpi", dpi);
         System.setProperty("display.density", String.valueOf(dm.density));
         System.setProperty("display.scaledDensity", String.valueOf(dm.scaledDensity));
 
