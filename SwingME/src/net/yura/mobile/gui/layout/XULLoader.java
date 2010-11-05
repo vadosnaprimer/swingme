@@ -463,7 +463,7 @@ public class XULLoader {
                     Hashtable properties = getProperties(value);
                     String fixedCellHeight = (String)properties.get("fixedCellHeight");
                     if (fixedCellHeight!=null) {
-                        list.setFixedCellHeight( Integer.parseInt(fixedCellHeight) );
+                        list.setFixedCellHeight( adjustSizeToDensity(fixedCellHeight) );
                     }
                 }
             }
@@ -717,7 +717,7 @@ public class XULLoader {
                     Hashtable properties = getProperties(value);
                     String gap = (String)properties.get("gap");
                     if (gap!=null) {
-                        label.setIconTextGap( Integer.parseInt(gap) );
+                        label.setIconTextGap( adjustSizeToDensity(gap) );
                     }
                     String vAlignment = (String)properties.get("valign");
                     if (vAlignment!=null) {
@@ -792,19 +792,19 @@ public class XULLoader {
                     columns = Integer.parseInt(value);
                 }
                 else if ("gap".equals(key)) {
-                    gap = Integer.parseInt(value);
+                    gap = adjustSizeToDensity(value);
                 }
                 else if ("top".equals(key)) {
-                    top = Integer.parseInt(value);
+                    top = adjustSizeToDensity(value);
                 }
                 else if ("bottom".equals(key)) {
-                    bottom = Integer.parseInt(value);
+                    bottom = adjustSizeToDensity(value);
                 }
                 else if ("left".equals(key)) {
-                    left = Integer.parseInt(value);
+                    left = adjustSizeToDensity(value);
                 }
                 else if ("right".equals(key)) {
-                    right = Integer.parseInt(value);
+                    right = adjustSizeToDensity(value);
                 }
 
             }
@@ -949,10 +949,10 @@ public class XULLoader {
                 comp.setForeground( Graphics2D.parseColor(value.substring(1),16) );
             }
             else if ("height".equals(key)) {
-                comp.setPreferredSize(comp.getPreferredWidth(), Integer.parseInt(value));
+                comp.setPreferredSize(comp.getPreferredWidth(), adjustSizeToDensity(value));
             }
             else if ("width".equals(key)) {
-                comp.setPreferredSize( Integer.parseInt(value),comp.getPreferredHeight());
+                comp.setPreferredSize( adjustSizeToDensity(value),comp.getPreferredHeight());
             }
             else if ("name".equals(key)) {
                 components.put(value, comp);
@@ -1026,6 +1026,24 @@ public class XULLoader {
 
     class Tab extends Option {
         private Component component;
+    }
+
+    private int adjustSizeToDensity(String value) {
+        int r = Integer.parseInt(value);
+
+        String dpi = System.getProperty("dpi");
+        if (dpi!=null) {
+            if ("hdpi".equals(dpi)) {
+                r = r * 2;
+            }
+            else if ("mdpi".equals(dpi)) {
+                r = (int)( r * 1.5);
+            }
+            // else ldpi
+            // we dont need to do anything
+        }
+
+        return r;
     }
 
 }
