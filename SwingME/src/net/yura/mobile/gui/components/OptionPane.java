@@ -150,6 +150,10 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             this.actionListener = actionListener;
     }
 
+    public ActionListener getActionListener() {
+        return actionListener;
+    }
+
     public void actionPerformed(String actionCommand) {
         setVisible(false);
         if (actionListener!=null) {
