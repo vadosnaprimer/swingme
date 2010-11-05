@@ -85,6 +85,8 @@ public class Frame extends Window {
          * @see java.awt.Frame#setUndecorated(boolean) Frame.setUndecorated
          */
         public void setUndecorated(boolean un) {
+
+            // TODO, maybe should setVisable to false instead of removing it!
             FrameTitlePane tb = getTitlePane();
             if (tb==null && !un) {
                 super.add(new FrameTitlePane());
@@ -324,7 +326,7 @@ public class Frame extends Window {
                 }
 */
                 setLocation(0, 0);
-                
+
                 DesktopPane desktop = getDesktopPane();
 
                 width = desktop.getWidth();

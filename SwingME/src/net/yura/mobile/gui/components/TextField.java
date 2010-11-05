@@ -115,6 +115,9 @@ public class TextField extends TextComponent {
         }
 
         public boolean allowChar(char keyCode) {
+            if (keyCode=='\t') {
+                return false;
+            }
             boolean r = keyCode!='\n';
             if (!r && al!=null) {
                 al.actionPerformed(action);
