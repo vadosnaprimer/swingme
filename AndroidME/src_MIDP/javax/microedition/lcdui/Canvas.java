@@ -72,6 +72,7 @@ public abstract class Canvas extends Displayable {
                 res = Canvas.UP;
                 break;
             case -2:
+            case '\t': // this is the tab key, and same as code = 9
                 res = Canvas.DOWN;
                 break;
             case -3:
