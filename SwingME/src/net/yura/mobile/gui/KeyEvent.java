@@ -399,11 +399,13 @@ public class KeyEvent {
             string.append(String.valueOf(justPressedKey));
             string.append(" justReleasedKey=");
             string.append(String.valueOf(justReleasedKey));
-            if (isDownKeys!=null) {
+            // we REALLY dont want any exceptions in a toString method
+            int[] copy = isDownKeys;
+            if (copy!=null) {
                 string.append(" isDownKeys=[");
-                for (int c=0;c<isDownKeys.length;c++) {
-                    string.append(String.valueOf(isDownKeys[c]));
-                    if (c<isDownKeys.length-1)
+                for (int c=0;c<copy.length;c++) {
+                    string.append(String.valueOf(copy[c]));
+                    if (c<copy.length-1)
                         string.append(',');
                 }
                 string.append("]");
