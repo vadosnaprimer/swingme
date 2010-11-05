@@ -17,7 +17,6 @@
 
 package net.yura.mobile.gui.plaf;
 
-import java.io.IOException;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Icon;
@@ -28,7 +27,6 @@ import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.TabBorder;
-import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin

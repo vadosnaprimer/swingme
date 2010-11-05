@@ -17,8 +17,6 @@
 
 package net.yura.mobile.gui.components;
 
-import net.yura.mobile.gui.DesktopPane;
-
 /**
  * @author Yura Mamyrin
  */

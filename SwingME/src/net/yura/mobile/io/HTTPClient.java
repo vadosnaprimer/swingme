@@ -17,6 +17,10 @@ import net.yura.mobile.util.QueueProcessorThread;
  */
 public abstract class HTTPClient extends QueueProcessorThread {
 
+    public HTTPClient() {
+        super("HTTPClient");
+    }
+    
     public void makeRequest(Request request) {
         addToInbox(request);
     }

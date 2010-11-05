@@ -23,7 +23,6 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.logging.Logger;

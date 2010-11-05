@@ -12,7 +12,6 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.io.file.FileSystemRegistry;
 import javax.microedition.lcdui.Image;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 

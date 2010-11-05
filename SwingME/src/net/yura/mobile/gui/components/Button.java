@@ -24,7 +24,6 @@ import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
