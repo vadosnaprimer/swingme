@@ -23,7 +23,6 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.border.Border;
-import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.Style;
@@ -966,7 +965,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private final int[] directions = new int[] {Canvas.RIGHT,Canvas.DOWN,Canvas.LEFT,Canvas.UP};
     private void passKeyEvent(KeyEvent keyevent) {
-
         //#debug
         notifyKeyListeners(keyevent);
 
@@ -1086,7 +1084,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn("Error in KeyEvent: " + th.toString());
+            Logger.warn("Error in KeyEvent: "+keyevent+" "+th.toString());
             Logger.error(th);
         }
 

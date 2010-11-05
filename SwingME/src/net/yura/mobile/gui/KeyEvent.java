@@ -50,7 +50,6 @@ public class KeyEvent {
         private int justReleasedKey;
         private int[] isDownKeys=new int[1];
 
-
         private int pos;
         private boolean acc;
         private boolean old;
@@ -360,24 +359,19 @@ public class KeyEvent {
 	}
 
         private void addKeyDown(int keyCode) {
-
-            boolean done=false;
             for (int c=0;c<isDownKeys.length;c++) {
                 if (isDownKeys[c] == 0 || isDownKeys[c] == keyCode) {
                     isDownKeys[c] = keyCode;
-                    done=true;
+                    return;
                 }
             }
-            if (!done) {
-                int[] newKeyDown = new int[isDownKeys.length+1];
 
-                // Copy all data
-                System.arraycopy(isDownKeys, 0, newKeyDown, 1, isDownKeys.length);
-                newKeyDown[0] = keyCode;
-
-                isDownKeys = newKeyDown;
-            }
-
+            // if we have no spaces left
+            int[] newKeyDown = new int[isDownKeys.length+1];
+            // Copy all data
+            System.arraycopy(isDownKeys, 0, newKeyDown, 1, isDownKeys.length);
+            newKeyDown[0] = keyCode;
+            isDownKeys = newKeyDown;
         }
         private void removeKeyDown(int keyCode) {
 
@@ -396,4 +390,26 @@ public class KeyEvent {
             }
 
         }
+
+
+        //#mdebug debug
+        public String toString() {
+            StringBuffer string = new StringBuffer();
+            string.append("KeyEvent justPressedKey=");
+            string.append(String.valueOf(justPressedKey));
+            string.append(" justReleasedKey=");
+            string.append(String.valueOf(justReleasedKey));
+            if (isDownKeys!=null) {
+                string.append(" isDownKeys=[");
+                for (int c=0;c<isDownKeys.length;c++) {
+                    string.append(String.valueOf(isDownKeys[c]));
+                    if (c<isDownKeys.length-1)
+                        string.append(',');
+                }
+                string.append("]");
+            }
+            return string.toString();
+        }
+        //#enddebug
+
 }
