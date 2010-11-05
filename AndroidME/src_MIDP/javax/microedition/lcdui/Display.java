@@ -90,29 +90,30 @@ public class Display
     }
 
     public void setCurrent(final Displayable current) {
+        if (current == null) {
+            // Set Application to background
+            midlet.getActivity().moveTaskToBack(true);
+            return;
+        }
+
         if (current != this.current) {
             final Displayable old = this.current;
             this.current = current;
+
             this.midlet.invokeAndWait(new Runnable() {
                 public void run() {
                     if (old != null) {
                         old.setCurrentDisplay(null);
-                        old.disposeDisplayable();
                     }
 
-                    if (current != null) {
-                        current.setCurrentDisplay(Display.this);
-                        current.initDisplayable(Display.this.midlet);
-                    }
+                    current.setCurrentDisplay(Display.this);
+                    current.initDisplayable(Display.this.midlet);
 
                     Activity activity = Display.this.midlet.getActivity();
-                    View view = (current == null) ? null : current.getView();
+                    View view = current.getView();
                     if (view != null) {
                         activity.setContentView(view);
                         view.requestFocus();
-                    } else {
-                        // Set Application to background
-                        activity.moveTaskToBack(true);
                     }
                 }
             });
@@ -144,5 +145,4 @@ public class Display
         // TODO Auto-generated method stub
         return 0x00FFFFFF;
     }
-
 }

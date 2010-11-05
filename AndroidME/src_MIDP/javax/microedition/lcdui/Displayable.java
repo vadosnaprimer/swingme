@@ -66,7 +66,5 @@ public abstract class Displayable {
 
 	public abstract void initDisplayable(MIDlet midlet);
 
-	public abstract void disposeDisplayable();
-
 	public abstract View getView();
 }

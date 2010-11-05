@@ -60,10 +60,6 @@ public class TextBox extends Screen {
     }
 
     @Override
-    public void disposeDisplayable() {
-    }
-
-    @Override
     public View getView() {
         if (currentCanvasView != null) {
             currentCanvasView.setInputConnectionView(textBoxView);
@@ -120,7 +116,7 @@ public class TextBox extends Screen {
             outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
             int inputType;
-            
+
             switch (constraints & TextField.CONSTRAINT_MASK) {
 				case TextField.NUMERIC:
 				case TextField.DECIMAL:

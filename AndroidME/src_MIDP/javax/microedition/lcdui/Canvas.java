@@ -191,11 +191,6 @@ public abstract class Canvas extends Displayable {
     }
 
     @Override
-    public void disposeDisplayable() {
-// JP        this.canvasView = null;
-    }
-
-    @Override
     public void initDisplayable(MIDlet midlet) {
 // JP        if (this.canvasView == null) {
 //            this.canvasView = new CanvasView(midlet.getActivity());
