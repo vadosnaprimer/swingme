@@ -3,6 +3,10 @@ package net.yura.android.plaf;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -44,24 +48,38 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("Menu", menuStyle);
 
         Style menuBarStyle = new Style(defaultStyle);
-        Border divider = getListDivider(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
-        menuBarStyle.addProperty(divider, "divider", Style.ALL);
+
+        Drawable divider = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
+        int thickness = divider.getIntrinsicHeight();
+        Rect thicknessRect = new Rect(thickness,thickness,0,0);
+        AndroidBorder.setDrawableState(Style.ALL, divider); // we set up the drawable to be able to get its color
+        //Border divider = getListDivider(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
+        menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
         // TODO we do not know where to get the verticalDivider, so here is a hack to create one.
-        menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable(0xff808080), new Rect(divider.getTop(),divider.getTop(),0,0)), "verticalDivider", Style.ALL);
+        menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable( getColorAtCenter(divider) ), thicknessRect), "verticalDivider", Style.ALL);
         setStyleFor("MenuBar", menuBarStyle);
 
-        Rect menuRenderExtraPadding = new Rect(10, 10, 10, 10);
+        Rect menuRenderExtraPadding = new Rect(8, 8, 8, 8);
         adjustSizeToDensity(ctx, menuRenderExtraPadding);
         Style menuRendererStyle = new Style(defaultStyle);
-        Border menuBorder = getBorder(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
-        menuRendererStyle.addBorder(menuBorder,Style.ALL);
+        //Border menuBorder = getBorder(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
+        //menuRendererStyle.addBorder(menuBorder,Style.ALL);
+
+
         // TODO: This is wrong... we should be using android.R.style.Widget_ListView, and then get its android.R.attr.textAppearance.
         // That should map to TextAppearance_Widget_TextView... For some reason, this is not working...
         // setForegroundColor(ctx, menuRendererStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
 
+        Drawable menuBorder = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector);
+        menuRendererStyle.addBorder(new AndroidBorder(menuBorder, menuRenderExtraPadding),Style.ALL);
+
+        AndroidBorder.setDrawableState(Style.FOCUSED|Style.SELECTED, menuBorder);
+
+        int color = getColorAtCenter(menuBorder);
+
         // TODO: Could not make it work... hard coded values for light theme.
         menuRendererStyle.addForeground(0xFF000000, Style.ALL);
-        menuRendererStyle.addForeground(0xFFFFFFFF, Style.SELECTED | Style.FOCUSED);
+        menuRendererStyle.addForeground( getTextColorFor(color), Style.SELECTED | Style.FOCUSED);
         menuRendererStyle.addForeground(0xFF808080, Style.DISABLED);
         setStyleFor("MenuRenderer",menuRendererStyle);
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
@@ -173,7 +191,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // TODO: This may not be the right render
         Style popupRendererStyle = new Style(menuRendererStyle);
-        popupRendererStyle.addBorder(new BorderWithDivider( menuBorder , divider2),Style.ALL);
+        Rect menuRenderExtraPadding2 = new Rect(12, 12, 12, 12);
+        adjustSizeToDensity(ctx, menuRenderExtraPadding2);
+        popupRendererStyle.addBorder(new BorderWithDivider( new AndroidBorder(menuBorder,menuRenderExtraPadding2) , divider2),Style.ALL);
         setStyleFor("PopupListRenderer", popupRendererStyle);
 
         // --- Tooltip ---
@@ -349,4 +369,44 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         rect.bottom = (int) (rect.bottom * density);
         rect.right = (int) (rect.right * density);
     }
+
+    private static int getColorAtCenter(Drawable d) {
+        int w = d.getIntrinsicWidth();
+        int h = d.getIntrinsicHeight();
+
+        if (w<=0) {
+            w=50;
+        }
+        if (h<=0) {
+            h=50;
+        }
+
+        int x = w / 2;
+        int y = h / 2;
+        Bitmap iBitmap = Bitmap.createBitmap(w,h, Config.ARGB_8888);
+        Canvas canvas = new Canvas(iBitmap);
+        d.setBounds(0, 0, w, h); // NEED to do this
+        d.draw(canvas);
+        int c = iBitmap.getPixel(x, y);
+        iBitmap.recycle();
+        return c;
+    }
+
+
+
+    public static int getTextColorFor(int c) {
+
+            int r = Color.red(c);
+            int g = Color.green(c);
+            // int b = c.getBlue();
+
+            if ((r > 240 || g > 240) || (r > 150 && g > 150)) {
+                    return Color.BLACK;
+            }
+            else {
+                    return Color.WHITE;
+            }
+
+    }
+
 }
