@@ -282,21 +282,22 @@ public class NimbusLookAndFeel extends LookAndFeel {
         NimbusBorder tmp3 = new NimbusBorder(listItemFocusedSettings);
         NimbusBorder tmp4 = new NimbusBorder(listItemFocusedSelectedSettings);
 
-        setUIDefault("ListRenderer.background", noColor);
-        setUIDefault("ListRenderer.border", tmp1);
-        setUIDefault("ListRenderer[selected].border",tmp2);
-        setUIDefault("ListRenderer[selected].foreground",uiSettings.get("nimbusSelectedText"));
-        setUIDefault("ListRenderer[focused].border",tmp3);
-        setUIDefault("ListRenderer[focused+selected].border",tmp4);
+        String componentName;
 
-        String componentName = "PopupListRenderer";
-
-        setUIDefault(componentName+".background", noColor);
-        setUIDefault(componentName+".border", tmp1);
-        setUIDefault(componentName+"[selected].border",tmp2);
-        setUIDefault(componentName+"[selected].foreground",uiSettings.get("nimbusSelectedText"));
-        setUIDefault(componentName+"[focused].border",tmp3);
-        setUIDefault(componentName+"[focused+selected].border",tmp4);
+        for (int c=0;c<3;c++) {
+            switch(c) {
+                case 0: componentName = "ListRenderer"; break;
+                case 1: componentName = "PopupListRenderer"; break;
+                case 2: componentName = "CheckBoxRenderer"; break;
+                default: throw new RuntimeException();
+            }
+            setUIDefault(componentName+".background", noColor);
+            setUIDefault(componentName+".border", tmp1);
+            setUIDefault(componentName+"[selected].border",tmp2);
+            setUIDefault(componentName+"[selected].foreground",uiSettings.get("nimbusSelectedText"));
+            setUIDefault(componentName+"[focused].border",tmp3);
+            setUIDefault(componentName+"[focused+selected].border",tmp4);
+        }
 
         componentName = "MenuRenderer";
 

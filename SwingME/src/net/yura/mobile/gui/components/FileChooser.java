@@ -28,6 +28,7 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.io.NativeUtil;
@@ -253,6 +254,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 fileList.setCellRenderer(thumbOptionRenderer);
                 fileList.setActionCommand("listSelect");
                 fileList.addActionListener(this);
+                if (Midlet.getPlatform()==Midlet.PLATFORM_ME4SE) {
+                    fileList.setDoubleClick(true);
+                }
             }
             fileList.setListData(files);
             scroll.add(fileList);
