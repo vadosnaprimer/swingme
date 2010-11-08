@@ -171,6 +171,12 @@ public class TextPane extends Component {
 
     }
 
+    public void setValue(Object obj) {
+        if (obj instanceof String) {
+            setText( (String)obj );
+        }
+    }
+
     public void append(String text1) {
         if (text1.startsWith("<html>")) {
             XHTMLLoader loader = new XHTMLLoader();
