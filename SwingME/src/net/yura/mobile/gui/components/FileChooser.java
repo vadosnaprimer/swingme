@@ -28,6 +28,7 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.plaf.Style;
@@ -110,6 +111,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         Button close = new Button((String)DesktopPane.get("cancelText"));
         close.setActionCommand("cancel");
         close.addActionListener(this);
+        close.setMnemonic(KeyEvent.KEY_END);
 
         MenuBar bar = new MenuBar();
         setMenuBar(bar);
