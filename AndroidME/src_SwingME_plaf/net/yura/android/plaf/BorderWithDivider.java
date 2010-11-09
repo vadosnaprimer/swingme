@@ -18,7 +18,7 @@ public class BorderWithDivider implements Border {
         border.paintBorder(c, g, width, height);
 
         int x = divider.getLeft() - getLeft();
-        int y = height + getBottom();
+        int y = height + border.getBottom() + divider.getTop();
         g.translate(x, y);
         divider.paintBorder(c, g, width
                 +getLeft()-divider.getLeft()
@@ -32,7 +32,7 @@ public class BorderWithDivider implements Border {
     }
 
     public int getBottom() {
-        return border.getBottom() + divider.getTop();
+        return border.getBottom();
     }
 
     public int getRight() {

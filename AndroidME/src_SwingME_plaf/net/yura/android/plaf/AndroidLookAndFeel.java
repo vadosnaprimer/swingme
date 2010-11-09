@@ -15,6 +15,13 @@ import net.yura.android.AndroidMeActivity;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.EmptyBorder;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
+import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.CheckBox;
+import net.yura.mobile.gui.components.ComboBox;
+import net.yura.mobile.gui.components.RadioButton;
+import net.yura.mobile.gui.components.TextArea;
+import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.logging.Logger;
@@ -44,7 +51,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         Style menuStyle = new Style(defaultStyle);
         menuStyle.addBorder(getBorder(ctx, 0, android.R.drawable.menu_frame),Style.ALL);
-        setForegroundColor(ctx, menuStyle, android.R.style.TextAppearance_Widget_IconMenu_Item);
+        //setForegroundColor(ctx, menuStyle, android.R.style.TextAppearance_Widget_IconMenu_Item,null); // a window does not need a foreground
         setStyleFor("Menu", menuStyle);
 
         Style menuBarStyle = new Style(defaultStyle);
@@ -52,7 +59,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Drawable divider = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
         int thickness = divider.getIntrinsicHeight();
         Rect thicknessRect = new Rect(thickness,thickness,0,0);
-        AndroidBorder.setDrawableState(Style.ALL, divider); // we set up the drawable to be able to get its color
+        //AndroidBorder.setDrawableState(Style.ALL, divider); // we set up the drawable to be able to get its color
         //Border divider = getListDivider(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
         menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
         // TODO we do not know where to get the verticalDivider, so here is a hack to create one.
@@ -73,7 +80,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Drawable menuBorder = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector);
         menuRendererStyle.addBorder(new AndroidBorder(menuBorder, menuRenderExtraPadding),Style.ALL);
 
-        AndroidBorder.setDrawableState(Style.FOCUSED|Style.SELECTED, menuBorder);
+        menuBorder.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_focused,android.R.attr.state_selected} );
+
+        //AndroidBorder.setDrawableState(Style.FOCUSED|Style.SELECTED, menuBorder);
 
         int color = getColorAtCenter(menuBorder);
 
@@ -92,14 +101,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style listCellRenderer = new Style(defaultStyle);
         Border mainBorder = getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector , listExtraPadding);
         listCellRenderer.addBorder(new BorderWithDivider(mainBorder, divider2 ),Style.ALL);
-        setForegroundColor(ctx, listCellRenderer, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
+        setForegroundColor(ctx, listCellRenderer, android.R.style.TextAppearance_Large,ListCellRenderer.class); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
 
         // --- List (No padding) ---
         Style listCellRendererCollapsed = new Style(defaultStyle);
         Border mainBorder2 = getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector);
         listCellRendererCollapsed.addBorder(new BorderWithDivider(mainBorder2, divider2 ),Style.ALL);
-        setForegroundColor(ctx, listCellRendererCollapsed, android.R.style.TextAppearance_Large); // Has defined in simple_list_item.xml
+        setForegroundColor(ctx, listCellRendererCollapsed, android.R.style.TextAppearance_Large,ListCellRenderer.class); // Has defined in simple_list_item.xml
         setStyleFor("ListRendererCollapsed",listCellRendererCollapsed);
 
 
@@ -116,7 +125,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // This a non focusable component. Just set Style.ALL
         Style titleBarLabelStyle = new Style(defaultStyle);
         titleBarLabelStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_LARGE) , Style.ALL);
-        setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle, Style.ALL); // Has defined in alert_dialog.xml
+        setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle, null, Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("TitleBarLabel", titleBarLabelStyle);
 
         // as preference_category.xml -> theme(Theme.Light)/listSeparatorTextViewStyle -> style/Widget.TextView.ListSeparator.White -> background
@@ -126,7 +135,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
         preferenceSeparatorStyle.addBorder(getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding),Style.ALL);
-        setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle,Style.ALL); // Has defined in alert_dialog.xml
+        setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, null,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
 //        Style progressBar = new Style(defaultStyle);
@@ -136,7 +145,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // --- Button ---
         Style buttonStyle = new Style(defaultStyle);
         buttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
-        setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button);
+        setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("Button", buttonStyle);
 
         // --- Radio Button ---
@@ -144,7 +153,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         radioStyle.addProperty(createButtonIcon(ctx, android.R.style.Widget_CompoundButton_RadioButton), "icon", Style.ALL);
         // Can't use the border. The border contains (left) padding for the button! Assuming transparent
         // addBorder(ctx, radioStyle, android.R.style.Widget_CompoundButton_RadioButton, android.R.attr.background);
-        setForegroundColor(ctx, radioStyle, android.R.style.Widget_CompoundButton_RadioButton);
+        setForegroundColor(ctx, radioStyle, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class);
         setStyleFor("RadioButton",radioStyle);
 
         // --- Check Box ---
@@ -152,7 +161,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         checkboxStyle.addProperty(createButtonIcon(ctx, android.R.style.Widget_CompoundButton_CheckBox), "icon", Style.ALL);
         // Can't use the border. The border contains (left) padding for the button! Assuming transparent
         // addBorder(ctx, checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox, android.R.attr.background);
-        setForegroundColor(ctx, checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox);
+        setForegroundColor(ctx, checkboxStyle, android.R.style.Widget_CompoundButton_CheckBox,CheckBox.class);
         setStyleFor("CheckBox",checkboxStyle);
 
         // --- Frame ---
@@ -170,19 +179,19 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // --- TextField ---
         Style textFieldStyle = new Style(defaultStyle);
         textFieldStyle.addBorder(getBorder(ctx, android.R.attr.editTextStyle, android.R.attr.background),Style.ALL);
-        setForegroundColor(ctx, textFieldStyle, android.R.style.Widget_EditText);
+        setForegroundColor(ctx, textFieldStyle, android.R.style.Widget_EditText,TextField.class);
         setStyleFor("TextField",textFieldStyle);
 
         // --- TextArea ---
         Style inputStyle1 = new Style(textFieldStyle);
         inputStyle1.addBorder(getBorder(ctx, android.R.attr.textViewStyle, android.R.attr.background), Style.DISABLED);
-        setForegroundColor(ctx, inputStyle1, android.R.style.TextAppearance_Widget_TextView, Style.DISABLED);
+        setForegroundColor(ctx, inputStyle1, android.R.style.TextAppearance_Widget_TextView, TextArea.class, Style.DISABLED);
         setStyleFor("TextArea",inputStyle1);
 
         // --- ComboBox ---
         Style comboStyle = new Style(buttonStyle);
         comboStyle.addBorder(getBorder(ctx, android.R.style.Widget_Spinner, android.R.attr.background),Style.ALL);
-        setForegroundColor(ctx, comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem);
+        setForegroundColor(ctx, comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem,ComboBox.class);
         setStyleFor("ComboBox",comboStyle);
 
         Style popupStyle = new Style(defaultStyle);
@@ -324,7 +333,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         return res;
     }
 
-    static void setForegroundColor(Context ctx, Style style, int defStyle) {
+    static void setForegroundColor(Context ctx, Style style, int defStyle,Class cl) {
         int[] map = {
                 Style.ALL,
                 Style.DISABLED,
@@ -342,19 +351,19 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         for (int i = 0; i < map.length; i++) {
 
             int swingMeStyle = map[i];
-            int[] stateSet = AndroidBorder.getDrawableState(swingMeStyle);
+            int[] stateSet = AndroidBorder.getDrawableState(swingMeStyle,cl,true);
             int color = clist.getColorForState(stateSet, defColor);
             style.addForeground(color , swingMeStyle);
         }
     }
 
 
-    static void setForegroundColor(Context ctx, Style style, int defStyle, int swingMeStyle) {
+    static void setForegroundColor(Context ctx, Style style, int defStyle, Class cl, int swingMeStyle) {
 
         ColorStateList clist = getTextColor(ctx, defStyle);
         int defColor = clist.getDefaultColor();
 
-        int[] stateSet = AndroidBorder.getDrawableState(swingMeStyle);
+        int[] stateSet = AndroidBorder.getDrawableState(swingMeStyle,cl,true);
         int color = clist.getColorForState(stateSet, defColor);
         style.addForeground(color , swingMeStyle);
     }
