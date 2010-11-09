@@ -160,13 +160,19 @@ public class RadioButton extends Button {
                 // as setState that is used by cell renderers
                 // should not affect the "value" of this item
                 // is this case the selected state is a display of the value
-		if (isSelected() && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
+
+                // we need to use the state here as when we pass this component though to the icon, if the icon
+                // use the getState it will differ from what state we have here, this problem comes up in Android Native Theme
+
+                boolean selected = (cState&Style.SELECTED)!=0; // isSelected();
+
+		if (selected && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
 			disabledSelectedImage.paintIcon(this, g, x, y);
 		}
-                else if(isSelected() && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
+                else if(selected && (cState&Style.FOCUSED)!=0 && focusedSelectedImage!=null){
 			focusedSelectedImage.paintIcon(this, g, x, y);
 		}
-                else if (isSelected() && selectedImage!=null) {
+                else if (selected && selectedImage!=null) {
 			selectedImage.paintIcon(this, g, x, y);
 		}
                 else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {

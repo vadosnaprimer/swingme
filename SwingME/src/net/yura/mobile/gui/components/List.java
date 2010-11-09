@@ -502,7 +502,7 @@ public class List extends Component implements ActionListener {
         }
         else if (type == DesktopPane.RELEASED) {
 
-            if (keys.isDownKey(KeyEvent.KEY_EDIT)) {
+            if (isCtrlKeyDown(keys)) {
                 return;
             }
             if (doubleClick) {
@@ -531,7 +531,7 @@ public class List extends Component implements ActionListener {
 
     private boolean clearSelectionOnClick=false;
     private void selectNewPointer(int i,KeyEvent keys) {
-        if (keys.isDownKey(KeyEvent.KEY_EDIT)) {
+        if (isCtrlKeyDown(keys)) {
             toggleHelper(current,selected==null,false);
             toggleHelper(i,true,true);
         }
@@ -540,9 +540,8 @@ public class List extends Component implements ActionListener {
         }
         setSelectedIndex(i);
     }
-
     private void selectNewKey(int i,KeyEvent keys) {
-        if (keys.isDownKey(KeyEvent.KEY_EDIT) || keys.isDownKey('#')) {
+        if (isCtrlKeyDown(keys)) {
             toggleHelper(current, i==current || addMode , i==current || !addMode  );
             toggleHelper(i, i!=current && addMode , i!=current && !addMode);
         }
@@ -550,6 +549,9 @@ public class List extends Component implements ActionListener {
             clearSelection();
         }
         setSelectedIndex(i);
+    }
+    private boolean isCtrlKeyDown(KeyEvent keys) {
+        return keys.isDownKey(KeyEvent.KEY_EDIT) || keys.isDownKey('#');
     }
 
     private boolean addMode;
@@ -580,7 +582,7 @@ public class List extends Component implements ActionListener {
             return false;
         }
 
-        if (keypad.justPressedKey(KeyEvent.KEY_EDIT) || keypad.justPressedKey('#')) {
+        if (isCtrlKeyDown(keypad)) {
             addMode = selected == null || !isSelectedIndex(current);
         }
 
@@ -700,7 +702,7 @@ public class List extends Component implements ActionListener {
 
         }
         else if (keypad.justPressedAction(Canvas.FIRE) || keypad.justPressedKey('\n')) {
-            if (keypad.isDownKey(KeyEvent.KEY_EDIT) || keypad.isDownKey('#')) {
+            if (isCtrlKeyDown(keypad)) {
                 selectNewKey(current,keypad);
                 return true;
             }

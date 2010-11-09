@@ -19,6 +19,7 @@ package net.yura.mobile.gui.celleditor;
 
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Table;
 
 /**
@@ -37,24 +38,25 @@ public class DefaultCellEditor implements TableCellEditor,ListCellRenderer {
     public DefaultCellEditor(Component c) {
         component = c;
     }
-    
+
     public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
         component.setValue(value);
         return component;
     }
-    
+
     public Object getCellEditorValue() {
         return component.getValue();
     }
 
     public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         component.setValue(value);
-        component.setupState(list, isSelected, cellHasFocus);
+        // part of the value of the button is its selected state, and we do want to lose that
+        component.setupState(list, component instanceof Button?((Button)component).isSelected():isSelected, cellHasFocus);
         return component;
     }
 
     public void updateUI() {
         component.updateUI();
     }
-    
+
 }
