@@ -245,8 +245,10 @@ public abstract class MIDlet {
 
                 // Network Operator = MMC + MNC
                 String op = tm.getNetworkOperator();
-                setProperty("MMC", op.substring(0, 3));
-                setProperty("MNC", op.substring(3));
+                if (op != null && op.length() > 4) {
+                    setProperty("MMC", op.substring(0, 3));
+                    setProperty("MNC", op.substring(3));
+                }
             } catch (Throwable e) {
                 e.printStackTrace();
             }
