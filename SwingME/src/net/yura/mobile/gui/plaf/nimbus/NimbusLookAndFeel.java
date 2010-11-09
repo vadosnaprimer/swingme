@@ -283,14 +283,10 @@ public class NimbusLookAndFeel extends LookAndFeel {
         NimbusBorder tmp4 = new NimbusBorder(listItemFocusedSelectedSettings);
 
         String componentName;
+        String[] components = {"ListRenderer", "PopupListRenderer", "CheckBoxRenderer"};
+        for (int c=0;c<components.length;c++) {
+            componentName = components[c];
 
-        for (int c=0;c<3;c++) {
-            switch(c) {
-                case 0: componentName = "ListRenderer"; break;
-                case 1: componentName = "PopupListRenderer"; break;
-                case 2: componentName = "CheckBoxRenderer"; break;
-                default: throw new RuntimeException();
-            }
             setUIDefault(componentName+".background", noColor);
             setUIDefault(componentName+".border", tmp1);
             setUIDefault(componentName+"[selected].border",tmp2);
