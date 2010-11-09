@@ -1029,21 +1029,30 @@ public class XULLoader {
     }
 
     private int adjustSizeToDensity(String value) {
-        int r = Integer.parseInt(value);
-
+    	int r = Integer.parseInt(value);
+    	return adjustSizeToDensity(r);
+    }
+    
+    //TODO: OREN: we better off caching the dpi rather than 
+    //calling the System.getProperty("display.dpi") every time
+    public static int adjustSizeToDensity(int value) {
         String dpi = System.getProperty("display.dpi");
         if (dpi!=null) {
             if ("hdpi".equals(dpi)) {
-                r = r * 2;
+                value = value * 2;
             }
             else if ("mdpi".equals(dpi)) {
-                r = (int)( r * 1.5);
+            	// value = (int) Math.round( value * 1.5);
+                // There is no Math.round in J2ME so we do the calculation ourselves.
+            	// To correctly round a fraction we need to add half of the denominator to the numerator.
+            	// Hence the rounded value of "value * 1.5" is equivalent to "value + (int)( (value+1) / 2 )";
+            	value += (value + 1) / 2; 
             }
             // else ldpi
             // we dont need to do anything
         }
 
-        return r;
+        return value;
     }
 
 }
