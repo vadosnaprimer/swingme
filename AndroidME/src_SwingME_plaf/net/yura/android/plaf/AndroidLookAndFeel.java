@@ -135,10 +135,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
         Border listSeparatorTextViewStyle = getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
-        // hard code a state
-        if (listSeparatorTextViewStyle instanceof AndroidBorder) {
-            ((AndroidBorder)listSeparatorTextViewStyle).setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled,android.R.attr.state_focused}  );
-        }
         preferenceSeparatorStyle.addBorder(listSeparatorTextViewStyle,Style.ALL);
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, null,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);

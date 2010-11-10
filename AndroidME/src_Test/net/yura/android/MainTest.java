@@ -1,13 +1,9 @@
 package net.yura.android;
 
-
-
-import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.Graphics;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
-
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
@@ -38,6 +34,10 @@ public class MainTest extends Section {
         addTest("Send SMS", "sms");
         addTest("Show Notification", "notification");
         addTest("Show Native Popup", "nativePopup");
+
+        Label yura = new Label("YURA");
+        yura.setName("PreferenceSeparator");
+        add(yura);
     }
 
     //Override

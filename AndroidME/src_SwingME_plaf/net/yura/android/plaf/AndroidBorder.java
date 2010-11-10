@@ -18,16 +18,11 @@ public class AndroidBorder implements Border {
 
     private Drawable drawable;
     private Rect padding;
-    private int[] state;
 
     public AndroidBorder(Drawable d) {
         this.drawable = d;
         this.padding = new Rect();
         d.getPadding(padding);
-    }
-
-    public void setState(int[] s) {
-        state = s;
     }
 
     // OREN: we want to override the padding values as on some versions
@@ -64,14 +59,7 @@ public class AndroidBorder implements Border {
     }
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
-
-        if (state==null) {
-            setDrawableState(c, drawable);
-        }
-        else {
-            drawable.setState(state);
-        }
-
+        setDrawableState(c, drawable);
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
         canvas.save();
         canvas.clipRect(-getLeft(), -getTop(), width+getRight(), height+getBottom());
