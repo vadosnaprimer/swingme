@@ -195,7 +195,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(ctx, comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem,ComboBox.class);
         setStyleFor("ComboBox",comboStyle);
 
-        Style comboStyle2 = new Style(defaultStyle); // TODO
+        Style comboStyle2 = new Style(defaultStyle);
         Drawable d1 = getDrawable(ctx, "btn_circle");
         Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
         comboStyle2.addBorder( new IconBorder(new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);

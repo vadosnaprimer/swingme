@@ -1,11 +1,14 @@
 package net.yura.android;
 
+import java.util.Vector;
+
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.Graphics;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.TextField;
@@ -35,9 +38,16 @@ public class MainTest extends Section {
         addTest("Show Notification", "notification");
         addTest("Show Native Popup", "nativePopup");
 
-        Label yura = new Label("YURA");
-        yura.setName("PreferenceSeparator");
-        add(yura);
+        Label preferenceSeparator = new Label("here are some android only components");
+        preferenceSeparator.setName("PreferenceSeparator");
+        add(preferenceSeparator);
+
+        Vector v = new Vector();
+        v.add("HELLO");
+        v.add("GOODBYE");
+        ComboBox comboBox2 = new ComboBox(v);
+        comboBox2.setName("ComboBox2");
+        add(comboBox2);
     }
 
     //Override
