@@ -27,7 +27,7 @@ import net.yura.mobile.gui.components.Component;
  * @author Yura Mamyrin
  */
 public class AndroidIcon extends Icon {
-    private Drawable  drawable;
+    private Drawable drawable;
 
     public AndroidIcon(Drawable drawable) {
         this.drawable= drawable;

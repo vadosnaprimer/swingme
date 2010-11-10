@@ -195,6 +195,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(ctx, comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem,ComboBox.class);
         setStyleFor("ComboBox",comboStyle);
 
+        Style comboStyle2 = new Style(defaultStyle); // TODO
+        Drawable d1 = getDrawable(ctx, "btn_circle");
+        Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
+        comboStyle2.addBorder( new IconBorder(new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
+        setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
+        setStyleFor("ComboBox2",comboStyle2);
+
+        // --- Popup ---
         Style popupStyle = new Style(defaultStyle);
         popupStyle.addBorder(getBorder(ctx, 0, android.R.drawable.alert_light_frame),Style.ALL); // As defined on AlertController
         setStyleFor("Popup", popupStyle);
@@ -212,6 +220,18 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("ToolTip", tooltipStyle);
 
     }
+    private Drawable getDrawable(Context ctx, String name) {
+        try {
+            Class clazz = Class.forName("com.android.internal.R$drawable");
+            int attrIdx = clazz.getField(name).getInt(clazz);
+            return ctx.getResources().getDrawable(attrIdx);
+        }
+        catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
     private Border getListDivider(Context ctx, int styleDef, int attr) {
         Drawable divider2 = getDrawable(ctx, styleDef, attr);
