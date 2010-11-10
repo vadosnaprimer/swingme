@@ -695,11 +695,29 @@ public abstract class Canvas extends Displayable {
                 keyReleased(meKeyCode);
             }
         }
+
+        @Override
+        public void onWindowFocusChanged(boolean hasWindowFocus) {
+            super.onWindowFocusChanged(hasWindowFocus);
+
+            try {
+                if (hasWindowFocus) {
+                    showNotify();
+                }
+                else {
+                    hideNotify();
+                }
+            } catch (Throwable e) {
+                //#debug debug
+                e.printStackTrace();
+            }
+        }
     }
 
-    protected void hideNotify() {
+    protected void hideNotify() {}
 
-    }
+    protected void showNotify() {}
+
 
     public void serviceRepaints() {
         AndroidMeActivity.DEFAULT_ACTIVITY.invokeAndWait(new Thread());
