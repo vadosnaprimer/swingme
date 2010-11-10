@@ -6,7 +6,6 @@ import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Button;
-import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.Window;
@@ -19,11 +18,16 @@ public class AndroidBorder implements Border {
 
     private Drawable drawable;
     private Rect padding;
+    private int[] state;
 
     public AndroidBorder(Drawable d) {
         this.drawable = d;
         this.padding = new Rect();
         d.getPadding(padding);
+    }
+
+    public void setState(int[] s) {
+        state = s;
     }
 
     // OREN: we want to override the padding values as on some versions
@@ -61,7 +65,12 @@ public class AndroidBorder implements Border {
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
 
-        setDrawableState(c, drawable);
+        if (state==null) {
+            setDrawableState(c, drawable);
+        }
+        else {
+            drawable.setState(state);
+        }
 
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
         canvas.save();
@@ -71,8 +80,8 @@ public class AndroidBorder implements Border {
         canvas.restore();
     }
 
-    static int[] getDrawableState(int state,Class cclass,boolean windowFocused) {
-        Vector stateList = new Vector(3);
+    static int[] getDrawableState(int state,Class<?> cclass,boolean windowFocused) {
+        Vector<Integer> stateList = new Vector<Integer>(3);
 
         if (windowFocused) {
             stateList.add(new Integer(android.R.attr.state_window_focused));
@@ -117,7 +126,7 @@ public class AndroidBorder implements Border {
 
         int[] res = new int[stateList.size()];
         for (int i = 0; i < res.length; i++) {
-            res[i] = ((Integer) stateList.elementAt(i)).intValue();
+            res[i] = stateList.elementAt(i).intValue();
         }
 
         return res;

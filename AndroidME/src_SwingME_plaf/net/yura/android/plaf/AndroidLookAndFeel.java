@@ -80,7 +80,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Drawable menuBorder = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector);
         menuRendererStyle.addBorder(new AndroidBorder(menuBorder, menuRenderExtraPadding),Style.ALL);
 
-        menuBorder.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_focused,android.R.attr.state_selected} );
+        menuBorder.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled,android.R.attr.state_focused} );
 
         //AndroidBorder.setDrawableState(Style.FOCUSED|Style.SELECTED, menuBorder);
 
@@ -134,7 +134,12 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
-        preferenceSeparatorStyle.addBorder(getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding),Style.ALL);
+        Border listSeparatorTextViewStyle = getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
+        // hard code a state
+        if (listSeparatorTextViewStyle instanceof AndroidBorder) {
+            ((AndroidBorder)listSeparatorTextViewStyle).setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled,android.R.attr.state_focused}  );
+        }
+        preferenceSeparatorStyle.addBorder(listSeparatorTextViewStyle,Style.ALL);
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, null,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
