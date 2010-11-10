@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeActivity;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Button;
@@ -119,6 +120,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("Dialog", dialogStyle);
 
         Style titleBarStyle = new Style(defaultStyle);
+
         titleBarStyle.addBorder(getBorder(ctx, 0, android.R.drawable.title_bar),Style.ALL);
         setStyleFor("TitleBar", titleBarStyle);
 
@@ -128,14 +130,21 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(ctx, titleBarLabelStyle, android.R.style.TextAppearance_WindowTitle, null, Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("TitleBarLabel", titleBarLabelStyle);
 
+        // -- PreferenceSeparator --
+
         // as preference_category.xml -> theme(Theme.Light)/listSeparatorTextViewStyle -> style/Widget.TextView.ListSeparator.White -> background
         // This a non focusable component. Just set Style.ALL
         Style preferenceSeparatorStyle = new Style(defaultStyle);
         preferenceSeparatorStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL) , Style.ALL);
+
+        // this is a hack to get it to look decent on the sont erricson,
+        // as just using the listSeparatorTextViewStyle is not enough
         Rect separatorPadding = new Rect(5, 2, 5, 2);
         adjustSizeToDensity(ctx, separatorPadding);
+        Border titlebar = getBorder(ctx, 0, android.R.drawable.title_bar,new Rect(0,0,0,0));
         Border listSeparatorTextViewStyle = getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
-        preferenceSeparatorStyle.addBorder(listSeparatorTextViewStyle,Style.ALL);
+
+        preferenceSeparatorStyle.addBorder(new CompoundBorder(titlebar, listSeparatorTextViewStyle),Style.ALL);
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, null,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
@@ -195,10 +204,16 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(ctx, comboStyle, android.R.style.TextAppearance_Widget_TextView_SpinnerItem,ComboBox.class);
         setStyleFor("ComboBox",comboStyle);
 
+        // --- ComboBox2 ---
+
+        // this is a total crazy hack, but sometimes we need these graphics, and this is the only way we have found to get them
         Style comboStyle2 = new Style(defaultStyle);
         Drawable d1 = getDrawable(ctx, "btn_circle");
         Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
-        comboStyle2.addBorder( new IconBorder(new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
+
+        Rect padding = new Rect(5, 2, 5, 2);
+        adjustSizeToDensity(ctx, padding);
+        comboStyle2.addBorder( new IconBorder(padding.top,padding.left,padding.bottom,padding.right,new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
         setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
         setStyleFor("ComboBox2",comboStyle2);
 

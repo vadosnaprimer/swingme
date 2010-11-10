@@ -3,13 +3,16 @@ package net.yura.android.plaf;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.components.Component;
 
-public class IconBorder implements Border {
+public class IconBorder extends EmptyBorder {
 
     private Icon icon1,icon2;
 
-    public IconBorder(Icon a1, Icon a2) {
+    public IconBorder(int top, int left,int bottom,int right,Icon a1, Icon a2) {
+        super(top, left, bottom, right);
+
         icon1 = a1;
         icon2 = a2;
     }
@@ -23,20 +26,8 @@ public class IconBorder implements Border {
         }
     }
 
-    public int getTop() {
-        return 0;
-    }
-
-    public int getBottom() {
-        return 0;
-    }
-
     public int getRight() {
-        return icon1.getIconWidth();
-    }
-
-    public int getLeft() {
-        return 0;
+        return super.getRight() + icon1.getIconWidth();
     }
 
     public boolean isBorderOpaque() {
