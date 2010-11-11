@@ -33,13 +33,15 @@ import javax.microedition.lcdui.Font;
 
 import net.yura.android.AndroidMeActivity;
 
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 
 public class FontManager {
 
-	private static int SIZE_SMALL = 12;
+	private static int SIZE_SMALL = 14;
 	private static int SIZE_MEDIUM = 16;
 	private static int SIZE_LARGE = 20;
 
@@ -79,18 +81,38 @@ public class FontManager {
 			if ((meFont.getStyle() & Font.STYLE_UNDERLINED) != 0) {
 				underlined = true;
 			}
-			int size = 0;
-			if (meFont.getSize() == Font.SIZE_SMALL) {
+
+			int textAppearance;
+			int size;
+ 			if (meFont.getSize() == Font.SIZE_SMALL) {
 				size = SIZE_SMALL;
+				textAppearance = android.R.style.TextAppearance_Small;
 			} else if (meFont.getSize() == Font.SIZE_MEDIUM) {
 				size = SIZE_MEDIUM;
-			} else if (meFont.getSize() == Font.SIZE_LARGE) {
+				textAppearance = android.R.style.TextAppearance_Medium;
+			} else {
 				size = SIZE_LARGE;
+				textAppearance = android.R.style.TextAppearance_Large;
 			}
 
+			Context ctx = AndroidMeActivity.DEFAULT_ACTIVITY;
+
 			// The font size is adjusted to the phone "scaled density"
-			DisplayMetrics metrics = AndroidMeActivity.DEFAULT_ACTIVITY.getResources().getDisplayMetrics();
+			DisplayMetrics metrics = ctx.getResources().getDisplayMetrics();
 			size = (int) (size * metrics.scaledDensity);
+
+//            // Use the values from Android Theme. If it fails, we will still
+//            // have some reasonable values
+//			try {
+//    			int attrs[] = {android.R.attr.textSize};
+//    	        TypedArray a = ctx.obtainStyledAttributes(textAppearance, attrs);
+//    	        size = Math.round(a.getDimension(0, size));
+//    	        a.recycle();
+//			}
+//			catch (Throwable e) {
+//                //#debug debug
+//			    e.printStackTrace();
+//            }
 
 			result = new FontManager(Typeface.create(family, style), size,
 					underlined);
