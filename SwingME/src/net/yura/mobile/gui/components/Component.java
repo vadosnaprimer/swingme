@@ -103,6 +103,9 @@ public abstract class Component {
         focusListener = lis;
     }
 
+    /**
+     * @see java.awt.Component#removeFocusListener(java.awt.event.FocusListener) Component.removeFocusListener
+     */
     public void removeFocusListener(ChangeListener lis) {
     	if (lis == focusListener) {
     		focusListener = null;
@@ -117,6 +120,13 @@ public abstract class Component {
             Logger.dumpStack();
         }
         //#enddebug
+    }
+
+    /**
+     * @see java.awt.Component#getFocusListeners() Component.getFocusListeners
+     */
+    public ChangeListener[] getFocusListeners() {
+        return focusListener==null?new ChangeListener[0]:new ChangeListener[] { focusListener };
     }
 
     /**
