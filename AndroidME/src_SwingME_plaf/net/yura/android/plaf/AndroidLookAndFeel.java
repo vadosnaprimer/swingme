@@ -67,8 +67,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable( getColorAtCenter(divider) ), thicknessRect), "verticalDivider", Style.ALL);
         setStyleFor("MenuBar", menuBarStyle);
 
-        Rect menuRenderExtraPadding = new Rect(8, 8, 8, 8);
-        adjustSizeToDensity(ctx, menuRenderExtraPadding);
+        Rect menuRenderExtraPadding = getAdjustedDensityRect(ctx, 8, 8, 8, 8);
         Style menuRendererStyle = new Style(defaultStyle);
         //Border menuBorder = getBorder(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.listSelector, menuRenderExtraPadding);
         //menuRendererStyle.addBorder(menuBorder,Style.ALL);
@@ -95,8 +94,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
-        Rect listExtraPadding = new Rect(10, 10, 10, 10);
-        adjustSizeToDensity(ctx, listExtraPadding);
+        Rect listExtraPadding = getAdjustedDensityRect(ctx, 10, 10, 10, 10);
         Border divider2 = getListDivider(ctx, android.R.style.Widget_ListView, android.R.attr.listDivider);
 
         Style listCellRenderer = new Style(defaultStyle);
@@ -139,8 +137,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // this is a hack to get it to look decent on the sont erricson,
         // as just using the listSeparatorTextViewStyle is not enough
-        Rect separatorPadding = new Rect(5, 2, 5, 2);
-        adjustSizeToDensity(ctx, separatorPadding);
+        Rect separatorPadding = getAdjustedDensityRect(ctx, 5, 2, 5, 2);
         Border titlebar = getBorder(ctx, 0, android.R.drawable.title_bar,new Rect(0,0,0,0));
         Border listSeparatorTextViewStyle = getBorder(ctx, android.R.attr.listSeparatorTextViewStyle, android.R.attr.background, separatorPadding);
 
@@ -211,8 +208,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Drawable d1 = getDrawable(ctx, "btn_circle");
         Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
 
-        Rect padding = new Rect(5, 2, 5, 2);
-        adjustSizeToDensity(ctx, padding);
+        Rect padding = getAdjustedDensityRect(ctx, 5, 8, 5, 8);
         comboStyle2.addBorder( new IconBorder(padding.top,padding.left,padding.bottom,padding.right,new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
         setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
         setStyleFor("ComboBox2",comboStyle2);
@@ -224,8 +220,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // TODO: This may not be the right render
         Style popupRendererStyle = new Style(menuRendererStyle);
-        Rect menuRenderExtraPadding2 = new Rect(12, 12, 12, 12);
-        adjustSizeToDensity(ctx, menuRenderExtraPadding2);
+        Rect menuRenderExtraPadding2 = getAdjustedDensityRect(ctx, 12, 12, 12, 12);
         popupRendererStyle.addBorder(new BorderWithDivider( new AndroidBorder(menuBorder,menuRenderExtraPadding2) , divider2),Style.ALL);
         setStyleFor("PopupListRenderer", popupRendererStyle);
 
@@ -404,15 +399,16 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         style.addForeground(color , swingMeStyle);
     }
 
-    private static void adjustSizeToDensity(Context ctx, Rect rect) {
+    private static Rect getAdjustedDensityRect(Context ctx, int left, int top, int right, int bottom) {
         float density = ctx.getResources().getDisplayMetrics().density;
-        //#debug debug
-        Logger.debug("123123 " + density);
 
-        rect.top = (int) (rect.top * density);
-        rect.left = (int) (rect.left * density);
-        rect.bottom = (int) (rect.bottom * density);
-        rect.right = (int) (rect.right * density);
+        Rect rect = new Rect(
+                (int) (left * density),
+                (int) (top * density),
+                (int) (right * density),
+                (int) (bottom * density));
+
+        return rect;
     }
 
     private static int getColorAtCenter(Drawable d) {
