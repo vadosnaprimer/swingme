@@ -35,6 +35,9 @@ public abstract class MIDlet {
     public static Activity DEFAULT_ACTIVITY;
     public static Properties DEFAULT_APPLICATION_PROPERTIES;
 
+    private static String platformLastUrl;
+    private static long platformLastTime;
+
 
     private Activity activity = DEFAULT_ACTIVITY;
     private Toolkit toolkit = DEFAULT_TOOLKIT;
@@ -104,41 +107,53 @@ public abstract class MIDlet {
     public boolean platformRequest(String url)
             throws ConnectionNotFoundException {
 
-        Uri content = Uri.parse(url);
-        boolean isProtoNative = url.startsWith(PROTOCOL_NATIVE);
-        boolean isProtoNativeNoRes = url.startsWith(PROTOCOL_NATIVE_NO_RESULT);
+        try {
+            Uri content = Uri.parse(url);
+            boolean isProtoNative = url.startsWith(PROTOCOL_NATIVE);
+            boolean isProtoNativeNoRes = url.startsWith(PROTOCOL_NATIVE_NO_RESULT);
 
-        if (isProtoNative || isProtoNativeNoRes) {
-            try {
-                String clName = content.getHost();
-                Class cls = Class.forName(clName);
-                Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
-                i.setData(content);
+            if (isProtoNative || isProtoNativeNoRes) {
+                long now = System.currentTimeMillis();
 
-                if (isProtoNative) {
-                    getActivity().startActivityForResult(i, 0);
+                // HACK: Android: platformRequest() is normally called, when a
+                // button is pressed. If the button is quickly pressed more than
+                // once, it will launch the same activity more than once. To
+                // minimize this, we don't launch the same url more than once
+                // for a short period of time
+                if (platformLastUrl == null || !platformLastUrl.equals(url) || (now - platformLastTime) > 1000) {
+                    platformLastUrl = url;
+                    platformLastTime = now;
+
+                    String clName = content.getHost();
+                    Class cls = Class.forName(clName);
+                    Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
+                    i.setData(content);
+
+                    if (isProtoNative) {
+                        getActivity().startActivityForResult(i, 0);
+                    }
+                    else {
+                        getActivity().startActivity(i);
+                    }
                 }
-                else {
-                    getActivity().startActivity(i);
-                }
-            } catch (Throwable e) {
-                //#debug debug
-                e.printStackTrace();
-
-                ConnectionNotFoundException connEx = new ConnectionNotFoundException(url);
-                connEx.initCause(e);
-
-                throw connEx;
             }
-        }
-        else if (url.startsWith(PROTOCOL_NOTIFY)) {
-            showNotification(content);
-        }
-        else {
-            String action = (url.startsWith(PROTOCOL_PHONE)) ?
-                 Intent.ACTION_DIAL : Intent.ACTION_DEFAULT;
-            Intent intent = new Intent(action, content);
-            getActivity().startActivity(intent);
+            else if (url.startsWith(PROTOCOL_NOTIFY)) {
+                showNotification(content);
+            }
+            else {
+                String action = (url.startsWith(PROTOCOL_PHONE)) ?
+                     Intent.ACTION_DIAL : Intent.ACTION_DEFAULT;
+                Intent intent = new Intent(action, content);
+                getActivity().startActivity(intent);
+            }
+        } catch (Throwable e) {
+            //#debug debug
+            e.printStackTrace();
+
+            ConnectionNotFoundException connEx = new ConnectionNotFoundException(url);
+            connEx.initCause(e);
+
+            throw connEx;
         }
 
         return false;
