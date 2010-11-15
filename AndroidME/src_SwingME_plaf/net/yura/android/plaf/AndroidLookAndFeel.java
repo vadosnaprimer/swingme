@@ -23,6 +23,8 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
+import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.MetalIcon;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.logging.Logger;
@@ -228,6 +230,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style tooltipStyle = new Style(defaultStyle);
         tooltipStyle.addBorder(getBorder(ctx, 0, android.R.drawable.toast_frame),Style.ALL);
         setStyleFor("ToolTip", tooltipStyle);
+
+
+        // -- Scrollbars --
+        Style scrollBarThumbStyle = new Style(defaultStyle);
+        Drawable scroll = getDrawable(ctx, 0, android.R.attr.scrollbarThumbVertical);
+        Rect scrollSize = new Rect(scroll.getIntrinsicWidth()/2, scroll.getIntrinsicHeight()/2, scroll.getIntrinsicWidth()/2, scroll.getIntrinsicHeight()/2);
+        scrollBarThumbStyle.addBorder(new AndroidBorder(scroll, scrollSize),Style.ALL);
+        setStyleFor("ScrollBarThumb",scrollBarThumbStyle);
 
     }
     private Drawable getDrawable(Context ctx, String name) {
