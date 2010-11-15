@@ -31,10 +31,11 @@ public class ClipboardManager implements ServiceLink.TaskHandler {
 
     private static ClipboardManager instance;
 
+    static {
+        instance = new ClipboardManager();
+    }
+
     public static ClipboardManager getInstance() {
-        if (instance==null) {
-            instance = new ClipboardManager();
-        }
         return instance;
     }
 
@@ -54,6 +55,7 @@ public class ClipboardManager implements ServiceLink.TaskHandler {
             midlet.platformRequest("clipboard://get",null);
 
             Object result = midlet.result;
+            midlet.result = null; // clear the result object
             if (result instanceof String) {
                 return (String)result;
             }
