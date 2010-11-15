@@ -172,34 +172,41 @@
     <bind style="radioButton" key="RadioButton"/>
 
 
-
-    <style id="scrollpane">
-
-      <imageIcon id="thumb_top" path="/iphone/thumb.png" x="0" y="0" width="14" height="10"/>
-      <imageIcon id="thumb_fill" path="/iphone/thumb.png" x="0" y="10" width="14" height="24"/>
-      <imageIcon id="thumb_bottom" path="/iphone/thumb.png" x="0" y="34" width="14" height="8"/>
-
-      <imageIcon id="track_top" path="/iphone/track.png" x="0" y="0" width="14" height="22"/>
-      <imageIcon id="track_fill" path="/iphone/track.png" x="0" y="22" width="14" height="12"/>
-      <imageIcon id="track_bottom" path="/iphone/track.png" x="0" y="34" width="14" height="22"/>
 <!--
+    <style id="scrollpane">
       <imageIcon id="left_arrow" path="/iphone/scrollArrows.png" x="0" y="0" width="15" height="30"/>
       <imageIcon id="right_arrow" path="/iphone/scrollArrows.png" x="0" y="30" width="15" height="30"/>
--->
       <state>
-        <property key="thumbTop" value="thumb_top"/>
-        <property key="thumbBottom" value="thumb_bottom"/>
-        <property key="thumbFill" value="thumb_fill"/>
-        <property key="trackTop" value="track_top"/>
-        <property key="trackBottom" value="track_bottom"/>
-        <property key="trackFill" value="track_fill"/>
-<!--
         <property key="rightArrow" value="right_arrow"/>
         <property key="leftArrow" value="left_arrow"/>
--->
       </state>
     </style>
     <bind style="scrollpane" key="ScrollPane"/>
+-->
+
+
+    <!-- ================================= -->
+    <!-- SCROLLBAR THUMB -->
+    <!-- ================================= -->
+    <style id="scrollBarThumbStyle">
+        <insets top="10" left="7" bottom="10" right="7"/>
+        <state>
+            <imagePainter method="scrollBarThumbBackground" path="/iphone/thumb.png" direction="vertical" sourceInsets="10 7 10 7" />
+        </state>
+    </style>
+    <bind style="scrollBarThumbStyle" type="REGION" key="ScrollBarThumb" />
+    
+    <!-- ================================= -->
+    <!-- SCROLLBAR TRACK -->
+    <!-- ================================= -->
+    <style id="scrollbarTrackStyle">
+        <insets top="22" left="7" bottom="22" right="7"/>
+        <state>
+            <imagePainter method="scrollBarTrackBackground" path="/iphone/track.png" direction="vertical" sourceInsets="22 7 22 7" />
+        </state>
+    </style>
+    <bind style="scrollbarTrackStyle" type="REGION" key="ScrollBarTrack" />
+
 
     <style id="listRenderer">
       <insets top="3" left="3" bottom="3" right="3"/>

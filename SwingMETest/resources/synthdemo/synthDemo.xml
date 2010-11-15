@@ -65,11 +65,10 @@
 	    <imagePainter path="/synthdemo/button_over.png" sourceInsets="12 15 12 15" />
 	    <color type="BORDERFILL" value="#F37529"/>
 	</state>
-	<!-- not supported yet
-        <state value="PRESSED"> 
+    <state value="SELECTED"> <!-- <state value="PRESSED"> not supported yet -->
 	    <imagePainter path="/synthdemo/button_press.png" sourceInsets="12 15 12 15" />
+	    <color type="BORDERFILL" value="#296ED3"/>
 	</state>
-        -->
     </style>
     <bind style="button" key="Button"/>
 

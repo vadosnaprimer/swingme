@@ -4,6 +4,8 @@
     <menubar>
         <menu text="Menu">
             <menuitem text="item"/>
+            <menuitem text="i1"/>
+            <separator/>
             <menu text="Menu2">
                 <checkboxmenuitem selected="true" text="check"/>
                 <checkboxmenuitem group="group1" selected="true" text="radio"/>
@@ -13,7 +15,7 @@
     <label text="TabbedPane demo"/>
     <tabbedpane name="tabbed" weightx="1">
         <tab text="One">
-            <textarea text="One"/>
+            <textarea end="3" start="3" text="One"/>
         </tab>
         <tab text="Two">
             <panel columns="1">
@@ -54,6 +56,7 @@
         <button action="changeText(thinlet, tabbed)" text="Change text"/>
         <spinbox action="updateIndex(thinlet, tabbed, this.text)" maximum="4" minimum="0" text="0"/>
         <button action="addTab(thinlet, tabbed)" mnemonic="0" text="Add"/>
+        <togglebutton selected="true" text="toggle"/>
     </panel>
     <panel gap="4">
         <list action="focus(thinlet, tf)">
