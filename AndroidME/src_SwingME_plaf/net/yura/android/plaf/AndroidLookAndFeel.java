@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.PorterDuff.Mode;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -156,6 +157,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         buttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
         setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("Button", buttonStyle);
+
+        Style redButtonStyle = new Style(defaultStyle);
+        Drawable d = getDrawable(ctx, android.R.attr.buttonStyle, android.R.attr.background);
+        d.setColorFilter(0x88FF0000, Mode.SRC_ATOP);
+        redButtonStyle.addBorder(new AndroidBorder(d),Style.ALL);
+        setForegroundColor(ctx, redButtonStyle, android.R.style.Widget_Button,Button.class);
+        setStyleFor("RedButton", redButtonStyle);
 
         // --- Radio Button ---
         Style radioStyle = new Style(defaultStyle);

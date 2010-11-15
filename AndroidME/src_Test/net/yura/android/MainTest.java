@@ -48,6 +48,10 @@ public class MainTest extends Section {
         ComboBox comboBox2 = new ComboBox(v);
         comboBox2.setName("ComboBox2");
         add(comboBox2);
+
+        Button redButton = new Button("RED BUTTON");
+        redButton.setName("RedButton");
+        add(redButton);
     }
 
     //Override
