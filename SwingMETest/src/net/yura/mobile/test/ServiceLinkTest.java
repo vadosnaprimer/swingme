@@ -24,23 +24,10 @@ public class ServiceLinkTest  extends Section {
     private TextArea infoLabel;
     private Panel info;
 
-        private MyClipboardManager clipboardManager;
+        private ClipboardManager clipboardManager = ClipboardManager.getInstance();
         private MyLocationMonitor locationMonitor;
         private MyContactManager contactManager;
 
-        class MyClipboardManager extends ClipboardManager {
-            public void handleTask(Task task) {
-                String strMethod = task.getMethod();
-                if ("GetClipboardTextError".equals(strMethod)) {
-                    infoLabel.setText("GetClipboardTextError");
-                }
-                if ("PutClipboardText".equals(strMethod)) {
-                    infoLabel.setText("");
-                    infoLabel.append((String) task.getObject());
-                    infoLabel.append("\n");
-                }
-            }
-        }
         class MyContactManager extends ContactManager {
             public void handleTask(Task task) {
                 String strMethod = task.getMethod();
@@ -188,12 +175,13 @@ public class ServiceLinkTest  extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        if (clipboardManager == null)
-                            clipboardManager = new MyClipboardManager();
 
                         infoLabel = new TextArea("Get Clipboard\n");
                         infoLabel.setFocusable(false);
-                        clipboardManager.getClipboard();
+                        String txt = clipboardManager.getText();
+                        if (txt!=null) {
+                            infoLabel.append(txt);
+                        }
                         info.add(infoLabel);
      			addToScrollPane(info, null );
                 }
@@ -202,12 +190,10 @@ public class ServiceLinkTest  extends Section {
                             info = new Panel( new BorderLayout() );
                         }
                         info.removeAll();
-                        if (clipboardManager == null)
-                            clipboardManager = new MyClipboardManager();
 
                         infoLabel = new TextArea("Put Clipboard\n");
                         infoLabel.setFocusable(false);
-                        clipboardManager.putClipboard("XYZ");
+                        clipboardManager.setText("XYZ");
                         info.add(infoLabel);
      			addToScrollPane(info, null );
                 }
