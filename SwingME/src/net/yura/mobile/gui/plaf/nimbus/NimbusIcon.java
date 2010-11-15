@@ -27,10 +27,6 @@ public class NimbusIcon extends Icon {
         this.borders = borders;
         this.color = color;
 
-        if ((type == LookAndFeel.ICON_THUMB_TOP) || (type == LookAndFeel.ICON_THUMB_BOTTOM)) {
-            height = 1;
-        }
-
     }
 
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
@@ -86,7 +82,7 @@ public class NimbusIcon extends Icon {
         else if (type == LookAndFeel.ICON_COMBO) {
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
-        else if ((type == LookAndFeel.ICON_TRACK_TOP) || (type == LookAndFeel.ICON_ARROW_UP)) {
+        else if (type == LookAndFeel.ICON_ARROW_UP) {
             int top = (height/2)-3;
             int middle = (width/2);
 
@@ -94,7 +90,7 @@ public class NimbusIcon extends Icon {
                            x+middle-3, y+top+6,
                            x+middle+3, y+top+6);
         }
-        else if ((type == LookAndFeel.ICON_TRACK_BOTTOM) || (type == LookAndFeel.ICON_ARROW_DOWN)) {
+        else if (type == LookAndFeel.ICON_ARROW_DOWN) {
             int top = (height/2)-3;
             int middle = (width/2);
 

@@ -87,7 +87,7 @@ public class Icon {
      */
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
         if (image instanceof Image) {
-            g.drawRegion((Image)image, px, py, width, height, 0, x, y);
+            g.drawRegion((Image)image, px, py, width, height, x, y);
         }
     }
 

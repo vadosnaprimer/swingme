@@ -37,12 +37,8 @@ public class MetalIcon extends Icon {
 //            size++;
 //        }
         width = size;
-        if (type == LookAndFeel.ICON_THUMB_TOP || type == LookAndFeel.ICON_THUMB_BOTTOM) {
-            height = 1;
-        }
-        else {
-            height = size;
-        }
+        height = size;
+
         this.type = type;
         foreground = fore;
         background = back;
@@ -113,61 +109,7 @@ public class MetalIcon extends Icon {
             g.setColor(fcolor);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
         }
-        else if (type == LookAndFeel.ICON_THUMB_TOP) {
 
-        }
-        else if (type == LookAndFeel.ICON_THUMB_FILL) {
-
-            g.setColor( fcolor );
-            g.fillRect(x+2, y, width-4, height);
-
-        }
-        else if (type == LookAndFeel.ICON_THUMB_BOTTOM) {
-
-        }
-        else if (type == LookAndFeel.ICON_TRACK_TOP) {
-
-            g.setColor( background );
-            g.fillRect(x, y, width, height);
-
-            g.setColor(fcolor);
-            g.drawRect(x, y, width-1, height-1);
-
-            int gp = 2; // gap between arrow and sides
-            int top = y+((height/2)-2);
-            int iconWidth = width-(gp*2);
-            g.fillTriangle(x+gp+(iconWidth/2)+1, top,
-                           x+gp+iconWidth, top+5,
-                           x+gp, top+5);
-
-        }
-        else if (type == LookAndFeel.ICON_TRACK_FILL) {
-
-            g.setColor( background );
-            g.fillRect(x, y, width, height);
-
-            // draw the lines either side
-            g.setColor( fcolor );
-            g.drawLine( x , y, x , y+height );
-            g.drawLine(x+width-1, y, x+width-1, y+height);
-
-        }
-        else if (type == LookAndFeel.ICON_TRACK_BOTTOM) {
-
-            g.setColor( background );
-            g.fillRect(x, y, width, height);
-
-            g.setColor(fcolor);
-            g.drawRect(x, y, width-1, height-1);
-
-            int gp = 2; // gap between arrow and sides
-            int top = y+((height/2)-2);
-            int iconWidth = width-(gp*2);
-            g.fillTriangle(x+gp+(iconWidth/2)+1, top+5,
-                           x+gp+iconWidth, top,
-                           x+gp, top);
-
-        }
     }
 
     private void drawSelectionArrow(Component c, Graphics2D g, int x, int y, int transformation) {

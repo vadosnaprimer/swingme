@@ -118,7 +118,7 @@ public class Graphics2D {
 
         }
 
-        public void drawRegion(Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest) {
+        public void drawRegion(Image src, int x_src, int y_src, int width, int height, int x_dest, int y_dest) {
 
                 int x1 = convertTrans(x_dest,y_dest);
                 int y1 = convertTrans(y_dest,x_dest);
@@ -127,16 +127,6 @@ public class Graphics2D {
                 int y=y_src;
                 int w=width;
                 int h=height;
-
-                // this is bad, but i cant work out the proper way easily
-
-                if (transform!=Sprite.TRANS_NONE) {
-                        src = Image.createImage(src, x_src, y_src, width, height, transform);
-                        x = 0;
-                        y = 0;
-                        w = src.getWidth();
-                        h = src.getHeight();
-                }
 
                 //#mdebug warn
                 if (w <= 0 || h <= 0) {
@@ -152,14 +142,14 @@ public class Graphics2D {
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage
          */
         public void drawImage(Image src, int x,int y) {
-                drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), trans , convertTrans(x,y), convertTrans(y,x));
+                drawRegion(src, 0, 0, src.getWidth(), src.getHeight(), x, y);
         }
 
         /**
          * unlike the real swing, this will tile the image and not streach it
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) Graphics.drawImage
          */
-        public void drawImage(Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h,int t) {
+        public void drawImage(Image img,int src_x,int src_y,int src_w,int src_h,int dest_x,int dest_y,int dest_w,int dest_h) {
 
             if (src_w<=0 || src_h<=0 || dest_w<=0 || dest_h<=0) {
                 //#debug debug
@@ -168,35 +158,29 @@ public class Graphics2D {
             }
 
             final int[] c = getClip();
-            g.clipRect(dest_x,dest_y,dest_w,dest_h);
+            clipRect(dest_x,dest_y,dest_w,dest_h);
 
-            boolean normal = (t==Sprite.TRANS_NONE || t==Sprite.TRANS_MIRROR || t==Sprite.TRANS_ROT180 || t==Sprite.TRANS_MIRROR_ROT180);
-            int a = normal?src_w:src_h;
-            int b = normal?src_h:src_w;
-
-            for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
-                for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
-                    drawRegion(img, src_x,  src_y, src_w, src_h, t, pos_x, pos_y);
+            for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
+                for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
+                    drawRegion(img, src_x,  src_y, src_w, src_h, pos_x, pos_y);
                 }
             }
 
             setClip(c);
 
-
-
             //#mdebug info
             if (Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
-                int tile = ((dest_w/a)*(dest_h/b));
+                int tile = ((dest_w/src_w)*(dest_h/src_h));
                 if ( tile>15 ) {
-                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +a+" src_h="+b+" dest_w="+ dest_w +" dest_h="+dest_h );
+                    Logger.info("going to tile a very small image "+tile+" times: src_w=" +src_w+" src_h="+src_h+" dest_w="+ dest_w +" dest_h="+dest_h );
 
                     if ( tile>30 ) {
                       Logger.info("###########################################################");
                         g.setColor( new Random().nextInt() );
-                        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+a) {
+                        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
                             g.drawLine(pos_x, dest_y, pos_x, (dest_y+dest_h));
                         }
-                        for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+b) {
+                        for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
                             g.drawLine(dest_x, pos_y, (dest_x+dest_w), pos_y);
                         }
                     }

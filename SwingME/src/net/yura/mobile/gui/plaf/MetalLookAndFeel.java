@@ -149,7 +149,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             //scrollStyle.addBorder(inputBorder,Style.ALL);
             //scrollStyle.addProperty(new Integer( getPrimary1() ),"thumbFill",Style.ALL );
             //scrollStyle.addProperty(new Integer( getSecondary3() ),"trackFill",Style.ALL );
-
+/*
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_TOP,getBlack(),getSecondary3()),"thumbTop",Style.ALL );
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_FILL,getBlack(),getSecondary3()),"thumbFill",Style.ALL );
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_THUMB_BOTTOM,getBlack(),getSecondary3()),"thumbBottom",Style.ALL );
@@ -157,12 +157,21 @@ public class MetalLookAndFeel extends LookAndFeel {
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_TOP,getBlack(),getSecondary3()),"trackTop",Style.ALL );
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_FILL,getBlack(),getSecondary3()),"trackFill",Style.ALL );
             scrollStyle.addProperty(new MetalIcon(iconSize, ICON_TRACK_BOTTOM,getBlack(),getSecondary3()),"trackBottom",Style.ALL );
-
+*/
 
             scrollStyle.addProperty(spinnerLeftIcon,"leftArrow",Style.ALL );
             scrollStyle.addProperty(spinnerRightIcon,"rightArrow",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
-            setStyleFor("Slider",scrollStyle);
+
+            Style scrollBarThumbStyle = new Style(defaultStyle);
+            scrollBarThumbStyle.addBorder(new MetalScrollBar(true, getBlack(),getSecondary3(),iconSize),Style.ALL);
+            setStyleFor("ScrollBarThumb",scrollBarThumbStyle);
+            setStyleFor("SliderThumb",scrollBarThumbStyle);
+
+            Style scrollbarTrackStyle = new Style(defaultStyle);
+            scrollbarTrackStyle.addBorder(new MetalScrollBar(false, getBlack(),getSecondary3(),iconSize),Style.ALL);
+            setStyleFor("ScrollBarTrack",scrollbarTrackStyle);
+            setStyleFor("SliderTrack",scrollbarTrackStyle);
 
             Style labelStyle = new Style(defaultStyle);
             labelStyle.addBackground(Style.NO_COLOR, Style.ALL);

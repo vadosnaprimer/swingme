@@ -542,37 +542,41 @@ public class NimbusLookAndFeel extends LookAndFeel {
         Vector trackFillSettings = new Vector();
         trackFillSettings.addElement(new NimbusBorderSetting(color4, color4, 1, 0, 1));
 
+        /*
         Icon thumbTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_TOP, thumbTopSettings, decodeColor("text"));
         Icon thumbBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_BOTTOM, thumbTopSettings, decodeColor("text"));
         Icon thumbFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_FILL, thumbFillSettings, decodeColor("text"));
         Icon trackTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_TOP, trackTopSettings, decodeColor("text"));
         Icon trackBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_BOTTOM, trackBottomSettings, decodeColor("text"));
         Icon trackFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_FILL, trackFillSettings, decodeColor("text"));
+         */
         Icon arrowUp = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
         Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_DOWN, null, decodeColor("text"));
         Icon arrowLeft = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_LEFT, null, decodeColor("text"));
         Icon arrowRight = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_RIGHT, null, decodeColor("text"));
 
         setUIDefault("ScrollPane.background", noColor);
+        /*
         setUIDefault("ScrollPane.property[thumbTop]", thumbTop);
         setUIDefault("ScrollPane.property[thumbBottom]", thumbBottom);
         setUIDefault("ScrollPane.property[thumbFill]", thumbFill);
         setUIDefault("ScrollPane.property[trackTop]", trackTop);
         setUIDefault("ScrollPane.property[trackBottom]", trackBottom);
         setUIDefault("ScrollPane.property[trackFill]", trackFill);
+        */
         setUIDefault("ScrollPane.property[upArrow]", arrowUp);
         setUIDefault("ScrollPane.property[downArrow]", arrowDown);
         setUIDefault("ScrollPane.property[leftArrow]", arrowLeft);
         setUIDefault("ScrollPane.property[rightArrow]", arrowRight);
 
-
+        /*
         setUIDefault("Slider.property[thumbTop]", thumbTop);
         setUIDefault("Slider.property[thumbBottom]", thumbBottom);
         setUIDefault("Slider.property[thumbFill]", thumbFill);
         setUIDefault("Slider.property[trackTop]", trackTop);
         setUIDefault("Slider.property[trackBottom]", trackBottom);
         setUIDefault("Slider.property[trackFill]", trackFill);
-
+        */
 
         // ToolTip
 

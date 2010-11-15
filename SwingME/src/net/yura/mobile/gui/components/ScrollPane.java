@@ -71,7 +71,7 @@ public class ScrollPane extends Panel implements Runnable {
         super.setName("ScrollPane");
 
         slider = new Slider();
-        slider.setName("ScrollPane");
+        slider.setName("ScrollBar");
     }
 
     public void setLayout(Layout lt) {

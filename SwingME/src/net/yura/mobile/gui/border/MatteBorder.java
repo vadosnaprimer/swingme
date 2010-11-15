@@ -207,36 +207,32 @@ public class MatteBorder extends EmptyBorder {
                 // on blackberry we can not draw a image of 0 width or 0 height, so we have to check
                 if (imageTop>0) {
                     if (imageLeft>0) {
-                        g.drawRegion(image, 0,  0, imageLeft, imageTop, Sprite.TRANS_NONE, -left, -top);
+                        g.drawRegion(image, 0,  0, imageLeft, imageTop, -left, -top);
                     }
                     if (imageRight>0) {
-                        g.drawRegion(image, imageWidth-imageRight,  0, imageRight, imageTop, Sprite.TRANS_NONE, width-rightDiff, -top);
+                        g.drawRegion(image, imageWidth-imageRight,  0, imageRight, imageTop, width-rightDiff, -top);
                     }
                 }
                 if (imageBottom>0) {
                     if (imageLeft>0) {
-                        g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, Sprite.TRANS_NONE, -left, height-bottomDiff);
+                        g.drawRegion(image, 0,  imageHeight-imageBottom, imageLeft, imageBottom, -left, height-bottomDiff);
                     }
                     if (imageRight>0) {
-                        g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, Sprite.TRANS_NONE, width-rightDiff, height-bottomDiff);
+                        g.drawRegion(image, imageWidth-imageRight,  imageHeight-imageBottom, imageRight, imageBottom, width-rightDiff, height-bottomDiff);
                     }
                 }
 
                 g.drawImage(image,imageLeft,0,imageWidth-imageRight-imageLeft,imageTop,
-                        leftDiff,-top,width-leftDiff-rightDiff,imageTop,
-                        Sprite.TRANS_NONE); // top line
+                        leftDiff,-top,width-leftDiff-rightDiff,imageTop); // top line
 
                 g.drawImage(image,imageLeft,imageHeight-imageBottom,imageWidth-imageRight-imageLeft,imageBottom,
-                        leftDiff,height-bottomDiff,width-leftDiff-rightDiff,imageBottom,
-                        Sprite.TRANS_NONE); // bottom line
+                        leftDiff,height-bottomDiff,width-leftDiff-rightDiff,imageBottom); // bottom line
 
                 g.drawImage(image,0,imageTop,imageLeft,imageHeight-imageTop-imageBottom,
-                        -left,topDiff,imageLeft,height-topDiff-bottomDiff,
-                        Sprite.TRANS_NONE); // left
+                        -left,topDiff,imageLeft,height-topDiff-bottomDiff); // left
 
                 g.drawImage(image,imageWidth-imageRight,imageTop,imageRight,imageHeight-imageTop-imageBottom,
-                        width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff,
-                        Sprite.TRANS_NONE); // right
+                        width-rightDiff,topDiff,imageRight,height-topDiff-bottomDiff); // right
 
                 if (!back && color==Style.NO_COLOR) {
 
@@ -254,12 +250,12 @@ public class MatteBorder extends EmptyBorder {
 
                     // to make themeing more flexable we will center the image if we do not need to tile it
                     if (src_w>=dist_w&&src_h>=dist_h) {
-                        g.drawRegion(image, imageLeft+(src_w-dist_w)/2, imageTop+(src_h-dist_h)/2, dist_w, dist_h, Sprite.TRANS_NONE, leftDiff,topDiff);
+                        g.drawRegion(image, imageLeft+(src_w-dist_w)/2, imageTop+(src_h-dist_h)/2, dist_w, dist_h, leftDiff,topDiff);
                     }
                     else {
                         //#debug debug
                         Logger.debug("filling background with tiled image!");
-                        g.drawImage(image,imageLeft,imageTop,src_w,src_h,leftDiff,topDiff,dist_w,dist_h,Sprite.TRANS_NONE); // centre
+                        g.drawImage(image,imageLeft,imageTop,src_w,src_h,leftDiff,topDiff,dist_w,dist_h); // centre
                     }
                 }
 

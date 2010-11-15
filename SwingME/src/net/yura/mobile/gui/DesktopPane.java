@@ -66,18 +66,6 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     /**
-     * This methods should ONLY be called from the updateUI() method in components
-     * @see javax.swing.UIManager#getUI(javax.swing.JComponent) UIManager#getUI
-     */
-    public static Style getDefaultTheme(Component comp) {
-        Style style = desktop.theme.getStyle(comp.getName());
-        if (style == null) {
-            style = desktop.theme.getStyle("");
-        }
-        return style;
-    }
-
-    /**
      * this method is used in {@link Component#getWindow()} and so needs to return the component you pass into it as the result if it is of class c
      * @see javax.swing.SwingUtilities#getAncestorOfClass(java.lang.Class, java.awt.Component) SwingUtilities.getAncestorOfClass
      */
@@ -91,45 +79,11 @@ public class DesktopPane extends Canvas implements Runnable {
         return null;
     }
 
-    public static void mySizeChanged(Component aThis) {
-
-        Component p = getAncestorOfClass(ScrollPane.class, aThis);
-        if (p==null) { p = aThis.getWindow(); }
-        if (p==null) return;
-
-        DesktopPane dp = aThis.getDesktopPane();
-        // if a window is not yet visable it still needs the
-        // mulipass validate system to work. e.g. DesktopPane#log() first time
-
-        // if this method is being called from a thread other then the event thread
-        // we dont want it to mess with whats currently happening in the paint
-        synchronized(dp.uiLock) {
-
-            // while it chooses what array to add the component to
-            // the validating turn id can NOT be changed
-            if (dp.validating==0) {
-                addToComponentVector(p, dp.revalidateComponents1);
-                p.repaint();
-            }
-            else if (dp.validating==1) {
-    //#debug debug
-    Logger.debug("thats some complex layout");
-                addToComponentVector(p, dp.revalidateComponents2);
-            }
-            else if (dp.validating==2) {
-    //#debug debug
-    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
-                addToComponentVector(p, dp.revalidateComponents3);
-            }
-            //#mdebug info
-            else {
-                // if this happens it means that when i add a scrollbar it says it
-                // does not need one, and as soon as i remove it, it says it does
-                Logger.info("asking for revalidate 4th time: "+p);
-                Logger.dumpStack();
-            }
-            //#enddebug
-        }
+    /**
+     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
+     */
+    public static void invokeLater(Runnable runner) {
+        Display.getDisplay(Midlet.getMidlet()).callSerially(runner);
     }
 
     /**
@@ -152,6 +106,24 @@ public class DesktopPane extends Canvas implements Runnable {
         com.updateUI();
 
     }
+
+    private Hashtable UIManager;
+
+    /**
+     * @see javax.swing.UIManager#get(java.lang.Object) UIManager.get
+     */
+    public static Object get(Object key) {
+        return getDesktopPane().UIManager.get(key);
+    }
+
+    /*
+     * @see javax.swing.UIManager#put(java.lang.Object, java.lang.Object) UIManager.put
+     */
+    public static void put(Object key,Object value) {
+        getDesktopPane().UIManager.put(key, value);
+    }
+
+
     public static final boolean debug = false;
 
     public boolean SOFT_KEYS;
@@ -274,22 +246,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
-    private Hashtable UIManager;
-
-    /**
-     * @see javax.swing.UIManager#get(java.lang.Object) UIManager.get
-     */
-    public static Object get(Object key) {
-        return getDesktopPane().UIManager.get(key);
-    }
-
-    /*
-     * @see javax.swing.UIManager#put(java.lang.Object, java.lang.Object) UIManager.put
-     */
-    public static void put(Object key,Object value) {
-        getDesktopPane().UIManager.put(key, value);
-    }
-
     public final void run() {
 
         try {
@@ -342,6 +298,47 @@ public class DesktopPane extends Canvas implements Runnable {
       }
     }
 
+    public static void mySizeChanged(Component aThis) {
+
+        Component p = getAncestorOfClass(ScrollPane.class, aThis);
+        if (p==null) { p = aThis.getWindow(); }
+        if (p==null) return;
+
+        DesktopPane dp = aThis.getDesktopPane();
+        // if a window is not yet visable it still needs the
+        // mulipass validate system to work. e.g. DesktopPane#log() first time
+
+        // if this method is being called from a thread other then the event thread
+        // we dont want it to mess with whats currently happening in the paint
+        synchronized(dp.uiLock) {
+
+            // while it chooses what array to add the component to
+            // the validating turn id can NOT be changed
+            if (dp.validating==0) {
+                addToComponentVector(p, dp.revalidateComponents1);
+                p.repaint();
+            }
+            else if (dp.validating==1) {
+    //#debug debug
+    Logger.debug("thats some complex layout");
+                addToComponentVector(p, dp.revalidateComponents2);
+            }
+            else if (dp.validating==2) {
+    //#debug debug
+    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
+                addToComponentVector(p, dp.revalidateComponents3);
+            }
+            //#mdebug info
+            else {
+                // if this happens it means that when i add a scrollbar it says it
+                // does not need one, and as soon as i remove it, it says it does
+                Logger.info("asking for revalidate 4th time: "+p);
+                Logger.dumpStack();
+            }
+            //#enddebug
+        }
+    }
+
     /**
      * This will call the animate() method on a component from the animation thread
      * @param com The Component to call animte() on
@@ -381,6 +378,7 @@ public class DesktopPane extends Canvas implements Runnable {
     /**
      * sets the default theme, and sets up default values if there are none set
      * @param a The Theme
+     * @see javax.swing.UIManager#setLookAndFeel(javax.swing.LookAndFeel) UIManager.setLookAndFeel
      */
     public void setLookAndFeel(LookAndFeel a) {
 
@@ -438,6 +436,25 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
+    /**
+     * This methods should ONLY be called from the updateUI() method in components
+     * @see javax.swing.UIManager#getUI(javax.swing.JComponent) UIManager#getUI
+     */
+    public static Style getDefaultTheme(Component comp) {
+        return getDefaultTheme(comp.getName());
+    }
+
+    public static Style getDefaultTheme(String compName) {
+        Style style = desktop.theme.getStyle(compName);
+        if (style == null) {
+            style = desktop.theme.getStyle("");
+        }
+        return style;
+    }
+
+    /**
+     * @see javax.swing.UIManager#getLookAndFeel() UIManager.getLookAndFeel
+     */
     public LookAndFeel getLookAndFeel() {
         return theme;
     }
@@ -450,13 +467,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
     public int getMenuHeight() {
         return menuHeight;
-    }
-
-    /**
-     * @see javax.swing.SwingUtilities#invokeLater(java.lang.Runnable) SwingUtilities.invokeLater
-     */
-    public static void invokeLater(Runnable runner) {
-        Display.getDisplay(Midlet.getMidlet()).callSerially(runner);
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
@@ -624,7 +634,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             }
                             else {
                                 // hack for synth and MIDP
-                                graphics.drawImage(i, 0, 0, fade.getIconWidth(), fade.getIconHeight(), 0, 0, getWidth(), getHeight(), javax.microedition.lcdui.game.Sprite.TRANS_NONE );
+                                graphics.drawImage(i, 0, 0, fade.getIconWidth(), fade.getIconHeight(), 0, 0, getWidth(), getHeight() );
                             }
                         }
     /*

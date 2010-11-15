@@ -20,8 +20,8 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 
@@ -34,19 +34,11 @@ public class Slider extends Component {
 
     public static final int MINIMUM_THUMB_SIZE=5;
 
-    private Icon thumbTop;
-    private Icon thumbBottom;
-    private Icon thumbFill;
-    private Icon trackTop;
-    private Icon trackBottom;
-    private Icon trackFill;
-
-
+    private Border track,thumb;
     int min,max,value,extent;
     boolean horizontal = true;
     // Slider has horizontal default
     // Scrollbar has vertical default
-
 
     /**
      * Creates a horizontal slider with the range 0 to 100 and an initial value of 50.
@@ -224,7 +216,7 @@ public class Slider extends Component {
 
     public void workoutMinimumSize() {
 
-        int thickness = (trackTop != null) ? trackTop.getIconWidth() : 0;
+        int thickness = (track != null) ? track.getRight() + track.getLeft() : 0;
 
         if (horizontal) {
             width = 20;
@@ -257,15 +249,30 @@ public class Slider extends Component {
         return "Slider";
     }
 
+    public String getName() {
+        String name = super.getName();
+        
+        return name;
+    }
+
     public void updateUI() {
         super.updateUI();
+        String name = getName();
 
+        Style theme1 = DesktopPane.getDefaultTheme(name+"Thumb");
+        Style theme2 = DesktopPane.getDefaultTheme(name+"Track");
+        
+        thumb = theme1.getBorder(Style.ALL);
+        track = theme2.getBorder(Style.ALL);
+
+/*
         thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
         thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
         thumbFill = (Icon)theme.getProperty("thumbFill", Style.ALL);
         trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
         trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
         trackFill = (Icon)theme.getProperty("trackFill", Style.ALL);
+*/
     }
 
 
@@ -320,8 +327,12 @@ public class Slider extends Component {
         // DRAW ARROWS
         //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
 
-        if (trackTop!=null) {
+        if (track!=null) {
 
+            g.translate(x+track.getLeft(), y+track.getTop());
+            track.paintBorder(this, g, w-track.getLeft()-track.getRight(), h-track.getTop()-track.getBottom());
+            g.translate(-x-track.getLeft(), -y-track.getTop());
+/*
             int x1 = x + (w-trackTop.getIconWidth())/2;
             trackTop.paintIcon(this, g, x1, y);
             trackBottom.paintIcon(this, g, x1, y+h-trackBottom.getIconHeight() );
@@ -329,13 +340,8 @@ public class Slider extends Component {
             starty = trackTop.getIconHeight();
             extenth = h - starty - trackBottom.getIconHeight();
 
-        }
-
-        // draw the track fill color
-        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-
-        if (trackFill!=null) {
             tileIcon(g, trackFill, x + (w-trackFill.getIconWidth())/2 , starty, trackFill.getIconWidth(), extenth);
+ */
         }
 
         // draw the thumb!
@@ -347,20 +353,32 @@ public class Slider extends Component {
         starty = tmp[1];
         extenth = tmp[2];
 
-        if (thumbTop!=null) {
+        if (thumb!=null) {
+
+            int x1 = x + (w-thumb.getLeft()-thumb.getRight())/2;
+
+            // this does the floating scrollbars
+            if (x1+thumb.getLeft()+thumb.getRight() > x+w) {
+                x1 = x+w -thumb.getLeft()-thumb.getRight();
+            }
+
+            g.translate(x1+thumb.getLeft(), starty+thumb.getTop());
+            thumb.paintBorder(this, g, 0, extenth-thumb.getTop()-thumb.getBottom());
+            g.translate(-x1-thumb.getLeft(), -starty-thumb.getTop());
+
+            /*
             int x1 = x + (w-thumbTop.getIconWidth())/2;
             thumbTop.paintIcon(this, g, x1, starty);
             thumbBottom.paintIcon(this, g, x1, starty+extenth-thumbBottom.getIconHeight());
             starty = starty + thumbTop.getIconHeight();
             extenth = extenth - (thumbTop.getIconHeight()+thumbBottom.getIconHeight());
-        }
 
-        if (thumbFill!=null) {
             tileIcon(g, thumbFill, x + (w-thumbFill.getIconWidth())/2 , starty, thumbFill.getIconWidth(), extenth);
+             */
         }
 
     }
-
+/*
     private void tileIcon(Graphics2D g, Icon icon,int dest_x,int dest_y,int dest_w,int dest_h) {
         int h = icon.getIconHeight();
 
@@ -377,7 +395,7 @@ public class Slider extends Component {
         g.setClip(c);
 
     }
-
+*/
     /**
      * @param x - Ignored?
      * @param y - Start of bar
@@ -392,25 +410,18 @@ public class Slider extends Component {
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
             ) {
 
-        final int box;
-        final int topBotton;
-        if (trackTop!=null) {
-            box = (trackTop.getIconHeight() >w)?w:trackTop.getIconHeight();
-            topBotton = (thumbTop==null)?0:thumbTop.getIconHeight()+thumbBottom.getIconHeight();
-        }
-        else {
-            box = 0;
-            topBotton = 0;
-        }
+        final int box = track!=null?((track.getTop() >w)?w:track.getTop()):0;
+        final int topBotton = (thumb==null)?0:thumb.getTop()+thumb.getBottom();
+
         final int space1 = h - box * 2;
 
         int extenth = (int) ( (extent*space1)/(double)max + 0.5);
-        int min = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
-        min = min>(space1/2)?space1/2:min;
+        int min1 = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
+        min1 = min1>(space1/2)?space1/2:min1;
 
         int space = space1;
-        if (extenth < min) {
-            extenth = min;
+        if (extenth < min1) {
+            extenth = min1;
             space = space-extenth;
             max = max-extent;
         }
@@ -427,17 +438,17 @@ public class Slider extends Component {
         }
          */
         // add squidge!
-        if ((starty+extenth) < (box+min)) {
+        if ((starty+extenth) < (box+min1)) {
             starty = box;
-            extenth = min;
+            extenth = min1;
         }
         else if (starty < box) {
             extenth = starty+extenth-box;
             starty = box;
         }
-        else if (starty > (box+space1-min)) {
-            starty = box+space1-min;
-            extenth = min;
+        else if (starty > (box+space1-min1)) {
+            starty = box+space1-min1;
+            extenth = min1;
         }
         else if ((starty+extenth) > (box+space1)) {
             extenth = box+space1-starty;
