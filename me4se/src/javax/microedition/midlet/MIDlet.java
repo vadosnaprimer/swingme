@@ -20,6 +20,10 @@
 
 package javax.microedition.midlet;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
@@ -121,7 +125,7 @@ public abstract class MIDlet {
 
 	if (url.startsWith("tel")) {
 		System.out.println("ME4SE: MIDlet.platformRequest('" + url + "') called in order to initiate a phone call.");
-		return false;
+
 	}
         else if (url.startsWith("grasshopper")) {
             try {
@@ -154,7 +158,26 @@ public abstract class MIDlet {
             catch (Exception ex) {
                 ex.printStackTrace();
             }
-            return false;
+
+        }
+        else if (url.startsWith("clipboard")) {
+            if (url.startsWith("clipboard://get")) {
+
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                //odd: the Object param of getContents is not currently used
+                Transferable contents = clipboard.getContents(null);
+                if ( contents!=null && contents.isDataFlavorSupported(DataFlavor.stringFlavor) ) {
+                    try {
+                        String result = (String)contents.getTransferData(DataFlavor.stringFlavor);
+                        onResult(0, result);
+                    }
+                    catch (Exception ex){
+                        //highly unlikely since we are using a standard DataFlavor
+                        ex.printStackTrace();
+                    }
+                }
+
+            }
         }
 	else {
 	    if (ApplicationManager.getInstance().applet != null) {
@@ -165,8 +188,7 @@ public abstract class MIDlet {
                     ex.initCause(e);
                     throw ex;
 		}
-		return false; // dont let the midlet exit in order to avoid the corresp.
-			      // page reload
+
 	    }
 	    else {
 		try {
@@ -178,11 +200,13 @@ public abstract class MIDlet {
                     ex.initCause(e);
                     throw ex;
 		}
-		return false;
+
 	    }
 
 	}
 
+        return false; // dont let the midlet exit in order to avoid the corresp.
+                      // page reload
 /*
     if (ApplicationManager.getInstance().applet != null) {
       try {
@@ -243,4 +267,7 @@ public abstract class MIDlet {
       System.out.println("Error attempting to launch web browser\n" + e.toString());
     }
   }
+
+  public void onResult(int resultCode, Object result) { }
+
 }
