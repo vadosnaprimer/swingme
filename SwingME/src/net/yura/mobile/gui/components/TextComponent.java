@@ -29,6 +29,7 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.io.ClipboardManager;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -209,7 +210,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
             boolean focusOwner = isFocusOwner();
             super.processMouseEvent(type, x, y, keys);
-            if (focusOwner && type==DesktopPane.PRESSED 
+            if (focusOwner && type==DesktopPane.PRESSED
                 //   && Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) { // hacked me4se so this would not be needed
                     ) {
                 // TODO check if we have a qwerty keyboard
@@ -248,7 +249,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             //    keyCode='\n';
             //}
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
+            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && !keyEvent.isDownKey(KeyEvent.KEY_EDIT) && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
 
                 if (!allowChar((char)keyCode)) {
                     return false;
@@ -323,6 +324,22 @@ public abstract class TextComponent extends Component implements ActionListener,
 			clear(false);
 			return true;
 		}
+                else if (keyEvent.isDownKey(KeyEvent.KEY_EDIT)) { // Ctrl is pressed
+                    if (keyEvent.isDownKey(22)) {// TODO no idea why 22
+                        String txt = ClipboardManager.getInstance().getText();
+                        if (txt!=null) {
+                            autoAccept();
+                            // TODO should not allow of pasting of text into a number only field
+                            //if (!allowOnlyNumberConstraint()) {
+                                // TODO should check it does not make the text longer then that allowed
+                                text.insert(caretPosition, txt);
+                                setCaretPosition(caretPosition + txt.length());
+                            //}
+
+                        }
+                    }
+                    // TODO support other things like CUT and COPY and UNDO
+                }
                 else if (keyEvent.isDownAction(Canvas.LEFT)) {
 
                     if (caretPosition>0) {

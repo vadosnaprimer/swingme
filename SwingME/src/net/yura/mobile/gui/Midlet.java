@@ -19,7 +19,6 @@ package net.yura.mobile.gui;
 
 import java.io.InputStream;
 import java.util.Hashtable;
-
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
@@ -293,4 +292,10 @@ public abstract class Midlet extends MIDlet {
 
         return Midlet.class.getResourceAsStream(name);
     }
+
+    public Object result;
+    public void onResult(int resultCode, Object result) {
+        this.result = result;
+    }
+
 }
