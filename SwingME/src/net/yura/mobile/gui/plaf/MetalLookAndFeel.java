@@ -42,7 +42,8 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             Font font = new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, size);
 
-            int iconSize = font.getHeight()-1;
+            int iconSize = font.getHeight();
+            iconSize = (iconSize/2)*2;
 
             MetalIcon radioIcon = new MetalIcon(iconSize,LookAndFeel.ICON_RADIO,Style.NO_COLOR,getSecondary3());
             MetalIcon checkboxIcon = new MetalIcon(iconSize,LookAndFeel.ICON_CHECKBOX,Style.NO_COLOR,getSecondary3());
@@ -161,15 +162,31 @@ public class MetalLookAndFeel extends LookAndFeel {
 
             scrollStyle.addProperty(spinnerLeftIcon,"leftArrow",Style.ALL );
             scrollStyle.addProperty(spinnerRightIcon,"rightArrow",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, LookAndFeel.ICON_ARROW_UP,getBlack(),getSecondary3()),"upArrow",Style.ALL );
+            scrollStyle.addProperty(new MetalIcon(iconSize, LookAndFeel.ICON_ARROW_DOWN,getBlack(),getSecondary3()),"downArrow",Style.ALL );
             setStyleFor("ScrollPane",scrollStyle);
 
             Style scrollBarThumbStyle = new Style(defaultStyle);
-            scrollBarThumbStyle.addBorder(new MetalScrollBar(true, getBlack(),getSecondary3(),iconSize),Style.ALL);
+            scrollBarThumbStyle.addBorder(new CompoundBorder(new EmptyBorder(1, 0, 1, 0), new MatteBorder(0, iconSize/2-2, 0, iconSize/2-2, getBlack())),Style.ALL);
             setStyleFor("ScrollBarThumb",scrollBarThumbStyle);
             setStyleFor("SliderThumb",scrollBarThumbStyle);
 
             Style scrollbarTrackStyle = new Style(defaultStyle);
-            scrollbarTrackStyle.addBorder(new MetalScrollBar(false, getBlack(),getSecondary3(),iconSize),Style.ALL);
+            scrollbarTrackStyle.addBorder(
+                    new CompoundBorder( // from the outside going in
+                        new LineBorder(getBlack()),
+                        new CompoundBorder(
+                            new MetalScrollBar(      // -2 as we draw the black border with a LineBorder
+                                new MetalIcon(iconSize-2, LookAndFeel.ICON_ARROW_UP, getBlack(),getSecondary3()),
+                                new MetalIcon(iconSize-2, LookAndFeel.ICON_ARROW_DOWN, getBlack(),getSecondary3())
+                            ),
+                            new CompoundBorder(
+                                new MatteBorder(1, 0, 1, 0, getBlack()),
+                                new MatteBorder(0, iconSize/2-1, 0, iconSize/2-1, getSecondary3()) // the very inside
+                            )
+                        )
+                    )
+                    ,Style.ALL);
             setStyleFor("ScrollBarTrack",scrollbarTrackStyle);
             setStyleFor("SliderTrack",scrollbarTrackStyle);
 

@@ -99,15 +99,43 @@ public class MetalIcon extends Icon {
             g.drawLine(x, (c.getHeight()-height)/2, x , height);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
-        else if (type == LookAndFeel.ICON_SPINNER_LEFT) {
+        else if (type == LookAndFeel.ICON_SPINNER_LEFT || type == LookAndFeel.ICON_ARROW_LEFT) {
 
             g.setColor(fcolor);
             drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(),Sprite.TRANS_MIRROR_ROT90);
         }
-        else if (type == LookAndFeel.ICON_SPINNER_RIGHT) {
+        else if (type == LookAndFeel.ICON_SPINNER_RIGHT || type == LookAndFeel.ICON_ARROW_RIGHT) {
 
             g.setColor(fcolor);
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
+        }
+        else if (type == LookAndFeel.ICON_ARROW_UP) {
+
+            //g.setColor( background );
+            //g.fillRect(x, y, width, height);
+
+            g.setColor( fcolor );
+            int gp = 2; // gap between arrow and sides
+            int top = y+((height/2)-2);
+            int iconWidth = width-(gp*2);
+            g.fillTriangle(x+gp+(iconWidth/2)+1, top,
+                           x+gp+iconWidth, top+5,
+                           x+gp, top+5);
+
+        }
+        else if (type == LookAndFeel.ICON_ARROW_DOWN) {
+
+            //g.setColor( background );
+            //g.fillRect(x, y, width, height);
+
+            g.setColor( fcolor );
+            int gp = 2; // gap between arrow and sides
+            int top = y+((height/2)-2);
+            int iconWidth = width-(gp*2);
+            g.fillTriangle(x+gp+(iconWidth/2)+1, top+5,
+                           x+gp+iconWidth, top,
+                           x+gp, top);
+
         }
 
     }

@@ -12,6 +12,7 @@ import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.MetalScrollBar;
 import net.yura.mobile.gui.plaf.Style;
 
 /**
@@ -513,23 +514,39 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("TabLeft.background",noColor);
         setUIDefault("TabLeft.border",new CompoundBorder(tabLeft,new EmptyBorder(0,0,0,-2)));
 
+        // ToolTip
+
+        setUIDefault("ToolTip.background",uiSettings.get("nimbusAlertYellow"));
+        setUIDefault("ToolTip.border",new LineBorder(decodeColor("nimbusOrange")));
+
+        // ScrollPane
+
+        Icon arrowUp = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
+        Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_DOWN, null, decodeColor("text"));
+        Icon arrowLeft = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_LEFT, null, decodeColor("text"));
+        Icon arrowRight = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_RIGHT, null, decodeColor("text"));
+
+        setUIDefault("ScrollPane.background", noColor);
+
+        setUIDefault("ScrollPane.property[upArrow]", arrowUp);
+        setUIDefault("ScrollPane.property[downArrow]", arrowDown);
+        setUIDefault("ScrollPane.property[leftArrow]", arrowLeft);
+        setUIDefault("ScrollPane.property[rightArrow]", arrowRight);
+
         // SCROLL BARS
 
-        int[] squareCorners = {0,0,0,0};
-        int[] singleBorder = {1,1,1,1};
+        int evensize = (font.getHeight()/2)*2;
 
-        Vector thumbTopSettings = new Vector();
-        thumbTopSettings.addElement(new NimbusBorderSetting(color6, color6, topTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
-        //thumbTopSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
-
-//        Vector thumbBottomSettings = new Vector();
-//        thumbBottomSettings.addElement(new NimbusBorderSetting(color6, color6, bottomTabRendererBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
-//        thumbBottomSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
-
-        int[] thumbFillBorders = {0,1,0,1};
         Vector thumbFillSettings = new Vector();
-        thumbFillSettings.addElement(new NimbusBorderSetting(color6, color6, thumbFillBorders, squareCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        thumbFillSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
         thumbFillSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+
+                                                                                                                    // this -1 is the tickness
+        Border thumb = new CompoundBorder(new NimbusBorder(thumbFillSettings),new EmptyBorder(1,(font.getHeight()/2)-1,1,(font.getHeight()/2)-1));
+        setUIDefault("ScrollBarThumb.border",thumb);
+        setUIDefault("SliderThumb.border",thumb);
+
+        int[] singleBorder = {1,1,1,1};
 
         Vector trackTopSettings = new Vector();
         trackTopSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, topCorners, 1, NimbusBorder.ORIENTATION_HORI));
@@ -542,46 +559,16 @@ public class NimbusLookAndFeel extends LookAndFeel {
         Vector trackFillSettings = new Vector();
         trackFillSettings.addElement(new NimbusBorderSetting(color4, color4, 1, 0, 1));
 
-        /*
-        Icon thumbTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_TOP, thumbTopSettings, decodeColor("text"));
-        Icon thumbBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_BOTTOM, thumbTopSettings, decodeColor("text"));
-        Icon thumbFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_THUMB_FILL, thumbFillSettings, decodeColor("text"));
-        Icon trackTop = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_TOP, trackTopSettings, decodeColor("text"));
-        Icon trackBottom = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_BOTTOM, trackBottomSettings, decodeColor("text"));
-        Icon trackFill = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_TRACK_FILL, trackFillSettings, decodeColor("text"));
-         */
-        Icon arrowUp = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
-        Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_DOWN, null, decodeColor("text"));
-        Icon arrowLeft = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_LEFT, null, decodeColor("text"));
-        Icon arrowRight = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_RIGHT, null, decodeColor("text"));
+        Icon trackTop = new NimbusIcon(evensize, LookAndFeel.ICON_ARROW_UP, trackTopSettings, decodeColor("text"));
+        Icon trackBottom = new NimbusIcon(evensize, LookAndFeel.ICON_ARROW_DOWN, trackBottomSettings, decodeColor("text"));
 
-        setUIDefault("ScrollPane.background", noColor);
-        /*
-        setUIDefault("ScrollPane.property[thumbTop]", thumbTop);
-        setUIDefault("ScrollPane.property[thumbBottom]", thumbBottom);
-        setUIDefault("ScrollPane.property[thumbFill]", thumbFill);
-        setUIDefault("ScrollPane.property[trackTop]", trackTop);
-        setUIDefault("ScrollPane.property[trackBottom]", trackBottom);
-        setUIDefault("ScrollPane.property[trackFill]", trackFill);
-        */
-        setUIDefault("ScrollPane.property[upArrow]", arrowUp);
-        setUIDefault("ScrollPane.property[downArrow]", arrowDown);
-        setUIDefault("ScrollPane.property[leftArrow]", arrowLeft);
-        setUIDefault("ScrollPane.property[rightArrow]", arrowRight);
+        Border track = new CompoundBorder(
+            new MetalScrollBar( trackTop, trackBottom ),
+            new CompoundBorder(new NimbusBorder(trackFillSettings),new EmptyBorder(0,(font.getHeight()/2),0,(font.getHeight()/2)))
+        );
 
-        /*
-        setUIDefault("Slider.property[thumbTop]", thumbTop);
-        setUIDefault("Slider.property[thumbBottom]", thumbBottom);
-        setUIDefault("Slider.property[thumbFill]", thumbFill);
-        setUIDefault("Slider.property[trackTop]", trackTop);
-        setUIDefault("Slider.property[trackBottom]", trackBottom);
-        setUIDefault("Slider.property[trackFill]", trackFill);
-        */
-
-        // ToolTip
-
-        setUIDefault("ToolTip.background",uiSettings.get("nimbusAlertYellow"));
-        setUIDefault("ToolTip.border",new LineBorder(decodeColor("nimbusOrange")));
+        setUIDefault("ScrollBarTrack.border",track);
+        setUIDefault("SliderTrack.border",track);
 
     }
 
