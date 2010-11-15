@@ -38,30 +38,30 @@ public class Table extends Panel {
 
     private Hashtable renderers;
     private Hashtable editors;
-    
+
     private Vector colWidths;
-    
+
     /**
      * @see javax.swing.JTable#rowHeight JTable.rowHeight
      */
     protected int rowHeight;
-    
+
      /**
      * @see javax.swing.JTable#editingRow JTable.editingRow
      */
     protected int editingRow;
-    
+
     /**
      * @see javax.swing.JTable#editingColumn JTable.editingColumn
      */
     protected int editingColumn;
-    
+
 
     /**
      * @see javax.swing.JTable#cellEditor JTable.cellEditor
      */
     protected TableCellEditor cellEditor;
-    
+
     /**
      * @see javax.swing.JTable#editorComp JTable.editorComp
      */
@@ -75,10 +75,10 @@ public class Table extends Panel {
     public Table() {
         colWidths = new Vector();
         rowHeight = (int) (theme.getFont(Style.ALL).getHeight() * 1.5); // default value
-        
+
         renderers = new Hashtable();
         editors = new Hashtable();
-        
+
         // should ALWAYS be selectable to that pointer event can give it focus
         focusable = true;
 
@@ -98,12 +98,12 @@ public class Table extends Panel {
      */
     public Table(Vector data, Vector names) {
         this();
-        
+
         dataVector=data;
         columnIdentifiers=names;
 
     }
-    
+
     // the current editor has finished editing
     public void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
 
@@ -114,7 +114,7 @@ public class Table extends Panel {
         }
 
     }
-    
+
     private boolean moveSelection(int d) {
 	// TODO: is editable
         if (d == Canvas.DOWN) {
@@ -153,14 +153,14 @@ public class Table extends Panel {
         return false;
 
     }
-    
+
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
         super.processMouseEvent(type, x, y, keys);
 
         if (!focusable) return;
 
         if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED ) {
-            
+
                 int x1 = 0,y1 = 0;
                 int currentRow = -1,currentCol = -1;
                 for (int c=0;c<getRowCount();c++) {
@@ -177,14 +177,14 @@ public class Table extends Panel {
                         break;
                     }
                 }
-                
+
                 if (currentCol==-1 || currentRow==-1) { return; }
-                
+
                 //if (editingColumn == currentCol && editingRow == currentRow)
                 if (type == DesktopPane.PRESSED) {
                     if(isCellEditable(currentRow, currentCol))
 			    editCellAt(currentRow,currentCol);
-                    
+
                     // dont pass clicks onto textComponents
                     if (editorComp!=null &&
                             x>= editorComp.getXWithBorder() &&
@@ -202,9 +202,9 @@ public class Table extends Panel {
 
                     setSelectedCell(currentRow,currentCol);
                 }
-            
+
         }
-        
+
     }
 
     /**
@@ -228,7 +228,7 @@ public class Table extends Panel {
         scrollRectToVisible( x, y , currentColWidth , currentRowHeight , false);
         repaint();
     }
-    
+
     public void focusLost() {
         repaint();
     }
@@ -242,12 +242,12 @@ public class Table extends Panel {
         }
         repaint();
     }
-     
+
     public boolean processKeyEvent(KeyEvent event) {
 
         int key = event.getIsDownKey();
         int action = event.getKeyAction(key);
-        
+
         if (    action==Canvas.UP ||
                 action==Canvas.DOWN ||
                 action==Canvas.LEFT ||
@@ -260,7 +260,7 @@ public class Table extends Panel {
             if (editingRow==-1 || editingColumn==-1) { return false; }
 
             editCellAt(editingRow, editingColumn);
-            
+
             // dont pass on fire to text components as that will open the native editor
             if (editorComp!=null && !(editorComp instanceof TextComponent && action == Canvas.FIRE)) {
                 // now pass the current event onto that component
@@ -282,7 +282,7 @@ public class Table extends Panel {
         }
         return x;
     }
-    
+
     /**
      * @param row the Row
      * @return the y position of a cell in the row
@@ -295,27 +295,27 @@ public class Table extends Panel {
         }
         return y;
     }
-    
+
     /**
      * @see javax.swing.JTable#editCellAt(int, int) JTable.editCellAt
      */
     public void editCellAt(int row, int column) {
-        
+
         removeEditor();
-        
+
         editingRow = row;
         editingColumn = column;
-        
+
         if (isCellEditable(editingRow, editingColumn)) {
-        
+
             cellEditor = getCellEditor(editingRow, editingColumn);
 
             editorComp = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
 
             add(editorComp);
-            
+
             doLayout();
-            
+
             if (getWindow().getFocusOwner() == this) {
                 editorComp.requestFocusInWindow();
             }
@@ -327,7 +327,7 @@ public class Table extends Panel {
      * @see javax.swing.JTable#removeEditor() JTable.removeEditor
      */
     public void removeEditor() {
-        
+
         if (cellEditor!=null) {
 
             setValueAt(cellEditor.getCellEditorValue(),editingRow, editingColumn);
@@ -347,21 +347,21 @@ public class Table extends Panel {
             removeAll();
 
         }
-        
+
     }
-    
+
     public void paintComponent(Graphics2D g) {
         int x=0,y=0;
         int his = intercellSpacing/2;
 
         int cols = getColumnCount();
         int rowc = getRowCount();
-        
+
         boolean editOpen = getComponents().size()==1;
-        
+
         boolean good1=false;
         for (int r=0;r<rowc;r++) {
-            
+
             int currentRowHeight = getRowHeight(r);
 
             if (y < g.getClipY()+g.getClipHeight() &&
@@ -378,7 +378,7 @@ public class Table extends Panel {
 
                           if (!editOpen || editingRow!=r || editingColumn!=c) {
 
-                                Component comp = getComponentFor(r,c);
+                                Component comp = prepareRenderer(r,c);
                                 if (comp!=null) {
 
                                     comp.setBoundsWithBorder(x+his, y+his, currentColWidth-intercellSpacing, currentRowHeight-intercellSpacing);
@@ -402,14 +402,17 @@ public class Table extends Panel {
             else if (good1) {
                 break;
             }
-            
+
             y = y + currentRowHeight;
             x=0;
         }
     }
-    
-    private Component getComponentFor(int r,int c) {
-	    
+
+    /**
+     * @see javax.swing.JTable#prepareRenderer(javax.swing.table.TableCellRenderer, int, int) JTable.prepareRenderer
+     */
+    public Component prepareRenderer(int r,int c) {
+
         Object object = getValueAt(r, c);
 
         ListCellRenderer renderer = getCellRenderer(r,c);
@@ -418,14 +421,14 @@ public class Table extends Panel {
         Component comp = renderer.getListCellRendererComponent(this, object, r, sel ,sel && isFocusOwner() );
 
         return comp;
-        
+
     }
 
     public void workoutMinimumSize() {
         super.workoutMinimumSize();
 
         //int w = 0;
-        
+
         //int c = getColumnCount();
         //for (int a=0;a<c;a++) {
         //    w = w + getColumnWidth(a);
@@ -444,7 +447,7 @@ public class Table extends Panel {
             }
             width = w;
         //}
-        
+
     }
 
     protected int workoutHeight() {
@@ -459,9 +462,9 @@ public class Table extends Panel {
         //}
 
     }
-    
+
     public void doLayout() {
-        
+
         if (editorComp!=null) {
             int x=getCellX(editingColumn);
             int y=getCellY(editingRow);
@@ -519,35 +522,35 @@ public class Table extends Panel {
                 ListCellRenderer renderer = (ListCellRenderer)renderers.get( getColumnClass(column) );
 
                 if (renderer==null) renderer = (ListCellRenderer)renderers.get(Object.class);
-                
+
 		return renderer;
 
     }
 
     public String getToolTipText() {
         if (editingRow!=-1 && editingColumn!=-1) {
-            Component c = getComponentFor(editingRow,editingColumn);
+            Component c = prepareRenderer(editingRow,editingColumn);
             return (c==null)?null:c.getToolTipText();
         }
         return super.getToolTipText();
     }
-    
+
     public int getToolTipLocationX() {
-        
+
         if (editingRow!=-1 && editingColumn!=-1) {
-            Component c = getComponentFor(editingRow,editingColumn);
+            Component c = prepareRenderer(editingRow,editingColumn);
             return getCellX(editingColumn) + c.getToolTipLocationX();
         }
-        
+
         return super.getToolTipLocationX();
     }
     public int getToolTipLocationY() {
-        
+
         if (editingRow!=-1 && editingColumn!=-1) {
-            Component c = getComponentFor(editingRow,editingColumn);
+            Component c = prepareRenderer(editingRow,editingColumn);
             return getCellY(editingRow) + c.getToolTipLocationY();
         }
-        
+
         return super.getToolTipLocationY();
     }
 
@@ -558,7 +561,7 @@ public class Table extends Panel {
     public int getSelectedRow() {
         return editingRow;
     }
-    
+
     /**
      * @see javax.swing.JTable#getSelectedColumns() JTable.getSelectedColumns
      * @see javax.swing.JTable#getEditingColumn() JTable.getEditingColumn
@@ -577,7 +580,7 @@ public class Table extends Panel {
      * @see javax.swing.JTable#setRowHeight(int) JTable.setRowHeight
      */
     public void setRowHeight(int rowHeight) {
-        
+
         this.rowHeight = rowHeight;
 //
 //        if (parent!=null) {
@@ -586,7 +589,7 @@ public class Table extends Panel {
 //        }
 
     }
-    
+
     public void setColumnWidth(int col,int colHeight) {
 
          while (colWidths.size() <= col) {
@@ -594,7 +597,7 @@ public class Table extends Panel {
          }
          colWidths.setElementAt(new Integer(colHeight), col);
     }
-          
+
     /**
      * @return the current width of a column
      * @see javax.swing.table.TableColumn#getMinWidth() TableColumn.getMinWidth
@@ -658,12 +661,12 @@ public class Table extends Panel {
      * @see javax.swing.table.DefaultTableModel#dataVector DefaultTableModel.dataVector
      */
     protected Vector dataVector;
-    
+
     /**
      * @see javax.swing.table.DefaultTableModel#columnIdentifiers DefaultTableModel.columnIdentifiers
      */
     protected Vector columnIdentifiers;
-    
+
     /**
      * @param columnIndex
      * @return the class of the column
@@ -672,7 +675,7 @@ public class Table extends Panel {
     public Class getColumnClass(int columnIndex) {
         return getValueAt(0,columnIndex).getClass();
     }
-    
+
     /**
      * @param rowIndex
      * @param columnIndex
@@ -723,7 +726,7 @@ public class Table extends Panel {
     public String getColumnName(int columnIndex) {
         return (String)columnIdentifiers.elementAt(columnIndex);
     }
-    
+
     /**
      * @return the number of rows
      * @see javax.swing.table.TableModel#getRowCount() TableModel.getRowCount
