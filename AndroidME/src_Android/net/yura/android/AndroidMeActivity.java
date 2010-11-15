@@ -14,25 +14,25 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.lcdui.Toolkit;
-
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.BroadcastReceiver;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickListener {
 
@@ -225,6 +225,11 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         // PIM and File (Note: "file.separator" already setup by Android OS)
         System.setProperty("microedition.pim.version", "1.0");
         System.setProperty("microedition.io.file.FileConnection.version", "1.0");
+        
+        // Hardware properties.
+        // Returns the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
+        String imei = ((TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+        System.setProperty("phone.imei", imei);
 
         // Listen for External Storage events
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
