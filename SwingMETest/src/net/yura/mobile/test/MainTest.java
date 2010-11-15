@@ -10,6 +10,7 @@ import javax.microedition.lcdui.Image;
 import javax.microedition.io.Connector;
 import javax.microedition.io.InputConnection;
 
+import javax.microedition.lcdui.Canvas;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Midlet;
@@ -305,6 +306,7 @@ public class MainTest extends Section {
                         int code1 = keypad.getJustPressedKey();
                         int code2 = keypad.getJustReleasedKey();
                         int code3 = keypad.getIsDownKey();
+                        System.out.println("code1="+code1+" code2="+code2+" code3="+code3);
                         int code = (code3==0)?code2:code3;
                         if (code!=0) {
                             infoLabel.append("keyEvent: "+code +"\nKeyText: "+keypad.getKeyText(code));
@@ -320,15 +322,15 @@ public class MainTest extends Section {
                             if (gcode!=0) {
                                 infoLabel.append("\ngame action: "+gcode+"\n");
                                 switch(gcode) {
-                                case 1: infoLabel.append("UP"); break;
-                                case 2: infoLabel.append("LEFT"); break;
-                                case 5: infoLabel.append("RIGHT"); break;
-                                case 6: infoLabel.append("DOWN"); break;
-                                case 8: infoLabel.append("FIRE"); break;
-                                case 9: infoLabel.append("GAME_A"); break;
-                                case 10: infoLabel.append("GAME_B"); break;
-                                case 11: infoLabel.append("GAME_C"); break;
-                                case 12: infoLabel.append("GAME_D"); break;
+                                case Canvas.UP: infoLabel.append("UP"); break;
+                                case Canvas.LEFT: infoLabel.append("LEFT"); break;
+                                case Canvas.RIGHT: infoLabel.append("RIGHT"); break;
+                                case Canvas.DOWN: infoLabel.append("DOWN"); break;
+                                case Canvas.FIRE: infoLabel.append("FIRE"); break;
+                                case Canvas.GAME_A: infoLabel.append("GAME_A"); break;
+                                case Canvas.GAME_B: infoLabel.append("GAME_B"); break;
+                                case Canvas.GAME_C: infoLabel.append("GAME_C"); break;
+                                case Canvas.GAME_D: infoLabel.append("GAME_D"); break;
                                 default: infoLabel.append("Unknown"); break;
                                 }
                             }
