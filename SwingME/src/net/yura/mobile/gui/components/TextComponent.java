@@ -333,6 +333,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                             //if (!allowOnlyNumberConstraint()) {
                                 // TODO should check it does not make the text longer then that allowed
                                 text.insert(caretPosition, txt);
+                                changedUpdate(caretPosition,txt.length());
                                 setCaretPosition(caretPosition + txt.length());
                             //}
 
