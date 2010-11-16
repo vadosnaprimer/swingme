@@ -102,14 +102,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         Style listCellRenderer = new Style(defaultStyle);
         Border mainBorder = getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector , listExtraPadding);
-        listCellRenderer.addBorder(new BorderWithDivider(mainBorder, divider2 ),Style.ALL);
+        listCellRenderer.addBorder(new BorderWithDivider(mainBorder, divider2,false ),Style.ALL);
         setForegroundColor(ctx, listCellRenderer, android.R.style.TextAppearance_Large,ListCellRenderer.class); // Has defined in simple_list_item.xml
         setStyleFor("ListRenderer",listCellRenderer);
 
         // --- List (No padding) ---
         Style listCellRendererCollapsed = new Style(defaultStyle);
         Border mainBorder2 = getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector);
-        listCellRendererCollapsed.addBorder(new BorderWithDivider(mainBorder2, divider2 ),Style.ALL);
+        listCellRendererCollapsed.addBorder(new BorderWithDivider(mainBorder2, divider2,true ),Style.ALL);
         setForegroundColor(ctx, listCellRendererCollapsed, android.R.style.TextAppearance_Large,ListCellRenderer.class); // Has defined in simple_list_item.xml
         setStyleFor("ListRendererCollapsed",listCellRendererCollapsed);
 
@@ -231,7 +231,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // TODO: This may not be the right render
         Style popupRendererStyle = new Style(menuRendererStyle);
         Rect menuRenderExtraPadding2 = getAdjustedDensityRect(ctx, 12, 12, 12, 12);
-        popupRendererStyle.addBorder(new BorderWithDivider( new AndroidBorder(menuBorder,menuRenderExtraPadding2) , divider2),Style.ALL);
+        popupRendererStyle.addBorder(new BorderWithDivider( new AndroidBorder(menuBorder,menuRenderExtraPadding2) , divider2,false),Style.ALL);
         setStyleFor("PopupListRenderer", popupRendererStyle);
 
         // --- Tooltip ---

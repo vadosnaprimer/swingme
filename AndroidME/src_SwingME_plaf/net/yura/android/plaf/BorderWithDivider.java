@@ -7,10 +7,12 @@ import net.yura.mobile.gui.components.Component;
 public class BorderWithDivider implements Border {
 
     Border border,divider;
+    boolean showDiv;
 
-    public BorderWithDivider(Border border,Border divider) {
+    public BorderWithDivider(Border border,Border divider,boolean showD) {
         this.border = border;
         this.divider = divider;
+        showDiv = showD;
     }
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
@@ -32,7 +34,7 @@ public class BorderWithDivider implements Border {
     }
 
     public int getBottom() {
-        return border.getBottom();
+        return border.getBottom()+ (showDiv?divider.getTop()+divider.getBottom():0);
     }
 
     public int getRight() {
