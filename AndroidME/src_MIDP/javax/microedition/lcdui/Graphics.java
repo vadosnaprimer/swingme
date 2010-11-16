@@ -246,6 +246,12 @@ public class Graphics {
             return;
         }
 
+        drawRegion(src, xSrc, ySrc, width, height, getMatrix(transform), x_dst, y_dst, anchor);
+    }
+
+
+    public static Matrix getMatrix(int transform) {
+
         int rotate;
         boolean mirror;
 
@@ -295,11 +301,18 @@ public class Graphics {
             }
         }
 
-        drawRegion(src, xSrc, ySrc, width, height, rotate, mirror, x_dst, y_dst, anchor);
+        // Create a matrix and apply the rotation and mirroring (scale == -1)
+        Matrix matrix = new Matrix();
+        matrix.preRotate(rotate);
+        matrix.preScale(mirror ? -1.0f : 1.0f, 1.0f);
+        return matrix;
+
     }
 
+
+
     public void drawRegion(Image src, int xSrc, int ySrc, int width,
-            int height, int rotate, boolean mirror, int xDst, int yDst, int anchor) {
+            int height, Matrix matrix, int xDst, int yDst, int anchor) {
 
         // may throw NullPointerException, this is ok
         if (xSrc + width > src.getWidth() || ySrc + height > src.getHeight() ||
@@ -311,10 +324,7 @@ public class Graphics {
             anchor = TOP | LEFT;
         }
 
-        // Create a matrix and apply the rotation and mirroring (scale == -1)
-        Matrix matrix = new Matrix();
-        matrix.preRotate(rotate);
-        matrix.preScale(mirror ? -1.0f : 1.0f, 1.0f);
+
 
         // Get the destination rectangle after rotation and mirroring...
         RectF r = new RectF(0, 0,  width,  height);

@@ -1,7 +1,7 @@
 package net.yura.android.plaf;
 
 import java.util.Vector;
-
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
@@ -62,6 +62,7 @@ public class AndroidBorder implements Border {
         setDrawableState(c, drawable);
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
         canvas.save();
+        canvas.concat( Graphics.getMatrix(g.getTransform()) );
         canvas.clipRect(-getLeft(), -getTop(), width+getRight(), height+getBottom());
         drawable.setBounds(-getLeft(), -getTop(), width+getRight(), height+getBottom());
         drawable.draw(canvas);
