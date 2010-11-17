@@ -30,6 +30,7 @@ public class KeyEvent {
          * Default Softkey left value.
          * this will be activated by the 'F1' key in ME4SE and appear as 'Left SoftKey' of J2ME phones.
          * On Android and blackberry nothing special will be done with this button
+         * @see net.yura.mobile.gui.components.Button#setMnemonic(int)
          */
 	public static final int KEY_SOFTKEY1 = -6;
 
@@ -37,6 +38,7 @@ public class KeyEvent {
          * Default Softkey right value.
          * this will be activated by the 'F2' key in ME4SE and appear as 'Right SoftKey' of J2ME phones.
          * On Android and blackberry nothing special will be done with this button
+         * @see net.yura.mobile.gui.components.Button#setMnemonic(int)
          */
 	public static final int KEY_SOFTKEY2 = -7;
 
