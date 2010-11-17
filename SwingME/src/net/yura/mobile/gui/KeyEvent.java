@@ -20,24 +20,68 @@ package net.yura.mobile.gui;
 import javax.microedition.lcdui.Canvas;
 
 /**
+ * ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
  * @author Yura Mamyrin
  * @see java.awt.event.KeyEvent
  */
 public class KeyEvent {
 
-         // ALL KEYS THAT ARE NOT LETTERS MUST BE NAGATIVE!
+        /**
+         * Default Softkey left value.
+         * this will be activated by the 'F1' key in ME4SE and appear as 'Left SoftKey' of J2ME phones.
+         * On Android and blackberry nothing special will be done with this button
+         */
+	public static final int KEY_SOFTKEY1 = -6;
 
-	public static final int KEY_SOFTKEY1 = -6;	//Default Softkey left value
-	public static final int KEY_SOFTKEY2 = -7;	//Default Softkey right value
-        public static final int KEY_SOFTKEY3 = -5;	//Default Softkey center value
-        public static final int KEY_CLEAR = -8;         //Default Clear value, this NEEDS to be negative
+        /**
+         * Default Softkey right value.
+         * this will be activated by the 'F2' key in ME4SE and appear as 'Right SoftKey' of J2ME phones.
+         * On Android and blackberry nothing special will be done with this button
+         */
+	public static final int KEY_SOFTKEY2 = -7;
 
-        public static final int KEY_DELETE = -9; // is the right 'clear' key in WTK3
+        /**
+         * Default Softkey center value
+         */
+        public static final int KEY_SOFTKEY3 = -5;
 
-        public static final int KEY_CALL = -10; // green key
-        public static final int KEY_END  = -11; // back button on some sony ericsons, android
-        public static final int KEY_MENU = -12; // 'app menu' on S60, 'inapp menu' on android
-        public static final int KEY_EDIT = -50; // S60 pensil button
+        /**
+         * Default Clear value, this NEEDS to be negative
+         */
+        public static final int KEY_CLEAR = -8;
+
+        /**
+         * is the right 'clear' key in WTK3
+         */
+        public static final int KEY_DELETE = -9;
+
+        /**
+         * S40 and S60 Green call key
+         */
+        public static final int KEY_CALL = -10;
+
+        /**
+         * back button on some sony ericsons, android.
+         * this will be activated by the 'Esc' key in ME4SE and appear as 'Right SoftKey' of J2ME phones
+         * On Android and blackberry it will be hidden from the layout and activated by the 'BACK' button
+         * @see net.yura.mobile.gui.components.Button#setMnemonic(int)
+         */
+        public static final int KEY_END  = -11;
+
+        /**
+         * 'app menu' on S60 (SwingME blocks this from acting as a mnemonic on S60 {@link DesktopPane#passKeyEvent(KeyEvent)}), 'inapp menu' on android
+         * this will be activated by the 'Alt' key in ME4SE and appear as 'Left SoftKey' of J2ME phones
+         * On Android and blackberry it will be hidden from the layout and activated by the 'MENU' button
+         * @see net.yura.mobile.gui.components.Button#setMnemonic(int)
+         */
+        public static final int KEY_MENU = -12;
+
+        /**
+         * S60 pensil button
+         * MS4SE Ctrl Key
+         */
+        public static final int KEY_EDIT = -50;
+
         //public static final int KEY_WEB = -20; // SonyE
         //public static final int KEY_PHOTO = -24 or -25 or -26; // SonyE
         //public static final int KEY_UP = -36; // SonyE

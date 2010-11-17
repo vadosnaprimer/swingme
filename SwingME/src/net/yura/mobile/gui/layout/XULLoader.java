@@ -65,22 +65,30 @@ import org.kxml2.io.KXmlParser;
 public class XULLoader {
 
     /**
+     * This is the SAME as the {@link net.yura.mobile.gui.KeyEvent#KEY_MENU} except it has a positive value for use in thinlet xml
      * @see java.awt.event.KeyEvent#VK_ALT KeyEvent.VK_ALT
+     * @see net.yura.mobile.gui.KeyEvent#KEY_MENU
      */
     public static final int VK_ALT = 18; // open the menu
 
     /**
+     * This is the SAME as the {@link net.yura.mobile.gui.KeyEvent#KEY_END} except it has a positive value for use in thinlet xml
      * @see java.awt.event.KeyEvent#VK_ESCAPE KeyEvent.VK_ESCAPE
+     * @see net.yura.mobile.gui.KeyEvent#KEY_END
      */
     public static final int VK_ESCAPE = 27; // go back
 
     /**
+     * This is the SAME as the {@link net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY1} except it has a positive value for use in thinlet xml
      * @see java.awt.event.KeyEvent#VK_F1 KeyEvent.VK_F1
+     * @see net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY1
      */
     public static final int VK_F1 = 112;
 
     /**
+     * This is the SAME as the {@link net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY2} except it has a positive value for use in thinlet xml
      * @see java.awt.event.KeyEvent#VK_F2 KeyEvent.VK_F2
+     * @see net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY2
      */
     public static final int VK_F2 = 113;
 

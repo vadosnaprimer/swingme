@@ -416,7 +416,33 @@ public class Button extends Label implements ActionListener {
         }
 
         /**
+         * <p>
+         * When set to {@link net.yura.mobile.gui.KeyEvent#KEY_MENU}
+         * this will be activated by the 'Alt' key in ME4SE and appear as 'Left SoftKey' of J2ME phones
+         * On Android and blackberry it will be hidden from the layout and activated by the 'MENU' button
+         * </p>
+         * <p>
+         * When set to {@link net.yura.mobile.gui.KeyEvent#KEY_END}
+         * this will be activated by the 'Esc' key in ME4SE and appear as 'Right SoftKey' of J2ME phones
+         * On Android and blackberry it will be hidden from the layout and activated by the 'BACK' button
+         * </p>
+         * <p>
+         * When set to {@link net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY1}
+         * this will be activated by the 'F1' key in ME4SE and appear as 'Left SoftKey' of J2ME phones.
+         * On Android and blackberry nothing special will be done with this button
+         * </p>
+         * <p>
+         * When set to {@link net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY2}
+         * this will be activated by the 'F2' key in ME4SE and appear as 'Right SoftKey' of J2ME phones.
+         * On Android and blackberry nothing special will be done with this button
+         * </p>
          * @see javax.swing.AbstractButton#setMnemonic(int) AbstractButton.setMnemonic
+         *
+         * @see net.yura.mobile.gui.KeyEvent#KEY_MENU
+         * @see net.yura.mobile.gui.KeyEvent#KEY_END
+         *
+         * @see net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY1
+         * @see net.yura.mobile.gui.KeyEvent#KEY_SOFTKEY2
          */
         public void setMnemonic(int m) {
             mneonic = m;
