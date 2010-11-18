@@ -33,6 +33,7 @@ import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
+import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.logging.Logger;
@@ -870,6 +871,8 @@ public class DesktopPane extends Canvas implements Runnable {
                     ((Frame)w).setMaximum(true);
                 }
                 pointerComponent = null;
+
+                windowChanged();
             }
             //#mdebug warn
             else {
@@ -891,6 +894,8 @@ public class DesktopPane extends Canvas implements Runnable {
             if (windows.contains(w)) {
                 windows.removeElement(w);
                 pointerComponent = null;
+
+                windowChanged();
             }
             //#mdebug warn
             else {
@@ -916,6 +921,8 @@ public class DesktopPane extends Canvas implements Runnable {
                 windows.removeElement(w);
                 windows.addElement(w);
                 pointerComponent = null;
+
+                windowChanged();
             }
             //#mdebug warn
             else {
@@ -925,6 +932,11 @@ public class DesktopPane extends Canvas implements Runnable {
             //#enddebug
         }
         fullRepaint();
+    }
+
+    private static void windowChanged() {
+        System.out.println("windowChanged windowChanged windowChanged windowChanged windowChanged windowChanged windowChanged");
+        TextComponent.closeNativeEditor();
     }
 
     /**
@@ -1379,7 +1391,7 @@ public class DesktopPane extends Canvas implements Runnable {
     // this is to fix buttons not being released properly on some phones
     public void showNotify() {
 
-        //#debug debug        
+        //#debug debug
         Logger.debug("showNotify");
 
         desktop = this;

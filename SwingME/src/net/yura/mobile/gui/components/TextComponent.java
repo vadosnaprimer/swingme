@@ -380,7 +380,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
         public void openNativeEditor() {
-            System.out.println("openNativeEditor openNativeEditor openNativeEditoropenNativeEditoropenNativeEditoropenNativeEditoropenNativeEditor");
                 // can not reuse this because of problems on S60
                 textbox = new TextBox(label, getText(), maxSize, constraints);
 
@@ -394,12 +393,14 @@ public abstract class TextComponent extends Component implements ActionListener,
                 Display.getDisplay(Midlet.getMidlet()).setCurrent(textbox);
 
         }
-        public void closeNativeEditor() {
+        public static void closeNativeEditor() {
             // go back to normal
-            DesktopPane rp = getDesktopPane();
-            Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
-            rp.setFullScreenMode(true);
-            textbox = null;
+            if (textbox!=null) {
+                DesktopPane rp = DesktopPane.getDesktopPane(); // will this always be the correct DesktopPane??
+                Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
+                rp.setFullScreenMode(true);
+                textbox = null;
+            }
         }
 
         public void commandAction(Command arg0, Displayable arg1) {
@@ -557,15 +558,6 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
 
                 dp.setIndicatorText(null);
-
-                if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
-                    Window w = getWindow();
-                    // if our window is null or if the next component is not a TextComponent
-                    if (w==null || !(w.getFocusOwner() instanceof TextComponent)) {
-                        closeNativeEditor();
-                    }
-                }
-
 		repaint();
 	}
 
