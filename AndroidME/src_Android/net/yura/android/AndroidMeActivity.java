@@ -229,7 +229,10 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         // Hardware properties.
         // Returns the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
         String imei = ((TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        System.setProperty("phone.imei", imei);
+        // fails on emulator
+        if(imei != null){
+        	System.setProperty("phone.imei", imei);
+        }
 
         // Listen for External Storage events
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
