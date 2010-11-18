@@ -10,10 +10,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -64,38 +64,38 @@ public abstract class Canvas extends Displayable {
     public int getGameAction(int keyCode) {
         int res;
         switch (keyCode) {
-            case -5:
-            case -10:
-                res = Canvas.FIRE;
-                break;
-            case -1:
-                res = Canvas.UP;
-                break;
-            case -2:
-            case '\t': // this is the tab key, and same as code = 9
-                res = Canvas.DOWN;
-                break;
-            case -3:
-                res = Canvas.LEFT;
-                break;
-            case -4:
-                res = Canvas.RIGHT;
-                break;
-            case '7':
-                res = Canvas.GAME_A;
-                break;
-            case '9':
-                res = Canvas.GAME_B;
-                break;
-            case '*':
-                res = Canvas.GAME_C;
-                break;
-            case '#':
-                res = Canvas.GAME_D;
-                break;
-            default:
-                res = 0;
-                break;
+        case -5:
+        case -10:
+            res = Canvas.FIRE;
+            break;
+        case -1:
+            res = Canvas.UP;
+            break;
+        case -2:
+        case '\t': // this is the tab key, and same as code = 9
+            res = Canvas.DOWN;
+            break;
+        case -3:
+            res = Canvas.LEFT;
+            break;
+        case -4:
+            res = Canvas.RIGHT;
+            break;
+        case '7':
+            res = Canvas.GAME_A;
+            break;
+        case '9':
+            res = Canvas.GAME_B;
+            break;
+        case '*':
+            res = Canvas.GAME_C;
+            break;
+        case '#':
+            res = Canvas.GAME_D;
+            break;
+        default:
+            res = 0;
+            break;
         }
         return res;
     }
@@ -103,36 +103,36 @@ public abstract class Canvas extends Displayable {
     public int getKeyCode(int gameAction) {
         int res;
         switch (gameAction) {
-            case Canvas.FIRE:
-                res = -5;
-                break;
-            case Canvas.UP:
-                res = -1;
-                break;
-            case Canvas.DOWN:
-                res = -2;
-                break;
-            case Canvas.LEFT:
-                res = -3;
-                break;
-            case Canvas.RIGHT:
-                res = -4;
-                break;
-            case Canvas.GAME_A:
-                res = '7';
-                break;
-            case Canvas.GAME_B:
-                res = '9';
-                break;
-            case Canvas.GAME_C:
-                res = '*';
-                break;
-            case Canvas.GAME_D:
-                res = '#';
-                break;
-            default:
-                res = 0;
-                break;
+        case Canvas.FIRE:
+            res = -5;
+            break;
+        case Canvas.UP:
+            res = -1;
+            break;
+        case Canvas.DOWN:
+            res = -2;
+            break;
+        case Canvas.LEFT:
+            res = -3;
+            break;
+        case Canvas.RIGHT:
+            res = -4;
+            break;
+        case Canvas.GAME_A:
+            res = '7';
+            break;
+        case Canvas.GAME_B:
+            res = '9';
+            break;
+        case Canvas.GAME_C:
+            res = '*';
+            break;
+        case Canvas.GAME_D:
+            res = '#';
+            break;
+        default:
+            res = 0;
+            break;
         }
         return res;
     }
@@ -207,33 +207,8 @@ public abstract class Canvas extends Displayable {
         return (h > 0) ? h : super.getHeight();
     }
 
-
-    class MyGestureDetector extends SimpleOnGestureListener {
-        private static final int SWIPE_MIN_DISTANCE = 120;
-        private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            int keyCode = -1;
-
-            if (Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-
-                int dist = (int) (e1.getX() - e2.getX());
-
-                if (dist > SWIPE_MIN_DISTANCE) {
-                    keyCode = KeyEvent.KEYCODE_DPAD_LEFT;
-                } else if (-dist > SWIPE_MIN_DISTANCE) {
-                    keyCode = KeyEvent.KEYCODE_DPAD_RIGHT;
-                }
-
-                if (keyCode != -1) {
-                    canvasView.onKeyDown(keyCode, new KeyEvent(KeyEvent.ACTION_DOWN, keyCode));
-                    canvasView.onKeyUp(keyCode, new KeyEvent(KeyEvent.ACTION_UP, keyCode));
-                }
-            }
-
-            return (keyCode != -1);
-        }
+    public void hideSoftKeyboard() {
+        canvasView.hideNativeTextInput();
     }
 
 
@@ -412,18 +387,14 @@ public abstract class Canvas extends Displayable {
         private int eventY;
         private int eventType = -1;
 
-        private int[]  touchType;
-        private int[]  touchX;
-        private int[]  touchY;
+        private int[] touchType;
+        private int[] touchX;
+        private int[] touchY;
 
 //        private int[] touchDebug;
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-
-//            if (gestureDetector.onTouchEvent(event)) {
-//                return true;
-//            }
 
             int actionCode = event.getAction() & 0xFF;
 
@@ -434,25 +405,25 @@ public abstract class Canvas extends Displayable {
 
             int action;
             switch (actionCode) {
-                case MotionEvent.ACTION_DOWN: //$FALL-THROUGH$
-                case 0x5:                     // ACTION_POINTER_DOWN (API Level 5)
-                    action = POINTER_PRESSED;
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    action = POINTER_DRAGGED;
-                    break;
-                case MotionEvent.ACTION_CANCEL:
-                    // A cancel can happen if the virtual keyboard is displayed.
-                    // x & y will be zero, so we simulate a POINTER_RELEASED
-                    // using the last known x/y values.
-                    action = POINTER_RELEASED;
-                    x = eventX;
-                    y = eventY;
-                    break;
-                default:
-                    // Handles ACTION_UP, ACTION_CANCEL, ACTION_OUTSIDE, etc...
-                    action = POINTER_RELEASED;
-                    break;
+            case MotionEvent.ACTION_DOWN: //$FALL-THROUGH$
+            case 0x5: // ACTION_POINTER_DOWN (API Level 5)
+                action = POINTER_PRESSED;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                action = POINTER_DRAGGED;
+                break;
+            case MotionEvent.ACTION_CANCEL:
+                // A cancel can happen if the virtual keyboard is displayed.
+                // x & y will be zero, so we simulate a POINTER_RELEASED
+                // using the last known x/y values.
+                action = POINTER_RELEASED;
+                x = eventX;
+                y = eventY;
+                break;
+            default:
+                // Handles ACTION_UP, ACTION_CANCEL, ACTION_OUTSIDE, etc...
+                action = POINTER_RELEASED;
+                break;
             }
 
             // Rounding can create "repeated" events... Ignore them.
@@ -464,19 +435,19 @@ public abstract class Canvas extends Displayable {
 
                 try {
                     switch (action) {
-                        case POINTER_PRESSED:
-                            if (pointerCount == 1) {
-                                Canvas.this.pointerPressed(x, y);
-                            }
-                            break;
-                        case POINTER_DRAGGED:
-                            Canvas.this.pointerDragged(x, y);
-                            break;
-                        default:
-                            if (pointerCount == 1) {
-                                Canvas.this.pointerReleased(x, y);
-                            }
-                            break;
+                    case POINTER_PRESSED:
+                        if (pointerCount == 1) {
+                            Canvas.this.pointerPressed(x, y);
+                        }
+                        break;
+                    case POINTER_DRAGGED:
+                        Canvas.this.pointerDragged(x, y);
+                        break;
+                    default:
+                        if (pointerCount == 1) {
+                            Canvas.this.pointerReleased(x, y);
+                        }
+                        break;
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -542,9 +513,9 @@ public abstract class Canvas extends Displayable {
 
             // WORK-ARROUD: Nexus, Desire, etc.
             // 1 - Close points are unreliable. Any difference bigger than
-            //     MIN_DIST automatically makes the points valid.
+            // MIN_DIST automatically makes the points valid.
             // 2 - If both points (fingers) move at the same time, then they
-            //     are also valid.
+            // are also valid.
             boolean fwEvent = false;
             if (touchPos[0] != p0 || touchPos[1] != p1) {
                 if (Math.abs(p0 - p1) > MULTI_TOUCH_MIN_DIST ||
@@ -650,19 +621,23 @@ public abstract class Canvas extends Displayable {
         }
 
         private void fixVirtualKeyboard() {
-            getHandler().postDelayed(new Runnable() {
-                public void run() {
+
+            Handler handler = getHandler();
+            if (handler != null) {
+                handler.postDelayed(new Runnable() {
+                    public void run() {
 
                     // WorkArround: View Re-size not done by the platform on landscape
                     // virtual keyboard... Ask to scroll to the bottom of the view.
                     requestRectangleOnScreen(new Rect(0, getHeight() - 1, 1, getHeight()));
 
-                    int h = getHeight();
+                        int h = getHeight();
                     if (requestRectangleOnScreen(new Rect(0, h - 1, 1, h), true)) {
-                        invalidate();
+                            invalidate();
+                        }
                     }
-                }
-            }, 500);
+                }, 500);
+            }
         }
 
         public void showNativeTextInput() {

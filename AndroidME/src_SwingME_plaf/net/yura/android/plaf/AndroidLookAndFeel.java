@@ -24,11 +24,8 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
-import net.yura.mobile.gui.plaf.LookAndFeel;
-import net.yura.mobile.gui.plaf.MetalIcon;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
-import net.yura.mobile.logging.Logger;
 
 public class AndroidLookAndFeel extends SynthLookAndFeel {
 

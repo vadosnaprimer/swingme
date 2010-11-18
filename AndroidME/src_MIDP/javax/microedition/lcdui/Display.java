@@ -90,6 +90,13 @@ public class Display
     }
 
     public void setCurrent(final Displayable current) {
+        if (current instanceof Canvas) {
+            ((Canvas) current).hideSoftKeyboard();
+        }
+        else if (this.current instanceof Canvas) {
+            ((Canvas) this.current).hideSoftKeyboard();
+        }
+
         if (current == null) {
             // Set Application to background
             midlet.getActivity().moveTaskToBack(true);
