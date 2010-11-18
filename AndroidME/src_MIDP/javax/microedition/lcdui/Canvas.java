@@ -219,7 +219,7 @@ public abstract class Canvas extends Displayable {
         private int keyMenuCount;
         private View inputConnectionView;
         private boolean needsNativeInput;
-        private boolean hasWindowFocus;
+        private boolean hasWindowFocus = true;
 
         public CanvasView(Context context) {
             super(context);
@@ -644,7 +644,10 @@ public abstract class Canvas extends Displayable {
 
         private void showNativeTextInput() {
             fixVirtualKeyboard();
-            getInputManager().showSoftInput(this, InputMethodManager.SHOW_FORCED);
+//            System.out.println(">>>>>> showNativeTextInput");
+            InputMethodManager m = getInputManager();
+            m.restartInput(this);
+            m.showSoftInput(this, InputMethodManager.SHOW_FORCED);
         }
 
         private void hideNativeTextInput() {
@@ -659,14 +662,14 @@ public abstract class Canvas extends Displayable {
 
         public void setInputConnectionView(View view) {
             if (inputConnectionView != view) {
+//                System.out.println(">>>>>> showNativeTextInput0 " + hasWindowFocus);
 
                 this.inputConnectionView = view;
-                getInputManager().restartInput(this);
+                this.needsNativeInput = !hasWindowFocus;
 
-                needsNativeInput = true;
                 if (hasWindowFocus) {
+//                    System.out.println(">>>>>> showNativeTextInput1");
                     showNativeTextInput();
-                    needsNativeInput = false;
                 }
             }
         }
@@ -682,17 +685,19 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public void onWindowFocusChanged(boolean hasWindowFocus) {
+//            System.out.println(">>>>>> onWindowFocusChanged: " + hasWindowFocus);
             this.hasWindowFocus = hasWindowFocus;
             super.onWindowFocusChanged(hasWindowFocus);
 
             try {
                 if (hasWindowFocus) {
-                    showNotify();
-
                     if (needsNativeInput) {
                         needsNativeInput = false;
+//                        System.out.println(">>>>>> showNativeTextInput2");
                         showNativeTextInput();
                     }
+
+                    showNotify();
                 }
                 else {
                     hideNotify();
