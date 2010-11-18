@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="AndroidMe" default="help">
 
+    <property name="sdk.dir" value="C:/Dev/android-sdk-windows" />
+    <import file="nbproject/build-impl.xml"/>
+
 	<copy file="../AndroidME/AndroidManifest.xml" todir="."/>
 	
 	<path id="project.classpath">
