@@ -380,7 +380,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
         public void openNativeEditor() {
-
+            System.out.println("openNativeEditor openNativeEditor openNativeEditoropenNativeEditoropenNativeEditoropenNativeEditoropenNativeEditor");
                 // can not reuse this because of problems on S60
                 textbox = new TextBox(label, getText(), maxSize, constraints);
 
@@ -394,17 +394,19 @@ public abstract class TextComponent extends Component implements ActionListener,
                 Display.getDisplay(Midlet.getMidlet()).setCurrent(textbox);
 
         }
+        public void closeNativeEditor() {
+            // go back to normal
+            DesktopPane rp = getDesktopPane();
+            Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
+            rp.setFullScreenMode(true);
+            textbox = null;
+        }
 
         public void commandAction(Command arg0, Displayable arg1) {
             if (arg0.getCommandType()==Command.OK) {
                 setText(textbox.getString());
             }
-            // go back to normal
-            DesktopPane rp = getDesktopPane();
-            Display.getDisplay(Midlet.getMidlet()).setCurrent(rp);
-            rp.setFullScreenMode(true);
-
-            textbox = null;
+            closeNativeEditor();
         }
 
         private boolean shouldUseUppercase() {
@@ -555,6 +557,15 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
 
                 dp.setIndicatorText(null);
+
+                if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
+                    Window w = getWindow();
+                    // if our window is null or if the next component is not a TextComponent
+                    if (w==null || !(w.getFocusOwner() instanceof TextComponent)) {
+                        closeNativeEditor();
+                    }
+                }
+
 		repaint();
 	}
 
@@ -586,7 +597,8 @@ public abstract class TextComponent extends Component implements ActionListener,
                 // when a new text component becomes focused
                 // if on android the keyboard is already visible
                 // we need to update it to display the correct keyboard
-                if (textbox!=null) {
+                //if (textbox!=null) {
+                if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
                     openNativeEditor();
                 }
 
