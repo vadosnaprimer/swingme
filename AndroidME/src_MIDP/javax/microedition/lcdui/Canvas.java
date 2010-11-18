@@ -208,17 +208,21 @@ public abstract class Canvas extends Displayable {
     }
 
     public void hideSoftKeyboard() {
-        canvasView.hideNativeTextInput();
+//        System.out.println(">>>>>> hideSoftKeyboard");
+        canvasView.setTextInputView(null);
     }
 
 
     class CanvasView extends View {
+        private static final int KEYBOARD_SHOW = 1;
+        private static final int KEYBOARD_HIDE = -1;
+
         javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());
         private int canvasY;
         private int canvasH;
         private int keyMenuCount;
         private View inputConnectionView;
-        private boolean needsNativeInput;
+        private int keyboardMode; // KEYBOARD_SHOW/HIDE or 0
         private boolean hasWindowFocus = true;
 
         public CanvasView(Context context) {
@@ -660,18 +664,29 @@ public abstract class Canvas extends Displayable {
             getInputManager().toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
 
-        public void setInputConnectionView(View view) {
-            if (inputConnectionView != view) {
-//                System.out.println(">>>>>> showNativeTextInput0 " + hasWindowFocus);
-
-                this.inputConnectionView = view;
-                this.needsNativeInput = !hasWindowFocus;
-
-                if (hasWindowFocus) {
-//                    System.out.println(">>>>>> showNativeTextInput1");
+        private void checkKeyboardState() {
+//          System.out.println(">>>>>> checkKeyboardState " + hasWindowFocus);
+            if (hasWindowFocus) {
+                if (keyboardMode == KEYBOARD_SHOW) {
+//                    System.out.println(">>>>>> showNativeTextInput2");
                     showNativeTextInput();
                 }
+                else if (keyboardMode == KEYBOARD_HIDE) {
+//                    System.out.println(">>>>>> hideNativeTextInput2");
+                    hideNativeTextInput();
+                }
+
+                keyboardMode = 0;
             }
+        }
+
+        public void setTextInputView(View view) {
+//            if (inputConnectionView != view) {
+            this.inputConnectionView = view;
+            this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
+
+            checkKeyboardState();
+//            }
         }
 
         public void sendText(CharSequence text) {
@@ -691,12 +706,7 @@ public abstract class Canvas extends Displayable {
 
             try {
                 if (hasWindowFocus) {
-                    if (needsNativeInput) {
-                        needsNativeInput = false;
-//                        System.out.println(">>>>>> showNativeTextInput2");
-                        showNativeTextInput();
-                    }
-
+                    checkKeyboardState();
                     showNotify();
                 }
                 else {

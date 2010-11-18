@@ -66,7 +66,7 @@ public class TextBox extends Screen {
     @Override
     public void initDisplayable(MIDlet midlet) {
         if (currentCanvasView != null) {
-            currentCanvasView.setInputConnectionView(textBoxView);
+            currentCanvasView.setTextInputView(textBoxView);
         }
     }
 
