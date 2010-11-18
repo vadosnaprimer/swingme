@@ -97,15 +97,17 @@ public class Display
             return;
         }
 
+        // Hide Keyboard, any time a new Displayable is set
+        if (!(newCurrent instanceof TextBox) && current instanceof Canvas) {
+            ((Canvas) current).hideSoftKeyboard();
+        }
+
         if (newCurrent != current) {
             this.midlet.invokeAndWait(new Runnable() {
                 public void run() {
 
+                    // TextBox is special... we don't really have any UI
                     if (newCurrent instanceof TextBox) {
-                        if (current instanceof Canvas) {
-                            ((Canvas) current).hideSoftKeyboard();
-                        }
-
                         newCurrent.initDisplayable(null);
                         return;
                     }

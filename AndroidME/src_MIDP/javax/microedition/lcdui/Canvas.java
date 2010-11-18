@@ -337,7 +337,7 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
-            System.out.println("onKeyDown -> " + keyCode);
+//            System.out.println("onKeyDown -> " + keyCode);
 
             int keyCount = event.getRepeatCount();
             if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -665,7 +665,6 @@ public abstract class Canvas extends Displayable {
 
                 needsNativeInput = true;
                 if (hasWindowFocus) {
-                    System.out.println("openNative Canvas1");
                     showNativeTextInput();
                     needsNativeInput = false;
                 }
@@ -692,7 +691,6 @@ public abstract class Canvas extends Displayable {
 
                     if (needsNativeInput) {
                         needsNativeInput = false;
-                        System.out.println("openNative Canvas2");
                         showNativeTextInput();
                     }
                 }
