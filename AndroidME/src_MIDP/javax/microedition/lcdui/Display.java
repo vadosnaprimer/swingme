@@ -89,35 +89,39 @@ public class Display
         return this.midlet;
     }
 
-    public void setCurrent(final Displayable current) {
-        if (current instanceof Canvas) {
-            ((Canvas) current).hideSoftKeyboard();
-        }
-        else if (this.current instanceof Canvas) {
-            ((Canvas) this.current).hideSoftKeyboard();
-        }
+    public void setCurrent(final Displayable newCurrent) {
 
-        if (current == null) {
+        if (newCurrent == null) {
             // Set Application to background
             midlet.getActivity().moveTaskToBack(true);
             return;
         }
 
-        if (current != this.current) {
-            final Displayable old = this.current;
-            this.current = current;
-
+        if (newCurrent != current) {
             this.midlet.invokeAndWait(new Runnable() {
                 public void run() {
+
+                    if (newCurrent instanceof TextBox) {
+                        if (current instanceof Canvas) {
+                            ((Canvas) current).hideSoftKeyboard();
+                        }
+
+                        newCurrent.initDisplayable(null);
+                        return;
+                    }
+
+                    Displayable old = current;
+                    current = newCurrent;
+
                     if (old != null) {
                         old.setCurrentDisplay(null);
                     }
 
-                    current.setCurrentDisplay(Display.this);
-                    current.initDisplayable(Display.this.midlet);
+                    newCurrent.setCurrentDisplay(Display.this);
+                    newCurrent.initDisplayable(Display.this.midlet);
 
                     Activity activity = Display.this.midlet.getActivity();
-                    View view = current.getView();
+                    View view = newCurrent.getView();
                     if (view != null) {
                         activity.setContentView(view);
                         view.requestFocus();

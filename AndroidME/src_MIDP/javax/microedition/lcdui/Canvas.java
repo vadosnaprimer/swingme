@@ -218,6 +218,8 @@ public abstract class Canvas extends Displayable {
         private int canvasH;
         private int keyMenuCount;
         private View inputConnectionView;
+        private boolean needsNativeInput;
+        private boolean hasWindowFocus;
 
         public CanvasView(Context context) {
             super(context);
@@ -640,25 +642,33 @@ public abstract class Canvas extends Displayable {
             }
         }
 
-        public void showNativeTextInput() {
+        private void showNativeTextInput() {
             fixVirtualKeyboard();
             getInputManager().showSoftInput(this, InputMethodManager.SHOW_FORCED);
         }
 
-        public void hideNativeTextInput() {
+        private void hideNativeTextInput() {
             fixVirtualKeyboard();
             getInputManager().hideSoftInputFromWindow(getWindowToken(), 0);
         }
 
-        public void toggleNativeTextInput() {
+        private void toggleNativeTextInput() {
             fixVirtualKeyboard();
             getInputManager().toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
 
         public void setInputConnectionView(View view) {
             if (inputConnectionView != view) {
+
                 this.inputConnectionView = view;
                 getInputManager().restartInput(this);
+
+                needsNativeInput = true;
+                if (hasWindowFocus) {
+                    System.out.println("openNative Canvas1");
+                    showNativeTextInput();
+                    needsNativeInput = false;
+                }
             }
         }
 
@@ -673,11 +683,18 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public void onWindowFocusChanged(boolean hasWindowFocus) {
+            this.hasWindowFocus = hasWindowFocus;
             super.onWindowFocusChanged(hasWindowFocus);
 
             try {
                 if (hasWindowFocus) {
                     showNotify();
+
+                    if (needsNativeInput) {
+                        needsNativeInput = false;
+                        System.out.println("openNative Canvas2");
+                        showNativeTextInput();
+                    }
                 }
                 else {
                     hideNotify();

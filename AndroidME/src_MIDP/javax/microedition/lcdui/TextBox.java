@@ -23,7 +23,6 @@ public class TextBox extends Screen {
     private int maxSize;
     private int constraints;
     private Canvas.CanvasView currentCanvasView;
-    private View oldView;
     private TextBoxView textBoxView;
 
     public TextBox(String title, String text, int maxSize, int constraints) {
@@ -34,7 +33,7 @@ public class TextBox extends Screen {
         // Hack: Current view could change...
         MIDlet midlet = AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet();
 
-        this.oldView = Display.getDisplay(midlet).getCurrent().getView();
+        View oldView = Display.getDisplay(midlet).getCurrent().getView();
         this.currentCanvasView = getCanvasView(oldView);
 
         textBoxView = new TextBoxView(AndroidMeActivity.DEFAULT_ACTIVITY);
@@ -61,16 +60,13 @@ public class TextBox extends Screen {
 
     @Override
     public View getView() {
-        if (currentCanvasView != null) {
-            currentCanvasView.setInputConnectionView(textBoxView);
-        }
-        return oldView;
+        return null;
     }
 
     @Override
     public void initDisplayable(MIDlet midlet) {
         if (currentCanvasView != null) {
-            currentCanvasView.showNativeTextInput();
+            currentCanvasView.setInputConnectionView(textBoxView);
         }
     }
 
