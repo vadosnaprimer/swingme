@@ -19,49 +19,50 @@ public class RecordStoreInitializer implements Initializer {
 
 	public void initialize(ApplicationManager am) {
 		
-        if (am.applet != null ) {
-            RecordStoreImpl.rmsDir = null;
-        }
-        else {
+            if (am.applet != null ) {
+                RecordStoreImpl.rmsDir = null;
+            }
+            else {
+
         	RecordStoreImpl.rmsDir = new File(am.getProperty("rms.home", ".rms"));
 
+                if(RecordStoreImpl.rmsDir.exists()) {
 
-                try {
-                    final File lockFile = new File( RecordStoreImpl.rmsDir , "in.use");
-                    if (lockFile.exists())
-                        lockFile.delete();
-                    FileOutputStream lockFileOS = new FileOutputStream(lockFile); // create the file
-                    lockFileOS.close();
-                    final FileChannel lockChannel = new RandomAccessFile(lockFile,"rw").getChannel();
-                    final FileLock lock = lockChannel.tryLock();
-                    if (lock==null) throw new Exception("Unable to obtain lock");
-
-
-                    Runtime.getRuntime().addShutdownHook(new Thread() {
-                        // destroy the lock when the JVM is closing
-                        @Override
-                        public void run() {
-                            try {
-                                lock.release();
-                                lockChannel.close();
+                        try {
+                            final File lockFile = new File( RecordStoreImpl.rmsDir , "in.use");
+                            if (lockFile.exists())
                                 lockFile.delete();
-                            }
-                            catch (Throwable th) { th.printStackTrace(); } // this should not throw
+                            FileOutputStream lockFileOS = new FileOutputStream(lockFile); // create the file
+                            lockFileOS.close();
+                            final FileChannel lockChannel = new RandomAccessFile(lockFile,"rw").getChannel();
+                            final FileLock lock = lockChannel.tryLock();
+                            if (lock==null) throw new Exception("Unable to obtain lock");
+
+
+                            Runtime.getRuntime().addShutdownHook(new Thread() {
+                                // destroy the lock when the JVM is closing
+                                @Override
+                                public void run() {
+                                    try {
+                                        lock.release();
+                                        lockChannel.close();
+                                        lockFile.delete();
+                                    }
+                                    catch (Throwable th) { th.printStackTrace(); } // this should not throw
+                                }
+                            });
+
+
+
                         }
-                    });
+                        catch (Exception e) {
+                            JOptionPane.showMessageDialog(null,"An instance of ME4SE is already running.","Warning",JOptionPane.WARNING_MESSAGE);
+                            //e.printStackTrace();
+                            System.exit(0);
+                        }
 
 
 
-                }
-                catch (Exception e) {
-                    JOptionPane.showMessageDialog(null,"An instance of ME4SE is already running.","Warning",JOptionPane.WARNING_MESSAGE);
-                    //e.printStackTrace();
-                    System.exit(0);
-                }
-
-
-
-        	if(RecordStoreImpl.rmsDir.exists()){
         		String[] files = RecordStoreImpl.rmsDir.list();
             
         		if(files != null){
@@ -73,7 +74,7 @@ public class RecordStoreInitializer implements Initializer {
         				}
         			}
         		}
+                }
             }
-		}
 	}
 }
