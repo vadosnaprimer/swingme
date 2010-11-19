@@ -220,7 +220,8 @@ public abstract class Canvas extends Displayable {
         javax.microedition.lcdui.Graphics graphics = new Graphics(new android.graphics.Canvas());
         private int canvasY;
         private int canvasH;
-        private int keyMenuCount;
+        private int keyMenuCount = -1;
+        private int keyBackCount = -1;
         private View inputConnectionView;
         private int keyboardMode; // KEYBOARD_SHOW/HIDE or 0
         private boolean hasWindowFocus = true;
@@ -350,10 +351,13 @@ public abstract class Canvas extends Displayable {
                     toggleNativeTextInput();
                 }
             }
-            else if (keyCode == KeyEvent.KEYCODE_BACK && keyCount == 1) {
-                // kill the application on a "long back key" press
-                // TODO: Should show some native Android UI for confirmation
-                AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+            else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                keyBackCount = keyCount;
+                if (keyCount == 1) {
+                    // kill the application on a "long back key" press
+                    // TODO: Should show some native Android UI for confirmation
+                    AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+                }
             }
             else {
                 int meKeyCode = getKeyCode(event);
@@ -377,7 +381,17 @@ public abstract class Canvas extends Displayable {
                     keyPressed(meKeyCode);
                     keyReleased(meKeyCode);
                 }
-            } else {
+                keyMenuCount = -1;
+            }
+            else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if (keyBackCount == 0) {
+                    // Simulate a press on menu
+                    keyPressed(meKeyCode);
+                    keyReleased(meKeyCode);
+                }
+                keyBackCount = -1;
+            }
+            else {
                 keyReleased(meKeyCode);
             }
             return true;
