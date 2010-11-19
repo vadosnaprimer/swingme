@@ -934,8 +934,8 @@ public class DesktopPane extends Canvas implements Runnable {
         fullRepaint();
     }
 
+    // this is here for android, when we move from 1 window to another, we want to close the keyboard
     private static void windowChanged() {
-        System.out.println("windowChanged windowChanged windowChanged windowChanged windowChanged windowChanged windowChanged");
         TextComponent.closeNativeEditor();
     }
 
@@ -1125,6 +1125,8 @@ public class DesktopPane extends Canvas implements Runnable {
     public static final int DRAGGED = 0;
     public static final int PRESSED = 1;
     public static final int RELEASED = 2;
+    public static final int CANCEL = 3;
+
     private Component pointerComponent;
     private ScrollPane pointerScrollPane;
     private int pointerFristX;
@@ -1197,6 +1199,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                     // check its dragged more then 5px
                     else if (!isAccurate(pointerFristX, pointerFristY, x, y)) {
+                        pointerComponent.processMouseEvent(CANCEL, x, y, keypad);
                         pointerComponent = null;
                     }
                 }

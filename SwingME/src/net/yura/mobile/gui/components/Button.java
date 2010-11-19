@@ -288,7 +288,7 @@ public class Button extends Label implements ActionListener {
                 }
 
             }
-            else if (type == DesktopPane.DRAGGED && selected) {
+            else if (selected) { // && type == DesktopPane.DRAGGED
                 selected = oldState;
                 repaint();
             }
