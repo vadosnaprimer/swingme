@@ -196,16 +196,19 @@ public class RecordStoreImpl extends AbstractRecordStore  {
             
 			file = new File(rmsDir, encode(this.recordStoreName) + ".rms");
 
+                        int count=-1;
+                        int length=-1;
+                        int i=-1;
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(file));
 
 				version = dis.readInt();
 				lastModified = dis.readLong();
-				int count = dis.readInt();
+				count = dis.readInt();
 				records = new Vector();
 
-				for (int i = 0; i < count; i++) {
-					int length = dis.readInt();
+				for (i = 0; i < count; i++) {
+					length = dis.readInt();
 					if (length >= 0) {
 						byte[] buffer = new byte[length];
 						dis.readFully(buffer, 0, length);
@@ -217,10 +220,17 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 					}
 				}
 				dis.close();
-			} catch (Exception ioe) {
+			} catch (Throwable ioe) { // need to be throwable as can be OutOfMemoryError
                                 // file not found is ok here
                             // as the create boolean handles that
                                 if (!(ioe instanceof FileNotFoundException)) {
+                                    System.err.println("Exception while reading RMS: "+file+
+                                            " version="+version+
+                                            " lastModified="+lastModified+
+                                            " count="+count+
+                                            " record="+i+
+                                            " length="+length
+                                            );
                                     ioe.printStackTrace();
                                 }
 
