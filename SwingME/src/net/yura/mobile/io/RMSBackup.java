@@ -71,8 +71,10 @@ public class RMSBackup extends QueueProcessorThread {
                         current.addElement(currentBooking);
                     }
                     catch(Exception ex) {
+                        //#mdebug warn
                         Logger.warn("Error loading RMS: "+rmsName+" record id="+id);
                         Logger.warn(ex);
+                        //#enddebug
                     }
                 }
 
