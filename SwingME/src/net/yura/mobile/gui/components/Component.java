@@ -862,12 +862,14 @@ public abstract class Component {
      */
     public void setupState(Component component, boolean isSelected, boolean cellHasFocus) {
             state=Style.ALL;
-            if ( component!=null && !component.isFocusable()) {
-                state |= Style.DISABLED;
-            }
+
             if (cellHasFocus) {
                 state |= Style.FOCUSED;
             }
+            else if ( component!=null && !component.isFocusable()) { // can be DISABLED only if not FOCUSED
+                state |= Style.DISABLED;
+            }
+
             if (isSelected) {
                 state |= Style.SELECTED;
             }
