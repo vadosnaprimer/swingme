@@ -107,10 +107,11 @@ public class AndroidBorder implements Border {
             else if (cclass!=null && ListCellRenderer.class.isAssignableFrom(cclass)) {
                 stateList.add(new Integer(android.R.attr.state_focused));
             }
-            else {// other things ???? this is not currently used for anything ????
-                System.out.println(" SELECTED ########################## "+cclass);
+            // commenting out the else seems to fix the foreground color of Lists
+            //else {// other things ???? this is not currently used for anything ????
+            //    System.out.println(" SELECTED ########################## "+cclass);
                 stateList.add(new Integer(android.R.attr.state_selected));
-            }
+            //}
         }
 
         int[] res = new int[stateList.size()];
