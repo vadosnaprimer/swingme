@@ -136,9 +136,12 @@ public class Display
         }
     }
 
+    /**
+     * http://developer.android.com/resources/articles/painless-threading.html
+     */
     public void callSerially(Runnable runner) {
-        // delegate to Canvas
-        midlet.getHandler().post(runner);
+        midlet.getActivity().runOnUiThread(runner);
+        //midlet.getHandler().post(runner);
     }
 
     public void vibrate(int duration) {
