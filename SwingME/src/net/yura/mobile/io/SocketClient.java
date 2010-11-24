@@ -108,7 +108,7 @@ public abstract class SocketClient implements Runnable {
 
                                 String serv = getNextServer();
                                 //#debug info
-                                Logger.info("[SocketClient] Trying to connect to: "+serv);
+                                Logger.info("[SocketClient] Trying to connect to: "+serv+" to send: "+object);
 
                                 //#debug debug
                                 if (disconnected) throw new IOException();
@@ -240,8 +240,11 @@ public abstract class SocketClient implements Runnable {
         }
 
         // if we are in the DISCONNECTED_AND_PAUSED state, wake us up
-        synchronized(writeThread){
-            writeThread.notify();
+        Object a = writeThread;
+        if (a!=null) {
+	        synchronized(a){
+	            a.notify();
+	        }
         }
     }
 
