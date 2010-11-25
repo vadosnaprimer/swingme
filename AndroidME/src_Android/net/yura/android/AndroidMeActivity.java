@@ -40,7 +40,6 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
     private Vector<String[]> jadMidlets;
     private View defaultView;
     private View waitingView;
-    private Handler handler;
     private Thread eventThread;
     private final Object lock = new Object();
     private boolean closed;
@@ -56,26 +55,22 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         return this.midlet;
     }
 
-    public Handler getHandler() {
-        return handler;
-    }
-
     public void invokeAndWait(final Runnable runnable) {
-        if (Thread.currentThread() == this.eventThread) {
+        if (Thread.currentThread() == eventThread) {
             runnable.run();
         } else {
             Runnable r = new Runnable() {
                 public void run() {
-                    synchronized (AndroidMeActivity.this.lock) {
+                    synchronized (lock) {
                         runnable.run();
-                        AndroidMeActivity.this.lock.notify();
+                        lock.notify();
                     }
                 }
             };
-            synchronized (this.lock) {
-                this.handler.post(r);
+            synchronized (lock) {
+                runOnUiThread(r);
                 try {
-                    this.lock.wait();
+                    lock.wait();
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -86,7 +81,6 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        this.handler = new Handler();
         this.eventThread = Thread.currentThread();
 
         showWaitingView(false);
@@ -225,7 +219,7 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         // PIM and File (Note: "file.separator" already setup by Android OS)
         System.setProperty("microedition.pim.version", "1.0");
         System.setProperty("microedition.io.file.FileConnection.version", "1.0");
-        
+
         // Hardware properties.
         // Returns the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
         String imei = ((TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
@@ -440,10 +434,6 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
 
     public int getScreenWidth() {
         return this.defaultView.getWidth();
-    }
-
-    public View inflate(int resourceId) {
-        return this.getLayoutInflater().inflate(resourceId, null, false);
     }
 
     public static InputStream getResourceAsStream(Class origClass, String name) {

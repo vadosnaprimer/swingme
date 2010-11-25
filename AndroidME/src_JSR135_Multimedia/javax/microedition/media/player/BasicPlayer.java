@@ -7,6 +7,7 @@ import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
 
+import net.yura.android.AndroidMeActivity;
 import net.yura.android.lcdui.Toolkit;
 
 public abstract class BasicPlayer implements Player {
@@ -212,12 +213,13 @@ public abstract class BasicPlayer implements Player {
         //  There's always one listener for EOM -- itself.
         if (listenerList.size() > 0 || evt == PlayerListener.END_OF_MEDIA) {
 
-            toolKit.getHandler().post(new Runnable() {
+            AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread(
+                new Runnable() {
 
-                public void run() {
-                    doListenerEvent(evt, evtData);
-                }
-            });
+                    public void run() {
+                        doListenerEvent(evt, evtData);
+                    }
+                });
         }
     }
 

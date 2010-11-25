@@ -3,7 +3,6 @@ package javax.microedition.media.player;
 import java.io.IOException;
 
 import javax.microedition.media.Control;
-import javax.microedition.media.Controllable;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.control.VideoControl;
 
@@ -16,7 +15,7 @@ import android.view.ViewGroup.LayoutParams;
 
 import net.yura.android.lcdui.Toolkit;
 
-public class CameraPlayer extends BasicPlayer implements VideoControl, Controllable {
+public class CameraPlayer extends BasicPlayer implements VideoControl {
 
     private Preview preview;
     private Camera camera;

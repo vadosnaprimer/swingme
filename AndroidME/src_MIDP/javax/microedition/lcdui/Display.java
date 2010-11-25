@@ -141,7 +141,6 @@ public class Display
      */
     public void callSerially(Runnable runner) {
         midlet.getActivity().runOnUiThread(runner);
-        //midlet.getHandler().post(runner);
     }
 
     public void vibrate(int duration) {

@@ -48,10 +48,6 @@ public abstract class MIDlet {
         PhoneListener.init();
     }
 
-    public Handler getHandler() {
-        return this.toolkit.getHandler();
-    }
-
     public void invokeAndWait(Runnable r) {
         this.toolkit.invokeAndWait(r);
     }

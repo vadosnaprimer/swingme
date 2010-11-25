@@ -4,6 +4,8 @@ import java.util.Vector;
 
 import javax.microedition.midlet.MIDlet;
 
+import net.yura.android.AndroidMeActivity;
+
 import android.view.View;
 
 public abstract class Displayable {
@@ -46,14 +48,14 @@ public abstract class Displayable {
 		View view = this.getView();
 		int w = (view == null) ? 0 : view.getWidth();
 
-		return (w <= 0) ? MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth() : w;
+		return (w <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth() : w;
 	}
 
 	public int getHeight() {
 		View view = this.getView();
 		int h = (view == null) ? 0 : view.getHeight();
 
-        return (h <= 0) ? MIDlet.DEFAULT_MIDLET.getToolkit().getScreenWidth() : h;
+        return (h <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth() : h;
 	}
 
 	public Display getCurrentDisplay() {
