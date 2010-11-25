@@ -61,12 +61,15 @@ public class LocalDevice {
 	        BluetoothAdapter.getDefaultAdapter();
 	        BluetoothManager.getBluetoothManager();
 
-    	    if (deviceInstance == null) {
-    	        deviceInstance = new LocalDevice();
-    	    }
-	    } catch (Throwable e) {
-            throw new BluetoothStateException(e.getMessage());
-        }
+        	    if (deviceInstance == null) {
+        	        deviceInstance = new LocalDevice();
+        	    }
+	    }
+	    catch (Throwable e) {
+	        BluetoothStateException ex = new BluetoothStateException(e.getMessage());
+	        ex.initCause(e);
+                throw ex;
+            }
 
 	    return deviceInstance;
 	}
