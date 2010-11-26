@@ -70,14 +70,15 @@ public class AndroidBorder implements Border {
     }
 
     static int[] getDrawableState(int state,Class<?> cclass,boolean windowFocused) {
-        Vector<Integer> stateList = new Vector<Integer>(3);
+        int[] stateList = new int[10];
+        int count = 0;
 
         if (windowFocused) {
-            stateList.add(new Integer(android.R.attr.state_window_focused));
+            stateList[count++] = android.R.attr.state_window_focused;
         }
 
         if ((state & Style.DISABLED) == 0) {
-            stateList.add(new Integer(android.R.attr.state_enabled));
+            stateList[count++] = android.R.attr.state_enabled;
         }
 
         // List hack:
@@ -90,36 +91,31 @@ public class AndroidBorder implements Border {
 
         if ((state & Style.FOCUSED) != 0) {
             if (cclass!=null && ListCellRenderer.class.isAssignableFrom(cclass)) {
-                stateList.add(new Integer(android.R.attr.state_pressed));
+                stateList[count++] = android.R.attr.state_pressed;
             }
             //else { // we need this or the list text is the wrong color, as in Android u can NOT have pressed and not focused
-                stateList.add(new Integer(android.R.attr.state_focused));
+            stateList[count++] = android.R.attr.state_focused;
             //}
         }
 
         if ((state & Style.SELECTED) != 0) {
             if (cclass!=null && RadioButton.class.isAssignableFrom(cclass)) {
-                stateList.add(new Integer(android.R.attr.state_checked));
+                stateList[count++] = android.R.attr.state_checked;
             }
             else if (cclass!=null && Button.class.isAssignableFrom(cclass)) {
-                stateList.add(new Integer(android.R.attr.state_pressed));
+                stateList[count++] = android.R.attr.state_pressed;
             }
             else if (cclass!=null && ListCellRenderer.class.isAssignableFrom(cclass)) {
-                stateList.add(new Integer(android.R.attr.state_focused));
+                stateList[count++] = android.R.attr.state_focused;
             }
             // commenting out the else seems to fix the foreground color of Lists
             //else {// other things ???? this is not currently used for anything ????
             //    System.out.println(" SELECTED ########################## "+cclass);
-                stateList.add(new Integer(android.R.attr.state_selected));
+            stateList[count++] = android.R.attr.state_selected;
             //}
         }
 
-        int[] res = new int[stateList.size()];
-        for (int i = 0; i < res.length; i++) {
-            res[i] = stateList.elementAt(i).intValue();
-        }
-
-        return res;
+        return stateList;
     }
 
     static void setDrawableState(Component comp, Drawable drawable) {
