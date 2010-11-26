@@ -17,6 +17,8 @@
 
 package net.yura.mobile.gui.components;
 
+import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
@@ -119,8 +121,13 @@ public class TextField extends TextComponent {
                 return false;
             }
             boolean r = keyCode!='\n';
-            if (!r && al!=null) {
-                al.actionPerformed(action);
+            if (!r) {
+                if (al!=null) {
+                    al.actionPerformed(action);
+                }
+                else {
+                    transferFocus(Canvas.DOWN);
+                }
             }
             return r;
         }

@@ -211,7 +211,7 @@ public abstract class Component {
 
     /**
      * This method WILL use small scroll, so if the component is too far then it wont gain focus
-     * @param direction can be up down right or left
+     * @param direction can be {@link Canvas#DOWN} {@link Canvas#UP} {@link Canvas#LEFT} or {@link Canvas#RIGHT}
      * @see java.awt.Component#transferFocus() Component.transferFocus
      * @see java.awt.Component#transferFocusBackward() Component.transferFocusBackward
      */
