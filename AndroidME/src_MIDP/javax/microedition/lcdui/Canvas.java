@@ -768,6 +768,8 @@ public abstract class Canvas extends Displayable {
     private long lastDrawTime;
     private String fpsStr = "0.0fps";
     private int nFrames;
+    private int fontH;
+    Paint debugPaint;
 
     private void showFramesPerSec(android.graphics.Canvas androidCanvas) {
         nFrames++;
@@ -780,15 +782,18 @@ public abstract class Canvas extends Displayable {
             nFrames = 0;
         }
 
-        Paint paint = new Paint();
+        if (debugPaint == null) {
+            debugPaint = new Paint();
+            debugPaint.setStyle(Paint.Style.FILL);
+        }
+        int w = (int)(debugPaint.measureText(fpsStr) + 2.0f);
+        if (fontH <= 0) {
+            fontH = debugPaint.getFontMetricsInt(debugPaint.getFontMetricsInt()) + 2;
+        }
 
-        int w = (int)(paint.measureText(fpsStr) + 2.0f);
-        int h = paint.getFontMetricsInt(paint.getFontMetricsInt()) + 2;
-
-        paint.setStyle(Paint.Style.FILL);
-        androidCanvas.drawRect(2, 5, 2 + w, 5 + h, paint);
-
-        paint.setColor(0xFFFFFFFF);
-        androidCanvas.drawText(fpsStr, 3, 1 + h, paint);
+        debugPaint.setColor(0xFF000000);
+        androidCanvas.drawRect(2, 5, 2 + w, 5 + fontH, debugPaint);
+        debugPaint.setColor(0xFFFFFFFF);
+        androidCanvas.drawText(fpsStr, 3, 1 + fontH, debugPaint);
     }
 }

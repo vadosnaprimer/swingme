@@ -174,9 +174,9 @@ public class Graphics {
         Paint paintFont = androidFont.getPaint();
 
         if ((anchor & javax.microedition.lcdui.Graphics.TOP) != 0) {
-            newy -= paintFont.getFontMetricsInt().ascent;
+            newy -= androidFont.getFontMetricsInt().ascent;
         } else if ((anchor & javax.microedition.lcdui.Graphics.BOTTOM) != 0) {
-            newy -= paintFont.getFontMetricsInt().descent;
+            newy -= androidFont.getFontMetricsInt().descent;
         }
         if ((anchor & javax.microedition.lcdui.Graphics.HCENTER) != 0) {
             newx -= paintFont.measureText(str) / 2;
@@ -250,6 +250,9 @@ public class Graphics {
     }
 
 
+    // Cache Matrix. Avoid object creation.
+    private static Matrix matrix = new Matrix();
+
     public static Matrix getMatrix(int transform) {
 
         int rotate;
@@ -302,7 +305,7 @@ public class Graphics {
         }
 
         // Create a matrix and apply the rotation and mirroring (scale == -1)
-        Matrix matrix = new Matrix();
+        matrix.reset();
         matrix.preRotate(rotate);
         matrix.preScale(mirror ? -1.0f : 1.0f, 1.0f);
         return matrix;

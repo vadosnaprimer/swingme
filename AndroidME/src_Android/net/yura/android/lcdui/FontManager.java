@@ -37,6 +37,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.Paint.FontMetricsInt;
 import android.util.DisplayMetrics;
 
 public class FontManager {
@@ -47,12 +48,16 @@ public class FontManager {
 
 	private static HashMap<Font, FontManager> fonts = new HashMap<Font, FontManager>();
 
-	Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+	Paint paint;
+	FontMetricsInt fontMetrics;
 
 	public FontManager(Typeface typeface, int size, boolean underlined) {
+	    paint = new Paint(Paint.ANTI_ALIAS_FLAG);
 		paint.setTypeface(typeface);
 		paint.setTextSize(size);
 		paint.setUnderlineText(underlined);
+
+		fontMetrics = paint.getFontMetricsInt();
 	}
 
 	public static FontManager getFont(Font meFont) {
@@ -146,6 +151,10 @@ public class FontManager {
 		return paint;
 	}
 
+	public FontMetricsInt getFontMetricsInt() {
+	    return fontMetrics;
+	}
+
 	public int charWidth(char ch) {
 		return (int) paint.measureText(new char[] { ch }, 0, 1);
 	}
@@ -155,11 +164,11 @@ public class FontManager {
 	}
 
 	public int getBaselinePosition() {
-		return -paint.getFontMetricsInt().ascent;
+		return -fontMetrics.ascent;
 	}
 
 	public int getHeight() {
-		return paint.getFontMetricsInt(paint.getFontMetricsInt());
+		return paint.getFontMetricsInt(fontMetrics);
 	}
 
 	public int stringWidth(String str) {
