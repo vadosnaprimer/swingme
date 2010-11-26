@@ -30,8 +30,14 @@ public class RecordStoreInitializer implements Initializer {
 
                         try {
                             final File lockFile = new File( RecordStoreImpl.rmsDir , "in.use");
-                            if (lockFile.exists())
+                            if (lockFile.exists()) {
+                                System.err.println("[RecordStoreInitializer] in.use file found! "+lockFile);
+                                // on OS X a locked file can still be deleted, so we have to just crash out
+                                if (System.getProperty("os.name").toLowerCase().indexOf( "mac" ) >= 0) {
+                                    throw new Exception("in.use file found");
+                                }
                                 lockFile.delete();
+                            }
                             FileOutputStream lockFileOS = new FileOutputStream(lockFile); // create the file
                             lockFileOS.close();
                             final FileChannel lockChannel = new RandomAccessFile(lockFile,"rw").getChannel();
