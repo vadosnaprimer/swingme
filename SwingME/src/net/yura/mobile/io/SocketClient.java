@@ -234,12 +234,21 @@ public abstract class SocketClient implements Runnable {
 
     }
 
+    /**
+     * if we are in the DISCONNECTED_AND_PAUSED state, wake us up
+     */
     public void addToOfflineBox(Object t) {
         if (!offlineBox.contains(t)) {
             offlineBox.addElement(t);
         }
 
-        // if we are in the DISCONNECTED_AND_PAUSED state, wake us up
+        wake();
+    }
+
+    /**
+     * if we are in the DISCONNECTED_AND_PAUSED state, wake us up
+     */
+    protected void wake() {
         Object a = writeThread;
         if (a!=null) {
 	        synchronized(a){
