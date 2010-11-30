@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.view.Menu;
@@ -99,6 +98,29 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
 //        PrintStream log = new PrintStream(new LogOutputStream("AndroidMe"));
 //        System.setErr(log);
 //        System.setOut(log);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // When we resume, we want to have a nice pool of memory. At the moment
+        // we ask for 3/5 of the max memory. If the max is 25Mb, this is 15Mb.
+        Runtime rt = Runtime.getRuntime();
+        long allocMem = (3 * rt.maxMemory()) / 5;
+
+        // NOTE: This code is not doing the trick... We need to use brute force.
+        // VMRuntime.getRuntime().setMinimumHeapSize(allocMem);
+
+        Vector v = new Vector();
+        try {
+            while (rt.totalMemory() < allocMem) {
+                v.add(new byte[100 * 1024]);
+            }
+        } catch (Throwable e) {
+            //#debug debug
+            e.printStackTrace();
+        }
     }
 
     private void showContentView(final View view) {
