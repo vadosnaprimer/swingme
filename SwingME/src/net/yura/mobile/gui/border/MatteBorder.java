@@ -249,7 +249,7 @@ public class MatteBorder extends EmptyBorder {
                     int dist_h = height-topDiff-bottomDiff;
 
                     // to make themeing more flexable we will center the image if we do not need to tile it
-                    if (src_w>=dist_w&&src_h>=dist_h) {
+                    if (dist_w>0&&dist_h>0&&src_w>=dist_w&&src_h>=dist_h) {
                         g.drawRegion(image, imageLeft+(src_w-dist_w)/2, imageTop+(src_h-dist_h)/2, dist_w, dist_h, leftDiff,topDiff);
                     }
                     else {
