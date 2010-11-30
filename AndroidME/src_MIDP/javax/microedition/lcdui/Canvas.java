@@ -1,5 +1,6 @@
 package javax.microedition.lcdui;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import javax.microedition.midlet.MIDlet;
@@ -226,11 +227,25 @@ public abstract class Canvas extends Displayable {
         private int keyboardMode; // KEYBOARD_SHOW/HIDE or 0
         private boolean hasWindowFocus = true;
 
+        // Reflection methods for Multitouch
+        Method methodGetPointerCount;
+        Method methodGetX;
+        Method methodGetY;
+
         public CanvasView(Context context) {
             super(context);
 
             setFocusable(true);
             setFocusableInTouchMode(true);
+
+            try {
+                methodGetPointerCount = MotionEvent.class.getMethod("getPointerCount");
+                methodGetX = MotionEvent.class.getMethod("getX", Integer.TYPE);
+                methodGetY = MotionEvent.class.getMethod("getY", Integer.TYPE);
+            }
+            catch (Throwable ex) {
+                // Nothing. Methods not available.
+            }
         }
 
         // Override > 2.1 only
@@ -560,24 +575,26 @@ public abstract class Canvas extends Displayable {
             return b;
         }
 
+
         // Android 1.6 helper method (getPointerCount() is API Level 5)
         private int getPointerCount(MotionEvent event) {
             try {
-                return (Integer) event.getClass().getMethod("getPointerCount").invoke(event);
+                if (methodGetPointerCount != null) {
+                    return (Integer) methodGetPointerCount.invoke(event);
+                }
             }
-            catch (Throwable ex) {
-                return 1;
-            }
+            catch (Throwable ex) {}
+            return 1;
         }
 
         // Android 1.6 helper method (getX(int) is API Level 5)
         private float getX(MotionEvent event, int pointerIndex) throws Exception {
-            return (Float) MotionEvent.class.getMethod("getX", Integer.TYPE).invoke(event, pointerIndex);
+            return (Float) methodGetX.invoke(event, pointerIndex);
         }
 
         // Android 1.6 helper method (getY(int) is API Level 5)
         private float getY(MotionEvent event, int pointerIndex) throws Exception {
-            return (Float) MotionEvent.class.getMethod("getY", Integer.TYPE).invoke(event, pointerIndex);
+            return (Float) methodGetY.invoke(event, pointerIndex);
         }
 
         private int getKeyCode(KeyEvent keyEvent) {
