@@ -6,13 +6,16 @@ import net.yura.mobile.logging.Logger;
  *
  * @author BMA
  */
-public class Timer extends Thread{
+public class Timer extends Thread {
 
     private String id;
     private long delay;
     private Runnable task;
     private boolean cancelled = false;
 
+    /**
+     * @see java.util.Timer#schedule(java.util.TimerTask, long) Timer.schedule
+     */
     public void schedule(String id, Runnable task, long delay){
 
         //#debug debug
@@ -25,10 +28,17 @@ public class Timer extends Thread{
         this.start();
     }
 
-    public void run(){
+    /**
+     * @see java.util.Timer#schedule(java.util.TimerTask, long, long) Timer.schedule
+     */
+    public void schedule(String id, Runnable task, long delay, long period){
+        throw new RuntimeException("not done yet :-)");
+    }
 
-        while(!cancelled){
-            try {
+    public final void run() {
+
+        try {
+            if (!cancelled) {
               try {
                   Thread.sleep(delay);
               }
@@ -37,21 +47,25 @@ public class Timer extends Thread{
                   Logger.info(e);
               }
 
-              if (cancelled) break;
+              if (cancelled) return;
 
               //#debug debug
               Logger.debug("Running task (" + id + ") after a schedule of: " + delay);
               task.run();
             }
-            catch (Throwable t) {
-              //#debug warn
-              Logger.warn("error in ("+id+") timer: "+t.toString());
-              Logger.error(t);
-            }
         }
+        catch (Throwable t) {
+          //#debug warn
+          Logger.warn("error in ("+id+") timer: "+t.toString());
+          Logger.error(t);
+        }
+
     }
 
 
+    /**
+     * @see java.util.Timer#cancel() Timer.cancel
+     */
     public void cancel(){
 
         //#debug debug
