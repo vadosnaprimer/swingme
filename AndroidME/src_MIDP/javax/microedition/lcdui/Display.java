@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import javax.microedition.midlet.MIDlet;
 
 import android.app.Activity;
+import android.os.Vibrator;
 import android.view.View;
 
 public class Display
@@ -144,7 +145,11 @@ public class Display
     }
 
     public void vibrate(int duration) {
-        // TODO Auto-generated method stub
+        
+        Activity activity = midlet.getActivity();
+        Vibrator vibrator = (Vibrator)activity.getSystemService(Activity.VIBRATOR_SERVICE);
+
+        vibrator.vibrate(duration);
     }
 
     public void flashBacklight(int duration) {
