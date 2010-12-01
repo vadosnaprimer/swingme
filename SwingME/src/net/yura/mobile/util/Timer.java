@@ -17,7 +17,7 @@ public class Timer extends Thread{
 
         //#debug debug
         Logger.debug("Setting schedule for (" + id + ") with delay of: " + delay);
-        
+
         this.id = id;
         this.delay = delay;
         this.task = task;
@@ -30,10 +30,11 @@ public class Timer extends Thread{
         while(!cancelled){
             try {
               try {
-                  this.sleep(delay);
+                  Thread.sleep(delay);
               }
               catch (InterruptedException e) {
-                Logger.info(e);
+                  //#debug info
+                  Logger.info(e);
               }
 
               if (cancelled) break;

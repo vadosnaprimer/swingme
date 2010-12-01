@@ -37,9 +37,12 @@ public abstract class SocketClient implements Runnable {
     protected OutputStream out;
     protected InputStream in;
 
-    //#debug debug
+    //#mdebug debug
     private boolean disconnected = false;
-
+    public void setDisconnected(boolean b){
+        this.disconnected = b;
+    }
+    //#enddebug
 
     // configurable parameters
     protected int maxRetries = 3;
@@ -61,9 +64,7 @@ public abstract class SocketClient implements Runnable {
     }
 
     public SocketClient(String server, int maxRetries, int retryWaitMultiplier, int initialWaitValue, int maxWaitTimeMillis, boolean pauseReconnectOnFailure){
-
         this.server = server;
-
         this.maxRetries = maxRetries;
         this.retryWaitMultiplier = retryWaitMultiplier;
         this.initialWaitValue = initialWaitValue;
@@ -71,9 +72,18 @@ public abstract class SocketClient implements Runnable {
         this.pauseReconnectOnFailure = pauseReconnectOnFailure;
     }
 
+    public void setRetryCount(int retryCount){
+        this.retryCount = retryCount;
+    }
+    protected int getRetryCount(){
+        return retryCount;
+    }
+    protected int getMaxRetries(){
+        return maxRetries;
+    }
 
     protected StreamConnection openConnection(String serv) throws IOException {
-    	
+
     	// TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
         if (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY &&
     		serv.indexOf(";") < 0) {
@@ -81,18 +91,14 @@ public abstract class SocketClient implements Runnable {
             // TODO: http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
         	serv += ";deviceside=true";
         }
-    	
+
         return (StreamConnection)Connector.open(protocol + serv);
-    }
-    
-    protected String getNextServer() {
-        return server;
     }
 
     public void addToOutbox(Object obj) {
 
         if (writeThread==null) {
-            writeThread = new QueueProcessorThread("[SocketClient] writeThread") {
+            writeThread = new QueueProcessorThread("SocketClient-WriteThread") {
                 public void process(Object object) {
 
                     if (conn==null) {
@@ -126,6 +132,9 @@ public abstract class SocketClient implements Runnable {
                                 wait = initialWaitValue;
                             }
                             catch (SecurityException s) {
+
+                                close(conn,in,out);
+
                                 updateState(DISCONNECTED);
                                 //#debug info
                                 Logger.info(s);
@@ -134,6 +143,9 @@ public abstract class SocketClient implements Runnable {
                                 return;
                             }
                             catch (Exception x) {
+
+                                close(conn,in,out);
+
                             	//#debug info
                                 Logger.info(x);
 
@@ -181,7 +193,7 @@ public abstract class SocketClient implements Runnable {
                         connected(in,out);
 
                         // START THE READ THREAD
-                        readThread = new Thread(SocketClient.this,"[SocketClient] readThread");
+                        readThread = new Thread(SocketClient.this,"SocketClient-ReadThread");
                         readThread.start();
 
                     }
@@ -249,131 +261,16 @@ public abstract class SocketClient implements Runnable {
      * if we are in the DISCONNECTED_AND_PAUSED state, wake us up
      */
     protected void wake() {
-        Object a = writeThread;
-        if (a!=null) {
-	        synchronized(a){
-	            a.notify();
-	        }
+        QueueProcessorThread obj = writeThread;
+        if (obj!=null) {
+            synchronized(obj){
+        	obj.notify();
+            }
         }
     }
 
     public Vector getOfflineBox() {
         return offlineBox;
-    }
-
-    private synchronized void shutdownConnection() {
-
-        // we have already shut down the connection
-        // and if we do it again, we risk moving the "hello" message
-        // out of the current queue of things to be sent
-        if (conn==null && in==null && out==null) return;
-
-        NativeUtil.close(conn);
-        conn = null;
-
-         // we HAVE to close these here, as if we do not close them, and ONLY
-         // close the Connection, the readThread stays in the blocked state
-        NativeUtil.close(in); // close on input can block???
-        NativeUtil.close(out);
-        in = null;
-        out = null;
-
-        // move anything in the inbox to the offline inbox
-        if (writeThread != null){
-            Vector inbox = writeThread.getInbox();
-            for (int c=0;c<inbox.size();c++) {
-                addToOfflineBox(inbox.elementAt(c));
-            }
-            writeThread.clearInbox();
-        }
-    }
-
-
-    public final void run() {
-        try {
-            //#mdebug info
-            String name = readThread.getName();
-            Logger.info("[SocketClient] STARTING "+ name );
-            //#enddebug
-            Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
-            Object task;
-            while (true) {
-                try {
-
-                    //#debug debug
-                    if (disconnected) throw new IOException();
-
-                    task = read(in);
-                }
-                catch(Exception ex) {
-                    // THIS HAPPENS ON A DISCONNECT
-
-                    updateState(DISCONNECTED);
-
-                    //#debug warn
-                    if (writeThread!=null) {
-
-                        //#debug info
-                        Logger.info("[SocketClient] Disconnect (Exception) during read from socket "+ex.toString());
-
-                        //#mdebug warn
-                        if (!(ex instanceof IOException)) {
-                            Logger.warn(ex); // this is NOT a normal disconnect
-                        }
-                    }
-                    //#enddebug
-
-                    shutdownConnection();
-
-                    break;
-                }
-
-                updateState(COMMUNICATING);
-
-                //#debug info
-                Logger.info("[SocketClient] got object: "+task);
-                try {
-
-                    Thread.yield();
-                    Thread.sleep(0);
-
-                    handleObject( task );
-
-                    Thread.yield();
-                    Thread.sleep(0);
-
-                }
-                catch (Exception x) {
-                    //#debug warn
-                    Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
-                    //#debug error
-                    Logger.error(x);
-                }
-                //#debug info
-                Logger.info("[SocketClient] finished handling object, waiting for new object from server");
-                updateState(CONNECTED);
-            }
-
-            // we have not had a disconnect requested, so we have to get ready to reconnect
-            if (writeThread!=null) {
-                disconnected();
-            }
-
-            //#debug info
-            Logger.info("[SocketClient] ENDING "+ name );
-        }
-        catch (Throwable t){
-            //#debug error
-            Logger.error(t);
-        }
-    }
-
-    public void disconnect() {
-        shutdownConnection();
-        if(writeThread != null) {
-        	writeThread.kill();
-        	writeThread = null;
-        }
     }
 
     protected void sendOfflineInboxMessages() {
@@ -386,27 +283,146 @@ public abstract class SocketClient implements Runnable {
         }
     }
 
-    //#mdebug debug
-    public void setDisconnected(boolean b){
-        this.disconnected = b;
+    public void disconnect() {
+        QueueProcessorThread old = writeThread;
+        writeThread = null;
+        shutdownConnection();
+        if(old != null) {
+            old.kill();
+        }
     }
-    //#enddebug
+
+    private synchronized void shutdownConnection() {
+
+        // we have already shut down the connection
+        // and if we do it again, we risk moving the "hello" message
+        // out of the current queue of things to be sent
+        if (conn==null && in==null && out==null) return;
+
+        updateState(DISCONNECTED);
+
+        close(conn,in,out);
+        in = null;
+        out = null;
+        conn = null;
+
+        // move anything in the inbox to the offline inbox
+        if (writeThread!=null){
+            Vector inbox = writeThread.getInbox();
+            for (int c=0;c<inbox.size();c++) {
+                addToOfflineBox(inbox.elementAt(c));
+            }
+            writeThread.clearInbox();
+
+            // we have not had a disconnect requested, so we have to get ready to reconnect
+            disconnected();
+        }
+    }
+
+    private void close(final StreamConnection connection,final InputStream inputStream,final OutputStream outputStream) {
+        // we HAVE to close these here, as if we do not close them, and ONLY
+        // close the Connection, the readThread stays in the blocked state
+
+        // we HAVE to have another thread here, as we may be closing this from ANY thread and it can get stuck
+        new Thread() {
+            public void run() {
+                NativeUtil.close(inputStream); // any close on input can block??? on SE JP7 ????
+                NativeUtil.close(outputStream);
+                NativeUtil.close(connection);
+            }
+        }.start();
+    }
+
+    /**
+     * This is the run() method of the Socket read thread
+     * this thread can sometimes block and stick around even after a socket is closed and a new one reopened
+     */
+    public final void run() {
+        try {
+            //#mdebug info
+            String name = readThread.getName();
+            int id = System.identityHashCode(readThread);
+            Logger.info("[SocketClient] STARTING "+ name +" "+id);
+            //#enddebug
+
+            Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
+            InputStream myin=in;
+
+            try {
+
+                while (true) {
+
+                    //#debug debug
+                    if (disconnected) throw new IOException();
+
+                    Object task = read(myin);
+
+                    updateState(COMMUNICATING);
+
+                    //#debug info
+                    Logger.info("[SocketClient] got object: "+task+" "+id);
+                    try {
+
+                        Thread.yield();
+                        Thread.sleep(0);
+
+                        handleObject( task );
+
+                        Thread.yield();
+                        Thread.sleep(0);
+
+                    }
+                    catch (Exception x) {
+                        //#debug warn
+                        Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
+                        //#debug error
+                        Logger.error(x);
+                    }
+
+                    updateState(CONNECTED);
+                }
+
+            }
+            catch(Exception ex) {
+                // THIS HAPPENS ON A DISCONNECT
+
+                //#debug info
+                Logger.info("[SocketClient] Disconnect (Exception) during read from socket "+ex.toString()+" "+id);
+
+                // this is a normal shutdown when a exception is thrown in the read thread and 'in' is the same as the one we used
+                boolean normal = myin == in;
+
+                //#mdebug warn
+                if (!normal || !(ex instanceof IOException)) {
+                    Logger.warn(ex); // this is NOT a normal disconnect
+                }
+                //#enddebug
+
+                // only call shut down if the current connection is the same as my connection
+                if (normal) {
+                    shutdownConnection();
+                }
+
+            }
+
+            //#debug info
+            Logger.info("[SocketClient] ENDING "+ name +" "+id);
+        }
+        catch (Throwable t){
+            //#debug error
+            Logger.error(t);
+        }
+    }
+
+    // --------------------------- abstract methods ---------------------------
+
+    protected String getNextServer() {
+        return server;
+    }
 
     protected void securityException() {
         //#debug warn
         Logger.warn("[SocketClient] Socket connections are not allowed.");
-    }
-
-    public void setRetryCount(int retryCount){
-        this.retryCount = retryCount;
-    }
-
-    protected int getRetryCount(){
-        return retryCount;
-    }
-
-    protected int getMaxRetries(){
-        return maxRetries;
     }
 
     /**
