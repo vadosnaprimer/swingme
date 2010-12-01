@@ -251,7 +251,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
                             " name = " + netInfo.getTypeName());
                     //#enddebug
 
-                    if (type != networkType || state != networkState) {
+                    if (type != networkType || state != networkState || !netInfo.isConnected()) {
                         networkType = type;
                         networkState = state;
                         cleanSocketConnections(closeConnections);
