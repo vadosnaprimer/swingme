@@ -185,7 +185,13 @@ public class TextBox extends Screen {
 
         //Override
         public boolean deleteSurroundingText(int leftLength, int rightLength) {
-            // System.out.println("deleteSurroundingText");
+            // System.out.println("deleteSurroundingText: leftLength = " + leftLength + " rightLength = " + rightLength);
+            // Remove left by sending backspaces
+            for (int i = 0; i < leftLength; i++) {
+                sendText("\b");
+            }
+            // TODO: Do we need to remove the right (send delete chars)?
+
             return true;
         }
 
