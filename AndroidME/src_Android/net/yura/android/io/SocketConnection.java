@@ -42,6 +42,7 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
+import android.test.IsolatedContext;
 
 public class SocketConnection implements javax.microedition.io.SocketConnection {
 
@@ -50,7 +51,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 
     protected Socket socket;
 
-	public SocketConnection() {
+	public SocketConnection() throws IOException {
 	    //#debug debug
 	    System.out.println(">>> SocketConnection: Constructor()");
 
@@ -62,48 +63,34 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 		this.socket = new Socket(host, port);
 	}
 
-	public SocketConnection(Socket socket) {
+	public SocketConnection(Socket socket) throws IOException {
 	    this();
 		this.socket = socket;
 	}
 
 	public String getAddress() throws IOException {
-		if (socket == null || socket.isClosed()) {
-			throw new IOException();
-		}
-
+	    checkState();
 		return socket.getInetAddress().toString();
 	}
 
 	public String getLocalAddress() throws IOException {
-		if (socket == null || socket.isClosed()) {
-			throw new IOException();
-		}
-
+	    checkState();
 		return socket.getLocalAddress().toString();
 	}
 
 	public int getLocalPort() throws IOException {
-		if (socket == null || socket.isClosed()) {
-			throw new IOException();
-		}
-
+	    checkState();
 		return socket.getLocalPort();
 	}
 
 	public int getPort() throws IOException {
-		if (socket == null || socket.isClosed()) {
-			throw new IOException();
-		}
-
+	    checkState();
 		return socket.getPort();
 	}
 
-	public int getSocketOption(byte option) throws IllegalArgumentException,
-			IOException {
-		if (socket != null && socket.isClosed()) {
-			throw new IOException();
-		}
+	public int getSocketOption(byte option) throws IllegalArgumentException, IOException {
+	    checkState();
+
 		switch (option) {
     		case DELAY:
     		    return (socket.getTcpNoDelay()) ? 1 : 0;
@@ -121,38 +108,36 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 		}
 	}
 
-	public void setSocketOption(byte option, int value)
-			throws IllegalArgumentException, IOException {
-		if (socket.isClosed()) {
-			throw new IOException();
-		}
+	public void setSocketOption(byte option, int value)	throws IllegalArgumentException, IOException {
+	    checkState();
+
 		switch (option) {
-		case DELAY:
-			socket.setTcpNoDelay(value != 0);
-			break;
-		case LINGER:
-			if (value < 0) {
-				throw new IllegalArgumentException();
-			}
-			socket.setSoLinger(value != 0, value);
-			break;
-		case KEEPALIVE:
-			socket.setKeepAlive(value != 0);
-			break;
-		case RCVBUF:
-			if (value <= 0) {
-				throw new IllegalArgumentException();
-			}
-			socket.setReceiveBufferSize(value);
-			break;
-		case SNDBUF:
-			if (value <= 0) {
-				throw new IllegalArgumentException();
-			}
-			socket.setSendBufferSize(value);
-			break;
-		default:
-			throw new IllegalArgumentException();
+    		case DELAY:
+    			socket.setTcpNoDelay(value != 0);
+    			break;
+    		case LINGER:
+    			if (value < 0) {
+    				throw new IllegalArgumentException();
+    			}
+    			socket.setSoLinger(value != 0, value);
+    			break;
+    		case KEEPALIVE:
+    			socket.setKeepAlive(value != 0);
+    			break;
+    		case RCVBUF:
+    			if (value <= 0) {
+    				throw new IllegalArgumentException();
+    			}
+    			socket.setReceiveBufferSize(value);
+    			break;
+    		case SNDBUF:
+    			if (value <= 0) {
+    				throw new IllegalArgumentException();
+    			}
+    			socket.setSendBufferSize(value);
+    			break;
+    		default:
+    			throw new IllegalArgumentException();
 		}
 	}
 
@@ -170,23 +155,35 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             socket.shutdownOutput();
         } catch (Throwable e) {}
 
-		socket.close();
+        try {
+    		socket.close();
+        } catch (Throwable e) {}
 	}
 
 	public InputStream openInputStream() throws IOException {
+	    checkState();
 		return socket.getInputStream();
 	}
 
 	public DataInputStream openDataInputStream() throws IOException {
+	    checkState();
 		return new DataInputStream(openInputStream());
 	}
 
 	public OutputStream openOutputStream() throws IOException {
+	    checkState();
 		return socket.getOutputStream();
 	}
 
 	public DataOutputStream openDataOutputStream() throws IOException {
+	    checkState();
 		return new DataOutputStream(openOutputStream());
+	}
+
+	private void checkState() throws IOException {
+	    if (socket == null || socket.isClosed()) {
+            throw new IOException();
+        }
 	}
 
 
@@ -202,21 +199,25 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 	 */
 	static class ConnectivityBroadcastReceiver extends BroadcastReceiver {
 
-        static private synchronized void addSocketConnection(SocketConnection socket) {
+        static private synchronized void addSocketConnection(SocketConnection socket) throws IOException {
             if (socketBroadcastReceiver == null) {
                 socketBroadcastReceiver = new ConnectivityBroadcastReceiver();
             }
 
-            socketBroadcastReceiver.cleanSocketConnections(false); // Clean weak refs
-            socketBroadcastReceiver.socketWeakList.add(new WeakReference<SocketConnection>(socket));
+            socketBroadcastReceiver.addSocketConnectionImpl(socket);
         }
 
         private Vector<WeakReference<SocketConnection>> socketWeakList = new Vector<WeakReference<SocketConnection>>();
         private int networkType;
         private State networkState;
+        private boolean isConnected;
 
-        private ConnectivityBroadcastReceiver() {
+        private ConnectivityBroadcastReceiver() throws IOException {
             updateConnectivity(false); // Initialize
+
+            if (!isConnected) {
+                throw new IOException("Not Connected");
+            }
 
             //#debug debug
             System.out.println(">>> SocketBroadcastReceiver: registerReceiver");
@@ -230,33 +231,50 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
         public void onReceive(Context context, Intent intent) {
             //#debug debug
             System.out.println(">>> SocketBroadcastReceiver: received " + intent.getAction() + ": " + intent.getExtras());
+
             updateConnectivity(true);
         }
 
+        private void addSocketConnectionImpl(SocketConnection socket) throws IOException {
+            cleanSocketConnections(false); // Clean weak references
+
+            if (!isConnected) {
+                throw new IOException("Not Connected");
+            }
+            socketWeakList.add(new WeakReference<SocketConnection>(socket));
+        }
+
         private void updateConnectivity(boolean closeConnections) {
+            boolean isConnected = false;
+            boolean hasStateChanged = false;
+
             ConnectivityManager connectivityManager = (ConnectivityManager) AndroidMeActivity.DEFAULT_ACTIVITY.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivityManager != null) {
                 NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
 
-                if (netInfo == null) {
-                    cleanSocketConnections(closeConnections);
-                }
-                else {
+                if (netInfo != null) {
                     State state = netInfo.getState();
                     int type = netInfo.getType();
+                    isConnected = netInfo.isConnected();
 
                     //#mdebug debug
                     System.out.println(">>> SocketBroadcastReceiver: state = " + state +
-                            " detail = " + netInfo.getDetailedState() + " type = " + type +
+                            " detail = " + netInfo.getDetailedState() +
+                            " type = " + type + " isConnected = " + isConnected +
                             " name = " + netInfo.getTypeName());
                     //#enddebug
 
-                    if (type != networkType || state != networkState || !netInfo.isConnected()) {
+                    if (type != networkType || state != networkState) {
                         networkType = type;
                         networkState = state;
-                        cleanSocketConnections(closeConnections);
+                        hasStateChanged = true;
                     }
                 }
+            }
+
+            this.isConnected = isConnected;
+            if (!isConnected || hasStateChanged) {
+                cleanSocketConnections(closeConnections);
             }
         }
 
@@ -268,12 +286,9 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             for (int i = socketWeakList.size() - 1; i >= 0; i--) {
                 SocketConnection conn = socketWeakList.elementAt(i).get();
                 if (closeConnections) {
-                    if (conn != null) {
-                        try {
-                            conn.close();
-                        } catch (Throwable e) {
-                        }
-                    }
+                    try {
+                        conn.close();
+                    } catch (Throwable e) {}
                     conn = null;
                 }
 
@@ -283,13 +298,11 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             }
 
             if (closeConnections) {
-                synchronized (ConnectivityBroadcastReceiver.class) {
-                    if (socketBroadcastReceiver != null && socketWeakList.size() == 0) {
-                        //#debug debug
-                        System.out.println(">>> SocketBroadcastReceiver: close");
-                        AndroidMeActivity.DEFAULT_ACTIVITY.unregisterReceiver(socketBroadcastReceiver);
-                        socketBroadcastReceiver = null;
-                    }
+                if (socketBroadcastReceiver != null && socketWeakList.size() == 0) {
+                    //#debug debug
+                    System.out.println(">>> SocketBroadcastReceiver: close");
+                    AndroidMeActivity.DEFAULT_ACTIVITY.unregisterReceiver(socketBroadcastReceiver);
+                    socketBroadcastReceiver = null;
                 }
             }
         }
