@@ -11,6 +11,7 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.gui.layout.BorderLayout;
@@ -52,6 +53,12 @@ public class MainTest extends Section {
         Button redButton = new Button("RED BUTTON");
         redButton.setName("RedButton");
         add(redButton);
+
+        ProgressBar bar = new ProgressBar();
+        bar.setName("IndeterminateSpinner");
+        bar.setIndeterminate(true);
+        add(bar);
+
     }
 
     //Override

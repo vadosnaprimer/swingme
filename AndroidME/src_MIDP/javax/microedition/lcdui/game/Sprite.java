@@ -43,44 +43,48 @@ public class Sprite extends Layer {
 
     // current frame index (within the sequence, not the absolut index)
     private int frame;
-    
+
     // the frame sequence
     // null if the default is used
     private int [] sequence;
-    
+
     // coordinate of the reference pixel
     private int refX;
     private int refY;
-    
+
     // number of cols and rows within the image
     private int cols;
     private int rows;
-    
+
     // the transform aplied to this sprite
     private int transform;
-            
+
     // the image containg the frames
     private Image img;
-    
+
     // the collision rectangle
     private int collX;
     private int collY;
     private int collWidth;
     private int collHeight;
-    
+
     // arrays for the collision detection at pixel level
     private int []rgbData;
     private int []rgbDataAux;
-    
+
+    public Sprite(int w, int h) {
+        super(0, 0, w, h, true);
+    }
+
     public Sprite(Image img) {
         this(img, img.getWidth(), img.getHeight());
     }
-    
+
     public Sprite(Image img, int frameWidth, int frameHeight) {
         // initial state is visible, positioned at 0, 0
         // with a bound rectangle the same as the frame
         super(0, 0, frameWidth, frameHeight, true);
-        
+
         // implicit check for null img
         if (img.getWidth() % frameWidth != 0 ||
                 img.getHeight() % frameHeight != 0)
@@ -92,10 +96,10 @@ public class Sprite extends Layer {
         collWidth = frameWidth;
         collHeight = frameHeight;
     }
-    
+
     public Sprite(Sprite otherSprite) {
         // copy the otherSprite
-        super(otherSprite.getX(), otherSprite.getY(), 
+        super(otherSprite.getX(), otherSprite.getY(),
                 otherSprite.getWidth(), otherSprite.getHeight(),
                 otherSprite.isVisible());
         this.frame = otherSprite.frame;
@@ -111,11 +115,11 @@ public class Sprite extends Layer {
         this.collWidth = otherSprite.collWidth;
         this.collHeight = otherSprite.collHeight;
     }
-    
+
 //    public final boolean collidesWith(Image image, int iX, int iY, boolean pixelLevel) {
 //        if (image == null)
 //            throw new IllegalArgumentException();
-//        
+//
 //        // only check collision if visible
 //        if (!this.isVisible())
 //                return false;
@@ -127,7 +131,7 @@ public class Sprite extends Layer {
 //    }
 
 
-    
+
 //    public final boolean collidesWith(TiledLayer layer, boolean pixelLevel) {
 //        int sX, sY;
 //        int sW, sH;
@@ -135,7 +139,7 @@ public class Sprite extends Layer {
 //        if (layer == null) {
 //            throw new NullPointerException();
 //        }
-//        
+//
 //        // only check collision if visible
 //        if (!this.isVisible())
 //                return false;
@@ -143,10 +147,10 @@ public class Sprite extends Layer {
 //        // only check collision if both are visible
 //        if (!layer.isVisible() || !this.isVisible())
 //            return false;
-//            
+//
 //        if (pixelLevel) // second and third parameters are dont care
 //            return collidesWithPixelLevel(layer, 0, 0);
-//        else 
+//        else
 //            return collidesWith(layer, 0, 0);
 //    }
 //
@@ -157,26 +161,26 @@ public class Sprite extends Layer {
 //        if (otherSprite == null) {
 //            throw new NullPointerException();
 //        }
-//        
+//
 //        // only check collision if both are visible
 //        if (!otherSprite.isVisible() || !this.isVisible())
 //            return false;
-//        
+//
 //        if (pixelLevel) // second and third parameters are dont care
 //            return collidesWithPixelLevel(otherSprite, 0, 0);
-//        else 
+//        else
 //            return collidesWith(otherSprite, 0, 0);
 //    }
-    
+
     public void defineReferencePixel(int x, int y) {
         refX = x;
         refY = y;
     }
-    
+
     public int getRefPixelX() {
         return getX() + refX;
     }
-    
+
     public int getRefPixelY() {
         return getY() + refY;
     }
@@ -227,7 +231,7 @@ public class Sprite extends Layer {
 
         setPosition(x - curRefX, y - curRefY);
     }
-   
+
     public void defineCollisionRectangle(int x, int y, int width, int height) {
         if (width < 0 || height < 0)
             throw new IllegalArgumentException();
@@ -236,7 +240,7 @@ public class Sprite extends Layer {
         collWidth = width;
         collHeight = height;
     }
-    
+
     public void setFrameSequence(int []sequence) {
         if (sequence == null) {
             // return to default sequence
@@ -247,85 +251,85 @@ public class Sprite extends Layer {
         int max = (rows*cols)-1;
 
         int l = sequence.length;
-        
+
         if (l == 0)
             throw new IllegalArgumentException();
-        
+
         for (int i = 0; i < l; i++) {
             int value = sequence[i];
             if (value > max || value < 0)
                 throw new ArrayIndexOutOfBoundsException();
         }
-            
+
         this.sequence = sequence;
         // the frame number has to be reseted
         this.frame = 0;
     }
-    
+
     public final int getFrame() {
 		return frame;
     }
-    
+
     public int getFrameSequenceLength() {
-    	return (sequence == null) ? rows*cols : sequence.length; 
+    	return (sequence == null) ? rows*cols : sequence.length;
     }
-    
+
     public void setFrame(int frame) {
-        int l = (sequence == null)? rows*cols : sequence.length; 
+        int l = (sequence == null)? rows*cols : sequence.length;
         if (frame < 0 || frame >= l) {
             throw new IndexOutOfBoundsException();
         }
         this.frame = frame;
     }
-    
+
     public void nextFrame() {
         if (frame == ((sequence == null)? rows*cols : sequence.length) - 1)
             frame = 0;
         else
             frame++;
     }
-    
+
     public void prevFrame() {
         if (frame == 0)
             frame = ((sequence == null)? rows*cols : sequence.length) - 1;
         else
             frame--;
     }
- 
+
     public void setImage(Image img, int frameWidth, int frameHeight) {
     	synchronized (this) {
 	        int oldW = getWidth();
 	        int oldH = getHeight();
 	        int newW = img.getWidth();
 	        int newH = img.getHeight();
-	        
+
 	        // implicit size check
 	        setSize(frameWidth, frameHeight);
-	
+
 	        if (img.getWidth() % frameWidth != 0 ||
 	                img.getHeight() % frameHeight != 0)
 	            throw new IllegalArgumentException();
 	        this.img = img;
-	        
+
 	        int oldFrames = cols*rows;
 	        cols = img.getWidth() / frameWidth;
 	        rows = img.getHeight() / frameHeight;
-	        
+
 	        if (rows*cols < oldFrames) {
 	            // there are fewer frames
 	            // reset frame number and sequence
 	            sequence = null;
 	            frame = 0;
 	        }
-	        
+
 	        if (frameWidth != getWidth() || frameHeight != getHeight()) {
 	            // size changed
 	            // reset collision rectangle and collision detection array
 	            defineCollisionRectangle(0, 0, frameWidth, frameHeight);
 	            rgbData = rgbDataAux = null;
-	            
+
 	            // if necessary change position to keep the reference pixel in place
-	            
+
 	            if (transform != TRANS_NONE) {
 	                int dx, dy;
 	                switch(transform) {
@@ -364,39 +368,39 @@ public class Sprite extends Layer {
 	                }
 	                // now change position to keep the refPixel in place
 	                move(dx, dy);
-	            }	                
+	            }
 	        }
     	}
     }
-    
-    public final void paint(Graphics g) {
+
+    public void paint(Graphics g) {
         if (!isVisible())
             return;
-        
+
         int f = (sequence == null)? frame : sequence[frame];
         int w = getWidth();
         int h = getHeight();
         int fx = w * (f % cols);
-        int fy = h * (f / cols);        
-        
+        int fy = h * (f / cols);
+
         g.drawRegion(img, fx, fy, w, h, transform, getX(), getY(), Graphics.TOP | Graphics.LEFT);
     }
-    
+
     public int getRawFrameCount() {
         return cols * rows;
     }
-    
+
     public void setTransform (int transform) {
         if (this.transform == transform)
             return;
-        
+
         int width = getWidth();
         int height = getHeight();
         int currentTransform = this.transform;
-        
+
         // calculate the coordinates of refPixel in the new transform
         // relative to x, y
-        
+
         int newRefX, newRefY;
 
         switch(transform) {
@@ -438,7 +442,7 @@ public class Sprite extends Layer {
 
         // calculate the coordinates of refPixel in the current transform
         // relative to x, y
-        
+
         int curRefX, curRefY;
 
         switch(currentTransform) {
@@ -479,32 +483,32 @@ public class Sprite extends Layer {
                     // may not be initialized)
                 return;
         }
-        
+
         // now change position to keep the refPixel in place
         move(curRefX - newRefX, curRefY - newRefY);
         this.transform = transform;
     }
 
-    
+
 //    /**
 //     * Helper methods that check for collisions
-//     * They are at the end of the file because of the 
+//     * They are at the end of the file because of the
 //     * length of the code
 //     *
-//     * For both methods, the second and third parameters 
-//     * are significant only if o is an Image, 
+//     * For both methods, the second and third parameters
+//     * are significant only if o is an Image,
 //     * otherwise they are ignored
 //     */
-//    private synchronized boolean collidesWith(Object o, 
+//    private synchronized boolean collidesWith(Object o,
 //                int oX, int oY) {
-//    
+//
 //        int tX = 0, tY = 0, tW = 0, tH = 0;
 //        int oW = 0, oH = 0;
 //
 //        Sprite t = this;
 //        boolean another = true;
-//        
-//        
+//
+//
 //        while (another) {
 //            int sX, sY, sW, sH;
 //
@@ -512,7 +516,7 @@ public class Sprite extends Layer {
 //            int cY = t.collY;
 //            int cW = t.collWidth;
 //            int cH = t.collHeight;
-//            
+//
 //            // if there is a zero in a dimension
 //            // then it cannot intersect with anything!
 //            if (cW == 0 || cH == 0) {
@@ -540,7 +544,7 @@ public class Sprite extends Layer {
 //                    break;
 //                case TRANS_ROT180:
 //                    sX = t.getX() + (t.getWidth() - cX - 1) - cW;
-//                    sY = t.getY() + (t.getHeight() - cY - 1) - cH; 
+//                    sY = t.getY() + (t.getHeight() - cY - 1) - cH;
 //                    sW = cW;
 //                    sH = cH;
 //                    break;
@@ -573,7 +577,7 @@ public class Sprite extends Layer {
 //                        // may not be initialized)
 //                    return false;
 //            }
-//            
+//
 //            if (o != t) {
 //                tX = sX;
 //                tY = sY;
@@ -622,7 +626,7 @@ public class Sprite extends Layer {
 //            // if o is a tiledLayer then
 //            // it is possible to have not a
 //            // collision if every intersection tile
-//            // has a zero value 
+//            // has a zero value
 //            TiledLayer layer = (TiledLayer) o;
 //            // this is the intersection of the two rectangles
 //            int rX, rY, rW, rH;
@@ -641,7 +645,7 @@ public class Sprite extends Layer {
 //                rY = tY;
 //                rH = ((tY + tH < oY + oH)? tY + tH : oY + oH) - rY;
 //            }
-//            
+//
 //            Image img = layer.img;
 //
 //            int lW = layer.getCellWidth();
@@ -675,38 +679,38 @@ public class Sprite extends Layer {
 //            // collision happened
 //            return true;
 //        }
-//    }    
+//    }
 //
-//    private synchronized boolean collidesWithPixelLevel(Object o, 
+//    private synchronized boolean collidesWithPixelLevel(Object o,
 //                int oX, int oY) {
-//        
-//        
+//
+//
 //        boolean another = true;
 //        Sprite t = this;
 //
 //        // the compiler bitchs if we dont initialize this
 //        int tX = 0, tY = 0, tW = 0, tH = 0;
 //        int oW = 0, oH = 0;
-//        
+//
 //        while (another) {
-//            // first calculate the actual rectangle we must check 
+//            // first calculate the actual rectangle we must check
 //            // for this sprite
 //            // this are for the reduced collision rectangle
 //            int cX, cY, cW, cH;
-//            // this are for the intersection of the bounds rectangle 
+//            // this are for the intersection of the bounds rectangle
 //            // and collision rectangle, taking into account
 //            // position and transform
 //            int sX, sY, sW, sH;
 //
 //
-//            
+//
 //            // take the collision rectangle in account
 //            // but since the pixels outside the frame are
 //            // considered transparent, first we have to
 //            // take the intersection between the collision
 //            // rectangle and the frame bounds
 //
-//            if (t.collX >= t.getWidth() || t.collX + t.collWidth <= 0 
+//            if (t.collX >= t.getWidth() || t.collX + t.collWidth <= 0
 //                        || t.collY >= t.getHeight() || t.collY + t.collHeight <= 0)
 //            // collision rectangle outside frame bounds
 //                return false;
@@ -737,7 +741,7 @@ public class Sprite extends Layer {
 //                    break;
 //                case TRANS_ROT180:
 //                    sX = t.getX() + (t.getWidth() - cX - 1) - cW;
-//                    sY = t.getY() + (t.getHeight() - cY - 1) - cH; 
+//                    sY = t.getY() + (t.getHeight() - cY - 1) - cH;
 //                    sW = cW;
 //                    sH = cH;
 //                    break;
@@ -770,7 +774,7 @@ public class Sprite extends Layer {
 //                        // may not be initialized)
 //                    return false;
 //            }
-//            
+//
 //            if (o != t) {
 //                tX = sX;
 //                tY = sY;
@@ -803,7 +807,7 @@ public class Sprite extends Layer {
 //                oH = sH;
 //            }
 //        }
-// 
+//
 //        // if there is no intersection
 //        // we know there is no collision
 //        if (tX > oX && tX >= oX + oW)
@@ -819,7 +823,7 @@ public class Sprite extends Layer {
 //        // this is the intersection of the two rectangles
 //        int rX, rY, rW, rH;
 //
-//        
+//
 //        if (oX > tX) {
 //            rX = oX;
 //            rW = ((oX + oW < tX + tW)? oX + oW : tX + tW) - rX ;
@@ -854,57 +858,57 @@ public class Sprite extends Layer {
 //        t = this;
 //        another = true;
 //        int[] tRgbData = this.rgbData;
-//        
+//
 //        while (another) {
 //            int sOffset;
 //            int sColIncr;
 //            int sRowIncr;
-//                    
+//
 //            switch(t.transform) {
 //                case TRANS_NONE:
-//                    t.img.getRGB(tRgbData, 0, rW, fX + rX - t.getX(), fY + rY - t.getY(), rW, rH); 
+//                    t.img.getRGB(tRgbData, 0, rW, fX + rX - t.getX(), fY + rY - t.getY(), rW, rH);
 //                    sOffset = 0;
 //                    sColIncr = 1;
 //                    sRowIncr = 0;
 //                    break;
 //                case TRANS_ROT180:
-//                    t.img.getRGB(tRgbData, 0, rW, fX + fW - (rX - t.getX()) - rW - 1, fY + fH - (rY - t.getY()) - rH - 1, rW, rH); 
+//                    t.img.getRGB(tRgbData, 0, rW, fX + fW - (rX - t.getX()) - rW - 1, fY + fH - (rY - t.getY()) - rH - 1, rW, rH);
 //                    sOffset = (rH * rW) - 1;
 //                    sColIncr = -1;
 //                    sRowIncr =  0;
 //                    break;
 //                case TRANS_MIRROR:
-//                    t.img.getRGB(tRgbData, 0, rW, fX + fW - (rX - t.getX()) - rW - 1, fY + rY - t.getY(), rW, rH); 
+//                    t.img.getRGB(tRgbData, 0, rW, fX + fW - (rX - t.getX()) - rW - 1, fY + rY - t.getY(), rW, rH);
 //                    sOffset = rW - 1;
 //                    sColIncr = -1;
 //                    sRowIncr =  rW << 1;
 //                    break;
 //                case TRANS_MIRROR_ROT180:
-//                    t.img.getRGB(tRgbData, 0, rW, fX + rX - t.getX(), fY + fH - (rY - t.getY()) - rH - 1, rW, rH); 
+//                    t.img.getRGB(tRgbData, 0, rW, fX + rX - t.getX(), fY + fH - (rY - t.getY()) - rH - 1, rW, rH);
 //                    sOffset = (rH - 1) * rW;
 //                    sColIncr = 1;
 //                    sRowIncr =  -(rW << 1);
 //                    break;
 //                case TRANS_ROT90:
-//                    t.img.getRGB(tRgbData, 0, rH, fX + rY - t.getY(), fY + fH - (rX - t.getX()) - rW, rH, rW); 
+//                    t.img.getRGB(tRgbData, 0, rH, fX + rY - t.getY(), fY + fH - (rX - t.getX()) - rW, rH, rW);
 //                    sOffset = (rW - 1) * rH;
 //                    sColIncr = -rH;
 //                    sRowIncr = (rH * rW) + 1;
 //                    break;
 //                case TRANS_MIRROR_ROT90:
-//                    t.img.getRGB(tRgbData, 0, rH, fX + fW - (rY - t.getY()) - rH, fY + fH - (rX - t.getX()) - rW, rH, rW); 
+//                    t.img.getRGB(tRgbData, 0, rH, fX + fW - (rY - t.getY()) - rH, fY + fH - (rX - t.getX()) - rW, rH, rW);
 //                    sOffset = (rH * rW) - 1;
 //                    sColIncr = -rH;
 //                    sRowIncr = (rH * rW) - 1;
 //                    break;
 //                case TRANS_MIRROR_ROT270:
-//                    t.img.getRGB(tRgbData, 0, rH, fX + rY - t.getY(), fY + rX - t.getX(), rH, rW); 
+//                    t.img.getRGB(tRgbData, 0, rH, fX + rY - t.getY(), fY + rX - t.getX(), rH, rW);
 //                    sOffset = 0;
 //                    sColIncr = rH;
 //                    sRowIncr = -(rH * rW) + 1;
 //                    break;
 //                case TRANS_ROT270:
-//                    t.img.getRGB(tRgbData, 0, rH, fX + fW - (rY - t.getY()) - rH, fY + rX - t.getX(), rH, rW); 
+//                    t.img.getRGB(tRgbData, 0, rH, fX + fW - (rY - t.getY()) - rH, fY + rX - t.getX(), rH, rW);
 //                    sOffset = rH - 1;
 //                    sColIncr = rH;
 //                    sRowIncr =  -(rH * rW) - 1;
@@ -925,7 +929,7 @@ public class Sprite extends Layer {
 //                    // another = true;
 //                    t = (Sprite) o;
 //                    tRgbData = this.rgbDataAux;
-//          
+//
 //                    f = (t.sequence == null)? t.frame : t.sequence[t.frame];
 //
 //                    fW = t.getWidth();
@@ -940,15 +944,15 @@ public class Sprite extends Layer {
 //                    oOffset = 0;
 //                    oColIncr = 1;
 //                    oRowIncr = 0;
-//                    
+//
 //                    int lW = layer.getCellWidth();
 //                    int lH = layer.getCellHeight();
-//                    
+//
 //                    int minC = (rX - oX) / lW;
 //                    int minR = (rY - oY) / lH;
 //                    int maxC = (rX - oX + rW - 1) / lW;
 //                    int maxR = (rY - oY + rH - 1) / lH;
-//                    
+//
 //                    // travel across all cells in the collision
 //                    // rectangle
 //                    for (int row = minR; row <= maxR; row++) {
@@ -958,13 +962,13 @@ public class Sprite extends Layer {
 //                            // associated static tile
 //                            if (cell < 0)
 //                                cell = layer.getAnimatedTile(cell);
-//                            
+//
 //                            int minX = (col == minC)? (rX - oX) % lW : 0;
 //                            int minY = (row == minR)? (rY - oY) % lH : 0;
 //                            int maxX = (col == maxC)? (rX + rW - oX - 1) % lW : lW-1;
 //                            int maxY = (row == maxR)? (rY + rH - oY - 1) % lH : lH-1;
-//                            
-//                            
+//
+//
 //                            int c = (row - minR) * lH * rW + (col - minC) * lW -
 //                                    ((col == minC)? 0 : (rX - oX) % lW) -
 //                                    ((row == minR)? 0 : (rY - oY) % lH) * rW;
@@ -974,8 +978,8 @@ public class Sprite extends Layer {
 //                            // fake positives caused by residual data
 //                            // on the rgb array
 //                            if (cell == 0) {
-//                                
-//                                for (int y = minY; y <= maxY; y++, 
+//
+//                                for (int y = minY; y <= maxY; y++,
 //                                            c += rW - (maxX - minX + 1)) {
 //                                    for (int x = minX; x <= maxX; x++, c++) {
 //                                        rgbDataAux[c] = 0;
@@ -984,14 +988,14 @@ public class Sprite extends Layer {
 //                            } else {
 //                                // make cell 0-based
 //                                cell--;
-//                                
+//
 //                                int imgCols = img.getWidth() / layer.getCellWidth();
 //                                int xSrc = lW * (cell % imgCols);
 //                                int ySrc = (cell / imgCols) * lH;
-//                                img.getRGB(rgbDataAux, c, rW, xSrc + minX, 
-//                                        ySrc + minY, maxX - minX + 1, 
+//                                img.getRGB(rgbDataAux, c, rW, xSrc + minX,
+//                                        ySrc + minY, maxX - minX + 1,
 //                                        maxY - minY + 1);
-//      
+//
 //                            }
 //                        }
 //                    }
@@ -1013,7 +1017,7 @@ public class Sprite extends Layer {
 //                oColIncr = sColIncr;
 //            }
 //        }
-//        
+//
 //        for (int row = 0; row < rH; row++, tOffset += tRowIncr, oOffset += oRowIncr) {
 //            for (int col = 0; col < rW; col++, tOffset += tColIncr, oOffset += oColIncr) {
 //                int rgb = rgbData[tOffset];

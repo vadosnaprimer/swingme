@@ -1,5 +1,8 @@
 package net.yura.android.plaf;
 
+import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.game.Sprite;
+
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -244,7 +247,18 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         scrollBarThumbStyle.addBorder(new AndroidBorder(scroll, scrollSize),Style.ALL);
         setStyleFor("ScrollBarThumb",scrollBarThumbStyle);
 
+        // -- IndeterminateSpinner --
+        Style indeterminateSpinner = new Style(defaultStyle);
+        Drawable spin = getDrawable(ctx,android.R.style.Widget_ProgressBar_Small,android.R.attr.indeterminateDrawable);
+        spin.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
+
+        indeterminateSpinner.addProperty( new AndroidSprite(spin), "sprite", Style.ALL);
+        setStyleFor("IndeterminateSpinner",indeterminateSpinner);
+
+        // yes = ok, no = cencel, dont use this as it seems to be wrong
+        //ctx.getResources().getString(android.R.string.ok);
     }
+
     private Drawable getDrawable(Context ctx, String name) {
         try {
             Class clazz = Class.forName("com.android.internal.R$drawable");
