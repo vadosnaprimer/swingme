@@ -42,7 +42,6 @@ import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
-import android.test.IsolatedContext;
 
 public class SocketConnection implements javax.microedition.io.SocketConnection {
 
