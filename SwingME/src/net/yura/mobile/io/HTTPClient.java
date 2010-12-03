@@ -20,7 +20,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
     public HTTPClient() {
         super("HTTPClient");
     }
-    
+
     public void makeRequest(Request request) {
         addToInbox(request);
     }
@@ -42,28 +42,28 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
     public static byte[] getData(InputStream iStrm,int length) throws IOException {
 
-          ByteArrayOutputStream bStrm = null;
+        ByteArrayOutputStream bStrm = null;
 
-          // ContentConnection includes a length method
-          byte imageData[];
+        // ContentConnection includes a length method
+        byte imageData[];
 
-          if (length != -1) {
+        if (length != -1) {
             imageData = new byte[length];
             // Read the png into an array
-    //        iStrm.read(imageData);
+            //        iStrm.read(imageData);
             DataInputStream din = new DataInputStream(iStrm);
             din.readFully(imageData);
-          }
-          else { // Length not available...
+        }
+        else { // Length not available...
             bStrm = new ByteArrayOutputStream();
             int len;
             for (byte[] buffer = new byte[Math.max(32, iStrm.available())]; (len = iStrm.read(buffer)) != -1; )
-              bStrm.write(buffer, 0, len);
+                bStrm.write(buffer, 0, len);
             imageData = bStrm.toByteArray();
             bStrm.close();
-          }
+        }
 
-          return imageData;
+        return imageData;
     }
 
     public void process(Object arg0) throws Exception {
@@ -108,8 +108,8 @@ public abstract class HTTPClient extends QueueProcessorThread {
             httpConn.setRequestMethod(request.post || request.postData!=null ? HttpConnection.POST : HttpConnection.GET);
             if(request.headers!=null) for(Enumeration e = request.headers.keys(); e.hasMoreElements(); )
             {
-              String key = e.nextElement().toString();
-              httpConn.setRequestProperty(key, request.headers.get(key).toString());
+                String key = e.nextElement().toString();
+                httpConn.setRequestProperty(key, request.headers.get(key).toString());
             }
             //httpConn.setRequestProperty("User-Agent",
             //  "Profile/MIDP-1.0 Confirguration/CLDC-1.0");
@@ -123,35 +123,46 @@ public abstract class HTTPClient extends QueueProcessorThread {
             os.flush();
             /** Initiate connection and check for the response code. If the
             response code is HTTP_OK then get the content from the target
-            **/
+             **/
             int respCode = httpConn.getResponseCode();
             Hashtable headers = new Hashtable();
-            String key;
-            for(int i=0; (key = httpConn.getHeaderFieldKey(i))!=null; i++)
-              headers.put(key, httpConn.getHeaderField(i));
+            for (int i = 0;; i++) {
+                String key = httpConn.getHeaderFieldKey(i);
+                if (key == null) {
+                    // NOTE: For some implementation, zero is special, and can
+                    // return null. We should try again.
+                    if (i > 0) {
+                        break;
+                    }
+                }
+                else {
+                    headers.put(key, httpConn.getHeaderField(i));
+                }
+            }
+
             switch(respCode)
             {
-              case HttpConnection.HTTP_OK:
-                is = httpConn.openInputStream();
-                onResult(request, respCode, headers, is,httpConn.getLength());
-                break;
-              //case HttpConnection.HTTP_MOVED_PERM:
-              case HttpConnection.HTTP_SEE_OTHER:
-                request.post = false;
-                request.postData = null;
-              case HttpConnection.HTTP_MOVED_TEMP:
-              case HttpConnection.HTTP_TEMP_REDIRECT:
-                request.url = httpConn.getHeaderField("Location");
-                if(request.url != null && request.redirects>0)
-                {
-                  addToInbox(request);
-                  request.redirects--;
-                  break;
-                }
-              default:
-                is = httpConn.openInputStream();
-                onResult(request, respCode, headers, is,httpConn.getLength());
-                break;
+                case HttpConnection.HTTP_OK:
+                    is = httpConn.openInputStream();
+                    onResult(request, respCode, headers, is,httpConn.getLength());
+                    break;
+                    //case HttpConnection.HTTP_MOVED_PERM:
+                case HttpConnection.HTTP_SEE_OTHER:
+                    request.post = false;
+                    request.postData = null;
+                case HttpConnection.HTTP_MOVED_TEMP:
+                case HttpConnection.HTTP_TEMP_REDIRECT:
+                    request.url = httpConn.getHeaderField("Location");
+                    if(request.url != null && request.redirects>0)
+                    {
+                        addToInbox(request);
+                        request.redirects--;
+                        break;
+                    }
+                default:
+                    is = httpConn.openInputStream();
+                    onResult(request, respCode, headers, is,httpConn.getLength());
+                    break;
             }
         }
         catch(Exception ex) {
@@ -169,31 +180,30 @@ public abstract class HTTPClient extends QueueProcessorThread {
         byte[] bytes = s.getBytes();
         StringBuffer ret = new StringBuffer(s.length());
         for (int a=0;a<bytes.length;a++) {
-          byte c = bytes[a];
-          if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-          || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*' || c == '_')
-            ret.append((char)c);
-          else if (c == ' ')
-            ret.append('+');
-          else {
-            appendHex(c, ret);
-            if (c >=128) {
-              appendHex(bytes[++a], ret);
+            byte c = bytes[a];
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
+                    || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*' || c == '_')
+                ret.append((char)c);
+            else if (c == ' ')
+                ret.append('+');
+            else {
+                appendHex(c, ret);
+                if (c >=128) {
+                    appendHex(bytes[++a], ret);
+                }
+                if (c >= 224) {
+                    appendHex(bytes[++a], ret);
+                }
             }
-            if (c >= 224) {
-              appendHex(bytes[++a], ret);
-            }
-          }
         }
         return ret.toString();
     }
 
-  private static void appendHex(int arg0, StringBuffer buff){
-    buff.append('%');
-    if (arg0 < 16) {
-      buff.append('0');
+    private static void appendHex(int arg0, StringBuffer buff){
+        buff.append('%');
+        if (arg0 < 16) {
+            buff.append('0');
+        }
+        buff.append(Integer.toHexString(arg0));
     }
-    buff.append(Integer.toHexString(arg0));
-  }
-
 }
