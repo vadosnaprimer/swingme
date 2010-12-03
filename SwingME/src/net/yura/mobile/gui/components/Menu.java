@@ -313,8 +313,8 @@ public class Menu extends Button {
          * @param c The component to append to the menu
          * @see javax.swing.JMenu#add(java.awt.Component) JMenu.add
          */
-        public void add(Component c) {
-            menuItems.add(c);
+        protected void addImpl(Component c, Object cons, int index) {
+            menuItems.insert(c,index);
 
             if (c instanceof Menu) {
                 ((Menu)c).setParentMenu(this);

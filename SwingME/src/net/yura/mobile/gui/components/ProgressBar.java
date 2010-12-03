@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -66,7 +67,7 @@ public class ProgressBar extends Component {
 
             if (go) {
                 int thickness = 20;
-                
+
                 // pos goes from 0 to loaded/2
                 int pos = (loading > loaded/2)? loaded-loading : loading;
 
@@ -109,30 +110,30 @@ public class ProgressBar extends Component {
         else {
                 go = false;
         }
-        
+
     }
-        
+
     /**
      * @see javax.swing.JProgressBar#getMaximum() JProgressBar.getMaximum
      */
     public int getMaximum() {
         return loaded;
     }
-    
+
     /**
      * @see javax.swing.JProgressBar#setMaximum(int) JProgressBar.setMaximum
      */
     public void setMaximum(int max) {
         loaded = max;
     }
-    
+
     /**
      * @see javax.swing.JProgressBar#getValue() JProgressBar.getValue
      */
     public Object getValue() {
         return new Integer(loading);
     }
-    
+
     /**
      * @param v The new value
      * @see javax.swing.JProgressBar#setValue(int) JProgressBar.setValue
@@ -140,7 +141,7 @@ public class ProgressBar extends Component {
     public void setValue(int v) {
         loading = v;
     }
-    
+
     public void workoutMinimumSize() {
 
         if (sprite!=null) {
@@ -157,5 +158,11 @@ public class ProgressBar extends Component {
     public String getDefaultName() {
         return "ProgressBar";
     }
-	
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        sprite = (Sprite)theme.getProperty("sprite", Style.ALL);
+    }
+
 }
