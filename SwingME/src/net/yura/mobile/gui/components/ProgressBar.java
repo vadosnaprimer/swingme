@@ -159,7 +159,6 @@ public class ProgressBar extends Component {
         return "ProgressBar";
     }
 
-    @Override
     public void updateUI() {
         super.updateUI();
         sprite = (Sprite)theme.getProperty("sprite", Style.ALL);
