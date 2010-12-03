@@ -239,7 +239,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                     timer.cancel();
                 }
                 timer = new Timer();
-                timer.schedule("J2MECellMonitor3", new J2MECellMonitor(), j2meCellPollRateInSeconds*1000);
+                // WTF: Jose - This time is is the initial delay for the first update... We should have an update as soon as we can (before was 300secs)
+                timer.schedule("J2MECellMonitor2", new J2MECellMonitor(), 0);
             }
         }
     }
