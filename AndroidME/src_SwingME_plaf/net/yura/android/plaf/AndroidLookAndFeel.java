@@ -249,7 +249,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // -- IndeterminateSpinner --
         Style indeterminateSpinner = new Style(defaultStyle);
-        Drawable spin = getDrawable(ctx,android.R.style.Widget_ProgressBar_Small,android.R.attr.indeterminateDrawable);
+        Drawable spin = getDrawable(ctx,android.R.style.Widget_ProgressBar,android.R.attr.indeterminateDrawable);
         spin.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
 
         indeterminateSpinner.addProperty( new AndroidSprite(spin), "sprite", Style.ALL);
