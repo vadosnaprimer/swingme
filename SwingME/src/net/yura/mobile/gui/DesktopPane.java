@@ -669,9 +669,9 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 javax.microedition.lcdui.Font font = gtmp.getFont();
 
-                gtmp.setColor(0x00FFFFFF);
+                gtmp.setColor(0xFFFFFFFF);
                 gtmp.fillRect((getWidth() - (font.stringWidth(mem) + 10)) / 2, 0, font.stringWidth(mem) + 10, font.getHeight() + 10);
-                gtmp.setColor(0x00000000);
+                gtmp.setColor(0xFF000000);
                 gtmp.drawString(mem, (getWidth() - (font.stringWidth(mem) + 10)) / 2 + 5, 5, Graphics.TOP | Graphics.LEFT);
             }
             //#enddebug
@@ -680,9 +680,9 @@ public class DesktopPane extends Canvas implements Runnable {
                 String m = new String(message);
                 javax.microedition.lcdui.Font font = gtmp.getFont();
 
-                gtmp.setColor(0x00000000);
+                gtmp.setColor(0xFF000000);
                 gtmp.fillRect((getWidth() - (font.stringWidth(m) + 10)) / 2, (getHeight() - (font.getHeight() + 10)) / 2, font.stringWidth(m) + 10, font.getHeight() + 10);
-                gtmp.setColor(0x00FF0000);
+                gtmp.setColor(0xFFFF0000);
                 gtmp.drawString(m, (getWidth() - (font.stringWidth(m) + 10)) / 2 + 5, (getHeight() - (font.getHeight() + 10)) / 2 + 5, Graphics.TOP | Graphics.LEFT);
             }
 

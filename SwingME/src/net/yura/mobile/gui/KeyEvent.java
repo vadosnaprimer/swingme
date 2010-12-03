@@ -258,35 +258,34 @@ public class KeyEvent {
         public int getJustReleasedKey() {
             return justReleasedKey;
         }
-        /*
-         * This is a bad method as it only returns the FIRST key that is down!
-         * it should though return the most recent of the down keys
+
+        /**
+         * @return the most recent key that is down
          */
         public int getIsDownKey() {
-               int res = 0;
-               for (int c=0;c<isDownKeys.length;c++) {
+               // search from the end
+               for (int c=(isDownKeys.length-1);c>=0;c--) {
                     if (isDownKeys[c] != 0) {
-                        res = isDownKeys[c];
-                        if (isDownKeys[c] > 0)
-                        {
-                            // Give priority to positive values (ascii).
-                            break;
-                        }
+                        return isDownKeys[c];
                     }
                }
-               return res;
+               return 0;
         }
+
+        /**
+         * @return the most recent action that is down
+         */
         public int getIsDownAction() {
-               int res = 0;
-               for (int c=0;c<isDownKeys.length;c++) {
+               // search from the end
+               for (int c=(isDownKeys.length-1);c>=0;c--) {
                     if (isDownKeys[c] != 0) {
                         int action = getKeyAction(isDownKeys[c]);
                         if (action != 0) {
-                            res = action;
+                            return action;
                         }
                     }
                }
-               return res;
+               return 0;
         }
 
         // on nokia emulators can throw when the key does not exist on the phone
@@ -405,18 +404,31 @@ public class KeyEvent {
 	}
 
         private void addKeyDown(int keyCode) {
+
+            // always add the new pressed button to the end
+            boolean found=false;
             for (int c=0;c<isDownKeys.length;c++) {
                 if (isDownKeys[c] == 0 || isDownKeys[c] == keyCode) {
-                    isDownKeys[c] = keyCode;
-                    return;
+                    found = true;
+                }
+                // once we have found a empty slot, we move all elements down by
+                // 1 into the empty slot, and then put the new value at the end
+                if (found) {
+                    if (c==isDownKeys.length-1) {
+                        isDownKeys[c] = keyCode;
+                        return;
+                    }
+                    else {
+                        isDownKeys[c] = isDownKeys[c+1];
+                    }
                 }
             }
 
             // if we have no spaces left
             int[] newKeyDown = new int[isDownKeys.length+1];
             // Copy all data
-            System.arraycopy(isDownKeys, 0, newKeyDown, 1, isDownKeys.length);
-            newKeyDown[0] = keyCode;
+            System.arraycopy(isDownKeys, 0, newKeyDown, 0, isDownKeys.length);
+            newKeyDown[isDownKeys.length] = keyCode;
             isDownKeys = newKeyDown;
         }
         private void removeKeyDown(int keyCode) {
@@ -427,14 +439,11 @@ public class KeyEvent {
                 }
             }
         }
-	public void clear() {
 
+	public void clear() {
             justPressedKey=0;
             justReleasedKey=0;
-            for (int c=0;c<isDownKeys.length;c++) {
-                    isDownKeys[c] = 0;
-            }
-
+            isDownKeys = new int[1];
         }
 
 
