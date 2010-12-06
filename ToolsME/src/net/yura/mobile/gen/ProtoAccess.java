@@ -3,14 +3,14 @@ import net.yura.tools.mobilegen.model.*;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.io.IOException;
-import net.yura.mobile.io.ProtoUtil;
+import net.yura.mobile.io.ProtoFileUtil;
 import net.yura.mobile.io.proto.CodedOutputStream;
 import net.yura.mobile.io.proto.CodedInputStream;
 import net.yura.mobile.io.proto.WireFormat;
 /**
 * THIS FILE IS GENERATED, DO NOT EDIT
 */
-public class ProtoAccess extends ProtoUtil {
+public class ProtoAccess extends ProtoFileUtil {
     public static final int TYPE_BOB=10000;
     public static final int TYPE_TEST=10001;
     public static final int TYPE_LOGIN=22;
@@ -555,7 +555,7 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 8: {
-                    Boolean value = new Boolean(in2.readBool() );
+                    Boolean value = in2.readBool()?Boolean.TRUE:Boolean.FALSE;
                     object.put("intz",value);
                     break;
                 }
@@ -623,7 +623,7 @@ public class ProtoAccess extends ProtoUtil {
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             switch(fieldNo) {
                 case 1204: {
-                    int value = (int)in2.readInt32();
+                    int value = in2.readInt32();
                     object.setId(value);
                     break;
                 }
@@ -677,22 +677,22 @@ public class ProtoAccess extends ProtoUtil {
                     break;
                 }
                 case 4: {
-                    boolean value = (boolean)in2.readBool();
+                    boolean value = in2.readBool();
                     object.setIsAlive(value);
                     break;
                 }
                 case 5: {
-                    int value = (int)in2.readInt32();
+                    int value = in2.readInt32();
                     object.setHeads(value);
                     break;
                 }
                 case 6: {
-                    long value = (long)in2.readInt64();
+                    long value = in2.readInt64();
                     object.setLastUpdated(value);
                     break;
                 }
                 case 7: {
-                    int value = (int)in2.readInt32();
+                    int value = in2.readInt32();
                     object.setThings(value);
                     break;
                 }
@@ -723,7 +723,7 @@ public class ProtoAccess extends ProtoUtil {
             int fieldNo = WireFormat.getTagFieldNumber(tag);
             switch(fieldNo) {
                 case 1201: {
-                    int value = (int)in2.readInt32();
+                    int value = in2.readInt32();
                     object.setId(value);
                     break;
                 }

@@ -198,6 +198,12 @@ Hashtable<String,MessageDefinition> messageDefs;
                     }
                 }
                 else {
+
+                    if (!field.getRequired() && field.getImplementation()==null) {
+                        System.out.println("Skipping field: "+field+" message="+message+" calc="+calc);
+                        continue;
+                    }
+
                     if (field.repeated) {
                         if (field.getImplementation().isArray()) {
                             type = field.getImplementation().getComponentType().getSimpleName();
@@ -357,6 +363,13 @@ ps.println("            int fieldNo = WireFormat.getTagFieldNumber(tag);");
 ps.println("            switch(fieldNo) {");
 
 for (ProtoLoader.FieldDefinition field:fields) {
+
+
+    if (message.getImplementation() != Hashtable.class && !field.getRequired() && field.getImplementation()==null) {
+        System.out.println("Skipping field: "+field+" message="+message+" load");
+        continue;
+    }
+
 
     ps.println("            case "+field.getID()+": {");
 

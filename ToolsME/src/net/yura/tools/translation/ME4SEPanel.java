@@ -3,17 +3,12 @@ package net.yura.tools.translation;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import javax.microedition.midlet.ApplicationManager;
-import javax.swing.JComponent;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Panel;
-import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.MetalLookAndFeel;
+import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import org.me4se.JadFile;
 
 /**
@@ -42,7 +37,7 @@ public class ME4SEPanel extends Container {
         desktop = DesktopPane.getDesktopPane();
 
         // todo find this from a better place
-        desktop.setLookAndFeel( new MetalLookAndFeel() );
+        desktop.setLookAndFeel( new NimbusLookAndFeel() );
 
     }
 

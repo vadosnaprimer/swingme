@@ -229,9 +229,9 @@ public class ProtoLoader {
         regex.append( "(\\w+?)" );                    // Field Type
         regex.append( "\\s+?" );
         regex.append( "(\\w+?)" );                    // Field Name
-        regex.append( "\\s+?" );
+        regex.append( "\\s*?" );
         regex.append( "\\=" );
-        regex.append( "\\s+?" );
+        regex.append( "\\s*?" );
         regex.append( "(\\d+)" );                    // Field Index
 
         // Find message name and fields using regex
@@ -268,7 +268,16 @@ public class ProtoLoader {
 
                 String methodName = "get" + MobileProtoGen.firstUp(name);
 
-                java.lang.reflect.Method method = messageClass.getMethod( methodName , (Class [])null );
+                java.lang.reflect.Method method = null;
+                try {
+                    method = messageClass.getMethod( methodName , (Class [])null );
+                }
+                catch(NoSuchMethodException ex) {
+                    if (required) {
+                        throw ex;
+                    }
+                    System.out.println("missing object method: "+methodName+" in "+messageClass);
+                }
 
                 if ( method != null ) {
                     returnType = method.getReturnType();

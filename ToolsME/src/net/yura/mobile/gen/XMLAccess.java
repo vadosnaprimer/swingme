@@ -36,11 +36,11 @@ public class XMLAccess extends XMLUtil {
             //serializer.attribute(null,"image", new String( org.bouncycastle.util.encoders.Base64.encode( object.getImage() ) ) );
         }
         serializer.attribute(null,"lastUpdated", String.valueOf( object.getLastUpdated() ) );
+        serializer.attribute(null,"age", String.valueOf( object.getAge() ) );
         serializer.attribute(null,"things", String.valueOf( object.getThings() ) );
         if (object.getMyType()!=null) {
             serializer.attribute(null,"myType", object.getMyType() );
         }
-        serializer.attribute(null,"age", String.valueOf( object.getAge() ) );
         serializer.attribute(null,"heads", String.valueOf( object.getHeads() ) );
         serializer.attribute(null,"isAlive", String.valueOf( object.getIsAlive() ) );
         saveTest(serializer, object);
@@ -96,14 +96,14 @@ public class XMLAccess extends XMLUtil {
             else if ("lastUpdated".equals(key)) {
                 object.setLastUpdated( Long.parseLong( value ) );
             }
+            else if ("age".equals(key)) {
+                object.setAge( Byte.parseByte(value) );
+            }
             else if ("things".equals(key)) {
                 object.setThings( Integer.parseInt(value) );
             }
             else if ("myType".equals(key)) {
                 object.setMyType(value);
-            }
-            else if ("age".equals(key)) {
-                object.setAge( Byte.parseByte(value) );
             }
             else if ("heads".equals(key)) {
                 object.setHeads( Integer.parseInt(value) );
