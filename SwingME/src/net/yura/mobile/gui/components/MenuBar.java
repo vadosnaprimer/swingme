@@ -284,7 +284,7 @@ public class MenuBar extends List implements ActionListener {
 
         Component c = super.getComponentFor(i, offset);
 
-        if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
+        if (getDesktopPane().GRID_MENU && firstMenu()) {
 
             final int size = getSize();
 
@@ -317,7 +317,7 @@ public class MenuBar extends List implements ActionListener {
 
     public void workoutMinimumSize() {
 
-        if (getDesktopPane().HIDDEN_MENU_AND_BACK) {
+        if (getDesktopPane().GRID_MENU) {
 
             int size = getSize();
             ListCellRenderer renderer = getCellRenderer();
@@ -401,7 +401,7 @@ public class MenuBar extends List implements ActionListener {
 
         int rows=size;
 
-        if (getDesktopPane().HIDDEN_MENU_AND_BACK && firstMenu()) {
+        if (getDesktopPane().GRID_MENU && firstMenu()) {
             int topRowCols = size % cols; // items in the top row!
             rows = ((size/cols)+(topRowCols==0?0:1));
 
