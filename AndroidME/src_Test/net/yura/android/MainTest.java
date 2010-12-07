@@ -6,6 +6,8 @@ import javax.microedition.io.Connector;
 import javax.microedition.lcdui.Graphics;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
+
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.ComboBox;
@@ -64,7 +66,9 @@ public class MainTest extends Section {
     //Override
     public void openTest(String actionCommand) {
         if ("mainmenu".equals(actionCommand)) {
-            addToScrollPane(this, null, makeButton("Exit", "exit"));
+            Button exit = makeButton("Exit", "exit");
+            exit.setMnemonic(KeyEvent.KEY_END);
+            addToScrollPane(this, null, exit);
         }
         else if ("exit".equals(actionCommand)) {
             Midlet.exit();
