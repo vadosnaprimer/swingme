@@ -51,11 +51,15 @@ public class SqlDao {
                     COLUMNNAME_RECORD_DATA + " BLOB," +
                     "PRIMARY KEY(" + COLUMNNAME_RECORD_RECORDSTORE_FK + "," + COLUMNNAME_RECORD_RECORDNUMBER + "));";
 
-            database2.beginTransaction();
-            database2.execSQL(a);
-            database2.execSQL(b);
-            database2.setTransactionSuccessful();
-            database2.endTransaction();
+            try {
+                database2.beginTransaction();
+                database2.execSQL(a);
+                database2.execSQL(b);
+                database2.setTransactionSuccessful();
+            }
+            finally {
+                database2.endTransaction();
+            }
         }
 
         @Override
@@ -188,12 +192,16 @@ public class SqlDao {
             database.beginTransaction();
             id = database.insertOrThrow(SqlDao.TABLENAME_RECORDSTORE, null, values);
             database.setTransactionSuccessful();
-            database.endTransaction();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             RecordStoreException r = new RecordStoreException("Could not insert record store row with name '"+recordStoreName+"'. Reason: "+e);
             r.initCause(e);
             throw r;
         }
+        finally {
+            database.endTransaction();
+        }
+
         if(id == -1) {
             throw new RecordStoreException("Could not insert record store row with name '"+recordStoreName+"'. Reason: The method 'SQLiteDatabase.insertOrThrow' returned '-1' instead of throwing an exception.");
         }
@@ -232,11 +240,16 @@ public class SqlDao {
         if(recordStore == null) {
             throw new RecordStoreNotFoundException("Could not delete row in table '"+TABLENAME_RECORDSTORE+"' with value '"+recordStoreName+"'");
         }
-        database.beginTransaction();
-        database.delete(TABLENAME_RECORDSTORE, "name = ?", new String[]{recordStoreName});
-        database.delete(TABLENAME_RECORD, COLUMNNAME_RECORD_RECORDSTORE_FK+" = ?", new String[]{Long.toString(recordStore.getPk())});
-        database.setTransactionSuccessful();
-        database.endTransaction();
+
+        try {
+            database.beginTransaction();
+            database.delete(TABLENAME_RECORDSTORE, "name = ?", new String[]{recordStoreName});
+            database.delete(TABLENAME_RECORD, COLUMNNAME_RECORD_RECORDSTORE_FK+" = ?", new String[]{Long.toString(recordStore.getPk())});
+            database.setTransactionSuccessful();
+        }
+        finally {
+            database.endTransaction();
+        }
     }
 
     /**
@@ -266,7 +279,8 @@ public class SqlDao {
 
             indexOfColumn = result.getColumnIndex(SqlDao.COLUMNNAME_RECORDSTORE_SIZE);
             size = result.getInt(indexOfColumn);
-        } finally {
+        }
+        finally {
             result.close();
         }
 
@@ -280,11 +294,14 @@ public class SqlDao {
             database.beginTransaction();
             database.insertOrThrow(TABLENAME_RECORD, null, values);
             database.setTransactionSuccessful();
-            database.endTransaction();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             RecordStoreException r = new RecordStoreException(e.toString());
             r.initCause(e);
             throw r;
+        }
+        finally {
+            database.endTransaction();
         }
 
         // Update record store stats.
@@ -301,11 +318,14 @@ public class SqlDao {
             database.beginTransaction();
             database.update(TABLENAME_RECORDSTORE, values, COLUMNNAME_RECORDSTORE_RECORDSTORE_PK + "= ?" , new String[] {Long.toString(recordStoreFk)});
             database.setTransactionSuccessful();
-            database.endTransaction();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             RecordStoreException r = new RecordStoreException(e.toString());
             r.initCause(e);
             throw r;
+        }
+        finally {
+            database.endTransaction();
         }
         return nextRecordId;
 
@@ -347,12 +367,16 @@ public class SqlDao {
             database.beginTransaction();
             database.update(TABLENAME_RECORD, values, COLUMNNAME_RECORD_RECORDSTORE_FK + "= ? AND "+COLUMNNAME_RECORD_RECORDNUMBER+"=?" , new String[] {Long.toString(recordStorePk),Integer.toString(recordId)});
             database.setTransactionSuccessful();
-            database.endTransaction();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             RecordStoreException r = new RecordStoreException(e.toString());
             r.initCause(e);
             throw r;
         }
+        finally {
+            database.endTransaction();
+        }
+
         RecordStore recordStore = getRecordStore(recordStorePk);
         byte[] oldData = getRecord(recordStorePk,recordId);
         values.clear();
