@@ -344,6 +344,7 @@ public class SqlDao {
             }
         }
         catch (Exception e) {
+            e.printStackTrace();
             // Do nothing. Just return null...
         }
         finally {
