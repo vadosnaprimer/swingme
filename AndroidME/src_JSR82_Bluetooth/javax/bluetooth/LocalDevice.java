@@ -12,6 +12,7 @@ package javax.bluetooth;
 import android.bluetooth.BluetoothAdapter;
 import javax.microedition.io.Connection;
 
+import net.yura.android.AndroidMeActivity;
 import net.yura.android.bluetooth.BluetoothManager;
 
 /**
@@ -55,21 +56,33 @@ public class LocalDevice {
 	 */
 	public static LocalDevice getLocalDevice() throws BluetoothStateException {
 
-	    try {
+        // NOTE: BluetoothAdapter.getDefaultAdapter() needs to run on UI thread,
+        // otherwise throws a "wrong lopper" exception
 
-	        // Make sure we have a valid BluetoothAdapter and BluetoothManager...
-	        BluetoothAdapter.getDefaultAdapter();
-	        BluetoothManager.getBluetoothManager();
+	    final BluetoothStateException ex = new BluetoothStateException();
 
-        	    if (deviceInstance == null) {
-        	        deviceInstance = new LocalDevice();
+	    AndroidMeActivity.DEFAULT_ACTIVITY.invokeAndWait(new Runnable() {
+            public void run() {
+        	    try {
+
+        	        // Make sure we have a valid BluetoothAdapter and BluetoothManager...
+        	        BluetoothAdapter.getDefaultAdapter();
+        	        BluetoothManager.getBluetoothManager();
+
+                	    if (deviceInstance == null) {
+                	        deviceInstance = new LocalDevice();
+                	    }
         	    }
-	    }
-	    catch (Throwable e) {
-	        BluetoothStateException ex = new BluetoothStateException(e.getMessage());
-	        ex.initCause(e);
-                throw ex;
+        	    catch (Throwable e) {
+        	        ex.initCause(e);
+        	        e.printStackTrace();
+                }
             }
+	    });
+
+	    if (ex.getCause() != null) {
+	        throw ex;
+	    }
 
 	    return deviceInstance;
 	}
