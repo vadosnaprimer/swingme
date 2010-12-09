@@ -314,14 +314,14 @@ public abstract class Canvas extends Displayable {
                 graphics.setCanvas(null);
 
                 try {
-                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.RGB_565);
+                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 } catch (OutOfMemoryError e) {
                     System.gc();
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e1) {
                     }
-                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.RGB_565);
+                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 }
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
             }

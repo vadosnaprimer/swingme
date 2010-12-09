@@ -19,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Environment;
 import android.telephony.TelephonyManager;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -49,7 +51,8 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
     public AndroidMeActivity() {
         DEFAULT_ACTIVITY = this;
     }
-
+    
+    
     public MIDlet getMIDlet() {
         return this.midlet;
     }
@@ -104,6 +107,11 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
     protected void onResume() {
         super.onResume();
 
+        { // Eliminates colour banding
+            Window window = getWindow();
+            window.setFormat(PixelFormat.RGBA_8888);
+        }
+        
         // When we resume, we want to have a nice pool of memory. At the moment
         // we ask for 3/5 of the max memory. If the max is 25Mb, this is 15Mb.
         Runtime rt = Runtime.getRuntime();
