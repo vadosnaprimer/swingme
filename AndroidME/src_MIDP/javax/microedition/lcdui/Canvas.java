@@ -283,7 +283,7 @@ public abstract class Canvas extends Displayable {
             getLocationInWindow(location);
 
             if (location[1] > 0) {
-                canvasY = location[1];
+                canvasY = Math.max(canvasY, location[1]);
                 canvasH = getHeight();
             } else {
                 // 2 - Visible height if displaying the virtual keyboard
