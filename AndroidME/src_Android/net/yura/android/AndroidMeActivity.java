@@ -42,7 +42,7 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
     private Thread eventThread;
     private final Object lock = new Object();
     private boolean closed;
-    private FileBroadcastReceiver fileBroadcastReceiver;
+    private Vector<BroadcastReceiver> broadcastReceiverList = new Vector<BroadcastReceiver>();
 
     public static AndroidMeActivity DEFAULT_ACTIVITY;
 
@@ -259,8 +259,7 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         intentFilter.addDataScheme("file");
 
-        fileBroadcastReceiver = new FileBroadcastReceiver();
-        registerReceiver(fileBroadcastReceiver, intentFilter);
+        registerReceiver(new FileBroadcastReceiver(), intentFilter);
 
         setFileSystemProperties();
 
@@ -373,18 +372,25 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
 
     private void closeMIDlet() {
         try {
-            if (fileBroadcastReceiver != null) {
-                unregisterReceiver(fileBroadcastReceiver);
-                fileBroadcastReceiver = null;
+            for (BroadcastReceiver receiver : broadcastReceiverList) {
+                try {
+                    super.unregisterReceiver(receiver);
+                } catch (Throwable e) {
+                    // Don't care
+                    //#debug debug
+                    e.printStackTrace();
+                }
             }
+            broadcastReceiverList.removeAllElements();
 
             if (midlet != null) {
                 midlet.doDestroyApp(true);
-                midlet = null;
             }
         }
         catch (Throwable ex) {
         }
+
+        midlet = null;
     }
 
     @Override
@@ -458,43 +464,6 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
         return this.defaultView.getWidth();
     }
 
-    public static InputStream getResourceAsStream(Class origClass, String name) {
-
-        long time = System.currentTimeMillis();
-        System.out.println(">>> getResourceAsStream (" + origClass.getName() + ")" + name);
-        long time2 = System.currentTimeMillis() - time;
-
-        InputStream is = null;
-        try {
-            if (name.startsWith("/")) {
-                name = name.substring(1);
-            }
-            else {
-                return origClass.getResourceAsStream(name);
-            }
-/*
-            // THIS DOES NOT WORK
-            else {
-                String dir = origClass.getName();
-                dir = dir.substring(0, dir.lastIndexOf('.')+1 );
-                dir = dir.replace('.', '/');
-                name = dir+name;
-System.out.println("name="+name);
-            }
-*/
-            is = DEFAULT_ACTIVITY.getAssets().open(name);
-        } catch (Throwable e) {
-            // e.printStackTrace();
-        }
-
-        if (is == null) {
-            long elapsed = System.currentTimeMillis() - time;
-            System.out.println(">>> getResourceAsStream: NOT FOUND. " + time2 + " " + elapsed);
-        }
-
-        return is;
-    }
-
     //Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         if (position >= 0) {
@@ -511,6 +480,20 @@ System.out.println("name="+name);
         	result = data.getExtras().get("data");
         }
         midlet.onResult(resultCode, result);
+    }
+
+    //Override
+    public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+        broadcastReceiverList.add(receiver); // Keep a copy, so we can clean up on shutdown.
+
+        return super.registerReceiver(receiver, filter);
+    }
+
+    //Override
+    public void unregisterReceiver(BroadcastReceiver receiver) {
+        broadcastReceiverList.remove(receiver);
+
+        super.unregisterReceiver(receiver);
     }
 
     class FileBroadcastReceiver extends BroadcastReceiver {
