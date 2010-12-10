@@ -24,9 +24,19 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import javax.microedition.io.ConnectionNotFoundException;
 
 /**
@@ -115,6 +125,55 @@ public abstract class MIDlet {
    */
   protected abstract void startApp() throws MIDletStateChangeException;
 
+
+    /**
+     * helper method for update
+     */
+    public static final void copyInputStream(InputStream in, OutputStream out) throws IOException {
+
+        byte[] buf = new byte[1024];
+        int len = 0;
+        while ((len=in.read(buf))>=0) {
+           out.write(buf, 0, len);
+        }
+        in.close();
+        out.flush();
+        out.close();
+    }
+
+    /**
+     * helper method for update
+     */
+    public static final void unzip(String name) throws Exception {
+          ZipFile zipFile = new ZipFile(name);
+          Enumeration entries = zipFile.entries();
+          while(entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry)entries.nextElement();
+            if(entry.isDirectory()) {
+              new File(entry.getName()).mkdir();
+            }
+          }
+          entries = zipFile.entries();
+          while(entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry)entries.nextElement();
+            if(!entry.isDirectory()) {
+                InputStream in = zipFile.getInputStream(entry);
+                OutputStream out = new FileOutputStream(entry.getName());
+                copyInputStream(new BufferedInputStream(in), new BufferedOutputStream(out));
+                in.close();
+                out.flush();
+                out.close();
+            }
+          }
+          zipFile.close();
+    }
+
+
+
+
+
+
+
   /**
    * @API MIDP-2.0
    * @ME4SE UNSUPPORTED
@@ -159,6 +218,30 @@ public abstract class MIDlet {
                 ex.printStackTrace();
             }
 
+        }
+        else if (url.startsWith("update:")) {
+            String update = url.substring( "update:".length() );
+
+            try {
+                String fileName = update.substring( update.lastIndexOf('/')+1 );
+
+                InputStream in = new java.net.URL(update).openStream();
+                FileOutputStream out = new FileOutputStream( new File(fileName) );
+
+                copyInputStream(new BufferedInputStream(in), new BufferedOutputStream(out));
+
+                out.flush();
+                out.close();
+                in.close();
+                
+                if (fileName.toUpperCase().endsWith(".ZIP")) {
+                    unzip(fileName);
+                }
+
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
         else if (url.startsWith("clipboard")) {
             if (url.startsWith("clipboard://get")) {
@@ -247,19 +330,21 @@ public abstract class MIDlet {
     String osName = System.getProperty("os.name");
     try {
       if (osName.startsWith("Mac OS")) {
-        Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
+        Class fileMgr = Class.forName("com.apple.eio.FileManager");
         Method openURL = fileMgr.getDeclaredMethod("openURL", new Class[] { String.class });
         openURL.invoke(null, new Object[] { url });
       } else if (osName.startsWith("Windows"))
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
       else { // assume Unix or Linux
         boolean found = false;
-        for (String browser : browsers)
+        for (int c=0;c<browsers.length;c++) {
+          String browser = browsers[c];
           if (!found) {
             found = Runtime.getRuntime().exec(new String[] { "which", browser }).waitFor() == 0;
             if (found)
               Runtime.getRuntime().exec(new String[] { browser, url });
           }
+        }
         if (!found)
           throw new Exception(Arrays.toString(browsers));
       }

@@ -47,7 +47,7 @@ public class RecordStoreInitializer implements Initializer {
 
                             Runtime.getRuntime().addShutdownHook(new Thread() {
                                 // destroy the lock when the JVM is closing
-                                @Override
+                                //@Override
                                 public void run() {
                                     try {
                                         lock.release();

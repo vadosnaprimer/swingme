@@ -230,7 +230,7 @@ public class ColorMatrix extends RGBImageFilter {
         m[10] = 1;  m[11] = 1.772f;     m[12] = 0;
     }
 
-    @Override
+    //@Override
     public int filterRGB(int x, int y, int rgb) {
 
 	int R = (rgb >> 16) & 0xFF;
