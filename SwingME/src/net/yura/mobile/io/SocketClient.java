@@ -393,7 +393,7 @@ public abstract class SocketClient implements Runnable {
                 boolean normal = myin == in;
 
                 //#mdebug warn
-                if (!normal || !(ex instanceof IOException)) {
+                if (!(ex instanceof IOException) || (!normal && writeThread!=null)) {
                     Logger.warn(ex); // this is NOT a normal disconnect
                 }
                 //#enddebug
