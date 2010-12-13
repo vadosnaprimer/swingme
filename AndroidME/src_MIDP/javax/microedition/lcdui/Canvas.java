@@ -65,38 +65,38 @@ public abstract class Canvas extends Displayable {
     public int getGameAction(int keyCode) {
         int res;
         switch (keyCode) {
-        case -5:
-        case -10:
-            res = Canvas.FIRE;
-            break;
-        case -1:
-            res = Canvas.UP;
-            break;
-        case -2:
-        case '\t': // this is the tab key, and same as code = 9
-            res = Canvas.DOWN;
-            break;
-        case -3:
-            res = Canvas.LEFT;
-            break;
-        case -4:
-            res = Canvas.RIGHT;
-            break;
-        case '7':
-            res = Canvas.GAME_A;
-            break;
-        case '9':
-            res = Canvas.GAME_B;
-            break;
-        case '*':
-            res = Canvas.GAME_C;
-            break;
-        case '#':
-            res = Canvas.GAME_D;
-            break;
-        default:
-            res = 0;
-            break;
+            case -5:
+            case -10:
+                res = Canvas.FIRE;
+                break;
+            case -1:
+                res = Canvas.UP;
+                break;
+            case -2:
+            case '\t': // this is the tab key, and same as code = 9
+                res = Canvas.DOWN;
+                break;
+            case -3:
+                res = Canvas.LEFT;
+                break;
+            case -4:
+                res = Canvas.RIGHT;
+                break;
+            case '7':
+                res = Canvas.GAME_A;
+                break;
+            case '9':
+                res = Canvas.GAME_B;
+                break;
+            case '*':
+                res = Canvas.GAME_C;
+                break;
+            case '#':
+                res = Canvas.GAME_D;
+                break;
+            default:
+                res = 0;
+                break;
         }
         return res;
     }
@@ -104,36 +104,36 @@ public abstract class Canvas extends Displayable {
     public int getKeyCode(int gameAction) {
         int res;
         switch (gameAction) {
-        case Canvas.FIRE:
-            res = -5;
-            break;
-        case Canvas.UP:
-            res = -1;
-            break;
-        case Canvas.DOWN:
-            res = -2;
-            break;
-        case Canvas.LEFT:
-            res = -3;
-            break;
-        case Canvas.RIGHT:
-            res = -4;
-            break;
-        case Canvas.GAME_A:
-            res = '7';
-            break;
-        case Canvas.GAME_B:
-            res = '9';
-            break;
-        case Canvas.GAME_C:
-            res = '*';
-            break;
-        case Canvas.GAME_D:
-            res = '#';
-            break;
-        default:
-            res = 0;
-            break;
+            case Canvas.FIRE:
+                res = -5;
+                break;
+            case Canvas.UP:
+                res = -1;
+                break;
+            case Canvas.DOWN:
+                res = -2;
+                break;
+            case Canvas.LEFT:
+                res = -3;
+                break;
+            case Canvas.RIGHT:
+                res = -4;
+                break;
+            case Canvas.GAME_A:
+                res = '7';
+                break;
+            case Canvas.GAME_B:
+                res = '9';
+                break;
+            case Canvas.GAME_C:
+                res = '*';
+                break;
+            case Canvas.GAME_D:
+                res = '#';
+                break;
+            default:
+                res = 0;
+                break;
         }
         return res;
     }
@@ -294,7 +294,7 @@ public abstract class Canvas extends Displayable {
 
                 // Check for size changes...
                 if (graphicsBitmap.getWidth() != this.getWidth() ||
-                    graphicsBitmap.getHeight() != canvasH) {
+                        graphicsBitmap.getHeight() != canvasH) {
 
                     // Notify Canvas clients
                     try {
@@ -440,25 +440,25 @@ public abstract class Canvas extends Displayable {
 
             int action;
             switch (actionCode) {
-            case MotionEvent.ACTION_DOWN: //$FALL-THROUGH$
-            case 0x5: // ACTION_POINTER_DOWN (API Level 5)
-                action = POINTER_PRESSED;
-                break;
-            case MotionEvent.ACTION_MOVE:
-                action = POINTER_DRAGGED;
-                break;
-            case MotionEvent.ACTION_CANCEL:
-                // A cancel can happen if the virtual keyboard is displayed.
-                // x & y will be zero, so we simulate a POINTER_RELEASED
-                // using the last known x/y values.
-                action = POINTER_RELEASED;
-                x = eventX;
-                y = eventY;
-                break;
-            default:
-                // Handles ACTION_UP, ACTION_CANCEL, ACTION_OUTSIDE, etc...
-                action = POINTER_RELEASED;
-                break;
+                case MotionEvent.ACTION_DOWN: //$FALL-THROUGH$
+                case 0x5: // ACTION_POINTER_DOWN (API Level 5)
+                    action = POINTER_PRESSED;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    action = POINTER_DRAGGED;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    // A cancel can happen if the virtual keyboard is displayed.
+                    // x & y will be zero, so we simulate a POINTER_RELEASED
+                    // using the last known x/y values.
+                    action = POINTER_RELEASED;
+                    x = eventX;
+                    y = eventY;
+                    break;
+                default:
+                    // Handles ACTION_UP, ACTION_CANCEL, ACTION_OUTSIDE, etc...
+                    action = POINTER_RELEASED;
+                    break;
             }
 
             // Rounding can create "repeated" events... Ignore them.
@@ -470,19 +470,19 @@ public abstract class Canvas extends Displayable {
 
                 try {
                     switch (action) {
-                    case POINTER_PRESSED:
-                        if (pointerCount == 1) {
-                            Canvas.this.pointerPressed(x, y);
-                        }
-                        break;
-                    case POINTER_DRAGGED:
-                        Canvas.this.pointerDragged(x, y);
-                        break;
-                    default:
-                        if (pointerCount == 1) {
-                            Canvas.this.pointerReleased(x, y);
-                        }
-                        break;
+                        case POINTER_PRESSED:
+                            if (pointerCount == 1) {
+                                Canvas.this.pointerPressed(x, y);
+                            }
+                            break;
+                        case POINTER_DRAGGED:
+                            Canvas.this.pointerDragged(x, y);
+                            break;
+                        default:
+                            if (pointerCount == 1) {
+                                Canvas.this.pointerReleased(x, y);
+                            }
+                            break;
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -554,8 +554,8 @@ public abstract class Canvas extends Displayable {
             boolean fwEvent = false;
             if (touchPos[0] != p0 || touchPos[1] != p1) {
                 if (Math.abs(p0 - p1) > MULTI_TOUCH_MIN_DIST ||
-                   (Math.abs(touchPos[0] - p0) > MULTI_TOUCH_MIN_DIST  &&
-                    Math.abs(touchPos[1] - p1) > MULTI_TOUCH_MIN_DIST)) {
+                        (Math.abs(touchPos[0] - p0) > MULTI_TOUCH_MIN_DIST  &&
+                                Math.abs(touchPos[1] - p1) > MULTI_TOUCH_MIN_DIST)) {
 
                     fwEvent = true;
                     touchPos[0] = p0;
@@ -603,47 +603,47 @@ public abstract class Canvas extends Displayable {
 
             int resultKeyCode;
             switch (deviceKeyCode) {
-            case KeyEvent.KEYCODE_DPAD_UP :
-                resultKeyCode = -1;
-                break;
-            case KeyEvent.KEYCODE_DPAD_DOWN :
-                resultKeyCode = -2;
-                break;
-            case KeyEvent.KEYCODE_DPAD_LEFT :
-                resultKeyCode = -3;
-                break;
-            case KeyEvent.KEYCODE_DPAD_RIGHT :
-                resultKeyCode = -4;
-                break;
-            case KeyEvent.KEYCODE_DPAD_CENTER :
-                resultKeyCode = -5;
-                break;
-            case KeyEvent.KEYCODE_MENU :
-                resultKeyCode = -12;
-                break;
-            case KeyEvent.KEYCODE_BACK :
-                resultKeyCode = -11;
-                break;
-            case KeyEvent.KEYCODE_DEL :
-                resultKeyCode = -8; // Backspace ascii
-                break;
-            case KeyEvent.KEYCODE_CALL :
-                resultKeyCode = -10;
-                break;
-            case KeyEvent.KEYCODE_ENDCALL :
-                resultKeyCode = -11; // Never called on Android...
-                break;
-            case KeyEvent.KEYCODE_VOLUME_UP :
-                resultKeyCode = -36;
-                break;
-            case KeyEvent.KEYCODE_VOLUME_DOWN :
-                resultKeyCode = -37;
-                break;
-            default:
-                resultKeyCode = keyEvent.getUnicodeChar();
-                if (resultKeyCode == 0) {
-                    resultKeyCode = -deviceKeyCode;
-                }
+                case KeyEvent.KEYCODE_DPAD_UP :
+                    resultKeyCode = -1;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN :
+                    resultKeyCode = -2;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT :
+                    resultKeyCode = -3;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT :
+                    resultKeyCode = -4;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_CENTER :
+                    resultKeyCode = -5;
+                    break;
+                case KeyEvent.KEYCODE_MENU :
+                    resultKeyCode = -12;
+                    break;
+                case KeyEvent.KEYCODE_BACK :
+                    resultKeyCode = -11;
+                    break;
+                case KeyEvent.KEYCODE_DEL :
+                    resultKeyCode = -8; // Backspace ascii
+                    break;
+                case KeyEvent.KEYCODE_CALL :
+                    resultKeyCode = -10;
+                    break;
+                case KeyEvent.KEYCODE_ENDCALL :
+                    resultKeyCode = -11; // Never called on Android...
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_UP :
+                    resultKeyCode = -36;
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_DOWN :
+                    resultKeyCode = -37;
+                    break;
+                default:
+                    resultKeyCode = keyEvent.getUnicodeChar();
+                    if (resultKeyCode == 0) {
+                        resultKeyCode = -deviceKeyCode;
+                    }
             }
 
             return resultKeyCode;
@@ -657,23 +657,25 @@ public abstract class Canvas extends Displayable {
             return (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         }
 
+
+        /**
+         *  WorkArround: View Re-size not done by the platform on landscape
+         *  virtual keyboard... Ask to scroll to the bottom of the view manually.
+         */
         private void fixVirtualKeyboard() {
 
             Handler handler = getHandler();
             if (handler != null) {
                 handler.postDelayed(new Runnable() {
                     public void run() {
-
-                    // WorkArround: View Re-size not done by the platform on landscape
-                    // virtual keyboard... Ask to scroll to the bottom of the view.
-                    requestRectangleOnScreen(new Rect(0, getHeight() - 1, 1, getHeight()));
+                        // System.out.println(">>> fixVirtualKeyboard");
 
                         int h = getHeight();
-                    if (requestRectangleOnScreen(new Rect(0, h - 1, 1, h), true)) {
+                        if (requestRectangleOnScreen(new Rect(0, h - 1, 1, h), true)) {
                             invalidate();
                         }
                     }
-                }, 500);
+                }, 750); // 500ms would still not be enough on experia mini
             }
         }
 
