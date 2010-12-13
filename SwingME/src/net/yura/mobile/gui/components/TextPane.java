@@ -302,6 +302,11 @@ public class TextPane extends Component {
     }
 
     private boolean makeVisible(int styleIdx, boolean smart) {
+        // Do we have anything focusable?
+        if (focusableElems.size() == 0) {
+            return false;
+        }
+
         int MAX = Integer.MAX_VALUE;
         int leftX = MAX, rightX = 0;
         int topY = MAX, bottomY = 0;

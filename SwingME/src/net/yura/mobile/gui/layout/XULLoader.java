@@ -118,16 +118,16 @@ public class XULLoader {
     public void swapComponent(String name,Component comp) {
         Component old = find(name);
 
-        Component obj = old.getParent();
-        if (obj instanceof Panel) {
-            Panel p = (Panel)obj;
+        Component parent = old.getParent();
+        if (parent instanceof Panel) {
+            Panel p = (Panel)parent;
             GridBagConstraints constr = (GridBagConstraints)p.getConstraints().get(old);
             int index = p.getComponents().indexOf(old);
             p.remove(old);
             p.insert(comp, constr, index);
         }
-        else if (obj instanceof MenuBar) {
-            MenuBar b = (MenuBar)obj;
+        else if (parent instanceof MenuBar) {
+            MenuBar b = (MenuBar)parent;
             int i = b.getItems().indexOf(old);
             b.remove(old);
             b.insert(comp, i);
