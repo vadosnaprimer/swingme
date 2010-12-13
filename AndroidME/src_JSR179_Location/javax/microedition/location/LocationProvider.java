@@ -4,7 +4,6 @@ import net.yura.android.AndroidMeActivity;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Looper;
 
 public class LocationProvider implements android.location.LocationListener {
 
@@ -28,7 +27,7 @@ public class LocationProvider implements android.location.LocationListener {
 		throw new UnsupportedOperationException();
 	}
 
-	public static LocationProvider getInstance(Criteria cr) {
+	public static LocationProvider getInstance(Criteria cr) throws LocationException {
 		return new LocationProvider(cr);
 
 	}
@@ -75,9 +74,12 @@ public class LocationProvider implements android.location.LocationListener {
 	/*
 	 * Private methods to support the implementation
 	 */
-	private LocationProvider(Criteria cr) {
+	private LocationProvider(Criteria cr) throws LocationException {
 		lm = getLocationManager();
 		locationProvider = lm.getBestProvider(cr.getAndroidCriteria(), false);
+		if(locationProvider == null) {
+			throw new LocationException("Unable to find location provider with set criteria");
+		}
 		lastKnownLocation = new LocationImpl(lm
 				.getLastKnownLocation(locationProvider));
 	}
