@@ -1,5 +1,6 @@
 package javax.microedition.location;
 
+
 /**
  * The criteria used for the selection of the location provider is defined by
  * the values in this class. It is up to the implementation to provide a
@@ -94,22 +95,22 @@ public class Criteria
 	/**
 	 * Constant indicating no requirements for the parameter.
 	 */
-	public static final int NO_REQUIREMENT = 0;
+	public static final int NO_REQUIREMENT = android.location.Criteria.NO_REQUIREMENT;
 
 	/**
 	 * Level indicating only low power consumption allowed.
 	 */
-	public static final int POWER_USAGE_LOW = 1;
+	public static final int POWER_USAGE_LOW = android.location.Criteria.POWER_LOW;
 
 	/**
 	 * Level indicating average power consumption allowed.
 	 */
-	public static final int POWER_USAGE_MEDIUM = 2;
+	public static final int POWER_USAGE_MEDIUM = android.location.Criteria.POWER_MEDIUM;
 
 	/**
 	 * Level indicating high power consumption allowed.
 	 */
-	public static final int POWER_USAGE_HIGH = 3;
+	public static final int POWER_USAGE_HIGH = android.location.Criteria.POWER_HIGH;
 
 	/**
 	 * The horizontal accuracy preference measured in meters. The preference
@@ -490,5 +491,16 @@ public class Criteria
 	public void setRemoteDeviceAddress (String address)
 	{
 		this.remoteDeviceAddress = address;
+	}
+
+	protected  android.location.Criteria getAndroidCriteria() {
+		android.location.Criteria c = new android.location.Criteria();
+		c.setAccuracy(horizontalAccuracy);
+		c.setAltitudeRequired(altitudeRequired);
+		c.setBearingRequired(speedAndCourseRequired);
+		c.setCostAllowed(costAllowed);
+		c.setPowerRequirement(powerConsumption);
+		c.setSpeedRequired(speedAndCourseRequired);
+		return c;
 	}
 }

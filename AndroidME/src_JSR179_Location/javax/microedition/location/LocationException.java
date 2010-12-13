@@ -5,6 +5,7 @@ package javax.microedition.location;
  * error has occurred.  The detailed conditions when this exception is
  * thrown are documented in the methods that throw this exception.
  */
+@SuppressWarnings("serial")
 public class LocationException
 	extends Exception
 {

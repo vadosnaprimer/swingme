@@ -15,16 +15,6 @@ package javax.microedition.location;
 public class Coordinates
 {
 	/**
-	 * This is the earth's mean radius in meters.  Using the mean gives the most
-	 * accurate results for distances measured with any bearing.
-	 * <p>
-	 * In truth the earth is not a perfect sphere.  The radius of the equator
-	 * is 6,378,137 and the polar radius is 6,356,752.3142.  The FAI's definition
-	 * of 6,371,000 lies between them.
-	 */
-	private static final double METERS_PER_RADIAN = 6371000;
-
-	/**
 	 * Identifier for string coordinate representation Degrees, Minutes, Seconds
 	 * and decimal fractions of a second.
 	 */
