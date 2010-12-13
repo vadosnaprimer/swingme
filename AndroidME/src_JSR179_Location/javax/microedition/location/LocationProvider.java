@@ -77,9 +77,6 @@ public class LocationProvider implements android.location.LocationListener {
 	private LocationProvider(Criteria cr) throws LocationException {
 		lm = getLocationManager();
 		locationProvider = lm.getBestProvider(cr.getAndroidCriteria(), false);
-		if(locationProvider == null) {
-			throw new LocationException("Unable to find location provider with set criteria");
-		}
 		lastKnownLocation = new LocationImpl(lm
 				.getLastKnownLocation(locationProvider));
 	}
