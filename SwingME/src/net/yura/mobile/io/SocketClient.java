@@ -146,8 +146,14 @@ public abstract class SocketClient implements Runnable {
 
                                 close(conn,in,out);
 
-                                //#debug info
-                                Logger.info(x.getMessage());
+                                //#mdebug info
+                                if (x instanceof IOException) {
+                                    Logger.info(x.toString()); // we do not want to print the full stack trace as this is not a serious error
+                                }
+                                else {
+                                    Logger.info(x);
+                                }
+                                //#enddebug
 
                                 if (pauseReconnectOnFailure && retryCount > maxRetries) {
                                     updateState(DISCONNECTED_AND_PAUSED);
