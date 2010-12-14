@@ -84,12 +84,12 @@ public abstract class SocketClient implements Runnable {
 
     protected StreamConnection openConnection(String serv) throws IOException {
 
-    	// TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
+        // TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
         if (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY &&
-    		serv.indexOf(";") < 0) {
+                serv.indexOf(";") < 0) {
             // TODO: Hack for black berry direct tcp/ip connection
             // TODO: http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
-        	serv += ";deviceside=true";
+            serv += ";deviceside=true";
         }
 
         return (StreamConnection)Connector.open(protocol + serv);
@@ -146,8 +146,8 @@ public abstract class SocketClient implements Runnable {
 
                                 close(conn,in,out);
 
-                            	//#debug info
-                                Logger.info(x);
+                                //#debug info
+                                Logger.info(x.getMessage());
 
                                 if (pauseReconnectOnFailure && retryCount > maxRetries) {
                                     updateState(DISCONNECTED_AND_PAUSED);
@@ -157,7 +157,7 @@ public abstract class SocketClient implements Runnable {
                                             wait();
                                         }
                                         catch (Exception e){
-                                        	//#debug info
+                                            //#debug info
                                             Logger.info(e);
                                         }
                                     }
@@ -182,8 +182,8 @@ public abstract class SocketClient implements Runnable {
                                         }
                                     }
                                     catch (InterruptedException ex) {
-                                    	//#debug info
-                                      Logger.info(ex);
+                                        //#debug info
+                                        Logger.info(ex);
                                     }
                                 }
                             }
@@ -199,8 +199,8 @@ public abstract class SocketClient implements Runnable {
                     }
 
                     try {
-			//#debug info
-			Logger.info("[SocketClient] sending object: "+object);
+                        //#debug info
+                        Logger.info("[SocketClient] sending object: "+object);
                         updateState(COMMUNICATING);
 
                         //#mdebug debug
@@ -264,7 +264,7 @@ public abstract class SocketClient implements Runnable {
         QueueProcessorThread obj = writeThread;
         if (obj!=null) {
             synchronized(obj){
-        	obj.notify();
+                obj.notify();
             }
         }
     }
@@ -277,9 +277,9 @@ public abstract class SocketClient implements Runnable {
         //#debug info
         Logger.info("[SocketClient] sending offline messages: "+offlineBox);
         while (!offlineBox.isEmpty()) {
-                Object task = offlineBox.elementAt(0);
-                offlineBox.removeElementAt(0);
-                addToOutbox( task );
+            Object task = offlineBox.elementAt(0);
+            offlineBox.removeElementAt(0);
+            addToOutbox( task );
         }
     }
 
