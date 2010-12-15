@@ -77,8 +77,17 @@ public class LocationProvider implements android.location.LocationListener {
 	private LocationProvider(Criteria cr) throws LocationException {
 		lm = getLocationManager();
 		locationProvider = lm.getBestProvider(cr.getAndroidCriteria(), false);
-		lastKnownLocation = new LocationImpl(lm
-				.getLastKnownLocation(locationProvider));
+		android.location.Location loc = lm.getLastKnownLocation(locationProvider);
+		setLastKnownLocation(loc);
+	}
+
+	private void setLastKnownLocation(android.location.Location loc) {
+		if(loc != null) {
+			lastKnownLocation = new LocationImpl(loc);
+		}
+		else {
+			lastKnownLocation = null;
+		}
 	}
 
 	private static LocationManager getLocationManager() {
@@ -87,10 +96,9 @@ public class LocationProvider implements android.location.LocationListener {
 	}
 
 	public void onLocationChanged(android.location.Location location) {
-		Location loc = new LocationImpl(location);
-		lastKnownLocation = loc;
+		setLastKnownLocation(location);
 		if (locationListener != null) {
-			locationListener.locationUpdated(this, loc);
+			locationListener.locationUpdated(this, lastKnownLocation);
 		}
 	}
 
