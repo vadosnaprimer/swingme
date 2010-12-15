@@ -3,6 +3,7 @@ package javax.microedition.midlet;
 
 import java.util.Properties;
 import javax.microedition.io.ConnectionNotFoundException;
+import javax.microedition.lcdui.Display;
 
 
 import net.yura.android.AndroidMeActivity;
@@ -14,11 +15,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public abstract class MIDlet {
     public static final String PROTOCOL_HTTP = "http://";
@@ -109,6 +111,11 @@ public abstract class MIDlet {
             boolean isProtoNativeNoRes = url.startsWith(PROTOCOL_NATIVE_NO_RESULT);
 
             if (isProtoNative || isProtoNativeNoRes) {
+
+                if (isProtoNative) {
+                    hideSoftKeyboard();
+                }
+
                 long now = System.currentTimeMillis();
 
                 // HACK: Android: platformRequest() is normally called, when a
@@ -276,5 +283,16 @@ public abstract class MIDlet {
     // To be overload by children
     public void onResult(int resultCode, Object result) {
 
+    }
+
+    private void hideSoftKeyboard() {
+        try {
+            View view = Display.getDisplay(this).getCurrent().getView();
+            InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            im.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        } catch (Throwable e) {
+            //#debug info
+            e.printStackTrace();
+        }
     }
 }
