@@ -398,9 +398,10 @@ public abstract class SocketClient implements Runnable {
                 // this is a normal shutdown when a exception is thrown in the read thread and 'in' is the same as the one we used
                 boolean normal = myin == in;
 
-                //#mdebug warn
+                //#mdebug info
                 if (!(ex instanceof IOException) || (!normal && writeThread!=null)) {
-                    Logger.warn(ex); // this is NOT a normal disconnect
+                    Logger.info("[SocketClient] strange disconnect in="+in+" myin="+myin);
+                    Logger.info(ex); // this is NOT a normal disconnect
                 }
                 //#enddebug
 
