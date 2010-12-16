@@ -257,6 +257,16 @@ public abstract class Canvas extends Displayable {
 
         @Override
         protected void onDraw(android.graphics.Canvas androidCanvas) {
+            try {
+                onDrawImpl(androidCanvas);
+            }
+            catch (Throwable e) {
+                //#debug info
+                e.printStackTrace();
+            }
+        }
+
+        private void onDrawImpl(android.graphics.Canvas androidCanvas) throws Exception {
 
             // Sanity check...
             if (androidCanvas == null || this.getWidth() <= 0 || this.getHeight() <= 0) {
@@ -267,11 +277,8 @@ public abstract class Canvas extends Displayable {
             long elapsed = System.currentTimeMillis() - time;
 
             if (elapsed < 10) {
-                try {
-//                    System.out.println("paint: elapsed " + elapsed);
-                    Thread.sleep(10 - elapsed);
-                } catch (InterruptedException e) {
-                }
+//              System.out.println("paint: elapsed " + elapsed);
+                Thread.sleep(10 - elapsed);
             }
 
             // WorkArround: View Re-size not done by the platform on landscape
@@ -317,10 +324,8 @@ public abstract class Canvas extends Displayable {
                     graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 } catch (OutOfMemoryError e) {
                     System.gc();
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e1) {
-                    }
+                    Thread.sleep(200);
+
                     graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 }
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
