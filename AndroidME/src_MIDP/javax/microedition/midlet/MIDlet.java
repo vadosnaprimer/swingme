@@ -127,9 +127,8 @@ public abstract class MIDlet {
                     platformLastUrl = url;
                     platformLastTime = now;
 
-                    String clName = content.getHost();
-                    Class cls = Class.forName(clName);
-                    Intent i = new Intent(Intent.ACTION_VIEW, content, getActivity(), cls);
+                    Class cls = Class.forName(content.getHost());
+                    Intent i = new Intent(getActivity(), cls);
                     i.setData(content);
 
                     if (isProtoNative) {
