@@ -78,7 +78,7 @@ public class ImageView extends Component {
                 bgImage.paintIcon(this, g, imgX, imgY);
             }
             else {
-                ImageUtil.drawScaledImage(g.getGraphics(), img, imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
+                g.drawScaledImage( img, imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
             }
         }
 

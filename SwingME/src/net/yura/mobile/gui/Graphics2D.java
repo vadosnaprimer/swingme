@@ -21,6 +21,7 @@ import java.util.Random;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
+
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -190,6 +191,43 @@ public class Graphics2D {
 
         }
 
+        public void drawScaledImage(Image img, int x, int y, int w, int h) {
+            try {
+                // Ensure we have 3D API, otherwise throws exception
+                Class.forName("javax.microedition.m3g.Background");
+
+                int maxView = Integer.MAX_VALUE;
+                try {
+                    Object o = javax.microedition.m3g.Graphics3D.getProperties().get("maxViewportDimension");
+                    maxView = ((Integer) o).intValue();
+                } catch (Throwable e) {
+                    // TODO: handle exception
+                }
+
+                javax.microedition.m3g.Image2D image2D = new javax.microedition.m3g.Image2D(javax.microedition.m3g.Image2D.RGB, img);
+                javax.microedition.m3g.Background background = new javax.microedition.m3g.Background();
+                background.setColor(0xffffffcc); // set the background color
+                background.setImage(image2D);
+
+                // get the singleton Graphics3D instance
+                javax.microedition.m3g.Graphics3D iG3D = javax.microedition.m3g.Graphics3D.getInstance();
+                try {
+                    iG3D.bindTarget(g, true, javax.microedition.m3g.Graphics3D.TRUE_COLOR);
+                    iG3D.setViewport(x, y, Math.min(maxView, w), Math.min(maxView, h));
+                    // clear the color and depth buffers
+                    iG3D.clear(background);
+                }
+                finally {
+                    // flush
+                    iG3D.releaseTarget();
+                }
+            }
+            catch (Throwable e) {
+                // Do nothing. Converting with 3D API failed. Use sampling.
+                //#debug debug
+                e.printStackTrace();
+            }
+        }
 
         /**
          * @see java.awt.Graphics#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver) Graphics.drawImage

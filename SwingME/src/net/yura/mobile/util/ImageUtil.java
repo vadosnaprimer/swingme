@@ -24,9 +24,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-import javax.microedition.m3g.Background;
-import javax.microedition.m3g.Graphics3D;
-import javax.microedition.m3g.Image2D;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -90,7 +88,7 @@ public class ImageUtil {
 
             // Create a mutable image with the requested size
             Image resImg = Image.createImage(newW, newH);
-            drawScaledImage(resImg.getGraphics(), img, 0, 0, newW, newH);
+            new Graphics2D(resImg.getGraphics()).drawScaledImage(img, 0, 0, newW, newH);
 
             return resImg;
         }
@@ -100,46 +98,6 @@ public class ImageUtil {
 
         return getScaledImage(img, newW, newH);
     }
-
-    public static void drawScaledImage(Graphics g, Image img, int x, int y, int w, int h) {
-        try {
-            // Ensure we have 3D API, otherwise throws exception
-            Class.forName("javax.microedition.m3g.Background");
-
-            int maxView = Integer.MAX_VALUE;
-            try {
-                Object o = Graphics3D.getProperties().get("maxViewportDimension");
-                maxView = ((Integer) o).intValue();
-            } catch (Throwable e) {
-                // TODO: handle exception
-            }
-
-            Image2D image2D = new Image2D(Image2D.RGB, img);
-            Background background = new Background();
-            background.setColor(0xffffffcc); // set the background color
-            background.setImage(image2D);
-
-            // get the singleton Graphics3D instance
-            Graphics3D iG3D = Graphics3D.getInstance();
-            try {
-                iG3D.bindTarget(g, true, Graphics3D.TRUE_COLOR);
-                iG3D.setViewport(x, y, Math.min(maxView, w), Math.min(maxView, h));
-                // clear the color and depth buffers
-                iG3D.clear(background);
-            }
-            finally {
-                // flush
-                iG3D.releaseTarget();
-            }
-        }
-        catch (Throwable e) {
-            // Do nothing. Converting with 3D API failed. Use sampling.
-            //#debug debug
-            e.printStackTrace();
-        }
-    }
-
-
 
 
 
