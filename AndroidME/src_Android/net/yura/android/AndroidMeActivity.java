@@ -48,11 +48,6 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
 
     public static AndroidMeActivity DEFAULT_ACTIVITY;
 
-    public AndroidMeActivity() {
-        DEFAULT_ACTIVITY = this;
-    }
-    
-    
     public MIDlet getMIDlet() {
         return this.midlet;
     }
@@ -83,6 +78,12 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
+
+        if (DEFAULT_ACTIVITY != null) {
+            super.finish(); // This can only run as single instance.
+        }
+
+        DEFAULT_ACTIVITY = this;
         this.eventThread = Thread.currentThread();
 
         showWaitingView(false);
@@ -111,7 +112,7 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
             Window window = getWindow();
             window.setFormat(PixelFormat.RGBA_8888);
         }
-        
+
         // When we resume, we want to have a nice pool of memory. At the moment
         // we ask for 3/5 of the max memory. If the max is 25Mb, this is 15Mb.
         Runtime rt = Runtime.getRuntime();
@@ -414,8 +415,12 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
 
     @Override
     protected void onDestroy() {
-        closeMIDlet();
         super.onDestroy();
+
+        if (DEFAULT_ACTIVITY == this) {
+            closeMIDlet();
+            MIDlet.DEFAULT_ACTIVITY = null;
+        }
     }
 
 
