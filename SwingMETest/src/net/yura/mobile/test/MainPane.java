@@ -59,15 +59,23 @@ public class MainPane extends DesktopPane {
         //                settings.put("Button.foreground", new Integer(0xFFff0000));
 
         //setLookAndFeel( new net.yura.android.plaf.AndroidLookAndFeel() );
+    	
+    	LookAndFeel lookandfeel=null;
         try {
-            setLookAndFeel( (LookAndFeel)Class.forName("net.yura.android.plaf.AndroidLookAndFeel").newInstance() );
+        	if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID) {
+        		lookandfeel = (LookAndFeel)Class.forName("net.yura.android.plaf.AndroidLookAndFeel").newInstance();
+        	}
+        	//else if (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY) {
+        	//	lookandfeel = (LookAndFeel)Class.forName("net.yura.blackberry.plaf.BlackBerryLookAndFeel").newInstance();
+        	//}
         }
         catch (Throwable ex) {
-            if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID) {
                 ex.printStackTrace();
-            }
-            setLookAndFeel( new NimbusLookAndFeel(16) );
         }
+        if (lookandfeel==null) {
+        	lookandfeel = new NimbusLookAndFeel(16);
+        }
+        setLookAndFeel( lookandfeel );
 
         mainWindow = new Frame();
 
@@ -108,8 +116,9 @@ public class MainPane extends DesktopPane {
              if ("openSection".equals(arg0)) {
 
                  if (parentSection == null) {
-                     mainPane.addToScrollPane(this, null , null);
-                 } else {
+                     openTest("mainmenu");
+                 }
+                 else {
                      // Add a back button, if we have a parent test section...
                      Button bk = parentSection.makeButton("Back", "mainmenu");
                      bk.setMnemonic(KeyEvent.KEY_END);
