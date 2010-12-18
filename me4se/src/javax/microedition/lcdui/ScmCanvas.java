@@ -8,6 +8,7 @@ package javax.microedition.lcdui;
  */
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.image.BufferedImage;
 
@@ -74,7 +75,9 @@ class ScmCanvas extends ScmComponent {
                             }
                         }
 
-                      
+                      Rectangle clip = g.getClipBounds();
+                      mg.clipRect(clip.x, clip.y, clip.width, clip.height);
+
                         canvas.paint(mg);  // thanks for the fix to Steven Lagerweij
                       
                         Log.log(Log.DRAW_EVENTS, "ScmCanvas.paint() left");

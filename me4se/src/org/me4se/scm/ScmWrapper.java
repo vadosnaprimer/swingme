@@ -196,8 +196,10 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
     Graphics offScreenGraphics = offScreen.getGraphics();
 
-    offScreenGraphics.setClip(0, 0, offScreenCache.getWidth(null),
-        offScreenCache.getHeight(null));
+    offScreenGraphics.setClip(g.getClip());
+
+
+
     offScreenGraphics.setColor(Color.black);
 
     helper.paint(offScreenGraphics);
