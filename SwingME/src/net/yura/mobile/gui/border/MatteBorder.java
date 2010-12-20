@@ -151,6 +151,13 @@ public class MatteBorder extends EmptyBorder {
             imageRight=r;
             this.back=back;
             this.color=color;
+
+            //#mdebug debug
+            if (back) {
+                Logger.debug("[WARN] MatteBorder created with filling background with tiled image set to true, this should be avoided unless a textured background is needed");
+            }
+            //#enddebug
+
         }
 
         /**
@@ -253,8 +260,6 @@ public class MatteBorder extends EmptyBorder {
                         g.drawRegion(image, imageLeft+(src_w-dist_w)/2, imageTop+(src_h-dist_h)/2, dist_w, dist_h, leftDiff,topDiff);
                     }
                     else {
-                        //#debug debug
-                        Logger.debug("filling background with tiled image!");
                         g.drawImage(image,imageLeft,imageTop,src_w,src_h,leftDiff,topDiff,dist_w,dist_h); // centre
                     }
                 }
