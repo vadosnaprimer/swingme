@@ -30,14 +30,14 @@ public class ToolTip extends Label {
 	    waiting = true;
             wait(1000);
 	    showing = true;
-            getDesktopPane().softkeyRepaint();
+            repaint();
             wait(2000);
 
         }
         finally {
             if (showing) {
                 showing = false;
-                getDesktopPane().fullRepaint();
+                getDesktopPane().repaintHole(this);
             }
 	    waiting = false;
         }

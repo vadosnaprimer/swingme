@@ -103,8 +103,18 @@ public class Window extends Panel {
          * @see Component#requestFocusInWindow()
          */
 	protected void setFocusedComponent(Component ac) {
+            Component old = focusedComponent;
             focusedComponent = ac;
-            getDesktopPane().repaint();
+
+            // HACK we do not really know if a reapint is needed, but we need to call paint at least once
+            // to get the focus to actually change, so we assume that a component gaining focus will need to repaint
+            // if setting focus to null, repaint the old component, if both are null, then do nothing
+            if (focusedComponent!=null) {
+                focusedComponent.repaint();
+            }
+            else if (old!=null) {
+                old.repaint();
+            }
 	}
 
         /**
@@ -431,7 +441,7 @@ public class Window extends Panel {
                 // leave garbage pixels... However, just because a window is smaller that
                 // the desktop, it does not mean the soft-keys are outside it...
                 if (getWidth() < dp.getWidth() || getHeight() < dp.getHeight()) {
-                    dp.fullRepaint();
+                    dp.repaint();
                 } else {
                     repaint();
                 }

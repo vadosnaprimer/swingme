@@ -171,17 +171,23 @@ public class FrameTitlePane extends Panel implements ActionListener {
 
         }
         else if (type == DesktopPane.DRAGGED) {
-
             Frame owner = (Frame)getWindow();
-
             if (!owner.isMaximum()) {
-
-                owner.setLocation(owner.getX()+(x-oldX),owner.getY()+(y-oldY));
-                owner.getDesktopPane().fullRepaint();
+                move(owner,owner.getX()+(x-oldX),owner.getY()+(y-oldY));
             }
-
         }
 
+    }
+
+    private void move(Window owner,int x,int y) {
+        owner.getDesktopPane().repaintHole(owner);
+        owner.setLocation(x,y);
+        owner.repaint();
+    }
+    private void resize(Window owner,int w,int h) {
+        owner.getDesktopPane().repaintHole(owner);
+        owner.setSize(w, h);
+        owner.repaint();
     }
 
     public boolean processKeyEvent(KeyEvent keypad) {
@@ -190,30 +196,26 @@ public class FrameTitlePane extends Panel implements ActionListener {
         
             if (keypad.isDownAction(Canvas.LEFT)) {
                 
-                if (move) { owner.setLocation(owner.getX()-2,owner.getY()); }
-                else if (resize) { owner.setSize(owner.getWidth()-2, owner.getHeight()); }
-                owner.getDesktopPane().fullRepaint();
+                if (move) { move(owner,owner.getX()-2,owner.getY()); }
+                else if (resize) { resize(owner,owner.getWidth()-2, owner.getHeight()); }
                 return true;
             }
             if (keypad.isDownAction(Canvas.RIGHT)) {
                 
-                if (move) { owner.setLocation(owner.getX()+2,owner.getY()); }
-                else if (resize) { owner.setSize(owner.getWidth()+2, owner.getHeight()); }
-                owner.getDesktopPane().fullRepaint();
+                if (move) { move(owner,owner.getX()+2,owner.getY()); }
+                else if (resize) { resize(owner,owner.getWidth()+2, owner.getHeight()); }
                 return true;
             }
             if (keypad.isDownAction(Canvas.UP)) {
                 
-                if (move) { owner.setLocation(owner.getX(),owner.getY()-2); }
-                else if (resize) { owner.setSize(owner.getWidth(), owner.getHeight()-2); }
-                owner.getDesktopPane().fullRepaint();
+                if (move) { move(owner,owner.getX(),owner.getY()-2); }
+                else if (resize) { resize(owner,owner.getWidth(), owner.getHeight()-2); }
                 return true;
             }
             if (keypad.isDownAction(Canvas.DOWN)) {
                 
-                if (move) { owner.setLocation(owner.getX(),owner.getY()+2); }
-                else if (resize) { owner.setSize(owner.getWidth(), owner.getHeight()+2); }
-                owner.getDesktopPane().fullRepaint();
+                if (move) { move(owner,owner.getX(),owner.getY()+2); }
+                else if (resize) { resize(owner,owner.getWidth(), owner.getHeight()+2); }
                 return true;
             }
             if (keypad.isDownAction(Canvas.FIRE)) {

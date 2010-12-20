@@ -399,13 +399,16 @@ public class Menu extends Button {
                                     pX = pX + menuMoveSpeed;
                                     if (pX > destX) { pX = destX; }
                                 }
+
+                                popup.getDesktopPane().repaintHole(popup);
                                 popup.setLocation(pX, pY);
+				popup.repaint();
 
 				if(pY==destY && pX == destX) {
                                     break;
 				}
 
-				popup.repaint();
+
 
 			}
 
@@ -421,12 +424,13 @@ public class Menu extends Button {
                 else {
                     open=true;
 
+                    popup.getDesktopPane().repaintHole(popup);
                     popup.setLocation(destX, destY);
                     // this is not good enough as during the animation images may have been loaded
                     // or the size of the menu could have changed, so our destination is not good enough
                     // instead what we need to do is just make sure it is on the screen
                     popup.makeVisible();
-                    popup.getDesktopPane().fullRepaint();
+                    popup.repaint();
                 }
             }
 

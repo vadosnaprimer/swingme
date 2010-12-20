@@ -399,7 +399,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             }
             // by the time we receive the close event
             // the camera might not belong to a window
-            getDesktopPane().fullRepaint();
+            getDesktopPane().repaint();
         }
     }
 

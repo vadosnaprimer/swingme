@@ -17,6 +17,7 @@
 package net.yura.mobile.gui;
 
 import java.util.Hashtable;
+import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
@@ -301,47 +302,6 @@ public class DesktopPane extends Canvas implements Runnable {
       }
     }
 
-    public static void mySizeChanged(Component aThis) {
-
-        Component p = getAncestorOfClass(ScrollPane.class, aThis);
-        if (p==null) { p = aThis.getWindow(); }
-        if (p==null) return;
-
-        DesktopPane dp = aThis.getDesktopPane();
-        // if a window is not yet visable it still needs the
-        // mulipass validate system to work. e.g. DesktopPane#log() first time
-
-        // if this method is being called from a thread other then the event thread
-        // we dont want it to mess with whats currently happening in the paint
-        synchronized(dp.uiLock) {
-
-            // while it chooses what array to add the component to
-            // the validating turn id can NOT be changed
-            if (dp.validating==0) {
-                addToComponentVector(p, dp.revalidateComponents1);
-                p.repaint();
-            }
-            else if (dp.validating==1) {
-    //#debug debug
-    Logger.debug("thats some complex layout");
-                addToComponentVector(p, dp.revalidateComponents2);
-            }
-            else if (dp.validating==2) {
-    //#debug debug
-    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
-                addToComponentVector(p, dp.revalidateComponents3);
-            }
-            //#mdebug info
-            else {
-                // if this happens it means that when i add a scrollbar it says it
-                // does not need one, and as soon as i remove it, it says it does
-                Logger.info("asking for revalidate 4th time: "+p);
-                Logger.dumpStack();
-            }
-            //#enddebug
-        }
-    }
-
     /**
      * This will call the animate() method on a component from the animation thread
      * @param com The Component to call animte() on
@@ -476,12 +436,6 @@ public class DesktopPane extends Canvas implements Runnable {
     //==== painting ============================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
-    //public void repaint() {
-    // cant do this
-    //}
-    //public void serviceRepaints() {
-    // cant do this
-    //}
     private Graphics2D graphics;
     //#debug
     private String mem;
@@ -529,10 +483,22 @@ public class DesktopPane extends Canvas implements Runnable {
 
         try {
 
+            int clipx = gtmp.getClipX();
+            int clipy = gtmp.getClipY();
+            int clipw = gtmp.getClipWidth();
+            int cliph = gtmp.getClipHeight();
+
             // can not add or remove windows while this is happening
             synchronized(uiLock) {
 
                 boolean doFullRepaint;
+
+                if (clipx<=0 && clipy<=0 && clipw>=getWidth() && cliph>=getHeight()) { // the system wants us to repaint everything
+                    fullrepaint = true;
+                }
+                else if (repaintComponent.isEmpty()) { // we want to repaint a component but have in a previous repaint cleared our list, so we do not know
+                    fullrepaint = true;
+                }
 
                 // now we need to layout all the components
                 // we use a 3 pass system, as 3 passes is the maximum needed to layout even
@@ -666,6 +632,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
             paintLast(graphics);
 
+
+            //gtmp.setColor( new Random().nextInt() );
+            //gtmp.drawRect(clipx, clipy, clipw-1, cliph-1);
+
+
             //#mdebug
             if (mem != null) {
 
@@ -757,40 +728,54 @@ public class DesktopPane extends Canvas implements Runnable {
     //==== Different ways of calling repaint ===================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
+    //public void repaint() {
+    // cant do this
+    //}
+    //public void serviceRepaints() {
+    // cant do this
+    //}
+
     /**
      * this is called when you call repaint() on a component
      * @param rc The Component to repaint
      */
     public void repaintComponent(Component rc) {
-        synchronized(uiLock) {
-            addToComponentVector(rc, repaintComponent);
+
+        Window myWindow = rc.getWindow();
+
+        // if we are not in a window, do nothing
+        if (myWindow==null || !rc.isShowing()) return;
+
+        Component p=rc;
+
+        while (p!=null) {
+            if (!p.isOpaque()) {
+                p = p.getParent();
+            }
+            else {
+                break;
+            }
         }
-        repaint();
+
+        synchronized(uiLock) {
+            // if we have reached the nothingness, so everything is NOT Opaque
+            if (p == null) {
+                fullrepaint = true;
+            }
+            else {
+                addToComponentVector(p, repaintComponent);
+            }
+        }
+        Border insets = rc.getInsets();
+        repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
+
     }
-
-    /**
-     * this method should NOT normally be called
-     * is it called when repaint() is called on a window,
-     * but that window is currently in the background
-     * or if the window is transparent
-     */
-    public void fullRepaint() {
-        // this is here coz this method should NOT be used
-        //#debug debug
-        Logger.debug("FULL REPAINT!!! this method should NOT normally be called");
-
+    public void repaintHole(Component rc) {
         synchronized(uiLock) {
             fullrepaint = true;
         }
-
-        repaint();
-    }
-
-    /**
-     * Repaint the softkeybar
-     */
-    public void softkeyRepaint() {
-        repaint();
+        Border insets = rc.getInsets();
+        repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
     }
 
     private int validating=0;
@@ -804,6 +789,47 @@ public class DesktopPane extends Canvas implements Runnable {
 
         synchronized (uiLock) {
             addToComponentVector(rc, revalidateComponents1);
+        }
+    }
+
+    public static void mySizeChanged(Component aThis) {
+
+        Component p = getAncestorOfClass(ScrollPane.class, aThis);
+        if (p==null) { p = aThis.getWindow(); }
+        if (p==null) return;
+
+        DesktopPane dp = aThis.getDesktopPane();
+        // if a window is not yet visable it still needs the
+        // mulipass validate system to work. e.g. DesktopPane#log() first time
+
+        // if this method is being called from a thread other then the event thread
+        // we dont want it to mess with whats currently happening in the paint
+        synchronized(dp.uiLock) {
+
+            // while it chooses what array to add the component to
+            // the validating turn id can NOT be changed
+            if (dp.validating==0) {
+                addToComponentVector(p, dp.revalidateComponents1);
+                p.repaint();
+            }
+            else if (dp.validating==1) {
+    //#debug debug
+    Logger.debug("thats some complex layout");
+                addToComponentVector(p, dp.revalidateComponents2);
+            }
+            else if (dp.validating==2) {
+    //#debug debug
+    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
+                addToComponentVector(p, dp.revalidateComponents3);
+            }
+            //#mdebug info
+            else {
+                // if this happens it means that when i add a scrollbar it says it
+                // does not need one, and as soon as i remove it, it says it does
+                Logger.info("asking for revalidate 4th time: "+p);
+                Logger.dumpStack();
+            }
+            //#enddebug
         }
     }
 
@@ -883,7 +909,14 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
-        fullRepaint();
+        if (w!=null) {
+            if (fade==null) {
+                w.repaint();
+            }
+            else {
+                repaint();
+            }
+        }
     }
 
     /**
@@ -906,7 +939,14 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
-        fullRepaint();
+        if (w!=null) {
+            if (fade==null) {
+                repaintHole(w);
+            }
+            else {
+                repaint();
+            }
+        }
     }
 
     /**
@@ -915,9 +955,11 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     public void setSelectedFrame(Window w) {
         // dont want to change the windows Vector while we are painting
+        Window old=null;
         synchronized (uiLock) {
             if ( w != null && windows.contains(w) ) {
-                if ( getSelectedFrame() == w) {
+                old = getSelectedFrame();
+                if (old == w) {
                     return;
                 }
                 windows.removeElement(w);
@@ -933,7 +975,24 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
-        fullRepaint();
+        
+        if (old!=null) {
+            if (fade==null) {
+                repaintHole(old);
+            }
+            else {
+                repaint();
+            }
+        }
+        if (w!=null) {
+            if (fade==null) {
+                w.repaint();
+            }
+            else {
+                repaint();
+            }
+        }
+
     }
 
     // this is here for android, when we move from 1 window to another, we want to close the keyboard
@@ -998,7 +1057,7 @@ public class DesktopPane extends Canvas implements Runnable {
             if (keyevent.isDownKey(Canvas.KEY_STAR)) {
 //            	System.gc();
                 mem = (Runtime.getRuntime().freeMemory() >> 10) + "K/" + (Runtime.getRuntime().totalMemory() >> 10) + "K";
-                fullRepaint();
+                repaint();
             }
             else {
                 mem = null;
@@ -1008,11 +1067,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
             if (keyevent.isDownKey(57) && keyevent.isDownKey(56) && keyevent.isDownKey(55) && keyevent.isDownKey(50)) {
                 message = new byte[] {121,117,114,97,46,110,101,116};
-                fullRepaint();
+                repaint();
             }
             else if (keyevent.isDownKey(52) && keyevent.isDownKey(50) && keyevent.isDownKey(54) && keyevent.isDownKey(51)) {
                 message = new byte[] {84,72,69,32,71,65,77,69};
-                fullRepaint();
+                repaint();
             }
             else {
                 message = null;
@@ -1303,13 +1362,19 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public void setIndicatorText(String txt) {
+        
+        // clear the old srea where the indicator was
+        if (indicator.isShowing()) {
+            repaintHole(indicator);
+        }
+
         indicator.setText(txt);
         indicator.workoutSize();
 
         setupIndicatorPosition();
 
         // as we dont know what size it was
-        fullRepaint();
+        indicator.repaint();
 
     }
 
@@ -1337,7 +1402,7 @@ public class DesktopPane extends Canvas implements Runnable {
         Logger.debug("sizeChanged!! " + paintdone + " w=" + w + " h=" + h);
 
         sizeChangedImpl();
-        fullRepaint();
+        repaint();
     }
 
     private void sizeChangedImpl() {
@@ -1372,6 +1437,33 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (window instanceof Frame && ((Frame) window).isMaximum()) {
                     ((Frame) window).setMaximum(true);
                 }
+/*
+                else {
+                    boolean left = window.getXWithBorder()==0;
+                    boolean top = window.getYWithBorder()==0;
+                    boolean right = window.getXWithBorder()+window.getWidthWithBorder()==oldw;
+                    boolean bottom = window.getYWithBorder()+window.getHeightWithBorder()==oldh;
+                    //System.out.println("left="+left+" top="+top+" right="+right+" bottom="+bottom);
+
+                    window.makeVisible();
+
+                    if (top && bottom) {
+                        window.setBoundsWithBorder(window.getXWithBorder(),0, window.getWidthWithBorder(),h);
+                    }
+                    else if (top || bottom) {
+                        Border insets = window.getInsets();
+                        window.setLocation(window.getX(), top?insets.getTop():h-window.getHeight()-insets.getBottom() );
+                    }
+
+                    if (left && right) {
+                        window.setBoundsWithBorder(0, window.getYWithBorder(), w, window.getHeightWithBorder());
+                    }
+                    else if (left || right) {
+                        Border insets = window.getInsets();
+                        window.setLocation(left?insets.getLeft():w-window.getWidth()-insets.getRight(), window.getY() );
+                    }
+                }
+*/
             //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
             }
         }
@@ -1405,7 +1497,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // A landscape change can happens when we are hidden. So check it now.
         sizeChangedImpl();
 
-        fullRepaint();
+        repaint();
 
     }
 

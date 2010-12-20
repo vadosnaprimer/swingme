@@ -161,8 +161,13 @@ public class Graphics2D {
             final int[] c = getClip();
             clipRect(dest_x,dest_y,dest_w,dest_h);
 
-            for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
-                for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
+            int start_x=(dest_x>=c[0]?dest_x:  dest_x+ (((c[0]-dest_x)/src_w)*src_w)  );
+            int start_y=(dest_y>=c[1]?dest_y:  dest_y+ (((c[1]-dest_y)/src_h)*src_h)  );
+            int end_x = (dest_x+dest_w)<=(c[0]+c[2])? (dest_x+dest_w) : (c[0]+c[2]) ;
+            int end_y = (dest_y+dest_h)<=(c[1]+c[3])? (dest_y+dest_h) : (c[1]+c[3]) ;
+
+            for (int pos_x=start_x;pos_x<end_x;pos_x=pos_x+src_w) {
+                for (int pos_y=start_y;pos_y<end_y;pos_y=pos_y+src_h) {
                     drawRegion(img, src_x,  src_y, src_w, src_h, pos_x, pos_y);
                 }
             }

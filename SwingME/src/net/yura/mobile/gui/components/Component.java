@@ -564,39 +564,7 @@ public abstract class Component {
      * @see java.awt.Component#repaint() Component.repaint
      */
     public void repaint() {
-
-            Window myWindow = getWindow();
-
-            // if we are not in a window, do nothing
-            if (myWindow==null || !isShowing()) return;
-
-            DesktopPane desktop = myWindow.getDesktopPane();
-
-            if (!isOpaque()) {
-
-                    Component p=parent;
-
-                    while (p!=null) {
-
-                            if (!p.isOpaque()) {
-                                    p = p.parent;
-                            }
-                            else {
-                                    break;
-                            }
-
-                    }
-                    // if we have reached the nothingness
-                    if (p == null) {
-                            desktop.fullRepaint();
-                    }
-                    else {
-                            desktop.repaintComponent(p);
-                    }
-            }
-            else {
-                    desktop.repaintComponent(this);
-            }
+        getDesktopPane().repaintComponent(this);
     }
 
     //#mdebug debug

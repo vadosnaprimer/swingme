@@ -322,7 +322,7 @@ public class MenuBar extends List implements ActionListener {
             int size = getSize();
             ListCellRenderer renderer = getCellRenderer();
 
-            int w=0,h=0; // max width and height
+            int w=5,h=5; // max width and height
 
             boolean icon =false;
             for(int i = 0; i < size; i++){
