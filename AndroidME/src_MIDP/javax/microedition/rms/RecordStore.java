@@ -102,6 +102,7 @@ public class RecordStore extends Object {
             throw new RecordStoreException("Could not create record store with name '" + recordStoreName + "'. Reason: The method 'SqlDao.createRecordStore' returned null although it is not allowed to do so.");
         }
         cacheRecordStore(recordStoreName, recordStore);
+
         return recordStore;
     }
 
@@ -123,7 +124,7 @@ public class RecordStore extends Object {
 
     public void closeRecordStore() throws RecordStoreNotOpenException, RecordStoreException {
         if(isClosed()) {
-            return;
+            throw new RecordStoreNotOpenException();
         }
         boolean closed = closeChachedRecordStore();
 

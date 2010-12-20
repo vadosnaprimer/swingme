@@ -139,7 +139,9 @@ public abstract class Canvas extends Displayable {
     }
 
     public void repaint(int x, int y, int w, int h) {
-        repaint();
+        if (this.canvasView != null) {
+            this.canvasView.postInvalidate(x, y, x+w, y+h);
+        }
     }
 
     public void repaint() {
@@ -332,6 +334,9 @@ public abstract class Canvas extends Displayable {
             }
 
             graphics.reset();
+
+            Rect clip = androidCanvas.getClipBounds();
+            graphics.clipRect(clip.left, clip.top, clip.right-clip.left, clip.bottom-clip.top);
 
             paint(graphics);
 
