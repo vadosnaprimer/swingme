@@ -148,9 +148,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(ctx, preferenceSeparatorStyle, android.R.attr.listSeparatorTextViewStyle, null,Style.ALL); // Has defined in alert_dialog.xml
         setStyleFor("PreferenceSeparator", preferenceSeparatorStyle);
 
-//        Style progressBar = new Style(defaultStyle);
-//        addBorder(progressBar, android.R.drawable.progress_horizontal);
-//        setStyleFor("ProgressBar",progressBar);
 
         // --- Button ---
         Style buttonStyle = new Style(defaultStyle);
@@ -257,6 +254,29 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // yes = ok, no = cencel, dont use this as it seems to be wrong
         //ctx.getResources().getString(android.R.string.ok);
+
+        // -- Slider --
+        Style sliderThumbStyle = new Style(defaultStyle);
+        Drawable slider = getDrawable(ctx,  android.R.style.Widget_SeekBar, android.R.attr.thumb);
+        Rect sliderSize = new Rect(slider.getIntrinsicWidth()/2, slider.getIntrinsicHeight()/2, slider.getIntrinsicWidth()/2, slider.getIntrinsicHeight()/2);
+        sliderThumbStyle.addBorder(new AndroidBorder(slider, sliderSize),Style.ALL);
+        setStyleFor("SliderThumb",sliderThumbStyle);
+
+        Style sliderTrackStyle = new Style(defaultStyle);
+        //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_SeekBar, android.R.attr.background),Style.ALL); NOT WORKING
+        //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_SeekBar, android.R.attr.process),Style.ALL); NOT WORKING
+        //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_ProgressBar_Horizontal, android.R.attr.process),Style.ALL); NOT WORKING
+        //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_ProgressBar_Horizontal, android.R.attr.background),Style.ALL); NOT WORKING
+        sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_SeekBar, android.R.attr.progressDrawable),Style.ALL);
+        setStyleFor("SliderTrack",sliderTrackStyle);
+
+        // -- ProgressBar --
+        Style progressBar = new Style(defaultStyle);
+        progressBar.addBorder( getBorder(ctx, android.R.style.Widget_ProgressBar_Horizontal, android.R.attr.progressDrawable),Style.ALL);
+        //addBorder(progressBar, android.R.drawable.progress_horizontal); ????
+        setStyleFor("ProgressBar",progressBar);
+
+
     }
 
     private Drawable getDrawable(Context ctx, String name) {
