@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="BlackBerryME" default="genswingme">
+	
+    <property name="wtk.home" value="C:/Program Files/NetBeans 6.5.1/mobility8/WTK2.5.2/" />
+    <property name="jde.home" value="C:/Dev/Eclipse_BlackBerry/" />
+    <property name="swingme.src" value="../SwingME/src/" />
+	
+	
+    <property name="bb.buildjars.home" location="${jde.home}/bin" />
+    <property name="j2me.rim.api" value="${jde.home}/lib/net_rim_api.jar" />
+
+    <property name="wtk.cldc.version" value="1.1" />
+    <property name="wtk.midp.version" value="2.0" />
+    <property name="wtk.all.enabled" value="false" />
+    
+    <property name="out.package" value="BadooMobile" />
+        
+    
+    <taskdef resource="bb-ant-defs.xml" classpath="tools/bb-ant-tools.jar" />
+    <taskdef resource="antenna.properties" classpath="tools/antenna-bin-1.2.1-beta.jar"/>
+
+
+    <target name="genswingme" depends="preprocess" description="gen SwingME.">
+
+		<delete dir="gen"/>
+
+		<copy todir="gen">
+			<fileset dir="${swingme.src}" includes="**/*.java"/>
+		</copy>
+
+
+
+        <replaceregexp byline="true"
+               match="javax.microedition.midlet.MIDlet(\W)"
+               replace="net.yura.blackberry.midlet.MIDlet\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+
+<!--
+
+        <replaceregexp byline="true"
+               match="javax.microedition.midlet.MIDlet(\W)"
+               replace="net.yura.blackberry.rim.MIDlet\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.Canvas(\W)"
+               replace="net.yura.blackberry.rim.Canvas\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.Font(\W)"
+               replace="net.yura.blackberry.rim.Font\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.Graphics(\W)"
+               replace="net.yura.blackberry.rim.Graphics\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.Image(\W)"
+               replace="net.yura.blackberry.rim.Image\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+-->
+
+
+
+    </target>
+
+
+    <target name="debug" depends="preprocess" description="Builds the application and signs it with a debug key.">
+
+        <!-- 
+            Black Berry phones (at least the emulators) don't seem able to catch 
+            "Throwable" exception. We find all instances of this type of catch
+            (using an ant regular expression and replace it by a 
+            catch(Error) + catch(Exception)
+        -->
+<!--
+        <replaceregexp byline="false" flags="gs"
+            match   = "catch\s*\(Throwable\s*(.*?)\)(.*?\})"
+            replace = "catch (Error \1)\2 catch (Exception \1)\2">
+
+            <fileset dir="src" includes="**/*.java"/>
+        </replaceregexp>
+-->
+        <replaceregexp file="src/net/yura/mobile/gui/Midlet.java"
+               match="extends MIDlet"
+               replace="extends BBMIDlet"
+               byline="true"
+        />
+
+        <mkdir dir="bin"/>
+
+        <unzip dest="bin">
+            <fileset dir="libs" includes="**/*.jar" />
+        </unzip>
+        
+        <copy todir="bin">
+            <fileset dir="res" />
+        </copy>
+
+        <wtkbuild srcdir="src" destdir="bin" classpath="bin;${j2me.rim.api}" includeantruntime="false" />
+
+        <copy file="res/BadooMobile.jad" todir="bin" />
+        <jar destfile="bin/app.jar" basedir="bin" excludes="*.jad"/>
+
+        <wtkpreverify classpath="${j2me.rim.api}" jarfile="bin/app.jar" jadfile="bin/BadooMobile.jad" />
+       
+        <!--
+            wtkrapc ignores ant base-dir, and always used the current working directory.
+            execute ant on a command shell, from inside the bin directory
+        -->
+        <exec executable="cmd" dir="bin">
+            <arg value="/c"/>
+            <arg value="ant -f ../build.xml -Dout.package=${out.package} -Djde.home=${jde.home} -Dwtk.home=&#34;${wtk.home}&#34; rapc"/>
+        </exec>
+    </target>
+
+
+    <target name="rapc">
+       <wtkrapc jadfile="bin/BadooMobile.jad" source="bin/app.jar" codename="${out.package}" import="${j2me.rim.api}" quiet="true" midlet="true" />
+    </target>
+
+
+    <target name="preprocess" if="preprocess" >
+         <wtkpreprocess srcdir="src" destdir="src" debuglevel="fatal" printsymbols="true" />
+    </target>
+
+
+    <target name="help">
+        <!-- displays starts at col 13
+              |13                                                              80| -->
+        <echo>Android Ant Build. Available targets:</echo>
+        <echo>   help:      Displays this help.</echo>
+        <echo>   clean:     Removes output files created by other targets.</echo>
+        <echo>   debug:     Builds the application and signs it with a debug key.</echo>
+        <echo>   install:   Installs/reinstalls the debug package onto a running</echo>
+        <echo>              emulator or device.</echo>
+        <echo>              If the application was previously installed, the</echo>
+        <echo>              signatures must match.</echo>
+        <echo>   uninstall: Uninstalls the application from a running emulator or</echo>
+        <echo>              device.</echo>
+    </target>
+
+</project>
