@@ -174,7 +174,7 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
                 Component comp = (Component)frames.elementAt(c);
                 DesktopPane.updateComponentTreeUI( comp );
             }
-            desktop.fullRepaint();
+            desktop.repaint();
     }
 
     class XULFile {
