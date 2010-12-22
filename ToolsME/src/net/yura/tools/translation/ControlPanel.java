@@ -84,6 +84,8 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
 
             XULFile file = (XULFile)list.getSelectedValue();
 
+            if (file==null) return;
+
             Properties properties = null;
 
             Mtcomm conn = tt.getPlugin();
@@ -173,6 +175,7 @@ public class ControlPanel extends ME4SEPanel implements ActionListener {
             for (int c = 0;c<frames.size();c++) {
                 Component comp = (Component)frames.elementAt(c);
                 DesktopPane.updateComponentTreeUI( comp );
+                comp.revalidate(); // if the themes changes the layout too much
             }
             desktop.repaint();
     }
