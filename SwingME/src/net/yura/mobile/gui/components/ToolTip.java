@@ -53,5 +53,9 @@ public class ToolTip extends Label {
     public boolean isShowing() {
 	return showing;
     }
+
+    public void setShowing(boolean b) {
+        showing = b;
+    }
     
 }

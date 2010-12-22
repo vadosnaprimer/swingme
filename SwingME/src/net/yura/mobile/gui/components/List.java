@@ -299,11 +299,13 @@ public class List extends Component implements ActionListener {
         int ri = -1;
         int roffset=0;
 
-        if ((layoutOrientation==HORIZONTAL && x<=0) || (layoutOrientation==VERTICAL && y<=0)) {
+        int size = getSize();
+
+        if (size==0 || (layoutOrientation==HORIZONTAL && x<=0) || (layoutOrientation==VERTICAL && y<=0)) {
             // dont do anything
         }
         else if (x > width || y > height) {
-            ri = getSize(); // skip everything
+            ri = size; // skip everything
         }
         else if (layoutOrientation==HORIZONTAL && fixedCellWidth!=-1) {
             ri = x/fixedCellWidth;
@@ -317,7 +319,7 @@ public class List extends Component implements ActionListener {
 
             Component comp=null;
 
-            for(int i=0,offset=0; i < getSize(); i++){
+            for(int i=0,offset=0; i < size; i++){
                 comp = getComponentFor(i,offset);
 
                 int cw=comp.getWidthWithBorder();

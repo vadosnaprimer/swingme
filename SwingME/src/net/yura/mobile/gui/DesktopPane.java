@@ -591,9 +591,9 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
                     for (int c = startC; c < windows.size(); c++) {
-                        if (c==0) {
-                            paintFirst(graphics);
-                        }
+                        //if (c==0) {
+                        //    paintFirst(graphics);
+                        //}
                         paintComponent(graphics, (Window) windows.elementAt(c));
                         if (c == (windows.size() - 2) && fade != null) {
                             Image i = fade.getImage();
@@ -616,6 +616,15 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
     */
                     }
+
+
+                    if (tooltip!=null && tooltip.isShowing()) {
+                        paintComponent(graphics, tooltip);
+                    }
+                    if (indicator!=null && indicator.isShowing()) {
+                        paintComponent(graphics, indicator);
+                    }
+
                 }
             } // end synchronized
 
@@ -623,14 +632,9 @@ public class DesktopPane extends Canvas implements Runnable {
             //                    drawSoftkeys(graphics);
             //                }
 
-            if (tooltip!=null && tooltip.isShowing()) {
-                paintComponent(graphics, tooltip);
-            }
-            if (indicator!=null && indicator.getText() != null && !QWERTY_KAYPAD) {
-                paintComponent(graphics, indicator);
-            }
 
-            paintLast(graphics);
+
+            //paintLast(graphics);
 
 
             //gtmp.setColor( new Random().nextInt() );
@@ -686,11 +690,11 @@ public class DesktopPane extends Canvas implements Runnable {
         fade = a;
     }
 
-    public void paintFirst(Graphics2D g) {
-    }
+    //public void paintFirst(Graphics2D g) {
+    //}
 
-    public void paintLast(Graphics2D g) {
-    }
+    //public void paintLast(Graphics2D g) {
+    //}
 
     private void paintComponent(Graphics2D g, Component com) {
 
@@ -1370,6 +1374,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
         indicator.setText(txt);
         indicator.workoutSize();
+
+        indicator.setShowing( txt != null && !QWERTY_KAYPAD );
 
         setupIndicatorPosition();
 
