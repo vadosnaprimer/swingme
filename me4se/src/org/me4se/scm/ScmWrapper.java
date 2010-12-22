@@ -156,10 +156,6 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
     repaint();
   }
 
-  public void update(Graphics g) {
-    paint(g);
-  }
-
   public BufferedImage getOffScreen() {
     Dimension size = getSize();
     if (size.width <= 0 || size.height <= 0 || size.width > 1000000000
@@ -181,8 +177,10 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
     return offScreenCache;
   }
 
-  public void paint(java.awt.Graphics g) {
-    Log.log(Log.DRAW_EVENTS, "AWT paint entered: " + g.getClipRect());
+  // app-triggered paint events come here
+  public void update(Graphics g) {
+
+
     if (invalid) {
       component.doLayout();
       invalid = false;
@@ -208,7 +206,7 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
     /*
      * offScreenGraphics.setColor(Color.BLUE);
-     * 
+     *
      * for(int i = 15; i < size.width; i += 30){
      * offScreenGraphics.drawLine((paintCount+i) % size.width, 0, (paintCount+i) %
      * size.width, size.height); }
@@ -223,12 +221,25 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
     }
      */
 
-    if (!g.drawImage(offScreen, 0, 0, size.width, size.height, 0, 0,
-        (int) (size.width / scale), (int) (size.height / scale), this)) {
-      System.out.println("DRAWIMAGE WAS RETURNING FALSE!!!");
-    }
-    // g.drawImage(offScreen, 0, 0, this);
+    paint(g);
+  }
 
+  // system-triggered paint events come here
+  public void paint(java.awt.Graphics g) {
+    Log.log(Log.DRAW_EVENTS, "AWT paint entered: " + g.getClipRect());
+
+      if (offScreenCache==null) {
+          update(g);
+      }
+      else {
+        Dimension size = getSize();
+
+        if (!g.drawImage(offScreenCache, 0, 0, size.width, size.height, 0, 0,
+            (int) (size.width / scale), (int) (size.height / scale), this)) {
+          System.out.println("DRAWIMAGE WAS RETURNING FALSE!!!");
+        }
+        // g.drawImage(offScreen, 0, 0, this);
+      }
     /*
      * g.setColor(Color.RED);
      * 

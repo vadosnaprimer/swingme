@@ -52,7 +52,11 @@ class ScmCanvas extends ScmComponent {
 							getHeight(), BufferedImage.TYPE_INT_RGB);
 				}
 
-				if (repaintPending) {
+                                // YURA basically we can noy have this check here
+                                // as what happens is there is 1 request for 1 sq and a 2nd request for a second sq to paint
+                                // but after the first paint, this flag is set to flase, and the second paint does not happen
+                                // this can leave areas that should have been painted, not being painted
+				//if (repaintPending) {
 					Graphics mg =
 						new Graphics(
 							canvas,
@@ -91,7 +95,7 @@ class ScmCanvas extends ScmComponent {
 						
 					}
 					else repaint ();
-				}
+				//}
 
 				//TODO: Clarify under which circumstances g may be null ... 
 				
