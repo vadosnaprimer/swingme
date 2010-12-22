@@ -5,6 +5,7 @@ import net.rim.device.api.ui.component.ButtonField;
 import net.rim.device.api.ui.component.Dialog;
 import net.rim.device.api.ui.component.LabelField;
 import net.rim.device.api.ui.component.RichTextField;
+import net.rim.device.api.ui.component.TextField;
 import net.rim.device.api.ui.container.MainScreen;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
@@ -34,6 +35,8 @@ public class HelloWorldScreen extends MainScreen{
 			});
 
             add(button);
+            
+            add(new TextField());
     }
 	
 	void test() {

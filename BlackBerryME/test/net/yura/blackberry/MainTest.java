@@ -4,6 +4,7 @@ import java.util.Vector;
 
 import javax.microedition.io.Connector;
 import javax.microedition.lcdui.Graphics;
+import javax.microedition.lcdui.Image;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
 
@@ -11,13 +12,17 @@ import net.rim.device.api.im.TextHitInfo;
 import net.rim.device.api.input.ITextInputConnector;
 import net.rim.device.api.input.InputHelper;
 import net.rim.device.api.system.Application;
+import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.VirtualKeyboard;
 import net.rim.device.api.ui.XYRect;
+import net.rim.device.api.ui.component.BitmapField;
 import net.rim.device.api.ui.component.Dialog;
+import net.rim.device.api.ui.component.LabelField;
 import net.rim.device.api.ui.component.TextField;
 import net.yura.blackberry.plaf.TestBorder;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
@@ -83,7 +88,22 @@ public class MainTest extends Section {
         	
         	UiApplication.getUiApplication().invokeLater (new Runnable() {
         	    public void run() {
-        	    	UiApplication.getUiApplication().pushScreen(new HelloWorldScreen()); 
+        	    	HelloWorldScreen helloWorldScreen = new HelloWorldScreen();
+        	    	
+        	    	int size=100;
+        	    	
+        	    	Image buffer1 = Image.createImage(size, size);
+        	    	Graphics g1 = buffer1.getGraphics();
+        	    	DesktopPane.getDesktopPane().paint(g1);
+        	    	int[] data = new int[size*size];
+        	    	buffer1.getRGB(data, 0, size, 0, 0, size, size);
+        	    	Bitmap bitmap = new Bitmap(size, size);
+        	    	bitmap.setARGB(data, 0, size, 0, 0, size, size);
+        	    	
+        	    	BitmapField label = new BitmapField(bitmap);
+        	    	helloWorldScreen.add(label);
+        	    	
+        	    	UiApplication.getUiApplication().pushScreen(helloWorldScreen); 
         	    }
         	});
         }
