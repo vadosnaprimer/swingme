@@ -370,16 +370,16 @@ public class DesktopPane extends Canvas implements Runnable {
             defaultSpace = (maxSize <= 128) ? 3 : (maxSize <= 208) ? 5 : 7;
         }
 
-        if (SOFT_KEYS) {
-            MenuItemRenderer m = new MenuItemRenderer();
-            m.setName("SoftkeyRenderer");
-            softkeyRenderer = m;
 
-            Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test"), 0, false, false);
-            c.workoutSize();
-            menuHeight = c.getHeightWithBorder();
+        // this is only needed for if SOFT_KEYS is true,
+        // but we may wish to set it to true after we set the look and feel
+        MenuItemRenderer m = new MenuItemRenderer();
+        m.setName("SoftkeyRenderer");
+        softkeyRenderer = m;
+        Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test"), 0, false, false);
+        c.workoutSize();
+        menuHeight = c.getHeightWithBorder();
 
-        }
 
         inaccuracy = theme.getStyle("").getFont(Style.ALL).getHeight();
 
@@ -437,7 +437,7 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public int getMenuHeight() {
-        return menuHeight;
+        return SOFT_KEYS?menuHeight:0;
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
