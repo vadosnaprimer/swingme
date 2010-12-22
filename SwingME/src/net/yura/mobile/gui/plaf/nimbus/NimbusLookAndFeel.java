@@ -150,9 +150,6 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("Label.background", noColor);
         setUIDefault("TitleBarLabel.background", noColor);
 
-        // Panel
-        setUIDefault("Panel.background", noColor);
-
         // BUTTONS
 
         Vector defaultBorderSettings = new Vector();
@@ -295,6 +292,8 @@ public class NimbusLookAndFeel extends LookAndFeel {
             setUIDefault(componentName+"[focused].border",tmp3);
             setUIDefault(componentName+"[focused+selected].border",tmp4);
         }
+
+        setUIDefault("List.background", uiSettings.get("nimbusLightBackground") );
 
         componentName = "MenuRenderer";
 
@@ -519,14 +518,18 @@ public class NimbusLookAndFeel extends LookAndFeel {
         setUIDefault("ToolTip.background",uiSettings.get("nimbusAlertYellow"));
         setUIDefault("ToolTip.border",new LineBorder(decodeColor("nimbusOrange")));
 
+        // TODO: this is WRONG!!! do NOT do this, as will create strange effects with iPhone scroll mode
+        // the reason this is here is to allow for the colored Dialogs, as its the color of the window that is supposed to show though
+        // this is not good enough as font color will still be wrong if the main app is light, but the dialogs are dark, Android LightTheme has this problem
+        // Panel
+        setUIDefault("Panel.background", noColor);
         // ScrollPane
+        setUIDefault("ScrollPane.background", noColor);
 
         Icon arrowUp = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_UP, null, decodeColor("text"));
         Icon arrowDown = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_DOWN, null, decodeColor("text"));
         Icon arrowLeft = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_LEFT, null, decodeColor("text"));
         Icon arrowRight = new NimbusIcon(font.getHeight(), LookAndFeel.ICON_ARROW_RIGHT, null, decodeColor("text"));
-
-        setUIDefault("ScrollPane.background", noColor);
 
         setUIDefault("ScrollPane.property[upArrow]", arrowUp);
         setUIDefault("ScrollPane.property[downArrow]", arrowDown);
