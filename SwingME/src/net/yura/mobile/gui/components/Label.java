@@ -437,7 +437,7 @@ public class Label extends Component {
                 borderOffset = b.getLeft() + b.getRight();
             }
 
-            int resonableTextLength = DesktopPane.getDesktopPane().getWidth() - borderOffset;
+            int resonableTextLength = getDesktopPane().getWidth() - borderOffset;
             int minimumIconWidth = getIconWidth() + padding *2;
 
             return Math.max(resonableTextLength,minimumIconWidth);
@@ -463,7 +463,7 @@ public class Label extends Component {
 
         //#mdebug debug
 	public String toString() {
-            return super.toString() +"("+ getText()+")";
+            return super.toString() +"("+string+")";
         }
         //#enddebug
 

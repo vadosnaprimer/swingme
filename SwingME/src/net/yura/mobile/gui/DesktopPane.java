@@ -17,7 +17,6 @@
 package net.yura.mobile.gui;
 
 import java.util.Hashtable;
-import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
@@ -386,14 +385,23 @@ public class DesktopPane extends Canvas implements Runnable {
 
         // this is a hack
         // to make sure that EVERYTHING on screen has a parent window and DesktopPane
-        Window dummy = new Window();
-        dummy.setDesktopPane(this);
+        Window dummy;
+        if (tooltip==null) {
 
-        tooltip = new ToolTip();
-        indicator = new ToolTip();
+            dummy = new Window();
+            dummy.setDesktopPane(this);
 
-        dummy.add(tooltip);
-        dummy.add(indicator);
+            tooltip = new ToolTip();
+            indicator = new ToolTip();
+
+            dummy.add(tooltip);
+            dummy.add(indicator);
+        }
+        else {
+            // if we already have these components, we dont want them to lose there state
+            dummy = tooltip.getWindow();
+            updateComponentTreeUI(dummy);
+        }
 
         fade = (Icon)getDefaultTheme(dummy).getProperty("dim", Style.ALL);
 
@@ -637,7 +645,7 @@ public class DesktopPane extends Canvas implements Runnable {
             //paintLast(graphics);
 
 
-            //gtmp.setColor( new Random().nextInt() );
+            //gtmp.setColor( new java.util.Random().nextInt() );
             //gtmp.drawRect(clipx, clipy, clipw-1, cliph-1);
 
 
@@ -1366,26 +1374,19 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public void setIndicatorText(String txt) {
-        
         // clear the old srea where the indicator was
         if (indicator.isShowing()) {
             repaintHole(indicator);
         }
-
         indicator.setText(txt);
         indicator.workoutSize();
-
         indicator.setShowing( txt != null && !QWERTY_KAYPAD );
-
         setupIndicatorPosition();
-
         // as we dont know what size it was
         indicator.repaint();
-
     }
 
     private void setupIndicatorPosition() {
-
         int w = indicator.getWidthWithBorder();
         int h = indicator.getHeightWithBorder();
         if (sideSoftKeys) {
@@ -1394,7 +1395,6 @@ public class DesktopPane extends Canvas implements Runnable {
         else {
             indicator.setBoundsWithBorder( (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ?0:(getWidth()-w), 0, w, h);
         }
-
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
@@ -1516,4 +1516,10 @@ public class DesktopPane extends Canvas implements Runnable {
     public boolean isSideSoftKeys() {
         return sideSoftKeys;
     }
+
+    //#mdebug debug
+    public String toString() {
+        return "DesktopPane"+windows;
+    }
+    //#enddebug
 }

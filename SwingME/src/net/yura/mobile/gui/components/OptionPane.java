@@ -129,7 +129,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
         Panel c = new Panel( new BoxLayout(Graphics.VCENTER) );
 
-        if (DesktopPane.getDesktopPane().VERY_BIG_SCREEN) {
+        if (getDesktopPane().VERY_BIG_SCREEN) {
             panel.add(icon,Graphics.LEFT);
         }
         else {
@@ -211,7 +211,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
     private Component getComponentFromObject(Object object) {
 
-        DesktopPane dp = DesktopPane.getDesktopPane();
+        DesktopPane dp = getDesktopPane();
 
         if (object instanceof Component) {
             Component component = (Component)object;
@@ -355,7 +355,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         //scroll.setPreferredSize(content.getWidth(), content.getHeight());
         pack();
 
-        DesktopPane dp = DesktopPane.getDesktopPane();
+        DesktopPane dp = getDesktopPane();
 
         int maxw = dp.getWidth();
         int maxh = dp.getHeight() - dp.getMenuHeight()*2;

@@ -41,7 +41,7 @@ public class Frame extends Window {
          */
         public Frame() {
             setUndecorated(false);
-            if (DesktopPane.getDesktopPane().MAX_CLOSE_BUTTONS) {
+            if (getDesktopPane().MAX_CLOSE_BUTTONS) {
                 setMaximizable(true);
                 setClosable(true);
             }
@@ -335,7 +335,7 @@ public class Frame extends Window {
                 // we want to use revalidate as it will make sure it
                 // happens in the correct thred
                 // so this method remains threadsafe
-                //setBounds(0, 0, DesktopPane.getDesktopPane().getWidth(), DesktopPane.getDesktopPane().getHeight());
+                //setBounds(0, 0, desktop.getWidth(), desktop.getHeight());
 
             }
 
@@ -346,7 +346,7 @@ public class Frame extends Window {
                 width = oldWidth;
                 height = oldHeight;
                 revalidate();
-                DesktopPane.getDesktopPane().fullRepaint();
+                repaint();
             }
 */
         }

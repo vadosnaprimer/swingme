@@ -628,11 +628,8 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
 
             mode = m;
-
             if (isFocusOwner()) {
-
                 getDesktopPane().setIndicatorText(i);
-
             }
         }
 
@@ -660,16 +657,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 focusable = (javax.microedition.lcdui.TextField.UNEDITABLE & constraints) == 0;
 
-                // this crap again
-                Window w = getWindow();
-                DesktopPane dp=null;
-                if (w!=null) {
-                    dp = w.getDesktopPane();
-                }
-                if (dp==null) {
-                    dp = DesktopPane.getDesktopPane();
-                }
-                // end crap
+                DesktopPane dp=getDesktopPane();
 
                 if ( dp.QWERTY_KAYPAD ) { // in desktop mode numbers are always numbers
                     setMode(MODE_123);
@@ -798,5 +786,11 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
             return x;
         }
+
+        //#mdebug debug
+        public String toString() {
+            return super.toString()+"["+text+"]";
+        }
+        //#enddebug
 
 }

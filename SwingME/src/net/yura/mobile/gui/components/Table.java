@@ -628,7 +628,7 @@ public class Table extends Panel {
 //                return ((ScrollPane)parent).getViewPortWidth() / getColumnCount();
 //        }
 //        else {
-//                return DesktopPane.getDesktopPane().getWidth() /getColumnCount();
+//                return getDesktopPane().getWidth() /getColumnCount();
 //        }
 
     }

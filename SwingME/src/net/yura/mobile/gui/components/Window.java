@@ -193,7 +193,7 @@ public class Window extends Panel {
         public void setVisible(boolean b) {
 
             if (b) {
-                DesktopPane.getDesktopPane().add(this);
+                getDesktopPane().add(this);
             }
             else {
 
@@ -500,7 +500,7 @@ public class Window extends Panel {
         public void setLocationRelativeTo(Component comp) {
             if (comp == null) {
 
-                DesktopPane dp = DesktopPane.getDesktopPane();
+                DesktopPane dp = getDesktopPane();
 
                 setLocation((dp.getWidth() - getWidth()) /2,
                         (dp.getHeight() - getHeight()) /2
