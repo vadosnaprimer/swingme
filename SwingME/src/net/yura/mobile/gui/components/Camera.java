@@ -94,7 +94,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
         int msgPosX = (getWidth() / 2) - (waitingMessageLength / 2);
         int msgPosY = (getHeight() / 2) - (font.getHeight() / 2);
-        g.setColor(foreground);
+        g.setColor( getCurrentForeground() );
         g.drawString(waitingMessage, msgPosX, msgPosY);
 
         if (running) {
