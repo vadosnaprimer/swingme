@@ -97,6 +97,11 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
+        
+        Style listStyle = new Style(defaultStyle);
+        listStyle.addBorder(getBorder(ctx, android.R.style.Widget_ListView_White, android.R.attr.background ),Style.ALL);
+        setStyleFor("ListWhite",listStyle);
+        
         Rect listExtraPadding = getAdjustedDensityRect(ctx, 10, 10, 10, 10);
         Border divider2 = getListDivider(ctx, android.R.style.Widget_ListView, android.R.attr.listDivider);
 
