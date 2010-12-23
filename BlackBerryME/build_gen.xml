@@ -4,7 +4,7 @@
     <property name="wtk.home" value="C:/Program Files/NetBeans 6.5.1/mobility8/WTK2.5.2/" />
     <property name="jde.home" value="C:/Dev/Eclipse_BlackBerry/" />
     <property name="swingme.src" value="../SwingME/src/" />
-	
+    <property name="swingmetest.src" value="../SwingMETest/src/" />
 	
     <property name="bb.buildjars.home" location="${jde.home}/bin" />
     <property name="j2me.rim.api" value="${jde.home}/lib/net_rim_api.jar" />
@@ -27,8 +27,10 @@
 		<copy todir="gen">
 			<fileset dir="${swingme.src}" includes="**/*.java"/>
 		</copy>
-
-
+		<copy todir="gen">
+			<fileset dir="${swingmetest.src}" includes="**/*.java"/>
+		</copy>
+<!--
 
         <replaceregexp byline="true"
                match="javax.microedition.midlet.MIDlet(\W)"
@@ -37,8 +39,8 @@
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
 
+-->
 
-<!--
 
         <replaceregexp byline="true"
                match="javax.microedition.midlet.MIDlet(\W)"
@@ -78,7 +80,20 @@
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
 
--->
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.Display(\W)"
+               replace="net.yura.blackberry.rim.Display\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.game.Sprite(\W)"
+               replace="net.yura.blackberry.rim.Sprite\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
 
 
 

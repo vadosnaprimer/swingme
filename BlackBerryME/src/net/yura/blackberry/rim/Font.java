@@ -3,157 +3,24 @@ package net.yura.blackberry.rim;
 import net.rim.device.api.ui.FontFamily;
 import net.rim.device.api.ui.Ui;
 
-/**
-* The <code>Font</code> class represents fonts and font
-* metrics. <code>Fonts</code> cannot be
-* created by applications. Instead, applications query for fonts
-* based on
-* font attributes and the system will attempt to provide a font that
-* matches
-* the requested attributes as closely as possible.
-* 
-* <p> A <code>Font's</code> attributes are style, size, and face. Values for
-* attributes must be specified in terms of symbolic constants. Values for
-* the style attribute may be combined using the bit-wise
-* <code>OR</code> operator,
-* whereas values for the other attributes may not be combined. For example,
-* the value </p>
-* 
-* <p> <code>
-* STYLE_BOLD | STYLE_ITALIC
-* </code> </p>
-* 
-* <p> may be used to specify a bold-italic font; however </p>
-* 
-* <p> <code>
-* SIZE_LARGE | SIZE_SMALL
-* </code> </p>
-* 
-* <p> is illegal. </p>
-* 
-* <p> The values of these constants are arranged so that zero is valid for
-* each attribute and can be used to specify a reasonable default font
-* for the system. For clarity of programming, the following symbolic
-* constants are provided and are defined to have values of zero: </p>
-* 
-* <p> <ul>
-* <li> <code> STYLE_PLAIN </code> </li>
-* <li> <code> SIZE_MEDIUM </code> </li>
-* <li> <code> FACE_SYSTEM </code> </li>
-* </ul> </p>
-* 
-* <p> Values for other attributes are arranged to have disjoint bit patterns
-* in order to raise errors if they are inadvertently misused (for example,
-* using <code>FACE_PROPORTIONAL</code> where a style is
-* required). However, the values
-* for the different attributes are not intended to be combined with each
-* other. </p>
-* <HR>
-* 
-* 
-* @since MIDP 1.0
-*/
 public final class Font {
-	/**
-	 * The plain style constant. This may be combined with the
-	 * other style constants for mixed styles.
-	 * 
-	 * <P>Value <code>0</code> is assigned to <code>STYLE_PLAIN</code>.</P>
-	 * 
-	 */
-	public static final int STYLE_PLAIN = 0;
 
-	/**
-	 * The bold style constant. This may be combined with the
-	 * other style constants for mixed styles.
-	 * 
-	 * <P>Value <code>1</code> is assigned to <code>STYLE_BOLD</code>.</P>
-	 * 
-	 */
-	public static final int STYLE_BOLD = 1;
+	public static final int STYLE_PLAIN = javax.microedition.lcdui.Font.STYLE_PLAIN;
+	public static final int STYLE_BOLD = javax.microedition.lcdui.Font.STYLE_BOLD;
+	public static final int STYLE_ITALIC = javax.microedition.lcdui.Font.STYLE_ITALIC;
+	public static final int STYLE_UNDERLINED = javax.microedition.lcdui.Font.STYLE_UNDERLINED;
 
-	/**
-	 * The italicized style constant. This may be combined with
-	 * the other style constants for mixed styles.
-	 * 
-	 * <P>Value <code>2</code> is assigned to <code>STYLE_ITALIC</code>.</P>
-	 * 
-	 */
-	public static final int STYLE_ITALIC = 2;
+	public static final int SIZE_SMALL = javax.microedition.lcdui.Font.SIZE_SMALL;
+	public static final int SIZE_MEDIUM = javax.microedition.lcdui.Font.SIZE_MEDIUM;
+	public static final int SIZE_LARGE = javax.microedition.lcdui.Font.SIZE_LARGE;
 
-	/**
-	 * The underlined style constant. This may be combined with
-	 * the other style constants for mixed styles.
-	 * 
-	 * <P>Value <code>4</code> is assigned to <code>STYLE_UNDERLINED</code>.</P>
-	 * 
-	 */
-	public static final int STYLE_UNDERLINED = 4;
+	public static final int FACE_SYSTEM = javax.microedition.lcdui.Font.FACE_SYSTEM;
+	public static final int FACE_MONOSPACE = javax.microedition.lcdui.Font.FACE_MONOSPACE;
+	public static final int FACE_PROPORTIONAL = javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
 
-	/**
-	 * The &quot;small&quot; system-dependent font size.
-	 * 
-	 * <P>Value <code>8</code> is assigned to <code>STYLE_SMALL</code>.</P>
-	 * 
-	 */
-	public static final int SIZE_SMALL = 8;
-
-	/**
-	 * The &quot;medium&quot; system-dependent font size.
-	 * 
-	 * <P>Value <code>0</code> is assigned to <code>STYLE_MEDIUM</code>.</P>
-	 */
-	public static final int SIZE_MEDIUM = 0;
-
-	/**
-	 * The &quot;large&quot; system-dependent font size.
-	 * 
-	 * <P>Value <code>16</code> is assigned to <code>SIZE_LARGE</code>.</P>
-	 */
-	public static final int SIZE_LARGE = 16;
-
-	/**
-	 * The &quot;system&quot; font face.
-	 * 
-	 * <P>Value <code>0</code> is assigned to <code>FACE_SYSTEM</code>.</P>
-	 * 
-	 */
-	public static final int FACE_SYSTEM = 0;
-
-	/**
-	 * The &quot;monospace&quot; font face.
-	 * 
-	 * <P>Value <code>32</code> is assigned to <code>FACE_MONOSPACE</code>.</P>
-	 */
-	public static final int FACE_MONOSPACE = 32;
-
-	/**
-	 * The &quot;proportional&quot; font face.
-	 * 
-	 * <P>Value <code>64</code> is assigned to
-	 * <code>FACE_PROPORTIONAL</code>.</P>
-	 */
-	public static final int FACE_PROPORTIONAL = 64;
-
-	/**
-	 * Default font specifier used to draw Item and Screen contents.
-	 * 
-	 * <code>FONT_STATIC_TEXT</code> has the value <code>0</code>.
-	 * 
-	 * @since MIDP 2.0
-	 */
-	public static final int FONT_STATIC_TEXT = 0;
-
-	/**
-	 * Font specifier used by the implementation to draw text input by
-	 * a user.
-	 * 
-	 * <code>FONT_INPUT_TEXT</code> has the value <code>1</code>.
-	 * 
-	 * @since MIDP 2.0
-	 */
-	public static final int FONT_INPUT_TEXT = 1;
-
+	public static final int FONT_STATIC_TEXT = javax.microedition.lcdui.Font.FONT_STATIC_TEXT;
+	public static final int FONT_INPUT_TEXT = javax.microedition.lcdui.Font.FONT_INPUT_TEXT;
+	
 	//following variables are implicitely defined by getter- or setter-methods:
 	private static Font defaultFont;
 	private final int style;

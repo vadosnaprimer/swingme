@@ -90,11 +90,11 @@ public class MainTest extends Section {
         	    public void run() {
         	    	HelloWorldScreen helloWorldScreen = new HelloWorldScreen();
         	    	
-        	    	int size=100;
+        	    	int size=200;
         	    	
         	    	Image buffer1 = Image.createImage(size, size);
         	    	Graphics g1 = buffer1.getGraphics();
-        	    	DesktopPane.getDesktopPane().paint(g1);
+        	    	//DesktopPane.getDesktopPane().paint(g1);
         	    	int[] data = new int[size*size];
         	    	buffer1.getRGB(data, 0, size, 0, 0, size, size);
         	    	Bitmap bitmap = new Bitmap(size, size);
