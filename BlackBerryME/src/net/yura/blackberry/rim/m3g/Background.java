@@ -1,4 +1,4 @@
-package javax.microedition.m3g;
+package net.yura.blackberry.rim.m3g;
 
 public class Background {
 

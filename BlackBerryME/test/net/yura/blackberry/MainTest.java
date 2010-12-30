@@ -7,15 +7,10 @@ import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.TextMessage;
-
-import net.rim.device.api.im.TextHitInfo;
-import net.rim.device.api.input.ITextInputConnector;
-import net.rim.device.api.input.InputHelper;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
-import net.rim.device.api.ui.VirtualKeyboard;
 import net.rim.device.api.ui.XYRect;
 import net.rim.device.api.ui.component.BitmapField;
 import net.rim.device.api.ui.component.Dialog;
@@ -118,7 +113,7 @@ public class MainTest extends Section {
         	    	//TestBorder.man.setBounds(text, 5, 5, 50, 50);
         	    	//TestBorder.man.delete(text);
         	    	//screen.add(text);
-        	    	
+/*
         	    	Dialog.alert("100");
         	    	
         	    	InputHelper helper = new InputHelper();
@@ -143,6 +138,7 @@ public class MainTest extends Section {
         	    	screen.setInputHelper(helper);
 
         	    	screen.getVirtualKeyboard().setVisibility(VirtualKeyboard.SHOW);
+*/
         	    }
         	});
         }

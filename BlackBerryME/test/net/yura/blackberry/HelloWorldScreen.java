@@ -1,5 +1,7 @@
 package net.yura.blackberry;
 
+import net.rim.device.api.ui.Field;
+import net.rim.device.api.ui.FieldChangeListener;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.ButtonField;
 import net.rim.device.api.ui.component.Dialog;
@@ -28,15 +30,16 @@ public class HelloWorldScreen extends MainScreen{
             
             // the ButtonField.CONSUME_CLICK is needed to stop the application mneu poping up
             ButtonField button = new ButtonField("test", ButtonField.CONSUME_CLICK);
-            button.setRunnable(new Runnable() {
-				public void run() {
-					test();
-				}
-			});
+            
+            button.setChangeListener(new FieldChangeListener() {
+                public void fieldChanged(Field field,int context) {
+                	test();
+                 }
+            });
 
             add(button);
             
-            add(new TextField());
+            add(new TextField(TextField.EDITABLE));
     }
 	
 	void test() {

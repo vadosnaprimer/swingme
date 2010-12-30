@@ -42,7 +42,7 @@
 -->
 
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.midlet.MIDlet(\W)"
                replace="net.yura.blackberry.rim.MIDlet\1"
         >
@@ -50,7 +50,7 @@
         </replaceregexp>
 
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.lcdui.Canvas(\W)"
                replace="net.yura.blackberry.rim.Canvas\1"
         >
@@ -58,14 +58,14 @@
         </replaceregexp>
 
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.lcdui.Font(\W)"
                replace="net.yura.blackberry.rim.Font\1"
         >
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.lcdui.Graphics(\W)"
                replace="net.yura.blackberry.rim.Graphics\1"
         >
@@ -73,26 +73,56 @@
         </replaceregexp>
 
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.lcdui.Image(\W)"
                replace="net.yura.blackberry.rim.Image\1"
         >
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.lcdui.Display(\W)"
                replace="net.yura.blackberry.rim.Display\1"
         >
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
 
-        <replaceregexp byline="true"
+        <replaceregexp byline="true" flags="g"
                match="javax.microedition.lcdui.game.Sprite(\W)"
                replace="net.yura.blackberry.rim.Sprite\1"
         >
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
+
+
+
+
+
+
+
+
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.m3g.Background(\W)"
+               replace="net.yura.blackberry.rim.m3g.Background\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.m3g.Graphics3D(\W)"
+               replace="net.yura.blackberry.rim.m3g.Graphics3D\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.m3g.Image2D(\W)"
+               replace="net.yura.blackberry.rim.m3g.Image2D\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+
+
 
 
 

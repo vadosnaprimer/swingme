@@ -1,15 +1,8 @@
 package net.yura.blackberry.rim;
 
-import java.util.Vector;
+import net.rim.device.api.ui.component.RichTextField;
 import net.rim.device.api.ui.container.MainScreen;
-import net.rim.device.api.system.Application;
-import net.rim.device.api.system.DeviceInfo;
-import net.rim.device.api.system.TrackwheelListener;
 import net.rim.device.api.ui.Keypad;
-import net.rim.device.api.ui.Field;
-import net.rim.device.api.ui.Manager;
-import net.rim.device.api.ui.TouchEvent; 
-import net.rim.device.api.ui.VirtualKeyboard;
 
 /**
 * Provides the base screen / displayable implementation for BlackBerry devices.
@@ -48,6 +41,7 @@ public abstract class Canvas extends MainScreen {
   */
  protected Canvas() {
 
+	 add(new RichTextField("Hello YURA World!")); 
  }
 
  public int getKeyCode(int gameAction)
@@ -598,7 +592,7 @@ protected void onDisplay() {
      }
      return keyCode;
 	}
-	    
+
 }
 
 

@@ -1,4 +1,4 @@
-package javax.microedition.m3g;
+package net.yura.blackberry.rim.m3g;
 
 import net.yura.blackberry.rim.Image;
 
