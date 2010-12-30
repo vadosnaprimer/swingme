@@ -60,7 +60,7 @@ public class NimbusBorder implements Border {
 
     public static void paintBorders(Vector borders, Graphics2D g, int x, int y, int w, int h) {
 
-        if (borders == null) return;
+        if (borders == null || w<=0 || h<=0) return;
 
         // Draw the borders
         int borderX = x;
