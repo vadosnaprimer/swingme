@@ -601,7 +601,7 @@ public class List extends Component implements ActionListener {
 
         int keyCode = keypad.getIsDownKey();
 
-        if (keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#' && keyCode!='\n') {
+        if (keyCode >= KeyEvent.MIN_INPUT_VALUE && keyCode < Character.MAX_VALUE && keyCode!='#' && keyCode!='\n') {
 
                 keyCode = keypad.getKeyChar(keyCode, KeyEvent.getChars( (char)keyCode,javax.microedition.lcdui.TextField.ANY ) ,false);
 

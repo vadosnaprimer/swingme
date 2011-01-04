@@ -249,7 +249,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             //    keyCode='\n';
             //}
 
-            if ( keyCode > Character.MIN_VALUE && keyCode < Character.MAX_VALUE && !keyEvent.isDownKey(KeyEvent.KEY_EDIT) && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
+            if ( keyCode >= KeyEvent.MIN_INPUT_VALUE && keyCode < Character.MAX_VALUE && !keyEvent.isDownKey(KeyEvent.KEY_EDIT) && (keyCode!=changeModeChar || getDesktopPane().QWERTY_KAYPAD || allowOnlyNumberConstraint())) {
 
                 if (!allowChar((char)keyCode)) {
                     return false;

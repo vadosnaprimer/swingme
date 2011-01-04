@@ -27,6 +27,12 @@ import javax.microedition.lcdui.Canvas;
 public class KeyEvent {
 
         /**
+         * the Tab key is the min valid input key, anything bellow is not input
+         * blackberry for some crazy reason, even though it is against the MIDP spec sends up down left and right as positive values
+         */
+        public static final int MIN_INPUT_VALUE = 9;
+
+        /**
          * Default Softkey left value.
          * this will be activated by the 'F1' key in ME4SE and appear as 'Left SoftKey' of J2ME phones.
          * On Android and blackberry nothing special will be done with this button
