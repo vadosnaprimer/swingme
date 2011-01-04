@@ -547,7 +547,6 @@ public class NimbusLookAndFeel extends LookAndFeel {
                                                                                                                     // this -1 is the tickness
         Border thumb = new CompoundBorder(new NimbusBorder(thumbFillSettings),new EmptyBorder(1,(font.getHeight()/2)-1,1,(font.getHeight()/2)-1));
         setUIDefault("ScrollBarThumb.border",thumb);
-        setUIDefault("SliderThumb.border",thumb);
 
         int[] singleBorder = {1,1,1,1};
 
@@ -571,7 +570,32 @@ public class NimbusLookAndFeel extends LookAndFeel {
         );
 
         setUIDefault("ScrollBarTrack.border",track);
-        setUIDefault("SliderTrack.border",track);
+
+
+        // SLIDER
+
+        int h = font.getHeight();
+
+        Vector sliderSettings = new Vector();
+        sliderSettings.addElement(new NimbusBorderSetting());
+        sliderSettings.addElement(new NimbusBorderSetting(color5, color5, 1, 3, 1, NimbusBorder.ORIENTATION_HORI));
+        sliderSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 3, 1, NimbusBorder.ORIENTATION_HORI));
+
+        setUIDefault("SliderThumb.border",new CompoundBorder(new NimbusBorder(sliderSettings),new EmptyBorder(h/3,h/3,h/3,h/3)) );
+
+        Vector sliderBorderSettings = new Vector();
+        sliderBorderSettings.addElement(new NimbusBorderSetting(color2, color2, 1, 3, 1, NimbusBorder.ORIENTATION_HORI));
+        sliderBorderSettings.addElement(new NimbusBorderSetting(color3, color4, 1, 2, 0.65, NimbusBorder.ORIENTATION_HORI));
+
+        Border strack = new CompoundBorder(
+            new EmptyBorder(0,(h/4),0,(h/4)),
+            new CompoundBorder(
+                new NimbusBorder(sliderBorderSettings),
+                new EmptyBorder(0,(h/4),0,(h/4))
+            )
+        );
+
+        setUIDefault("SliderTrack.border", strack );
 
     }
 

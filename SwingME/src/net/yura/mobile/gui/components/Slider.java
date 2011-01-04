@@ -35,8 +35,13 @@ public class Slider extends Component {
     public static final int MINIMUM_THUMB_SIZE=5;
 
     private Border track,thumb;
-    int min,max,value,extent;
-    boolean horizontal = true;
+    private int min,max,value,extent;
+    private boolean horizontal = true;
+
+    private boolean paintTicks = false;
+    private int majorTickSpacing;
+    private int tickSpace;
+
     // Slider has horizontal default
     // Scrollbar has vertical default
 
@@ -51,6 +56,8 @@ public class Slider extends Component {
         value = 50;
 
         extent = 1;
+
+        tickSpace = theme.getFont(Style.ALL).getHeight()/2;
     }
 
     /**
@@ -135,8 +142,33 @@ public class Slider extends Component {
     }
 
 
+    /**
+     * @see javax.swing.JSlider#setSnapToTicks(boolean) JSlider.setSnapToTicks
+     */
+    public void setSnapToTicks(boolean snap) {
 
+    }
 
+    /**
+     * @see javax.swing.JSlider#setPaintTrack(boolean) JSlider.setPaintTrack
+     */
+    public void setPaintTrack(boolean ticks) {
+         paintTicks = ticks;
+    }
+
+    /**
+     * @see javax.swing.JSlider#setMajorTickSpacing(int) JSlider.setMajorTickSpacing
+     */
+    public void setMajorTickSpacing(int n) {
+        majorTickSpacing = n;
+    }
+
+    /**
+     * @see javax.swing.JSlider#setMinorTickSpacing(int) JSlider.setMinorTickSpacing
+     */
+    public void setMinorTickSpacing(int n) {
+        
+    }
 
     public void paintComponent(Graphics2D g) {
         if (horizontal) {
@@ -172,9 +204,11 @@ public class Slider extends Component {
         }
     }
 
-
     int click;
+    int startPos,startValue;
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
+
+        if (!focusable) return;
 
         if (type==DesktopPane.RELEASED) {
             click = 0;
@@ -192,6 +226,7 @@ public class Slider extends Component {
                         pointY,
                         pointX
                 );
+                startPos = pointX;
             }
             else {
                 click = doClickInScrollbar(
@@ -205,18 +240,44 @@ public class Slider extends Component {
                         pointX,
                         pointY
                 );
+                startPos = pointY;
             }
+            startValue = value;
 
             if (click==CLICK_UP || click == CLICK_DOWN) {
                 getDesktopPane().animateComponent(this);
             }
         }
-        //System.out.println("TODO click="+click);
+        else if (type == DesktopPane.DRAGGED) {
+
+            if (click==CLICK_THUMB) {
+
+                int w = horizontal?height:width;
+                int h = horizontal?width:height;
+                int p = horizontal?pointX:pointY;
+
+                value = getNewValue(
+                        0,
+                        0,
+                        w,
+                        h,
+                        startValue,
+                        extent,
+                        max,
+                        p-startPos
+                  );
+                repaint();
+            }
+        }
+
     }
 
     public void workoutMinimumSize() {
 
         int thickness = (track != null) ? track.getRight() + track.getLeft() : 0;
+        if (paintTicks) {
+            thickness = thickness + tickSpace;
+        }
 
         if (horizontal) {
             width = 20;
@@ -321,6 +382,18 @@ public class Slider extends Component {
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
             ) {
 
+
+        if (paintTicks && majorTickSpacing>0) {
+            g.setColor( getCurrentForeground() );
+
+            w = w - tickSpace;
+
+            for (int c=0;c<=max;c=c+majorTickSpacing) {
+                g.drawLine(w , c, w+tickSpace*3/4, c);
+            }
+        }
+
+
         int starty = 0;
         int extenth = h;
 
@@ -404,7 +477,7 @@ public class Slider extends Component {
      * @param value - Desired view X/Y
      * @param extent - viewPort Height/Width > same as h?
      * @param max - view Height/Width
-     * @return
+     * @return int[0]=boxSize int[1]=thumbY int[2]=thumbSize
      */
     public int[] getOffsets(int x,int y,int w, int h, int value,int extent, int max
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
