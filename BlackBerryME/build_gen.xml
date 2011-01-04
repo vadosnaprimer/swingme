@@ -30,7 +30,9 @@
 		<copy todir="gen">
 			<fileset dir="${swingmetest.src}" includes="**/*.java"/>
 		</copy>
-<!--
+    	
+    	
+<!-- -->
 
         <replaceregexp byline="true"
                match="javax.microedition.midlet.MIDlet(\W)"
@@ -38,9 +40,34 @@
         >
             <fileset dir="gen" includes="**/*.java"/>
         </replaceregexp>
+        
+        
+        
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.m3g.Background(\W)"
+               replace="net.yura.blackberry.midlet.m3g.Background\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
 
--->
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.m3g.Graphics3D(\W)"
+               replace="net.yura.blackberry.midlet.m3g.Graphics3D\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
 
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.m3g.Image2D(\W)"
+               replace="net.yura.blackberry.midlet.m3g.Image2D\1"
+        >
+            <fileset dir="gen" includes="**/*.java"/>
+        </replaceregexp>
+        
+
+<!-- -->
+
+<!-- - ->
 
         <replaceregexp byline="true" flags="g"
                match="javax.microedition.midlet.MIDlet(\W)"
@@ -123,7 +150,7 @@
         </replaceregexp>
 
 
-
+<!- - -->
 
 
 

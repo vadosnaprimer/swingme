@@ -4,6 +4,7 @@ import javax.microedition.lcdui.Display;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.KeyListener;
 import net.rim.device.api.ui.Keypad;
+// import net.rim.device.api.ui.VirtualKeyboard; // API - 4.7.0 does not work on 'BlackBerry Bold (4.6)'
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 
@@ -82,4 +83,63 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
             e.printStackTrace();
         }
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+	/**
+	 * Shows the softkeyboard if the device supports it. This method is only supported on the Android platform at the moment.
+	 * @see #hideSoftKeyboard()
+	 * @see #isSoftKeyboardShown()
+	 * /
+	public static void showSoftKeyboard() {
+		//#if polish.android1.5
+		//#	MidletBridge.instance.showSoftKeyboard();
+		//#elif polish.blackberry && polish.hasPointerEvents && polish.usePolishGui
+			Display disp = Display.getDisplay(this);
+			if (disp != null) {
+				VirtualKeyboard keyboard = ((BaseScreen)(Object)disp).getVirtualKeyboard();
+				if (keyboard != null) {
+					keyboard.setVisibility( VirtualKeyboard.SHOW );					
+				}
+			}
+		//#endif
+	}
+	
+	/**
+	 * Hides the softkeyboard if the device supports it. This method is only supported on the Android platform at the moment.
+	 * @see #showSoftKeyboard()
+	 * @see #isSoftKeyboardShown()
+	 * /
+	public static void hideSoftKeyboard() {
+		//#if polish.android1.5
+		//#	MidletBridge.instance.hideSoftKeyboard();
+		//#elif polish.blackberry && polish.hasPointerEvents && polish.usePolishGui
+			Display disp = Display.getInstance();
+			if (disp != null) {
+				VirtualKeyboard keyboard = ((BaseScreen)(Object)disp).getVirtualKeyboard();
+				if (keyboard != null) {
+					keyboard.setVisibility( VirtualKeyboard.HIDE );					
+				}
+			}
+		//#endif
+	}
+    
+    */
 }

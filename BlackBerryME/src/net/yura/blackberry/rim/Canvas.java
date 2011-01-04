@@ -41,7 +41,22 @@ public abstract class Canvas extends MainScreen {
   */
  protected Canvas() {
 
-	 add(new RichTextField("Hello YURA World!")); 
+	 add(new RichTextField("Hello YURA World!"));
+	 
+	 
+	try {
+		//add(new RichTextField("hello "+net.rim.device.api.ui.TouchEvent.class) );
+	}
+	catch(Exception th) {
+		add(new RichTextField(th.toString())); 
+	}
+	catch(Error th) {
+		add(new RichTextField(th.toString()));
+	}
+	catch(Throwable th) {
+		add(new RichTextField(th.toString()));
+	}
+	 
  }
 
  public int getKeyCode(int gameAction)
