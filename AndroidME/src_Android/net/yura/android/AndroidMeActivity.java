@@ -419,6 +419,8 @@ public class AndroidMeActivity extends Activity implements Toolkit, OnItemClickL
 
         if (DEFAULT_ACTIVITY == this) {
             closeMIDlet();
+
+            DEFAULT_ACTIVITY = null;
             MIDlet.DEFAULT_ACTIVITY = null;
         }
     }
