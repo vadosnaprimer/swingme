@@ -101,19 +101,9 @@ public class Logger {
      * with implications and errors can be reported on the warn level. Warn
      * logging can also and should be used for assertions.
      */
-    public static void warn(Exception exception) {
+    public static void warn(Throwable exception) {
       //#debug warn
       if(level<=WARN) logger.log(exception, WARN);
-    }
-
-    /**
-     * Warn logging should be used for any errors or bugs. Unexpected exceptions
-     * with implications and errors can be reported on the warn level. Warn
-     * logging can also and should be used for assertions.
-     */
-    public static void warn(Error error) {
-      //#debug warn
-      if(level<=WARN) logger.log(error, WARN);
     }
 
     /**
