@@ -244,9 +244,7 @@ public class TextPane extends Component {
 
     public void focusGained() {
         super.focusGained();
-
         makeVisible(focusComponentIdx, false);
-        repaint();
     }
 
     public boolean processKeyEvent(KeyEvent event) {

@@ -75,10 +75,8 @@ public class TextField extends TextComponent {
 
         public void focusGained() {
             super.focusGained();
-
             // this is called here to update any inner scroll that needs to be done
             setCaretPosition( getCaretPosition() );
-
         }
 
         public void setCaretPosition(int a) {

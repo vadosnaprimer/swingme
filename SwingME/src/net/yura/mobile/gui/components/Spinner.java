@@ -327,36 +327,7 @@ public class Spinner extends Label {
 	    repaint();
 	}
 */
-	public void focusLost() {
-                super.focusLost();
-//		foreground = normalForeground;
-//                super.setBorder(normalBorder);
-		repaint();
-	}
 
-	public void focusGained() {
-                super.focusGained();
-//		foreground = activeForeground;
-//                super.setBorder(activeBorder);
-		repaint();
-	}
-
-//	public Border getActiveBorder() {
-//		return activeBorder;
-//	}
-//
-//	public void setActiveBorder(Border activeBorderColor) {
-//		this.activeBorder = activeBorderColor;
-//	}
-//
-//	public Border getBorder() {
-//		return normalBorder;
-//	}
-//
-//	public void setBorder(Border borderColor) {
-//		this.normalBorder = borderColor;
-//                super.setBorder(borderColor);
-//	}
 	//#mdebug
 	/**
 	 * This throws an IllegalArgumentException and you should use the 

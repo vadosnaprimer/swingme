@@ -593,9 +593,6 @@ public abstract class TextComponent extends Component implements ActionListener,
                 if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
                     openNativeEditor();
                 }
-
-		repaint();
-
 	}
 
 //        protected void paintBorder(Graphics2D g) {

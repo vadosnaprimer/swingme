@@ -452,26 +452,25 @@ public abstract class Component {
     public void animate() throws InterruptedException { }
 
     /**
+     * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent) FocusListener.focusGained
+     */
+    public void focusGained() {
+        if (focusListener!=null) {
+            focusListener.changeEvent(this,FOCUS_GAINED);
+        }
+        // default focusGained action, make me visible
+        makeVisible();
+        repaint();
+    }
+
+    /**
      * @see java.awt.event.FocusListener#focusLost(java.awt.event.FocusEvent) FocusListener.focusLost
      */
     public void focusLost() {
         if (focusListener!=null) {
             focusListener.changeEvent(this,FOCUS_LOST);
         }
-    }
-
-    /**
-     * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent) FocusListener.focusGained
-     */
-    public void focusGained() {
-
-        if (focusListener!=null) {
-            focusListener.changeEvent(this,FOCUS_GAINED);
-        }
-
-        // default focusGained action, make me visible
-        makeVisible();
-
+        repaint();
     }
 
     public void makeVisible() {

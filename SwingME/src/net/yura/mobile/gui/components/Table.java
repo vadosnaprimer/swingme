@@ -229,10 +229,8 @@ public class Table extends Panel {
         repaint();
     }
 
-    public void focusLost() {
-        repaint();
-    }
     public void focusGained() {
+        super.focusGained();
         if (editorComp!=null) {
             editorComp.requestFocusInWindow();
         }
@@ -240,7 +238,6 @@ public class Table extends Panel {
             editingRow=0;
             editingColumn=0;
         }
-        repaint();
     }
 
     public boolean processKeyEvent(KeyEvent event) {

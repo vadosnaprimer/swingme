@@ -475,10 +475,8 @@ public class List extends Component implements ActionListener {
             }
             else {
                 ensureIndexIsVisible(current);
-                repaint(); // repaint even if we have not scrolled
             }
         }
-
         if (useSelectButton) {
             selectButton = new Button( (String)DesktopPane.get("selectText") );
             selectButton.setActionCommand("select");
@@ -486,7 +484,6 @@ public class List extends Component implements ActionListener {
             selectButton.addActionListener(this);
             getWindow().addCommand(selectButton);
         }
-
     }
 
     private long doubleClickTime;

@@ -380,7 +380,9 @@ public class Slider extends Component {
     }
 
 
-
+    public boolean consumesMotionEvents() {
+        return true;
+    }
 
 
     public static final int CLICK_NONE = 0;

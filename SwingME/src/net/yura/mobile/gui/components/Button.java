@@ -331,18 +331,14 @@ public class Button extends Label implements ActionListener {
 
 	public void focusLost() {
                 super.focusLost();
-
 		if (useSelectButton) {
                     selectButton.getWindow().removeCommand(selectButton);
                     selectButton = null;
 		}
-
-		repaint();
 	}
 
 	public void focusGained() {
                 super.focusGained();
-
 		if (useSelectButton) {
                     selectButton = new Button( (String)DesktopPane.get("selectText") );
                     selectButton.addActionListener(this);
@@ -350,8 +346,6 @@ public class Button extends Label implements ActionListener {
                     selectButton.setMnemonic(KeyEvent.KEY_SOFTKEY1);
                     getWindow().addCommand(selectButton);
 		}
-
-		repaint();
 	}
 
 //        protected int getCurrentForeground() {
