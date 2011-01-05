@@ -37,6 +37,7 @@ import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.ScrollPane;
+import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.Spinner;
 import net.yura.mobile.gui.components.TabbedPane;
 import net.yura.mobile.gui.components.Table;
@@ -50,7 +51,6 @@ import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.io.NativeUtil;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.Option;
-import net.yura.mobile.util.SystemUtil;
 
 /**
  *
@@ -136,7 +136,27 @@ public class ComponentTest  extends Section{
         components.addElement( new ComboBox(getItems()) );
         components.addElement( new Spinner(getItems(), true));
 
-        components.addElement(new TextField(TextField.ANY));
+        final TextField textField = new TextField(TextField.ANY);
+
+        components.addElement(textField);
+
+        Slider slider = new Slider(0, 11, 6);
+ 	slider.setPaintTicks(true);
+ 	slider.setMajorTickSpacing(5);
+ 	slider.setMinorTickSpacing(1);
+ 	//slider.setPaintLabels( true );
+ 	slider.setSnapToTicks( true );
+
+        slider.setPreferredSize(100, -1);
+        slider.setBorder( new LineBorder(0xFFFF0000) );
+
+        components.addElement(slider);
+
+        slider.addChangeListener(new ChangeListener() {
+            public void changeEvent(Component arg0, int arg1) {
+                textField.setText( String.valueOf(arg1) );
+            }
+        });
 
         return components;
     }

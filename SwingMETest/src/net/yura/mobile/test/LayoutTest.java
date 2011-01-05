@@ -27,6 +27,7 @@ public class LayoutTest  extends Section {
                                 addTest("XUL tabbedpane","xulTest1");
                                 addTest("XUL generate","xulTest2");
                                 addTest("XUL demodialog","xulTest3");
+                                addTest("XUL icons","xulTest4");
     }
 
     public void openTest(String actionCommand) {
@@ -112,6 +113,20 @@ System.out.println("open file browser");
 //System.out.println(xuldialog);
                     xuldialog.pack();
                     xuldialog.setVisible(true);
+                }
+                else if ("xulTest4".equals(actionCommand)) {
+
+                    Panel panel = null;
+
+                    try {
+                        XULLoader loader = XULLoader.load(getClass().getResourceAsStream("/icons.xml"), this);
+                        panel = (Panel)loader.getRoot();
+                    }
+                    catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+
+                    addToScrollPane(panel, null );
                 }
     }
 }
