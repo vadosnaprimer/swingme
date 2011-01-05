@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.game.Sprite;
+import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
@@ -39,8 +40,9 @@ public class Slider extends Component {
     private boolean horizontal = true;
 
     private boolean paintTicks = false;
-    private int majorTickSpacing;
+    private int minorTickSpacing,majorTickSpacing;
     private int tickSpace;
+    private ChangeListener chl;
 
     // Slider has horizontal default
     // Scrollbar has vertical default
@@ -51,13 +53,44 @@ public class Slider extends Component {
      * @see javax.swing.JScrollBar#JScrollBar() JScrollBar.JScrollBar
      */
     public Slider() {
-        min = 0;
-        max = 100;
-        value = 50;
+        this(0,100,50);
+    }
 
-        extent = 1;
-
+    /**
+     * @see javax.swing.JSlider#JSlider(int, int, int) JSlider.JSlider
+     */
+    public Slider(int min, int max, int value) {
+        this.min= min;
+        this.max = max;
+        this.value = value;
+        extent = 0; // ZERO is the default extent for the JSlider
         tickSpace = theme.getFont(Style.ALL).getHeight()/2;
+    }
+
+    /**
+     * @see javax.swing.JSlider#addChangeListener(javax.swing.event.ChangeListener) JSlider.addChangeListener
+     */
+    public void addChangeListener(ChangeListener l) {
+        //#mdebug warn
+        if (chl!=null) {
+            Logger.warn("trying to add a ChangeListener when there is already one registered");
+            Logger.dumpStack();
+        }
+        if (l==null) {
+            Logger.warn("trying to add a null ChangeListener");
+            Logger.dumpStack();
+        }
+        //#enddebug
+        chl = l;
+    }
+
+    /**
+     * @see javax.swing.JSlider#fireStateChanged() JSlider.fireStateChanged
+     */
+    protected void fireStateChanged() {
+        if (chl!=null) {
+            chl.changeEvent(this, value);
+        }
     }
 
     /**
@@ -150,9 +183,9 @@ public class Slider extends Component {
     }
 
     /**
-     * @see javax.swing.JSlider#setPaintTrack(boolean) JSlider.setPaintTrack
+     * @see javax.swing.JSlider#setPaintTicks(boolean) JSlider.setPaintTicks
      */
-    public void setPaintTrack(boolean ticks) {
+    public void setPaintTicks(boolean ticks) {
          paintTicks = ticks;
     }
 
@@ -167,7 +200,7 @@ public class Slider extends Component {
      * @see javax.swing.JSlider#setMinorTickSpacing(int) JSlider.setMinorTickSpacing
      */
     public void setMinorTickSpacing(int n) {
-        
+        minorTickSpacing = n;
     }
 
     public void paintComponent(Graphics2D g) {
@@ -207,6 +240,7 @@ public class Slider extends Component {
     int click;
     int startPos,startValue;
     public void processMouseEvent(int type, int pointX, int pointY, KeyEvent keys) {
+        super.processMouseEvent(type, pointX, pointY, keys);
 
         if (!focusable) return;
 
@@ -256,7 +290,7 @@ public class Slider extends Component {
                 int h = horizontal?width:height;
                 int p = horizontal?pointX:pointY;
 
-                value = getNewValue(
+                int newValue = getNewValue(
                         0,
                         0,
                         w,
@@ -266,6 +300,13 @@ public class Slider extends Component {
                         max,
                         p-startPos
                   );
+
+                int m = max-extent;
+                if (newValue>m) newValue=m;
+                if (newValue<min) newValue=min;
+                value=newValue;
+                fireStateChanged();
+
                 repaint();
             }
         }
@@ -294,9 +335,11 @@ public class Slider extends Component {
         while (true) {
             if (click == CLICK_UP && value > min) {
                 value--;
+                fireStateChanged();
             }
-            else if (click == CLICK_DOWN && value < max) {
+            else if (click == CLICK_DOWN && value < (max-extent)) {
                 value++;
+                fireStateChanged();
             }
             else {
                 break;
@@ -382,20 +425,32 @@ public class Slider extends Component {
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
             ) {
 
+        int[] tmp = getOffsets(x,y,w,h,value,extent,max
+//                ,trackTop,trackFill,trackBottom,thumbTop,thumbFill,thumbBottom
+                );
+        int starty = tmp[1];
+        int extenth = tmp[2];
 
-        if (paintTicks && majorTickSpacing>0) {
+        if (paintTicks) {
             g.setColor( getCurrentForeground() );
-
             w = w - tickSpace;
+            int side = tmp[0]+(thumb!=null?thumb.getLeft():0);
+            int space = h-side*2;
 
-            for (int c=0;c<=max;c=c+majorTickSpacing) {
-                g.drawLine(w , c, w+tickSpace*3/4, c);
+            if (minorTickSpacing>0) {
+                for (int c=0;c<=max;c=c+minorTickSpacing) {
+                    int tickY = side + space*c/max;
+                    g.drawLine(w , tickY, w+tickSpace/2, tickY);
+                }
+            }
+            if (majorTickSpacing>0) {
+                for (int c=0;c<=max;c=c+majorTickSpacing) {
+                    int tickY = side + space*c/max;
+                    g.drawLine(w , tickY, w+tickSpace*3/4, tickY);
+                }
             }
         }
 
-
-        int starty = 0;
-        int extenth = h;
 
         // DRAW ARROWS
         //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
@@ -420,11 +475,6 @@ public class Slider extends Component {
         // draw the thumb!
         //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
 
-        int[] tmp = getOffsets(x,y,w,h,value,extent,max
-//                ,trackTop,trackFill,trackBottom,thumbTop,thumbFill,thumbBottom
-                );
-        starty = tmp[1];
-        extenth = tmp[2];
 
         if (thumb!=null) {
 
