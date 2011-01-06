@@ -140,6 +140,10 @@ public abstract class Canvas extends Displayable {
 
     public void repaint(int x, int y, int w, int h) {
         if (this.canvasView != null) {
+
+            int graphicsY = canvasView.getHeight() - getHeight();
+            y = y+graphicsY;
+
             this.canvasView.postInvalidate(x, y, x+w, y+h);
         }
     }
@@ -335,12 +339,13 @@ public abstract class Canvas extends Displayable {
 
             graphics.reset();
 
+            int graphicsY = getHeight() - canvasH;
+
             Rect clip = androidCanvas.getClipBounds();
-            graphics.clipRect(clip.left, clip.top, clip.right-clip.left, clip.bottom-clip.top);
+            graphics.clipRect(clip.left, clip.top -graphicsY, clip.right-clip.left, clip.bottom-clip.top);
 
             paint(graphics);
 
-            int graphicsY = getHeight() - canvasH;
             androidCanvas.drawBitmap(graphicsBitmap, 0, graphicsY, null);
 
 //            if (touchDebug != null) {
