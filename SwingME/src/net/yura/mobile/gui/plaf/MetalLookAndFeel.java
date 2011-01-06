@@ -167,7 +167,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("ScrollPane",scrollStyle);
 
             Style scrollBarThumbStyle = new Style(defaultStyle);
-            scrollBarThumbStyle.addBorder(new CompoundBorder(new EmptyBorder(1, 0, 1, 0), new MatteBorder(0, iconSize/2-2, 0, iconSize/2-2, getBlack())),Style.ALL);
+            scrollBarThumbStyle.addBorder(new CompoundBorder(new EmptyBorder(0, 1, 0, 1), new MatteBorder(iconSize/2-2, 0, iconSize/2-2, 0, getBlack())),Style.ALL);
             setStyleFor("ScrollBarThumb",scrollBarThumbStyle);
             setStyleFor("SliderThumb",scrollBarThumbStyle);
 
@@ -177,12 +177,12 @@ public class MetalLookAndFeel extends LookAndFeel {
                         new LineBorder(getBlack()),
                         new CompoundBorder(
                             new MetalScrollBar(      // -2 as we draw the black border with a LineBorder
-                                new MetalIcon(iconSize-2, LookAndFeel.ICON_ARROW_UP, getBlack(),getSecondary3()),
-                                new MetalIcon(iconSize-2, LookAndFeel.ICON_ARROW_DOWN, getBlack(),getSecondary3())
+                                new MetalIcon(iconSize-2, LookAndFeel.ICON_ARROW_LEFT, getBlack(),getSecondary3()),
+                                new MetalIcon(iconSize-2, LookAndFeel.ICON_ARROW_RIGHT, getBlack(),getSecondary3())
                             ),
                             new CompoundBorder(
-                                new MatteBorder(1, 0, 1, 0, getBlack()),
-                                new MatteBorder(0, iconSize/2-1, 0, iconSize/2-1, getSecondary3()) // the very inside
+                                new MatteBorder(0, 1, 0, 1, getBlack()),
+                                new MatteBorder(iconSize/2-1, 0, iconSize/2-1, 0, getSecondary3()) // the very inside
                             )
                         )
                     )

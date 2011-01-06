@@ -541,32 +541,32 @@ public class NimbusLookAndFeel extends LookAndFeel {
         int evensize = (font.getHeight()/2)*2;
 
         Vector thumbFillSettings = new Vector();
-        thumbFillSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
-        thumbFillSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1, NimbusBorder.ORIENTATION_HORI));
+        thumbFillSettings.addElement(new NimbusBorderSetting(color6, color6, 1, 0, 1));
+        thumbFillSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 0, 1));
 
                                                                                                                     // this -1 is the tickness
-        Border thumb = new CompoundBorder(new NimbusBorder(thumbFillSettings),new EmptyBorder(1,(font.getHeight()/2)-1,1,(font.getHeight()/2)-1));
+        Border thumb = new CompoundBorder(new NimbusBorder(thumbFillSettings),new EmptyBorder((font.getHeight()/2)-1,1,(font.getHeight()/2)-1,1));
         setUIDefault("ScrollBarThumb.border",thumb);
 
         int[] singleBorder = {1,1,1,1};
 
         Vector trackTopSettings = new Vector();
-        trackTopSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, topCorners, 1, NimbusBorder.ORIENTATION_HORI));
-        trackTopSettings.addElement(new NimbusBorderSetting(color7, color8, singleBorder, topInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        trackTopSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, leftCorners, 1));
+        trackTopSettings.addElement(new NimbusBorderSetting(color7, color8, singleBorder, leftInnerCorners, 1));
 
         Vector trackBottomSettings = new Vector();
-        trackBottomSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, bottomCorners, 1, NimbusBorder.ORIENTATION_HORI));
-        trackBottomSettings.addElement(new NimbusBorderSetting(color7, color8, singleBorder, bottomInnerCorners, 1, NimbusBorder.ORIENTATION_HORI));
+        trackBottomSettings.addElement(new NimbusBorderSetting(color6, color6, singleBorder, rightCorners, 1));
+        trackBottomSettings.addElement(new NimbusBorderSetting(color7, color8, singleBorder, rightInnerCorners, 1));
 
         Vector trackFillSettings = new Vector();
         trackFillSettings.addElement(new NimbusBorderSetting(color4, color4, 1, 0, 1));
 
-        Icon trackTop = new NimbusIcon(evensize, LookAndFeel.ICON_ARROW_UP, trackTopSettings, decodeColor("text"));
-        Icon trackBottom = new NimbusIcon(evensize, LookAndFeel.ICON_ARROW_DOWN, trackBottomSettings, decodeColor("text"));
+        Icon trackTop = new NimbusIcon(evensize, LookAndFeel.ICON_ARROW_LEFT, trackTopSettings, decodeColor("text"));
+        Icon trackBottom = new NimbusIcon(evensize, LookAndFeel.ICON_ARROW_RIGHT, trackBottomSettings, decodeColor("text"));
 
         Border track = new CompoundBorder(
             new MetalScrollBar( trackTop, trackBottom ),
-            new CompoundBorder(new NimbusBorder(trackFillSettings),new EmptyBorder(0,(font.getHeight()/2),0,(font.getHeight()/2)))
+            new CompoundBorder(new NimbusBorder(trackFillSettings),new EmptyBorder((font.getHeight()/2),0,(font.getHeight()/2),0))
         );
 
         setUIDefault("ScrollBarTrack.border",track);
@@ -578,20 +578,20 @@ public class NimbusLookAndFeel extends LookAndFeel {
 
         Vector sliderSettings = new Vector();
         sliderSettings.addElement(new NimbusBorderSetting());
-        sliderSettings.addElement(new NimbusBorderSetting(color5, color5, 1, 3, 1, NimbusBorder.ORIENTATION_HORI));
-        sliderSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 3, 1, NimbusBorder.ORIENTATION_HORI));
+        sliderSettings.addElement(new NimbusBorderSetting(color5, color5, 1, 3, 1));
+        sliderSettings.addElement(new NimbusBorderSetting(color7, color8, 1, 3, 1));
 
         setUIDefault("SliderThumb.border",new CompoundBorder(new NimbusBorder(sliderSettings),new EmptyBorder(h/3,h/3,h/3,h/3)) );
 
         Vector sliderBorderSettings = new Vector();
-        sliderBorderSettings.addElement(new NimbusBorderSetting(color2, color2, 1, 3, 1, NimbusBorder.ORIENTATION_HORI));
-        sliderBorderSettings.addElement(new NimbusBorderSetting(color3, color4, 1, 2, 0.65, NimbusBorder.ORIENTATION_HORI));
+        sliderBorderSettings.addElement(new NimbusBorderSetting(color2, color2, 1, 3, 1));
+        sliderBorderSettings.addElement(new NimbusBorderSetting(color3, color4, 1, 2, 0.65));
 
         Border strack = new CompoundBorder(
-            new EmptyBorder(0,(h/4),0,(h/4)),
+            new EmptyBorder((h/4),0,(h/4),0),
             new CompoundBorder(
                 new NimbusBorder(sliderBorderSettings),
-                new EmptyBorder(0,(h/4),0,(h/4))
+                new EmptyBorder((h/4),0,(h/4),0)
             )
         );
 

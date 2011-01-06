@@ -100,14 +100,24 @@ public class MetalIcon extends Icon {
             drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
         }
         else if (type == LookAndFeel.ICON_SPINNER_LEFT || type == LookAndFeel.ICON_ARROW_LEFT) {
+            g.setColor( fcolor );
+            int gp = 2; // gap between arrow and sides
+            int side = x+((width/2)-2);
+            int iconHeight = height-(gp*2);
+            g.fillTriangle(side,y+gp+(iconHeight/2)+1,
+                           side+5,y+gp+iconHeight,
+                           side+5,y+gp);
 
-            g.setColor(fcolor);
-            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(),Sprite.TRANS_MIRROR_ROT90);
         }
         else if (type == LookAndFeel.ICON_SPINNER_RIGHT || type == LookAndFeel.ICON_ARROW_RIGHT) {
 
-            g.setColor(fcolor);
-            drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
+            g.setColor( fcolor );
+            int gp = 2; // gap between arrow and sides
+            int side = x+((width/2)-2);
+            int iconHeight = height-(gp*2);
+            g.fillTriangle(side+5,y+gp+(iconHeight/2)+1,
+                           side,y+gp+iconHeight,
+                           side,y+gp);
         }
         else if (type == LookAndFeel.ICON_ARROW_UP) {
 

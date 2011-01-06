@@ -10,32 +10,32 @@ import net.yura.mobile.gui.components.Component;
  */
 public class MetalScrollBar implements Border {
 
-    Icon top,bottom;
+    Icon left,right;
 
-    public MetalScrollBar(Icon top,Icon bottom) {
-        this.top = top;
-        this.bottom = bottom;
+    public MetalScrollBar(Icon left,Icon right) {
+        this.left = left;
+        this.right = right;
     }
 
     public void paintBorder(Component c, Graphics2D g, int w, int h) {
-        top.paintIcon(c, g, (w-top.getIconWidth())/2, -getTop());
-        bottom.paintIcon(c, g, (w-bottom.getIconWidth())/2, h);
+        left.paintIcon(c, g, -getLeft(),(h-left.getIconHeight())/2);
+        right.paintIcon(c, g, w, (h-right.getIconHeight())/2);
     }
 
     public int getTop() {
-        return top.getIconHeight();
+        return 0;
     }
 
     public int getBottom() {
-        return bottom.getIconHeight();
+        return 0;
     }
 
     public int getRight() {
-        return 0;
+        return right.getIconWidth();
     }
 
     public int getLeft() {
-        return 0;
+        return left.getIconWidth();
     }
 
     public boolean isBorderOpaque() {

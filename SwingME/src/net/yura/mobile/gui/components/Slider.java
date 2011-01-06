@@ -206,6 +206,17 @@ public class Slider extends Component {
     public void paintComponent(Graphics2D g) {
         if (horizontal) {
 
+            drawScrollBar(g,
+                    0,
+                    0,
+                    width,
+                    height,
+                    value,
+                    extent,
+                    max
+            );
+        }
+        else {
             int t = g.getTransform();
             g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
 
@@ -220,20 +231,6 @@ public class Slider extends Component {
             );
 
             g.setTransform( t );
-
-        }
-        else {
-
-            drawScrollBar(g,
-                    0,
-                    0,
-                    width,
-                    height,
-                    value,
-                    extent,
-                    max
-            );
-
         }
     }
 
@@ -252,20 +249,6 @@ public class Slider extends Component {
                 click = doClickInScrollbar(
                         0,
                         0,
-                        height,
-                        width,
-                        value,
-                        extent,
-                        max,
-                        pointY,
-                        pointX
-                );
-                startPos = pointX;
-            }
-            else {
-                click = doClickInScrollbar(
-                        0,
-                        0,
                         width,
                         height,
                         value,
@@ -273,6 +256,20 @@ public class Slider extends Component {
                         max,
                         pointX,
                         pointY
+                );
+                startPos = pointX;
+            }
+            else {
+                click = doClickInScrollbar(
+                        0,
+                        0,
+                        height,
+                        width,
+                        value,
+                        extent,
+                        max,
+                        pointY,
+                        pointX
                 );
                 startPos = pointY;
             }
@@ -286,8 +283,8 @@ public class Slider extends Component {
 
             if (click==CLICK_THUMB) {
 
-                int w = horizontal?height:width;
-                int h = horizontal?width:height;
+                int w = horizontal?width:height;
+                int h = horizontal?height:width;
                 int p = horizontal?pointX:pointY;
 
                 int newValue = getNewValue(
@@ -315,7 +312,7 @@ public class Slider extends Component {
 
     public void workoutMinimumSize() {
 
-        int thickness = (track != null) ? track.getRight() + track.getLeft() : 0;
+        int thickness = (track != null) ? track.getTop() + track.getBottom() : 0;
         if (paintTicks) {
             thickness = thickness + tickSpace;
         }
@@ -396,22 +393,22 @@ public class Slider extends Component {
 
         int[] tmp = getOffsets(x1,y1,w1,h1,value1,extent1,max1);
         int box = tmp[0];
-        int starty = tmp[1];
-        int extenth = tmp[2];
+        int startX = tmp[1];
+        int extentW = tmp[2];
 
-        if (ScrollPane.isPointInsideRect(pointX, pointY, x1, y1, w1, box)) {
+        if (ScrollPane.isPointInsideRect(pointX, pointY, x1, y1, box, h1)) {
             return CLICK_UP;
         }
-        else if (ScrollPane.isPointInsideRect(pointX, pointY, x1, y1+box, w1, starty-y1-box)) {
+        else if (ScrollPane.isPointInsideRect(pointX, pointY, x1+box, y1, startX-x1-box, h1)) {
             return CLICK_PGUP;
         }
-        else if (ScrollPane.isPointInsideRect(pointX, pointY, x1, starty ,w1,extenth)) { // thumb on the right
+        else if (ScrollPane.isPointInsideRect(pointX, pointY, startX, y1 ,extentW,h1)) { // thumb on the right
             return CLICK_THUMB;
         }
-        else if (ScrollPane.isPointInsideRect(pointX, pointY, x1, starty+extenth, w1, h1 - box - (starty-y1) - extenth)) {
+        else if (ScrollPane.isPointInsideRect(pointX, pointY, startX+extentW, y1, w1 - box - (startX-x1) - extentW, h1)) {
             return CLICK_PGDOWN;
         }
-        else if (ScrollPane.isPointInsideRect(pointX, pointY, x1, y1+h1-box, w1, box)) {
+        else if (ScrollPane.isPointInsideRect(pointX, pointY, x1+w1-box, y1, box, h1)) {
             return CLICK_DOWN;
         }
         else {
@@ -430,25 +427,25 @@ public class Slider extends Component {
         int[] tmp = getOffsets(x,y,w,h,value,extent,max
 //                ,trackTop,trackFill,trackBottom,thumbTop,thumbFill,thumbBottom
                 );
-        int starty = tmp[1];
-        int extenth = tmp[2];
+        int startX = tmp[1];
+        int extentW = tmp[2];
 
         if (paintTicks) {
             g.setColor( getCurrentForeground() );
-            w = w - tickSpace;
-            int side = tmp[0]+(thumb!=null?thumb.getLeft():0);
-            int space = h-side*2;
+            h = h - tickSpace;
+            int side = tmp[0]+(thumb!=null?thumb.getTop():0);
+            int space = w-side*2;
 
             if (minorTickSpacing>0) {
                 for (int c=0;c<=max;c=c+minorTickSpacing) {
-                    int tickY = side + space*c/max;
-                    g.drawLine(w , tickY, w+tickSpace/2, tickY);
+                    int tickX = side + space*c/max;
+                    g.drawLine(tickX , h, tickX, h+tickSpace/2);
                 }
             }
             if (majorTickSpacing>0) {
                 for (int c=0;c<=max;c=c+majorTickSpacing) {
-                    int tickY = side + space*c/max;
-                    g.drawLine(w , tickY, w+tickSpace*3/4, tickY);
+                    int tickX = side + space*c/max;
+                    g.drawLine(tickX ,h , tickX, h+tickSpace*3/4);
                 }
             }
         }
@@ -480,16 +477,16 @@ public class Slider extends Component {
 
         if (thumb!=null) {
 
-            int x1 = x + (w-thumb.getLeft()-thumb.getRight())/2;
+            int y1 = y + (h-thumb.getTop()-thumb.getBottom())/2;
 
             // this does the floating scrollbars
-            if (x1+thumb.getLeft()+thumb.getRight() > x+w) {
-                x1 = x+w -thumb.getLeft()-thumb.getRight();
+            if (y1+thumb.getTop()+thumb.getBottom() > y+h) {
+                y1 = y+h -thumb.getTop()-thumb.getBottom();
             }
 
-            g.translate(x1+thumb.getLeft(), starty+thumb.getTop());
-            thumb.paintBorder(this, g, 0, extenth-thumb.getTop()-thumb.getBottom());
-            g.translate(-x1-thumb.getLeft(), -starty-thumb.getTop());
+            g.translate(startX+thumb.getLeft(), y1+thumb.getTop());
+            thumb.paintBorder(this, g, extentW-thumb.getLeft()-thumb.getRight(), 0);
+            g.translate(-startX-thumb.getLeft(), -y1-thumb.getTop());
 
             /*
             int x1 = x + (w-thumbTop.getIconWidth())/2;
@@ -535,22 +532,22 @@ public class Slider extends Component {
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
             ) {
 
-        final int box = track!=null?((track.getTop() >w)?w:track.getTop()):0;
+        final int box = track!=null?((track.getLeft() >h)?h:track.getLeft()):0;
         final int topBotton = (thumb==null)?0:thumb.getTop()+thumb.getBottom();
 
-        final int space1 = h - box * 2;
+        final int space1 = w - box * 2;
 
-        int extenth = (int) ( (extent*space1)/(double)max + 0.5);
+        int extentW = (int) ( (extent*space1)/(double)max + 0.5);
         int min1 = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
         min1 = min1>(space1/2)?space1/2:min1;
 
         int space = space1;
-        if (extenth < min1) {
-            extenth = min1;
-            space = space-extenth;
+        if (extentW < min1) {
+            extentW = min1;
+            space = space-extentW;
             max = max-extent;
         }
-        int starty = box+ (int)( (space*value)/(double)max + 0.5 );
+        int startX = box+ (int)( (space*value)/(double)max + 0.5 );
 
         // make sure the thumb value is bound
         /*
@@ -563,28 +560,28 @@ public class Slider extends Component {
         }
          */
         // add squidge!
-        if ((starty+extenth) < (box+min1)) {
-            starty = box;
-            extenth = min1;
+        if ((startX+extentW) < (box+min1)) {
+            startX = box;
+            extentW = min1;
         }
-        else if (starty < box) {
-            extenth = starty+extenth-box;
-            starty = box;
+        else if (startX < box) {
+            extentW = startX+extentW-box;
+            startX = box;
         }
-        else if (starty > (box+space1-min1)) {
-            starty = box+space1-min1;
-            extenth = min1;
+        else if (startX > (box+space1-min1)) {
+            startX = box+space1-min1;
+            extentW = min1;
         }
-        else if ((starty+extenth) > (box+space1)) {
-            extenth = box+space1-starty;
+        else if ((startX+extentW) > (box+space1)) {
+            extentW = box+space1-startX;
         }
 
-        return new int[] {box,y+starty,extenth};
+        return new int[] {box,x+startX,extentW};
     }
 
     public int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
         int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
-        return value + ((max-extent)*  pixels)/ (h - offsets[0]*2 - offsets[2]);
+        return value + ((max-extent)*  pixels)/ (w - offsets[0]*2 - offsets[2]);
     }
 
 }

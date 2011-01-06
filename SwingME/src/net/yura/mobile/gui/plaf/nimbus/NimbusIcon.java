@@ -78,10 +78,6 @@ public class NimbusIcon extends Icon {
                 }
             }
         }
-        // Draw the combo box arrow
-        else if (type == LookAndFeel.ICON_COMBO) {
-            drawSelectionArrow(c, g, x, y, Sprite.TRANS_NONE);
-        }
         else if (type == LookAndFeel.ICON_ARROW_UP) {
             int top = (height/2)-3;
             int middle = (width/2);
@@ -90,7 +86,7 @@ public class NimbusIcon extends Icon {
                            x+middle-3, y+top+6,
                            x+middle+3, y+top+6);
         }
-        else if (type == LookAndFeel.ICON_ARROW_DOWN) {
+        else if (type == LookAndFeel.ICON_ARROW_DOWN || type == LookAndFeel.ICON_COMBO) {
             int top = (height/2)-3;
             int middle = (width/2);
 
@@ -99,30 +95,21 @@ public class NimbusIcon extends Icon {
                            x+middle+3, y+top);
         }
         else if ((type == LookAndFeel.ICON_SPINNER_LEFT) || (type == LookAndFeel.ICON_ARROW_LEFT)) {
-            drawSelectionArrow(c, g, x+getIconWidth(), y+getIconHeight(), Sprite.TRANS_MIRROR_ROT90);
+            int top = (height/2)-3;
+            int middle = (width/2);
+
+            g.fillTriangle(x+middle+3, y+top,
+                           x+middle-3, y+top+3,
+                           x+middle+3, y+top+6);
         }
         else if ((type == LookAndFeel.ICON_SPINNER_RIGHT) || (type == LookAndFeel.ICON_ARROW_RIGHT)) {
-            drawSelectionArrow(c, g, x, y, Sprite.TRANS_ROT90);
+            int top = (height/2)-3;
+            int middle = (width/2);
+
+            g.fillTriangle(x+middle-3, y+top+6,
+                           x+middle-3, y+top,
+                           x+middle+3, y+top+3);
         }
-    }
-
-    private void drawSelectionArrow(Component c, Graphics2D g, int x, int y, int transform) {
-        // Default arrow has point facing downwards
-        g.translate(x, y);
-
-        int trans = g.getTransform();
-        g.setTransform(transform);
-
-        int top = (height/2)-3;
-        int middle = (width/2);
-
-        g.fillTriangle(middle, top+6,
-                       middle-3, top,
-                       middle+3, top);
-        
-        g.setTransform(trans);
-
-        g.translate(-x, -y);
     }
     
 }

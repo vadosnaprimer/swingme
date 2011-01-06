@@ -432,36 +432,30 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         boolean horizontal = viewWidth > (width-viewPortX); // NEEDS to be same check as in getViewPortHeight
 
         if ( vertical ) {
+            int t = g.getTransform();
+            g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
             slider.drawScrollBar(g,
-                    width -barThickness,
                     viewPortY,
-                    barThickness,
+                    width -barThickness,
                     height -viewPortY -(horizontal?barThickness:0),
+                    barThickness,
                     viewPortY-view.getY(),
                     viewPortHeight,
                     viewHeight
             );
-
+            g.setTransform( t );
         }
-
         if ( horizontal ) {
-
-            int t = g.getTransform();
-            g.setTransform( Sprite.TRANS_MIRROR_ROT270 );
-
             slider.drawScrollBar(g,
-                    height -barThickness,
                     viewPortX,
-                    barThickness,
+                    height -barThickness,
                     width -viewPortX -(vertical?barThickness:0),
+                    barThickness,
                     viewPortX-view.getX(),
                     viewPortWidth,
                     viewWidth
             );
-
-            g.setTransform( t );
         }
-
     }
 
 
@@ -866,27 +860,27 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             if (mode == MODE_SCROLLBARS) {
 
                 int clickX = slider.doClickInScrollbar(
-                      viewPortY + viewPortHeight,
                       viewPortX,
-                      height - viewPortY - viewPortHeight,
+                      viewPortY + viewPortHeight,
                       viewPortWidth,
+                      height - viewPortY - viewPortHeight,
                       viewPortX-viewX,
                       viewPortWidth,
                       viewWidth,
-                      pointY,pointX
+                      pointX,pointY
                 );
 
                 dragVelocityX = doClickInScrollbar(clickX,DRAG_SLIDER_HORZ,viewPortWidth);
 
                 int clickY = slider.doClickInScrollbar(
-                        viewPortX + viewPortWidth,
                         viewPortY,
-                        width - viewPortX - viewPortWidth,
+                        viewPortX + viewPortWidth,
                         viewPortHeight,
+                        width - viewPortX - viewPortWidth,
                         viewPortY - viewY,
                         viewPortHeight,
                         viewHeight,
-                        pointX, pointY
+                        pointY,pointX
                 );
 
                 dragVelocityY = doClickInScrollbar(clickY,DRAG_SLIDER_VERT,viewPortHeight);
@@ -930,10 +924,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
             if (dragScrollBarMode == DRAG_SLIDER_HORZ) {
                 dragLastX = slider.getNewValue(
-                        viewPortY + viewHeight,
                         viewPortX,
-                        height - viewPortY - viewPortHeight,
+                        viewPortY + viewHeight,
                         viewPortWidth,
+                        height - viewPortY - viewPortHeight,
                         dragStartX,
                         viewPortWidth,
                         viewWidth,
@@ -944,10 +938,10 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
             else if (dragScrollBarMode == DRAG_SLIDER_VERT) {
 
                 dragLastY = slider.getNewValue(
-                        viewPortX + viewWidth,
                         viewPortY,
-                        width - viewPortX - viewPortWidth,
+                        viewPortX + viewWidth,
                         viewPortHeight,
+                        width - viewPortX - viewPortWidth,
                         dragStartY,
                         viewPortHeight,
                         viewHeight,
