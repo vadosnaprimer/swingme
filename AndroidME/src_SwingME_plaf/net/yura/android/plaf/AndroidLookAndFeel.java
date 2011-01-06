@@ -1,8 +1,5 @@
 package net.yura.android.plaf;
 
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.game.Sprite;
-
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -68,7 +65,17 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
         // TODO we do not know where to get the verticalDivider, so here is a hack to create one.
         menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable( getColorAtCenter(divider) ), thicknessRect), "verticalDivider", Style.ALL);
+
         setStyleFor("MenuBar", menuBarStyle);
+
+
+
+        // on NEXUS S the menus are black, but we never want these, as they make icons not show up
+        // so we hard code all menus to be white, and we hard code all menu text to be black
+        androidMenuStyle.addBackground(0xFFEEEEEE, Style.ALL);
+        menuStyle.addBackground(0xFFEEEEEE, Style.ALL);
+        menuBarStyle.addBackground(0xFFEEEEEE, Style.ALL); // as anything on a menubar has black text, we want it to be white where ever it is
+
 
         Rect menuRenderExtraPadding = getAdjustedDensityRect(ctx, 8, 8, 8, 8);
         Style menuRendererStyle = new Style(defaultStyle);
