@@ -185,27 +185,16 @@
 -->
 
 
-    <!-- ================================= -->
-    <!-- SCROLLBAR THUMB -->
-    <!-- ================================= -->
-    <style id="scrollBarThumbStyle">
-        <insets top="10" left="7" bottom="10" right="7"/>
+
+    <style id="scrollpane">
+      <insets top="2" left="5" bottom="2" right="5"/>
         <state>
-            <imagePainter method="scrollBarThumbBackground" path="/iphone/thumb.png" direction="vertical" sourceInsets="10 7 10 7" />
+            <imagePainter method="scrollBarThumbBackground" path="/iphone/thumb.png" direction="vertical" sourceInsets="2 5 2 5" />
         </state>
     </style>
-    <bind style="scrollBarThumbStyle" type="REGION" key="ScrollBarThumb" />
-    
-    <!-- ================================= -->
-    <!-- SCROLLBAR TRACK -->
-    <!-- ================================= -->
-    <style id="scrollbarTrackStyle">
-        <insets top="22" left="7" bottom="22" right="7"/>
-        <state>
-            <imagePainter method="scrollBarTrackBackground" path="/iphone/track.png" direction="vertical" sourceInsets="22 7 22 7" />
-        </state>
-    </style>
-    <bind style="scrollbarTrackStyle" type="REGION" key="ScrollBarTrack" />
+    <bind style="scrollpane" type="region" key="ScrollBarThumb"/>
+
+
 
 
     <style id="listRenderer">

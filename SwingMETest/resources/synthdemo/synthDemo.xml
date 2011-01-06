@@ -39,6 +39,35 @@
     <bind style="scrollpane" key="ScrollPane"/>
 
 
+
+
+
+    <!-- ================================= -->
+    <!-- SCROLLBAR THUMB -->
+    <!-- ================================= -->
+    <style id="scrollBarThumbStyle">
+        <insets top="7" left="10" bottom="7" right="10"/>
+        <state>
+            <imagePainter method="scrollBarThumbBackground" path="/synthdemo/thumb.png" direction="vertical" sourceInsets="7 10 7 10" />
+        </state>
+    </style>
+    <bind style="scrollBarThumbStyle" type="REGION" key="ScrollBarThumb" />
+    
+    <!-- ================================= -->
+    <!-- SCROLLBAR TRACK -->
+    <!-- ================================= -->
+    <style id="scrollbarTrackStyle">
+        <insets top="7" left="22" bottom="7" right="22"/>
+        <state>
+            <imagePainter method="scrollBarTrackBackground" path="/synthdemo/track.png" direction="vertical" sourceInsets="7 22 7 22" />
+        </state>
+    </style>
+    <bind style="scrollbarTrackStyle" type="REGION" key="ScrollBarTrack" />
+
+
+
+
+
     <style id="textfield">
 	<insets top="4" left="6" bottom="4" right="6"/>
 	<state>
