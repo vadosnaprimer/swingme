@@ -124,6 +124,15 @@ public class Slider extends Component {
         //#enddebug
     }
 
+    public void setValue(int newValue) {
+        int m = max-extent;
+        if (newValue>m) newValue=m;
+        if (newValue<min) newValue=min;
+        value=newValue;
+        fireStateChanged();
+        repaint();
+    }
+
     /**
      * @see javax.swing.JSlider#getMaximum() JSlider.getMaximum
      * @see javax.swing.JScrollBar#getMaximum() JScrollBar.getMaximum
@@ -291,9 +300,7 @@ public class Slider extends Component {
 
                 int newValue = ((max-extent)*  pixels)/ (w - offsets[0]*2 - offsets[2]);
 
-                value=newValue;
-                fireStateChanged();
-                repaint();
+                setValue(newValue);
             }
         }
         else if (type == DesktopPane.DRAGGED) {
@@ -315,12 +322,7 @@ public class Slider extends Component {
                         p-startPos
                   );
 
-                int m = max-extent;
-                if (newValue>m) newValue=m;
-                if (newValue<min) newValue=min;
-                value=newValue;
-                fireStateChanged();
-                repaint();
+                  setValue(newValue);
             }
         }
 
@@ -347,17 +349,14 @@ public class Slider extends Component {
 
         while (true) {
             if (click == CLICK_UP && value > min) {
-                value--;
-                fireStateChanged();
+                setValue(value-1);
             }
             else if (click == CLICK_DOWN && value < (max-extent)) {
-                value++;
-                fireStateChanged();
+                setValue(value+1);
             }
             else {
                 break;
             }
-            repaint();
             wait(20);
         }
     }
