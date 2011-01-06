@@ -278,6 +278,23 @@ public class Slider extends Component {
             if (click==CLICK_UP || click == CLICK_DOWN) {
                 getDesktopPane().animateComponent(this);
             }
+            else if (click==CLICK_PGUP || click == CLICK_PGDOWN) {
+
+                int w = horizontal?width:height;
+                int h = horizontal?height:width;
+                int p = horizontal?pointX:pointY;
+
+
+                int[] offsets = getOffsets(0, 0, w, h, 0, extent, max);
+
+                int pixels = p -offsets[0] -offsets[2]/2;
+
+                int newValue = ((max-extent)*  pixels)/ (w - offsets[0]*2 - offsets[2]);
+
+                value=newValue;
+                fireStateChanged();
+                repaint();
+            }
         }
         else if (type == DesktopPane.DRAGGED) {
 
@@ -303,7 +320,6 @@ public class Slider extends Component {
                 if (newValue<min) newValue=min;
                 value=newValue;
                 fireStateChanged();
-
                 repaint();
             }
         }
