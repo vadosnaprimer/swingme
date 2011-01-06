@@ -97,11 +97,11 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 //        setStyleFor("MenuItem",menuItemStyle); // for the arrow to work
 
         // --- List ---
-        
+
         Style listStyle = new Style(defaultStyle);
         listStyle.addBorder(getBorder(ctx, android.R.style.Widget_ListView_White, android.R.attr.background ),Style.ALL);
         setStyleFor("ListWhite",listStyle);
-        
+
         Rect listExtraPadding = getAdjustedDensityRect(ctx, 10, 10, 10, 10);
         Border divider2 = getListDivider(ctx, android.R.style.Widget_ListView, android.R.attr.listDivider);
 
@@ -244,7 +244,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // -- Scrollbars --
         Style scrollBarThumbStyle = new Style(defaultStyle);
-        Drawable scroll = getDrawable(ctx, 0, android.R.attr.scrollbarThumbVertical);
+        Drawable scroll = getDrawable(ctx, 0, android.R.attr.scrollbarThumbHorizontal);
         Rect scrollSize = new Rect(scroll.getIntrinsicWidth()/2, scroll.getIntrinsicHeight()/2, scroll.getIntrinsicWidth()/2, scroll.getIntrinsicHeight()/2);
         scrollBarThumbStyle.addBorder(new AndroidBorder(scroll, scrollSize),Style.ALL);
         setStyleFor("ScrollBarThumb",scrollBarThumbStyle);
@@ -260,11 +260,18 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // yes = ok, no = cencel, dont use this as it seems to be wrong
         //ctx.getResources().getString(android.R.string.ok);
 
+
+
+
+
+
+
+
         // -- Slider --
         Style sliderThumbStyle = new Style(defaultStyle);
         Drawable slider = getDrawable(ctx,  android.R.style.Widget_SeekBar, android.R.attr.thumb);
         Rect sliderSize = new Rect(slider.getIntrinsicWidth()/2, slider.getIntrinsicHeight()/2, slider.getIntrinsicWidth()/2, slider.getIntrinsicHeight()/2);
-        sliderThumbStyle.addBorder(new AndroidBorder(slider, sliderSize),Style.ALL);
+        sliderThumbStyle.addBorder(new AndroidBorder(slider,sliderSize),Style.ALL);
         setStyleFor("SliderThumb",sliderThumbStyle);
 
         Style sliderTrackStyle = new Style(defaultStyle);
@@ -272,8 +279,21 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_SeekBar, android.R.attr.process),Style.ALL); NOT WORKING
         //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_ProgressBar_Horizontal, android.R.attr.process),Style.ALL); NOT WORKING
         //sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_ProgressBar_Horizontal, android.R.attr.background),Style.ALL); NOT WORKING
-        sliderTrackStyle.addBorder( getBorder(ctx, android.R.style.Widget_SeekBar, android.R.attr.progressDrawable),Style.ALL);
+
+        Drawable sliderTrack = getDrawable(ctx, android.R.style.Widget_SeekBar, android.R.attr.progressDrawable);
+
+        Rect sliderTrackSize = getAdjustedDensityRect(ctx,0,10,0,10);
+        sliderTrackStyle.addBorder( new CompoundBorder(
+                new EmptyBorder(sliderTrackSize.top, sliderTrackSize.left, sliderTrackSize.bottom, sliderTrackSize.right),
+                new AndroidBorder(sliderTrack, sliderTrackSize)
+                ) ,Style.ALL);
         setStyleFor("SliderTrack",sliderTrackStyle);
+
+
+
+
+
+
 
         // -- ProgressBar --
         Style progressBar = new Style(defaultStyle);
