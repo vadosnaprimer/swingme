@@ -170,7 +170,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 //        midlet = null;
 //    }
 //
-//    @Override
+//    //Override
 //    public void finish() {
 //        // Ignore multiple calls to finish()
 //        if (!closed) {
@@ -181,7 +181,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 //    }
 
 
-    @Override
+    //Override
     protected void onDestroy() {
         super.onDestroy();
 
