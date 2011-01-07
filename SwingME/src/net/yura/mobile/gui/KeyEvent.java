@@ -296,11 +296,25 @@ public class KeyEvent {
 
         // on nokia emulators can throw when the key does not exist on the phone
         public String getKeyText(int keyCode) {
+            keyCode = checkBack(keyCode);
+
             try {
                 return canvas.getKeyName(keyCode);
             }
             catch(Throwable ex) {
                 return ex.getMessage();
+            }
+        }
+
+
+        public int getKeyAction(int code) {
+            code = checkBack(code);
+
+            try {
+                return canvas.getGameAction(code);
+            }
+            catch(Throwable ex) {
+                return 0;
             }
         }
 
@@ -449,21 +463,14 @@ public class KeyEvent {
 
         }
 
-        public int getKeyAction(int code) {
-
+        private int checkBack(int code) {
             if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
                 switch (code) {
                     case KEY_SOFTKEY3: code=-8; break;
                     case KEY_CLEAR: code=8; break;
                 }
             }
-
-            try {
-                return canvas.getGameAction(code);
-            }
-            catch(Throwable ex) {
-                return 0;
-            }
+            return code;
         }
 
         //#mdebug debug
