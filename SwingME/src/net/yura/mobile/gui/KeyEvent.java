@@ -303,14 +303,6 @@ public class KeyEvent {
                 return ex.getMessage();
             }
         }
-        public int getKeyAction(int code) {
-            try {
-                return canvas.getGameAction(code);
-            }
-            catch(Throwable ex) {
-                return 0;
-            }
-        }
 
         public boolean isDownAction(int action) {
             for (int c=0;c<isDownKeys.length;c++) {
@@ -377,23 +369,6 @@ public class KeyEvent {
                 removeKeyDown(keyCode);
 	}
 
-        private int check(int keyCode) {
-
-            switch (keyCode) {
-                case 8: return KEY_CLEAR;
-                case 127: return KEY_DELETE;
-                case '\r': return '\n'; // 13 -> 10
-
-                // Sony-Ericsson phones - Volume keys
-		// not sure about this
-                //case -36: return canvas.getKeyCode(Canvas.UP);
-                //case -37: return canvas.getKeyCode(Canvas.DOWN);
-
-                default: return keyCode;
-            }
-
-        }
-
 	public void keyRepeated(int keyCode) {
 
                 // if its held down for a long time to to -2
@@ -452,6 +427,44 @@ public class KeyEvent {
             isDownKeys = new int[1];
         }
 
+
+        private int check(int keyCode) {
+
+            if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
+                if (keyCode==-8) return KEY_SOFTKEY3;
+            }
+
+            switch (keyCode) {
+                case 8: return KEY_CLEAR; // (on blackberry and other devices)
+                case 127: return KEY_DELETE;
+                case '\r': return '\n'; // 13 -> 10
+
+                // Sony-Ericsson phones - Volume keys
+		// not sure about this
+                //case -36: return canvas.getKeyCode(Canvas.UP);
+                //case -37: return canvas.getKeyCode(Canvas.DOWN);
+
+                default: return keyCode;
+            }
+
+        }
+
+        public int getKeyAction(int code) {
+
+            if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
+                switch (code) {
+                    case KEY_SOFTKEY3: code=-8; break;
+                    case KEY_CLEAR: code=8; break;
+                }
+            }
+
+            try {
+                return canvas.getGameAction(code);
+            }
+            catch(Throwable ex) {
+                return 0;
+            }
+        }
 
         //#mdebug debug
         public String toString() {
