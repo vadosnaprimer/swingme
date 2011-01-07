@@ -1,7 +1,6 @@
 package net.yura.blackberry.rim;
 
 import net.rim.device.api.ui.UiApplication;
-import net.yura.blackberry.TestMIDlet;
 
 public abstract class MIDlet extends UiApplication {
 
@@ -17,9 +16,11 @@ public abstract class MIDlet extends UiApplication {
     	return false;
 	}
 
-    public static void main(String[] args) { 
-    	MIDlet theApp = new TestMIDlet();
-        theApp.enterEventDispatcher(); 
+    public static void main(String[] args) {
+    	
+    	// TODO 
+    	//MIDlet theApp = new net.yura.blackberry.TestMIDlet();
+        //theApp.enterEventDispatcher(); 
     }
 
 }

@@ -31,6 +31,9 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     }
 
     public boolean keyDown(int keycode, int time) {
+    	Object canvas = Display.getDisplay(this).getCurrent();
+    	if (!(canvas instanceof DesktopPane)) return false;
+    	
         //#debug debug
         System.out.println(">>>> keyDown");
 
@@ -42,6 +45,9 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     }
 
     public boolean keyUp(int keycode, int time) {
+    	Object canvas = Display.getDisplay(this).getCurrent();
+    	if (!(canvas instanceof DesktopPane)) return false;
+    	
         //#debug debug
         System.out.println(">>>> keyUp");
 
@@ -51,11 +57,11 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         if (keyPressed == key) {
             keyPressed = 0;
             if (key == Keypad.KEY_ESCAPE) {
-                processKey(KeyEvent.KEY_END);
+                processKey( (DesktopPane)canvas, KeyEvent.KEY_END);
                 return true;
             }
             if(key == Keypad.KEY_MENU) {
-                processKey(KeyEvent.KEY_MENU);
+                processKey( (DesktopPane)canvas, KeyEvent.KEY_MENU);
                 return true;
             }
         }
@@ -63,21 +69,15 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         return false;
     }
 
-    void processKey(int key) {
+    void processKey(DesktopPane canvas, int key) {
         try {
+
             //#debug debug
-            System.out.println(">>>> processKey key = " + key );
+            System.out.println(">>>> Found a DesktopPane to fw event");
 
-            // TODO, when some thing like TextBox is open this will breaks
-            Object canvas = Display.getDisplay(this).getCurrent();
+            ((DesktopPane)canvas).keyPressed(key);
+            ((DesktopPane)canvas).keyReleased(key);
 
-            if (canvas instanceof DesktopPane) {
-	            //#debug debug
-	            System.out.println(">>>> Found a DesktopPane to fw event");
-	
-	            ((DesktopPane)canvas).keyPressed(key);
-	            ((DesktopPane)canvas).keyReleased(key);
-            }
         }
         catch (Throwable e) {
             e.printStackTrace();
