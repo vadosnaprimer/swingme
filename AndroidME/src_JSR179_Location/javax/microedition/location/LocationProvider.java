@@ -1,6 +1,7 @@
 package javax.microedition.location;
 
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 import android.content.Context;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -60,7 +61,7 @@ public class LocationProvider implements android.location.LocationListener {
 		this.locationListener = listener;
 		final LocationProvider provider = this;
 		if (locationListener != null) {
-			AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread( new Runnable() {
+			AndroidMeApp.getIntance().invokeLater( new Runnable() {
 				public void run() {
 					lm.requestLocationUpdates(locationProvider, interval * 1000, MINIMUM_MOVEMENT_IN_METRES, provider);
 				}
@@ -91,8 +92,7 @@ public class LocationProvider implements android.location.LocationListener {
 	}
 
 	private static LocationManager getLocationManager() {
-		return (LocationManager) AndroidMeActivity.DEFAULT_ACTIVITY
-				.getSystemService(Context.LOCATION_SERVICE);
+		return (LocationManager) AndroidMeApp.getContext().getSystemService(Context.LOCATION_SERVICE);
 	}
 
 	public void onLocationChanged(android.location.Location location) {

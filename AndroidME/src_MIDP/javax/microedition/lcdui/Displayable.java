@@ -55,7 +55,7 @@ public abstract class Displayable {
 		View view = this.getView();
 		int h = (view == null) ? 0 : view.getHeight();
 
-        return (h <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth() : h;
+        return (h <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenHeight() : h;
 	}
 
 	public Display getCurrentDisplay() {

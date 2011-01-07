@@ -10,9 +10,8 @@ import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 
-import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -23,12 +22,11 @@ import android.content.IntentFilter;
 public class BluetoothManager {
 
     // Intent request codes
-    private static final int REQUEST_ENABLE_BT = 2;
+    // JANE: private static final int REQUEST_ENABLE_BT = 2;
 
     private static BluetoothManager instance;
 
     private DiscoveryListener listener;
-    private Activity activity;
     private EventReceiver_2_0 eventReceiver_2_0;
     private EventReceiver_1_6 eventReceiver_1_6;
     private LocalBluetoothDevice localBT;
@@ -40,7 +38,7 @@ public class BluetoothManager {
 
     public static BluetoothManager getBluetoothManager() {
         if (instance == null) {
-            instance = new BluetoothManager(AndroidMeActivity.DEFAULT_ACTIVITY);
+            instance = new BluetoothManager();
 
             // Attempt to use older Bluetooth Android 1.6 API's
             // If it fails, attempt Android 2.0 API's
@@ -55,16 +53,14 @@ public class BluetoothManager {
         return instance;
     }
 
-    private BluetoothManager(Activity activity) {
-
-        this.activity = activity;
+    private BluetoothManager() {
     }
 
     private void start_1_6() throws Exception {
         System.out.println(">>> Bluetooth trying 1.6 API...");
 
         // If we are not running on Android 1.6, this will fail
-        localBT = LocalBluetoothDevice.initLocalDevice(activity);
+        localBT = LocalBluetoothDevice.initLocalDevice(AndroidMeApp.getContext());
         System.out.println("localBT = " + localBT);
 
         eventReceiver_1_6 = new EventReceiver_1_6();
@@ -85,19 +81,22 @@ public class BluetoothManager {
 
         // Register for broadcasts when a device is discovered
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        activity.registerReceiver(eventReceiver_2_0, filter);
+        AndroidMeApp.getIntance().registerReceiver(eventReceiver_2_0, filter);
 
         // Register for broadcasts when discovery has finished
         filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        activity.registerReceiver(eventReceiver_2_0, filter);
+        AndroidMeApp.getIntance().registerReceiver(eventReceiver_2_0, filter);
 
         // If BT is not on, request that it be enabled.
         if (!mBluetoothAdapter.isEnabled()) {
             // Set result CANCELED in case the user backs out
-            activity.setResult(Activity.RESULT_CANCELED);
+            // JANE: We no longer have an activity, just a Context
+//            activity.setResult(Activity.RESULT_CANCELED);
+//
+//            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//            activity.startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
 
-            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            activity.startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+            AndroidMeApp.getContext().startActivity(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE));
         }
     }
 
@@ -105,7 +104,7 @@ public class BluetoothManager {
     // TODO: This should be called when the activity is paused...
     public void stop() {
         if (eventReceiver_2_0 != null) {
-            activity.unregisterReceiver(eventReceiver_2_0);
+            AndroidMeApp.getIntance().unregisterReceiver(eventReceiver_2_0);
         }
         if (eventReceiver_1_6 != null) {
             // TODO: Is cancel enough?

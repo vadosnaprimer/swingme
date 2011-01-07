@@ -31,10 +31,9 @@ import java.util.HashMap;
 
 import javax.microedition.lcdui.Font;
 
-import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.Paint.FontMetricsInt;
@@ -100,7 +99,7 @@ public class FontManager {
 				textAppearance = android.R.style.TextAppearance_Large;
 			}
 
-			Context ctx = AndroidMeActivity.DEFAULT_ACTIVITY;
+			Context ctx = AndroidMeApp.getContext();
 
 			// The font size is adjusted to the phone "scaled density"
 			DisplayMetrics metrics = ctx.getResources().getDisplayMetrics();

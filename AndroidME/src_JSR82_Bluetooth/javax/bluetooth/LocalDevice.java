@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothAdapter;
 import javax.microedition.io.Connection;
 
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 import net.yura.android.bluetooth.BluetoothManager;
 
 /**
@@ -61,7 +62,7 @@ public class LocalDevice {
 
 	    final BluetoothStateException ex = new BluetoothStateException();
 
-	    AndroidMeActivity.DEFAULT_ACTIVITY.invokeAndWait(new Runnable() {
+	    AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
             public void run() {
         	    try {
 

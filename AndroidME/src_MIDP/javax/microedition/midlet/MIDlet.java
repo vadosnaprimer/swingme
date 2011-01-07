@@ -4,10 +4,8 @@ package javax.microedition.midlet;
 import java.util.Properties;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
-
-
 import net.yura.android.AndroidMeActivity;
-import net.yura.android.lcdui.Toolkit;
+import net.yura.android.AndroidMeApp;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,37 +31,17 @@ public abstract class MIDlet {
     public static final String PROTOCOL_NATIVE_NO_RESULT = "nativeNoResult:";
 
     public static MIDlet DEFAULT_MIDLET;
-    public static Toolkit DEFAULT_TOOLKIT;
-    public static Activity DEFAULT_ACTIVITY;
     public static Properties DEFAULT_APPLICATION_PROPERTIES;
 
     private static String platformLastUrl;
     private static long platformLastTime;
 
 
-    private Activity activity = DEFAULT_ACTIVITY;
-    private Toolkit toolkit = DEFAULT_TOOLKIT;
     private Properties applicationProperties = DEFAULT_APPLICATION_PROPERTIES;
 
     protected MIDlet() {
         DEFAULT_MIDLET = this;
         PhoneListener.init();
-    }
-
-    public void invokeAndWait(Runnable r) {
-        this.toolkit.invokeAndWait(r);
-    }
-
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public Toolkit getToolkit() {
-        return toolkit;
-    }
-
-    public void setToolkit(Toolkit toolkit) {
-        this.toolkit = toolkit;
     }
 
     protected abstract void destroyApp(boolean unconditional)
@@ -74,7 +52,7 @@ public abstract class MIDlet {
     protected abstract void startApp() throws MIDletStateChangeException;
 
     public final void notifyDestroyed() {
-        this.activity.finish();
+        AndroidMeActivity.DEFAULT_ACTIVITY.finish();
 
         new Thread() {
             public void run() {
@@ -109,6 +87,7 @@ public abstract class MIDlet {
             Uri content = Uri.parse(url);
             boolean isProtoNative = url.startsWith(PROTOCOL_NATIVE);
             boolean isProtoNativeNoRes = url.startsWith(PROTOCOL_NATIVE_NO_RESULT);
+            Activity activity = AndroidMeActivity.DEFAULT_ACTIVITY;
 
             if (isProtoNative || isProtoNativeNoRes) {
 
@@ -127,15 +106,16 @@ public abstract class MIDlet {
                     platformLastUrl = url;
                     platformLastTime = now;
 
+
                     Class cls = Class.forName(content.getHost());
-                    Intent i = new Intent(getActivity(), cls);
+                    Intent i = new Intent(activity, cls);
                     i.setData(content);
 
                     if (isProtoNative) {
-                        getActivity().startActivityForResult(i, 0);
+                        activity.startActivityForResult(i, 0);
                     }
                     else {
-                        getActivity().startActivity(i);
+                        activity.startActivity(i);
                     }
                 }
             }
@@ -146,7 +126,7 @@ public abstract class MIDlet {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
                      Intent.ACTION_DIAL : Intent.ACTION_DEFAULT;
                 Intent intent = new Intent(action, content);
-                getActivity().startActivity(intent);
+                activity.startActivity(intent);
             }
         } catch (Throwable e) {
             //#debug debug
@@ -176,7 +156,7 @@ public abstract class MIDlet {
         String message = uri.getQueryParameter("message");
         String icon = uri.getQueryParameter("icon");
 
-        Context ctx = getActivity();
+        Context ctx = AndroidMeApp.getContext();
         int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
 
         System.out.println(">>>> showNotification:" +
@@ -233,7 +213,7 @@ public abstract class MIDlet {
         }
 
         private TelephonyManager getTelephonyManager() {
-            return (TelephonyManager) DEFAULT_ACTIVITY.getSystemService(Context.TELEPHONY_SERVICE);
+            return (TelephonyManager) AndroidMeApp.getContext().getSystemService(Context.TELEPHONY_SERVICE);
         }
 
 
@@ -287,7 +267,8 @@ public abstract class MIDlet {
     private void hideSoftKeyboard() {
         try {
             View view = Display.getDisplay(this).getCurrent().getView();
-            InputMethodManager im = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            Context ctx = view.getContext();
+            InputMethodManager im = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
             im.hideSoftInputFromWindow(view.getWindowToken(), 0);
         } catch (Throwable e) {
             //#debug info

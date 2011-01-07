@@ -33,7 +33,7 @@ import java.lang.ref.WeakReference;
 import java.net.Socket;
 import java.util.Vector;
 
-import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -223,7 +223,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 
             // Listen for Network events
             IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-            AndroidMeActivity.DEFAULT_ACTIVITY.registerReceiver(this, intentFilter);
+            AndroidMeApp.getIntance().registerReceiver(this, intentFilter);
         }
 
         @Override
@@ -247,7 +247,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             boolean isConnected = false;
             boolean hasStateChanged = false;
 
-            ConnectivityManager connectivityManager = (ConnectivityManager) AndroidMeActivity.DEFAULT_ACTIVITY.getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager connectivityManager = (ConnectivityManager) AndroidMeApp.getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connectivityManager != null) {
                 NetworkInfo netInfo = connectivityManager.getActiveNetworkInfo();
 
@@ -300,7 +300,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
                 if (socketBroadcastReceiver != null && socketWeakList.size() == 0) {
                     //#debug debug
                     System.out.println(">>> SocketBroadcastReceiver: close");
-                    AndroidMeActivity.DEFAULT_ACTIVITY.unregisterReceiver(socketBroadcastReceiver);
+                    AndroidMeApp.getIntance().unregisterReceiver(socketBroadcastReceiver);
                     socketBroadcastReceiver = null;
                 }
             }

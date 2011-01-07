@@ -6,6 +6,7 @@ import java.util.Arrays;
 import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -51,11 +52,7 @@ public abstract class Canvas extends Displayable {
     private Bitmap graphicsBitmap;
 
     protected Canvas() {
-        this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
-        this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
-        canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        linearLayout.addView(canvasView);
     }
 
     public void setFullScreenMode(boolean fullScreen) {
@@ -194,7 +191,16 @@ public abstract class Canvas extends Displayable {
 
     @Override
     public View getView() {
-        return this.linearLayout;
+
+        if (linearLayout==null) {
+            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
+            this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
+
+            canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(canvasView);
+        }
+
+        return linearLayout;
     }
 
     @Override
@@ -773,7 +779,7 @@ public abstract class Canvas extends Displayable {
 
 
     public void serviceRepaints() {
-        AndroidMeActivity.DEFAULT_ACTIVITY.invokeAndWait(new Thread());
+        AndroidMeApp.getIntance().invokeAndWait(new Thread());
     }
 
     public String getKeyName(int keyCode) {

@@ -1,14 +1,12 @@
 package javax.microedition.media.player;
 
 import java.util.Vector;
-
 import javax.microedition.media.Control;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
-
 import net.yura.android.AndroidMeActivity;
-import net.yura.android.lcdui.Toolkit;
+import net.yura.android.AndroidMeApp;
 
 public abstract class BasicPlayer implements Player {
 
@@ -17,8 +15,6 @@ public abstract class BasicPlayer implements Player {
 
     // Player Listener List
     Vector<PlayerListener> listenerList = new Vector<PlayerListener>();
-
-    Toolkit toolKit;
 
     // Player worker methods
     abstract protected void doRealize() throws MediaException;
@@ -35,9 +31,6 @@ public abstract class BasicPlayer implements Player {
     abstract protected Control doGetControl(String type);
 
 
-    public BasicPlayer(Toolkit toolKit) {
-        this.toolKit = toolKit;
-    }
 
     /**
      * Check to see if the Player is closed.  If the
@@ -213,7 +206,7 @@ public abstract class BasicPlayer implements Player {
         //  There's always one listener for EOM -- itself.
         if (listenerList.size() > 0 || evt == PlayerListener.END_OF_MEDIA) {
 
-            AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread(
+            AndroidMeApp.getIntance().invokeLater(
                 new Runnable() {
 
                     public void run() {
@@ -285,7 +278,7 @@ public abstract class BasicPlayer implements Player {
     void sendPlayerEvent(final String evt, final Object evtData) throws MediaException {
         playerException = null;
 
-        toolKit.invokeAndWait(new Runnable() {
+        AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
             public void run() {
                 try {
                     doPlayerEvent(evt, evtData);
@@ -298,9 +291,8 @@ public abstract class BasicPlayer implements Player {
         if (playerException != null) {
             if (playerException instanceof MediaException) {
                 throw (MediaException) playerException;
-            } else {
-                playerException.printStackTrace();
             }
+            playerException.printStackTrace();
         }
     }
 

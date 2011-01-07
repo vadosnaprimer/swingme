@@ -21,7 +21,7 @@ public class Manager {
             player = null;
         }
         else if (locator.startsWith("capture://video")) {
-            player = new CameraPlayer(AndroidMeActivity.DEFAULT_ACTIVITY);
+            player = new CameraPlayer();
         }
         else if (TONE_DEVICE_LOCATOR.equals(locator)) {
             player = new TonePlayer();

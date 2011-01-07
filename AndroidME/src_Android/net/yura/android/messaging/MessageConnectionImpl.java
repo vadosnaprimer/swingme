@@ -11,7 +11,7 @@ import javax.wireless.messaging.MessageConnection;
 import javax.wireless.messaging.MessageListener;
 import javax.wireless.messaging.TextMessage;
 
-import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -115,7 +115,7 @@ public class MessageConnectionImpl extends BroadcastReceiver implements MessageC
     private void setupMessageReceiver() {
         this.isListeningForMessages = true;
         IntentFilter filter = new IntentFilter(ACTION);
-        AndroidMeActivity.DEFAULT_ACTIVITY.registerReceiver(this, filter);
+        AndroidMeApp.getIntance().registerReceiver(this, filter);
     }
 
     public void send(Message msg) throws IOException, InterruptedIOException {
@@ -145,7 +145,7 @@ public class MessageConnectionImpl extends BroadcastReceiver implements MessageC
             this.receiveLock.notify();
         }
         if (this.isListeningForMessages) {
-            AndroidMeActivity.DEFAULT_ACTIVITY.unregisterReceiver(this);
+            AndroidMeApp.getIntance().unregisterReceiver(this);
             this.isListeningForMessages = false;
         }
     }

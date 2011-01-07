@@ -12,8 +12,7 @@ import android.hardware.Camera.Parameters;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
-
-import net.yura.android.lcdui.Toolkit;
+import net.yura.android.AndroidMeActivity;
 
 public class CameraPlayer extends BasicPlayer implements VideoControl {
 
@@ -23,10 +22,6 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
     private int dispX, dispY;
     private int dispW, dispH;
     private boolean fullScreen;
-
-    public CameraPlayer(Toolkit toolKit) {
-        super(toolKit);
-    }
 
     @Override
     protected void doClose() {
@@ -157,13 +152,14 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
     public int getSourceHeight() {
         // If we can't record video, this method is meaningless...
         // Return screen height for now.
-        return toolKit.getScreenHeight();
+
+        return AndroidMeActivity.DEFAULT_ACTIVITY.getScreenHeight();
     }
 
     public int getSourceWidth() {
         // If we can't record video, this method is meaningless...
         // Return screen width for now.
-        return toolKit.getScreenWidth();
+        return AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth();
     }
 
     public Object initDisplayMode(int mode, Object obj) {

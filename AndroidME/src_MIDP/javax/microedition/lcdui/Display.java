@@ -4,7 +4,11 @@ import java.util.Hashtable;
 
 import javax.microedition.midlet.MIDlet;
 
+import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
+
 import android.app.Activity;
+import android.content.Context;
 import android.os.Vibrator;
 import android.view.View;
 
@@ -36,6 +40,8 @@ public class Display
     }
 
     private Displayable current;
+    //TODO: Create accessor
+    public Displayable hiddenDisplay;
     private MIDlet midlet;
 
     private Display( MIDlet midlet )
@@ -92,9 +98,12 @@ public class Display
 
     public void setCurrent(final Displayable newCurrent) {
 
+        final Activity activity = AndroidMeActivity.DEFAULT_ACTIVITY;
         if (newCurrent == null) {
             // Set Application to background
-            midlet.getActivity().moveTaskToBack(true);
+            if (activity != null) {
+                activity.moveTaskToBack(true);
+            }
             return;
         }
 
@@ -103,8 +112,16 @@ public class Display
             ((Canvas) current).hideSoftKeyboard();
         }
 
+
+
+        if (activity == null) {
+            hiddenDisplay = newCurrent;
+            return;
+        }
+        hiddenDisplay = null;
+
         if (newCurrent != current) {
-            this.midlet.invokeAndWait(new Runnable() {
+            AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
                 public void run() {
 
                     // TextBox is special... we don't really have any UI
@@ -123,7 +140,6 @@ public class Display
                     newCurrent.setCurrentDisplay(Display.this);
                     newCurrent.initDisplayable(Display.this.midlet);
 
-                    Activity activity = Display.this.midlet.getActivity();
                     View view = newCurrent.getView();
                     if (view != null) {
                         activity.setContentView(view);
@@ -133,7 +149,7 @@ public class Display
             });
 
             // Wait for the view to be set...
-            this.midlet.invokeAndWait(new Thread());
+            AndroidMeApp.getIntance().invokeAndWait(new Thread());
         }
     }
 
@@ -141,13 +157,13 @@ public class Display
      * http://developer.android.com/resources/articles/painless-threading.html
      */
     public void callSerially(Runnable runner) {
-        midlet.getActivity().runOnUiThread(runner);
+        AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread(runner);
     }
 
     public void vibrate(int duration) {
-        
-        Activity activity = midlet.getActivity();
-        Vibrator vibrator = (Vibrator)activity.getSystemService(Activity.VIBRATOR_SERVICE);
+
+        Context ctx = AndroidMeApp.getContext();
+        Vibrator vibrator = (Vibrator)ctx.getSystemService(Activity.VIBRATOR_SERVICE);
 
         vibrator.vibrate(duration);
     }
