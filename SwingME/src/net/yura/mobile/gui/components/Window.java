@@ -284,35 +284,46 @@ public class Window extends Panel {
         }
 
         public void paintSoftKeys(Graphics2D g) {
-            Window w = getWindow();
 
-            if (w.getDesktopPane().SOFT_KEYS && w == desktop.getSelectedFrame()) {
+            if (getDesktopPane().SOFT_KEYS && isFocused()) {
 
                 int offsetX = g.getTranslateX();
                 int offsetY = g.getTranslateY();
                 g.translate(-offsetX,-offsetY);
 
-                for (int i=0; i< 5; i++) {
+                int menu = KeyEvent.KEY_MENU;
+                int back = KeyEvent.KEY_END;
+
+                for (int i=0; i<5; i++) {
                     int key=0;
                     switch (i) {
                         case 0: key = KeyEvent.KEY_SOFTKEY1; break;
                         case 1: key = KeyEvent.KEY_SOFTKEY2; break;
                         case 2: key = KeyEvent.KEY_SOFTKEY3; break;
-                        case 3: key = KeyEvent.KEY_MENU; break;
-                        case 4: key = KeyEvent.KEY_END; break;
+                        case 3: key = menu; break;
+                        case 4: key = back; break;
                     }
 
-                    Button b = getSoftkeyForMneonic(key);
+                    if (key!=0) {
+                        Button b = getSoftkeyForMneonic(key);
 
-                    if (b!=null) {
-                        Component component = getRendererComponentOnScreen(b);
+                        if (b!=null) {
+                            // if we find the softkey we should not look for the other one,
+                            // as this will cause one to be painted over the top of the other
+                            switch (key) {
+                                case KeyEvent.KEY_SOFTKEY1: menu = 0; break;
+                                case KeyEvent.KEY_SOFTKEY2: back = 0; break;
+                            }
 
-                        int x = component.getX();
-                        int y = component.getY();
+                            Component component = getRendererComponentOnScreen(b);
 
-                        g.translate(x,y);
-                        component.paint(g);
-                        g.translate(-x, -y);
+                            int x = component.getX();
+                            int y = component.getY();
+
+                            g.translate(x,y);
+                            component.paint(g);
+                            g.translate(-x, -y);
+                        }
                     }
                 }
 
@@ -341,16 +352,18 @@ public class Window extends Panel {
 
     public Component getRendererComponentOnScreen(Button button){
 
-            boolean sideSoftKeys = desktop.isSideSoftKeys();
+            DesktopPane dp = getDesktopPane();
+
+            boolean sideSoftKeys = dp.isSideSoftKeys();
 
             int mnemonic = button.getMnemonic();
 
-            int desktopWidth = desktop.getWidth();
-            int desktopHeight = desktop.getHeight();
+            int desktopWidth = dp.getWidth();
+            int desktopHeight = dp.getHeight();
 
     //Logger.debug("Screen height: "+desktopHeight);
 
-            Component component = desktop.getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
+            Component component = dp.getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
 
             component.workoutSize();
             int componentWidth = component.getWidthWithBorder();
@@ -430,21 +443,14 @@ public class Window extends Panel {
             }
             //#enddebug
 
-            softKeyRepaint();
+            softKeyRepaint(softkey);
         }
 
-        private void softKeyRepaint() {
+        private void softKeyRepaint(Button softkey) {
             DesktopPane dp = getDesktopPane();
             if (dp.SOFT_KEYS) {
-                // HACK: Jane - If the soft-keys are outside the "window paint area", we need a
-                // full repaint, otherwise, replacing a "big" soft-key with a "small" will
-                // leave garbage pixels... However, just because a window is smaller that
-                // the desktop, it does not mean the soft-keys are outside it...
-                if (getWidth() < dp.getWidth() || getHeight() < dp.getHeight()) {
-                    dp.repaint();
-                } else {
-                    repaint();
-                }
+                Component c = getRendererComponentOnScreen(softkey);
+                dp.repaintHole(c);
             }
         }
 
@@ -469,7 +475,7 @@ public class Window extends Panel {
             }
             //#enddebug
 
-            softKeyRepaint();
+            softKeyRepaint(softkey);
         }
 
         public void updateUI() {

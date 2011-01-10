@@ -671,6 +671,13 @@ public class DesktopPane extends Canvas implements Runnable {
                 gtmp.drawString(m, (getWidth() - (font.stringWidth(m) + 10)) / 2 + 5, (getHeight() - (font.getHeight() + 10)) / 2 + 5, Graphics.TOP | Graphics.LEFT);
             }
 
+            // there is a bug on blackberry that if it is processing a repaint and it is the last thing on the event queue
+            // and in that repaint we call repaint again, the 2nd repaint will never get called, even though it does get put on the queue
+            // we want the queue to have something more on it, so we put a empty task if we know we need another repaint
+            if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY && (fullrepaint || !repaintComponent.isEmpty())) {
+                invokeLater(dummyThread);
+            }
+
         }
         catch (Throwable th) {
             //#debug warn
@@ -678,6 +685,12 @@ public class DesktopPane extends Canvas implements Runnable {
             Logger.error(th);
         }
 
+    }
+    static Thread dummyThread;
+    static {
+        if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
+            dummyThread=new Thread();
+        }
     }
 
     /**

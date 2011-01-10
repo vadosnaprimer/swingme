@@ -61,4 +61,10 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
         return "MenuRenderer";
     }
 
+    //#mdebug debug
+    public String toString() {
+        return super.toString()+"["+component+"]";
+    }
+    //#enddebug
+
 }
