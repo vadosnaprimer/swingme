@@ -939,14 +939,14 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
-        if (w!=null) {
-            if (fade==null) {
-                w.repaint();
-            }
-            else {
-                repaint();
-            }
-        }
+        //if (w!=null) {
+        //    if (fade==null) {
+        //        w.repaint();
+        //    }
+        //    else {
+                repaint(); // full is needed as softkeys may have changed and may be outside of window
+        //    }
+        //}
     }
 
     /**
@@ -964,19 +964,19 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#mdebug warn
             else {
-                Logger.warn("cant remove, this window is not visible: " + w);
+                Logger.warn("cant remove, this window is not visible or null: " + w);
                 Logger.dumpStack();
             }
             //#enddebug
         }
-        if (w!=null) {
-            if (fade==null) {
-                repaintHole(w);
-            }
-            else {
-                repaint();
-            }
-        }
+        //if (w!=null) {
+        //    if (fade==null) {
+        //        repaintHole(w);
+        //    }
+        //    else {
+                repaint(); // full is needed as softkeys may have changed and may be outside of window
+        //    }
+        //}
     }
 
     /**
@@ -1006,22 +1006,22 @@ public class DesktopPane extends Canvas implements Runnable {
             //#enddebug
         }
         
-        if (old!=null) {
-            if (fade==null) {
-                repaintHole(old);
-            }
-            else {
-                repaint();
-            }
-        }
-        if (w!=null) {
-            if (fade==null) {
-                w.repaint();
-            }
-            else {
-                repaint();
-            }
-        }
+        //if (old!=null) {
+        //    if (fade==null) {
+        //        repaintHole(old);
+        //    }
+        //    else {
+                repaint(); // full is needed as softkeys may have changed and may be outside of window
+        //    }
+        //}
+        //if (w!=null) {
+        //    if (fade==null) {
+        //        w.repaint();
+        //    }
+        //    else {
+        //        repaint();
+        //    }
+        //}
 
     }
 
