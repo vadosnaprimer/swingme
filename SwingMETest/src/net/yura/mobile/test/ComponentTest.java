@@ -553,7 +553,9 @@ public class ComponentTest  extends Section{
         }
         else if ("testCamera".equals(actionCommand)) {
             cameraPanel = new Camera();
-            addToContentPane(cameraPanel, makeButton("Capture","cameraCapture") );
+            Button cameraCapture = makeButton("Capture","cameraCapture");
+            cameraCapture.setMnemonic( KeyEvent.KEY_SOFTKEY3 ); // works on blackberry too
+            addToContentPane(cameraPanel, cameraCapture );
             cameraPanel.setActionListener(this);
             cameraPanel.setActionCommand("cameraCaptureDone");
         }
