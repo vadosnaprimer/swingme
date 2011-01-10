@@ -275,7 +275,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                     if (videoCtrl.getDisplayWidth() != dispW ||
                         videoCtrl.getDisplayHeight() != dispW) {
 
-                        videoCtrl.setDisplaySize(dispW, dispH);
+                        setDisplaySize(videoCtrl,dispW, dispH);
                     }
                 }
 
@@ -501,7 +501,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
             videoCtrl.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, playerCanvas);
             videoCtrl.setDisplayLocation(getXOnScreen(), getYOnScreen());
-            videoCtrl.setDisplaySize(getWidth(), getHeight());
+            setDisplaySize(videoCtrl,getWidth(), getHeight());
 
             //#debug debug
             Logger.debug("Video Size = " + getWidth() + "x" + getHeight());
@@ -544,6 +544,17 @@ public class Camera extends Component implements Runnable, PlayerListener {
         //#enddebug
 
         return highestResEncoding;
+    }
+
+    private static void setDisplaySize(VideoControl videoCtrl,int w, int h) {
+        try {
+            videoCtrl.setDisplaySize(w,h);
+        }
+        catch (MediaException mex) {
+            //#debug debug
+            Logger.debug(mex);
+            //resizing is not supported or the operation failed due to hardware or software limitations.
+        }
     }
 
     private static String getEncodingParamString(String encoding, String prefix) {
