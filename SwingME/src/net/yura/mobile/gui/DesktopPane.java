@@ -453,7 +453,12 @@ public class DesktopPane extends Canvas implements Runnable {
      */
     protected void paint(Graphics gtmp) {
 
-        //Logger.debug("CANVAS PAINT!!!  fullrepaint="+fullrepaint+" repaintComponent="+repaintComponent);
+        // TODO: take copy of this first,
+        // as if a component asks for a repaint in a different thread and that requires a fullrepaint,
+        // it will only set the flag, but if a paint is in progress, the crop will not be correct
+        // This problem shows up with hiding of a tooltip prematurely, as the repaint is called from the animation thread
+        boolean doFullRepaint = fullrepaint;
+        fullrepaint = false;
 
         if (!paintdone) {
 
@@ -499,13 +504,11 @@ public class DesktopPane extends Canvas implements Runnable {
             // can not add or remove windows while this is happening
             synchronized(uiLock) {
 
-                boolean doFullRepaint;
-
                 if (clipx<=0 && clipy<=0 && clipw>=getWidth() && cliph>=getHeight()) { // the system wants us to repaint everything
-                    fullrepaint = true;
+                    doFullRepaint = true;
                 }
                 else if (repaintComponent.isEmpty()) { // we want to repaint a component but have in a previous repaint cleared our list, so we do not know
-                    fullrepaint = true;
+                    doFullRepaint = true;
                 }
 
                 // now we need to layout all the components
@@ -540,8 +543,9 @@ public class DesktopPane extends Canvas implements Runnable {
                 repaintComponent.removeAllElements();
 
                 // For thread safety, we cache fullrepaint now, and clean it
-                doFullRepaint = fullrepaint;
-                fullrepaint = false;
+
+
+//Logger.debug("PAINT fullrepaint="+doFullRepaint+" repaintComponent="+repaintComponent2+" x="+clipx+" y="+clipy+" w="+clipw+" h="+cliph);
 
                 Window currentWindow = getSelectedFrame();
 
@@ -764,7 +768,7 @@ public class DesktopPane extends Canvas implements Runnable {
      * this is called when you call repaint() on a component
      * @param rc The Component to repaint
      */
-    public void repaintComponent(Component rc) {
+    public void repaintComponent(final Component rc) {
 
         Window myWindow = rc.getWindow();
 
@@ -793,9 +797,10 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         Border insets = rc.getInsets();
         repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
-
     }
-    public void repaintHole(Component rc) {
+
+    public void repaintHole(final Component rc) {
+
         synchronized(uiLock) {
             fullrepaint = true;
         }
