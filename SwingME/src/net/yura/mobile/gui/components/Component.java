@@ -508,7 +508,7 @@ public abstract class Component {
      * to the MINIMUM that is needed for this component
      * @see javax.swing.JComponent#getMinimumSize() JComponent.getMinimumSize
      */
-    public abstract void workoutMinimumSize();
+    protected abstract void workoutMinimumSize();
 
     /**
      * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
@@ -778,6 +778,10 @@ public abstract class Component {
     public void revalidate() {
         getDesktopPane().revalidateComponent(this);
     }
+    /**
+     * @see Panel#validate()
+     * @see java.awt.Container#validate() Container.validate()
+     */
     public void validate() {
         // nothing??
     }
