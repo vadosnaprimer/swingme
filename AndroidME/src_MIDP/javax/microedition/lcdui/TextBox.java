@@ -229,7 +229,8 @@ public class TextBox extends Screen {
         //Override
         public ExtractedText getExtractedText(ExtractedTextRequest request, int flags) {
             // System.out.println("getExtractedText");
-            sendComposingText(composingText, true);
+            // WE CAN NOT CLEAR HERE, as next time setComposingText is called it will still have the full String
+            //sendComposingText(composingText, true <- this can NOT be true );
             return null;
         }
 
