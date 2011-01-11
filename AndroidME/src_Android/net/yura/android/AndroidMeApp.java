@@ -53,6 +53,11 @@ public class AndroidMeApp extends Application {
         });
     }
 
+    public static void waitForMIDletCreation() {
+        // Just wait for a dummy task to be handled.
+        instance.invokeAndWait(new Thread());
+    }
+
     // TODO: Async
     public static void startMIDlet() {
         // Needs to run on the UI thread, otherwise some of the API's will not start

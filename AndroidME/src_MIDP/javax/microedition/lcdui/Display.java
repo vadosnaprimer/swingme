@@ -157,7 +157,12 @@ public class Display
      * http://developer.android.com/resources/articles/painless-threading.html
      */
     public void callSerially(Runnable runner) {
-        AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread(runner);
+        if (AndroidMeActivity.DEFAULT_ACTIVITY == null) {
+            AndroidMeApp.getIntance().invokeLater(runner);
+        }
+        else {
+            AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread(runner);
+        }
     }
 
     public void vibrate(int duration) {
