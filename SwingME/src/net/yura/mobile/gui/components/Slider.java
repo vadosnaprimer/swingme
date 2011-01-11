@@ -20,6 +20,7 @@ package net.yura.mobile.gui.components;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
@@ -47,6 +48,8 @@ public class Slider extends Component {
     // Slider has horizontal default
     // Scrollbar has vertical default
 
+    private Font font;
+
     /**
      * Creates a horizontal slider with the range 0 to 100 and an initial value of 50.
      * @see javax.swing.JSlider#JSlider() JSlider.JSlider
@@ -64,7 +67,7 @@ public class Slider extends Component {
         this.max = max;
         this.value = value;
         extent = 0; // ZERO is the default extent for the JSlider
-        tickSpace = theme.getFont(Style.ALL).getHeight()/2;
+        tickSpace = font.getHeight()/2;
     }
 
     /**
@@ -210,6 +213,10 @@ public class Slider extends Component {
      */
     public void setMinorTickSpacing(int n) {
         minorTickSpacing = n;
+    }
+
+    public Font getFont() {
+        return font;
     }
 
     public void paintComponent(Graphics2D g) {
@@ -380,6 +387,8 @@ public class Slider extends Component {
         
         thumb = theme1.getBorder(Style.ALL);
         track = theme2.getBorder(Style.ALL);
+
+        font = theme.getFont(Style.ALL);
 
 /*
         thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
