@@ -213,8 +213,9 @@ public class Panel extends Component {
     /**
      * redo the layout
      * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
+     * @see java.awt.Container#doLayout() Container.doLayout
      */
-    public void doLayout() {
+    protected void doLayout() {
 
         if (layout!=null) {
             layout.layoutPanel(this);
