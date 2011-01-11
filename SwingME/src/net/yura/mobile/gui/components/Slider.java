@@ -118,7 +118,7 @@ public class Slider extends Component {
      */
     public void setValue(Object o) {
         if (o instanceof Integer) {
-            value = ((Integer)o).intValue();
+            setValue( ((Integer)o).intValue() );
         }
         //#mdebug warn
         else {
@@ -128,12 +128,15 @@ public class Slider extends Component {
     }
 
     public void setValue(int newValue) {
+        int oldValue = value;
         int m = max-extent;
         if (newValue>m) newValue=m;
         if (newValue<min) newValue=min;
         value=newValue;
-        fireStateChanged();
-        repaint();
+        if (value!=oldValue) {
+            fireStateChanged();
+            repaint();
+        }
     }
 
     /**
@@ -364,7 +367,7 @@ public class Slider extends Component {
             else {
                 break;
             }
-            wait(20);
+            wait(50);
         }
     }
 
