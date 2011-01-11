@@ -55,7 +55,7 @@ public class TextPane extends Component {
         //       line, some y may be visible and others not...
 
         TextStyle focusElem = getFocusElementStyle();
-        int bgColor = getCurrentBackground();
+        int bgColor = getBackground();
         int topClipY = g.getClipY();
         int bottomClipY = topClipY + g.getClipHeight();
 
@@ -660,7 +660,7 @@ public class TextPane extends Component {
 
         // Set default paragraph style
         paragStyle.setBackground(getBackground());
-        paragStyle.setForeground(getCurrentForeground());
+        paragStyle.setForeground(getForeground());
         paragStyle.setAlignment(TextStyle.ALIGN_LEFT);
 
         for (int i = 0; i < elemList.size(); i++) {

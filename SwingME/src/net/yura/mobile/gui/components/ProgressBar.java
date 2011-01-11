@@ -63,7 +63,7 @@ public class ProgressBar extends Component {
         }
         else {
 
-            g.setColor( getCurrentForeground() );
+            g.setColor( getForeground() );
 
             if (go) {
                 int thickness = 20;

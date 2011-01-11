@@ -19,7 +19,6 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Font;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.Border;
@@ -218,7 +217,7 @@ public class Label extends Component {
 			}
 
 
-			g.setColor( getCurrentForeground() );
+			g.setColor( getForeground() );
                         g.setFont(font);
 			g.drawString( drawString, tx,ty );
 		}
@@ -431,13 +430,9 @@ public class Label extends Component {
             // if the width has not been set yet
             // we will assume as can take the default amount
 
-            int borderOffset=0;
-            Border b = getBorder();
-            if (b!=null) {
-                borderOffset = b.getLeft() + b.getRight();
-            }
+            Border b = getInsets();
 
-            int resonableTextLength = getDesktopPane().getWidth() - borderOffset;
+            int resonableTextLength = getDesktopPane().getWidth() - ( b.getLeft()+b.getRight() );
             int minimumIconWidth = getIconWidth() + padding *2;
 
             return Math.max(resonableTextLength,minimumIconWidth);

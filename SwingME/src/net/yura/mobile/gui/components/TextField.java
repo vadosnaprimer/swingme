@@ -53,7 +53,7 @@ public class TextField extends TextComponent {
 		int[] oldClip = g.getClip();
 		g.clipRect(0, 0, width, height);
                 
-                g.setColor( getCurrentForeground() );
+                g.setColor( getForeground() );
                 g.setFont(font);
 		g.drawString( textString, offset, (height-font.getHeight())/2 );
 

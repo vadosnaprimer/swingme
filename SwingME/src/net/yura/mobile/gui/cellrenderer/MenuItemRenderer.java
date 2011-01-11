@@ -47,7 +47,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
 
     public void paintComponent(Graphics2D g) {
         component.setSize( getWidth() , getHeight() );
-        component.setForeground( getCurrentForeground() );
+        component.setForeground( getForeground() );
         component.paintComponent(g);
     }
 

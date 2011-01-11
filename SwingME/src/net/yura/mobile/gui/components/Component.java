@@ -348,7 +348,7 @@ public abstract class Component {
             //Logger.debug("paint "+this);
             paintBorder(g);
 
-            int back = getCurrentBackground();
+            int back = getBackground();
             if ( !Graphics2D.isTransparent(back) ) {
                 g.setColor(back);
                 g.fillRect(0, 0, width, height);
@@ -363,7 +363,7 @@ public abstract class Component {
      */
     protected void paintBorder(Graphics2D g) {
 
-        Border b = getCurrentBorder();
+        Border b = getBorder();
         if (b != null) {
             b.paintBorder(this, g,width,height);
         }
@@ -375,35 +375,43 @@ public abstract class Component {
      * @see javax.swing.JComponent#getInsets() JComponent.getInsets
      */
     public Border getInsets() {
-        Border b = getCurrentBorder();
+        Border b = getBorder();
         return b==null?empty:b;
     }
 
-    public final int getCurrentBackground() {
+    /**
+     * @see java.awt.Component#getBackground() Component.getBackground
+     */
+    public final int getBackground() {
         if (background != Style.NO_COLOR) {
             return background;
         }
-        else {
-            return theme.getBackground( getCurrentState() );
+        return theme.getBackground( getCurrentState() );
+    }
+
+    /**
+     * @see javax.swing.JComponent#getBorder() JComponent.getBorder
+     * @return the border object for this component
+     */
+    public final Border getBorder() {
+        if (border != null) {
+            return border;
         }
+        return theme.getBorder( getCurrentState() );
     }
 
-    public final Border getCurrentBorder() {
-            if (border != null) {
-                return border;
-            }
-            else {
-                return theme.getBorder( getCurrentState() );
-            }
-    }
-
-    public final int getCurrentForeground() {
-            if (foreground!=Style.NO_COLOR) {
-                return foreground;
-            }
-            else {
-                return theme.getForeground( getCurrentState() );
-            }
+    /**
+     * @see java.awt.Component#getForeground() Component.getForeground
+     */
+    public final int getForeground() {
+        if (foreground!=Style.NO_COLOR) {
+            return foreground;
+        }
+        int f = theme.getForeground( getCurrentState() );
+        if (f!=Style.NO_COLOR || parent==null) {
+            return f;
+        }
+        return parent.getForeground();
     }
 
     /**
@@ -538,8 +546,8 @@ public abstract class Component {
      * @see javax.swing.JComponent#isOpaque() JComponent.isOpaque
      */
     public boolean isOpaque() {
-        if (Graphics2D.isOpaque( getCurrentBackground() )) return true;
-        Border b = getCurrentBorder();
+        if (Graphics2D.isOpaque( getBackground() )) return true;
+        Border b = getBorder();
         if (b!=null) {
             return b.isBorderOpaque();
         }
@@ -574,14 +582,6 @@ public abstract class Component {
             return getName();
     }
     //#enddebug
-
-    /**
-     * @return the border object for this component
-     * @see javax.swing.JComponent#getBorder() JComponent.getBorder
-     */
-    public Border getBorder() {
-            return border;
-    }
 
     /**
      * @param border the border to be rendered for this component
@@ -650,26 +650,11 @@ public abstract class Component {
     }
 
     /**
-     * @see java.awt.Component#getForeground() Component.getForeground
-     */
-    public int getForeground() {
-            return foreground;
-    }
-
-    /**
      * @see javax.swing.JComponent#setForeground(java.awt.Color) JComponent.setForeground
      */
     public void setForeground(int foreground) {
             this.foreground = foreground;
     }
-
-    /**
-     * @see java.awt.Component#getBackground() Component.getBackground
-     */
-    public int getBackground() {
-            return background;
-    }
-
 
 
     /**

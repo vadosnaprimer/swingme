@@ -458,7 +458,7 @@ public class Slider extends Component {
         int extentW = tmp[2];
 
         if (paintTicks) {
-            g.setColor( getCurrentForeground() );
+            g.setColor( getForeground() );
             h = h - tickSpace;
             int side = tmp[0]+(thumb!=null?thumb.getTop():0);
             int space = w-side*2;

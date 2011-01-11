@@ -784,7 +784,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 name = name.substring(0, name.length() - 1);
             }
 
-            g.setColor( getCurrentForeground() );
+            g.setColor( getForeground() );
 
             if (gridView.isSelected()) {
                 if (img != null) {

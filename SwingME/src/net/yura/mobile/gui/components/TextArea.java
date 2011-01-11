@@ -121,7 +121,7 @@ public class TextArea extends TextComponent {
 			y -= height;
 		}
 */
-                g.setColor( getCurrentForeground() );
+                g.setColor( getForeground() );
 
                 int i, startLine, endLine, lineHeight;
 
