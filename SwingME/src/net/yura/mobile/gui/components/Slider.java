@@ -36,9 +36,11 @@ public class Slider extends Component {
 
     public static final int MINIMUM_THUMB_SIZE=5;
 
-    private Border track,thumb;
+    private Border track;
+
+	protected Border thumb;
     private int min,max,value,extent;
-    private boolean horizontal = true;
+    protected boolean horizontal = true;
 
     private boolean paintTicks = false;
     private int minorTickSpacing,majorTickSpacing;
