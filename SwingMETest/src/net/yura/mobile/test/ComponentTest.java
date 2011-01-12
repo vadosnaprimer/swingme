@@ -158,6 +158,17 @@ public class ComponentTest  extends Section{
             }
         });
 
+        Slider slider2 = new Slider(0, 11, 6);
+ 	slider2.setPaintTicks(true);
+ 	slider2.setMajorTickSpacing(5);
+ 	slider2.setMinorTickSpacing(1);
+ 	//slider2.setPaintLabels( true );
+ 	slider2.setSnapToTicks( true );
+
+        slider2.setHorizontal(false);
+        slider2.setPreferredSize(-1,100);
+        components.addElement(slider2);
+
         return components;
     }
 
