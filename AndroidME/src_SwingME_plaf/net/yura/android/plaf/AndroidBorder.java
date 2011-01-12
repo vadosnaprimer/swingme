@@ -1,13 +1,14 @@
 package net.yura.android.plaf;
 
-import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.ProgressBar;
 import net.yura.mobile.gui.components.RadioButton;
+import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.Style;
 import android.graphics.PixelFormat;
@@ -59,6 +60,12 @@ public class AndroidBorder implements Border {
     }
 
     public void paintBorder(Component c, Graphics2D g, int width, int height) {
+        if (c instanceof Slider || c instanceof ProgressBar) {
+            int value = ((Integer)c.getValue()).intValue();
+            int min = (c instanceof Slider)?((Slider)c).getMinimum():0;//((ProgressBar)c).getMinimum();
+            int max = (c instanceof Slider)?((Slider)c).getMaximum():((ProgressBar)c).getMaximum();
+            drawable.setLevel( 10000/(max-min) * value );
+        }
         setDrawableState(c, drawable);
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
         canvas.save();
