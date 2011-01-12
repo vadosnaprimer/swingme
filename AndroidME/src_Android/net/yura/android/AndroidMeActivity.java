@@ -40,6 +40,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
         if (DEFAULT_ACTIVITY != null) {
             super.finish(); // This can only run as single instance.
+            return;
         }
 
         DEFAULT_ACTIVITY = this;
