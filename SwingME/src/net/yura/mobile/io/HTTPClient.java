@@ -90,7 +90,9 @@ public abstract class HTTPClient extends QueueProcessorThread {
         HttpConnection httpConn = null;
         InputStream is = null;
         OutputStream os = null;
-
+        int respCode = 0;
+        Hashtable headers = new Hashtable();
+        
         try {
 
             if ((!request.post || request.postData!=null) && getpost!=null) {
@@ -103,29 +105,34 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
 
             httpConn = (HttpConnection)Connector.open(url);
-
             // Setup HTTP Request
             httpConn.setRequestMethod(request.post || request.postData!=null ? HttpConnection.POST : HttpConnection.GET);
-            if(request.headers!=null) for(Enumeration e = request.headers.keys(); e.hasMoreElements(); )
-            {
-                String key = e.nextElement().toString();
-                httpConn.setRequestProperty(key, request.headers.get(key).toString());
+
+            if(request.headers!=null) {
+            	Enumeration e = request.headers.keys();
+            	while(e.hasMoreElements()) {
+	                String key = e.nextElement().toString();
+	                httpConn.setRequestProperty(key, request.headers.get(key).toString());
+	            }
             }
             //httpConn.setRequestProperty("User-Agent",
             //  "Profile/MIDP-1.0 Confirguration/CLDC-1.0");
-            os = httpConn.openOutputStream();
-            if (request.postData!=null ) {
-                os.write(request.postData);
+            if(request.post) {
+            	// opening an output stream will automatically set the request method to POST
+            	// BE Careful!!!!!
+	            os = httpConn.openOutputStream();
+	            if (request.postData!=null ) {
+	                os.write(request.postData);
+	            }
+	            else if(request.post && getpost!=null) {
+	                os.write(getpost.getBytes());
+	            }
+	            os.flush();
             }
-            else if(request.post && getpost!=null) {
-                os.write(getpost.getBytes());
-            }
-            os.flush();
             /** Initiate connection and check for the response code. If the
             response code is HTTP_OK then get the content from the target
              **/
-            int respCode = httpConn.getResponseCode();
-            Hashtable headers = new Hashtable();
+            respCode = httpConn.getResponseCode();
             for (int i = 0;; i++) {
                 String key = httpConn.getHeaderFieldKey(i);
                 if (key == null) {
@@ -144,7 +151,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
             {
                 case HttpConnection.HTTP_OK:
                     is = httpConn.openInputStream();
-                    onResult(request, respCode, headers, is,httpConn.getLength());
+                    onResult(request, respCode, headers, is, httpConn.getLength());
                     break;
                     //case HttpConnection.HTTP_MOVED_PERM:
                 case HttpConnection.HTTP_SEE_OTHER:
@@ -161,13 +168,13 @@ public abstract class HTTPClient extends QueueProcessorThread {
                     }
                 default:
                     is = httpConn.openInputStream();
-                    onResult(request, respCode, headers, is,httpConn.getLength());
+                    onResult(request, respCode, headers, is, httpConn.getLength());
                     break;
             }
         }
         catch(Exception ex) {
             Logger.info(ex);
-            onError(request, 0, null, ex);
+            onError(request, respCode, headers, ex);
         }
         finally {
             NativeUtil.close(httpConn);
