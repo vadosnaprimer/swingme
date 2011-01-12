@@ -126,6 +126,12 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("ListRendererCollapsed",listCellRendererCollapsed);
 
 
+        Style gridCellRendererCollapsed = new Style(defaultStyle);
+        gridCellRendererCollapsed.addBorder( getBorder(ctx, android.R.style.Widget_ListView, android.R.attr.listSelector) ,Style.ALL);
+        setForegroundColor(ctx, gridCellRendererCollapsed, android.R.style.TextAppearance_Large,ListCellRenderer.class); // Has defined in simple_list_item.xml
+        setStyleFor("GridRendererCollapsed",gridCellRendererCollapsed);
+
+
         // com.android.internal.R.style.Theme_Dialog_Alert
         // Dialog
         Style dialogStyle = new Style(defaultStyle);
