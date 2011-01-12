@@ -379,7 +379,7 @@ public class Slider extends Component {
 
     public String getName() {
         String name = super.getName();
-        
+
         return name;
     }
 
@@ -389,7 +389,7 @@ public class Slider extends Component {
 
         Style theme1 = DesktopPane.getDefaultTheme(name+"Thumb");
         Style theme2 = DesktopPane.getDefaultTheme(name+"Track");
-        
+
         thumb = theme1.getBorder(Style.ALL);
         track = theme2.getBorder(Style.ALL);
 
@@ -462,7 +462,8 @@ public class Slider extends Component {
         if (paintTicks) {
             g.setColor( getForeground() );
             h = h - tickSpace;
-            int side = tmp[0]+(thumb!=null?thumb.getTop():0);
+
+            int side = tmp[0]+(thumb!=null?thumb.getLeft():0);
             int space = w-side*2;
 
             if (minorTickSpacing>0) {
@@ -562,12 +563,12 @@ public class Slider extends Component {
             ) {
 
         final int box = track!=null?((track.getLeft() >h)?h:track.getLeft()):0;
-        final int topBotton = (thumb==null)?0:thumb.getTop()+thumb.getBottom();
+        final int leftRight = (thumb==null)?0:thumb.getLeft()+thumb.getRight();
 
         final int space1 = w - box * 2;
 
         int extentW = (int) ( (extent*space1)/(double)max + 0.5);
-        int min1 = (topBotton<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:topBotton;
+        int min1 = (leftRight<MINIMUM_THUMB_SIZE)?MINIMUM_THUMB_SIZE:leftRight;
         min1 = min1>(space1/2)?space1/2:min1;
 
         int space = space1;
@@ -604,7 +605,6 @@ public class Slider extends Component {
         else if ((startX+extentW) > (box+space1)) {
             extentW = box+space1-startX;
         }
-
         return new int[] {box,x+startX,extentW};
     }
 
