@@ -227,8 +227,8 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Drawable d1 = getDrawable(ctx, "btn_circle");
         Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
 
-        Rect padding = getAdjustedDensityRect(ctx, 5, 8, 5, 8);
-        comboStyle2.addBorder( new IconBorder(padding.top,padding.left,padding.bottom,padding.right,new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
+        Rect comboBox2Padding = getAdjustedDensityRect(ctx, 5, 8, 5, 8);
+        comboStyle2.addBorder( new IconBorder(comboBox2Padding.top,comboBox2Padding.left,comboBox2Padding.bottom,comboBox2Padding.right,new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
         setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
         setStyleFor("ComboBox2",comboStyle2);
 
@@ -277,8 +277,17 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // -- Slider --
         Style sliderThumbStyle = new Style(defaultStyle);
         Drawable slider = getDrawable(ctx,  android.R.style.Widget_SeekBar, android.R.attr.thumb);
+
+//Drawable drawable = slider;
+//Rect padding = new Rect();
+//drawable.getPadding(padding);
+//System.out.println("drawable = "+drawable+" "+drawable.getIntrinsicWidth()+" "+drawable.getIntrinsicHeight()+" "+drawable.getMinimumWidth()+" "+drawable.getMinimumHeight()+" bounds="+drawable.getBounds()+" padding="+padding);
+
         Rect sliderSize = new Rect(slider.getIntrinsicWidth()/2, slider.getIntrinsicHeight()/2, slider.getIntrinsicWidth()/2, slider.getIntrinsicHeight()/2);
-        sliderThumbStyle.addBorder(new AndroidBorder(slider,sliderSize),Style.ALL);
+        sliderThumbStyle.addBorder(new CompoundBorder(
+                new EmptyBorder(0,-sliderSize.left/2,0,-sliderSize.right/2),
+                new AndroidBorder(slider,sliderSize)
+                ),Style.ALL);
         setStyleFor("SliderThumb",sliderThumbStyle);
 
         Style sliderTrackStyle = new Style(defaultStyle);
