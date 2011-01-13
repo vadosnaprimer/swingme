@@ -22,6 +22,7 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.RadioButton;
+import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
@@ -36,7 +37,15 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Context ctx = AndroidMeActivity.DEFAULT_ACTIVITY;
 
         TypedArray a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.colorForeground});
-        int c = a2.getColor(0, 0xFF000000);
+        int c = a2.getColor(0, 0xFFFF00FF);
+        a2.recycle();
+
+        a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.textColorSecondary});
+        int c2 = a2.getColor(0, 0xFFFF00FF);
+        a2.recycle();
+
+        a2 = ctx.getTheme().obtainStyledAttributes(new int[]{android.R.attr.textColorTertiary});
+        int c3 = a2.getColor(0, 0xFFFF00FF);
         a2.recycle();
 
 //        ctx.setTheme(android.R.style.Theme_Black);
@@ -311,6 +320,10 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
                 ) ,Style.ALL);
         setStyleFor("SliderTrack",sliderTrackStyle);
 
+        Style sliderStyle = new Style(defaultStyle);
+        //setForegroundColor(ctx, comboStyle2, android.R.style.Widget_SeekBar,Slider.class); // does nothing
+        sliderStyle.addForeground(c3, Style.DISABLED);
+        setStyleFor("Slider",sliderStyle);
 
 
 
