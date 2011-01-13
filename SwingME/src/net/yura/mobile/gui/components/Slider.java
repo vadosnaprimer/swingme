@@ -90,6 +90,23 @@ public class Slider extends Component {
     }
 
     /**
+     * @see javax.swing.JSlider#removeChangeListener(javax.swing.event.ChangeListener) JSlider.removeChangeListener
+     */
+    public void removeChangeListener(ChangeListener l) {
+        if (chl == l) { chl = null; }
+        //#mdebug warn
+        else {
+            Logger.warn("trying to remove a ChangeListener that is not registered");
+            Logger.dumpStack();
+        }
+        if (l==null) {
+            Logger.warn("trying to remove a null ChangeListener");
+            Logger.dumpStack();
+        }
+        //#enddebug
+    }
+
+    /**
      * @see javax.swing.JSlider#fireStateChanged() JSlider.fireStateChanged
      */
     protected void fireStateChanged() {
