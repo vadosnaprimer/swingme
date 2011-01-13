@@ -27,6 +27,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
     private View defaultView;
     private View waitingView;
+    private long backgroundTime;
 
     public static AndroidMeActivity DEFAULT_ACTIVITY;
 
@@ -103,6 +104,22 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             //#debug debug
             e.printStackTrace();
         }
+    }
+
+    //Override
+    protected void onStop() {
+        super.onStop();
+        backgroundTime = System.currentTimeMillis();
+    }
+
+    //Override
+    protected void onStart() {
+        super.onStart();
+        backgroundTime = 0L;
+    }
+
+    public long getInBackgroundTime() {
+        return (backgroundTime <= 0) ? 0 : (System.currentTimeMillis() - backgroundTime);
     }
 
     private void showContentView(final View view) {
