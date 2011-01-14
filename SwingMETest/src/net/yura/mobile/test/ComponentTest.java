@@ -140,14 +140,14 @@ public class ComponentTest  extends Section{
 
         components.addElement(textField);
 
-        Slider slider = new Slider(0, 11, 6);
+        Slider slider = new Slider(0, 7, 4);
  	slider.setPaintTicks(true);
- 	slider.setMajorTickSpacing(5);
+ 	slider.setMajorTickSpacing(3);
  	slider.setMinorTickSpacing(1);
  	//slider.setPaintLabels( true );
  	slider.setSnapToTicks( true );
 
-        slider.setPreferredSize(100, -1);
+        slider.setPreferredSize(200, -1);
         slider.setBorder( new LineBorder(0xFFFF0000) );
 
         components.addElement(slider);
@@ -168,6 +168,8 @@ public class ComponentTest  extends Section{
         slider2.setHorizontal(false);
         slider2.setPreferredSize(-1,100);
         components.addElement(slider2);
+
+        slider2.setExtent(3);
 
         return components;
     }
