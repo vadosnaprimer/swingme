@@ -295,7 +295,6 @@ public class Slider extends Component {
                         pointX,
                         pointY
                 );
-                startPos = pointX;
             }
             else {
                 click = doClickInScrollbar(
@@ -309,11 +308,13 @@ public class Slider extends Component {
                         pointY,
                         pointX
                 );
-                startPos = pointY;
             }
-            startValue = value;
 
-            if (click==CLICK_UP || click == CLICK_DOWN) {
+            if (click==CLICK_THUMB) {
+                startPos = horizontal?pointX:pointY;
+                startValue = value;
+            }
+            else if (click==CLICK_UP || click == CLICK_DOWN) {
                 getDesktopPane().animateComponent(this);
             }
             else if (click==CLICK_PGUP || click == CLICK_PGDOWN) {
@@ -322,12 +323,7 @@ public class Slider extends Component {
                 int h = horizontal?height:width;
                 int p = horizontal?pointX:pointY;
 
-
-                int[] offsets = getOffsets(0, 0, w, h, 0, extent, max);
-
-                int pixels = p -offsets[0] -offsets[2]/2;
-
-                int newValue = ((max-extent)*  pixels)/ (w - offsets[0]*2 - offsets[2]);
+                int newValue = getNewValue(0, 0, w, h, extent, max, p);
 
                 setValue(newValue);
             }
@@ -351,7 +347,7 @@ public class Slider extends Component {
                         p-startPos
                   );
 
-                  setValue(newValue);
+                setValue(newValue);
             }
         }
 
@@ -625,9 +621,19 @@ public class Slider extends Component {
         return new int[] {box,x+startX,extentW};
     }
 
-    public int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
+    public int getNewValue(int x,int y,int w,int h,int extent, int max,int pixels) {
         int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
-        return value + ((max-extent)*  pixels)/ (w - offsets[0]*2 - offsets[2]);
+        return getNewValue(offsets, w, h, extent, max, pixels);
+    }
+
+    public int getNewValue(int x,int y,int w,int h,int startValue,int extent, int max,int pixels) {
+        int[] offsets = getOffsets(x,y, w, h, startValue, extent, max);
+        return getNewValue(offsets,w,h,extent,max,pixels- (-offsets[1]-offsets[2]/2) );
+    }
+
+    private int getNewValue(int[] offsets,int w,int h,int extent, int max,int pixels) {
+        int p = pixels -offsets[0] -offsets[2]/2;
+        return ((max-extent)*  p)/ (w - offsets[0]*2 - offsets[2]);
     }
 
 }
