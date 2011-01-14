@@ -1005,7 +1005,7 @@ public class DesktopPane extends Canvas implements Runnable {
             }
             //#enddebug
         }
-        
+
         //if (old!=null) {
         //    if (fade==null) {
         //        repaintHole(old);
@@ -1405,13 +1405,15 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     private void setupIndicatorPosition() {
-        int w = indicator.getWidthWithBorder();
-        int h = indicator.getHeightWithBorder();
-        if (sideSoftKeys) {
-            indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
-        }
-        else {
-            indicator.setBoundsWithBorder( (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ?0:(getWidth()-w), 0, w, h);
+        if (indicator != null) {
+            int w = indicator.getWidthWithBorder();
+            int h = indicator.getHeightWithBorder();
+            if (sideSoftKeys) {
+                indicator.setBoundsWithBorder(0, getHeight() - h, w, h);
+            }
+            else {
+                indicator.setBoundsWithBorder( (Midlet.getPlatform() == Midlet.PLATFORM_SONY_ERICSSON) ?0:(getWidth()-w), 0, w, h);
+            }
         }
     }
 
