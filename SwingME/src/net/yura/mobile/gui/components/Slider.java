@@ -627,8 +627,8 @@ public class Slider extends Component {
     }
 
     public int getNewValue(int x,int y,int w,int h,int startValue,int extent, int max,int pixels) {
-        int[] offsets = getOffsets(x,y, w, h, startValue, extent, max);
-        return getNewValue(offsets,w,h,extent,max,pixels- (-offsets[1]-offsets[2]/2) );
+        int[] offsets = getOffsets(x,y, w, h, 0, extent, max);
+        return startValue + getNewValue(offsets, w, h, extent, max, pixels +offsets[0] +offsets[2]/2 );
     }
 
     private int getNewValue(int[] offsets,int w,int h,int extent, int max,int pixels) {
