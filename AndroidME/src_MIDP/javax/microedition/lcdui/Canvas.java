@@ -193,11 +193,37 @@ public abstract class Canvas extends Displayable {
     public View getView() {
 
         if (linearLayout==null) {
-            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
+            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY) {
+
+                // See: WORK-AROUND for restartInput()
+
+                //Override
+                protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
+                    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+
+                    if (gainFocus) {
+                        canvasView.getInputManager().restartInput(this);
+                        canvasView.requestFocus();
+                    }
+                }
+
+                //Override
+                public boolean onCheckIsTextEditor() {
+                    return true;
+                }
+
+                //Override
+                public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+                    return  canvasView.onCreateInputConnection(outAttrs);
+                }
+            };
+
             this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
             canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             linearLayout.addView(canvasView);
+            linearLayout.setFocusable(true);
+            linearLayout.setFocusableInTouchMode(true);
         }
 
         return linearLayout;
@@ -700,12 +726,33 @@ public abstract class Canvas extends Displayable {
             }
         }
 
+        //Override
+        public boolean onCheckIsTextEditor() {
+            return true;
+        }
+
+        @Override
+        protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
+            super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+
+            if (gainFocus) {
+                getInputManager().restartInput(this);
+            }
+        }
+
         private void showNativeTextInput() {
             fixVirtualKeyboard();
 //            System.out.println(">>>>>> showNativeTextInput");
             InputMethodManager m = getInputManager();
-            m.restartInput(this);
+            //m.restartInput(this);
             m.showSoftInput(this, InputMethodManager.SHOW_FORCED);
+
+            // WORK-AROUND for restartInput(): Sonny Ericsson and others... The
+            // restartInput() is buggy and does not clean properly. We need
+            // to change the focus to another view, and then back to the
+            // canvas. For now we change focus to our parent, and then it
+            // will set it back gain to the canvas
+            linearLayout.requestFocus();
         }
 
         private void hideNativeTextInput() {
