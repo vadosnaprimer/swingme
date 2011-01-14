@@ -223,6 +223,12 @@ public abstract class MIDlet {
             String update = url.substring( "update:".length() );
 
             try {
+
+                if (new File("no.update").exists()) {
+                    System.out.println("UPDATE STOPPED BY no.update FILE");
+                    return false;
+                }
+
                 String fileName = update.substring( update.lastIndexOf('/')+1 );
 
                 InputStream in = new java.net.URL(update).openStream();
