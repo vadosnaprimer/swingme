@@ -323,7 +323,7 @@ public class Slider extends Component {
                 int h = horizontal?height:width;
                 int p = horizontal?pointX:pointY;
 
-                int newValue = getNewValue(0, 0, w, h, extent, max, p);
+                int newValue = getNewValueSlider(0, 0, w, h, extent, max, p);
 
                 setValue(newValue);
             }
@@ -336,7 +336,7 @@ public class Slider extends Component {
                 int h = horizontal?height:width;
                 int p = horizontal?pointX:pointY;
 
-                int newValue = getNewValue(
+                int newValue = getNewValueSlider(
                         0,
                         0,
                         w,
@@ -621,22 +621,30 @@ public class Slider extends Component {
         return new int[] {box,x+startX,extentW};
     }
 
-    public int getNewValue(int x,int y,int w,int h,int extent, int max,int pixels) {
+    public int getNewValueSlider(int x,int y,int w,int h,int extent, int max,int pixels) {
         int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
-        return getNewValue(offsets, w, h, extent, max, pixels);
+        return getNewValueSlider(offsets, w, h, extent, max, pixels);
     }
 
-    public int getNewValue(int x,int y,int w,int h,int startValue,int extent, int max,int pixels) {
+    public int getNewValueSlider(int x,int y,int w,int h,int startValue,int extent, int max,int pixels) {
         int[] offsets = getOffsets(x,y, w, h, startValue, extent, max);
-        return getNewValue(offsets, w, h, extent, max, offsets[1]+offsets[2]/2+pixels  );
+        return getNewValueSlider(offsets, w, h, extent, max, offsets[1]+offsets[2]/2+pixels  );
     }
 
-    private int getNewValue(int[] offsets,int w,int h,int extent, int max,int p) {
+    private int getNewValueSlider(int[] offsets,int w,int h,int extent, int max,int p) {
         float barWidth = w - offsets[0] * 2 - offsets[2];	// the maximum pixels between lowest and highest position slider can take 
         float pixels = p - offsets[0] - offsets[2] / 2;		// requested slider position in pixels - in range [0..barWidth]
         float numberOfDivisions = max - extent;				// number of free ticks e.g. With 10 ticks and slider over two ticks => we get 8 divisions
         float newValue = pixels / barWidth * numberOfDivisions + 0.5f;	// bump half increment up so that value snaps to nearest tick
         return (int) newValue;
+    }
+
+    /**
+     * this method is used by the ScrollPane
+     */
+    public int getNewValue(int x,int y,int w,int h,int value,int extent, int max,int pixels) {
+        int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
+        return value + ((max-extent)*  pixels)/ (w - offsets[0]*2 - offsets[2]);
     }
 
 }
