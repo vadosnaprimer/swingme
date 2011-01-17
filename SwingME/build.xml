@@ -13,7 +13,7 @@
 		<mkdir dir="build"/>
 		<mkdir dir="dist"/>
 
-		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="../SwingMETest/lib/midletrunner.jar:../SwingMETest/lib/opt.jar:../SwingMETest/lib/me4se3d.jar:lib/UtilME.jar"/>
+		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="../SwingMETest/lib/midletrunner.jar:../SwingMETest/lib/opt.jar:../SwingMETest/lib/m3gbasic.jar:lib/UtilME.jar"/>
 
                 <unzip src="lib/UtilME.jar" dest="build"/>
 
