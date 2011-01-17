@@ -38,6 +38,7 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.microedition.io.ConnectionNotFoundException;
+import javax.swing.JOptionPane;
 
 /**
  * @API MIDP-1.0
@@ -243,6 +244,9 @@ public abstract class MIDlet {
                 if (fileName.toUpperCase().endsWith(".ZIP")) {
                     unzip(fileName);
                 }
+
+                JOptionPane.showMessageDialog(null, "update done! click OK to close.");
+                System.exit(0);
 
             }
             catch (Exception ex) {
