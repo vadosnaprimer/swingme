@@ -94,9 +94,15 @@ public class TextBox extends Screen {
         this.constraints = constraints;
     }
 
-    private class TextBoxView extends View implements InputConnection {
+    // HACK/WORK-AROUND for restartInput(): Sonny Ericsson and others...
+    // InputMethodManager.restartInput() method is buggy and does not clean the
+    // composing text. Changing the focus to another view, and then back to the
+    // canvas fixes the problem on SE Phones, but breaks Samsung's (Galaxy S, etc).
+    // Making composingText member static will keep the composing text from older
+    // TextBox's, in case restartInput() doesn't clean it.
+    private static CharSequence composingText = "";
 
-        CharSequence composingText = "";
+    private class TextBoxView extends View implements InputConnection {
 
         public TextBoxView(Context context) {
             super(context);
