@@ -35,7 +35,6 @@ public class ScrollPane extends Panel implements Runnable {
 
     public static final int MODE_NONE=-1;
     public static final int MODE_SCROLLBARS=0;
-    public static final int MODE_FLOATING_SCROLLBARS=3;
     public static final int MODE_SCROLLARROWS=1;
     public static final int MODE_INDICATOR=2;
 
@@ -111,7 +110,6 @@ public class ScrollPane extends Panel implements Runnable {
     public void setSize(int w, int h) {
 
         switch (mode) {
-            case MODE_FLOATING_SCROLLBARS: // fall though
             case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
             case MODE_SCROLLARROWS: // fall though
             case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : 0; break;
@@ -274,7 +272,6 @@ public class ScrollPane extends Panel implements Runnable {
         switch (mode) {
             case MODE_SCROLLBARS: return height-getViewPortY()-((getView().getWidth()> (width-getViewPortX()) )?barThickness:0);
             case MODE_SCROLLARROWS: return (getView().getHeight() > height)?height-(barThickness*2):height;
-            case MODE_FLOATING_SCROLLBARS:
             case MODE_NONE:
             case MODE_INDICATOR: return height;
             default: throw new RuntimeException();
@@ -288,7 +285,6 @@ public class ScrollPane extends Panel implements Runnable {
         switch (mode) {
             case MODE_SCROLLBARS: return width-getViewPortX()-((getView().getHeight()>vph)?barThickness:0);
             case MODE_SCROLLARROWS: return (getView().getWidth() > width)?width-(barThickness*2):width;
-            case MODE_FLOATING_SCROLLBARS:
             case MODE_NONE:
             case MODE_INDICATOR: return width;
             default: throw new RuntimeException();
@@ -298,7 +294,6 @@ public class ScrollPane extends Panel implements Runnable {
         switch (mode) {
             case MODE_SCROLLARROWS: return (getView().getWidth() > width)?barThickness:0;
             case MODE_SCROLLBARS:
-            case MODE_FLOATING_SCROLLBARS:
             case MODE_NONE:
             case MODE_INDICATOR: return 0;
             default: throw new RuntimeException();
@@ -308,7 +303,6 @@ public class ScrollPane extends Panel implements Runnable {
         switch (mode) {
             case MODE_SCROLLARROWS: return (getView().getHeight() > height)?barThickness:0;
             case MODE_SCROLLBARS:
-            case MODE_FLOATING_SCROLLBARS:
             case MODE_NONE:
             case MODE_INDICATOR: return 0;
             default: throw new RuntimeException();
@@ -409,7 +403,6 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         switch (mode) {
             case MODE_NONE: return;
-            case MODE_FLOATING_SCROLLBARS:
             case MODE_SCROLLBARS: drawScrollBars(g); return;
             case MODE_SCROLLARROWS: drawScrollArrows(g,false); return;
             case MODE_INDICATOR: drawScrollArrows(g,true); return;
