@@ -199,13 +199,15 @@ public class RecordStoreImpl extends AbstractRecordStore  {
                         int count=-1;
                         int length=-1;
                         int i=-1;
+
+                        records = new Vector();
+
 			try {
 				DataInputStream dis = new DataInputStream(new FileInputStream(file));
 
 				version = dis.readInt();
 				lastModified = dis.readLong();
 				count = dis.readInt();
-				records = new Vector();
 
 				for (i = 0; i < count; i++) {
 					length = dis.readInt();
@@ -238,8 +240,6 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 					refCount = 0;
 					throw new RecordStoreNotFoundException();
 				}
-
-				records = new Vector();
 			
 				writeToFile();
 			}
