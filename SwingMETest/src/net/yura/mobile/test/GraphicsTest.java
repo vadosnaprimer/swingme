@@ -11,6 +11,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.OptionPane;
@@ -114,15 +115,29 @@ public class GraphicsTest extends Section {
         }
         else if ("urlImage".equals(actionCommand)) {
 
-            Panel scaleImagePanel = new Panel();
+            final Panel scaleImagePanel = new Panel();
 
-            try {
-                Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png");
-                scaleImagePanel.add( new Label( new Icon(img) ) );
-            }
-            catch (Exception ex) {
-                scaleImagePanel.add( new Label( ex.toString() ) );
-            }
+            final Label l1 = new Label();
+
+            new Thread() {
+            	public void run() {
+
+            		try {
+                        Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png"+
+                                (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY?";deviceside=true":"")
+                                );
+                        l1.setIcon( new Icon(img) ) ;
+                    }
+                    catch (Exception ex) {
+                    	l1.setText(ex.toString());
+                    }
+                    scaleImagePanel.revalidate();
+                    scaleImagePanel.repaint();
+
+            	};
+            }.start();
+
+            scaleImagePanel.add(l1);
 
             addToScrollPane(scaleImagePanel, null);
         }
