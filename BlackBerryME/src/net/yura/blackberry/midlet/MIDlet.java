@@ -4,6 +4,9 @@ import javax.microedition.lcdui.Display;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.KeyListener;
 import net.rim.device.api.ui.Keypad;
+import net.rim.device.api.ui.Screen;
+import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.container.FullScreen;
 // import net.rim.device.api.ui.VirtualKeyboard; // API - 4.7.0 does not work on 'BlackBerry Bold (4.6)'
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
@@ -31,6 +34,12 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     }
 
     public boolean keyDown(int keycode, int time) {
+    	
+    	Class screen = UiApplication.getUiApplication().getActiveScreen().getClass();
+    	if (net.rim.device.api.ui.component.Dialog.class==screen) return false;
+    	if ("net.rim.device.api.ui.menu.DefaultMenuScreen".equals(screen.getName())) return false;
+
+    	
     	Object canvas = Display.getDisplay(this).getCurrent();
     	if (!(canvas instanceof DesktopPane)) return false;
     	
