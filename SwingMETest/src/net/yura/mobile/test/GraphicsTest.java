@@ -1,9 +1,11 @@
 package net.yura.mobile.test;
 
+import java.io.InputStream;
+import javax.microedition.io.Connector;
+import javax.microedition.io.HttpConnection;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
-
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -11,17 +13,18 @@ import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
+import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.io.HTTPClient;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.ImageUtil;
 
-
 /**
  *
- * @author Administrator
+ * @author Yura & Jane
  */
 public class GraphicsTest extends Section {
 
@@ -35,6 +38,7 @@ public class GraphicsTest extends Section {
         addTest("Water Ripple", "waterRipple");
         addTest("Draw Offscreen", "drawOffscreen");
         addTest("Scale Image", "scaleImage");
+        addTest("Image from URL", "urlImage");
     }
 
     public void openTest(String actionCommand) {
@@ -108,7 +112,42 @@ public class GraphicsTest extends Section {
 
             addToScrollPane(scaleImagePanel, null);
         }
+        else if ("urlImage".equals(actionCommand)) {
+
+            Panel scaleImagePanel = new Panel();
+
+            try {
+                Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png");
+                scaleImagePanel.add( new Label( new Icon(img) ) );
+            }
+            catch (Exception ex) {
+                scaleImagePanel.add( new Label( ex.toString() ) );
+            }
+
+            addToScrollPane(scaleImagePanel, null);
+        }
+        else {
+            OptionPane.showMessageDialog(null, "unknown action: "+actionCommand, "error", OptionPane.WARNING_MESSAGE);
+        }
     }
+
+    public static Image loadImage(String url) throws Exception {
+        HttpConnection hpc = null;
+        InputStream dis = null;
+        try {
+          hpc = (HttpConnection) Connector.open(url);
+          int length = (int) hpc.getLength();
+          dis = hpc.openInputStream();
+          byte[] data = HTTPClient.getData(dis, length);
+          return Image.createImage(data, 0, data.length);
+        }
+        finally {
+          if (hpc != null)
+            hpc.close();
+          if (dis != null)
+            dis.close();
+        }
+  }
 
     class DrawRegionPanel extends Panel implements ActionListener {
         Image img;
