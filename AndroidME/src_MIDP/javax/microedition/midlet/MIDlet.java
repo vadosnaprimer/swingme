@@ -106,10 +106,13 @@ public abstract class MIDlet {
                     platformLastUrl = url;
                     platformLastTime = now;
 
-
                     Class cls = Class.forName(content.getHost());
                     Intent i = new Intent(activity, cls);
                     i.setData(content);
+
+                    if ("true".equalsIgnoreCase(content.getQueryParameter("isSingleton"))) {
+                        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    }
 
                     if (isProtoNative) {
                         activity.startActivityForResult(i, 0);
