@@ -6,7 +6,6 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.util.ImageUtil;
 
 public class ImageView extends Component {
 
@@ -42,9 +41,8 @@ public class ImageView extends Component {
 
     // Override
     public void workoutMinimumSize() {
-        // TODO Auto-generated method stub
-        width = 100;
-        height = 100;
+        width = (bgImage == null) ? 1 : 100;
+        height = (bgImage == null) ? 1 : 100;
     }
 
     // Override
