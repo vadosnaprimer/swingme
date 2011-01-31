@@ -18,6 +18,7 @@
 package net.yura.mobile.util;
 
 import java.util.Vector;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -94,8 +95,15 @@ public class StringUtil {
             StringBuffer buffer = new StringBuffer(str);
 
             int i = str.indexOf(replace);
-            buffer.delete(i, i + replace.length());
-            buffer.insert(i, replacement);
+            if (i>=0) {
+                buffer.delete(i, i + replace.length());
+                buffer.insert(i, replacement);
+            }
+            //#mdebug info
+            else {
+                Logger.info("can not replace "+replace+" with "+replacement+" in string "+str);
+            }
+            //#enddebug
 
             return buffer.toString();
         }
