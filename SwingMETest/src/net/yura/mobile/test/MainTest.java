@@ -442,17 +442,58 @@ public class MainTest extends Section {
 
 
             String[] labels = {
-                    "abcdefgh",
-                    "ijklmnopqr",
-                    "stuvwxyz",
-                    "ABCDEFGH",
-                    "IJKLMNOPQR",
-                    "STUVWXYZ",
+                    "abcdefgh ijklmnopqr",
+                    "stuvwxyz ABCDEFGH",
+                    "IJKLMNOPQR STUVWXYZ",
                     "!$#|@/\\\"':;!_-",
 
             };
 
             Font[] fonts = {
+                    Font.getDefaultSystemFont(),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_MONOSPACE, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+
+
+
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+
+
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_BOLD, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_SMALL),
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_MEDIUM),
+                    new Font(javax.microedition.lcdui.Font.FACE_SYSTEM, javax.microedition.lcdui.Font.STYLE_ITALIC, javax.microedition.lcdui.Font.SIZE_LARGE),
+
+
                     Font.getFont("/font/test.fnt",new String[] { "/font/test.png" }, new int[] {0xFFFFFFFF }),
                     Font.getFont("/font/calibri.fnt", new String[] { "/font/calibri.png" },new int[] {0xFF000000 } ),
 
@@ -467,6 +508,66 @@ public class MainTest extends Section {
                     Font.getFont("/basicfont/treasure.font"),
             };
 
+            String[] fontNames = new String[] {
+                    "DefaultSystemFont",
+
+                    "MONOSPACE PLAIN SMALL",
+                    "MONOSPACE PLAIN MEDIUM",
+                    "MONOSPACE PLAIN LARGE",
+
+                    "MONOSPACE BOLD SMALL",
+                    "MONOSPACE BOLD MEDIUM",
+                    "MONOSPACE BOLD LARGE",
+
+                    "MONOSPACE ITALIC SMALL",
+                    "MONOSPACE ITALIC MEDIUM",
+                    "MONOSPACE ITALIC LARGE",
+
+
+
+
+                    "PROPORTIONAL PLAIN SMALL",
+                    "PROPORTIONAL PLAIN MEDIUM",
+                    "PROPORTIONAL PLAIN LARGE",
+
+                    "PROPORTIONAL BOLD SMALL",
+                    "PROPORTIONAL BOLD MEDIUM",
+                    "PROPORTIONAL BOLD LARGE",
+
+                    "PROPORTIONAL ITALIC SMALL",
+                    "PROPORTIONAL ITALIC MEDIUM",
+                    "PROPORTIONAL ITALIC LARGE",
+
+
+
+                    "SYSTEM PLAIN SMALL",
+                    "SYSTEM PLAIN MEDIUM",
+                    "SYSTEM PLAIN LARGE",
+
+                    "SYSTEM BOLD SMALL",
+                    "SYSTEM BOLD MEDIUM",
+                    "SYSTEM BOLD LARGE",
+
+                    "SYSTEM ITALIC SMALL",
+                    "SYSTEM ITALIC MEDIUM",
+                    "SYSTEM ITALIC LARGE",
+
+
+                    "test",
+                    "calibri",
+
+                    "font1-small",
+                    "font1-med",
+                    "font1-large",
+
+                    "font2-small",
+                    "font2-med",
+                    "font2-large",
+
+                    "treasure",
+
+            };
+
             int colors[] = {
 
                     0xFF000000,
@@ -478,16 +579,16 @@ public class MainTest extends Section {
                     0xFFFFFF00
 
             };
-
+/*
             for(int l = 0; l < labels.length; l++) {
                 Label label = new Label(labels[l]);
                 panel.add(label);
 
             }
-
+*/
             for(int f = 0; f < fonts.length; f++ ) {
 
-                panel.add(new Label("Font " + f));
+                panel.add(new Label( fontNames[f] ));
 
                 int color = 0;
 
