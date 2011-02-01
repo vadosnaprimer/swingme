@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
@@ -351,6 +352,24 @@ public class Slider extends Component {
             }
         }
 
+    }
+
+    public boolean processKeyEvent(KeyEvent keypad) {
+
+        // TODO up and down may need to be reversed
+        // also when you have got to the end, we may want to return false, so that focus can move
+        int left = horizontal?Canvas.LEFT:Canvas.UP;
+        int right = horizontal?Canvas.RIGHT:Canvas.DOWN;
+
+        if (keypad.isDownAction(left)){
+            setValue(value-1);
+            return true;
+        }
+        else if (keypad.isDownAction(right)){
+             setValue(value+1);
+             return true;
+        }
+        return (keypad.justReleasedAction(left) || keypad.justReleasedAction(right));
     }
 
     public void workoutMinimumSize() {
