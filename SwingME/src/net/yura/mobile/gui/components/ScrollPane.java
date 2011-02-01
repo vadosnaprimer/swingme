@@ -746,11 +746,12 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 }
             }
 
-        } catch(Throwable e) {
+        }
+        catch(Throwable e) {
             Logger.error(e);
-            if (ScrollPane.dragScrollPane == this) {
-                ScrollPane.dragScrollPane = null;
-            }
+
+            // we use this instead of using brackets as blackberry build script does not like brackets in catch blocks
+            ScrollPane.dragScrollPane = ScrollPane.dragScrollPane == this?null:ScrollPane.dragScrollPane;
         }
 
         //System.out.println("END ScrollPane Thread... (" + (System.currentTimeMillis() - startAnimTime) + "ms)");
