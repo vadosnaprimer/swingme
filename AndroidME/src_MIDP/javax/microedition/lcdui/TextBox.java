@@ -103,6 +103,7 @@ public class TextBox extends Screen {
     private static CharSequence composingText = "";
 
     private class TextBoxView extends View implements InputConnection {
+        private CharSequence textBeforeCursor = " ";
 
         public TextBoxView(Context context) {
             super(context);
@@ -211,7 +212,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean setComposingText(CharSequence text, int newCursorPosition) {
-            // System.out.println("setComposingText: " + text);
+            // System.out.println("setComposingText: >" + text + "<");
             sendComposingText(text, false);
             return true;
         }
@@ -248,8 +249,8 @@ public class TextBox extends Screen {
 
         //Override
         public CharSequence getTextBeforeCursor(int n, int flags) {
-            // System.out.println("getTextBeforeCursor");
-            return " ";
+            // System.out.println("getTextBeforeCursor: " + textBeforeCursor);
+            return textBeforeCursor;
         }
 
         //Override
@@ -308,6 +309,8 @@ public class TextBox extends Screen {
             if (currentCanvasView != null) {
                 currentCanvasView.sendText(text);
             }
+
+            textBeforeCursor = text;
         }
 
         private void sendComposingText(CharSequence text, boolean done) {
