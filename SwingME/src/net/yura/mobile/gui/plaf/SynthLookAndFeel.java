@@ -149,6 +149,7 @@ public class SynthLookAndFeel extends LookAndFeel {
 
             // vars local to this style
             EmptyBorder insets = null;
+            boolean opaque=true; // in J2SE Synth the default is true
 
             // read start tag
             while (parser.nextTag() != KXmlParser.END_TAG) {
@@ -184,6 +185,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                                 Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]),
                                                 "true".equals(paintCenter) || "Y".equals(paintCenter)
                                                 , borderfill);
+                                        border.opaque = opaque;
                                         newStyle.addBorder(border, st);
                                     }
                                 }
@@ -290,7 +292,10 @@ public class SynthLookAndFeel extends LookAndFeel {
                         else if ("opaque".equals(name)) {
 
                                 String value = parser.getAttributeValue(null, "value");
-				if ("false".equals(value)) {
+
+                                opaque = !"false".equals(value);
+
+				if (!opaque) { // if it is transparent!
 					newStyle.addBackground(Style.NO_COLOR, Style.ALL);
 				}
 

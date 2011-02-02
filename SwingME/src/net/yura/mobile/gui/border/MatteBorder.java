@@ -19,7 +19,6 @@ package net.yura.mobile.gui.border;
 
 import java.util.Random;
 import javax.microedition.lcdui.Image;
-import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
@@ -142,6 +141,7 @@ public class MatteBorder extends EmptyBorder {
 
 	}
 
+        public boolean opaque=true;
         public MatteBorder(Icon i, int top, int left, int bottom, int right, int t, int l, int b, int r, boolean back, int color) {
             super(top,left,bottom,right);
             activeimage = i;
@@ -293,7 +293,7 @@ public class MatteBorder extends EmptyBorder {
 
 
     public boolean isBorderOpaque() {
-        return back || (activeimage!=null && Graphics2D.isOpaque(color) );
+        return opaque && (back || (activeimage!=null && Graphics2D.isOpaque(color) ) );
     }
 
     public void setColor(int c) {
