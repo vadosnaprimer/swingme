@@ -111,6 +111,7 @@ public class MainTest extends Section {
         addMenuItem(mainMenu,"synthTheme3", "Synth Visto");
         addMenuItem(mainMenu,"synthTheme4", "Synth Telus");
         addMenuItem(mainMenu,"synthTheme5", "Synth LG");
+        addMenuItem(mainMenu,"synthThemeSize", "Synth Size");
 
     }
 
@@ -235,6 +236,9 @@ public class MainTest extends Section {
         }
         else if ("synthTheme5".equals(actionCommand)) {
             loadSynthSkin("/lg/synthLG.xml");
+        }
+        else if ("synthThemeSize".equals(actionCommand)) {
+            loadSynthSkinSize("/badoo/","/synth.xml");
         }
 
         else if ("info".equals(actionCommand)) {
@@ -641,6 +645,63 @@ public class MainTest extends Section {
         setupNewLookAndFeel( synth );
 
     }
+
+    private void loadSynthSkinSize(final String dir,String file) {
+
+        final String size;
+
+
+
+        String dpi=null;
+        try {
+            dpi = System.getProperty("display.dpi");
+        }
+        catch(Throwable th) {
+            th.printStackTrace();
+        }
+
+
+        if ("mdpi".equals(dpi)) {
+            size = "medium";
+        }
+        else if ("hdpi".equals(dpi)) {
+            size = "high";
+        }
+        else if ("ldpi".equals(dpi)) {
+            size = "low";
+        }
+        else {
+            DesktopPane dp = DesktopPane.getDesktopPane();
+            int wh = dp.getWidth()<dp.getHeight()?dp.getWidth():dp.getHeight();
+            if (wh<200) { // 300
+                size = "low";
+            }
+            else if (wh<350) { // 450
+                size = "medium";
+            }
+            else {
+                size = "high";
+            }
+        }
+
+
+        synth = new SynthLookAndFeel() {
+            protected InputStream getResourceAsStream(String path) {
+                return getClass().getResourceAsStream(dir+size+path);
+            }
+        };
+
+        try {
+            synth.load(  getClass().getResourceAsStream(dir+size+file) );
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        setupNewLookAndFeel( synth );
+
+    }
+
     /**
      * This is VERY far from perfect
      * but swing does it something like this

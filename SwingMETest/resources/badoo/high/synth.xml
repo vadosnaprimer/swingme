@@ -1,0 +1,980 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--<!DOCTYPE synth SYSTEM "SynthME.dtd">-->
+
+<synth>
+    <style id="global">
+        <font name="PROPORTIONAL" size="MEDIUM" path="/font/small.fnt" id="calibri">
+            <fontImage path="/font/small_0.png" color="#000000"/>
+        </font>
+        <font name="PROPORTIONAL" size="MEDIUM" style="BOLD" path="/font/large.fnt" id="calibri_bold">
+            <fontImage path="/font/large_0.png" color="#000000"/>
+        </font>
+<!--
+        <font name="PROPORTIONAL" size="MEDIUM" id="calibri"/>
+        <font name="PROPORTIONAL" size="MEDIUM" style="BOLD" id="calibri_bold"/>
+-->
+        <state>
+            <font idref="calibri" />
+            <color type="FOREGROUND" value="#555555"/>
+        </state>
+    </style>
+    <bind style="global" key=".*"/>
+
+    <style id="frame">
+        <state>
+            <color type="BACKGROUND" value="#404042"/>
+        </state>
+    </style>
+    <bind style="frame" key="Frame"/>
+	<style id="loadingWindow">
+        <state>
+            <color type="BACKGROUND" value="#000000"/>
+        </state>
+    </style>
+    <bind style="loadingWindow" key="LoadingFrame"/>
+	
+    <style id="transparent">
+        <state>
+            <color type="BACKGROUND" value="#00000000"/>
+        </state>
+    </style>
+    <bind style="transparent" key="LoadingPane"/>
+    <bind style="transparent" key="Transparent"/>
+
+    <style id="menu">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <color type="BACKGROUND" value="#ffffff"/>
+        </state>
+        <state value="FOCUSED">
+            <color type="FOREGROUND" value="#ffffff"/>
+            <color type="BORDERFILL" value="#3f7fca"/>
+            <color type="BACKGROUND" value="#0000ff"/>
+        </state>
+    </style>
+    <bind style="menu" key="Menu"/>
+
+    <style id="tooltip">
+        <insets top="0" left="0" bottom="0" right="2"/>
+        <state>
+            <color type="BACKGROUND" value="#888888"/>
+        </state>
+    </style>
+    <bind style="tooltip" key="ToolTip"/>
+
+
+    <style id="menuBar">
+
+        <imageIcon id="aniImage" path="/images/loader-sprite.png"/>
+        <state>
+            <property key="loader-sprite" value="aniImage"/>
+        </state>
+
+        <!--
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <imagePainter path="/images/softkeyMenu.png" sourceInsets="15 1 1 1" paintCenter="true"/>
+        </state>
+        -->
+    </style>
+    <bind style="menuBar" key="MenuBar"/>
+
+
+	<style id="dialog">
+		<!--<imageIcon id="warning_icon" path="/images/hint_warning.png" x="0" y="0" width="62" height="62"/>-->
+		<!--<imageIcon id="info_icon" path="/images/hint_tick.png" x="0" y="0" width="62" height="62"/>-->
+                <!-- these two aren't recognised by Dialog class, but we need them loaded -->
+                <!--<imageIcon id="restricted_icon" path="/images/hint_padlock.png" x="0" y="0" width="62" height="62"/>-->
+                <!--<imageIcon id="pim_icon" path="/images/hint_connections.png" x="0" y="0" width="62" height="62"/>-->
+        <state>
+            <!-- <property key="WARNING_MESSAGE" value="warning_icon"/>
+            <property key="INFORMATION_MESSAGE" value="info_icon"/> -->
+            <color type="BACKGROUND" value="#404042"/>
+		</state>
+	</style>
+	<bind style="dialog" key="Dialog"/>
+
+    <style id="nextItemButton">
+        <insets top="0" left="0" bottom="3" right="0"/>
+        <state>
+            <!--<imagePainter path="/images/nextItemButton.png" sourceInsets="0 0 0 30" paintCenter="false"/>-->
+            <color type="FOREGROUND" value="#000000"/>
+            <!--<font clone="calibriFONT_bold"/>-->
+        </state>
+        <state value="FOCUSED">
+            <!--<imagePainter path="/images/nextItemButtonSelected.png" sourceInsets="0 0 0 30" paintCenter="false"/>-->
+            <color type="FOREGROUND" value="#0000ff"/>
+            <!--<font clone="calibriFONT_bold"/>-->
+        </state>
+    </style>
+    <bind style="nextItemButton" key="NextItemButton"/>
+
+	  <style id="preListTopButton">
+        <insets top="0" left="3" bottom="0" right="0"/>
+        <state>
+            <!--<imagePainter path="/images/nextItemButton.png" sourceInsets="0 0 0 30" paintCenter="false"/>-->
+            <color type="FOREGROUND" value="#000000"/>
+            <!--<font clone="calibriFONT_bold"/>-->
+        </state>
+        <state value="FOCUSED">
+            <!--<imagePainter path="/images/nextItemButtonSelected.png" sourceInsets="0 0 0 30" paintCenter="false"/>-->
+            <color type="FOREGROUND" value="#0000ff"/>
+            <!--<font clone="calibriFONT_bold"/>-->
+        </state>
+    </style>
+    <bind style="preListTopButton" key="PreListTopButton"/>
+	
+    <style id="nextItemNoFocus">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <imagePainter path="/images/arrow.png" sourceInsets="10 8 10 10" paintCenter="true"/>
+            <color type="FOREGROUND" value="#000000"/>
+        </state>
+        <state value="FOCUSED">
+            <color type="FOREGROUND" value="#000000"/>
+            <!--<font style="BOLD"/>-->
+        </state>
+    </style>
+    <bind style="nextItemNoFocus" key="NextItemNoFocus"/>
+
+    <style id="nextItemUnderlined">
+        <insets top="0" left="0" bottom="1" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#666666" />
+            <imagePainter path="/images/underlineGrey.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+       <state value="FOCUSED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#BFDCFE" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="nextItemUnderlined" key="NextItemUnderlined"/>
+
+    <style id="redCounter">
+        <insets top="1" left="4" bottom="2" right="4" />
+        <state>
+            <imagePainter path="/images/redBlob.png" sourceInsets="11 9 11 9" paintCenter="false"/>
+            <color type="FOREGROUND" value="#ffffff"/>
+			<color type="BORDERFILL" value="#e60000"/>
+        </state>
+    </style>
+    <bind style="redCounter" key="RedCounter"/>
+    
+    <style id="blueCounter">
+        <insets top="1" left="4" bottom="2" right="4" />
+        <state>
+            <imagePainter path="/images/blueBlob.png" sourceInsets="11 9 11 9" paintCenter="false"/>
+            <color type="FOREGROUND" value="#ffffff"/>
+			<color type="BORDERFILL" value="#2a71c4"/>
+        </state>
+    </style>
+    <bind style="blueCounter" key="BlueCounter"/>
+
+    <style id="counterButton">
+        <insets top="0" left="0" bottom="3" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#000000"/>
+            <!--<font style="BOLD"/>-->
+        </state>
+        <state value="FOCUSED">
+            <color type="FOREGROUND" value="#0000ff"/>
+            <!--<font style="BOLD"/>-->
+        </state>
+    </style>
+    <bind style="counterButton" key="CounterButton"/>
+
+    <style id="link">
+        <insets top="0" left="2" bottom="0" right="2"/>
+        <state>
+            <imagePainter path="/images/underline_with_gap.png" sourceInsets="0 0 2 0" paintCenter="false"/>
+            <color type="FOREGROUND" value="#2870C4"/>
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/textfield_selected.png" sourceInsets="1 1 2 2" paintCenter="false"/>
+            <color type="FOREGROUND" value="#2870C4"/>
+            <color type="BORDERFILL" value="#BFDCFE"/>
+        </state>
+    </style>
+    <bind style="link" key="Link"/>
+    <bind style="link" key="a"/>
+
+    <style id="underline">
+        <insets top="0" left="0" bottom="1" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#666666" />
+            <imagePainter path="/images/underlineGrey.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+       <state value="FOCUSED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#bfdcff" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+       <state value="SELECTED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#bfdcff" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="underline" key="Underline"/>
+    <bind style="underline" key="ListRendererCollapsed"/>
+    <bind style="underline" key="ListRenderer"/>
+
+    <style id="peopleList">
+        <insets top="5" left="5" bottom="5" right="5"/>
+        <state>
+            <color type="FOREGROUND" value="#666666" />
+            <imagePainter path="/images/underlineGrey.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+       <state value="SELECTED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#bfdcff" />
+            <color type="BORDERFILL" value="#bfdcff" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="peopleList" key="PeopleListCellRenderer"/>
+
+    <style id="nextItemList">
+        <insets top="1" left="0" bottom="1" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#666666" />
+        </state>
+		<state value="FOCUSED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <imagePainter path="/images/nextItemButton.png" sourceInsets="0 0 2 25" paintCenter="false"/>
+        </state>
+       <state value="SELECTED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <imagePainter path="/images/nextItemButtonSelected.png" sourceInsets="0 0 2 25" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="nextItemList" key="NextItemList"/>
+
+    <!-- ERRORS -->
+    <style id="panelInError">
+        <insets top="0" left="0" bottom="1" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#ff0000" />
+            <imagePainter path="/images/error.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+        <state value="FOCUSED">
+            <color type="BACKGROUND" value="#ffc7c7" />
+            <imagePainter path="/images/error.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="panelInError" key="ErrorPanel"/>
+
+    <style id="textFieldError">
+    <insets top="2" left="3" bottom="3" right="3"/>
+        <state>
+            <imagePainter path="/images/textfield_error.png" sourceInsets="1 1 2 2"/>
+            <color type="FOREGROUND" value="#000000"/>
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+    </style>
+    <bind style="textFieldError" key="ErrorTextComponent"/>
+
+    <style id="whiteLabel">
+           <state>
+                  <color type="FOREGROUND" value="#ffffff"/>
+           </state>
+    </style>
+    <bind style="whiteLabel" key="WhiteLabel"/>
+    <bind style="whiteLabel" key="ToolTip"/>
+    <bind style="whiteLabel" key="ImageUnavailablePane"/>
+
+    <style id="labelBlue">
+        <state value="SELECTED">
+            <font idref="calibri_bold" />
+            <color type="FOREGROUND" value="#3c7dca"/>
+        </state>
+    </style>
+    <bind style="labelBlue" key="Label"/>
+
+    <style id="errorMessage">
+        <state>
+            <color type="FOREGROUND" value="#ff0000"/>
+        </state>
+    </style>
+    <bind style="errorMessage" key="ErrorMessage"/>
+
+    <style id="locationLabel">
+        <state>
+            <color type="FOREGROUND" value="#ffffff"/>
+            <color type="BACKGROUND" value="#3aad00"/>
+        </state>
+    </style>
+    <bind style="locationLabel" key="LocationLabel"/>
+
+    <style id="albumTitleLabel">
+        <state>
+            <!--<font style="BOLD"/>-->
+        </state>        
+    </style>
+    <bind style="albumTitleLabel" key="AlbumTitleLabel"/>
+
+    <style id="text">
+        <insets top="2" left="3" bottom="3" right="3"/>
+        <state>
+            <imagePainter path="/images/textfield.png" sourceInsets="1 1 2 2" />
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/textfield_selected.png" sourceInsets="1 1 2 2" />
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+        <state value="DISABLED">
+            <color type="FOREGROUND" value="#8f8f8f"/>
+        </state>
+    </style>
+    <bind style="text" key="TextField"/>
+    <bind style="text" key="SequenceTextField"/>
+    <bind style="text" key="TextArea"/>
+    <bind style="text" key="EditableTextArea"/>
+
+    <!-- STATIC TEXT AREA - THESE ARE THE INSTRUCTION FIELDS -->
+    <style id="staticText">
+        <insets top="0" left="0" bottom="0" right="0"/>
+    </style>
+    <bind style="staticText" key="TextArea"/>
+    
+    <!--  <style id="text_old">
+        <insets top="3" left="6" bottom="3" right="6"/>
+        <state>
+            <imagePainter path="/images/textfield.png" sourceInsets="13 15 13 15" paintCenter="false"/>
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+        <state value="FOCUSED">				<!- - top, left, bottom, right - ->
+            <imagePainter path="/images/textfield_selected.png" sourceInsets="13 15 13 15" paintCenter="false"/>
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+    </style>-->
+
+
+
+     <!-- CHAT SPECIFIC STYLING  -->
+
+    <style id="userChat">
+        <insets top="2" left="5" bottom="10" right="5"/>
+        <state>
+            <color type="FOREGROUND" value="#2870c4" />
+            <imagePainter path="/images/chatbox_blue.png" sourceInsets="5 5 10 16" paintCenter="false"/>
+            <color type="BORDERFILL" value="#d4e7ff"/>
+        </state>
+    </style>
+    <bind style="userChat" key="MyChatMessage"/>
+
+    <style id="theirChat">
+        <insets top="2" left="5" bottom="10" right="5"/>
+        <state>
+            <color type="FOREGROUND" value="#388b02" />
+            <imagePainter path="/images/chatbox_green.png" sourceInsets="5 16 10 5" paintCenter="false"/>
+            <color type="BORDERFILL" value="#c8ffa4"/>
+        </state>
+    </style>
+    <bind style="theirChat" key="TheirChatMessage"/>
+
+    <style id="chatMessage">
+        <insets top="2" left="5" bottom="2" right="5"/>
+        <state>
+            <property key="gap" value="5" type="integer"/>
+        </state>
+    </style>
+    <bind style="chatMessage" key="ChatListRenderer"/>
+
+
+
+    <style id="mainMenuButton">
+        <imageIcon id="disImage" path="/images/disableFeature.png"/>
+        <state>
+            <property key="disableFeature" value="disImage"/>
+        </state>
+    </style>
+    <bind style="mainMenuButton" key="MainMenuButton"/>
+
+
+    <style id="window">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <imageIcon id="dimImage" path="/images/semiTransparent.png"/>
+        <state>
+            <color type="BACKGROUND" value="#666666"/>
+            <property key="dim" value="dimImage"/>
+        </state>
+    </style>
+    <bind style="window" key="Window"/>
+
+    <style id="panelTransparent">
+        <state>
+            
+        </state>
+    </style>
+    <bind style="panelTransparent" key="TPanel" />
+
+    <style id="menuTransparent">
+        <state>
+            <color type="FOREGROUND" value="#000000" />
+        </state>
+    </style>
+    <bind style="menuTransparent" key="MPanel" />
+
+
+    <style id="panelWhite">
+        <state>
+            <color type="BACKGROUND" value="#ffffff"/>
+        </state>
+    </style>
+    <bind style="panelWhite" key="Panel"/>
+    <bind style="panelWhite" key="Form"/>
+	
+    <style id="titleBar">
+        <insets top="2" left="0" bottom="2" right="0"/>
+        <state>
+            <imagePainter path="/images/titleBar.png" sourceInsets="12 4 11 4" paintCenter="false"/>
+			<!-- <color type="BORDERFILL" value="#FF0099" /> -->
+			<color type="BORDERFILL" value="#397bc9" />
+			<property key="titleAlignment" type="string" value="center"/>
+        </state>
+    </style>
+    <bind style="titleBar" key="TitleBar"/>
+    
+    <style id="transBar">
+        <state>
+            <imagePainter path="/images/semiTransparent.png" sourceInsets="0 0 0 0" paintCenter="true"/>
+            <property key="titleAlignment" type="string" value="center"/>
+        </state>
+    </style>
+    <bind style="transBar" key="ImageFrameTitleBar"/>
+
+    <style id="titleBarLabel">
+        <state>
+            <font idref="calibri_bold" />
+            <color value="#ffffff" type="FOREGROUND"/>
+        </state>
+    </style>
+    <bind style="titleBarLabel" key="TitleBarLabel"/>
+
+   <!-- <style id="textWindow">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <imagePainter path="/images/mainWindow.png" sourceInsets="20 115 20 115" paintCenter="false"/>
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+    </style>
+    <bind style="textWindow" key="TextWindow"/>-->
+
+    <style id="checkbox">
+        <imageIcon id="check" path="/images/iconGrid.png" x="0" y="23" width="23" height="23"/>
+        <imageIcon id="check_selected" path="/images/iconGrid.png" x="0" y="0" width="23" height="23"/>
+        <imageIcon id="check_focused" path="/images/iconGrid.png" x="0" y="69" width="23" height="23"/>
+        <imageIcon id="check_focused_selected" path="/images/iconGrid.png" x="0" y="46" width="23" height="23"/>
+        <imageIcon id="check_disabled_selected" path="/images/iconGrid.png" x="0" y="0" width="23" height="23"/>
+        <imageIcon id="check_disabled" path="/images/iconGrid.png" x="0" y="23" width="23" height="23"/>
+        <state>
+            <property key="icon" value="check"/>
+        </state>
+        <state value="FOCUSED">
+            <property key="icon" value="check_focused"/>
+        </state>
+        <state value="SELECTED">
+            <property key="icon" value="check_selected"/>
+        </state>
+        <state value="FOCUSED AND SELECTED">
+            <property key="icon" value="check_focused_selected"/>
+        </state>
+        <state value="DISABLED AND SELECTED">
+            <property key="icon" value="check_disabled_selected"/>
+        </state>
+        <state value="DISABLED">
+            <property key="icon" value="check_disabled"/>
+        </state>
+    </style>
+    <bind style="checkbox" key="CheckBox"/>
+    <bind style="checkbox" key="CheckBoxRenderer"/>
+
+
+  <style id="radioButton">
+		<imageIcon id="radio_on" path="/images/iconGrid.png" x="0" y="92" width="23" height="23"/>
+		<imageIcon id="radio_on_focused" path="/images/iconGrid.png" x="0" y="115" width="23" height="23"/>
+		<imageIcon id="radio_on_disabled" path="/images/iconGrid.png" x="0" y="92" width="23" height="23"/>
+		<imageIcon id="radio_off" path="/images/iconGrid.png" x="0" y="23" width="23" height="23"/>
+		<imageIcon id="radio_off_focused" path="/images/iconGrid.png" x="0" y="69" width="23" height="23"/>
+		<imageIcon id="radio_off_disabled" path="/images/iconGrid.png" x="0" y="23" width="23" height="23"/>
+		<state>
+			<property key="icon" value="radio_off"/>
+		</state>
+		<state value="SELECTED">
+			<property key="icon" value="radio_on"/>
+		</state>
+		<state value="FOCUSED">
+			<property key="icon" value="radio_off_focused"/>
+		</state>
+		<state value="FOCUSED AND SELECTED">
+			<property key="icon" value="radio_on_focused"/>
+		</state>
+		<state value="DISABLED">
+			<property key="icon" value="radio_off_disabled"/>
+		</state>
+		<state value="DISABLED AND SELECTED">
+			<property key="icon" value="radio_on_disabled"/>
+		</state>
+	</style>
+	<bind style="radioButton" key="RadioButton"/>
+
+
+
+    <style id="scrollpane">
+
+        <imageIcon id="thumb_top" path="/images/thumb.png" x="0" y="0" width="14" height="1"/>
+        <imageIcon id="thumb_fill" path="/images/thumb.png" x="0" y="1" width="14" height="50"/>
+        <imageIcon id="thumb_bottom" path="/images/thumb.png" x="0" y="51" width="14" height="1"/>
+        <imageIcon id="track_top" path="/images/track.png" x="0" y="0" width="22" height="1"/>
+        <imageIcon id="track_fill" path="/images/track.png" x="0" y="1" width="22" height="52"/>
+        <imageIcon id="track_bottom" path="/images/track.png" x="0" y="53" width="22" height="1"/>
+
+        <state>
+            <property key="thumbTop" value="thumb_top"/>
+            <property key="thumbBottom" value="thumb_bottom"/>
+            <property key="trackTop" value="track_top"/>
+            <property key="trackBottom" value="track_bottom"/>
+            <property key="thumbFill" value="thumb_fill"/>
+            <property key="trackFill" value="track_fill"/>
+
+            <color type="BACKGROUND" value="#ffffff" />
+        </state>
+    </style>
+    <bind style="scrollpane" key="ScrollPane"/>
+
+    <style id="progressBar">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <imagePainter path="/images/control_progressBar.png" sourceInsets="1 1 1 1" paintCenter="false"/>
+            <color type="BORDERFILL" value="#2a71c4" />
+        </state>
+    </style>
+    <bind style="progressBar" key="ProgressBar"/>
+
+    <!-- SOFTKEY POPUP MENU -->
+    <style id="menuRenderer">
+        <state>
+            <color type="FOREGROUND" value="#000000"/>
+        </state>
+        <state value="SELECTED">
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BACKGROUND" value="#2a71c4"/>
+        </state>
+    </style>
+    <bind style="menuRenderer" key="MenuRenderer"/>
+
+    <style id="menuItem">
+        <imageIcon id="arrow" path="/images/goto-arrow.png"/>
+        <state>
+               <property key="icon" value="arrow"/>
+        </state>
+    </style>
+    <bind style="menuItem" key="MenuItem"/>
+
+    <!-- SOFTKEY BUTTONS -->
+    <style id="softkeyRenderer">
+        <insets top="1" left="3" bottom="2" right="3" />
+        <state>
+            <imagePainter path="/images/menuGreyGradButton.png" sourceInsets="6 9 6 9" paintCenter="false"/>
+			<color type="FOREGROUND" value="#ffffff"/>
+			<!--<font name="PROPORTIONAL" size="SMALL" />-->
+			<color type="BORDERFILL" value="#767676"/>
+        </state>
+    </style>
+    <bind style="softkeyRenderer" key="SoftkeyRenderer"/>
+
+    <!-- COMBO BOX-->
+    <style id="dropdown">
+        <insets top="2" left="2" bottom="2" right="23"/>
+        <state>
+            <imagePainter path="/images/control_dropdown.png" sourceInsets="2 2 2 23" paintCenter="false"/>
+            <color type="FOREGROUND" value="#999999"/>
+			<color type="BORDERFILL" value="#FFFFFF"/>
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/control_dropdown_focus.png" sourceInsets="2 2 2 23" paintCenter="false"/>
+            <color type="BACKGROUND" value="#ffffff"/>
+            <color type="FOREGROUND" value="#000000"/>
+			<color type="BORDERFILL" value="#FFFFFF"/>
+        </state>
+    </style>
+    <bind style="dropdown" key="ComboBox"/>
+
+    <style id="dropdownItem">
+        <insets top="0" left="5" bottom="0" right="5"/>
+        <state>
+            <color type="BACKGROUND" value="#eeeeee"/>
+        </state>
+        <state>
+            <color type="BACKGROUND" value="#0000ff"/>
+            <color type="FOREGROUND" value="#ffffff"/>
+        </state>
+    </style>
+    <bind style="dropdownItem" key="Choice"/>
+
+    <style id="section">
+        <insets top="5" left="5" bottom="5" right="5"/>
+        <state>
+            <imagePainter path="/images/section.png" sourceInsets="12 12 12 12" paintCenter="false"/>
+            <color type="BORDERFILL" value="#ffffff"/>
+        </state>
+    </style>
+    <bind style="section" key="Section"/>
+
+
+	<!-- TEXT -->
+	<style id="blackText">
+            <state>
+                <color type="FOREGROUND" value="#000000"/>
+            </state>
+	</style>
+    <bind style="blackText" key="BlackText"/>
+    <bind style="blackText" key="TextPane"/>
+
+	<style id="blackTextBold">
+		<state>
+            <font idref="calibri_bold" />
+            <color type="FOREGROUND" value="#000000"/>
+        </state>
+	</style>
+    <bind style="blackTextBold" key="PersonProfileButton"/>
+    <bind style="blackTextBold" key="MainMenuButton"/>
+    <bind style="blackTextBold" key="SettingsButton"/>
+    <bind style="blackTextBold" key="BlackTextBold"/>
+    <bind style="blackTextBold" key="DeleteAccountOption"/>
+    <bind style="blackTextBold" key="PeopleDetailCellRendererName"/>
+
+	<style id="greyText">
+		<state>
+            <color type="FOREGROUND" value="#666666"/>
+        </state>
+	</style>
+    <bind style="greyText" key="GreyText"/>
+    <bind style="greyText" key="GreyTextPane"/>
+    <bind style="greyText" key="ProfileWish"/>
+    
+
+    <style id="lightGreyText">
+		<state>
+            <color type="FOREGROUND" value="#8f8f8f"/>
+        </state>
+	</style>
+    <bind style="lightGreyText" key="LightGreyText"/>
+
+    <style id="inactiveGreyText">
+		<state>
+            <color type="FOREGROUND" value="#cccccc"/>
+        </state>
+	</style>
+    <bind style="inactiveGreyText" key="StatusOfflineLabel"/>
+    
+    <style id="greenText">
+        <state>
+            <color type="FOREGROUND" value="#339900"/>
+        </state>
+    </style>
+    <bind style="greenText" key="StatusOnlineLabel"/>
+
+    <style id="amberText">
+        <state>
+            <color type="FOREGROUND" value="#FF3300"/>
+        </state>
+    </style>
+    <bind style="amberText" key="StatusIdleLabel"/>
+
+    <style id="greyHelpText">
+	<insets top="0" left="6" bottom="0" right="6"/>
+	<state>
+            <color type="FOREGROUND" value="#999999"/>
+        </state>
+	</style>
+    <bind style="greyHelpText" key="GreyHelpText"/>
+	
+	
+	
+    <!-- BUTTONS  -->
+    
+    <!-- <style id="encounterButton">
+        <insets top="0" left="5" bottom="0" right="5"/>
+        <state>
+            <imagePainter path="/images/menuButton.png" sourceInsets="10 14 10 14" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+        </state>
+        <state value="SELECTED">
+            <imagePainter path="/images/greyGradButton.png" sourceInsets="10 14 10 14" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+        </state>
+    </style>
+    <bind style="encounterButton" key="EncounterButton"/>
+    -->
+
+    <!-- The following button is an encounter button -->
+    <style id="redButton">
+        <insets top="0" left="5" bottom="0" right="5"/>
+        <state>
+            <imagePainter path="/images/menuButton.png" sourceInsets="10 5 10 5" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BORDERFILL" value="#393939"/>
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/redButton.png" sourceInsets="10 5 10 5" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BORDERFILL" value="#d12929"/>
+        </state>
+    </style>
+    <bind style="redButton" key="RedButton"/>
+
+    <!-- The following button is an encounter button -->
+    <style id="greenButton">
+        <insets top="0" left="5" bottom="0" right="5"/>
+        <state>
+            <imagePainter path="/images/menuButton.png" sourceInsets="10 5 10 5" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BORDERFILL" value="#393939"/>
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/greenButton.png" sourceInsets="10 5 10 5" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BORDERFILL" value="#4db200"/>
+        </state>
+    </style>
+    <bind style="greenButton" key="GreenButton"/>
+
+     <!-- The following button is an encounter button -->
+     <style id="greyButton">
+        <insets top="0" left="5" bottom="0" right="5"/>
+        <state>
+            <imagePainter path="/images/menuButton.png" sourceInsets="10 5 10 5" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BORDERFILL" value="#393939"/>
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/greyGradButton.png" sourceInsets="10 5 10 5" paintCenter="false"/>
+            <color type="FOREGROUND" value="#FFFFFF"/>
+            <color type="BORDERFILL" value="#939aa5"/>
+        </state>
+    </style>
+    <bind style="greyButton" key="GreyButton"/>
+    
+    
+    <style id="greyBorderButton">
+        <insets top="0" left="0" bottom="1" right="0"/>
+        <state>
+            <imagePainter path="/images/profileBG.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+            <!-- <color type="BACKGROUND" value="#ffffff"/> -->
+        </state>
+        <state value="FOCUSED">
+            <imagePainter path="/images/select_row.png" sourceInsets="0 4 4 4" paintCenter="false"/>
+            <!--<font style="BOLD"/>-->
+			<color type="BORDERFILL" value="#bfdcff" />
+        </state>
+    </style>
+    <bind style="greyBorderButton" key="ProfileButton"/>
+
+	
+    <style id="rowButton">
+        <insets top="5" left="5" bottom="5" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#000000" />
+			<imagePainter path="/images/button_row.png" sourceInsets="4 4 1 4" paintCenter="false"/>
+        </state>
+       <state value="FOCUSED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BORDERFILL" value="#bfdcff" />
+            <imagePainter path="/images/button_row_focus.png" sourceInsets="4 4 1 4" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="rowButton" key="RowButton"/>
+
+
+    <style id="button">
+        <insets top="3" left="3" bottom="3" right="3"/>
+        <state>
+            <color type="BORDERFILL" value="#dedede"/>
+            <imagePainter path="/images/button.png" sourceInsets="12 10 11 10" paintCenter="false"/>
+			<!--<color type="FOREGROUND" value="#ffffff"/>-->
+        </state>
+        <state value="FOCUSED">				<!-- top, left, bottom, right -->
+            <imagePainter path="/images/highlight.png" sourceInsets="12 10 11 10" paintCenter="false"/>
+            <color type="BORDERFILL" value="#3f7fca"/>
+            <color type="FOREGROUND" value="#ffffff"/>
+        </state>
+    </style>
+    <bind style="button" key="Button"/>
+
+    <style id="panelBlueBackground">
+		<insets top="0" left="0" bottom="1" right="0"/>
+		<state value="FOCUSED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#BFDCFE" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+		<state value="SELECTED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#BFDCFE" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+    </style>
+    <bind style="panelBlueBackground" key="PanelBlueBackground"/>
+
+    <style id="noStyleButton">
+	<insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <color type="FOREGROUND" value="#666666"/>
+        </state>
+    </style>
+    <bind style="noStyleButton" key="NoStyleButton"/>
+
+    <style id="greyBackground">
+        <state>
+            <color type="BACKGROUND" value="#aaaaaa"/>
+        </state>
+    </style>
+    <bind style="greyBackground" key="Separator"/>
+
+    
+    <style id="greenBackground">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <color type="BACKGROUND" value="#339900"/>
+            <color type="FOREGROUND" value="#ffffff"/>
+            <!--<font style="BOLD"/>-->
+        </state>
+    </style>
+    <bind style="greenBackground" key="GreenBackground"/>
+    
+    <style id="amberBackground">
+        <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <color type="BACKGROUND" value="#FF6600"/>
+            <color type="FOREGROUND" value="#ffffff"/>
+            <!--<font style="BOLD"/>-->
+        </state>
+    </style>
+    <bind style="amberBackground" key="AmberBackground"/>
+    
+    <style id="whiteBackground">
+    <insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <color type="BACKGROUND" value="#ffffff"/>
+            <color type="FOREGROUND" value="#C2C2C2"/>
+            <!--<font style="BOLD"/>-->
+        </state>
+    </style>
+    <bind style="whiteBackground" key="WhiteBackground"/>
+
+    <style id="galleryImage">
+        <insets top="3" left="3" bottom="3" right="3"/>
+        <state value="FOCUSED">
+            <imagePainter path="/images/imageBorder.png" sourceInsets="10 10 10 10" paintCenter="false"/>
+            <color type="BORDERFILL" value="#bfdcff"/>
+        </state>
+    </style>
+    <bind style="galleryImage" key="GalleryImage"/>
+    <bind style="galleryImage" key="ImageButton"/>
+    <bind style="galleryImage" key="CheckBoxRenderer"/>
+
+
+    <style id="fileChooserIcons">
+	<imageIcon id="folder" path="/images/directory.png"/>
+	<imageIcon id="unknown" path="/images/unknown.png"/>
+	<state>
+		<property key="folderIcon" value="folder"/>
+		<property key="unknownIcon" value="unknown"/>
+	</state>
+    </style>
+    <bind style="fileChooserIcons" key="CheckBoxRenderer"/>	
+	
+	<!-- STYLES TO BE SORTED! -->
+
+
+	<style id="searchField">
+		<insets top="5" left="20" bottom="5" right="3"/>
+        <state>
+            <imagePainter path="/images/searchBar_icon.png" sourceInsets="22 20 4 7" paintCenter="false"/>
+            <color type="FOREGROUND" value="#949494"/>
+            <color type="BACKGROUND" value="#FFFFFF"/>
+        </state>
+	</style>
+	<bind style="searchField" key="SearchField" />
+	
+	<style id="silverDialog">
+		<insets top="0" left="0" bottom="0" right="0"/>
+        <state>
+            <imagePainter path="/images/dialog_titleBarSilver.png" sourceInsets="23 1 0 1" paintCenter="false"/>
+            <color type="FOREGROUND" value="#666666"/>
+        </state>
+	</style>
+	<bind style="silverDialog" key="SilverDialog" />
+	
+	<style id="imageHighlight">
+		<insets top="0" left="0" bottom="0" right="0" />
+		<state>
+			<imagePainter path="/images/imageHighlight.png" sourceInsets="0 0 1 1" paintCenter="false" />
+		</state>
+	</style>
+	<bind style="imageHighlight" key="ImageHighlight" />
+
+	<!-- Profile action icons -->
+	<style id="profileChatIcon">
+		<insets top="1" left="0" bottom="0" right="0" />
+		<state>
+			<imagePainter path="/images/chat.png" sourceInsets="19 19 0 0" paintCenter="false" />
+		</state>
+		<state value="FOCUSED">
+            <imagePainter path="/images/chat_focus.png" sourceInsets="19 19 0 0" paintCenter="false" />
+        </state>
+	</style>
+	<bind style="profileChatIcon" key="ProfileChatIcon" />
+	
+	<style id="profileStarIcon">
+		<insets top="1" left="0" bottom="0" right="0" />
+		<state>
+			<imagePainter path="/images/star.png" sourceInsets="19 19 0 0" paintCenter="false" />
+		</state>
+		<state value="FOCUSED">
+            <imagePainter path="/images/star_focus.png" sourceInsets="19 19 0 0" paintCenter="false" />
+        </state>
+	</style>
+	<bind style="profileStarIcon" key="ProfileStarIcon" />
+	
+	<style id="profileHeartIcon">
+		<insets top="1" left="0" bottom="0" right="0" />
+		<state>
+			<imagePainter path="/images/heart.png" sourceInsets="19 19 0 0" paintCenter="false" />
+		</state>
+		<state value="FOCUSED">
+            <imagePainter path="/images/heart_focus.png" sourceInsets="19 19 0 0" paintCenter="false" />
+        </state>
+	</style>
+	<bind style="profileHeartIcon" key="ProfileHeartIcon" />
+	
+	<style id="profileCrossIcon">
+		<insets top="1" left="0" bottom="0" right="0" />
+		<state>
+			<imagePainter path="/images/cross.png" sourceInsets="19 19 0 0" paintCenter="false" />
+		</state>
+		<state value="FOCUSED">
+            <imagePainter path="/images/cross_focus.png" sourceInsets="19 19 0 0" paintCenter="false" />
+        </state>
+	</style>
+	<bind style="profileCrossIcon" key="ProfileCrossIcon" />
+	
+<!--<style id="feedbackCellRenderer">
+		<insets top="5" left="3" bottom="5" right="0" />
+		<!- - <insets top="0" left="0" bottom="0" right="0" /> - ->
+		<state>
+            <color type="FOREGROUND" value="#666666" />
+            <imagePainter path="/images/underlineGrey.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+		</state>
+		<state value="FOCUSED">
+            <color type="FOREGROUND" value="#2870C4" />
+            <color type="BACKGROUND" value="#BFDCFE" />
+            <imagePainter path="/images/underline.png" sourceInsets="0 0 1 0" paintCenter="false"/>
+        </state>
+	</style>
+	<bind style="feedbackCellRenderer" key="FeedbackCellRenderer" />-->
+</synth>
