@@ -40,12 +40,11 @@ public class SynthLookAndFeel extends LookAndFeel {
 
     protected Icon getIcon( String path ,int x,int y,int w,int h) {
         try {
+            Image img = Image.createImage( getResourceAsStream(path) );
             if (w!=0 && h !=0) {
-                Image img = Image.createImage(path);
                 img = Image.createImage(img, x, y, w, h, Sprite.TRANS_NONE);
-                return new Icon(img);
             }
-            return new Icon(path);
+            return new Icon(img);
         }
         catch (Exception ex) {
             //#mdebug warn
