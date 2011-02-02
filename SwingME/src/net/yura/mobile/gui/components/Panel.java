@@ -243,23 +243,31 @@ public class Panel extends Component {
         doLayout();
     }
 
+    /**
+     * @see java.awt.FocusTraversalPolicy#getComponentAfter(java.awt.Container, java.awt.Component) FocusTraversalPolicy.getComponentAfter
+     * @see java.awt.FocusTraversalPolicy#getComponentBefore(java.awt.Container, java.awt.Component) FocusTraversalPolicy.getComponentBefore
+     */
+    public Component getNextComponent(Component component,int direction) {
+        int index = components.indexOf(component);
+        boolean right = (direction == Canvas.RIGHT) || (direction == Canvas.DOWN);
+        index =  right? ((index==components.size()-1)?(-1):(index+1)) : ((index==-1)?( components.size()-1 ): (   (index==0)?(-1):(index-1)   ));
+        return (index == -1)?null:(Component)components.elementAt(index);
+    }
+
     // BREAK OUT!!!
     // find next component in this panel
 
     protected void breakOutAction(Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
-        int index = components.indexOf(component);
-        boolean right = (direction == Canvas.RIGHT) || (direction == Canvas.DOWN);
 
         while (true) {
+            component = getNextComponent(component, direction);
 
-            index =  right? ((index==components.size()-1)?(-1):(index+1)) : ((index==-1)?( components.size()-1 ): (   (index==0)?(-1):(index-1)   ));
-            if (index == -1) break;
-            component = (Component)components.elementAt(index);
-
+            if (component==null) {
+                break;
+            }
             if (!component.isVisible()) {
                 continue;
             }
-
             if (component.isFocusable()) {
 
                 boolean requestFocus = false;
@@ -273,6 +281,8 @@ public class Panel extends Component {
                     }
                 }
                 else if (scrolltothere) {
+                    // we will try and scroll to the new component we are trying to focus
+                    // and if we succeed then we will give focus to that component
                     requestFocus = scrollRectToVisible( component.getXWithBorder(),component.getYWithBorder(),component.getWidthWithBorder(),component.getHeightWithBorder() , !forceFocus);
                 }
 
