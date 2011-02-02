@@ -152,6 +152,11 @@ public class MainTest extends Section {
         	UiApplication.getUiApplication().invokeLater (new Runnable() {
         	    public void run() {
         	    	Dialog.alert("bob");
+        	    	
+        	    	//final net.rim.device.api.ui.picker.DateTimePicker datePicker = net.rim.device.api.ui.picker.DateTimePicker.createInstance();
+        	        //datePicker.doModal();
+        	        //Midlet.getMidlet().onResult(1, datePicker.getDateTime());
+
         	    }
         	});
 

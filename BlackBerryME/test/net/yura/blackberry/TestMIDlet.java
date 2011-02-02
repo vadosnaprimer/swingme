@@ -21,7 +21,7 @@ public class TestMIDlet extends Midlet {
 	}
 
 	// Override (called on Android only, after showing a native Activity)
-	public void onResult(Object object) {
+	public void onResult(int code, Object object) {
 	    OptionPane.showMessageDialog(null, object, "Received Result", OptionPane.INFORMATION_MESSAGE);
 	}
 }

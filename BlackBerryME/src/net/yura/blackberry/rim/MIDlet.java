@@ -13,6 +13,9 @@ public abstract class MIDlet extends UiApplication {
     }
 	
     public boolean platformRequest(String url) {
+    	
+    	// launch native date picker?
+    	
     	return false;
 	}
 
