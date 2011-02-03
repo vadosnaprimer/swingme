@@ -15,6 +15,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
@@ -189,7 +190,7 @@ public class AndroidMeApp extends Application {
     }
 
     private void setSystemProperties() {
-        System.setProperty("microedition.platform", "androidMe");
+        System.setProperty("microedition.platform", "androidMe(" + Build.MODEL + " " + Build.VERSION.RELEASE + ")");
         System.setProperty("microedition.locale", Locale.getDefault().toString());
         System.setProperty("microedition.configuration", "CLDC-1.1");
         System.setProperty("microedition.profiles", "MIDP-2.0");
