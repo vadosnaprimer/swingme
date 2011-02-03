@@ -289,6 +289,11 @@ public class ProtoUtil {
 
     public int computeAnonymousObjectSize(Object obj) {
         int type = getObjectTypeEnum(obj);
+        //#mdebug debug
+        if (type==BinUtil.TYPE_HASHTABLE) {
+            System.out.println("[ProtoUtil] Sending object as Hashtable "+obj);
+        }
+        //#enddebug
         int size1 = CodedOutputStream.computeInt32Size(OBJECT_TYPE, type );
         int size2 = CodedOutputStream.computeBytesSize(OBJECT_VALUE, computeObjectSize(obj,type) );
         return size1+size2;
