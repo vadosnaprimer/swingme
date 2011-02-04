@@ -124,7 +124,9 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
                     if (al!=null) {
                         al.actionPerformed(buttons[i].getActionCommand());
                     }
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
+                    e.printStackTrace();
                 }
 
                 finish();
