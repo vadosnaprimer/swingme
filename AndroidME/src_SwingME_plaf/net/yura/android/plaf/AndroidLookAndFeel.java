@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidOptionPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
@@ -21,6 +22,7 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
+import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.TextArea;
@@ -337,6 +339,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("ProgressBar",progressBar);
 
 
+        OptionPane.optionPaneClass = AndroidOptionPane.class;
     }
 
     private Drawable getDrawable(Context ctx, String name) {

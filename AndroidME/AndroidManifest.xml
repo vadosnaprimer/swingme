@@ -17,6 +17,7 @@
         <activity android:name="net.yura.android.TestTimePickerActivity" 
                   android:theme="@android:style/Theme.Translucent.NoTitleBar"
         />
+        <activity android:name="net.yura.android.OptionPaneActivity" android:configChanges="orientation|keyboard|keyboardHidden" android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/android:Theme.Translucent"/>
 
     </application>
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />
@@ -34,4 +35,10 @@
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    
+    <!--
+    can use this when you dont want to make difference assets for different resolutions
+    <supports-screens android:anyDensity="false"/>
+    -->
+    
 </manifest>
