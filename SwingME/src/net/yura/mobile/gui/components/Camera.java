@@ -551,8 +551,8 @@ public class Camera extends Component implements Runnable, PlayerListener {
 
         }
 
-        int dispX = getXOnScreen()+(getHeight()-videoCtrl.getDisplayHeight())/2;
-        int dispY = getYOnScreen()+(getWidth()-videoCtrl.getDisplayWidth())/2;
+        int dispX = getXOnScreen()+(getWidth()-videoCtrl.getDisplayWidth())/2;
+        int dispY = getYOnScreen()+(getHeight()-videoCtrl.getDisplayHeight())/2;
 
         if (videoCtrl.getDisplayX() != dispX ||
             videoCtrl.getDisplayY() != dispY) {
