@@ -288,6 +288,13 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     }
 
     /**
+     * @see javax.swing.JOptionPane#getInitialValue() JOptionPane.getInitialValue
+     */
+    public Button getInitialValue() {
+        return defaultCommand;
+    }
+
+    /**
      * @see javax.swing.JOptionPane#setOptions(java.lang.Object[]) JOptionPane.setOptions
      */
     public void setOptions(Button[] options) {
