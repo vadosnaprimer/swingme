@@ -350,29 +350,29 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
     public void run() {
         try {
-        //content.workoutSize(); // what out what the needed size is
-        //Logger.debug("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
-        //scroll.setPreferredSize(content.getWidth(), content.getHeight());
-        pack();
+            //content.workoutSize(); // what out what the needed size is
+            //Logger.debug("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
+            //scroll.setPreferredSize(content.getWidth(), content.getHeight());
+            pack();
 
-        DesktopPane dp = getDesktopPane();
+            DesktopPane dp = getDesktopPane();
 
-        int maxw = dp.getWidth();
-        int maxh = dp.getHeight() - dp.getMenuHeight()*2;
+            int maxw = dp.getWidth();
+            int maxh = dp.getHeight() - dp.getMenuHeight()*2;
 
-        if (getHeightWithBorder() > maxh) {
-            setFocusedComponent(null);
-            setBoundsWithBorder(0,0,getWidthWithBorder() + scroll.getBarThickness(), maxh);
-        }
-        if (getWidthWithBorder() > maxw) {
-            setFocusedComponent(null);
-            setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:scroll.getBarThickness()) );
-        }
-        getMostRecentFocusOwner();
+            if (getHeightWithBorder() > maxh) {
+                setFocusedComponent(null);
+                setBoundsWithBorder(0,0,getWidthWithBorder() + scroll.getBarThickness(), maxh);
+            }
+            if (getWidthWithBorder() > maxw) {
+                setFocusedComponent(null);
+                setBoundsWithBorder(0,0,maxw, getHeightWithBorder() +((getHeightWithBorder() == maxh)?0:scroll.getBarThickness()) );
+            }
+            getMostRecentFocusOwner();
 
-        setLocationRelativeTo(null);
+            setLocationRelativeTo(null);
 
-        setVisible(true);
+            setVisible(true);
         }
         catch(Throwable t) {
           Logger.error(t);
@@ -387,6 +387,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
     }
 
     private boolean factory;
+    public static Class optionPaneClass = OptionPane.class;
 
     /**
      * @see javax.swing.JOptionPane#showOptionDialog(java.awt.Component, java.lang.Object, java.lang.String, int, int, javax.swing.Icon, java.lang.Object[], java.lang.Object) JOptionPane.showOptionDialog
@@ -405,7 +406,12 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         }
 
         if (myself==null) {
-            myself = new OptionPane();
+            try {
+                myself = (OptionPane)optionPaneClass.newInstance();
+            }
+            catch (Throwable th) {
+                myself = new OptionPane();
+            }
             myself.factory = true;
         }
 
