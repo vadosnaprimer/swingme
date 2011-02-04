@@ -442,6 +442,10 @@ public class Label extends Component {
         public void updateUI() {
             super.updateUI();
             font = theme.getFont(Style.ALL);
+            Integer iconTextGap = (Integer)theme.getProperty("iconTextGap", Style.ALL);
+            if (iconTextGap!=null) {
+                gap = iconTextGap.intValue();
+            }
         }
 
         private int getIconWidth() {

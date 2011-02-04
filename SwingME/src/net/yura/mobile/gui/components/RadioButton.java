@@ -30,7 +30,6 @@ public class RadioButton extends Button {
 	protected Icon selectedImage;
 	protected Icon disabledImage;
 	protected Icon disabledSelectedImage;
-	protected Icon focusedImage;
 	protected Icon focusedSelectedImage;
 
 	/**
@@ -75,20 +74,6 @@ public class RadioButton extends Button {
 	 */
 	public void setRolloverSelectedIcon(Icon focusedSelectedImage) {
 		this.focusedSelectedImage = focusedSelectedImage;
-	}
-
-	/**
-	 * @see javax.swing.AbstractButton#getRolloverIcon() AbstractButton.getRolloverIcon
-	 */
-	public Icon getRolloverIcon() {
-		return focusedImage;
-	}
-
-	/**
-	 * @see javax.swing.AbstractButton#setRolloverIcon() AbstractButton.setRolloverIcon
-	 */
-	public void setRolloverIcon(Icon rolloverIcon) {
-		this.focusedImage = rolloverIcon;
 	}
 
 	/**
@@ -177,9 +162,6 @@ public class RadioButton extends Button {
 		}
                 else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {
 			disabledImage.paintIcon(this, g, x, y);
-		}
-                else if ((cState&Style.FOCUSED)!=0 && focusedImage!=null) {
-			focusedImage.paintIcon(this, g, x, y);
 		}
                 else {
 			super.paintIcon(g, x, y);

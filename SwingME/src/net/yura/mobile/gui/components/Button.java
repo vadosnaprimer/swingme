@@ -22,6 +22,7 @@ import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.Border;
@@ -63,6 +64,8 @@ public class Button extends Label implements ActionListener {
 
 	private boolean useSelectButton;
         private int mneonic;
+
+        protected Icon focusedImage;
 
         /**
          * @see javax.swing.JButton#JButton() JButton.JButton
@@ -468,6 +471,32 @@ public class Button extends Label implements ActionListener {
             super.updateUI();
             if (selectButton!=null) {
                 selectButton.updateUI();
+            }
+        }
+
+	/**
+	 * @see javax.swing.AbstractButton#getRolloverIcon() AbstractButton.getRolloverIcon
+	 */
+	public Icon getRolloverIcon() {
+		return focusedImage;
+	}
+
+	/**
+	 * @see javax.swing.AbstractButton#setRolloverIcon() AbstractButton.setRolloverIcon
+	 */
+	public void setRolloverIcon(Icon rolloverIcon) {
+		this.focusedImage = rolloverIcon;
+	}
+
+        protected void paintIcon(Graphics2D g, int x, int y) {
+
+            int cState = getCurrentState();
+
+            if ((cState&Style.FOCUSED)!=0 && focusedImage!=null) {
+                    focusedImage.paintIcon(this, g, x, y);
+            }
+            else {
+                super.paintIcon(g, x, y);
             }
         }
 

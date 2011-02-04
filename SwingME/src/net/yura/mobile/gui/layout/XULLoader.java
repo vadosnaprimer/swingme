@@ -668,6 +668,14 @@ public class XULLoader {
                     }
                     g.add(button);
                 }
+                else if("property".equals(key)) {
+                    Hashtable properties = getProperties(value);
+                    String rolloverIcon = (String)properties.get("rolloverIcon");
+                    if (rolloverIcon!=null) {
+                        button.setRolloverIcon( loadIcon( rolloverIcon ) );
+                    }
+                }
+
             }
 
             readLabel(parser, button);
