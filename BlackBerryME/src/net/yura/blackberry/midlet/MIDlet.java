@@ -8,6 +8,7 @@ import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.FullScreen;
 // import net.rim.device.api.ui.VirtualKeyboard; // API - 4.7.0 does not work on 'BlackBerry Bold (4.6)'
+import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 
@@ -18,6 +19,8 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     public MIDlet() {
         // Register RIM key listener
         Application.getApplication().addKeyListener(this);
+        
+        BlackBerryOptionPane.init();
     }
 
 
