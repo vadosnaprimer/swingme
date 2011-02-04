@@ -538,7 +538,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         int dispH = getHeight();
 
         if (videoCtrl.getDisplayWidth() != dispW ||
-            videoCtrl.getDisplayHeight() != dispW) {
+            videoCtrl.getDisplayHeight() != dispH) {
 
             try {
                 videoCtrl.setDisplaySize(dispW,dispH);
