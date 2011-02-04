@@ -17,6 +17,7 @@ public class AndroidOptionPane extends OptionPane {
                 Midlet.getMidlet().platformRequest("nativeNoResult://"+OptionPaneActivity.class.getName()+"/" + optionPaneCounter, this);
             }
             else {
+                //#debug warn
                 Logger.warn("why is this happening???? setVisible(false) in AndroidOptionPane");
             }
         }
