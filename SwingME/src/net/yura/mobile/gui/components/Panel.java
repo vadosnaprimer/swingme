@@ -30,7 +30,7 @@ import net.yura.mobile.gui.layout.Layout;
  */
 public class Panel extends Component {
 
-    private static Layout defaultLayout = new FlowLayout();
+    private static Layout defaultLayout;
 
     private Layout layout;
     private Vector components;
@@ -43,6 +43,11 @@ public class Panel extends Component {
         components = new Vector();
         constraints = new Hashtable(1);
         focusable = false;
+
+        if (defaultLayout==null) {
+            defaultLayout = new FlowLayout();
+        }
+
         layout = defaultLayout;
         // this is true as u need to select a panel to get to 1 of its components
     }
