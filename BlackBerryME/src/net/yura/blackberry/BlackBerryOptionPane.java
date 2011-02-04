@@ -34,11 +34,20 @@ public class BlackBerryOptionPane extends OptionPane {
             	    public void run() {
             	// synchronized with EventLock does not work, as when you click ok, the thread gets stuck 
             	//synchronized(Application.getEventLock()) {
-            	    	int result = Dialog.ask( (String)getMessage(), (Object[])options, d );
-            	    	
-            	    	ActionListener al = getActionListener();
-            	    	if (al!=null) {
-            	    		al.actionPerformed( buttons[result].getActionCommand() );
+            	    	try {
+	            	    	int result = Dialog.ask( (String)getMessage(), (Object[])options, d );
+	            	    	ActionListener al = getActionListener();
+	            	    	if (al!=null) {
+	            	    		al.actionPerformed( buttons[result].getActionCommand() );
+	            	    	}
+            	    	}
+            	    	catch(Exception ex) {
+            	    		//#debug warn
+            	    		Logger.warn(ex);
+            	    	}
+            	    	catch(Error er) {
+            	    		//#debug warn
+            	    		Logger.warn(er);
             	    	}
             	//}
             	    }
