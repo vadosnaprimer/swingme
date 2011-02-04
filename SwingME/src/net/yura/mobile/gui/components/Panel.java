@@ -260,11 +260,15 @@ public class Panel extends Component {
     protected void breakOutAction(Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
 
         while (true) {
-            component = getNextComponent(component, direction);
+            Component c = getNextComponent(component, direction);
 
-            if (component==null) {
+            if (c==null) {
                 break;
             }
+            else {
+                component=c;
+            }
+
             if (!component.isVisible()) {
                 continue;
             }
