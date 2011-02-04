@@ -126,6 +126,7 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
                     }
                 }
                 catch (Throwable e) {
+                    //#debug debug
                     e.printStackTrace();
                 }
 
