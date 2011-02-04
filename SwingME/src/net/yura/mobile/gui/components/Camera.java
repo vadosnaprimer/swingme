@@ -261,22 +261,9 @@ public class Camera extends Component implements Runnable, PlayerListener {
                 }
 
                 if (videoCtrl != null) {
-                    int dispX = getXOnScreen();
-                    int dispY = getYOnScreen();
-                    int dispW = getWidth();
-                    int dispH = getHeight();
 
-                    if (videoCtrl.getDisplayX() != dispX ||
-                        videoCtrl.getDisplayY() != dispY) {
+                    setupBounds(videoCtrl);
 
-                        videoCtrl.setDisplayLocation(dispX, dispY);
-                    }
-
-                    if (videoCtrl.getDisplayWidth() != dispW ||
-                        videoCtrl.getDisplayHeight() != dispW) {
-
-                        setDisplaySize(videoCtrl,dispW, dispH);
-                    }
                 }
 
                 if (requestCapture && actionListener != null) {
@@ -500,8 +487,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             Canvas playerCanvas = getDesktopPane();
 
             videoCtrl.initDisplayMode(VideoControl.USE_DIRECT_VIDEO, playerCanvas);
-            videoCtrl.setDisplayLocation(getXOnScreen(), getYOnScreen());
-            setDisplaySize(videoCtrl,getWidth(), getHeight());
+            setupBounds(videoCtrl);
 
             //#debug debug
             Logger.debug("Video Size = " + getWidth() + "x" + getHeight());
@@ -546,14 +532,32 @@ public class Camera extends Component implements Runnable, PlayerListener {
         return highestResEncoding;
     }
 
-    private static void setDisplaySize(VideoControl videoCtrl,int w, int h) {
-        try {
-            videoCtrl.setDisplaySize(w,h);
+    private void setupBounds(VideoControl videoCtrl) {
+
+        int dispW = getWidth();
+        int dispH = getHeight();
+
+        if (videoCtrl.getDisplayWidth() != dispW ||
+            videoCtrl.getDisplayHeight() != dispW) {
+
+            try {
+                videoCtrl.setDisplaySize(dispW,dispH);
+            }
+            catch (MediaException mex) {
+                //#debug debug
+                Logger.debug(mex);
+                //resizing is not supported or the operation failed due to hardware or software limitations.
+            }
+
         }
-        catch (MediaException mex) {
-            //#debug debug
-            Logger.debug(mex);
-            //resizing is not supported or the operation failed due to hardware or software limitations.
+
+        int dispX = getXOnScreen()+(getHeight()-videoCtrl.getDisplayHeight())/2;
+        int dispY = getYOnScreen()+(getWidth()-videoCtrl.getDisplayWidth())/2;
+
+        if (videoCtrl.getDisplayX() != dispX ||
+            videoCtrl.getDisplayY() != dispY) {
+
+            videoCtrl.setDisplayLocation(dispX, dispY);
         }
     }
 
