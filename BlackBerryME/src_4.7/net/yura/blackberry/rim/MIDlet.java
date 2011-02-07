@@ -1,6 +1,7 @@
 package net.yura.blackberry.rim;
 
 import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.component.Dialog;
 
 public abstract class MIDlet extends UiApplication {
 
@@ -21,9 +22,19 @@ public abstract class MIDlet extends UiApplication {
 
     public static void main(String[] args) {
     	
-    	// TODO 
-    	//MIDlet theApp = new net.yura.blackberry.TestMIDlet();
-        //theApp.enterEventDispatcher(); 
+    	if (args.length==0) {
+    		Dialog.alert("no args given, pls give args");
+    	}
+    	else {
+    		try {
+	        	MIDlet theApp = (MIDlet) Class.forName( args[0] ).newInstance();
+	            theApp.enterEventDispatcher();
+    		}
+    		catch (Exception ex) {
+    			Dialog.alert("error starting: "+ex.toString() );
+    		}
+    	}
+
     }
 
 }
