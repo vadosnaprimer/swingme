@@ -16,7 +16,6 @@ import net.rim.device.api.ui.component.BitmapField;
 import net.rim.device.api.ui.component.Dialog;
 import net.rim.device.api.ui.component.LabelField;
 import net.rim.device.api.ui.component.TextField;
-import net.yura.blackberry.plaf.TestBorder;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
