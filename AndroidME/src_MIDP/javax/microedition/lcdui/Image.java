@@ -46,11 +46,11 @@ public class Image {
             case Sprite.TRANS_ROT270:
             case Sprite.TRANS_MIRROR_ROT90:
             case Sprite.TRANS_MIRROR_ROT270: {
-                res = Image.createTransparentImage(height, width);
+                res = Image.createImage(height, width, image.bitmap.getConfig());
                 break;
             }
             default: {
-                res = Image.createTransparentImage(width, height);
+                res = Image.createImage(width, height, image.bitmap.getConfig());
             }
         }
 
@@ -91,20 +91,20 @@ public class Image {
         return new Image(bitmap);
     }
 
-    private static Image createTransparentImage(int width, int height) {
+    private static Image createImage(int width, int height, Config config) {
         Bitmap bitmap;
         try {
-            bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(width, height, config);
 
         } catch (OutOfMemoryError e) {
             cleanMem();
-            bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+            bitmap = Bitmap.createBitmap(width, height, config);
         }
         return new Image(bitmap);
     }
 
     public static Image createImage(int width, int height) {
-        Image res = createTransparentImage(width, height);
+        Image res = createImage(width, height, Config.ARGB_8888);
 
         // MIDP: All pixels should be white
         Graphics g = res.getGraphics();
