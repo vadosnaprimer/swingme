@@ -20,7 +20,7 @@
 
     <target name="swingmetest" depends="preprocess" description="Badoo BlackBerry.">
     
-    	<copy todir="${gen.dir}">
+    	<copy todir="${gen.dir}" overwrite="true">
 			<fileset dir="${swingmetest.src}" includes="**/*.java"/>
 		</copy>
 

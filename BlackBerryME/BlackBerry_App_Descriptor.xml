@@ -1,6 +1,6 @@
 <Properties ModelVersion="1.1.2">
   <General Title="BlackBerry ME" Version="1.0.0" Vendor="yura.net" Description=""/>
-  <Application Type="MIDlet" MainMIDletName="net.yura.blackberry.TestMIDlet" MainArgs="" HomeScreenPosition="0" StartupTier="7" IsSystemModule="false" IsAutostartup="false"/>
+  <Application Type="MIDlet" MainMIDletName="net.yura.blackberry.TestMIDlet" MainArgs="net.yura.blackberry.TestMIDlet" HomeScreenPosition="0" StartupTier="7" IsSystemModule="false" IsAutostartup="false"/>
   <Resources hasTitleResource="false" TitleResourceBundleName="" TitleResourceBundleRelativePath="" TitleResourceBundleClassName="" TitleResourceBundleKey="" DescriptionId="">
     <Icons/>
   </Resources>

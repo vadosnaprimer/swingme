@@ -1,10 +1,11 @@
 package net.yura.blackberry.rim;
 
 import net.rim.device.api.ui.component.RichTextField;
+import net.rim.device.api.ui.container.FullScreen;
 import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.Keypad;
 
-public abstract class Canvas extends MainScreen {
+public abstract class Canvas extends FullScreen {
 
     public static final int UP = javax.microedition.lcdui.Canvas.UP;
     public static final int DOWN = javax.microedition.lcdui.Canvas.DOWN;
