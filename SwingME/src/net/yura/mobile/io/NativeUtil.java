@@ -640,7 +640,7 @@ public class NativeUtil {
             dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openInputStream();
             return ImageUtil.getThumbFromFile(dis);
         }
-        catch (Exception err) {
+        catch (Throwable err) {
             //#mdebug warn
             Logger.warn("failed to load thumb for: "+fileName+" "+err.toString());
             Logger.warn(err);
@@ -661,7 +661,7 @@ public class NativeUtil {
             is = NativeUtil.getInputStreamFromFileConnector(filename);
             return Image.createImage(is);
         }
-        catch (Exception err) {
+        catch (Throwable err) {
           //#mdebug warn
           Logger.warn("failed to load image for: "+filename+" "+err.toString());
           Logger.warn(err);

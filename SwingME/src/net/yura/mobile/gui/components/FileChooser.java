@@ -386,7 +386,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
           }
       }
       catch(Throwable t) {
-        Logger.error(t);
+            //#debug warn
+            Logger.warn("faital error in FileChooser thread");
+            //#debug error
+            Logger.error(t);
       }
     }
 
