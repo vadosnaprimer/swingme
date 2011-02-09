@@ -16,6 +16,7 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
@@ -116,7 +117,7 @@ public class GraphicsTest extends Section {
         }
         else if ("urlImage".equals(actionCommand)) {
 
-            final Panel scaleImagePanel = new Panel();
+            final Panel scaleImagePanel = new ScrollPane(new Label("loading..."));
 
             
 
@@ -125,7 +126,7 @@ public class GraphicsTest extends Section {
 
                     try {
                         final Label l1 = new Label();
-                        Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png_"+
+                        Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png"+
                                 (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY?";deviceside=true":"")
                                 );
                         l1.setIcon( new Icon(img) ) ;
