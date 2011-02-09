@@ -104,7 +104,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         protected char tmpChar;
         private long lastKeyEvent;
-        //protected double preferredPercentWidth=-1;
 
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
@@ -118,14 +117,14 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setText(initialText);
         }
 
-        /**
-         * @param d the Preferred Width, can be -1 for no Preferred Width
-         * /
-        public void setPreferredWidth(double d) {
-            preferredPercentWidth = d;
-        }*/
-
         public boolean allowChar(char ch) {
+
+            // TODO somehow open the blackberry symbol dialog
+            if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY && ch==128) {
+                openNativeEditor();
+                return false;
+            }
+
             return true;
         }
 

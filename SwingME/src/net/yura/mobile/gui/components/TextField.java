@@ -118,16 +118,16 @@ public class TextField extends TextComponent {
             if (keyCode=='\t') {
                 return false;
             }
-            boolean r = keyCode!='\n';
-            if (!r) {
+            if (keyCode=='\n') {
                 if (al!=null) {
                     al.actionPerformed(action);
                 }
                 else {
                     transferFocus(Canvas.DOWN);
                 }
+                return false;
             }
-            return r;
+            return super.allowChar(keyCode);
         }
 
         /**
