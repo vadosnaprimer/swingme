@@ -270,4 +270,12 @@ public class PageView extends ScrollPane {
         }
         setBounceMode(bounceMode);
     }
+
+    public void nextPage() {
+        changeView(1);
+    }
+
+    public void previousPage() {
+        changeView(-1);
+    }
 }
