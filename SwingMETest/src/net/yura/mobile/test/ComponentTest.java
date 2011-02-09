@@ -69,7 +69,8 @@ public class ComponentTest  extends Section{
         addTest("Component Test","componentTest");
         addTest("Tab Test","tabTest");
         addTest("Window Test","windowTest1");
-        addTest("Option Pane Test","optionPaneTest");
+        addTest("Option Pane Test 1","optionPaneTest1");
+        addTest("Option Pane Test 2","optionPaneTest");
         addTest("Table Test","tableTest");
         addTest("Scroll Test 1","scrollTest1");
         addTest("Scroll Test 2","scrollTest2");
@@ -524,6 +525,11 @@ public class ComponentTest  extends Section{
             }
 
             addToScrollPane(tableTest, null );
+
+        }
+        else if ("optionPaneTest1".equals(actionCommand)) {
+
+            OptionPane.showMessageDialog(null, "Hello There", "Greeting", OptionPane.PLAIN_MESSAGE);
 
         }
         else if ("optionPaneTest".equals(actionCommand)) {

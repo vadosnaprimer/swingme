@@ -16,6 +16,7 @@ import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Label;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
@@ -117,19 +118,29 @@ public class GraphicsTest extends Section {
 
             final Panel scaleImagePanel = new Panel();
 
-            final Label l1 = new Label();
+            
 
             new Thread() {
             	public void run() {
 
-            		try {
-                        Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png"+
+                    try {
+                        final Label l1 = new Label();
+                        Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png_"+
                                 (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY?";deviceside=true":"")
                                 );
                         l1.setIcon( new Icon(img) ) ;
+
+                        scaleImagePanel.add(l1);
                     }
                     catch (Exception ex) {
-                    	l1.setText(ex.toString());
+                        ex.printStackTrace();
+
+                        TextArea ta = new TextArea();
+                        ta.setLineWrap(true);
+                        ta.setFocusable(false);
+                    	ta.setText(ex.toString());
+
+                        scaleImagePanel.add(ta);
                     }
                     scaleImagePanel.revalidate();
                     scaleImagePanel.repaint();
@@ -137,7 +148,7 @@ public class GraphicsTest extends Section {
             	};
             }.start();
 
-            scaleImagePanel.add(l1);
+            
 
             addToScrollPane(scaleImagePanel, null);
         }
@@ -151,10 +162,16 @@ public class GraphicsTest extends Section {
         InputStream dis = null;
         try {
           hpc = (HttpConnection) Connector.open(url);
-          int length = (int) hpc.getLength();
-          dis = hpc.openInputStream();
-          byte[] data = HTTPClient.getData(dis, length);
-          return Image.createImage(data, 0, data.length);
+          int code = hpc.getResponseCode();
+          if (code == HttpConnection.HTTP_OK) {
+              int length = (int) hpc.getLength();
+              dis = hpc.openInputStream();
+              byte[] data = HTTPClient.getData(dis, length);
+              return Image.createImage(data, 0, data.length);
+          }
+          else {
+              throw new Exception("HTTP ERROR WITH CODE: "+code);
+          }
         }
         finally {
           if (hpc != null)
