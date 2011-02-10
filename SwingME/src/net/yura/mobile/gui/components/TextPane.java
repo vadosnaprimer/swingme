@@ -250,6 +250,12 @@ public class TextPane extends Component {
     public boolean processKeyEvent(KeyEvent event) {
 
         int key = event.getIsDownKey();
+
+        // we can NOT call getKeyAction with a 0 keycode
+        if (key==0) {
+            return false;
+        }
+
         int action = event.getKeyAction(key);
 
         if (action == Canvas.FIRE) {
