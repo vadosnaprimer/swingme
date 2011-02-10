@@ -15,7 +15,7 @@
     <PackageProtection/>
   </HiddenProperties>
   <AlternateEntryPoints>
-    <AlternateEntryPoint Title="SwingMEText" MainMIDletName="net.yura.mobile.test.MyMidlet" ArgumentsForMain="" HomeScreenPosition="0" StartupTier="7" IsSystemModule="false" IsAutostartup="false" hasTitleResource="false" TitleResourceBundleKey="" TitleResourceBundleName="" TitleResourceBundleClassName="" TitleResourceBundleRelativePath="">
+    <AlternateEntryPoint Title="SwingMETest" MainMIDletName="net.yura.mobile.test.MyMidlet" ArgumentsForMain="" HomeScreenPosition="0" StartupTier="7" IsSystemModule="false" IsAutostartup="false" hasTitleResource="false" TitleResourceBundleKey="" TitleResourceBundleName="" TitleResourceBundleClassName="" TitleResourceBundleRelativePath="">
       <Icons/>
     </AlternateEntryPoint>
   </AlternateEntryPoints>
