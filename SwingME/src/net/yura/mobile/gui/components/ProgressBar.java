@@ -41,7 +41,7 @@ public class ProgressBar extends Component {
      * @see javax.swing.JProgressBar#JProgressBar() JProgressBar.JProgressBar
      */
     public ProgressBar() {
-
+            focusable = false;
             wait = 50;
             loaded = 100;
     }

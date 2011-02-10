@@ -229,6 +229,17 @@ public class Table extends Panel {
         repaint();
     }
 
+    /**
+     * Not sure if this is needed, this method is called when we use the pointer to select this component
+     * and we do NOT want to scroll the WHOLE table to be visible, as the current cell is good enough
+     *
+    public void makeVisible() {
+        // so we dont jump
+        //#debug debug
+        System.out.println("skip makeVisible");
+    }
+     */
+
     public void focusGained() {
         super.focusGained();
         if (editorComp!=null) {
@@ -243,6 +254,12 @@ public class Table extends Panel {
     public boolean processKeyEvent(KeyEvent event) {
 
         int key = event.getIsDownKey();
+
+        // TODO must be a better way
+        if (key==0) {
+            return true;
+        }
+
         int action = event.getKeyAction(key);
 
         if (    action==Canvas.UP ||

@@ -783,6 +783,8 @@ public class List extends Component implements ActionListener {
     public void makeVisible() {
         // as we use ensureIndexIsVisible to make the current item visible, we do not need makeVisible
         // TODO, as components can have components inside them that have focus themselves, maybe they should handle the makeVisible themselves
+        //#debug debug
+        System.out.println("skip makeVisible");
     }
 
     private int ensureIndexIsVisible=-1;
