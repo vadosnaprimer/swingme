@@ -83,12 +83,6 @@ public class Panel extends Component {
     * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
     */
    protected void addImpl(Component component,Object cons,int index) {
-        //#mdebug debug
-        if (component instanceof Window) {
-            throw new RuntimeException("trying to add a window to a panel "+component+" to "+this);
-        }
-        //#enddebug
-
         if (index==-1) {
             components.addElement(component);
         }
@@ -345,7 +339,7 @@ public class Panel extends Component {
         }
 
         if (!scrolled) {
-            if (parent != null && !(parent instanceof Window)) {
+            if (parent != null) { // && !(parent instanceof Window)
                 // passes onto parent
                 ((Panel)parent).breakOutAction(this, direction ,scrolltothere,forceFocus);
             }

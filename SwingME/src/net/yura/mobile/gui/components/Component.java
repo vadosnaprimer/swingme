@@ -258,6 +258,13 @@ public abstract class Component {
     * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
     */
    protected void addImpl(Component component,Object cons,int index) {
+
+        //#mdebug debug
+        if (component instanceof Window) {
+            throw new RuntimeException("trying to add a window to a Component: "+component+" to "+this);
+        }
+        //#enddebug
+
         component.parent = this;
    }
 

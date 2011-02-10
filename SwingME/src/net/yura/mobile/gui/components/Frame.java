@@ -279,6 +279,13 @@ public class Frame extends Window {
 
         }
 
+        /**
+         * this is the new way of doing things instead of overriding breakOutAction
+         */
+        public Component getNextComponent(Component component,int direction) {
+            return (component==null)?getContentPane():null;
+        }
+/*
         protected void breakOutAction(final Component component, final int direction, final boolean scrolltothere,final boolean forceFocus) {
 
             Panel cp = getContentPane();
@@ -287,6 +294,7 @@ public class Frame extends Window {
             }
 
         }
+*/
 
         // java 1.5 hack
         public void add(Component comp) {
