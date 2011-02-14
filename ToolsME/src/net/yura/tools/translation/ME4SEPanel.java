@@ -7,7 +7,6 @@ import javax.microedition.midlet.ApplicationManager;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Panel;
-import net.yura.mobile.gui.plaf.MetalLookAndFeel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import org.me4se.JadFile;
 
@@ -16,8 +15,9 @@ import org.me4se.JadFile;
  */
 public class ME4SEPanel extends Container {
 
+    private ApplicationManager manager;
     private DesktopPane desktop;
-    Frame frame1;
+    private Frame frame1;
 
     public DesktopPane getDesktopPane() {
         return desktop;
@@ -28,7 +28,7 @@ public class ME4SEPanel extends Container {
 
         // this can only be happening in 1 thread at a time
 
-        final ApplicationManager manager = ApplicationManager.createInstance(this, null );
+        manager = ApplicationManager.createInstance(this, null );
 
         JadFile jad = new JadFile();
         jad.setValue("MIDlet-1", ",," + EmptyMidlet.class.getName());
@@ -40,6 +40,11 @@ public class ME4SEPanel extends Container {
         desktop.setLookAndFeel( new NimbusLookAndFeel() );
 
     }
+
+    //public void destroy() {
+    //    can not use this as causes System.exit in all events
+    //    manager.destroy(true, false); // true will cause System.exit
+    //}
 
     public java.awt.Component getComponent() {
         return getComponents()[0];

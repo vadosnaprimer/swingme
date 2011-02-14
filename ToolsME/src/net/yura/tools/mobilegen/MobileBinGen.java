@@ -38,7 +38,7 @@ String className = theclass.getSimpleName();
 //classes.add(Test.class);
 //classes.add(TestObject.class);
 
-ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile());
+ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile(),false);
 File f = getGeneratedFile();
 System.out.println("saving to file: "+f);
 PrintStream ps = new PrintStream( f); //new File("src/net/yura/mobile/gen/BinAccess.java"));
@@ -70,6 +70,10 @@ for (Class c:classes) {
 ps.println("    public static final int TYPE_"+c.getSimpleName().toUpperCase()+"="+(20+n)+";");
 n++;
 }
+
+// we do the sort here instead of when we load the files so that the IDs are in the order that the Classes are in the file
+// but the instanceof checking is done in the order defined by the ClassComparator
+Collections.sort(classes, new ClassComparator());
 
 ps.println("    public "+getOutputClass()+"() {");
 ps.println("    }");

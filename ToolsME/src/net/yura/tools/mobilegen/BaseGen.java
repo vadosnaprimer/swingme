@@ -92,7 +92,7 @@ public abstract class BaseGen extends Task {
      * @return
      * @throws Exception
      */
-    public static Collection<Class> loadClassesFromFile(String fileName) throws Exception {
+    public static Collection<Class> loadClassesFromFile(String fileName, boolean sort) throws Exception {
         LineNumberReader reader = new LineNumberReader(new FileReader(fileName));
         ArrayList<Class> classes = new ArrayList<Class>();
         String line = null;
@@ -105,7 +105,9 @@ public abstract class BaseGen extends Task {
             }
         }
 
-        Collections.sort(classes, new ClassComparator());
+        if (sort) {
+            Collections.sort(classes, new ClassComparator());
+        }
 
         return classes;
     }

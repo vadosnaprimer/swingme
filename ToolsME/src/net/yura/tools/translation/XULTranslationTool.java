@@ -6,13 +6,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
 import javax.microedition.lcdui.Graphics;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 //import javax.swing.ToolTipManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
@@ -43,13 +51,24 @@ public class XULTranslationTool extends MessageTool {
 
     public static void main(String[] args) {
 
+        final String name = "XUL Translation Tool";
+        final String ver  = "1.0";
+
+        try {
+            net.yura.grasshopper.SimpleBug.initSimple(name, ver, "NA");
+            System.out.println("Grasshopper loaded");
+        }
+        catch (Throwable th) {
+            System.out.println("failed to load Grasshopper");
+        }
+
         // this is needed as ME4SE uses AWT and not Swing
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
         //ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
 
         XULTranslationTool tt = new XULTranslationTool();
 
-        final JFrame frame = new JFrame("XUL Translation Tool");
+        final JFrame frame = new JFrame( tt.getName()+" "+name+" "+ver );
 
 
         frame.getContentPane().add( tt.getToolBar() , BorderLayout.NORTH);
@@ -91,17 +110,17 @@ public class XULTranslationTool extends MessageTool {
             }
         });
 
+        me4sePanel.getDesktopPane().SOFT_KEYS = true;
+        me4sePanel.getDesktopPane().VERY_BIG_SCREEN = false;
+        me4sePanel.getDesktopPane().MAX_CLOSE_BUTTONS = false;
+        me4sePanel.getDesktopPane().IPHONE_SCROLL = true;
+        me4sePanel.getDesktopPane().QWERTY_KAYPAD = false;
 
         final Frame meFrame = new Frame("Test");
         meFrame.add( new Label("hello world") );
         meFrame.add( new TextField(), Graphics.BOTTOM );
         meFrame.setMaximum(true);
 
-        me4sePanel.getDesktopPane().SOFT_KEYS = true;
-        me4sePanel.getDesktopPane().VERY_BIG_SCREEN = false;
-        me4sePanel.getDesktopPane().MAX_CLOSE_BUTTONS = false;
-        me4sePanel.getDesktopPane().IPHONE_SCROLL = true;
-        me4sePanel.getDesktopPane().QWERTY_KAYPAD = false;
 
         me4sePanel.getDesktopPane().add(meFrame);
         Dimension d = new Dimension(100, 100);
@@ -151,9 +170,10 @@ public class XULTranslationTool extends MessageTool {
         // and if a error happens then the error dialog will not show
         frame.setVisible(true);
 
+/*
         try {
 
-            String badooHome = "E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/trunk/";
+            String badooHome = "E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/";
 
             tt.control.setBaseXULDir( new File(badooHome+"resources/res_medium_defaults") );
 
@@ -162,60 +182,15 @@ public class XULTranslationTool extends MessageTool {
             tt.control.setLookAndFeel(plaf);
 
             PropertiesComm conn = new PropertiesComm();
-            conn.load( new File(badooHome+"resources/res_en/messages_en.txt") );
+            conn.load( new File(badooHome+"resources/lang/en/messages.txt") );
             tt.load(conn);
 
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
+*/
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-/*
- * // real synth test
-
-            try {
-                javax.swing.plaf.synth.SynthLookAndFeel lookAndFeel = new javax.swing.plaf.synth.SynthLookAndFeel();
-                lookAndFeel.load( new File("E:/My_World/6_Yura/linuxhome/Domination/assets/domFlash.xml").toURI().toURL() );
-                javax.swing.UIManager.setLookAndFeel(lookAndFeel);
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-            }
-
-            JFrame f = new JFrame("hi");
-            f.add(new javax.swing.JScrollPane());
-            f.add(new javax.swing.JTextField("hi"),BorderLayout.NORTH);
-            f.setVisible(true);
- */
     }
 
 }

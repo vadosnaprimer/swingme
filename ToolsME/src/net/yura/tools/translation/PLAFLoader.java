@@ -149,23 +149,6 @@ public class PLAFLoader implements ActionListener {
         }
 
         @Override
-        protected Icon getIcon( String path ,int x,int y,int w,int h) {
-            try {
-                InputStream imgStream = getResourceAsStream(path);
-                Image img = Image.createImage(imgStream);
-                if (w>0 && h>0) {
-                    img = Image.createImage(img, x, y, w, h, Sprite.TRANS_NONE);
-                }
-                return new Icon(img);
-            }
-            catch (Exception ex) {
-                System.err.println("not able to find icon "+path);
-                ex.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
         protected InputStream getResourceAsStream(String path) {
             try {
                 return new FileInputStream(new File(current, path));
