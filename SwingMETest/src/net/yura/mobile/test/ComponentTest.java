@@ -587,22 +587,22 @@ public class ComponentTest  extends Section{
             cameraPanel.close();
             byte[] imgData = cameraPanel.getSnapshotData();
 
-            Label l, d = null;
+            Panel p = new Panel();
+            p.setLayout(new BoxLayout(Graphics.VCENTER));
+
             if (imgData == null) {
-                l = new Label("Camera Capture Failed!");
-            } else {
+                p.add( new Label("Camera Capture Failed!") );
+            }
+            else {
                 Image img = Image.createImage(imgData, 0, imgData.length);
                 imgData = null;
                 System.gc();
-                d = new Label("H:"+img.getHeight()+ ", W:" + img.getWidth());
-                l = new Label(new Icon(img));
-            }
-            Panel p = new Panel();
-            p.setLayout(new BoxLayout(Graphics.VCENTER));
-            p.add(d);
-            p.add(l);
 
-            addToContentPane(p,null);
+                p.add( new Label("H:"+img.getHeight()+ ", W:" + img.getWidth()) );
+                p.add( new Label(new Icon(img)) );
+            }
+
+            addToScrollPane(p,null);
         }
         else if ("testProgress".equals(actionCommand)) {
 
