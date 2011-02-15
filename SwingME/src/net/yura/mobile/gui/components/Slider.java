@@ -37,9 +37,6 @@ public class Slider extends Component {
 
     public static final int MINIMUM_THUMB_SIZE=5;
 
-    private Border track;
-
-	protected Border thumb;
     private int min,max,value,extent;
     protected boolean horizontal = true;
 
@@ -374,6 +371,8 @@ public class Slider extends Component {
 
     public void workoutMinimumSize() {
 
+        Border track = getTrack();
+
         int thickness = (track != null) ? track.getTop() + track.getBottom() : 0;
         if (paintTicks) {
             thickness = thickness + tickSpace;
@@ -417,24 +416,17 @@ public class Slider extends Component {
 
     public void updateUI() {
         super.updateUI();
-        String name = getName();
-
-        Style theme1 = DesktopPane.getDefaultTheme(name+"Thumb");
-        Style theme2 = DesktopPane.getDefaultTheme(name+"Track");
-
-        thumb = theme1.getBorder(Style.ALL);
-        track = theme2.getBorder(Style.ALL);
-
         font = theme.getFont(Style.ALL);
+    }
 
-/*
-        thumbTop = (Icon)theme.getProperty("thumbTop", Style.ALL);
-        thumbBottom = (Icon) theme.getProperty("thumbBottom", Style.ALL);
-        thumbFill = (Icon)theme.getProperty("thumbFill", Style.ALL);
-        trackTop = (Icon) theme.getProperty("trackTop", Style.ALL);
-        trackBottom = (Icon) theme.getProperty("trackBottom", Style.ALL);
-        trackFill = (Icon)theme.getProperty("trackFill", Style.ALL);
-*/
+    protected Border getThumb() {
+        Style theme1 = DesktopPane.getDefaultTheme(getName()+"Thumb");
+        return theme1.getBorder( getCurrentState() );
+    }
+
+    protected Border getTrack() {
+        Style theme2 = DesktopPane.getDefaultTheme(getName()+"Track");
+        return theme2.getBorder( getCurrentState() );
     }
 
 
@@ -484,6 +476,9 @@ public class Slider extends Component {
     public void drawScrollBar(Graphics2D g, int x,int y,int w,int h,int value,int extent, int max
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
             ) {
+
+        Border track = getTrack();
+        Border thumb = getThumb();
 
         int[] tmp = getOffsets(x,y,w,h,value,extent,max
 //                ,trackTop,trackFill,trackBottom,thumbTop,thumbFill,thumbBottom
@@ -593,6 +588,9 @@ public class Slider extends Component {
     public int[] getOffsets(int x,int y,int w, int h, int value,int extent, int max
 //            ,Icon trackTop,Icon trackFill,Icon trackBottom,Icon thumbTop,Icon thumbFill,Icon thumbBottom
             ) {
+
+        Border track = getTrack();
+        Border thumb = getThumb();
 
         final int box = track!=null?((track.getLeft() >h)?h:track.getLeft()):0;
         final int leftRight = (thumb==null)?0:thumb.getLeft()+thumb.getRight();
