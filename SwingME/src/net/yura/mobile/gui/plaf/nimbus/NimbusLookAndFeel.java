@@ -14,11 +14,12 @@ import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.plaf.LookAndFeel;
 import net.yura.mobile.gui.plaf.MetalScrollBar;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 
 /**
  * @author Nathan
  */
-public class NimbusLookAndFeel extends LookAndFeel {
+public class NimbusLookAndFeel extends SynthLookAndFeel {
 
     private Hashtable uiSettings = new Hashtable();
 
