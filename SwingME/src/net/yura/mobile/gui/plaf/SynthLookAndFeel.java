@@ -283,7 +283,20 @@ public class SynthLookAndFeel extends LookAndFeel {
                                 String height = parser.getAttributeValue(null, "height");
                                 String id = parser.getAttributeValue(null, "id");
 
-                                Icon newImage = getIcon( path,x==null?0:Integer.parseInt(x),y==null?0:Integer.parseInt(y),width==null?0:Integer.parseInt(width),height==null?0:Integer.parseInt(height) );
+                                String frameWidth = parser.getAttributeValue(null, "frameWidth");
+                                String frameHeight = parser.getAttributeValue(null, "frameHeight");
+
+                                Object newImage=null;
+                                if (frameWidth!=null || frameHeight!=null) {
+                                    InputStream in = getResourceAsStream(path);
+                                    if (in!=null) {
+                                        Image img = Image.createImage(in);
+                                        newImage = new Sprite(img, frameWidth==null?img.getWidth():Integer.parseInt(frameWidth), frameHeight==null?img.getHeight():Integer.parseInt(frameHeight));
+                                    }
+                                }
+                                else {
+                                    newImage = getIcon( path,x==null?0:Integer.parseInt(x),y==null?0:Integer.parseInt(y),width==null?0:Integer.parseInt(width),height==null?0:Integer.parseInt(height) );
+                                }
                                 if (newImage!=null) {
                                     params.put(id, newImage );
                                 }
