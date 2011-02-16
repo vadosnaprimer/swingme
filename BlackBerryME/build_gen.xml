@@ -31,14 +31,14 @@
 		</copy>
 
     	
-    	
+<!-- -->
         <replaceregexp byline="false" flags="gs"
             match   = "catch\s*\(Throwable\s*(.*?)\)(.*?\})"
             replace = "catch (Error \1)\2 catch (Exception \1)\2">
 
         	<fileset dir="${gen.dir}" includes="**/*.java"/>
         </replaceregexp>
-    	
+<!-- -->
     	
     	
 <!-- -->

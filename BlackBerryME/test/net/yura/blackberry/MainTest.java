@@ -44,7 +44,7 @@ public class MainTest extends Section {
         addTest("Show Native Popup", "nativePopup");
         addTest("Show Native Screen", "nativeScreen");
         addTest("Show Native Text", "nativeText");
-
+        addTest("camera", "camera");
         
         Label preferenceSeparator = new Label("here are some android only components");
         preferenceSeparator.setName("PreferenceSeparator");
@@ -168,6 +168,17 @@ public class MainTest extends Section {
                 e.printStackTrace();
             }
             */
+        }
+        else if ("camera".equals( actionCommand )) {
+        	
+
+        		//_fileListener = new MyFileJournalListener(this);        
+                //        UiApplication.getUiApplication().addFileSystemJournalListener(_fileListener);
+        	
+        	// Error starting myproject: Module 'myproject' attempts to access a secure API
+        	//net.rim.blackberry.api.invoke.Invoke.invokeApplication(net.rim.blackberry.api.invoke.Invoke.APP_TYPE_CAMERA, null);
+
+        	
         }
     }
 

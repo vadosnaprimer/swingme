@@ -21,6 +21,18 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         Application.getApplication().addKeyListener(this);
         
         BlackBerryOptionPane.init();
+        
+        int keyLayout = Keypad.getHardwareLayout();
+        
+        boolean qwerty =keyLayout==Keypad.HW_LAYOUT_32 ||
+        				keyLayout==Keypad.HW_LAYOUT_39 ||
+        				keyLayout==Keypad.HW_LAYOUT_LEGACY ||
+        				keyLayout==Keypad.HW_LAYOUT_PHONE;
+        
+        boolean qw_er_ty=keyLayout==Keypad.HW_LAYOUT_REDUCED ||
+						 keyLayout==Keypad.HW_LAYOUT_REDUCED_24;
+        
+        KeyEvent.BLACKBERRY_QWERTY = qwerty;
     }
 
 
