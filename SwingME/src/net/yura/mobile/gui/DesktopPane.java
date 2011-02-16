@@ -183,12 +183,15 @@ public class DesktopPane extends Canvas implements Runnable {
     public DesktopPane(Midlet m, int back, Image sph) {
 
         SOFT_KEYS = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE && Midlet.getPlatform() != Midlet.PLATFORM_ANDROID && Midlet.getPlatform() != Midlet.PLATFORM_BLACKBERRY;
+        HIDDEN_MENU_AND_BACK = Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY;
+
         VERY_BIG_SCREEN = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
         MAX_CLOSE_BUTTONS = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE;
         IPHONE_SCROLL = Midlet.getPlatform() != Midlet.PLATFORM_ME4SE;
-        QWERTY_KAYPAD = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE || Midlet.getPlatform() == Midlet.PLATFORM_ANDROID;
+
+        QWERTY_KAYPAD = Midlet.getPlatform() == Midlet.PLATFORM_ME4SE || Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || KeyEvent.BLACKBERRY_QWERTY;
+
         USE_SOFT_KEY_CLEAR = Midlet.getPlatform() == Midlet.PLATFORM_NOKIA_S40;
-        HIDDEN_MENU_AND_BACK = Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY;
         GRID_MENU = Midlet.getPlatform() == Midlet.PLATFORM_ANDROID;
 
         desktop = this;

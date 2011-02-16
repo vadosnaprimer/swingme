@@ -173,6 +173,9 @@ public class KeyEvent {
             //}
         }
 
+        // sometimes blackberry is NOT qwerty
+        public static boolean BLACKBERRY_QWERTY = false; // HAS to be false, or all phones will be qwerty, is set to true by BlackBerryME
+
         private static final String CHARS_PHONE = "*+pw";
         private static final String CHARS_DECIMAL = ".-";
         private static final String CHARS_35 = " ";
