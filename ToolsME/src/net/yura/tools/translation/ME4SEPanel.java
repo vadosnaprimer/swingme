@@ -41,6 +41,10 @@ public class ME4SEPanel extends Container {
 
     }
 
+    public ApplicationManager getApplicationManager() {
+        return manager;
+    }
+
     //public void destroy() {
     //    can not use this as causes System.exit in all events
     //    manager.destroy(true, false); // true will cause System.exit
