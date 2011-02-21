@@ -979,6 +979,9 @@ public class XULLoader {
             else if ("visible".equals(key)) {
                 comp.setVisible( "true".equals(value) );
             }
+            else if ("enabled".equals(key)) {
+                comp.setFocusable( "true".equals(value) );
+            }
             else if("property".equals(key)) {
                 Hashtable properties = getProperties(value);
                 String plafname = (String)properties.get("plafname");
