@@ -126,6 +126,14 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
     }
 
+    /**
+     * @see javax.swing.JFileChooser#JFileChooser(java.io.File) JFileChooser.JFileChooser
+     */
+    public FileChooser(String string) {
+        this();
+        setCurrentDirectory(string);
+    }
+
     public void doLayout() {
         // called on revalidate
         calcThumbSize(width,height);
@@ -453,7 +461,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
         else if ("listSelect".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileList.getSelectedValue();
-            if (NativeUtil.isFileType(to.getName(), NativeUtil.TYPE_FOLDER)) {
+            if (NativeUtil.isFileType(to.getAbsolutePath(), NativeUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
                 gotoDir(to);
             } else {
@@ -467,7 +475,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
         else if ("tableClick".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileTable.getSelectedValue();
-            if (NativeUtil.isFileType(to.getName(), NativeUtil.TYPE_FOLDER)) {
+            if (NativeUtil.isFileType(to.getAbsolutePath(), NativeUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
                 gotoDir(to);
             } else {
