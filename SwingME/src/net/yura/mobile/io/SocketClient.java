@@ -82,6 +82,8 @@ public abstract class SocketClient implements Runnable {
         return maxRetries;
     }
 
+    public static String connectAppend;
+    
     protected StreamConnection openConnection(String serv) throws IOException {
 
         // TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
@@ -89,12 +91,13 @@ public abstract class SocketClient implements Runnable {
                 serv.indexOf(";") < 0) {
             // TODO: Hack for black berry direct tcp/ip connection
             // TODO: http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
-            serv += ";deviceside=true";
+            //serv += ";deviceside=true";
+        	serv += connectAppend;
         }
 
         return (StreamConnection)Connector.open(protocol + serv);
     }
-
+    
     public void addToOutbox(Object obj) {
 
         if (writeThread==null) {
