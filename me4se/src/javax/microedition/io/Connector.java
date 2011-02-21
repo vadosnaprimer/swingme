@@ -25,6 +25,7 @@ import java.io.*;
 import javax.microedition.midlet.ApplicationManager;
 
 import org.me4se.impl.*;
+import org.me4se.psi.java1.gcf.file.AssetConnection;
 
 /**
  * @API MIDP-1.0
@@ -66,6 +67,12 @@ public class Connector {
 	public static Connection open(String url, int mode, boolean timeOuts)
 			throws IOException {
 
+            final String PROTOCOL_ASSET = "file:///android_asset/";
+            if (url.startsWith(PROTOCOL_ASSET)) {
+                return new AssetConnection(url.substring( PROTOCOL_ASSET.length() ));
+            }
+
+
 //		System.out.println("open()...");
 		
 		int cut = url.indexOf(':');
@@ -90,7 +97,7 @@ public class Connector {
 			return connection;
 
 		} catch (ClassNotFoundException e) {
-			throw new IOException("Protocol not found: " + e);
+			throw new IOException("Protocol not found: " + e,e);
 		}
 	}
 

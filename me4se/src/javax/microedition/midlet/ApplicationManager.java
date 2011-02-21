@@ -548,8 +548,10 @@ public class ApplicationManager {
   private ApplicationManager(java.awt.Container container, Properties properties) {
 
       // YURA: this stops the flicker on Windows when resizing the canvas
-      java.lang.System.setProperty("sun.awt.noerasebackground","true");
-
+      try {
+        java.lang.System.setProperty("sun.awt.noerasebackground","true");
+      }
+      catch(Throwable th) { }
 //    System.out.println("Container: " + container);
 
       this.properties = properties == null ? new Properties() : properties;
