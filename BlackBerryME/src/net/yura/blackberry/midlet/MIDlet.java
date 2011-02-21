@@ -1,8 +1,14 @@
 package net.yura.blackberry.midlet;
 
 import javax.microedition.lcdui.Display;
+
+import net.rim.device.api.servicebook.ServiceBook;
+import net.rim.device.api.servicebook.ServiceRecord;
 import net.rim.device.api.system.Application;
+import net.rim.device.api.system.CoverageInfo;
+import net.rim.device.api.system.DeviceInfo;
 import net.rim.device.api.system.KeyListener;
+import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
@@ -11,6 +17,8 @@ import net.rim.device.api.ui.container.FullScreen;
 import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.io.SocketClient;
+import net.yura.mobile.logging.Logger;
 
 public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements KeyListener{
 
@@ -33,6 +41,9 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
 						 keyLayout==Keypad.HW_LAYOUT_REDUCED_24;
         
         KeyEvent.BLACKBERRY_QWERTY = qwerty;
+        
+        
+        setInternetConnectionString();
     }
 
 
@@ -108,23 +119,88 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         }
     }
     
+    /**
+     * Determines what connection type to use. 
+     * See http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
+     */
+    private void setInternetConnectionString() {
+    	
+        // This code is based on the connection code developed by Mike Nelson of AccelGolf.
+        // http://blog.accelgolf.com/2009/05/22/blackberry-cross-carrier-and-cross-network-http-connection        
+        String connStr;                
+                        
+        // Simulator behaviour is controlled by the USE_MDS_IN_SIMULATOR variable.
+        if(DeviceInfo.isSimulator()) {
+        	//#debug debug
+        	Logger.debug("Setup Internet: Simulator.");
+        	connStr = ";deviceside=true";
+        }                                        
+        else if(WLANInfo.getWLANState() == WLANInfo.WLAN_STATE_CONNECTED) {
+        	// Wifi is the preferred transmission method
+        	//#debug debug
+            Logger.debug("Setup Internet: Wifi.");
+            connStr = ";interface=wifi";
+        }
+        else if((CoverageInfo.getCoverageStatus() & CoverageInfo.COVERAGE_DIRECT) == CoverageInfo.COVERAGE_DIRECT) {
+        	// Is the carrier network the only way to connect?
+        	//#debug debug
+            Logger.debug("Setup Internet: Carrier coverage.");
+                        
+            String carrierUid = getCarrierBIBSUid();
+            if(carrierUid == null) {
+                // Has carrier coverage, but not BIBS.  So use the carrier's TCP network
+            	//#debug debug
+                Logger.debug("Setup Internet: No Uid");
+                connStr = ";deviceside=true";
+            }
+            else {
+                // otherwise, use the Uid to construct a valid carrier BIBS request
+            	//#debug debug
+                Logger.debug("Setup Internet: uid is: " + carrierUid);
+                connStr = ";deviceside=false;connectionUID="+carrierUid + ";ConnectionType=mds-public";
+            }
+        }                
+        else if((CoverageInfo.getCoverageStatus() & CoverageInfo.COVERAGE_MDS) == CoverageInfo.COVERAGE_MDS) {
+        	// Check for an MDS connection instead (BlackBerry Enterprise Server)
+        	//#debug debug
+            Logger.debug("Setup Internet: MDS coverage found");
+            connStr = ";deviceside=false";
+        }
+        else if(CoverageInfo.getCoverageStatus() == CoverageInfo.COVERAGE_NONE) {
+        	// If there is no connection available abort to avoid bugging the user unnecessarily.
+        	//#debug debug
+            Logger.debug("Setup Internet: There is no available connection.");
+            connStr = "";
+        }
+        else {
+        	// In theory, all bases are covered so this shouldn't be reachable.
+        	//#debug debug
+            Logger.debug("Setup Internet: no option found.");
+            connStr = ";deviceside=true";
+        }        
+        
+        SocketClient.connectAppend = connStr;
+    }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    /**
+     * Looks through the phone's service book for a carrier provided BIBS network
+     * @return The uid used to connect to that network.
+     */
+    private static String getCarrierBIBSUid() {
+    	
+    	// TODO: API needs signing!!!
+    	
+//        ServiceRecord[] records = ServiceBook.getSB().getRecords();
+//        for(int currentRecord = 0; currentRecord < records.length; currentRecord++) {
+//            if(records[currentRecord].getCid().toLowerCase().equals("ippp")) {
+//                if(records[currentRecord].getName().toLowerCase().indexOf("bibs") >= 0) {
+//                    return records[currentRecord].getUid();
+//                }
+//            }
+//        }
+        
+        return null;
+    } 
     
 
 	/**
