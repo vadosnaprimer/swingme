@@ -143,6 +143,12 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("GridRendererCollapsed",gridCellRendererCollapsed);
 
 
+        // -- Separator component that can be used anywhere --
+        Style separator = new Style(defaultStyle);
+        separator.addBorder(divider2,Style.ALL);
+        setStyleFor("Separator",separator);
+
+
         // com.android.internal.R.style.Theme_Dialog_Alert
         // Dialog
         Style dialogStyle = new Style(defaultStyle);

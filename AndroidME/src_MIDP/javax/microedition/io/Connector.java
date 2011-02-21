@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import net.yura.android.io.AndroidAssetConnection;
 import net.yura.android.io.AndroidURLConnection;
 import net.yura.android.io.AndroidFileConnection;
 import net.yura.android.io.HttpConnectionImpl;
@@ -20,6 +21,7 @@ public class Connector {
     public static final int WRITE = 0x02;
     public static final int READ_WRITE = READ | WRITE;
 
+    private static final String PROTOCOL_ASSET = "file:///android_asset/";
     private static final String PROTOCOL_FILE = "file:";
     private static final String PROTOCOL_SOCKET = "socket:";
     private static final String PROTOCOL_HTTP = "http:";
@@ -33,10 +35,13 @@ public class Connector {
     public static final Connection open(String name, int mode)
             throws IOException {
         Connection connection;
-        if (name.startsWith(PROTOCOL_FILE)) {
+        if (name.startsWith(PROTOCOL_ASSET)) {
+            connection = new AndroidAssetConnection(name.substring( PROTOCOL_ASSET.length() ));
+        }
+        else if (name.startsWith(PROTOCOL_FILE)) {
             connection = new AndroidFileConnection(name);
-            // TODO : http should have a separate connection type
-        } else if (name.startsWith(PROTOCOL_SOCKET)) {
+        }
+        else if (name.startsWith(PROTOCOL_SOCKET)) {
             connection = getSocketConnection(name);
         }
         else if (name.startsWith(PROTOCOL_SMS)) {
