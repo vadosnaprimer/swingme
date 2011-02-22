@@ -492,7 +492,10 @@ public class List extends Component implements ActionListener {
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
         super.processMouseEvent(type, x, y, keys);
 
-        if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
+        if (!isFocusable()) {
+            // if we are disabled then we do not do anything!
+        }
+        else if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
             int i = getComponentAt(x, y)[0];
 
             if (i>=0 && i<getSize()) {

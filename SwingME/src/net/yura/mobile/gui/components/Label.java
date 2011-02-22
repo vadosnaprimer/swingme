@@ -175,7 +175,7 @@ public class Label extends Component {
 
 			}
 
-			if ((textPosition & Graphics.VCENTER) != 0) {
+			if ((textPosition & Graphics.VCENTER) != 0 || (textPosition & Graphics.RIGHT) != 0 || (textPosition & Graphics.LEFT) != 0 ) {
 
 				iy = y + (combinedheight - getIconHeight())/2;
 
@@ -252,15 +252,23 @@ public class Label extends Component {
         }
 
 	protected int getCombinedHeight(int iconHeight) {
+
+            // how to work out height based on Text Position
+            //  M=Max S=Sum
+
+            //    M--S--M
+            //    M--M--M
+            //    M--S--M
+
 		int fw = (font!=null && !"".equals(string) && string != null)?font.getHeight():0;
-		if ((textPosition & Graphics.VCENTER)!= 0) {
+		if ((textPosition & Graphics.VCENTER)!= 0 || ((textPosition & Graphics.RIGHT)!= 0) || ((textPosition & Graphics.LEFT)!= 0) ) {
 			if (iconHeight<=0 && font == null) return 0;
 			if (iconHeight>0) {
 				return (iconHeight > fw)?iconHeight:fw;
 			}
 			return fw;
 		}
-		else {
+                else { // only add if HCENTER AND (TOP OR BOTTOM)
 			if (iconHeight>0) { fw=    ((fw==0)?0:gap)     +fw+iconHeight; }
 			return fw;
 		}

@@ -290,6 +290,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
             setUIDefault(componentName+".border", tmp1);
             setUIDefault(componentName+"[selected].border",tmp2);
             setUIDefault(componentName+"[selected].foreground",uiSettings.get("nimbusSelectedText"));
+            setUIDefault(componentName+"[disabled].foreground",uiSettings.get("nimbusDisabledText"));
             setUIDefault(componentName+"[focused].border",tmp3);
             setUIDefault(componentName+"[focused+selected].border",tmp4);
         }
