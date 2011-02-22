@@ -15,7 +15,8 @@ public class BlackBerryOptionPane extends OptionPane {
 	
 	
     public void setVisible(boolean b) {
-        if (getMessage() instanceof String) {
+    	Object obj = getMessage();
+        if (obj == null || obj instanceof String) {
             if (b) {
                 
             	final Button[] buttons = getOptions();
@@ -30,12 +31,19 @@ public class BlackBerryOptionPane extends OptionPane {
             	final int d=defaultChoice;
             	//final int result;
             	
+            	// if the message is null, try use the title
+            	if (obj==null) {
+            		obj = getTitle();
+            	}
+            	
+            	final String string = (String)obj;
+            	
             	Application.getApplication().invokeLater (new Runnable() {
             	    public void run() {
             	// synchronized with EventLock does not work, as when you click ok, the thread gets stuck 
             	//synchronized(Application.getEventLock()) {
             	    	try {
-	            	    	int result = Dialog.ask( (String)getMessage(), (Object[])options, d );
+	            	    	int result = Dialog.ask( string, (Object[])options, d );
 	            	    	ActionListener al = getActionListener();
 	            	    	if (al!=null) {
 	            	    		al.actionPerformed( buttons[result].getActionCommand() );
