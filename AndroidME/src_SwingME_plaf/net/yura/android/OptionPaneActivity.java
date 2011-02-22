@@ -42,8 +42,10 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
 
             String msg = (String) optionPaneWrapper.getMessage();
 
-            CharSequence alertText = (msg.startsWith("<html>")) ? Html.fromHtml(msg) : msg;
-            alertDialog.setMessage(alertText);
+            if (msg!=null) {
+                CharSequence alertText = (msg.startsWith("<html>")) ? Html.fromHtml(msg) : msg;
+                alertDialog.setMessage(alertText);
+            }
 
             int msgType = optionPaneWrapper.getMessageType();
             int iconId;

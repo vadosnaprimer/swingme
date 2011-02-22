@@ -11,7 +11,10 @@ public class AndroidOptionPane extends OptionPane {
 
     @Override
     public void setVisible(boolean b) {
-        if (getMessage() instanceof String) {
+
+        Object obj = getMessage();
+
+        if (obj==null || obj instanceof String) {
             if (b) {
 
                 try {
