@@ -278,7 +278,13 @@ public abstract class Midlet extends MIDlet {
     public static InputStream getResourceAsStream(String name) {
 
         try {
-            String resdir = System.getProperty("resdir");
+            String resdir;
+            try {
+                resdir = System.getProperty("resdir");
+            }
+            catch (Throwable th) {
+                resdir = null;
+            }
             if (resdir!=null) { // (getPlatform()==PLATFORM_ANDROID) {
                 InputStream is = Midlet.class.getResourceAsStream(resdir+name);
                 if (is!=null) {

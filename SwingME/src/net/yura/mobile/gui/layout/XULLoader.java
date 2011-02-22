@@ -1055,7 +1055,13 @@ public class XULLoader {
     //TODO: OREN: we better off caching the dpi rather than 
     //calling the System.getProperty("display.dpi") every time
     public static int adjustSizeToDensity(int value) {
-        String dpi = System.getProperty("display.dpi");
+        String dpi;
+        try {
+            dpi = System.getProperty("display.dpi");
+        }
+        catch (Throwable th) {
+            dpi = null;
+        }
         if (dpi!=null) {
             if ("hdpi".equals(dpi)) {
                 value = value * 2;
