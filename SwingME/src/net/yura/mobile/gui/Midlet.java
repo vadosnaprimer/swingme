@@ -280,6 +280,7 @@ public abstract class Midlet extends MIDlet {
         try {
             String resdir;
             try {
+                // when running as a me4se applet, this can throw a SecurityException
                 resdir = System.getProperty("resdir");
             }
             catch (Throwable th) {

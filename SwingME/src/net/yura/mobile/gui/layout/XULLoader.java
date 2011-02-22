@@ -1057,6 +1057,7 @@ public class XULLoader {
     public static int adjustSizeToDensity(int value) {
         String dpi;
         try {
+            // when running as a me4se applet, this can throw a SecurityException
             dpi = System.getProperty("display.dpi");
         }
         catch (Throwable th) {
