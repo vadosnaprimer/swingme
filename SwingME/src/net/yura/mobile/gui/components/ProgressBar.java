@@ -47,12 +47,13 @@ public class ProgressBar extends Component {
     }
 
     public ProgressBar(Sprite sp) {
+    	this();
+    	setSprite(sp);
+    }
 
-            sprite = sp;
-
-            wait = 50;
-            loaded = sprite.getFrameSequenceLength()-1;
-
+    public void setSprite(Sprite sp) {
+        sprite = sp;
+        loaded = sprite.getFrameSequenceLength()-1;
     }
 
     public void paintComponent(Graphics2D g) {
@@ -161,7 +162,10 @@ public class ProgressBar extends Component {
 
     public void updateUI() {
         super.updateUI();
-        sprite = (Sprite)theme.getProperty("sprite", Style.ALL);
+        Sprite sp = (Sprite)theme.getProperty("sprite", Style.ALL);
+        if (sp!=null) {
+        	setSprite(sp);
+        }
     }
 
 }
