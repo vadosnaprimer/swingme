@@ -18,7 +18,12 @@ import org.me4se.impl.rms.AbstractRecordStore;
 public class RecordStoreInitializer implements Initializer {
 
 	public void initialize(ApplicationManager am) {
-		
+
+            // we have already initialized, do not need to do it again!
+            if (RecordStoreImpl.rmsDir!=null) {
+                return;
+            }
+
             if (am.applet != null ) {
                 RecordStoreImpl.rmsDir = null;
             }
