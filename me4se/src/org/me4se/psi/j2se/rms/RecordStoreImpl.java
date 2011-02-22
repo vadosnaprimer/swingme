@@ -192,7 +192,19 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 			records = new Vector();
 		} 
 		else {
-            rmsDir.mkdirs();
+                    try {
+                        rmsDir.mkdirs();
+                    }
+                    catch(Throwable th) {
+                        // same as for applet
+                        rmsDir = null;
+                        if (!create) {
+				refCount = 0;
+				throw new RecordStoreNotFoundException();
+			}
+			records = new Vector();
+                        return;
+                    }
             
 			file = new File(rmsDir, encode(this.recordStoreName) + ".rms");
 

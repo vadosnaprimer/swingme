@@ -478,8 +478,19 @@ public class ApplicationManager {
   public String getProperty(String name) {
     String result = properties.getProperty(name.toLowerCase());
 
-    return result == null ? (applet != null ? applet.getParameter(name)
-        : System.getProperty(name)) : result;
+    if (result == null) {
+        if (applet != null) {
+            result = applet.getParameter(name);
+        }
+        else {
+            try {
+                result = System.getProperty(name);
+            }
+            catch(Throwable th) { }
+        }
+    }
+
+    return result;
   }
 
   public String getProperty(String name, String dflt) {
@@ -588,7 +599,7 @@ public class ApplicationManager {
       InputStream is = null;
       try {
         is = openInputStream("/locale-" + locale + ".properties");
-      } catch (IOException e) {
+      } catch (Exception e) {
       }
       try {
         if (is == null) {
@@ -598,7 +609,7 @@ public class ApplicationManager {
         if (is != null) {
           properties.load(is);
         }
-      } catch (IOException e) {
+      } catch (Exception e) {
       }
     }
 
@@ -1258,7 +1269,10 @@ public class ApplicationManager {
     if (applet != null) {
       org.me4se.System.properties.setProperty(key, value);
     } else {
-      java.lang.System.setProperty(key, value);
+        try {
+            java.lang.System.setProperty(key, value);
+        }
+        catch(Throwable th) { }
     }
   }
 
@@ -1266,7 +1280,11 @@ public class ApplicationManager {
     if (applet != null) {
       return org.me4se.System.properties.getProperty(key);
     } else {
-      return java.lang.System.getProperty(key);
+        try {
+            return java.lang.System.getProperty(key);
+        }
+        catch(Throwable th) { }
+        return null;
     }
   }
   

@@ -26,7 +26,15 @@ public class RecordStoreInitializer implements Initializer {
 
         	RecordStoreImpl.rmsDir = new File(am.getProperty("rms.home", ".rms"));
 
-                if(RecordStoreImpl.rmsDir.exists()) {
+                boolean hasRms;
+                try {
+                    hasRms = RecordStoreImpl.rmsDir.exists();
+                }
+                catch (Throwable th) {
+                    hasRms = false;
+                }
+
+                if(hasRms) {
 
                         try {
                             final File lockFile = new File( RecordStoreImpl.rmsDir , "in.use");
