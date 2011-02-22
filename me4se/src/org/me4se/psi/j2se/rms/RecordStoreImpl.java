@@ -121,6 +121,10 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 			return;
 
 		try {
+                    if (file==null) {
+                        // YURA if we do not know we are a applet, but really we are, we have no file object
+                        return;
+                    }
 
 			DataOutputStream dos;
                         try {
