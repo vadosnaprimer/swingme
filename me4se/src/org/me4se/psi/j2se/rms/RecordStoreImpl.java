@@ -197,7 +197,8 @@ public class RecordStoreImpl extends AbstractRecordStore  {
                     }
                     catch(Throwable th) {
                         // same as for applet
-                        rmsDir = null;
+                        rmsDir = null;  // note that this can at any point be set back to a File object,
+                                        // open will then come back here, and we will set it back to null
                         if (!create) {
 				refCount = 0;
 				throw new RecordStoreNotFoundException();
@@ -296,8 +297,9 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 		if (refCount > 0){
 			//System.out.println("!!! Deleting open RecordStore; refCount: "+refCount);
 		}
-		
-		if (!isApplet() && !file.delete()){
+
+                // YURA sometimes when we are loaded using ME4SEPanel we can not know we are a applet, yet not have a file either, as really we are a applet
+		if (!isApplet() && file!=null && !file.delete()){
 			throw new RecordStoreException("Cannot delete Store " + file.getName());
 		}
 		
