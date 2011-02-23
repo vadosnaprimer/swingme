@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import javax.microedition.io.file.FileConnection;
+
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
 import net.yura.android.AndroidMeApp;
 
@@ -62,7 +64,9 @@ public class AndroidAssetConnection implements FileConnection {
 
     @Override
     public long fileSize() throws IOException {
-        return 0;
+        AssetManager manager = getAssetManager();
+        AssetFileDescriptor fd = manager.openFd(name);
+        return fd.getLength();
     }
 
     @Override
@@ -125,7 +129,7 @@ public class AndroidAssetConnection implements FileConnection {
             name = name.substring(0, name.length()-1);
         }
 
-        AssetManager manager = AndroidMeApp.getIntance().getResources().getAssets();
+        AssetManager manager = getAssetManager();
 
         final String[] files = manager.list(name);
         // TODO Auto-generated method stub
@@ -161,8 +165,8 @@ public class AndroidAssetConnection implements FileConnection {
 
     @Override
     public InputStream openInputStream() throws IOException {
-        AssetManager amanager = AndroidMeApp.getIntance().getResources().getAssets();
-        return amanager.open(name);
+        AssetManager manager = getAssetManager();
+        return manager.open(name);
     }
 
     @Override
@@ -213,6 +217,10 @@ public class AndroidAssetConnection implements FileConnection {
     @Override
     public long usedSize() {
         return 0;
+    }
+
+    private static AssetManager getAssetManager() {
+        return AndroidMeApp.getIntance().getResources().getAssets();
     }
 
 }
