@@ -142,7 +142,7 @@ public class Menu extends Button {
                     getDesktopPane(),
                     parentMenu==null?Graphics.TOP:Graphics.RIGHT
                     );
-            setupSnap();
+            //setupSnap();
             openMenuAtLocation();
         }
 
@@ -224,7 +224,7 @@ public class Menu extends Button {
 
             openMenuAtLocation();
         }
-
+/*
         private void setupSnap() {
 
             DesktopPane dp = getDesktopPane();
@@ -238,7 +238,7 @@ public class Menu extends Button {
             popup.snap = (left?Graphics.LEFT:0) | (top?Graphics.TOP:0) | (right?Graphics.RIGHT:0) | (bottom?Graphics.BOTTOM:0);
 
         }
-
+*/
         private void openMenuAtLocation() {
 
             DesktopPane dp = getDesktopPane();
