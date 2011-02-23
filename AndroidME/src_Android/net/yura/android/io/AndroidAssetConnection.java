@@ -12,18 +12,12 @@ import net.yura.android.AndroidMeApp;
 
 public class AndroidAssetConnection implements FileConnection {
 
+    // we store the name of dirs like this "dirName/" even though the real name is "dirName"
+    // and we have to remove the trailing "/" if we want to actually list the files in that dir
     private String name;
 
     public AndroidAssetConnection(String n) {
         this.name = n;
-
-        // for some reason when you pass "/" to the list() method, you get a list of the files in the root of the apk
-        // but there is no way to list anything else using the "/" at the start or end
-
-        if (name.length()>1 && name.endsWith("/")) {
-            name = name.substring(0, name.length()-1);
-        }
-
     }
 
     @Override
@@ -88,13 +82,12 @@ public class AndroidAssetConnection implements FileConnection {
         return null;
     }
 
+    /**
+     * @see #name
+     */
     @Override
     public boolean isDirectory() {
-        return  isDirectory(name); // "".equals(name) || name.endsWith("/");
-    }
-
-    private boolean isDirectory(String name) {
-        return name.indexOf('.')<=0;
+        return "".equals(name) || name.endsWith("/");
     }
 
     @Override
@@ -117,8 +110,20 @@ public class AndroidAssetConnection implements FileConnection {
         return list("", false);
     }
 
+    /**
+     * @see #name
+     */
     @Override
     public Enumeration<String> list(String filter, boolean includeHidden) throws IOException {
+
+        String name = this.name;
+
+        // for some reason when you pass "/" to the list() method, you get a list of the files in the root of the apk
+        // but there is no way to list anything else using the "/" at the start or end
+
+        if (name.length()>1 && name.endsWith("/")) {
+            name = name.substring(0, name.length()-1);
+        }
 
         AssetManager manager = AndroidMeApp.getIntance().getResources().getAssets();
 
@@ -133,7 +138,8 @@ public class AndroidAssetConnection implements FileConnection {
             @Override
             public String nextElement() {
                 String file = files[c++];
-                return file+(isDirectory(file)?"/":""); // name + ("".equals(name)||name.endsWith("/")?"":"/")+
+                // if we have a dot in the name, we assume if is not a dir, otherwise we add a "/" to the end
+                return file+( file.indexOf('.')<=0 ?"/":"");
             }
         };
     }
