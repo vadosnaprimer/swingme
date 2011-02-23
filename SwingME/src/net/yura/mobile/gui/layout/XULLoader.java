@@ -52,6 +52,7 @@ import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
+import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.io.UTF8InputStreamReader;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
@@ -567,7 +568,13 @@ public class XULLoader {
 
             return readUIObject(parser, slider,listener);
         }
-        else { // if (name.equals("slider")) {
+        else if ("popupmenu".equals(name)) {
+            
+            Window popupmenu = Menu.makePopup();
+
+            return readUIObject(parser, popupmenu,listener);
+        }
+        else {
             //#debug debug
             Logger.debug("unknown object found: "+name);
 
@@ -999,11 +1006,8 @@ public class XULLoader {
 
             Object obj = readObject(parser,listener);
 
-            if (comp instanceof TabbedPane) {
-                Tab tab = (Tab)obj;
-                ((TabbedPane)comp).addTab(tab.getValue(), tab.getIcon(), tab.component, tab.getToolTip());
-            }
-            else if (comp instanceof Frame) {
+
+            if (comp instanceof Frame) {
                 Panel panel = ((Frame)comp).getContentPane();
                 if (panel instanceof ScrollPane) { panel = (Panel)((ScrollPane)panel).getView(); }
 
@@ -1015,28 +1019,39 @@ public class XULLoader {
                     panel.add(component, obj);
                 }
             }
+            else if (comp instanceof Window) { // we must be a popup menu!
+                Menu.getPopupMenu( (Window)comp ).add( ((GridBagConstraints)obj).component );
+            }
+            else if (comp instanceof TabbedPane) {
+                Tab tab = (Tab)obj;
+                ((TabbedPane)comp).addTab(tab.getValue(), tab.getIcon(), tab.component, tab.getToolTip());
+            }
             else if (comp instanceof ScrollPane) {
                 ((Panel)((ScrollPane)comp).getView()).add(((GridBagConstraints)obj).component, obj);
             }
+            // all classes that extend Panel, like scrollpane, TabbedPane, window, frame, must be checked before here?
             else if (comp instanceof Panel) {
                 ((Panel)comp).add(((GridBagConstraints)obj).component, obj);
             }
             else if (comp instanceof ComboBox) {
                 ((ComboBox)comp).getItems().addElement(obj);
             }
-            else if (comp instanceof MenuBar) {
-                ((MenuBar)comp).add( (Button) ((GridBagConstraints)obj).component );
-            }
             else if (comp instanceof Menu) {
                 ((Menu)comp).add( ((GridBagConstraints)obj).component );
+            }
+            else if (comp instanceof MenuBar) {
+                ((MenuBar)comp).add( (Button) ((GridBagConstraints)obj).component );
             }
             else if (comp instanceof List) {
                 ((List)comp).getItems().addElement(obj);
             }
-            else {
-                //#debug debug
-                Logger.debug("what to do with this object: "+obj.getClass() +" "+obj+" parent="+uiobject.component);
+            else { // any component can have a popup
+                comp.setPopupMenu( (Window) ((GridBagConstraints)obj).component );
             }
+            //else {
+            //    //#debug debug
+            //    Logger.debug("what to do with this object: "+obj.getClass() +" "+obj+" parent="+uiobject.component);
+            //}
         }
 
         return uiobject;

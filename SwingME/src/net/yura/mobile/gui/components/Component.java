@@ -38,6 +38,10 @@ public abstract class Component {
 
     protected Component parent;
     private String name;
+
+    /**
+     * @see javax.swing.JComponent#ui JComponent.ui
+     */
     protected Style theme;
 
     protected int background=Style.NO_COLOR;
@@ -53,6 +57,8 @@ public abstract class Component {
     public static final int FOCUS_GAINED = 1;
     public static final int FOCUS_LOST = 2;
     private ChangeListener focusListener;
+
+    protected Window popup;
 
     /**
      * @see javax.swing.JComponent#JComponent() JComponent.JComponent
@@ -445,6 +451,15 @@ public abstract class Component {
         else if (parent!=null) {
             parent.processMouseEvent(type,x+posX,y+posY, keys);
         }
+
+        if (type == DesktopPane.RELEASED) {
+            if (popup!=null) {
+                popup.pack();
+                popup.setLocation(getXOnScreen()+x, getYOnScreen()+y);
+                popup.setVisible(true);
+            }
+        }
+
         //else {
         //    owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
         //}
@@ -586,7 +601,7 @@ public abstract class Component {
      * @see java.awt.Component#toString() Component.toString
      */
     public String toString() {
-            return getName();
+        return getName() +( popup!=null?"<pop="+popup.toString()+">":"" ) ;
     }
     //#enddebug
 
@@ -747,6 +762,10 @@ public abstract class Component {
         //background = theme.getBackground(Style.ALL);
         //foreground = theme.getForeground(Style.ALL);
         //border = theme.getBorder(Style.ALL);
+
+        if (popup!=null) {
+            DesktopPane.updateComponentTreeUI(popup);
+        }
     }
 
     /**
@@ -850,6 +869,14 @@ public abstract class Component {
             return w.getDesktopPane();
         }
         return DesktopPane.getDesktopPane();
+    }
+
+    /**
+     * in Swing this is done by adding a MouseListener that will then fire the popup menu
+     * @see java.awt.Component#addMouseListener(java.awt.event.MouseListener) Component.addMouseListener
+     */
+    public void setPopupMenu(Window component) {
+        popup = component;
     }
 
 }
