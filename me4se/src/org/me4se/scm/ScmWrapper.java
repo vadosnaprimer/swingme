@@ -224,6 +224,7 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
     paint(g);
   }
 
+  Rectangle clip = new Rectangle();
   // system-triggered paint events come here
   public void paint(java.awt.Graphics g) {
     Log.log(Log.DRAW_EVENTS, "AWT paint entered: " + g.getClipRect());
@@ -232,10 +233,15 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
           update(g);
       }
       else {
-        Dimension size = getSize();
+        //Dimension size = getSize();
+        //if (!g.drawImage(offScreenCache, 0, 0, size.width, size.height, 0, 0,
+        //    (int) (size.width / scale), (int) (size.height / scale), this)) {
 
-        if (!g.drawImage(offScreenCache, 0, 0, size.width, size.height, 0, 0,
-            (int) (size.width / scale), (int) (size.height / scale), this)) {
+        // YURA for some crazy reason that makes no sense, this is a LOT faster on JavaSE Windows then what is above!
+        // even though really it is doing the sxact same thing!
+        g.getClipBounds(clip);
+        if (!g.drawImage(offScreenCache, clip.x, clip.y, clip.x+clip.width, clip.y+clip.height,
+               (int) (clip.x/scale), (int) (clip.y/scale), (int) ((clip.x+clip.width)/scale), (int) ((clip.y+clip.height)/scale), this)) {
           System.out.println("DRAWIMAGE WAS RETURNING FALSE!!!");
         }
         // g.drawImage(offScreen, 0, 0, this);
