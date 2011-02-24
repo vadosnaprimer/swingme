@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.CheckBox;
@@ -117,6 +118,15 @@ public class XHTMLLoader {
         }
         else if ("a".equals(name)) {
             return link;
+        }
+        else if ("font".equals(name)) {
+            TextStyle style = new TextStyle();
+            style.setName("font");
+            String color = parser.getAttributeValue(null, "color");
+            if (color!=null) {
+                style.setForeground( Graphics2D.parseColor(color, 16) );
+            }
+            return style;
         }
 
         return null;
