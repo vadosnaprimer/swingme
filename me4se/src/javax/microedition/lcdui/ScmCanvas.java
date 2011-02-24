@@ -24,10 +24,13 @@ class ScmCanvas extends ScmComponent {
 	Canvas canvas;
 	boolean first = true;
 	int keyCode;
-	Object repaintLock = new Object();
+	final Object repaintLock = new Object();
 	boolean repaintPending;
 
-        private BufferedImage offscreen;
+        // buffering is dome at a heigher level, so we do not need to do it here!
+        // if have buffering here AND at the higher level then we waste a LOT of
+        // memory in a full screen app, and actually get OutOFMemory Errors!
+        //private BufferedImage offscreen;
     
 	ScmCanvas(Canvas canvas) {
 		this.canvas = canvas;
@@ -41,16 +44,16 @@ class ScmCanvas extends ScmComponent {
 		try {
 			synchronized (repaintLock) {
 
-				ApplicationManager manager = ApplicationManager.getInstance();
+				//ApplicationManager manager = ApplicationManager.getInstance();
 
 				//java.awt.Dimension d = getSize();
 
                                 // YURA FIX
-				if (offscreen == null || offscreen.getWidth() != getWidth() || offscreen.getHeight() != getHeight()) {
-					offscreen = new BufferedImage(
-							getWidth(),
-							getHeight(), BufferedImage.TYPE_INT_RGB);
-				}
+				//if (offscreen == null || offscreen.getWidth() != getWidth() || offscreen.getHeight() != getHeight()) {
+				//	offscreen = new BufferedImage(
+				//			getWidth(),
+				//			getHeight(), BufferedImage.TYPE_INT_RGB);
+				//}
 
                                 // YURA basically we can noy have this check here
                                 // as what happens is there is 1 request for 1 sq and a 2nd request for a second sq to paint
@@ -60,8 +63,8 @@ class ScmCanvas extends ScmComponent {
 					Graphics mg =
 						new Graphics(
 							canvas,
-							offscreen,
-							offscreen.getGraphics());
+							null,
+							g);
                     
 					if (mg != null) {
 						repaintPending = false;  // moved up here to allow the request of a repaint in paint
@@ -99,13 +102,13 @@ class ScmCanvas extends ScmComponent {
 
 				//TODO: Clarify under which circumstances g may be null ... 
 				
-				if(g != null){
-				g.drawImage(
-					offscreen,
-					0,
-					0,
-					manager.awtContainer);
-				}
+				//if(g != null){
+				//g.drawImage(
+				//	offscreen,
+				//	0,
+				//	0,
+				//	manager.awtContainer);
+				//}
 
                                 if (pointx!=0&&pointy!=0) {
                                     g.setColor(Color.RED);

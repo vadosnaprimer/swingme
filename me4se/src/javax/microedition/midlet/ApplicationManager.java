@@ -676,7 +676,8 @@ public class ApplicationManager {
           }
         }
       };
-      displayContainer.setBackground(new java.awt.Color(0x0ffffff));
+      // YURA this is not needed, as produces a strange white box effect
+      //displayContainer.setBackground(new java.awt.Color(0x0ffffff));
     }
 
     // create list to force up/down image loading before midlet start
