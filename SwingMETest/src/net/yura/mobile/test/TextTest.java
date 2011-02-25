@@ -35,6 +35,8 @@ import net.yura.mobile.test.MainPane.Section;
  */
 public class TextTest extends Section {
 
+    private String someHtml = "<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a> some very very long text here, lalalala, bob the builder, ok, now i cant think of anything to write</center></html>";
+
     Panel componentTest2;
     TextArea viewText;
 
@@ -181,7 +183,7 @@ for (int c=0;c<4;c++) {
                     TextPane html = new TextPane();
                     html.setActionListener(this);
                     html.setBackground(0xFFFFAAAA); // pink
-                    html.setText("<html><center>Bob <b>the</b> <i>builder</i>. <a href=\"link\">link</a> some very very long text here, lalalala, bob the builder, ok, now i cant think of anything to write</center></html>");
+                    html.setText(someHtml);
 
                     Panel p = new Panel(new BorderLayout());
 
@@ -208,7 +210,7 @@ InputStream inputStreamTxt=null;
 try {
 	inputStreamTxt = this.getClass().getResourceAsStream("/xhtmltest.xhtml"); // xhtmltest // "/test2.xhtml"
         loader = new XHTMLLoader();
-        loader.gotResult(inputStreamTxt);
+        loader.gotResult(inputStreamTxt,null);
 	//int c ;
 	//while ((c = inputStreamTxt.read()) != -1)
 	//{buf.append((char)c);}
