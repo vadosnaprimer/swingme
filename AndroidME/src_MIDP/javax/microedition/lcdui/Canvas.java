@@ -356,12 +356,22 @@ public abstract class Canvas extends Displayable {
 
             int graphicsY = getHeight() - canvasH;
 
-            Rect clip = androidCanvas.getClipBounds();
-            graphics.clipRect(clip.left, clip.top -graphicsY, clip.right-clip.left, clip.bottom-clip.top);
+            Rect dist = androidCanvas.getClipBounds();
+            graphics.clipRect(dist.left, dist.top -graphicsY, dist.right-dist.left, dist.bottom-dist.top);
+            Rect src = graphics.getCanvas().getClipBounds();
 
+            // reset the dist based on the src as we will use it for the dist paint Rect
+            dist.top = src.top+graphicsY; // we need to do this as it may be off screen on some devices such as SE-X10-mini
+            
+            // this is not technically needed
+            dist.bottom = src.bottom+graphicsY;
+            dist.left = src.left;
+            dist.right = src.right;
+            // but just to be sure we do it anyway, as we ALWAYS want them to be the same size, or the image is stretched
+            
             paint(graphics);
             
-            androidCanvas.drawBitmap(graphicsBitmap, graphics.getCanvas().getClipBounds(), clip, null);
+            androidCanvas.drawBitmap(graphicsBitmap, src, dist, null);
 
 //            if (touchDebug != null) {
 //                Paint paint = new Paint();
