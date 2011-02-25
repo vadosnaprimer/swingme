@@ -51,6 +51,10 @@ public class GridBagLayout implements Layout {
     public int getGap() {
         return gap;
     }
+    
+    public void setGap(int newGap) {
+    	gap = newGap;
+    }
 
     private static int getSum(int[] values, int from, int length, int gap, boolean last) {
             if (length <= 0) {
