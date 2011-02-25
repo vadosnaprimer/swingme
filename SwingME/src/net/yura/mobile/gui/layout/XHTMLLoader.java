@@ -3,7 +3,10 @@ package net.yura.mobile.gui.layout;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Graphics;
+
+import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.LineBorder;
@@ -24,6 +27,7 @@ import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.StringUtil;
+
 import org.kxml2.io.KXmlParser;
 
 /**
@@ -34,11 +38,19 @@ public class XHTMLLoader {
     Panel root;
     TagHandler currentTag;
     Component currentComponent;
+    ActionListener al;
 
-    public void gotResult(InputStream resultsStream) {
+    public static Component load(String text, ActionListener listener) {
+        XHTMLLoader xhtmlLoader = new XHTMLLoader();
+        xhtmlLoader.gotResult( new ByteArrayInputStream( text.getBytes() ) ,listener);
+        return xhtmlLoader.getRoot();
+    }
+
+    public void gotResult(InputStream resultsStream,ActionListener actionL) {
 
         try {
 
+            al = actionL;
             root = new Panel(new FlowLayout(Graphics.VCENTER,0));
             currentComponent = root;
 
@@ -218,6 +230,7 @@ public class XHTMLLoader {
 
     private void startInlineSection() {
         TextPane it = new TextPane();
+        it.setActionListener(al);
         //TextArea it = new TextArea(); it.setLineWrap(true);
         //#mdebug
         if (DesktopPane.debug) {
