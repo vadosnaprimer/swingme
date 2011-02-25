@@ -1,12 +1,9 @@
 package javax.microedition.lcdui;
 
 import java.util.Hashtable;
-
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
-
 import android.app.Activity;
 import android.content.Context;
 import android.os.Vibrator;
@@ -144,6 +141,10 @@ public class Display
                     if (view != null) {
                         activity.setContentView(view);
                         view.requestFocus();
+                        
+                        // YURA tiny optimization, so we do not need to draw any background bitmaps!
+                        view.getRootView().setBackgroundDrawable(null);
+
                     }
                 }
             });
