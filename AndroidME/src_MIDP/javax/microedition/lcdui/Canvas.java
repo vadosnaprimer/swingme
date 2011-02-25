@@ -47,8 +47,17 @@ public abstract class Canvas extends Displayable {
     public static final int KEY_STAR = 42;
     public static final int KEY_POUND = 35;
 
+    /**
+     * the extra LinearLayout is needed so we can put other components ontop of the
+     * normal Canvas like the camera view
+     */
     private LinearLayout linearLayout;
     private CanvasView canvasView;
+    
+    /**
+     * we NEED a buffer here, as if we do not we MUST paint ALL of the area inside
+     * the crop rect on every paint, and currently SwingME does not
+     */
     private Bitmap graphicsBitmap;
 
     protected Canvas() {
@@ -351,8 +360,8 @@ public abstract class Canvas extends Displayable {
             graphics.clipRect(clip.left, clip.top -graphicsY, clip.right-clip.left, clip.bottom-clip.top);
 
             paint(graphics);
-
-            androidCanvas.drawBitmap(graphicsBitmap, 0, graphicsY, null);
+            
+            androidCanvas.drawBitmap(graphicsBitmap, graphics.getCanvas().getClipBounds(), clip, null);
 
 //            if (touchDebug != null) {
 //                Paint paint = new Paint();
