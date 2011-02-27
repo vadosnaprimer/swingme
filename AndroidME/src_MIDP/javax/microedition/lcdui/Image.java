@@ -3,6 +3,7 @@ package javax.microedition.lcdui;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import javax.microedition.lcdui.game.Sprite;
 
@@ -213,6 +214,13 @@ public class Image {
         new Canvas(bm.bitmap).drawBitmap(source.bitmap, 0, 0, paint);
 
         // return bm;
+    }
+    
+    public static void saveImage(Image img, OutputStream out) {
+    	boolean good = img.bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+    	if (!good) {
+    		throw new RuntimeException("save failed of img: "+img);
+    	}
     }
 
     private static void cleanMem() {
