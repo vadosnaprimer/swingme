@@ -47,7 +47,10 @@ public class RecordStoreInitializer implements Initializer {
                                 System.err.println("[RecordStoreInitializer] in.use file found! "+lockFile);
                                 // on OS X a locked file can still be deleted, so we have to just crash out
                                 if (System.getProperty("os.name").toLowerCase().indexOf( "mac" ) >= 0) {
-                                    throw new Exception("in.use file found");
+                                    int result = JOptionPane.showConfirmDialog(null, "ME4SE may already be running, are you sure you want to run anyway?", "Question?", JOptionPane.YES_NO_OPTION);
+                                    if (result==JOptionPane.NO_OPTION) {
+                                        System.exit(0);
+                                    }
                                 }
                                 lockFile.delete();
                             }
