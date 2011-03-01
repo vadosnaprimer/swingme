@@ -3,6 +3,7 @@ package net.yura.android;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Vector;
@@ -15,6 +16,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -95,7 +99,7 @@ public class AndroidMeApp extends Application {
     private Vector<BroadcastReceiver> broadcastReceiverList = new Vector<BroadcastReceiver>();
 
     public AndroidMeApp() {
-        System.out.println(">>>>>>>>>> AndroidMeApp@constructor");
+        //System.out.println(">>>>>>>>>> AndroidMeApp@constructor");
         instance = this;
 
         handler = new Handler();
@@ -231,15 +235,19 @@ public class AndroidMeApp extends Application {
         }
 
         // Listen for External Storage events
-        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
-        intentFilter.addAction(Intent.ACTION_MEDIA_EJECT);
-        intentFilter.addDataScheme("file");
+        IntentFilter fileFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        fileFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        fileFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
+        fileFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
+        fileFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
+        fileFilter.addAction(Intent.ACTION_MEDIA_EJECT);
+        fileFilter.addDataScheme("file");
 
-        registerReceiver(new FileBroadcastReceiver(), intentFilter);
+        IntentFilter wifiFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+
+        BroadcastReceiver receiver = new SystemChangedBroadcastReceiver();
+        registerReceiver(receiver, fileFilter);
+        registerReceiver(receiver, wifiFilter);
 
         setFileSystemProperties();
 
@@ -281,15 +289,45 @@ public class AndroidMeApp extends Application {
         System.setProperty("fileconn.dir.private",  privDir);
     }
 
+    private void setWifiProperties() {
+        String prop = "";
+
+        WifiManager wifiMan = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        if (wifiMan != null) {
+            WifiInfo myWifi = wifiMan.getConnectionInfo();
+            String myMAC = "";
+            if (myWifi != null) {
+                myMAC = myWifi.getBSSID();
+                // System.out.println(">>> My wifi MAC: " + myMAC);
+            }
+
+
+            List<ScanResult> scanRes = wifiMan.getScanResults();
+            if (scanRes != null) {
+                for (ScanResult scanResult : scanRes) {
+                    if (!myMAC.equals(scanResult.BSSID)) {
+                        // System.out.println(">>> Neighbour wifi MAC: " + scanResult.BSSID);
+                        if (prop.length() > 0) {
+                            prop += ";";
+                        }
+                        prop += scanResult.BSSID + "=" + scanResult.level;
+                    }
+                }
+            }
+        }
+
+        System.setProperty("wifi.state",  prop);
+    }
+
     private void loadJadFile() throws IOException {
         Properties properties = new Properties();
         MIDlet.DEFAULT_APPLICATION_PROPERTIES = properties;
 
         String[] assetList = getResources().getAssets().list("");
         for (int i = 0; i < assetList.length; i++) {
-            System.out.println("> > >" + assetList[i]);
+            //System.out.println("> > >" + assetList[i]);
             if (assetList[i].endsWith(".jad")) {
-                System.out.println("Found a Jad File: " + assetList[i]);
+                //System.out.println("Found a Jad File: " + assetList[i]);
 
                 InputStream is = getAssets().open(assetList[i]);
                 properties.load(is);
@@ -303,7 +341,7 @@ public class AndroidMeApp extends Application {
         while (true) {
             count++;
             String midletProp = properties.getProperty("MIDlet-" + count);
-            System.out.println("Found MIDlet: " + midletProp);
+            //System.out.println("Found MIDlet: " + midletProp);
             if (midletProp == null) {
                 break;
             }
@@ -324,13 +362,19 @@ public class AndroidMeApp extends Application {
         }
     }
 
-    class FileBroadcastReceiver extends BroadcastReceiver {
+    class SystemChangedBroadcastReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             //#debug debug
-            System.out.println(">>> FileBroadcastReceiver: received " + intent.getAction());
-            setFileSystemProperties();
+            System.out.println(">>> SystemChangedBroadcastReceiver: received " + intent.getAction());
+
+            if (WifiManager.WIFI_STATE_CHANGED_ACTION.endsWith(intent.getAction())) {
+                setWifiProperties();
+            }
+            else {
+                setFileSystemProperties();
+            }
         }
     }
 }
