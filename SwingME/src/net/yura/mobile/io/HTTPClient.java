@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
@@ -92,7 +94,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
         OutputStream os = null;
         int respCode = 0;
         Hashtable headers = new Hashtable();
-        
+
         try {
 
             if ((!request.post || request.postData!=null) && getpost!=null) {
@@ -209,12 +211,13 @@ public abstract class HTTPClient extends QueueProcessorThread {
         return ret.toString();
     }
 
-    private static void appendHex(int arg0, StringBuffer buff){
+    private static void appendHex(byte b, StringBuffer buff){
+        int n = b & 0xFF;
         buff.append('%');
-        if (arg0 < 16) {
+        if (n < 16) {
             buff.append('0');
         }
-        buff.append(Integer.toHexString(arg0));
+        buff.append(Integer.toHexString(n));
     }
 
 
