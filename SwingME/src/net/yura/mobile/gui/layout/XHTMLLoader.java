@@ -2,6 +2,7 @@ package net.yura.mobile.gui.layout;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Graphics;
@@ -83,6 +84,9 @@ public class XHTMLLoader {
     }
 
     /**
+     * This method should only return a Synth Style or a preset, e.g. &lt;b&gt;
+     * it should NOT create new styles based on the tag!!!
+     *
      * do not default
      * @return style for this tag if found, otherwise null
      */
@@ -115,33 +119,7 @@ public class XHTMLLoader {
             return textStyle;
         }
 
-        // css defaults
-        if ("b".equals(name)) {
-            return bold;
-        }
-        else if ("i".equals(name)) {
-            return italic;
-        }
-        else if ("u".equals(name)) {
-            return underline;
-        }
-        else if ("center".equals(name)) {
-            return center;
-        }
-        else if ("a".equals(name)) {
-            return link;
-        }
-        else if ("font".equals(name)) {
-            TextStyle style = new TextStyle();
-            style.setName("font");
-            String color = parser.getAttributeValue(null, "color");
-            if (color!=null) {
-                style.setForeground( Graphics2D.parseColor(color, 16) );
-            }
-            return style;
-        }
-
-        return null;
+        return (TextStyle)htmlTextStyles.get(name);
     }
 
     protected void read(KXmlParser parser) throws Exception {
@@ -207,18 +185,27 @@ public class XHTMLLoader {
         return root;
     }
 
-    final static TextStyle bold = new TextStyle();
-    final static TextStyle italic = new TextStyle();
-    final static TextStyle underline = new TextStyle();
-    final static TextStyle center = new TextStyle();
-    final static TextStyle link = new TextStyle();
+    private final static Hashtable htmlTextStyles = new Hashtable();
+
     static {
+
+        // css defaults
+        TextStyle bold = new TextStyle();
+        TextStyle italic = new TextStyle();
+        TextStyle underline = new TextStyle();
+        TextStyle center = new TextStyle();
+        TextStyle link = new TextStyle();
+        TextStyle font = new TextStyle();
+
         bold.setBold(true);
         bold.setName("b");
+
         italic.setItalic(true);
         italic.setName("i");
+
         underline.setUnderline(true);
         underline.setName("u");
+        
         center.setAlignment( TextStyle.ALIGN_CENTER );
         center.setName("center");
 
@@ -226,6 +213,19 @@ public class XHTMLLoader {
         link.setForeground(0xFF0000FF);
         link.addForeground(0xFFFF0000, Style.FOCUSED);
         link.setName("a");
+
+        font.setName("font");
+
+        addHtmlTextStyle(bold);
+        addHtmlTextStyle(italic);
+        addHtmlTextStyle(underline);
+        addHtmlTextStyle(center);
+        addHtmlTextStyle(link);
+        addHtmlTextStyle(font);
+    }
+
+    public static void addHtmlTextStyle(TextStyle style) {
+        htmlTextStyles.put(style.getName(), style);
     }
 
     private void startInlineSection() {
@@ -291,19 +291,39 @@ public class XHTMLLoader {
 Logger.debug("START: "+startTag);
 
             if ("a".equals(startTag)) {
-                for (int c=0;c<count;c++) {
-                    String key = parser.getAttributeName(c).toLowerCase();
-                    String value = parser.getAttributeValue(c);
-                    if ("href".equals(key)) {
 
+                String value = parser.getAttributeValue(null, "href");
+
+
+                //for (int c=0;c<count;c++) {
+                //    String key = parser.getAttributeName(c).toLowerCase();
+                //    String value = parser.getAttributeValue(c);
+                //    if ("href".equals(key)) {
+
+                if (value!=null) {
                         TextStyle linkStyle = new TextStyle();
 
                         linkStyle.putAll(style);
                         linkStyle.setAction(value);
 
                         style = linkStyle;
-                    }
                 }
+
+                //    }
+                //}
+            }
+            if ("font".equals(startTag)) {
+
+                String color = parser.getAttributeValue(null, "color");
+                if (color!=null) {
+                    TextStyle linkStyle = new TextStyle();
+
+                    linkStyle.putAll(style);
+                    linkStyle.setForeground( Graphics2D.parseColor(color, 16) );
+
+                    style = linkStyle;
+                }
+
             }
             else if ("br".equals(startTag)) {
                 if (currentComponent instanceof TextPane) { // should be TextComponent

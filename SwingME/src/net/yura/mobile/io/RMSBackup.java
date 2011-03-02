@@ -119,10 +119,14 @@ public class RMSBackup extends QueueProcessorThread {
             //Object bookingId = helper.getObjectId(obj);
             Integer i = (Integer)table.remove(obj);
 
-            RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
-            recordStore.deleteRecord(i.intValue());
-            recordStore.closeRecordStore();
-
+            if (i!=null) {
+                RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
+                recordStore.deleteRecord(i.intValue());
+                recordStore.closeRecordStore();
+            }
+            else {
+                System.err.println("[RMSBackup] ERROR: can not del "+obj+" from "+table);
+            }
         }
         else if ("save".equals(method)) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
