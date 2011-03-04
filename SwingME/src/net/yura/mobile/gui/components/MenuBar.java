@@ -284,16 +284,7 @@ public class MenuBar extends List implements ActionListener {
     private int cols;
 
     private boolean firstMenu() {
-        // HACK to work out if we should be a android grid menu
-        ActionListener al = getActionListener();
-        if (al instanceof Menu) {
-            Menu parentMenu = (Menu)al;
-            Component bar = parentMenu.getParent();
-            if (bar instanceof MenuBar && ((MenuBar)bar).isFrameMenuBar() ) {
-                return true;
-            }
-        }
-        return false;
+        return (owner != null && owner.isFrameMenuBar() );
     }
 
     protected Component getComponentFor(int i,int offset) {
