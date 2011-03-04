@@ -451,15 +451,6 @@ public abstract class Component {
         else if (parent!=null) {
             parent.processMouseEvent(type,x+posX,y+posY, keys);
         }
-
-        if (type == DesktopPane.RELEASED) {
-            if (popup!=null) {
-                popup.pack();
-                popup.setLocation(getXOnScreen()+x, getYOnScreen()+y);
-                popup.setVisible(true);
-            }
-        }
-
         //else {
         //    owner.pointerEvent(type,x+getXInWindow(),y+getYInWindow());
         //}
@@ -877,6 +868,12 @@ public abstract class Component {
      */
     public void setPopupMenu(Window component) {
         popup = component;
+    }
+    /**
+     * @see javax.swing.JMenu#getPopupMenu() JMenu.getPopupMenu
+     */
+    public Window getPopupMenu() {
+        return popup;
     }
 
 }

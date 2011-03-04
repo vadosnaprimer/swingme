@@ -605,6 +605,11 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
         if (!uiSettings.containsKey(key)) {
             uiSettings.put(key, value);
         }
+        //#mdebug debug
+        else {
+            System.out.println("[NimbusLookAndFeel] UIDefault already set: "+key+" "+value);
+        }
+        //#enddebug
     }
 
 

@@ -27,7 +27,6 @@ import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -41,46 +40,9 @@ public class Menu extends Button {
         private int destX;
         private int destY;
         private Icon arrowDirection;
-        private Menu parentMenu;
 
         public Menu() {
             popup = makePopup();
-
-            popup.addWindowListener(this);
-            MenuBar menuItems = getPopupMenu(popup);
-
-            // SETUP RIGHT/BACK SOFT KEY
-
-            Button cancel = new Button( (String)DesktopPane.get("cancelText") );
-            cancel.setActionCommand(Frame.CMD_CLOSE);
-            cancel.addActionListener(this);
-            cancel.setMnemonic(KeyEvent.KEY_END);
-            popup.addCommand(cancel);
-
-            // SETUP LEFT/MENU SOFT KEY
-
-            if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
-                Button cancel2 = new Button( (String)DesktopPane.get("menuText") );
-                cancel2.setActionCommand(Frame.CMD_CLOSE);
-                cancel2.addActionListener(this);
-                cancel2.setMnemonic(KeyEvent.KEY_MENU);
-                popup.addCommand(cancel2);
-            }
-            else {
-                menuItems.setUseSelectButton(true);
-            }
-
-            //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
-            // hack, this is not the best way of doing this, but its all i can think of for now
-
-            activateAction = menuItems.getActionCommand();
-            menuItems.removeActionListener(menuItems);
-
-            menuItems.setActionCommand("select");
-            menuItems.addActionListener(this);
-
-            //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
-
 
             // TODO ???
             //arrowDirection = Graphics.RIGHT;
@@ -96,12 +58,79 @@ public class Menu extends Button {
             setText(string);
         }
 
+/*
+        public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
+            super.processMouseEvent(type, x, y, keys);
+            // do not wait for the mouse up. we want to fire right away
+            if (isSelected()) {
+                // can not do this, as fireActionPerformed also makes a button unselected!
+                fireActionPerformed();
+            }
+        }
+*/
+
+        public void fireActionPerformed() {
+            super.fireActionPerformed();
+            setPopupMenuVisible(true);
+        }
+
+        /**
+         * @param c The component to append to the menu
+         * @see javax.swing.JMenu#add(java.awt.Component) JMenu.add
+         */
+        protected void addImpl(Component c, Object cons, int index) {
+            getPopupMenu(popup).insert(c,index);
+
+            // hack to make menu items have left alignment
+            if (c instanceof Button && c.getName().equals("Button")){
+                ((Button)c).setName("MenuItem");
+                ((Button)c).setHorizontalAlignment(Graphics.LEFT);
+            }
+        }
+
+        /**
+         * @see javax.swing.JMenu#removeAll() JMenu.removeAll
+         */
+        public void removeAll() {
+            getPopupMenu(popup).removeAll();
+        }
+
+        public Button findMneonicButton(int mnu) {
+            return getPopupMenu(popup).findMneonicButton(mnu);
+        }
+
+	public void workoutMinimumSize() {
+		super.workoutMinimumSize();
+		width = width + (arrowDirection!=null?(arrowDirection.getIconWidth()+gap):0);
+	}
+
+	public void paintComponent(Graphics2D g) {
+            super.paintComponent(g);
+
+            if (arrowDirection!=null) {
+                arrowDirection.paintIcon(this, g, width-padding-arrowDirection.getIconWidth(), (height - arrowDirection.getIconHeight())/2 );
+            }
+	}
+
+        public void setMenuRenderer(ListCellRenderer renderer) {
+            getPopupMenu(popup).setCellRenderer(renderer);
+        }
+
+        public void updateUI() {
+            super.updateUI();
+            arrowDirection = (Icon)theme.getProperty("icon", Style.ALL);
+        }
+
         /**
          * @see javax.swing.JMenu#addSeparator() JMenu.addSeparator
          */
         public void addSeparator() {
             add( makeSeparator() );
         }
+
+        /**
+         * @see javax.swing.JSeparator
+         */
         public static Component makeSeparator() {
             Label separator = new Label();
             separator.setPreferredSize(-1, 1);
@@ -109,6 +138,9 @@ public class Menu extends Button {
             return separator;
         }
 
+        /**
+         * @see javax.swing.JPopupMenu
+         */
         public static Window makePopup() {
 
             Window popup = new Window();
@@ -118,8 +150,31 @@ public class Menu extends Button {
             menuItems.setLayoutOrientation(List.VERTICAL);
             menuItems.setLoop(true);
 
+            popup.addWindowListener(menuItems);
+
             popup.add(new ScrollPane(menuItems));
             popup.setName("Menu");
+
+            // SETUP RIGHT/BACK SOFT KEY
+
+            Button cancel = new Button( (String)DesktopPane.get("cancelText") );
+            cancel.setActionCommand(Frame.CMD_CLOSE);
+            cancel.addActionListener(menuItems);
+            cancel.setMnemonic(KeyEvent.KEY_END);
+            popup.addCommand(cancel);
+
+            // SETUP LEFT/MENU SOFT KEY
+
+            if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
+                Button cancel2 = new Button( (String)DesktopPane.get("menuText") );
+                cancel2.setActionCommand(Frame.CMD_CLOSE);
+                cancel2.addActionListener(menuItems);
+                cancel2.setMnemonic(KeyEvent.KEY_MENU);
+                popup.addCommand(cancel2);
+            }
+            else {
+                menuItems.setUseSelectButton(true);
+            }
 
             return popup;
         }
@@ -128,39 +183,43 @@ public class Menu extends Button {
             return (MenuBar) ((ScrollPane)popup.getComponents().firstElement()).getView();
         }
 
-        public void setMenuRenderer(ListCellRenderer renderer) {
-            getPopupMenu(popup).setCellRenderer(renderer);
-        }
+        /**
+         * @see javax.swing.JMenu#setPopupMenuVisible(boolean) JMenu#setPopupMenuVisible
+         */
+        public void setPopupMenuVisible(boolean vis) {
+            if (vis) {
 
-        public void fireActionPerformed() {
-            super.fireActionPerformed();
-            popup.pack();
-            Border insets=getInsets();
-            positionMenuRelativeTo(
-                    popup,
-                    getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(),getHeightWithBorder(),
-                    getDesktopPane(),
-                    parentMenu==null?Graphics.TOP:Graphics.RIGHT
-                    );
-            //setupSnap();
-            openMenuAtLocation();
-        }
+                int direction=Graphics.RIGHT;
 
-        private static int extraWidth(Panel p) {
-            Vector children = p.getComponents();
-            for (int c=0;c<children.size();c++) {
-                Component comp = (Component)children.elementAt(c);
-                if (comp instanceof ScrollPane) {
-                    return ((ScrollPane)comp).getBarThickness();
-                }
-                else if (comp instanceof Panel) {
-                    int e = extraWidth( (Panel)comp );
-                    if (e>0) {
-                        return e;
+                MenuBar menubar = getPopupMenu(popup);
+                Component parent1 = getParent();
+                if (parent1 instanceof MenuBar) {
+                    menubar.owner = (MenuBar)parent1;
+                    // if we are a horivontal menu bar, e.g. the menu bar of a window
+                    if ( ((MenuBar)parent1).getLayoutOrientation() == List.HORIZONTAL ) {
+                        direction=Graphics.TOP;
                     }
                 }
+                else {
+                    // if we are just a button we want to pop down
+                    direction=Graphics.TOP;
+                }
+
+                popup.pack();
+
+                Border insets=getInsets();
+                positionMenuRelativeTo(
+                        popup,
+                        getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(), getHeightWithBorder(),
+                        getDesktopPane(),
+                        direction
+                    );
+
+                setupSnap(popup);
+
+                openMenuAtLocation();
             }
-            return 0;
+            // TODO else
         }
 
         public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,DesktopPane dp,int direction) {
@@ -211,6 +270,41 @@ public class Menu extends Button {
 
         }
 
+        private static int extraWidth(Panel p) {
+            Vector children = p.getComponents();
+            for (int c=0;c<children.size();c++) {
+                Component comp = (Component)children.elementAt(c);
+                if (comp instanceof ScrollPane) {
+                    return ((ScrollPane)comp).getBarThickness();
+                }
+                else if (comp instanceof Panel) {
+                    int e = extraWidth( (Panel)comp );
+                    if (e>0) {
+                        return e;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        private static void setupSnap(Window popup) {
+
+            DesktopPane dp = DesktopPane.getDesktopPane();
+
+            boolean left = popup.getXWithBorder()==0;
+            boolean top = popup.getYWithBorder()==0;
+            boolean right = popup.getXWithBorder()+popup.getWidthWithBorder()==dp.getWidth();
+            boolean bottom = popup.getYWithBorder()+popup.getHeightWithBorder()==dp.getHeight();
+            //System.out.println("left="+left+" top="+top+" right="+right+" bottom="+bottom);
+
+            popup.snap = (left?Graphics.LEFT:0) | (top?Graphics.TOP:0) | (right?Graphics.RIGHT:0) | (bottom?Graphics.BOTTOM:0);
+
+        }
+
+        /**
+         * there is no method for this in Swing, Swing uses:
+         * popup.show(parent, (invokerSize.width - popupSize.width) / 2, (invokerSize.height - popupSize.height) / 2);
+         */
         public void openMenuInCentre() {
 
             //menuItems.workoutSize(); // what out what the needed size is
@@ -224,21 +318,7 @@ public class Menu extends Button {
 
             openMenuAtLocation();
         }
-/*
-        private void setupSnap() {
 
-            DesktopPane dp = getDesktopPane();
-
-            boolean left = popup.getXWithBorder()==0;
-            boolean top = popup.getYWithBorder()==0;
-            boolean right = popup.getXWithBorder()+popup.getWidthWithBorder()==dp.getWidth();
-            boolean bottom = popup.getYWithBorder()+popup.getHeightWithBorder()==dp.getHeight();
-            //System.out.println("left="+left+" top="+top+" right="+right+" bottom="+bottom);
-
-            popup.snap = (left?Graphics.LEFT:0) | (top?Graphics.TOP:0) | (right?Graphics.RIGHT:0) | (bottom?Graphics.BOTTOM:0);
-
-        }
-*/
         private void openMenuAtLocation() {
 
             DesktopPane dp = getDesktopPane();
@@ -277,99 +357,7 @@ public class Menu extends Button {
             dp.add(popup);
         }
 
-        private String activateAction;
-
-    	public void actionPerformed(String actionCommand) {
-
-            // from WindowListener or cancel button
-            if (Frame.CMD_CLOSE.equals(actionCommand)) {
-                close();
-            }
-            else if ("select".equals(actionCommand)) {
-
-                MenuBar menuItems = getPopupMenu(popup);
-
-                Button button = (Button)menuItems.getSelectedValue();
-
-                menuItems.actionPerformed(activateAction);
-
-//
-//                //if (button instanceof Menu) {
-//                Component comp = menuItems.getRendererComponentFor( menuItems.getSelectedIndex() );
-//                button.setBoundsWithBorder(menuItems.getXOnScreen() + comp.getXWithBorder(), menuItems.getYOnScreen() + comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
-                //}
-                if (!(button instanceof Menu)) {
-                    close();
-                }
-
-//                button.fireActionPerformed();
-            }
-            //#mdebug warn
-            else {
-                Logger.warn("unknown command in menu: "+actionCommand);
-            }
-            //#enddebug
-
-        }
-
-        private void close() {
-            Component c = getParent();
-            if (c instanceof MenuBar) {
-                ((MenuBar)c).unselectAndUnfocus();
-            }
-            popup.setVisible(false);
-            // cancel the parent menu
-            if (parentMenu!=null) {
-                parentMenu.actionPerformed(Frame.CMD_CLOSE);
-            }
-        }
-
-        /**
-         * @param c The component to append to the menu
-         * @see javax.swing.JMenu#add(java.awt.Component) JMenu.add
-         */
-        protected void addImpl(Component c, Object cons, int index) {
-            getPopupMenu(popup).insert(c,index);
-
-            if (c instanceof Menu) {
-                ((Menu)c).setParentMenu(this);
-            }
-
-            // hack to make menu items have left alignment
-            if (c instanceof Button && c.getName().equals("Button")){
-                ((Button)c).setName("MenuItem");
-                ((Button)c).setHorizontalAlignment(Graphics.LEFT);
-            }
-        }
-
-        /**
-         * @see javax.swing.JMenu#removeAll() JMenu.removeAll
-         */
-        public void removeAll() {
-            getPopupMenu(popup).removeAll();
-        }
-
-        private void setParentMenu(Menu m) {
-            parentMenu = m;
-        }
-
-	public void workoutMinimumSize() {
-
-		super.workoutMinimumSize();
-		width = width + (arrowDirection!=null?(arrowDirection.getIconWidth()+gap):0);
-
-	}
-
-	public void paintComponent(Graphics2D g) {
-            super.paintComponent(g);
-
-            if (arrowDirection!=null) {
-                arrowDirection.paintIcon(this, g, width-padding-arrowDirection.getIconWidth(), (height - arrowDirection.getIconHeight())/2 );
-            }
-	}
-
         public void animate() throws InterruptedException {
-
 
             try {
 
@@ -456,16 +444,6 @@ public class Menu extends Button {
                 }
             }
 
-        }
-
-        public void updateUI() {
-            super.updateUI();
-
-            arrowDirection = (Icon)theme.getProperty("icon", Style.ALL);
-        }
-
-        public Button findMneonicButton(int mnu) {
-            return getPopupMenu(popup).findMneonicButton(mnu);
         }
 
 }

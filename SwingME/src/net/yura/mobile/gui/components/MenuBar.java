@@ -34,6 +34,8 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class MenuBar extends List implements ActionListener {
 
+    MenuBar owner;
+
     public MenuBar() {
         setLayoutOrientation(List.HORIZONTAL);
         setCellRenderer( new MenuItemRenderer() );
@@ -123,10 +125,24 @@ public class MenuBar extends List implements ActionListener {
                 Component comp = getRendererComponentFor( index );
                 button.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                 if (!(button instanceof Menu)) {
-                    unselectAndUnfocus();
+                    actionPerformed(Frame.CMD_CLOSE);
                 }
                 button.fireActionPerformed();
             }
+        }
+        else if (Frame.CMD_CLOSE.equals(actionCommand)) {
+
+            unselectAndUnfocus();
+
+            Window win = getWindow();
+            if (win.closeOnFocusLost) {
+                win.setVisible(false);
+            }
+
+            if (owner!=null) {
+                owner.actionPerformed(Frame.CMD_CLOSE);
+            }
+
         }
         else {
             super.actionPerformed(actionCommand);

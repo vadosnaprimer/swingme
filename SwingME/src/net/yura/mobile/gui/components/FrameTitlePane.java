@@ -251,8 +251,8 @@ public class FrameTitlePane extends Panel implements ActionListener {
         }
         else if (Frame.CMD_CLOSE.equals(actionCommand)) {
              getWindow().doClose();
-         }
-         else if (Frame.CMD_MIN.equals(actionCommand)) {
+        }
+        else if (Frame.CMD_MIN.equals(actionCommand)) {
 
              //if (parent==null) {
                  Vector windows = getDesktopPane().getAllFrames();
@@ -277,6 +277,5 @@ public class FrameTitlePane extends Panel implements ActionListener {
         }
 
     }
-
     
 }
