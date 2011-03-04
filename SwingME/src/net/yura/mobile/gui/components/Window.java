@@ -37,7 +37,7 @@ public class Window extends Panel {
 
         private Component focusedComponent;
 
-        private boolean closeOnFocusLost;
+        boolean closeOnFocusLost;
 
         private Vector softkeys;
 

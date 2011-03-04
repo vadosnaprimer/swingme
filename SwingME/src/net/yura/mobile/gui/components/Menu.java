@@ -215,7 +215,7 @@ public class Menu extends Button {
                         direction
                     );
 
-                setupSnap(popup);
+                //setupSnap(popup);
 
                 openMenuAtLocation();
             }
@@ -286,7 +286,7 @@ public class Menu extends Button {
             }
             return 0;
         }
-
+/*
         private static void setupSnap(Window popup) {
 
             DesktopPane dp = DesktopPane.getDesktopPane();
@@ -300,7 +300,7 @@ public class Menu extends Button {
             popup.snap = (left?Graphics.LEFT:0) | (top?Graphics.TOP:0) | (right?Graphics.RIGHT:0) | (bottom?Graphics.BOTTOM:0);
 
         }
-
+*/
         /**
          * there is no method for this in Swing, Swing uses:
          * popup.show(parent, (invokerSize.width - popupSize.width) / 2, (invokerSize.height - popupSize.height) / 2);
