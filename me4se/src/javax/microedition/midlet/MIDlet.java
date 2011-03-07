@@ -22,7 +22,9 @@ package javax.microedition.midlet;
 
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -253,7 +255,7 @@ public abstract class MIDlet {
                 ex.printStackTrace();
             }
         }
-        else if (url.startsWith("clipboard")) {
+        else if (url.startsWith("clipboard://")) {
             if (url.startsWith("clipboard://get")) {
 
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -270,6 +272,17 @@ public abstract class MIDlet {
                     }
                 }
 
+            }
+            else if (url.startsWith("clipboard://put/")) {
+
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+            	String text = url.substring( "clipboard://put/".length() );
+            	if (!"".equals(text)) {
+                    clipboard.setContents( new StringSelection(text) , new ClipboardOwner() {
+                        public void lostOwnership(Clipboard clipboard, Transferable contents) { }
+                    } );
+            	}
             }
         }
 	else {
