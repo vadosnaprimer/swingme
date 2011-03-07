@@ -30,6 +30,7 @@ import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.Menu;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.components.ScrollPane;
@@ -226,6 +227,14 @@ public class DesktopPane extends Canvas implements Runnable {
 
         UIManager.put("yesText", "Yes");
         UIManager.put("noText", "No");
+
+        // the clipboard
+        UIManager.put("cutText", "Cut");
+        UIManager.put("copyText", "Copy");
+        UIManager.put("pasteText", "Paste");
+        UIManager.put("deleteText", "Delete");
+        UIManager.put("selectAllText", "Select All");
+
 
         //      // check if we want to be in debug mode
         //      String s;
@@ -1225,7 +1234,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private ScrollPane pointerScrollPane;
     private int pointerFristX;
     private int pointerFristY;
-
+    private long pointerFristTime;
 
     public void pointerDragged(int x, int y) {
         pointerEvent(DRAGGED, x, y);
@@ -1284,6 +1293,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                     pointerFristX = x;
                     pointerFristY = y;
+                    pointerFristTime = System.currentTimeMillis();
                 }
 
                 // Start forwarding events to pointer ScrollPane?
@@ -1328,6 +1338,17 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 // When pointer released, reset pointer Component/ScrollPane
                 if (type == RELEASED) {
+
+                    long time = System.currentTimeMillis();
+                    if (time - pointerFristTime > 1000 && isAccurate(pointerFristX, pointerFristY, x, y)) {
+                        if (pointerComponent!=null) {
+                            Window popup = pointerComponent.getPopupMenu();
+                            if (popup!=null && !popup.isVisible()) {
+                                popup.show(pointerComponent, x, y);
+                            }
+                        }
+                    }
+
                     pointerScrollPane = null;
                     pointerComponent = null;
                 }
@@ -1452,48 +1473,53 @@ public class DesktopPane extends Canvas implements Runnable {
             sideSoftKeys = wideScreen;
         }
 
+        // if we are animating a menu up, kill the animation!
+        if (currentAnimatedComponent instanceof Menu) {
+            animateComponent(null);
+        }
+
+
         Vector win = getAllFrames();
 
         for (int c = 0; c < win.size(); c++) {
             Window window = (Window)win.elementAt(c);
 
-            // TODO RESIZE better
+            if (window != null) {// can it be null????
 
-            // when the scren switches from 1 resolution to another, and the 'hidden' menubar is not repositioned,
-            // it may cause it to stop being painted at all, as it may bcome totally off the screen
-
-            if (window != null) {
                 if (window instanceof Frame && ((Frame) window).isMaximum()) {
+                    // if it was max, then make it max again
                     ((Frame) window).setMaximum(true);
                 }
-/*
                 else {
-                    boolean left = window.getXWithBorder()==0;
-                    boolean top = window.getYWithBorder()==0;
-                    boolean right = window.getXWithBorder()+window.getWidthWithBorder()==oldw;
-                    boolean bottom = window.getYWithBorder()+window.getHeightWithBorder()==oldh;
-                    //System.out.println("left="+left+" top="+top+" right="+right+" bottom="+bottom);
 
+                    // push the window onto the screen in case it has gone of the screen
                     window.makeVisible();
 
-                    if (top && bottom) {
-                        window.setBoundsWithBorder(window.getXWithBorder(),0, window.getWidthWithBorder(),h);
-                    }
-                    else if (top || bottom) {
-                        Border insets = window.getInsets();
-                        window.setLocation(window.getX(), top?insets.getTop():h-window.getHeight()-insets.getBottom() );
-                    }
+                    // if our window is set to snap to some sides of the scrren, lets make sure it does
+                    if (window.snap!=0) {
 
-                    if (left && right) {
-                        window.setBoundsWithBorder(0, window.getYWithBorder(), w, window.getHeightWithBorder());
-                    }
-                    else if (left || right) {
-                        Border insets = window.getInsets();
-                        window.setLocation(left?insets.getLeft():w-window.getWidth()-insets.getRight(), window.getY() );
+                        boolean left = (window.snap & Graphics.LEFT)!=0;
+                        boolean top = (window.snap & Graphics.TOP)!=0;
+                        boolean right = (window.snap & Graphics.RIGHT)!=0;
+                        boolean bottom = (window.snap & Graphics.BOTTOM)!=0;
+
+                        if (top && bottom) {
+                            window.setBoundsWithBorder(window.getXWithBorder(),0, window.getWidthWithBorder(),h);
+                        }
+                        else if (top || bottom) {
+                            Border insets = window.getInsets();
+                            window.setLocation(window.getX(), top?insets.getTop():h-window.getHeight()-insets.getBottom() );
+                        }
+
+                        if (left && right) {
+                            window.setBoundsWithBorder(0, window.getYWithBorder(), w, window.getHeightWithBorder());
+                        }
+                        else if (left || right) {
+                            Border insets = window.getInsets();
+                            window.setLocation(left?insets.getLeft():w-window.getWidth()-insets.getRight(), window.getY() );
+                        }
                     }
                 }
-*/
-            //window.setBounds(window.getY(),window.getX(),window.getHeight(), window.getWidth());
             }
         }
         oldw = w;

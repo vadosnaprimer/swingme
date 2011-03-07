@@ -177,7 +177,21 @@ public abstract class TextComponent extends Component implements ActionListener,
 	}
 
 	public void actionPerformed(String actionCommand) {
-            if (SOFTKEY_CLEAR.getActionCommand().equals(actionCommand)) {
+
+            if ("cut".equals(actionCommand)) {
+            	actionPerformed("copy");
+            	actionPerformed("delete");
+            }
+            else if ("copy".equals(actionCommand)) {
+            	ClipboardManager.getInstance().setText( getText() );
+            }
+            else if ("paste".equals(actionCommand)) {
+            	paste();
+            }
+            else if ("delete".equals(actionCommand)) {
+            	setText("");
+            }
+            else if (SOFTKEY_CLEAR.getActionCommand().equals(actionCommand)) { // null pointer???
                 clear(true);
             }
             //#mdebug warn
@@ -185,6 +199,26 @@ public abstract class TextComponent extends Component implements ActionListener,
                 Logger.warn("something not right here?!?!?! "+actionCommand);
             }
             //#enddebug
+	}
+
+        /**
+         * @see javax.swing.text.JTextComponent#paste() JTextComponent.paste
+         */
+	public void paste() {
+		
+        String txt = ClipboardManager.getInstance().getText();
+        if (txt!=null) {
+            autoAccept();
+            // TODO should not allow of pasting of text into a number only field
+            //if (!allowOnlyNumberConstraint()) {
+                // TODO should check it does not make the text longer then that allowed
+                text.insert(caretPosition, txt);
+                changedUpdate(caretPosition,txt.length());
+                setCaretPosition(caretPosition + txt.length());
+            //}
+
+        }
+		
 	}
 
         private void clear(boolean back) {
@@ -325,18 +359,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 		}
                 else if (keyEvent.isDownKey(KeyEvent.KEY_EDIT)) { // Ctrl is pressed
                     if (keyEvent.isDownKey(22)) {// TODO no idea why 22
-                        String txt = ClipboardManager.getInstance().getText();
-                        if (txt!=null) {
-                            autoAccept();
-                            // TODO should not allow of pasting of text into a number only field
-                            //if (!allowOnlyNumberConstraint()) {
-                                // TODO should check it does not make the text longer then that allowed
-                                text.insert(caretPosition, txt);
-                                changedUpdate(caretPosition,txt.length());
-                                setCaretPosition(caretPosition + txt.length());
-                            //}
-
-                        }
+                    	paste();
                     }
                     // TODO support other things like CUT and COPY and UNDO
                 }
@@ -781,6 +804,50 @@ public abstract class TextComponent extends Component implements ActionListener,
                 return Integer.valueOf( x );
             }
             return x;
+        }
+
+        public Window getPopupMenu() {
+
+            if (!isFocusable()) return null;
+
+            Button cut = new Button( (String)DesktopPane.get("cutText") );
+            Button copy = new Button( (String)DesktopPane.get("copyText") );
+            Button paste = new Button( (String)DesktopPane.get("pasteText") );
+            Button delete = new Button( (String)DesktopPane.get("deleteText") );
+            //Button selectAll = new Button( (String)DesktopPane.get("selectAllText") );
+
+            cut.setActionCommand("cut");
+            copy.setActionCommand("copy");
+            paste.setActionCommand("paste");
+            delete.setActionCommand("delete");
+
+            cut.addActionListener(this);
+            copy.addActionListener(this);
+            paste.addActionListener(this);
+            delete.addActionListener(this);
+            
+            Window popup = Menu.makePopup();
+            MenuBar menu = Menu.getPopupMenu(popup);
+            menu.add(cut);
+            menu.add(copy);
+            menu.add(paste);
+            menu.add(delete);
+            //menu.add( Menu.makeSeparator() );
+            //menu.add(selectAll); // TODO
+
+            String txt = getText();
+            if (txt==null || "".equals(txt)) {
+                cut.setFocusable(false);
+                copy.setFocusable(false);
+                delete.setFocusable(false);
+            }
+
+            String txt2 = ClipboardManager.getInstance().getText();
+            if (txt2==null || "".equals(txt2)) {
+                paste.setFocusable(false);
+            }
+
+            return popup;
         }
 
         //#mdebug debug

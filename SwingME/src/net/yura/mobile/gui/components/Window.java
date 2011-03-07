@@ -34,13 +34,10 @@ import net.yura.mobile.logging.Logger;
 public class Window extends Panel {
 
         private DesktopPane desktop;
-
         private Component focusedComponent;
-
         boolean closeOnFocusLost;
-
+        public int snap;
         private Vector softkeys;
-
         private ActionListener windowListener;
 
         /**
@@ -176,7 +173,6 @@ public class Window extends Panel {
          * internal method that is called when a window autocloses or is closed from the titlebar
          */
         void doClose() {
-
                 if (windowListener!=null) {
                     windowListener.actionPerformed(Frame.CMD_CLOSE);
                 }
@@ -538,6 +534,19 @@ public class Window extends Panel {
 
             Border insets = getInsets();
             setLocation(x+insets.getLeft(), y+insets.getTop());
+        }
+
+        //Window owner;
+        /**
+         * @see javax.swing.JPopupMenu#show(java.awt.Component, int, int) JPopupMenu.show
+         */
+        public void show(Component invoker, int x,int y) {
+            //owner = invoker.getWindow();
+
+            pack();
+            setLocation(x, y);
+            makeVisible(); // make sure its not going off the side of the screen
+            setVisible(true);
         }
 
 }

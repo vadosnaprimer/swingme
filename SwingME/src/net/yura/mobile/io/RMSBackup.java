@@ -61,9 +61,10 @@ public class RMSBackup extends QueueProcessorThread {
 
                 RecordEnumeration re = recordStore.enumerateRecords(null, null, true);
                 while (re.hasNextElement()) {
-                    // Get an input stream for the data in the record store.
+
                     int id = re.nextRecordId();
                     try {
+                        // Get an input stream for the data in the record store.
                         ByteArrayInputStream bais = new ByteArrayInputStream(recordStore.getRecord(id));
                         // as we now have bookings in RMS, we need to update the bookingID->rmsID lookup table
                         Object currentBooking = helper.loadObject(bais);
@@ -71,6 +72,9 @@ public class RMSBackup extends QueueProcessorThread {
                         current.addElement(currentBooking);
                     }
                     catch(Exception ex) {
+                        // we can not read this record, lets remove it from the store!
+                        recordStore.deleteRecord(id);
+
                         //#mdebug warn
                         Logger.warn("Error loading RMS: "+rmsName+" record id="+id);
                         Logger.warn(ex);
