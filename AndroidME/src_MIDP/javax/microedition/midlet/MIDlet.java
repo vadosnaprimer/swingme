@@ -133,13 +133,21 @@ public abstract class MIDlet {
             	onResult(0, obj==null?null:obj.toString()); // so far we only support Strings
             	
             }
-            else if (url.equals("clipboard://put")) {
+            else if (url.startsWith("clipboard://put/")) {
             	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
-            	net.yura.mobile.gui.Midlet midlet = net.yura.mobile.gui.Midlet.getMidlet();
-            	Object obj = midlet.retrievePlatformRequestParam(url);
-            	if (obj instanceof String) {
-            		clipboardManager.setText( (String)obj );
+            	
+            	// this makes us link to SwingME where we do not really want to, as me4se would need to too
+            	//net.yura.mobile.gui.Midlet midlet = net.yura.mobile.gui.Midlet.getMidlet();
+            	//Object obj = midlet.retrievePlatformRequestParam(url);
+            	//if (obj instanceof String) {
+            	//	clipboardManager.setText( (String)obj );
+            	//}
+            	
+            	String text = url.substring( "clipboard://put/".length() );
+            	if (!"".equals(text)) {
+            		clipboardManager.setText( text );
             	}
+            	
             }
             else {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
