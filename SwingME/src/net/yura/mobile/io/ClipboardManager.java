@@ -73,11 +73,14 @@ public class ClipboardManager implements ServiceLink.TaskHandler {
             }
         }
         else {
-
             Midlet midlet = Midlet.getMidlet();
-
-            midlet.platformRequest("clipboard://put",text);
-
+            //midlet.platformRequest("clipboard://put",text);
+            try {
+                midlet.platformRequest("clipboard://put/"+text);
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

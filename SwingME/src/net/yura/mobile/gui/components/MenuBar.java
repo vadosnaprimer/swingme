@@ -89,6 +89,14 @@ public class MenuBar extends List implements ActionListener {
         if (isFrameMenuBar() && button instanceof Button) {
             autoMnemonic();
         }
+
+
+        // hack to make menu items have left alignment
+        if (button instanceof Button && button.getName().equals("Button")){
+            ((Button)button).setName("MenuItem");
+            ((Button)button).setHorizontalAlignment(Graphics.LEFT);
+        }
+
     }
 
     void autoMnemonic() {

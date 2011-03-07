@@ -808,6 +808,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public Window getPopupMenu() {
 
+            if (popup!=null) return popup;
             if (!isFocusable()) return null;
 
             Button cut = new Button( (String)DesktopPane.get("cutText") );

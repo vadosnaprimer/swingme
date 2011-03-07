@@ -80,12 +80,6 @@ public class Menu extends Button {
          */
         protected void addImpl(Component c, Object cons, int index) {
             getPopupMenu(popup).insert(c,index);
-
-            // hack to make menu items have left alignment
-            if (c instanceof Button && c.getName().equals("Button")){
-                ((Button)c).setName("MenuItem");
-                ((Button)c).setHorizontalAlignment(Graphics.LEFT);
-            }
         }
 
         /**
