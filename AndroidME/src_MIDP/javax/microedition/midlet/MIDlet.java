@@ -17,6 +17,7 @@ import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.telephony.gsm.GsmCellLocation;
+import android.text.ClipboardManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -124,6 +125,21 @@ public abstract class MIDlet {
             }
             else if (url.startsWith(PROTOCOL_NOTIFY)) {
                 showNotification(content);
+            }
+            else if (url.equals("clipboard://get")) {
+            	
+            	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
+            	Object obj = clipboardManager.getText();
+            	onResult(0, obj==null?null:obj.toString()); // so far we only support Strings
+            	
+            }
+            else if (url.equals("clipboard://put")) {
+            	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
+            	net.yura.mobile.gui.Midlet midlet = net.yura.mobile.gui.Midlet.getMidlet();
+            	Object obj = midlet.retrievePlatformRequestParam(url);
+            	if (obj instanceof String) {
+            		clipboardManager.setText( (String)obj );
+            	}
             }
             else {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
