@@ -245,6 +245,7 @@ public class AndroidMeApp extends Application {
         fileFilter.addDataScheme("file");
 
         IntentFilter wifiFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+        wifiFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
 
         BroadcastReceiver receiver = new SystemChangedBroadcastReceiver();
         registerReceiver(receiver, fileFilter);
@@ -371,7 +372,8 @@ public class AndroidMeApp extends Application {
                 //#debug debug
                 System.out.println(">>> SystemChangedBroadcastReceiver: received " + intent.getAction());
 
-                if (WifiManager.WIFI_STATE_CHANGED_ACTION.endsWith(intent.getAction())) {
+                if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(intent.getAction()) ||
+                    WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(intent.getAction())) {
                     setWifiProperties();
                 }
                 else {
