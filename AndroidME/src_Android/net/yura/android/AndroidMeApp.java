@@ -11,6 +11,7 @@ import java.util.Vector;
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 
+import net.yura.mobile.logging.Logger;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -305,7 +306,7 @@ public class AndroidMeApp extends Application {
             List<ScanResult> scanRes = wifiMan.getScanResults();
             if (scanRes != null) {
                 for (ScanResult scanResult : scanRes) {
-                    if (!myMAC.equals(scanResult.BSSID)) {
+                    if (myMAC != null && !myMAC.equals(scanResult.BSSID)) {
                         // System.out.println(">>> Neighbour wifi MAC: " + scanResult.BSSID);
                         if (prop.length() > 0) {
                             prop += ";";
@@ -366,14 +367,19 @@ public class AndroidMeApp extends Application {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //#debug debug
-            System.out.println(">>> SystemChangedBroadcastReceiver: received " + intent.getAction());
+            try {
+                //#debug debug
+                System.out.println(">>> SystemChangedBroadcastReceiver: received " + intent.getAction());
 
-            if (WifiManager.WIFI_STATE_CHANGED_ACTION.endsWith(intent.getAction())) {
-                setWifiProperties();
-            }
-            else {
-                setFileSystemProperties();
+                if (WifiManager.WIFI_STATE_CHANGED_ACTION.endsWith(intent.getAction())) {
+                    setWifiProperties();
+                }
+                else {
+                    setFileSystemProperties();
+                }
+            } catch (Throwable e) {
+                //#debug warn
+                Logger.warn(e);
             }
         }
     }
