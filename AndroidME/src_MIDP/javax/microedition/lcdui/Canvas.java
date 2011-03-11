@@ -7,7 +7,6 @@ import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
@@ -53,7 +52,7 @@ public abstract class Canvas extends Displayable {
      */
     private LinearLayout linearLayout;
     private CanvasView canvasView;
-    
+
     /**
      * we NEED a buffer here, as if we do not we MUST paint ALL of the area inside
      * the crop rect on every paint, and currently SwingME does not
@@ -362,15 +361,15 @@ public abstract class Canvas extends Displayable {
 
             // reset the dist based on the src as we will use it for the dist paint Rect
             dist.top = src.top+graphicsY; // we need to do this as it may be off screen on some devices such as SE-X10-mini
-            
+
             // this is not technically needed
             dist.bottom = src.bottom+graphicsY;
             dist.left = src.left;
             dist.right = src.right;
             // but just to be sure we do it anyway, as we ALWAYS want them to be the same size, or the image is stretched
-            
+
             paint(graphics);
-            
+
             androidCanvas.drawBitmap(graphicsBitmap, src, dist, null);
 
 //            if (touchDebug != null) {
@@ -423,7 +422,7 @@ public abstract class Canvas extends Displayable {
                 }
             }
 
-            return true;
+            return !isVolumeKey(keyCode);
         }
 
         @Override
@@ -449,7 +448,13 @@ public abstract class Canvas extends Displayable {
             else {
                 keyReleased(meKeyCode);
             }
-            return true;
+
+            return !isVolumeKey(keyCode);
+        }
+
+        private boolean isVolumeKey(int keyCode) {
+            return (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+                    keyCode == KeyEvent.KEYCODE_VOLUME_DOWN);
         }
 
         private static final int POINTER_DRAGGED = 0;
