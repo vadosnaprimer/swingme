@@ -1339,15 +1339,16 @@ public class DesktopPane extends Canvas implements Runnable {
                 // When pointer released, reset pointer Component/ScrollPane
                 if (type == RELEASED) {
 
-                    long time = System.currentTimeMillis();
-                    if (time - pointerFristTime > 1000 && isAccurate(pointerFristX, pointerFristY, x, y)) {
-                        if (pointerComponent!=null) {
-                            Window popup = pointerComponent.getPopupMenu();
-                            if (popup!=null && !popup.isVisible()) {
-                                popup.show(pointerComponent, x, y);
-                            }
-                        }
-                    }
+                	//	this is temporary because we do not want it in v1.4
+//                    long time = System.currentTimeMillis();
+//                    if (time - pointerFristTime > 1000 && isAccurate(pointerFristX, pointerFristY, x, y)) {
+//                        if (pointerComponent!=null) {
+//                            Window popup = pointerComponent.getPopupMenu();
+//                            if (popup!=null && !popup.isVisible()) {
+//                                popup.show(pointerComponent, x, y);
+//                            }
+//                        }
+//                    }
 
                     pointerScrollPane = null;
                     pointerComponent = null;
