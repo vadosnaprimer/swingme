@@ -317,8 +317,14 @@ public class ScrollPane extends Panel implements Runnable {
         slider.workoutSize();
 
         super.workoutMinimumSize();
-        width = getView().getWidthWithBorder();
-        height = getView().getHeightWithBorder();
+
+        Component view = getView();
+
+        // we use the real size and NOT the size with border here
+        // as the border is outside the content, and only visable when you
+        // drag past the edge
+        width = view.getWidth();
+        height = view.getHeight();
     }
 
 
@@ -425,6 +431,7 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         int viewHeight = view.getHeight();
 
         boolean vertical = viewHeight > viewPortHeight; // NEEDS to be same check as in getViewPortWidth
+
         boolean horizontal = viewWidth > (width-viewPortX); // NEEDS to be same check as in getViewPortHeight
 
         if ( vertical ) {

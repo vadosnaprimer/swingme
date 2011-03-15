@@ -160,7 +160,7 @@ public class MenuBar extends List implements ActionListener {
     void unselectAndUnfocus() {
         if (isFrameMenuBar()) {
             Window w = getWindow();
-            if (w.getMostRecentFocusOwner() == this) {
+            if (w.getFocusOwner() == this) {
                 w.setFocusedComponent(null);
                 setSelectedIndex(-1);
             }

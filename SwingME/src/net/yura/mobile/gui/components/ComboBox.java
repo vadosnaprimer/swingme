@@ -129,7 +129,10 @@ public class ComboBox extends Button implements ActionListener{
                 scroll.removeAll();
                 scroll.add(list);
 
-                dropDown.pack();
+                // helper to make sure it opens on the correct DesktopPane, is not needed in the case where there is just 1
+                dropDown.setDesktopPane(getDesktopPane());
+
+                Menu.setupSize(dropDown);
 
                 if (dropDown.getWidthWithBorder()<getWidthWithBorder()) {
                     dropDown.setBoundsWithBorder(0, 0, getWidthWithBorder(), dropDown.getHeightWithBorder());
@@ -138,7 +141,6 @@ public class ComboBox extends Button implements ActionListener{
                 Menu.positionMenuRelativeTo(
                         dropDown,
                         getXOnScreen() - getInsets().getLeft(), getYOnScreen(), getWidthWithBorder(),getHeight(),
-                        getDesktopPane(),
                         Graphics.TOP
                         );
                 dropDown.setVisible(true);

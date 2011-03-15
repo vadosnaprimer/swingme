@@ -303,6 +303,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
         setUIDefault(componentName+".border", new EmptyBorder(tmp2.getTop(), tmp2.getLeft(), tmp2.getBottom(), tmp2.getRight()));
         setUIDefault(componentName+"[selected].border",tmp2);
         setUIDefault(componentName+"[selected].foreground",uiSettings.get("nimbusSelectedText"));
+        setUIDefault(componentName+"[disabled].foreground",uiSettings.get("nimbusDisabledText"));
 
         // COMBOS
         Vector comboBorderSettings = new Vector();

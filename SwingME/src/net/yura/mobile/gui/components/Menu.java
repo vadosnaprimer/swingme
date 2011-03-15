@@ -94,15 +94,20 @@ public class Menu extends Button {
         }
 
 	public void workoutMinimumSize() {
-		super.workoutMinimumSize();
-		width = width + (arrowDirection!=null?(arrowDirection.getIconWidth()+gap):0);
+            super.workoutMinimumSize();
+
+            if (!isTopLevelMenu()) {
+                width = width + (arrowDirection!=null?(arrowDirection.getIconWidth()+gap):0);
+            }
 	}
 
 	public void paintComponent(Graphics2D g) {
             super.paintComponent(g);
-
-            if (arrowDirection!=null) {
-                arrowDirection.paintIcon(this, g, width-padding-arrowDirection.getIconWidth(), (height - arrowDirection.getIconHeight())/2 );
+            
+            if (!isTopLevelMenu()) {
+                if (arrowDirection!=null) {
+                    arrowDirection.paintIcon(this, g, width-padding-arrowDirection.getIconWidth(), (height - arrowDirection.getIconHeight())/2 );
+                }
             }
 	}
 
@@ -183,30 +188,22 @@ public class Menu extends Button {
         public void setPopupMenuVisible(boolean vis) {
             if (vis) {
 
-                int direction=Graphics.RIGHT;
-
-                MenuBar menubar = getPopupMenu(popup);
+                // setup the owner of this popup
                 Component parent1 = getParent();
                 if (parent1 instanceof MenuBar) {
-                    menubar.owner = (MenuBar)parent1;
-                    // if we are a horivontal menu bar, e.g. the menu bar of a window
-                    if ( ((MenuBar)parent1).getLayoutOrientation() == List.HORIZONTAL ) {
-                        direction=Graphics.TOP;
-                    }
-                }
-                else {
-                    // if we are just a button we want to pop down
-                    direction=Graphics.TOP;
+                    getPopupMenu(popup).owner = (MenuBar)parent1;
                 }
 
-                popup.pack();
+                // just a help to make sure we open always on the correct DesktopPane, in the case there are more then one
+                popup.setDesktopPane( getDesktopPane() );
+
+                setupSize(popup);
 
                 Border insets=getInsets();
                 positionMenuRelativeTo(
                         popup,
                         getXOnScreen() - insets.getLeft(), getYOnScreen()- insets.getTop(), getWidthWithBorder(), getHeightWithBorder(),
-                        getDesktopPane(),
-                        direction
+                        isTopLevelMenu()?Graphics.TOP:Graphics.RIGHT
                     );
 
                 setupSnap(popup);
@@ -216,7 +213,17 @@ public class Menu extends Button {
             // TODO else
         }
 
-        public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,DesktopPane dp,int direction) {
+        private boolean isTopLevelMenu() {
+            Component parent1 = getParent();
+            // return true if we are NOT in a mneubar, or if the menubar is horizontal
+            return !(parent1 instanceof MenuBar) || ((MenuBar)parent1).getLayoutOrientation() == List.HORIZONTAL;
+        }
+
+        public static void setupSize(Window window) {
+
+            window.pack();
+
+            DesktopPane dp = window.getDesktopPane();
 
             int w = window.getWidthWithBorder();
             int h = window.getHeightWithBorder();
@@ -232,6 +239,18 @@ public class Menu extends Button {
             if (w > dp.getWidth()) {
                 w = dp.getWidth();
             }
+
+            Border insets=window.getInsets();
+            window.setSize(w-insets.getLeft()-insets.getRight(), h-insets.getTop()-insets.getBottom() );
+
+        }
+
+        public static void positionMenuRelativeTo(Window window,int x, int y, int width, int height,int direction) {
+
+            DesktopPane dp = window.getDesktopPane();
+
+            int w = window.getWidthWithBorder();
+            int h = window.getHeightWithBorder();
 
             if (direction!=Graphics.RIGHT) {
                 // the right x position of whatever opended me!
@@ -259,7 +278,10 @@ public class Menu extends Button {
                 x = x+width;
             }
 
-            window.setBoundsWithBorder(x, y, w, h);
+            Border insets=window.getInsets();
+            window.setLocation(x+insets.getLeft(), y+insets.getTop());
+
+            // will adjust the location to make sure it is on screen
             window.makeVisible();
 
         }

@@ -448,6 +448,10 @@ public class DesktopPane extends Canvas implements Runnable {
         return softkeyRenderer;
     }
 
+    /**
+     * this returns how big the area at the top and the bottom is that is
+     * reserved for the softkeys, or 0 if there are no softkeys
+     */
     public int getMenuHeight() {
         return SOFT_KEYS?menuHeight:0;
     }
@@ -1352,6 +1356,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                     pointerScrollPane = null;
                     pointerComponent = null;
+
                 }
             }
 
@@ -1499,16 +1504,19 @@ public class DesktopPane extends Canvas implements Runnable {
                     // if our window is set to snap to some sides of the scrren, lets make sure it does
                     if (window.snap!=0) {
 
+                        Menu.setupSize(window);
+
                         boolean left = (window.snap & Graphics.LEFT)!=0;
                         boolean top = (window.snap & Graphics.TOP)!=0;
                         boolean right = (window.snap & Graphics.RIGHT)!=0;
                         boolean bottom = (window.snap & Graphics.BOTTOM)!=0;
 
+                        Border insets = window.getInsets();
+
                         if (top && bottom) {
                             window.setBoundsWithBorder(window.getXWithBorder(),0, window.getWidthWithBorder(),h);
                         }
                         else if (top || bottom) {
-                            Border insets = window.getInsets();
                             window.setLocation(window.getX(), top?insets.getTop():h-window.getHeight()-insets.getBottom() );
                         }
 
@@ -1516,7 +1524,6 @@ public class DesktopPane extends Canvas implements Runnable {
                             window.setBoundsWithBorder(0, window.getYWithBorder(), w, window.getHeightWithBorder());
                         }
                         else if (left || right) {
-                            Border insets = window.getInsets();
                             window.setLocation(left?insets.getLeft():w-window.getWidth()-insets.getRight(), window.getY() );
                         }
                     }
