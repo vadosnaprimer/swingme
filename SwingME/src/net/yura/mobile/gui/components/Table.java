@@ -46,16 +46,19 @@ public class Table extends Panel {
      */
     protected int rowHeight;
 
-     /**
+    /**
+     * init to -1, same as Swing
+     * @see javax.swing.JTable#initializeLocalVars() JTable.initializeLocalVars
      * @see javax.swing.JTable#editingRow JTable.editingRow
      */
     protected int editingRow=-1;
 
     /**
+     * init to -1, same as Swing
+     * @see javax.swing.JTable#initializeLocalVars() JTable.initializeLocalVars
      * @see javax.swing.JTable#editingColumn JTable.editingColumn
      */
     protected int editingColumn=-1;
-
 
     /**
      * @see javax.swing.JTable#cellEditor JTable.cellEditor
