@@ -23,6 +23,7 @@ import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.logging.Logger;
@@ -88,9 +89,30 @@ public class Window extends Panel {
          */
         public Component getMostRecentFocusOwner() {
             if (focusedComponent==null) {
-                breakOutAction(null,Canvas.DOWN,false,false);
+
+                // on android this call can return null even if there are components to focus
+                // as on android no components are focused by defualt
+                if (Midlet.getPlatform()!=Midlet.PLATFORM_ANDROID) {
+                    breakOutAction(null,Canvas.DOWN,false,false);
+                }
             }
             return focusedComponent;
+        }
+
+        /**
+         * this is a internal method, do not call this
+         * on android it removes focus, other platforms it does nothing, as you can not have nothing focused on them
+         * not in Swing, now sure how to do this in Swing?!?!
+         */
+        public void setNothingFocused() {
+            if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
+                // we have to use mostRecentFocusOwner here as the window may have lost focus by now
+                // as the button could have opened a new window, and focusOwner could be returning null
+                Component f = getMostRecentFocusOwner();
+                if (f!=null && !(f instanceof TextComponent)) {
+                    setFocusedComponent(null);
+                }
+            }
         }
 
         /**

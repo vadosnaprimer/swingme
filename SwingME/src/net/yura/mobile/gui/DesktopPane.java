@@ -1309,6 +1309,8 @@ public class DesktopPane extends Canvas implements Runnable {
                     else if (!isAccurate(pointerFristX, pointerFristY, x, y)) {
                         pointerComponent.processMouseEvent(CANCEL, x, y, keypad);
                         pointerComponent = null;
+
+                        currentWindow.setNothingFocused();
                     }
                 }
 
@@ -1353,6 +1355,9 @@ public class DesktopPane extends Canvas implements Runnable {
 //                            }
 //                        }
 //                    }
+
+
+                    currentWindow.setNothingFocused();
 
                     pointerScrollPane = null;
                     pointerComponent = null;
