@@ -365,19 +365,21 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 //Logger.debug("size2 "+ cw+" "+ ch);
             comp.setSize(cw, ch);
 
-            if (comp.getX() > getViewPortX()) {
-                setViewLocation(getViewPortX(), comp.getY());
+            // only do this in the last revalidate
+            if (DesktopPane.myLastRevalidate(this)) {
+                if (comp.getX() > getViewPortX()) {
+                    setViewLocation(getViewPortX(), comp.getY());
+                }
+                if (comp.getY() > getViewPortY()) {
+                    setViewLocation(comp.getX(), getViewPortY());
+                }
+                if ((cw - getViewPortX() + comp.getX()) < getViewPortWidth()) {
+                    setViewLocation(-cw +getViewPortX() +getViewPortWidth(), comp.getY());
+                }
+                if ((ch - getViewPortY() + comp.getY()) < getViewPortHeight()) {
+                    setViewLocation(comp.getX(),-ch +getViewPortY() +getViewPortHeight());
+                }
             }
-            if (comp.getY() > getViewPortY()) {
-                setViewLocation(comp.getX(), getViewPortY());
-            }
-            if ((cw - getViewPortX() + comp.getX()) < getViewPortWidth()) {
-                setViewLocation(-cw +getViewPortX() +getViewPortWidth(), comp.getY());
-            }
-            if ((ch - getViewPortY() + comp.getY()) < getViewPortHeight()) {
-                setViewLocation(comp.getX(),-ch +getViewPortY() +getViewPortHeight());
-            }
-
         }
 
     }

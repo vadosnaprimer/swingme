@@ -854,29 +854,62 @@ public class DesktopPane extends Canvas implements Runnable {
 
             // while it chooses what array to add the component to
             // the validating turn id can NOT be changed
-            if (dp.validating==0) {
-                addToComponentVector(p, dp.revalidateComponents1);
-                p.repaint();
+
+            switch(dp.validating) {
+                case 0:
+                    addToComponentVector(p, dp.revalidateComponents1);
+                    p.repaint();
+                    break;
+                case 1:
+                    //#debug debug
+                    Logger.debug("thats some complex layout");
+                    addToComponentVector(p, dp.revalidateComponents2);
+                    break;
+                case 2:
+                    //#debug debug
+                    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
+                    addToComponentVector(p, dp.revalidateComponents3);
+                    break;
+                //#mdebug info
+                default:
+                    // if this happens it means that when i add a scrollbar it says it
+                    // does not need one, and as soon as i remove it, it says it does
+                    Logger.info("asking for revalidate 4th time: "+p);
+                    Logger.dumpStack();
+                    break;
+                //#enddebug
             }
-            else if (dp.validating==1) {
-    //#debug debug
-    Logger.debug("thats some complex layout");
-                addToComponentVector(p, dp.revalidateComponents2);
-            }
-            else if (dp.validating==2) {
-    //#debug debug
-    Logger.debug("thats some CRAZY SHIT COMPLEX LAYOUT");
-                addToComponentVector(p, dp.revalidateComponents3);
-            }
-            //#mdebug info
-            else {
-                // if this happens it means that when i add a scrollbar it says it
-                // does not need one, and as soon as i remove it, it says it does
-                Logger.info("asking for revalidate 4th time: "+p);
-                Logger.dumpStack();
-            }
-            //#enddebug
         }
+    }
+
+    public static boolean myLastRevalidate(Component rc) {
+            DesktopPane dp = rc.getDesktopPane();
+            Vector vec;
+            switch(dp.validating) {
+                case 0:
+                    vec = dp.revalidateComponents1;
+                    break;
+                case 1:
+                    vec = dp.revalidateComponents2;
+                    break;
+                case 2:
+                    vec = dp.revalidateComponents3;
+                    break;
+                default:
+                    return true;
+            }
+
+            Component c1 = rc;
+            while (c1 != null) {
+                if (vec.contains(c1)) {
+                    //#debug debug
+                    Logger.info("component found! myLastRevalidate returning false");
+                    return false;
+                }
+                c1 = c1.getParent(); // recurse
+            }
+
+            return true;
     }
 
     private static void addToComponentVector(Component rc, Vector vec) {
