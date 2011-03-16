@@ -525,8 +525,10 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
          * @see List#getSelectedIndex()
          */
         public int getSelectedIndex() {
-            if (getSelectedRow() == -1 && getSelectedColumn() == -1) return -1;
-            return convertLin(getSelectedRow(), getSelectedColumn());
+        	int row = getSelectedRow();
+        	int col = getSelectedColumn();
+            if ( row == -1 && col == -1) return -1;
+            return convertLin(row, col);
         }
         /**
          * @see List#getItems()

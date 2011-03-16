@@ -49,12 +49,12 @@ public class Table extends Panel {
      /**
      * @see javax.swing.JTable#editingRow JTable.editingRow
      */
-    protected int editingRow;
+    protected int editingRow=-1;
 
     /**
      * @see javax.swing.JTable#editingColumn JTable.editingColumn
      */
-    protected int editingColumn;
+    protected int editingColumn=-1;
 
 
     /**
