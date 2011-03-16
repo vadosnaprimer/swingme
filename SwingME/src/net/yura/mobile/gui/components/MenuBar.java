@@ -140,7 +140,15 @@ public class MenuBar extends List implements ActionListener {
         }
         else if (Frame.CMD_CLOSE.equals(actionCommand)) {
 
-            unselectAndUnfocus();
+            setSelectedIndex(-1);
+
+            // if we are the frame menu bar then we want to unfocus us
+            if (isFrameMenuBar()) {
+                Window w = getWindow();
+                if (w.getFocusOwner() == this) {
+                    w.setFocusedComponent(null);
+                }
+            }
 
             Window win = getWindow();
             if (win.closeOnFocusLost) {
@@ -154,16 +162,6 @@ public class MenuBar extends List implements ActionListener {
         }
         else {
             super.actionPerformed(actionCommand);
-        }
-    }
-
-    void unselectAndUnfocus() {
-        if (isFrameMenuBar()) {
-            Window w = getWindow();
-            if (w.getFocusOwner() == this) {
-                w.setFocusedComponent(null);
-                setSelectedIndex(-1);
-            }
         }
     }
 
