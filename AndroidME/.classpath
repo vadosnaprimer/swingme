@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="src_MIDP"/>
+	<classpathentry kind="src" path="src_JSR120_SMS"/>
+	<classpathentry kind="src" path="src_JSR184_3D"/>
+	<classpathentry kind="src" path="src_SwingME_plaf"/>
+	<classpathentry kind="src" path="src_JSR82_Bluetooth"/>
+	<classpathentry kind="src" path="src_Android"/>
+	<classpathentry kind="src" path="src_JSR135_Multimedia"/>
+	<classpathentry kind="src" path="src_JSR179_Location"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SwingME"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/UtilME"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/android 1.6"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
