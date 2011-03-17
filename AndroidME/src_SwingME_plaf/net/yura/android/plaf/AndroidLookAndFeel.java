@@ -14,6 +14,7 @@ import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidOptionPane;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
@@ -291,9 +292,11 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         //ctx.getResources().getString(android.R.string.ok);
 
 
-
-
-
+        DesktopPane.put("cutText", ctx.getResources().getString(android.R.string.cut) );
+        DesktopPane.put("copyText", ctx.getResources().getString(android.R.string.copy) );
+        DesktopPane.put("pasteText", ctx.getResources().getString(android.R.string.paste) );
+        //DesktopPane.put("deleteText", ctx.getResources().getString(android.R.string.del)); // do not have string
+        DesktopPane.put("selectAllText", ctx.getResources().getString(android.R.string.selectAll)); // not yet used
 
 
 

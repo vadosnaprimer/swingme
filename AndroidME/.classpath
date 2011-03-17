@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="res"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="src_SwingME_plaf"/>
+	<classpathentry kind="src" path="src_UtilME"/>
+	<classpathentry kind="src" path="src_SwingME"/>
+	<classpathentry kind="src" path="src_SwingMETest"/>
 	<classpathentry kind="src" path="src_MIDP"/>
 	<classpathentry kind="src" path="src_JSR120_SMS"/>
 	<classpathentry kind="src" path="src_JSR184_3D"/>
-	<classpathentry kind="src" path="src_SwingME_plaf"/>
 	<classpathentry kind="src" path="src_JSR82_Bluetooth"/>
 	<classpathentry kind="src" path="src_Android"/>
 	<classpathentry kind="src" path="src_JSR135_Multimedia"/>
 	<classpathentry kind="src" path="src_JSR179_Location"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/SwingME"/>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/UtilME"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/android 1.6"/>
+	<classpathentry kind="src" path="src_Test"/>
+	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
+	<classpathentry kind="lib" path="E:/My_World/6_Yura/linuxhome/UtilME/lib/kxml2.jar" sourcepath="E:/My_World/6_Yura/linuxhome/J2ME/kxml2-src-2.3.0/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
