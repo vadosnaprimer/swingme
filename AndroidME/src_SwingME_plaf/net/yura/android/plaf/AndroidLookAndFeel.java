@@ -187,9 +187,25 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- Button ---
         Style buttonStyle = new Style(defaultStyle);
-        buttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
+        Drawable but = getDrawable(ctx, android.R.attr.buttonStyle, android.R.attr.background);
+        Rect padding = new Rect(); but.getPadding(padding);
+        // we want the buttons bigger then the default padding in Android
+        // as in android the default padding is what you get for a muli-line button
+        // and with single buttons extra padding is added ontop of the standard padding.
+        padding.top = (int) (padding.top*1.6);
+        padding.bottom = (int) (padding.bottom*1.4);
+        padding.left = (int) (padding.left*1.5);
+        padding.right = (int) (padding.right*1.5);
+        buttonStyle.addBorder(new AndroidBorder(but, padding),Style.ALL);
         setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("Button", buttonStyle);
+        
+        
+        
+        Style sbuttonStyle = new Style(defaultStyle);
+        sbuttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
+        setForegroundColor(ctx, sbuttonStyle, android.R.style.Widget_Button,Button.class);
+        setStyleFor("SmallButton", sbuttonStyle);
 
         Style redButtonStyle = new Style(defaultStyle);
         Drawable d = getDrawable(ctx, android.R.attr.buttonStyle, android.R.attr.background);
