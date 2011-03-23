@@ -83,6 +83,13 @@ public class Panel extends Component {
     * @see java.awt.Container#addImpl(java.awt.Component, java.lang.Object, int) Container.addImpl
     */
    protected void addImpl(Component component,Object cons,int index) {
+
+       //#mdebug debug
+       if (components.contains(component)) {
+           throw new RuntimeException("this panel already has this component, comp="+component+" panel="+this);
+       }
+       //#enddebug
+
         if (index==-1) {
             components.addElement(component);
         }
