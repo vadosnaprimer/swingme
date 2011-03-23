@@ -37,6 +37,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import javax.microedition.io.ConnectionNotFoundException;
@@ -273,7 +274,19 @@ public abstract class MIDlet {
                     }
                 }
 
-                System.setProperty("clipboard.text",text);
+                if (text==null) {
+                    try {
+                        // only java 1.5
+                        System.clearProperty("clipboard.text");
+                    }
+                    catch(Throwable th) {
+                        Properties sysProps = System.getProperties();
+                        sysProps.remove("clipboard.text");
+                    }
+                }
+                else {
+                    System.setProperty("clipboard.text",text);
+                }
 
             }
             else if (url.startsWith("clipboard://put/")) {
