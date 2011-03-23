@@ -6,6 +6,7 @@ import javax.microedition.lcdui.Graphics;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 
 public final class Graphics3D {
@@ -52,11 +53,15 @@ public final class Graphics3D {
         } else {
             Bitmap bitmap = background.getImage().getImage().getBitmap();
             Canvas canvas = targetGraphics.getCanvas();
+            Paint paint = targetGraphics.getPaint();
 
             Rect src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
             Rect dst = new Rect(vpX, vpY, vpX + vpW, vpY + vpH);
-
-            canvas.drawBitmap(bitmap, src, dst, null);
+            
+            int a = paint.getAlpha();
+            paint.setAlpha(0xFF); // not not use alpha with images
+            canvas.drawBitmap(bitmap, src, dst, paint );
+            paint.setAlpha(a);
         }
     }
 

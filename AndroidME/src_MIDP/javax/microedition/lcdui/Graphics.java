@@ -37,6 +37,13 @@ public class Graphics {
     public Graphics(android.graphics.Canvas canvas) {
         setFont(Font.getDefaultFont());
         setCanvas(canvas);
+        
+        //paint.setAntiAlias(true); // breaks all 1px thick lines
+        //paint.setStrokeWidth(0); // does NOT fix the AntiAlias problem
+        
+        paint.setFilterBitmap(true); // this means that when a image is scaled it is smoothed out
+        //paint.setDither(true);
+        
     }
 
     public android.graphics.Canvas getCanvas() {
@@ -125,7 +132,10 @@ public class Graphics {
         } else {
             ay = y - image.getHeight();
         }
-        canvas.drawBitmap(image.getBitmap(), ax, ay, null);
+        int a = paint.getAlpha();
+        paint.setAlpha(0xFF);// do not want to use alpha with images
+        canvas.drawBitmap(image.getBitmap(), ax, ay, paint);
+        paint.setAlpha(a);
     }
 
     public void drawLine(int x1, int y1, int x2, int y2) {
@@ -390,7 +400,12 @@ public class Graphics {
         // Draw the image
         Rect srcRect = new Rect(xSrc, ySrc, xSrc + width, ySrc + height);
         Rect dstRect = new Rect(0, 0,  width,  height);
-        canvas.drawBitmap(src.getBitmap(), srcRect, dstRect, null);
+        
+
+        int a = paint.getAlpha();
+        paint.setAlpha(0xFF); // we do not support alpha when drawing images
+        canvas.drawBitmap(src.getBitmap(), srcRect, dstRect, paint);
+        paint.setAlpha(a);
 
         canvas.restore();
     }
@@ -438,7 +453,10 @@ public class Graphics {
             scanlength = width;
         }
 
-        canvas.drawBitmap(rgbData, offset, scanlength, x, y, width, height, processAlpha, null);
+        int a = paint.getAlpha();
+        paint.setAlpha(0xFF); // do not use alpha when drawing images
+        canvas.drawBitmap(rgbData, offset, scanlength, x, y, width, height, processAlpha, paint);
+        paint.setAlpha(a);
     }
 
     public void scale(double sx, double sy) {
