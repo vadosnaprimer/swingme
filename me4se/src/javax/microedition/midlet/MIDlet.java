@@ -258,19 +258,22 @@ public abstract class MIDlet {
         else if (url.startsWith("clipboard://")) {
             if (url.startsWith("clipboard://get")) {
 
+                String text=null;
+
                 Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 //odd: the Object param of getContents is not currently used
                 Transferable contents = clipboard.getContents(null);
                 if ( contents!=null && contents.isDataFlavorSupported(DataFlavor.stringFlavor) ) {
                     try {
-                        String result = (String)contents.getTransferData(DataFlavor.stringFlavor);
-                        onResult(0, result);
+                        text = (String)contents.getTransferData(DataFlavor.stringFlavor);
                     }
                     catch (Exception ex){
                         //highly unlikely since we are using a standard DataFlavor
                         ex.printStackTrace();
                     }
                 }
+
+                System.setProperty("clipboard.text",text);
 
             }
             else if (url.startsWith("clipboard://put/")) {
@@ -375,7 +378,5 @@ public abstract class MIDlet {
       System.out.println("Error attempting to launch web browser\n" + e.toString());
     }
   }
-
-  public void onResult(int resultCode, Object result) { }
 
 }
