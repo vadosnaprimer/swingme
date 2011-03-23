@@ -300,9 +300,4 @@ public abstract class Midlet extends MIDlet {
         return Midlet.class.getResourceAsStream(name);
     }
 
-    public Object result;
-    public void onResult(int resultCode, Object result) {
-        this.result = result;
-    }
-
 }

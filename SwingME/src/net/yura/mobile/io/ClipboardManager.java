@@ -54,11 +54,7 @@ public class ClipboardManager implements ServiceLink.TaskHandler {
 
             midlet.platformRequest("clipboard://get",null);
 
-            Object result = midlet.result;
-            midlet.result = null; // clear the result object
-            if (result instanceof String) {
-                return (String)result;
-            }
+            return System.getProperty("clipboard.text");
         }
 
         return null;

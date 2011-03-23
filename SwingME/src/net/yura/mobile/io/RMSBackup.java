@@ -129,6 +129,13 @@ public class RMSBackup extends QueueProcessorThread {
                 recordStore.closeRecordStore();
             }
             else {
+                //this problem happens when the initial sync is happening,
+                //and there is lots of saves happening as lots of new booking are loaded onto the client,
+                //if at this point a new booking is created and saved,
+                //when it actually gets saved it has already got its realID from the server,
+                //and so no booking with the fakeID can be found in the RMS.
+                //this will be solved when RMS saving is made super fast!
+
                 System.err.println("[RMSBackup] ERROR: can not del "+obj+" from "+table);
             }
         }
