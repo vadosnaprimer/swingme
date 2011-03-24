@@ -130,7 +130,12 @@ public abstract class MIDlet {
             	
             	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
             	Object obj = clipboardManager.getText();
-            	System.setProperty("clipboard.text", obj==null?null:obj.toString()); // so far we only support Strings
+            	if (obj==null) {
+            		System.clearProperty("clipboard.text");
+            	}
+            	else {
+            		System.setProperty("clipboard.text", obj.toString()); // so far we only support Strings
+            	}
             	
             }
             else if (url.startsWith("clipboard://put/")) {
