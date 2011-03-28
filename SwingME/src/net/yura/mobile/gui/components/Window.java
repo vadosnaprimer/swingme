@@ -102,7 +102,7 @@ public class Window extends Panel {
         /**
          * this is a internal method, do not call this
          * on android it removes focus, other platforms it does nothing, as you can not have nothing focused on them
-         * not in Swing, now sure how to do this in Swing?!?!
+         * @see java.awt.KeyboardFocusManager#clearGlobalFocusOwner() KeyboardFocusManager.clearGlobalFocusOwner
          */
         public void setNothingFocused() {
             if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {

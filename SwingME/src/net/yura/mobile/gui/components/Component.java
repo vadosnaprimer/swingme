@@ -54,8 +54,17 @@ public abstract class Component {
     protected int preferredWidth=-1;
     protected int preferredHeight=-1;
 
-    public static final int FOCUS_GAINED = 1;
-    public static final int FOCUS_LOST = 2;
+    /**
+     * same value as in Swing
+     * @see java.awt.event.FocusEvent#FOCUS_GAINED FocusEvent.FOCUS_GAINED
+     */
+    public static final int FOCUS_GAINED = 1004;
+    /**
+     * same value as in Swing
+     * @see java.awt.event.FocusEvent#FOCUS_LOST FocusEvent.FOCUS_LOST
+     */
+    public static final int FOCUS_LOST = 1005;
+
     private ChangeListener focusListener;
 
     protected Window popup;
