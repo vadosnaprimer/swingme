@@ -101,7 +101,7 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
         for (int i = 0; i < buttons.length; i++) {
             int mnemonic = buttons[i].getMnemonic();
             if (mnemonic == KeyEvent.KEY_END || mnemonic == KeyEvent.KEY_SOFTKEY2) {
-                buttons[i].fireActionPerformed();
+                fireActionPerformed(buttons[i]);
                 break;
             }
         }
@@ -125,21 +125,26 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
             if (BUTTON_TYPE[i] == which) {
                 alertDialog.dismiss();
 
-                try {
-                    Button[] buttons = optionPaneWrapper.getOptions();
-                    ActionListener al = optionPaneWrapper.getActionListener();
-                    if (al!=null) {
-                        al.actionPerformed(buttons[i].getActionCommand());
-                    }
-                }
-                catch (Throwable e) {
-                    //#debug debug
-                    e.printStackTrace();
-                }
+                Button[] buttons = optionPaneWrapper.getOptions();
+                fireActionPerformed(buttons[i]);
 
-                finish();
                 break;
             }
+        }
+
+        finish();
+    }
+
+    private void fireActionPerformed(Button b) {
+        try {
+            ActionListener al = optionPaneWrapper.getActionListener();
+            if (al!=null) {
+                al.actionPerformed(b.getActionCommand());
+            }
+        }
+        catch (Throwable e) {
+            //#debug debug
+            e.printStackTrace();
         }
     }
 
