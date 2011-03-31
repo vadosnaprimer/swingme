@@ -204,6 +204,7 @@ public abstract class Midlet extends MIDlet {
             platformRequest(url);
         }
         catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException(e.toString());
         }
     }

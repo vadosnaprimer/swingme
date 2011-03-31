@@ -59,7 +59,7 @@ public class RMSBackup extends QueueProcessorThread {
                     start();
                 }
 
-                RecordEnumeration re = recordStore.enumerateRecords(null, null, true);
+                RecordEnumeration re = recordStore.enumerateRecords(null, null, false);
                 while (re.hasNextElement()) {
 
                     int id = re.nextRecordId();
@@ -127,6 +127,8 @@ public class RMSBackup extends QueueProcessorThread {
                 RecordStore recordStore = RecordStore.openRecordStore(rmsName, true);
                 recordStore.deleteRecord(i.intValue());
                 recordStore.closeRecordStore();
+
+                //System.out.println("[RMSBackup] del done: "+obj);
             }
             else {
                 //this problem happens when the initial sync is happening,
@@ -175,6 +177,8 @@ public class RMSBackup extends QueueProcessorThread {
                 }
 
                 recordStore.closeRecordStore();
+
+                //System.out.println("[RMSBackup] save done: "+obj);
             }
         }
         else {

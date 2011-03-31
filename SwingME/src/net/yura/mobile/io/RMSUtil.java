@@ -55,7 +55,7 @@ public class RMSUtil {
 
 		// Ensure the record store is not empty.
 		if (recordStore.getNumRecords() != 0) {
-			RecordEnumeration re = recordStore.enumerateRecords(null, null, true);
+			RecordEnumeration re = recordStore.enumerateRecords(null, null, false);
 
 			if (re.hasNextElement()) {
 				// Get an input stream for the data in the record store.
