@@ -41,6 +41,10 @@ public class RecordStoreInitializer implements Initializer {
 
                 if(hasRms) {
 
+                    // TODO
+                    // TODO This only happens at start up, but if we make the rms dir diring running of the app, we do NOT put a in.use file there
+                    // TODO
+
                         try {
                             final File lockFile = new File( RecordStoreImpl.rmsDir , "in.use");
                             if (lockFile.exists()) {

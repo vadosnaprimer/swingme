@@ -114,17 +114,74 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 	}
 
         // YURA added synchronized as this should not be done from more then 1 thread at a time!
-	private synchronized void writeToFile() throws RecordStoreException {
+	private void writeToFile() throws RecordStoreException {
 		//System.out.println ("Writing records to file...");
 
 		if (isApplet())
 			return;
 
-		try {
-                    if (file==null) {
-                        // YURA if we do not know we are a applet, but really we are, we have no file object
-                        return;
+                if (file==null) {
+                    // YURA if we do not know we are a applet, but really we are, we have no file object
+                    return;
+                }
+/*
+                // OLD WAY OF DOING THINGS, IN MY OWN THREAD
+                try {
+                    doWriteToFile();
+                }
+                catch (Exception ioe) {
+                    RecordStoreException r = new RecordStoreException("Error writing Records to file!");
+                    r.initCause(ioe);
+                    throw r;
+                }
+*/
+                // NEW WAY OF DOING THINGS INSIDE A DIFFERENT THREAD
+                synchronized(todo) {
+                    if (!todo.contains(this)) {
+                        todo.add(this);
+                        todo.notifyAll();
                     }
+                }
+
+        }
+
+        private final static Vector todo= new Vector();
+        static {
+            new Thread() {
+                public void run() {
+
+                    while(true) {
+
+                        RecordStoreImpl store;
+
+                        synchronized(todo) {
+                            while (todo.isEmpty()) {
+                                try {
+                                    todo.wait();
+                                }
+                                catch(InterruptedException e) {
+                                    // TODO this is wrong
+                                    e.printStackTrace();
+                                }
+                            }
+                            store = (RecordStoreImpl)todo.remove(0);
+                        }
+
+                        try {
+                            store.doWriteToFile();
+                        }
+                        catch (Exception ioe) {
+                            System.err.println("Error writing Records to file!");
+                            ioe.printStackTrace();
+                        }
+                    }
+
+                }
+            }.start();
+        }
+
+
+        private void doWriteToFile() throws Exception {
 
 			DataOutputStream dos;
                         try {
@@ -165,12 +222,6 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
 			dos.flush();
 			dos.close();
-		}
-                catch (IOException ioe) {
-                    RecordStoreException r = new RecordStoreException("Error writing Records to file!");
-                    r.initCause(ioe);
-                    throw r;
-		}
 		//System.out.println ("finished.");
 	}
 

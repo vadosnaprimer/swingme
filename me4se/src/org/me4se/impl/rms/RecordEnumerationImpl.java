@@ -59,8 +59,10 @@ public class RecordEnumerationImpl
 
 		loadRecords();
 
-		if (keepUpdated)
+		if (keepUpdated) {
+                    System.out.println("[WARN] RecordEnumeration created with keepUpdated=true");
 			store.addRecordListener(this);
+                }
 	}
 
 
