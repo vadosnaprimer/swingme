@@ -220,16 +220,4 @@ public class SystemUtil {
     	return n;
     }
 
-	public static byte[] getBytes(InputStream is) throws IOException {
-		
-		StringBuffer buffer = new StringBuffer();
-		byte[] buf = new byte[1024];
-		int read = 0;
-		while ((read = is.read(buf)) != -1){
-			buffer.append(new String(buf, 0, read));
-		}
-		
-		return buffer.toString().getBytes();
-	}
-	
 }
