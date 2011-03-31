@@ -209,15 +209,5 @@ public class SystemUtil {
         }
         return name;
     }
-    
-    public static byte[] arrayCopy(byte[] b, int offset, int length){
-    	byte[] n = new byte[length];
-    	
-    	for (int i = offset, j=0; i < offset + length; i++,j++){
-    		n[j] = b[i];
-    	}
-    	
-    	return n;
-    }
 
 }
