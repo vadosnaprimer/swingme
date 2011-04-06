@@ -213,10 +213,12 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
         });
     }
 
+    private final int BUTTON_MAX_TEXT_LINES = 3;
+
     private void resetButtonSize(android.widget.Button btn) {
         if (btn != null) {
             btn.setMinLines(1);
-            btn.setMaxLines(3);
+            btn.setMaxLines(BUTTON_MAX_TEXT_LINES);
         }
     }
 
@@ -243,8 +245,12 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
 
                 // Even the height of a multi-line is wrong in some phones, so
                 // we make sure we have at least enough to show the text.
-                int h = (btn.getLineCount() + 1) * btn.getLineHeight();
-                maxH = Math.max(h, maxH);
+                // Some (SE x10) report more lines that the maximum set.
+                int numLines = btn.getLineCount();
+                if (numLines <= BUTTON_MAX_TEXT_LINES) {
+                    int h = (numLines + 1) * btn.getLineHeight();
+                    maxH = Math.max(h, maxH);
+                }
             }
         }
 
