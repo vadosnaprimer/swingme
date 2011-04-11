@@ -5,6 +5,7 @@
 
 package net.yura.mobile.test;
 
+import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -48,8 +49,9 @@ import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.XULLoader;
-import net.yura.mobile.io.NativeUtil;
+import net.yura.mobile.io.FileUtil;
 import net.yura.mobile.test.MainPane.Section;
+import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Option;
 
 /**
@@ -81,6 +83,7 @@ public class ComponentTest  extends Section{
         addTest("Page View", "pageView");
         addTest("Test Gallery w > h", "testImageView1");
         addTest("Test Gallery h > w", "testImageView2");
+
     }
 
     public void actionPerformed(String actionCommand) {
@@ -172,6 +175,8 @@ public class ComponentTest  extends Section{
 
         slider2.setExtent(3);
 
+        components.addElement( new List( getItems() ,new DefaultListCellRenderer(),List.VERTICAL) );
+
         return components;
     }
 
@@ -239,8 +244,6 @@ public class ComponentTest  extends Section{
 
                 componentTest.add(email);
 
-                componentTest.add( new List( getItems() ,new DefaultListCellRenderer(),List.VERTICAL) );
-
                 menu = new Menu("Menu");
                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                 menu.add(new Button("bob"));
@@ -250,6 +253,9 @@ public class ComponentTest  extends Section{
                 menu2.add(new Button("fred"));
                 menu2.add(new Button("item 2"));
                 menu.add(menu2);
+
+                menu.add(new Button("bob test 1"));
+                menu.add(new Button("bob test 2"));
 
             }
 
@@ -263,7 +269,11 @@ public class ComponentTest  extends Section{
                 b.setFocusable(false);
                 p.add(b);
             }
-            addToScrollPane(p,null);
+
+
+            Button w = makeButton("W", "windowTest1");
+
+            addToScrollPane(p,w);
         }
         else if ("windowTest1".equals(actionCommand)) {
 
@@ -529,7 +539,10 @@ public class ComponentTest  extends Section{
         }
         else if ("optionPaneTest1".equals(actionCommand)) {
 
-            OptionPane.showMessageDialog(null, "Hello There", "Greeting", OptionPane.PLAIN_MESSAGE);
+            //OptionPane.showMessageDialog(null, "Hello There", "Greeting", OptionPane.PLAIN_MESSAGE);
+            
+            Button[] b = new Button[] { new Button("Sure!")};
+            OptionPane.showOptionDialog(null, "message", "title", 0, OptionPane.INFORMATION_MESSAGE, null,b , null);
 
         }
         else if ("optionPaneTest".equals(actionCommand)) {
@@ -551,8 +564,12 @@ public class ComponentTest  extends Section{
         }
         else if ("fileChooser".equals(actionCommand)) {
 
+            String string = "file:///android_asset//";
+            Vector en = FileUtil.listFiles(string, FileUtil.TYPE_ALL, false);
+            System.out.println("file: "+en);
+
             if (chooser1==null) {
-                chooser1 = new FileChooser();
+                chooser1 = new FileChooser("file:///android_asset/");
             }
             chooser1.showDialog(this, "fileSelected1", "Select File", "Select");
         }
@@ -565,7 +582,7 @@ public class ComponentTest  extends Section{
         else if ("fileSelected1".equals(actionCommand)) {
 
             String file = chooser1.getSelectedFile();
-            Image img = NativeUtil.getImageFromFile(file);
+            Image img = ImageUtil.getImageFromFile(file);
             if (img!=null) {
                 OptionPane.showMessageDialog(null, new Label(new Icon(img)), "image", OptionPane.PLAIN_MESSAGE);
             }

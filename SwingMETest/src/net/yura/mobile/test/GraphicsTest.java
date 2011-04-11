@@ -21,6 +21,7 @@ import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
+import net.yura.mobile.io.FileUtil;
 import net.yura.mobile.io.HTTPClient;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.ImageUtil;
@@ -167,7 +168,7 @@ public class GraphicsTest extends Section {
           if (code == HttpConnection.HTTP_OK) {
               int length = (int) hpc.getLength();
               dis = hpc.openInputStream();
-              byte[] data = HTTPClient.getData(dis, length);
+              byte[] data = FileUtil.getData(dis, length);
               return Image.createImage(data, 0, data.length);
           }
           else {
@@ -399,7 +400,9 @@ public class GraphicsTest extends Section {
             g.setColor(0xFFFFFFFF);
             g.drawString(s, 3, 6);
 
-            repaint();
+            //repaint();
+            // only want to repaint a section of screen
+            getDesktopPane().repaint(getXOnScreen(), getYOnScreen(), imgWidth, imgHeight);
         }
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
