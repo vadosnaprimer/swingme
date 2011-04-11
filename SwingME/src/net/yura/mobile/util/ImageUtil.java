@@ -130,30 +130,28 @@ public class ImageUtil {
      */
     public static Image getThumbnailFromFile(final String fileName) {
 
-/*
+
         try {
-
-	    	String x = fileName.substring(0, fileName.lastIndexOf('/')) +"/BBThumbs.dat";
-	    	String file = fileName.substring(fileName.lastIndexOf('/')+1);
-
-	    	System.out.println("loading1 "+fileName+" "+x+" "+file);
-
-	    	InputStream in = FileUtil.getInputStreamFromFileConnector(x);
-	    	byte[] data = FileUtil.getData(in, -1);
-	    	byte[] img = readThumbs(data, file);
-	    	return Image.createImage(img, 0, img.length);
+	    	String bbThumbs = fileName.substring(0, fileName.lastIndexOf('/')) +"/BBThumbs.dat";
+                if (FileUtil.localFileExists(bbThumbs)) {
+                    InputStream in = FileUtil.getInputStreamFromFileConnector(bbThumbs);
+                    String file = fileName.substring(fileName.lastIndexOf('/')+1);
+                    byte[] data = FileUtil.getData(in, -1);
+                    byte[] img = readThumbs(data, file);
+                    return Image.createImage(img, 0, img.length);
+                }
     	}
     	catch (Exception ex) {
     		ex.printStackTrace();
     	}
-*/
+
 
 
 
         InputStream dis = null;
         try {
-            dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openInputStream();
-            return ImageUtil.getThumbFromFile(dis);
+            dis = FileUtil.getInputStreamFromFileConnector(fileName);
+            return getThumbFromFile(dis);
         }
         catch (Throwable err) {
             //#mdebug warn
@@ -177,12 +175,12 @@ public class ImageUtil {
 
 
 
-	// @byte[] search refers to BBThumbs.dat file already opened previously and
+	// @param byte[] search refers to BBThumbs.dat file already opened previously and
 	// indexed for faster
 
 	// lookups
 
-	// @String szSearch refers to the image we want the thumbnail of, so if
+	// @param String szSearch refers to the image we want the thumbnail of, so if
 	// picture01.jpg is in the //folder with the current BBThumbs.dat then that
 	// will be my search String
 
