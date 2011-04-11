@@ -174,21 +174,21 @@ public class ImageUtil {
 
 
 
+        /**
+	 * @param byte[] search refers to BBThumbs.dat file already opened previously and
+	 * indexed for faster
 
-	// @param byte[] search refers to BBThumbs.dat file already opened previously and
-	// indexed for faster
+	 * lookups
 
-	// lookups
+	 * @param String szSearch refers to the image we want the thumbnail of, so if
+	 * picture01.jpg is in the //folder with the current BBThumbs.dat then that
+	 * will be my search String
 
-	// @param String szSearch refers to the image we want the thumbnail of, so if
-	// picture01.jpg is in the //folder with the current BBThumbs.dat then that
-	// will be my search String
+	 * Also now with BB 5.0 we have random file access which will make this
+	 * method of lookup even
 
-	// Also now with BB 5.0 we have random file access which will make this
-	// method of lookup even
-
-	// faster for single file thumbnail creation
-
+	 * faster for single file thumbnail creation
+         */
 	public static byte[] readThumbs(byte[] search, String szSearch) {
 
 		// convert the search string to bytes for easier comparison
