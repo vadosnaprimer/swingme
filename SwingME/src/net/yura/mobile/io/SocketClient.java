@@ -335,9 +335,9 @@ public abstract class SocketClient implements Runnable {
         // we HAVE to have another thread here, as we may be closing this from ANY thread and it can get stuck
         new Thread() {
             public void run() {
-                NativeUtil.close(inputStream); // any close on input can block??? on SE JP7 ????
-                NativeUtil.close(outputStream);
-                NativeUtil.close(connection);
+                FileUtil.close(inputStream); // any close on input can block??? on SE JP7 ????
+                FileUtil.close(outputStream);
+                FileUtil.close(connection);
             }
         }.start();
     }

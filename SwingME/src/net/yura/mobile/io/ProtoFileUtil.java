@@ -48,7 +48,7 @@ public class ProtoFileUtil extends ProtoUtil {
                 }
             }
             finally {
-                NativeUtil.close(is);
+                FileUtil.close(is);
             }
         }
         else {

@@ -32,7 +32,7 @@ import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.plaf.Style;
-import net.yura.mobile.io.NativeUtil;
+import net.yura.mobile.io.FileUtil;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 
@@ -47,8 +47,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
     private GridList fileTable;
     private ActionListener actionListener;
     private String action;
-    private String dir = NativeUtil.ROOT_PREX;
-    private int filter = NativeUtil.TYPE_ALL;
+    private String dir = FileUtil.ROOT_PREX;
+    private int filter = FileUtil.TYPE_ALL;
     private boolean multiSelect;
 //    private boolean useGridView;
 //    private boolean showOnlyNew;
@@ -311,7 +311,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
           if (files.isEmpty()) {
               requestImage.removeAllElements();
-              Vector fileNames = NativeUtil.listFiles(dir, filter, showNew.isSelected());
+              Vector fileNames = FileUtil.listFiles(dir, filter, showNew.isSelected());
 
               for (int c = 0; c < fileNames.size(); c++) {
 
@@ -361,12 +361,12 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
   //#debug debug
   //Logger.debug("start load 1: "+absoultePath);
               yield();
-              Image image = NativeUtil.getThumbnailFromFile(absoultePath);
+              Image image = ImageUtil.getThumbnailFromFile(absoultePath);
   //#debug debug
   //Logger.debug("start load 2: "+absoultePath);
               if (image == null) {
                   yield();
-                  image = NativeUtil.getImageFromFile( absoultePath );
+                  image = ImageUtil.getImageFromFile( absoultePath );
               }
   //#debug debug
   //Logger.debug("start load 3: "+absoultePath);
@@ -446,7 +446,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             if (fileTable != null) {
                 fileTable.removeEditor();
             }
-            doneButton.setFocusable((multiSelect && getSelectedFiles().size() > 0) || (!multiSelect && getSelectedFile() != null && (filter == NativeUtil.TYPE_FOLDER || !NativeUtil.isFileType(getSelectedFile(), NativeUtil.TYPE_FOLDER))));
+            doneButton.setFocusable((multiSelect && getSelectedFiles().size() > 0) || (!multiSelect && getSelectedFile() != null && (filter == FileUtil.TYPE_FOLDER || !FileUtil.isFileType(getSelectedFile(), FileUtil.TYPE_FOLDER))));
         }
         else if ("done".equals(myaction)) {
             actionListener.actionPerformed(action);
@@ -461,7 +461,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
         else if ("listSelect".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileList.getSelectedValue();
-            if (NativeUtil.isFileType(to.getAbsolutePath(), NativeUtil.TYPE_FOLDER)) {
+            if (FileUtil.isFileType(to.getAbsolutePath(), FileUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
                 gotoDir(to);
             } else {
@@ -475,7 +475,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
         else if ("tableClick".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileTable.getSelectedValue();
-            if (NativeUtil.isFileType(to.getAbsolutePath(), NativeUtil.TYPE_FOLDER)) {
+            if (FileUtil.isFileType(to.getAbsolutePath(), FileUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
                 gotoDir(to);
             } else {
@@ -721,8 +721,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
          */
         public Icon getIcon() {
 
-            int type = NativeUtil.getFileType(filename);
-            if (type == NativeUtil.TYPE_PICTURE) {
+            int type = FileUtil.getFileType(filename);
+            if (type == FileUtil.TYPE_PICTURE) {
 
                 Icon img;
 
@@ -769,18 +769,18 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
             // the file does not seem to have a icon, must use some default
             if (img == null) {
-                int id = NativeUtil.getFileType( tbOption.getName() );
+                int id = FileUtil.getFileType( tbOption.getName() );
 
-                if (id == NativeUtil.TYPE_FOLDER) {
+                if (id == FileUtil.TYPE_FOLDER) {
                     img = folderIcon;
                 }
-                else if (id == NativeUtil.TYPE_PICTURE) {
+                else if (id == FileUtil.TYPE_PICTURE) {
                     img = imageIcon;
                 }
-                else if (id == NativeUtil.TYPE_AUDIO) {
+                else if (id == FileUtil.TYPE_AUDIO) {
                     img = soundIcon;
                 }
-                else if (id == NativeUtil.TYPE_VIDEO) {
+                else if (id == FileUtil.TYPE_VIDEO) {
                     img = videoIcon;
                 }
 

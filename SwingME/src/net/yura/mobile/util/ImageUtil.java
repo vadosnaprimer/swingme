@@ -25,6 +25,7 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.io.FileUtil;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -98,6 +99,194 @@ public class ImageUtil {
 
         return getScaledImage(img, newW, newH);
     }
+
+
+
+    /**
+     * return null if not enough mem to load image
+     */
+    public static Image getImageFromFile(String filename) {
+        InputStream is=null;
+        try {
+            is = FileUtil.getInputStreamFromFileConnector(filename);
+            return Image.createImage(is);
+        }
+        catch (Throwable err) {
+          //#mdebug warn
+          Logger.warn("failed to load image for: "+filename+" "+err.toString());
+          Logger.warn(err);
+          //#enddebug
+          return null;
+        }
+        finally {
+            FileUtil.close(is);
+        }
+    }
+
+
+
+    /**
+     * will return null if no thumb found
+     */
+    public static Image getThumbnailFromFile(final String fileName) {
+
+/*
+        try {
+
+	    	String x = fileName.substring(0, fileName.lastIndexOf('/')) +"/BBThumbs.dat";
+	    	String file = fileName.substring(fileName.lastIndexOf('/')+1);
+
+	    	System.out.println("loading1 "+fileName+" "+x+" "+file);
+
+	    	InputStream in = FileUtil.getInputStreamFromFileConnector(x);
+	    	byte[] data = FileUtil.getData(in, -1);
+	    	byte[] img = readThumbs(data, file);
+	    	return Image.createImage(img, 0, img.length);
+    	}
+    	catch (Exception ex) {
+    		ex.printStackTrace();
+    	}
+*/
+
+
+
+        InputStream dis = null;
+        try {
+            dis = ((FileConnection)Connector.open(fileName, Connector.READ)).openInputStream();
+            return ImageUtil.getThumbFromFile(dis);
+        }
+        catch (Throwable err) {
+            //#mdebug warn
+            Logger.warn("failed to load thumb for: "+fileName+" "+err.toString());
+            Logger.warn(err);
+            //#enddebug
+            return null;
+        }
+        finally {
+            FileUtil.close(dis);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+	// @byte[] search refers to BBThumbs.dat file already opened previously and
+	// indexed for faster
+
+	// lookups
+
+	// @String szSearch refers to the image we want the thumbnail of, so if
+	// picture01.jpg is in the //folder with the current BBThumbs.dat then that
+	// will be my search String
+
+	// Also now with BB 5.0 we have random file access which will make this
+	// method of lookup even
+
+	// faster for single file thumbnail creation
+
+	public static byte[] readThumbs(byte[] search, String szSearch) {
+
+		// convert the search string to bytes for easier comparison
+
+		byte[] searchtmp = szSearch.getBytes();
+		for (int x = 0; x < search.length; x++) {
+			boolean found = false;
+			int lastbyte = 0;
+
+			// For the length of searchtmp trying to find a match in the byte
+			// file
+
+			// we could also have converted search to String [new
+			// String(search)]
+
+			// and have done an index of however I prefer direct byte access as
+
+			// lookups tend to be faster
+
+			for (int y = 0; y < searchtmp.length; y++) {
+				if (search[x + y] == searchtmp[y]) {
+					lastbyte = x + y + 1;
+					found = true;
+				} else {
+					found = false;
+					break;
+				}
+			}
+
+			if (found) {
+
+				// we found our search string so next we want to see how long in
+
+				// bytes the files is so we only read untill end of this PNG
+
+				// without needing to search for the AE 42 50 82 Hex String,
+
+				// also there might be a chance that AE 42 50 82 repeats itself
+
+				// as such it is highly recommended to get the size
+
+				byte[] tmpB = new byte[4];
+				tmpB[0] = search[lastbyte + 20];
+				tmpB[1] = search[lastbyte + 19];
+				tmpB[2] = search[lastbyte + 18];
+				tmpB[3] = search[lastbyte + 17];
+				long readsize = 0;
+				int t = 0;
+
+				// convert and retrieve the size
+
+				for (int shiftBy = 0; shiftBy < 32; shiftBy += 8) {
+					readsize |= (long) (tmpB[t++] & 0xff) << shiftBy;
+				}
+				tmpB = null;
+				tmpB = new byte[(int) readsize];
+				t = 0;
+
+				// now we read from the start of the image untill the end of
+
+				// the image
+
+				for (int y = lastbyte + 21; y < (int) readsize + lastbyte + 21; y++) {
+					tmpB[t++] = search[y];
+				}
+
+				// and like that we have our bitmap
+
+				// now all that is left to do is to convert it using
+
+				// Bitmap.createBitmapFromBytes(tmpB, x, y, z);
+
+				return tmpB;
+
+			}
+		}
+		return null;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

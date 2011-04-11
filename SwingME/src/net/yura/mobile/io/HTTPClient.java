@@ -42,32 +42,6 @@ public abstract class HTTPClient extends QueueProcessorThread {
     protected abstract void onResult(Request request, int responseCode, Hashtable headers, InputStream is, long length) throws IOException;
 
 
-    public static byte[] getData(InputStream iStrm,int length) throws IOException {
-
-        ByteArrayOutputStream bStrm = null;
-
-        // ContentConnection includes a length method
-        byte imageData[];
-
-        if (length != -1) {
-            imageData = new byte[length];
-            // Read the png into an array
-            //        iStrm.read(imageData);
-            DataInputStream din = new DataInputStream(iStrm);
-            din.readFully(imageData);
-        }
-        else { // Length not available...
-            bStrm = new ByteArrayOutputStream();
-            int len;
-            for (byte[] buffer = new byte[Math.max(32, iStrm.available())]; (len = iStrm.read(buffer)) != -1; )
-                bStrm.write(buffer, 0, len);
-            imageData = bStrm.toByteArray();
-            bStrm.close();
-        }
-
-        return imageData;
-    }
-
     public void process(Object arg0) throws Exception {
         Request request = (Request)arg0;
 
@@ -179,9 +153,9 @@ public abstract class HTTPClient extends QueueProcessorThread {
             onError(request, respCode, headers, ex);
         }
         finally {
-            NativeUtil.close(httpConn);
-            NativeUtil.close(is);
-            NativeUtil.close(os);
+            FileUtil.close(httpConn);
+            FileUtil.close(is);
+            FileUtil.close(os);
         }
     }
 
