@@ -24,8 +24,10 @@ public class RMSUtil {
                     RecordStore.deleteRecordStore(name);
                 }
                 catch (Exception ex) {
-                    //#debug info
-                    Logger.info("can not del RMS");
+                    //#mdebug info
+                    Logger.info("can not del RMS, this should not happen");
+                    ex.printStackTrace();
+                    //#enddebug
                 }
 
 		// Open the record store.
@@ -48,7 +50,7 @@ public class RMSUtil {
 
 	public static Object load(String name) throws RecordStoreFullException, RecordStoreNotFoundException, RecordStoreException, IOException {
 
-            Object vals=null;
+                Object vals=null;
 
 		// Open the record store.
 		RecordStore recordStore = RecordStore.openRecordStore(name, true);
@@ -61,6 +63,12 @@ public class RMSUtil {
 				// Get an input stream for the data in the record store.
 				int id = re.nextRecordId();
 				ByteArrayInputStream bais = new ByteArrayInputStream(recordStore.getRecord(id));
+
+                                //#mdebug info
+                                if (vals!=null) {
+                                    System.err.println("vals already has a value: "+vals);
+                                }
+                                //#enddebug
 
 				vals = load(bais);
 
