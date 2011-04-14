@@ -154,6 +154,16 @@ public class FileUtil {
             return true;
         }
         else if( filetype == TYPE_FOLDER ) {
+/*
+            // this is overkill, and only works for full paths, not filenames
+            try {
+                FileConnection fc =(FileConnection)(Connector.open(fname,Connector.READ));
+                return fc.isDirectory();
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+*/
             return name.endsWith("/");
         }
         else if( filetype == TYPE_PICTURE || filetype == TYPE_AUDIO  || filetype == TYPE_VIDEO ) {

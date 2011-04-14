@@ -357,6 +357,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
     public void run() {
         try {
+
             //content.workoutSize(); // what out what the needed size is
             //Logger.debug("prefered size of scroll "+content.getWidth()+" "+content.getHeight());
             //scroll.setPreferredSize(content.getWidth(), content.getHeight());
@@ -380,6 +381,12 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             setLocationRelativeTo(null);
 
             setVisible(true);
+
+            // this has to happen AFTER to setVisible or we may get reused by someone before we even get a chance to display ourselves
+            // if we are def sure it is safe to reuse this class
+            if (isVisible()) { // getClass() == OptionPane.class
+                factory = true; // mark this option pane, so when it stops being visable it can be reused
+            }
         }
         catch(Throwable t) {
           Logger.error(t);
@@ -408,6 +415,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             Window op = (Window)((WeakReference)myselfs.elementAt(c)).get();
             if (op instanceof OptionPane && ((OptionPane)op).factory && !op.isVisible()) {
                 myself = (OptionPane)op;
+                myself.factory = false; // we are about to use it, but have not yet opened it, so we must reset the flag
                 break;
             }
         }
@@ -419,7 +427,6 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             catch (Throwable th) {
                 myself = new OptionPane();
             }
-            myself.factory = true;
         }
 
         myself.setTitle(title);
