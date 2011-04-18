@@ -355,6 +355,9 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
         this.icon.setIcon(icon);
     }
 
+    /**
+     * @see javax.swing.JOptionPane#createDialog(java.awt.Component, java.lang.String) JOptionPane.createDialog
+     */
     public void run() {
         try {
 

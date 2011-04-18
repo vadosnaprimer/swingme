@@ -473,7 +473,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // as if a component asks for a repaint in a different thread and that requires a fullrepaint,
         // it will only set the flag, but if a paint is in progress, the crop will not be correct
         // This problem shows up with hiding of a tooltip prematurely, as the repaint is called from the animation thread
-        boolean doFullRepaint = fullrepaint;
+        boolean doFullRepaint = fullrepaint; // For thread safety, we cache fullrepaint now, and reset it
         fullrepaint = false;
 
         if (!paintdone) {
@@ -520,12 +520,18 @@ public class DesktopPane extends Canvas implements Runnable {
             // can not add or remove windows while this is happening
             synchronized(uiLock) {
 
-                if (clipx<=0 && clipy<=0 && clipw>=getWidth() && cliph>=getHeight()) { // the system wants us to repaint everything
-                    doFullRepaint = true;
-                }
-                else if (repaintComponent.isEmpty()) { // we want to repaint a component but have in a previous repaint cleared our list, so we do not know
-                    doFullRepaint = true;
-                }
+                // For thread safety, we cache the components to repaint
+                // and as a component can call repaint from inside its paint method
+                Vector repaintComponent2 = new Vector(repaintComponent.size());
+                SystemUtil.addAll(repaintComponent2, repaintComponent);
+                repaintComponent.removeAllElements();
+
+
+
+
+
+
+                // deal with layout ============================================
 
                 // now we need to layout all the components
                 // we use a 3 pass system, as 3 passes is the maximum needed to layout even
@@ -552,14 +558,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 revalidateComponents2.removeAllElements();
                 revalidateComponents3.removeAllElements();
 
-                // For thread safety, we cache the components to repaint
-                // and as a component can call repaint from inside its paint method
-                Vector repaintComponent2 = new Vector(repaintComponent.size());
-                SystemUtil.addAll(repaintComponent2, repaintComponent);
-                repaintComponent.removeAllElements();
 
-                // For thread safety, we cache fullrepaint now, and clean it
 
+
+                // deal with focus =============================================
 
 //Logger.debug("PAINT fullrepaint="+doFullRepaint+" repaintComponent="+repaintComponent2+" x="+clipx+" y="+clipy+" w="+clipw+" h="+cliph);
 
@@ -592,7 +594,32 @@ public class DesktopPane extends Canvas implements Runnable {
                     sizeChanged = false;
                 }
 
-                // now start painting
+
+
+
+                // now start painting ==========================================
+
+                // if while we did the focusGained new components need to be repainted
+                // we want to repaint them in the same repaint cycle as the components themselves
+                // so we move all the current comonents to the next cycle and then return
+                if (!repaintComponent.isEmpty() || fullrepaint) {
+                    for (int c=0;c<repaintComponent2.size();c++) {
+                        repaintComponent((Component)repaintComponent2.elementAt(c));
+                    }
+                    if (doFullRepaint) {
+                        fullrepaint = true;
+                    }
+                    repaint(clipx, clipy, clipw, cliph);
+                    return;
+                }
+
+                if (clipx<=0 && clipy<=0 && clipw>=getWidth() && cliph>=getHeight()) { // the system wants us to repaint everything
+                    doFullRepaint = true;
+                }
+                else if (repaintComponent2.isEmpty()) { // we want to repaint a component but have in a previous repaint cleared our list, so we do not know
+                    doFullRepaint = true;
+                }
+
                 graphics.setGraphics(gtmp);
 
                 if (!doFullRepaint && !repaintComponent2.isEmpty()) {
