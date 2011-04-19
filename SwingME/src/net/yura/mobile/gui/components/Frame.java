@@ -213,7 +213,7 @@ public class Frame extends Window {
 
             FrameTitlePane titleBar = getTitlePane();
             if (titleBar!=null && titleBar.isVisible()) {
-                titleBar.workoutSize();
+                titleBar.workoutPreferredSize();
                 int tw = titleBar.getWidthWithBorder();
                 int th = titleBar.getHeightWithBorder();
                 if (tw>w) w = tw;
@@ -222,7 +222,7 @@ public class Frame extends Window {
 
             MenuBar menubar = getMenuBar();
             if (menubar!=null && menubar.isVisible()) {
-                menubar.workoutSize();
+                menubar.workoutPreferredSize();
                 if (isMaximum) {
                     int mw = menubar.getWidthWithBorder();
                     int mh = menubar.getHeightWithBorder();
@@ -233,7 +233,7 @@ public class Frame extends Window {
 
             Panel contentPane = getContentPane();
             if (contentPane!=null && contentPane.isVisible()) {
-                contentPane.workoutSize();
+                contentPane.workoutPreferredSize();
                 int cw = contentPane.getWidthWithBorder();
                 int ch = contentPane.getHeightWithBorder();
                 if (cw>w) w = cw;

@@ -189,7 +189,7 @@ public class Panel extends Component {
         for(int i = 0; i < components.size(); i++) {
 
             Component component = (Component)components.elementAt(i);
-            component.workoutSize();
+            component.workoutPreferredSize();
 
         }
 
@@ -244,7 +244,7 @@ public class Panel extends Component {
      */
     public void validate() {
         for(int i = 0; i < components.size(); i++) {
-                ((Component)components.elementAt(i)).workoutSize();
+                ((Component)components.elementAt(i)).workoutPreferredSize();
         }
         doLayout();
     }

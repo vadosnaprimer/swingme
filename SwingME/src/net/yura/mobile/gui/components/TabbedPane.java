@@ -241,7 +241,7 @@ public class TabbedPane extends Panel implements ChangeListener {
 	    for(int i = 0; i < tabs.size(); i++) {
 
 		Component component = (Component)tabs.elementAt(i);
-		component.workoutSize();
+		component.workoutPreferredSize();
 		if (component.getWidthWithBorder() > tabContent.getPreferredWidth()) {
 			tabContent.setPreferredSize(component.getWidthWithBorder(),tabContent.getPreferredHeight());
 		}

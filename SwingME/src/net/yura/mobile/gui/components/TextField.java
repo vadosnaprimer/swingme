@@ -43,7 +43,7 @@ public class TextField extends TextComponent {
             offset = padding;
             //preferredPercentWidth = 0.5;
             
-            workoutSize();
+            workoutPreferredSize();
         }
     
     	public void paintComponent(Graphics2D g) {

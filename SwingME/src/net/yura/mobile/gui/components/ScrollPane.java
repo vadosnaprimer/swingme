@@ -314,7 +314,7 @@ public class ScrollPane extends Panel implements Runnable {
 
     public void workoutMinimumSize() {
 
-        slider.workoutSize();
+        slider.workoutPreferredSize();
 
         super.workoutMinimumSize();
 

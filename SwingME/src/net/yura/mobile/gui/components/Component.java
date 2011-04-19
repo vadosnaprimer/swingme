@@ -533,9 +533,11 @@ public abstract class Component {
     protected abstract void workoutMinimumSize();
 
     /**
+     * This method used to be called wokroutSize() but that would fail with
+     * java/lang/VerifyError: Preverification failed with error code 1. on a Mac
      * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
      */
-    public final void workoutSize() {
+    public final void workoutPreferredSize() {
 
         // we still need to do this as we may need to workout lines
         //if (preferredWidth==-1 || preferredHeight==-1) {

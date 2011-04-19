@@ -235,7 +235,7 @@ public class MenuBar extends List implements ActionListener {
                 for(int i = 0; i < getSize(); i++){
                     Object item = getElementAt(i);
                     Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
-                    c.workoutSize();
+                    c.workoutPreferredSize();
                     minWidth = minWidth + c.getWidthWithBorder();
                 }
                 off = width - off - minWidth;
@@ -359,7 +359,7 @@ public class MenuBar extends List implements ActionListener {
                 }
 
                 Component c = renderer.getListCellRendererComponent(this, item, i, false, false);
-                c.workoutSize();
+                c.workoutPreferredSize();
 
                 if (w < c.getWidthWithBorder()) {
                     w = c.getWidthWithBorder();

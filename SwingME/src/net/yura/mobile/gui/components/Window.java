@@ -168,7 +168,7 @@ public class Window extends Panel {
          */
         public void pack() {
             // TODO this fails when there is a scrolpane with a panel with many textPanes inside
-            workoutSize();
+            workoutPreferredSize();
             doLayout();
             setupFocusedComponent();
         }
@@ -178,7 +178,7 @@ public class Window extends Panel {
             Vector components = getComponents();
             for(int i = 0; i < components.size(); i++) {
                     Component component = (Component)components.elementAt(i);
-                    component.workoutSize();
+                    component.workoutPreferredSize();
             }
             super.setSize(width, height); // calls doLayout
             setupFocusedComponent();
@@ -383,7 +383,7 @@ public class Window extends Panel {
 
             Component component = dp.getSoftkeyRenderer().getListCellRendererComponent(null,button,0,false,false);
 
-            component.workoutSize();
+            component.workoutPreferredSize();
             int componentWidth = component.getWidthWithBorder();
             int componentHeight = component.getHeightWithBorder();
 

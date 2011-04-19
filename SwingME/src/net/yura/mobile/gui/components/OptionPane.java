@@ -227,7 +227,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
         int space = dp.getWidth() - 12 - scroll.getBarThickness(); // padding
         if (dp.VERY_BIG_SCREEN) {
-            icon.workoutSize();
+            icon.workoutPreferredSize();
             space = space - icon.getWidthWithBorder();
         }
 
@@ -245,7 +245,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
 
 
 
-        tmp.workoutSize();
+        tmp.workoutPreferredSize();
         if (tmp.getWidthWithBorder() < space) {
             return tmp;
         }

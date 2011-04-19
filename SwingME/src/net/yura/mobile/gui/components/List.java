@@ -179,7 +179,7 @@ public class List extends Component implements ActionListener {
                 Object item = getElementAt(i);
 
                 Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
-                c.workoutSize();
+                c.workoutPreferredSize();
                 int w = fixedCellWidth==-1?c.getWidthWithBorder():fixedCellWidth;
                 int h = fixedCellHeight==-1?c.getHeightWithBorder():fixedCellHeight;
 
@@ -442,7 +442,7 @@ public class List extends Component implements ActionListener {
 
         // if we need to put this back, someone needs to write WHY we do
         if (fixedCellWidth==-1||fixedCellHeight==-1) {
-            c.workoutSize();
+            c.workoutPreferredSize();
         }
 
         int w = fixedCellWidth!=-1?fixedCellWidth:c.getWidthWithBorder();
@@ -917,7 +917,7 @@ public class List extends Component implements ActionListener {
     public void setPrototypeCellValue(Object prototypeCellValue)  {
 
         Component c = renderer.getListCellRendererComponent(this, prototypeCellValue, 0, false, false);
-        c.workoutSize();
+        c.workoutPreferredSize();
         setFixedCellHeight( c.getHeightWithBorder() );
 
     }

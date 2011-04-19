@@ -389,7 +389,7 @@ public class DesktopPane extends Canvas implements Runnable {
         m.setName("SoftkeyRenderer");
         softkeyRenderer = m;
         Component c = softkeyRenderer.getListCellRendererComponent(null, new Button("test"), 0, false, false);
-        c.workoutSize();
+        c.workoutPreferredSize();
         menuHeight = c.getHeightWithBorder();
 
 
@@ -1441,7 +1441,7 @@ public class DesktopPane extends Canvas implements Runnable {
         if (show && comp != null && comp.getToolTipText() != null) {
 
             tooltip.setText(comp.getToolTipText());
-            tooltip.workoutSize();
+            tooltip.workoutPreferredSize();
             int x = comp.getToolTipLocationX() + comp.getXOnScreen();
             int y = comp.getToolTipLocationY() + comp.getYOnScreen();
             int w = tooltip.getWidthWithBorder();
@@ -1490,7 +1490,7 @@ public class DesktopPane extends Canvas implements Runnable {
             repaintHole(indicator);
         }
         indicator.setText(txt);
-        indicator.workoutSize();
+        indicator.workoutPreferredSize();
         indicator.setShowing( txt != null && !QWERTY_KAYPAD );
         setupIndicatorPosition();
         // as we dont know what size it was
