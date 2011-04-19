@@ -533,7 +533,7 @@ public abstract class Component {
     protected abstract void workoutMinimumSize();
 
     /**
-     * This method used to be called wokroutSize() but that would fail with
+     * This method used to be called workoutSize() but that would fail with
      * java/lang/VerifyError: Preverification failed with error code 1. on a Mac
      * @see javax.swing.JComponent#getPreferredSize() JComponent.getPreferredSize
      */
