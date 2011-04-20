@@ -1296,8 +1296,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private Component pointerComponent;
     private ScrollPane pointerScrollPane;
-    private int pointerFristX;
-    private int pointerFristY;
+    private int pointerFirstX;
+    private int pointerFirstY;
     private long pointerFristTime;
 
     public void pointerDragged(int x, int y) {
@@ -1355,8 +1355,8 @@ public class DesktopPane extends Canvas implements Runnable {
                         }
                     }
 
-                    pointerFristX = x;
-                    pointerFristY = y;
+                    pointerFirstX = x;
+                    pointerFirstY = y;
                     pointerFristTime = System.currentTimeMillis();
                 }
 
@@ -1366,7 +1366,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         pointerScrollPane = null;
                     }
                     // check its dragged more then 5px
-                    else if (!isAccurate(pointerFristX, pointerFristY, x, y)) {
+                    else if (!isAccurate(pointerFirstX, pointerFirstY, x, y)) {
                         pointerComponent.processMouseEvent(CANCEL, x, y, keypad);
                         pointerComponent = null;
 
@@ -1397,8 +1397,8 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (keypad.isDownAction(Canvas.FIRE)) {
                     multitouchEvent(
                             new int[] {type, type},
-                            new int[] {x, 2 * pointerFristX - x - 100},
-                            new int[] {y, 2 * pointerFristY - y - 100});
+                            new int[] {x, 2 * pointerFirstX - x - 100},
+                            new int[] {y, 2 * pointerFirstY - y - 100});
                 }
                 //#enddebug
 
@@ -1406,7 +1406,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (type == RELEASED) {
 
                     long time = System.currentTimeMillis();
-                    if (time - pointerFristTime > 1000 && isAccurate(pointerFristX, pointerFristY, x, y)) {
+                    if (time - pointerFristTime > 1000 && isAccurate(pointerFirstX, pointerFirstY, x, y)) {
                         if (pointerComponent!=null) {
                             Window popup = pointerComponent.getPopupMenu();
                             if (popup!=null && !popup.isVisible()) {
