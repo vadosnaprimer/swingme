@@ -1,3 +1,6 @@
+// based on version 349 of the file
+// http://code.google.com/p/protobuf/source/browse/trunk/java/src/main/java/com/google/protobuf/CodedInputStream.java?spec=svn383&r=349
+
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
 // http://code.google.com/p/protobuf/
@@ -66,7 +69,25 @@ public final class CodedInputStream {
    */
   public static CodedInputStream newInstance(final byte[] buf, final int off,
                                              final int len) {
-    return new CodedInputStream(buf, off, len);
+    CodedInputStream result = new CodedInputStream(buf, off, len);
+    try {
+      // Some uses of CodedInputStream can be more efficient if they know
+      // exactly how many bytes are available.  By pushing the end point of the
+      // buffer as a limit, we allow them to get this information via
+      // getBytesUntilLimit().  Pushing a limit that we know is at the end of
+      // the stream can never hurt, since we can never past that point anyway.
+      result.pushLimit(len);
+    } catch (IOException ex) {
+      // The only reason pushLimit() might throw an exception here is if len
+      // is negative. Normally pushLimit()'s parameter comes directly off the
+      // wire, so it's important to catch exceptions in case of corrupt or
+      // malicious data. However, in this case, we expect that len is not a
+      // user-supplied value, so we can assume that it being negative indicates
+      // a programming error. Therefore, throwing an unchecked exception is
+      // appropriate.
+      throw new IllegalArgumentException(ex.toString());
+    }
+    return result;
   }
 
   // -----------------------------------------------------------------
@@ -83,8 +104,9 @@ public final class CodedInputStream {
     }
 
     lastTag = readRawVarint32();
-    if (lastTag == 0) {
-      // If we actually read zero, that's not a valid tag.
+    if (WireFormat.getTagFieldNumber(lastTag) == 0) {
+      // If we actually read zero (or any tag number corresponding to field
+      // number zero), that's not a valid tag.
       throw new IOException();
     }
     return lastTag;
@@ -264,7 +286,9 @@ public final class CodedInputStream {
   /** Read a {@code bytes} field value from the stream. */
   public byte[] readBytes() throws IOException {
     final int size = readRawVarint32();
-    if (size <= (bufferSize - bufferPos) && size > 0) {
+    if (size == 0) {
+      return new byte[0];
+    } else if (size <= (bufferSize - bufferPos) && size > 0) {
       // Fast path:  We already have the bytes in a contiguous buffer, so
       //   just copy directly from it.
       byte[] result = new byte[size];
@@ -277,6 +301,9 @@ public final class CodedInputStream {
     }
   }
 
+  /**
+   * YURA: added for ProtoUtil
+   */
   public int readBytesSize() throws IOException {
       return readRawVarint32();
   }
@@ -362,8 +389,26 @@ public final class CodedInputStream {
    * CodedInputStream buffers its input.
    */
   static int readRawVarint32(final InputStream input) throws IOException {
-    int result = 0;
-    int offset = 0;
+    final int firstByte = input.read();
+    if (firstByte == -1) {
+      throw new IOException();
+    }
+    return readRawVarint32(firstByte, input);
+  }
+
+  /**
+   * Like {@link #readRawVarint32(InputStream)}, but expects that the caller
+   * has already read one byte.  This allows the caller to determine if EOF
+   * has been reached before attempting to read.
+   */
+  public static int readRawVarint32(
+      final int firstByte, final InputStream input) throws IOException {
+    if ((firstByte & 0x80) == 0) {
+      return firstByte;
+    }
+
+    int result = firstByte & 0x7f;
+    int offset = 7;
     for (; offset < 32; offset += 7) {
       final int b = input.read();
       if (b == -1) {
@@ -474,7 +519,9 @@ public final class CodedInputStream {
   /**
    * The total number of bytes read before the current buffer.  The total
    * bytes read up to the current position can be computed as
-   * {@code totalBytesRetired + bufferPos}.
+   * {@code totalBytesRetired + bufferPos}.  This value may be negative if
+   * reading started in the middle of the current buffer (e.g. if the
+   * constructor that takes a byte array and an offset was used).
    */
   private int totalBytesRetired;
 
@@ -490,12 +537,13 @@ public final class CodedInputStream {
 
   private static final int DEFAULT_RECURSION_LIMIT = 64;
   private static final int DEFAULT_SIZE_LIMIT = 64 << 20;  // 64MB
-  private static final int BUFFER_SIZE = 1024; // j2me = 2048; // Default value = 4096
+  private static final int BUFFER_SIZE = 1024; // YURA: j2me = 2048; // Default value = 4096
 
   private CodedInputStream(final byte[] buffer, final int off, final int len) {
     this.buffer = buffer;
     bufferSize = off + len;
     bufferPos = off;
+    totalBytesRetired = -off;
     input = null;
   }
 
@@ -503,6 +551,7 @@ public final class CodedInputStream {
     buffer = new byte[BUFFER_SIZE];
     bufferSize = 0;
     bufferPos = 0;
+    totalBytesRetired = 0;
     this.input = input;
   }
 
@@ -553,12 +602,20 @@ public final class CodedInputStream {
    * Resets the current size counter to zero (see {@link #setSizeLimit(int)}).
    */
   public void resetSizeCounter() {
-    totalBytesRetired = 0;
+    totalBytesRetired = -bufferPos;
   }
 
   /**
    * Sets {@code currentLimit} to (current position) + {@code byteLimit}.  This
    * is called when descending into a length-delimited embedded message.
+   *
+   * <p>Note that {@code pushLimit()} does NOT affect how many bytes the
+   * {@code CodedInputStream} reads from an underlying {@code InputStream} when
+   * refreshing its buffer.  If you need to prevent reading past a certain
+   * point in the underlying {@code InputStream} (e.g. because you expect it to
+   * contain more data after the end of the message which you need to handle
+   * differently) then you must place a wrapper around you {@code InputStream}
+   * which limits the amount of data that can be read from it.
    *
    * @return the old limit.
    */
@@ -623,6 +680,14 @@ public final class CodedInputStream {
   }
 
   /**
+   * The total bytes read up to the current position. Calling
+   * {@link #resetSizeCounter()} resets this value to zero.
+   */
+  public int getTotalBytesRead() {
+      return totalBytesRetired + bufferPos;
+  }
+
+  /**
    * Called with {@code this.buffer} is empty to read more bytes from the
    * input.  If {@code mustSucceed} is true, refillBuffer() gurantees that
    * either there will be at least one byte in the buffer when it returns
@@ -648,9 +713,11 @@ public final class CodedInputStream {
 
     bufferPos = 0;
 
-    // changed by yura, so stop if overreading
+    // YURA: fix to stop if overreading
     int readAllowed = sizeLimit - totalBytesRetired;
     bufferSize = (input == null) ? -1 : input.read(buffer, 0,buffer.length <readAllowed ?buffer.length : readAllowed);
+    // YURA: what was here:
+    //bufferSize = (input == null) ? -1 : input.read(buffer);
     if (bufferSize == 0 || bufferSize < -1) {
       throw new IllegalStateException(
           "InputStream#read(byte[]) returned invalid result: " + bufferSize +
@@ -819,19 +886,19 @@ public final class CodedInputStream {
     } else {
       // Skipping more bytes than are in the buffer.  First skip what we have.
       int pos = bufferSize - bufferPos;
-      totalBytesRetired += pos;
-      bufferPos = 0;
-      bufferSize = 0;
+      bufferPos = bufferSize;
 
-      // Then skip directly from the InputStream for the rest.
-      while (pos < size) {
-        final int n = (input == null) ? -1 : (int) input.skip(size - pos);
-        if (n <= 0) {
-          throw new IOException();
-        }
-        pos += n;
-        totalBytesRetired += n;
+      // Keep refilling the buffer until we get to the point we wanted to skip
+      // to.  This has the side effect of ensuring the limits are updated
+      // correctly.
+      refillBuffer(true);
+      while (size - pos > bufferSize) {
+        pos += bufferSize;
+        bufferPos = bufferSize;
+        refillBuffer(true);
       }
+
+      bufferPos = size - pos;
     }
   }
 }

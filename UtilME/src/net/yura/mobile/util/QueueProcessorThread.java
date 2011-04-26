@@ -53,6 +53,7 @@ public abstract class QueueProcessorThread extends Thread {
                                 }
                                 catch (InterruptedException ex) {
                                     Logger.info(ex);
+                                    // TODO do something!!!!
                                 }
                         }
                         object = inbox.elementAt(0);
