@@ -422,7 +422,7 @@ public abstract class Canvas extends Displayable {
                 }
             }
 
-            return !isVolumeKey(keyCode);
+            return isKeyHandled(keyCode);
         }
 
         @Override
@@ -449,12 +449,13 @@ public abstract class Canvas extends Displayable {
                 keyReleased(meKeyCode);
             }
 
-            return !isVolumeKey(keyCode);
+            return isKeyHandled(keyCode);
         }
 
-        private boolean isVolumeKey(int keyCode) {
-            return (keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
-                    keyCode == KeyEvent.KEYCODE_VOLUME_DOWN);
+        private boolean isKeyHandled(int keyCode) {
+            return !(keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+                     keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
+                     keyCode == KeyEvent.KEYCODE_CAMERA);
         }
 
         private static final int POINTER_DRAGGED = 0;
