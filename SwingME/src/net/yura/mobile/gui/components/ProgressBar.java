@@ -18,6 +18,8 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.game.Sprite;
+
+import net.yura.mobile.gui.Animation;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.plaf.Style;
 
@@ -27,12 +29,9 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class ProgressBar extends Component {
 
-    protected boolean go;
-    protected int wait;
-
     protected int loaded;
     protected int loading;
-
+    private boolean indeterminate;
     private Sprite sprite;
 
     /**
@@ -42,7 +41,6 @@ public class ProgressBar extends Component {
      */
     public ProgressBar() {
             focusable = false;
-            wait = 50;
             loaded = 100;
     }
 
@@ -58,20 +56,19 @@ public class ProgressBar extends Component {
 
     public void paintComponent(Graphics2D g) {
 
+    	if (indeterminate) {
+    		Animation.registerAnimated(this);
+    	}
+    	
         if (sprite!=null) {
-
-		g.drawSprite(sprite, loading, (width-sprite.getWidth())/2, (height-sprite.getHeight())/2);
+        	g.drawSprite(sprite, loading, (width-sprite.getWidth())/2, (height-sprite.getHeight())/2);
         }
         else {
-
             g.setColor( getForeground() );
-
-            if (go) {
+            if (indeterminate) {
                 int thickness = 20;
-
                 // pos goes from 0 to loaded/2
                 int pos = (loading > loaded/2)? loaded-loading : loading;
-
                 g.fillRect( ( (width-thickness) * pos)/ (loaded/2) , 0, thickness, height);
             }
             else {
@@ -83,19 +80,10 @@ public class ProgressBar extends Component {
     /**
      *  goes from 0 to loaded (inclusive), then goes back to 0 and start again
      */
-    public void animate() throws InterruptedException {
-
-            loading = 0;
-
-            while (go) {
-
-                    repaint();
-                    wait(wait);
-
-                    if (loading == loaded) { loading=0; }
-                    else { loading ++; }
-            }
-
+    public void animate() {
+        if (loading == loaded) { loading=0; }
+        else { loading ++; }
+        repaint();
     }
 
     /**
@@ -103,15 +91,8 @@ public class ProgressBar extends Component {
      * @see javax.swing.JProgressBar#setIndeterminate(boolean) JProgressBar.setIndeterminate
      */
     public void setIndeterminate(boolean v) {
-
-        if (v) {
-		go = true;
-		getDesktopPane().animateComponent(this);
-        }
-        else {
-                go = false;
-        }
-
+    	indeterminate = v;
+    	repaint();
     }
 
     /**

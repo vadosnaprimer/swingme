@@ -297,11 +297,11 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 try {
-                    currentAnimatedComponent.animate();
+                    currentAnimatedComponent.run();
                 }
                 catch (InterruptedException e) {
                     //#debug debug
-                    Logger.debug("Interrupted during animation");
+                    Logger.debug("Interrupted during animation (this is ok)");
                 }
             }
         }

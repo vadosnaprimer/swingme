@@ -24,7 +24,7 @@
     <available file="../VistoJ2ME" type="dir" property="VistoJ2ME"/>
     <available file="../vauchacha" type="dir" property="vauchacha"/>
     <available file="../AgentClient" type="dir" property="AgentClient"/>
-    <available file="E:/My_World/6_Yura/Work/java/badoo/repo/Abba" type="dir" property="Abba"/>
+    <available file="I:/6_Yura/Work/java/badoo/repo/Abba" type="dir" property="Abba"/>
     <available file="../iPhoneRace" type="dir" property="iPhoneRace"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
 
@@ -41,7 +41,7 @@
         <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
     </target>
     <target name="d5" if="Abba">
-        <copy file="${deployment.jar}" todir="E:/My_World/6_Yura/Work/java/badoo/repo/Abba/lib"/>
+        <copy file="${deployment.jar}" todir="I:/6_Yura/Work/java/badoo/repo/Abba/lib"/>
     </target>
     <target name="d6" if="iPhoneRace">
         <copy file="${deployment.jar}" todir="../iPhoneRace/lib"/>

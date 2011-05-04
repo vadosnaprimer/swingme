@@ -388,7 +388,7 @@ public class Slider extends Component {
         }
     }
 
-    public void animate() throws InterruptedException {
+    public void run() throws InterruptedException {
 
         while (true) {
             if (click == CLICK_UP && value > min) {

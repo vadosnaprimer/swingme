@@ -25,7 +25,7 @@ public class ToolTip extends Label {
     private boolean waiting;
     private boolean showing;
     
-    public void animate() throws InterruptedException {
+    public void run() throws InterruptedException {
         try {
 	    waiting = true;
             wait(1000);

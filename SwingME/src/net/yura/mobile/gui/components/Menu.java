@@ -373,7 +373,7 @@ public class Menu extends Button {
             dp.add(popup);
         }
 
-        public void animate() throws InterruptedException {
+        public void run() throws InterruptedException {
 
             try {
 

@@ -479,7 +479,8 @@ public abstract class Component {
         return false;
     }
 
-    public void animate() throws InterruptedException { }
+    public void run() throws InterruptedException { }
+    public void animate() { }
 
     /**
      * @see java.awt.event.FocusListener#focusGained(java.awt.event.FocusEvent) FocusListener.focusGained

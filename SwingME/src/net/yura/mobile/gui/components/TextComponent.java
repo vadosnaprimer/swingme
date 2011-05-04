@@ -478,7 +478,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             return caretPosition;
         }
 
-	public void animate() throws InterruptedException {
+	public void run() throws InterruptedException {
 
             try {
                 int newWait = cursorBlinkWait;
