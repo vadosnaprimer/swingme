@@ -150,6 +150,10 @@ public abstract class Canvas extends Displayable {
             y = y+graphicsY;
 
             this.canvasView.postInvalidate(x, y, x+w, y+h);
+            
+            //#mdebug debug
+            this.canvasView.postInvalidate(0, 0, 10, 10);
+            //#enddebug
         }
     }
 
