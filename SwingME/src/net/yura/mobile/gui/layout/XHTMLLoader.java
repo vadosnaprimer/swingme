@@ -639,13 +639,19 @@ Logger.debug("START: "+startTag);
         private void processText(KXmlParser parser) {
             String string = parser.getText();
             string = StringUtil.replaceAll(string, "\n", " ");
-            //string = StringUtil.replaceAll(string, "\t", " ");
-            //string = StringUtil.replaceAll(string, "  ", " ");
-            //string = StringUtil.trimStart(string);
+            string = StringUtil.replaceAll(string, "\t", " ");
+            string = StringUtil.replaceAll(string, "  ", " ");
+
             //#debug debug
             Logger.debug("    text: \""+string+"\"");
             if (currentComponent instanceof TextPane) { // should be TextComponent
                 TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
+                // if we are the start of a new block of text, get rid of any spaces at the start of the line
+                if (inlineText.getText().length()==0 || inlineText.getText().endsWith(" ")) {
+                    while (string.length()!=0 && string.charAt(0)==' ') {
+                        string = string.substring(1);
+                    }
+                }
                 inlineText.append( string );
             }
             else if (currentComponent instanceof ComboBox) {
