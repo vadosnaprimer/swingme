@@ -153,10 +153,10 @@ public class Frame extends Window {
          */
         public void setContentPane(Panel p) {
 
-            Panel mbar = getContentPane();
-            if (mbar!=p) {
-                if (mbar!=null) {
-                    super.remove(mbar);
+            Panel oldCP = getContentPane();
+            if (oldCP!=p) {
+                if (oldCP!=null) {
+                    super.remove(oldCP);
                 }
                 // we insert at 0 as if everything is transparent, we want the
                 // contentPane to draw first as it may have scroll clip set to false
