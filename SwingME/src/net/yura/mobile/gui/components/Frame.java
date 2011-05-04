@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
+
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.layout.BorderLayout;
@@ -157,8 +158,8 @@ public class Frame extends Window {
                 if (mbar!=null) {
                     super.remove(mbar);
                 }
-                // we insert at 0 as if everything is transpaent, we want the
-                // contentPane to draw first as it may have scoll clip set to false
+                // we insert at 0 as if everything is transparent, we want the
+                // contentPane to draw first as it may have scroll clip set to false
                 super.insert(p,0);
             }
 
