@@ -1,17 +1,5 @@
 package net.yura.android.plaf;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.util.DisplayMetrics;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidOptionPane;
 import net.yura.mobile.gui.DesktopPane;
@@ -25,11 +13,22 @@ import net.yura.mobile.gui.components.CheckBox;
 import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.RadioButton;
-import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.Rect;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.DisplayMetrics;
 
 public class AndroidLookAndFeel extends SynthLookAndFeel {
 
@@ -70,14 +69,16 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style menuBarStyle = new Style(defaultStyle);
 
         Drawable divider = getDrawable(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
-        int thickness = divider.getIntrinsicHeight();
-        Rect thicknessRect = new Rect(thickness,thickness,0,0);
-        //AndroidBorder.setDrawableState(Style.ALL, divider); // we set up the drawable to be able to get its color
-        //Border divider = getListDivider(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
-        menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
-        // TODO we do not know where to get the verticalDivider, so here is a hack to create one.
-        menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable( getColorAtCenter(divider) ), thicknessRect), "verticalDivider", Style.ALL);
-
+        // some Android roms (MIUI) do not have a horizontal divider
+        if (divider!=null) {
+            int thickness = divider.getIntrinsicHeight();
+            Rect thicknessRect = new Rect(thickness,thickness,0,0);
+            //AndroidBorder.setDrawableState(Style.ALL, divider); // we set up the drawable to be able to get its color
+            //Border divider = getListDivider(ctx, android.R.style.Widget_ListView_Menu, android.R.attr.divider);
+            menuBarStyle.addProperty(new AndroidBorder(divider, thicknessRect), "divider", Style.ALL);
+            // TODO we do not know where to get the verticalDivider, so here is a hack to create one.
+            menuBarStyle.addProperty(new AndroidBorder(new ColorDrawable( getColorAtCenter(divider) ), thicknessRect), "verticalDivider", Style.ALL);
+        }
         setStyleFor("MenuBar", menuBarStyle);
 
 
@@ -199,9 +200,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         buttonStyle.addBorder(new AndroidBorder(but, padding),Style.ALL);
         setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("Button", buttonStyle);
-        
-        
-        
+
+
+
         Style sbuttonStyle = new Style(defaultStyle);
         sbuttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
         setForegroundColor(ctx, sbuttonStyle, android.R.style.Widget_Button,Button.class);
@@ -308,8 +309,8 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         spin2.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
         indeterminateSpinner2.addProperty( new AndroidSprite(spin2), "sprite", Style.ALL);
         setStyleFor("IndeterminateSpinnerSmall",indeterminateSpinner2);
-        
-        
+
+
         // yes = ok, no = cencel, dont use this as it seems to be wrong
         //ctx.getResources().getString(android.R.string.ok);
 
