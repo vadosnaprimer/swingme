@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Graphics;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
@@ -39,6 +40,7 @@ public class XHTMLLoader {
     Panel root;
     TagHandler currentTag;
     Component currentComponent;
+    boolean newBlock;
     ActionListener al;
 
     public static Component load(String text, ActionListener listener) {
@@ -90,9 +92,7 @@ public class XHTMLLoader {
      * do not default
      * @return style for this tag if found, otherwise null
      */
-    private TextStyle getStyleForTag(KXmlParser parser) {
-
-        String name = parser.getName();
+    private TextStyle getStyleForTag(String name) {
 
 /* TODO
         final int count = parser.getAttributeCount();
@@ -127,10 +127,13 @@ public class XHTMLLoader {
         int eventType = parser.getEventType();
         do {
             if(eventType == KXmlParser.START_TAG) {
-                TagHandler tag = new TagHandler();
+
+                String name = parser.getName().toLowerCase();
+
+                TagHandler tag = new TagHandler(name);
 
                 tag.setParant(currentTag);
-                tag.style = getStyleForTag(parser);
+                tag.style = getStyleForTag(name);
 
                 currentTag = tag;
                 currentTag.processStartElement(parser);
@@ -138,6 +141,10 @@ public class XHTMLLoader {
                 if (currentComponent instanceof TextPane) {
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                     currentTag.styleStart = inlineText.getText().length();
+                }
+
+                if (isBlock( name ) ) {
+                    newBlock = true;
                 }
 
             }
@@ -156,8 +163,13 @@ public class XHTMLLoader {
                     }
                 }
 
+                if (isBlock( currentTag.name ) ) {
+                    newBlock = true;
+                }
+
                 currentTag.processEndElement(parser);
                 currentTag = currentTag.getParent();
+
             }
             else if(eventType == KXmlParser.TEXT) {
                 currentTag.processText(parser);
@@ -222,6 +234,19 @@ public class XHTMLLoader {
         addHtmlTextStyle(center);
         addHtmlTextStyle(link);
         addHtmlTextStyle(font);
+
+        //TextStyle h1 = new TextStyle();
+        //h1.addFont(new Font(
+        //        javax.microedition.lcdui.Font.FACE_SYSTEM,
+        //        javax.microedition.lcdui.Font.STYLE_PLAIN,
+        //        javax.microedition.lcdui.Font.SIZE_LARGE), Style.ALL);
+        //h1.setName("h1");
+        //h1.setForeground(0xFFFF0000);
+        //addHtmlTextStyle(h1);
+    }
+
+    public boolean isBlock(String tag) {
+        return "center".equals(tag) || "p".equals(tag) || "h1".equals(tag) || "h2".equals(tag) || "h3".equals(tag);
     }
 
     public static void addHtmlTextStyle(TextStyle style) {
@@ -239,6 +264,7 @@ public class XHTMLLoader {
         //#enddebug
         ((Panel)currentComponent).add(it);
         currentComponent = it;
+        newBlock = false;
     }
     private void endInlineSection() {
         // clear all formatting
@@ -284,13 +310,19 @@ public class XHTMLLoader {
         TextStyle style;
         int styleStart;
 
+        String name;
+
+        TagHandler(String name) {
+            this.name = name;
+        }
+
         public void processStartElement(KXmlParser parser) throws Exception {
             final int count = parser.getAttributeCount();
-            String startTag = parser.getName().toLowerCase();
-//#debug debug
-Logger.debug("START: "+startTag);
 
-            if ("a".equals(startTag)) {
+//#debug debug
+Logger.debug("START: "+name);
+
+            if ("a".equals(name)) {
 
                 String value = parser.getAttributeValue(null, "href");
 
@@ -312,7 +344,7 @@ Logger.debug("START: "+startTag);
                 //    }
                 //}
             }
-            if ("font".equals(startTag)) {
+            if ("font".equals(name)) {
 
                 String color = parser.getAttributeValue(null, "color");
                 if (color!=null) {
@@ -325,7 +357,7 @@ Logger.debug("START: "+startTag);
                 }
 
             }
-            else if ("br".equals(startTag)) {
+            else if ("br".equals(name)) {
                 if (currentComponent instanceof TextPane) { // should be TextComponent
                     TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
                     inlineText.append( "\n" );
@@ -336,7 +368,7 @@ Logger.debug("START: "+startTag);
                 }
                 //#enddebug
             }
-            else if ("select".equals(startTag)) {
+            else if ("select".equals(name)) {
                 int size = 1;
                 for (int c=0;c<count;c++) {
                     String key = parser.getAttributeName(c).toLowerCase();
@@ -355,7 +387,7 @@ Logger.debug("START: "+startTag);
                 insertComponent(c);
 
             }
-            else if ("option".equals(startTag)) {
+            else if ("option".equals(name)) {
 
                 boolean selected=false;
                 for (int c=0;c<count;c++) {
@@ -390,7 +422,7 @@ Logger.debug("START: "+startTag);
                 }
                 //#enddebug
             }
-            else if ("input".equals(startTag)) {
+            else if ("input".equals(name)) {
                 Class theClass = null;
                 String text = null;
                 int constraints = TextComponent.ANY;
@@ -440,13 +472,13 @@ Logger.debug("START: "+startTag);
                     insertComponent(comp);
                 }
             }
-            else if ("button".equals(startTag)) {
+            else if ("button".equals(name)) {
                 insertComponent( new Button() );
             }
-            else if ("textarea".equals(startTag)) {
+            else if ("textarea".equals(name)) {
                 insertComponent( new TextArea() );
             }
-            else if ("ul".equals(startTag) || "ol".equals(startTag)) { // lists
+            else if ("ul".equals(name) || "ol".equals(name)) { // lists
                 Panel p = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
                 //#mdebug
                 if (DesktopPane.debug) {
@@ -455,15 +487,16 @@ Logger.debug("START: "+startTag);
                 //#enddebug
                 insertComponent( p );
             }
-            else if ("li".equals(startTag)) { // list items
-                Label l = new Label("*");
+            else if ("li".equals(name)) { // list items
+
+                Label l = new Label("ol".equals(parent.name)? (((Panel)currentComponent).getComponentCount()/2+1) +".":"*");
                 l.setVerticalAlignment(Graphics.TOP);
                 // we did insertComponent with a panel, so now we know we have a panel here
                 ((Panel)currentComponent).add(l, new GridBagConstraints());
 
                 insertPanel(new Panel(new FlowLayout(Graphics.VCENTER,0)), new GridBagConstraints());
             }
-            else if ("tr".equals(startTag)) { // row
+            else if ("tr".equals(name)) { // row
                 if (parent!=null && parent.rows!=null) {
                     parent.row++;
                 }
@@ -473,11 +506,11 @@ Logger.debug("START: "+startTag);
                 }
                 //#enddebug
             }
-            else if ("table".equals(startTag)) {
+            else if ("table".equals(name)) {
                 rows = new Vector();
                 insertComponent(new Panel(new GridBagLayout(000, 2, 2, 2, 2, 2)) );
             }
-            else if ("th".equals(startTag) || "td".equals(startTag)) { // col
+            else if ("th".equals(name) || "td".equals(name)) { // col
                 String colspan = parser.getAttributeValue(null,"colspan");
                 String rowspan = parser.getAttributeValue(null,"rowspan");
                 int colspani = colspan==null?1:Integer.parseInt(colspan);
@@ -509,35 +542,35 @@ Logger.debug("START: "+startTag);
 
             }
             //#mdebug info
-            else if ("b".equals(startTag)) {
+            else if ("b".equals(name)) {
 
             }
-            else if ("i".equals(startTag)) {
+            else if ("i".equals(name)) {
 
             }
-            else if ("u".equals(startTag)) {
+            else if ("u".equals(name)) {
 
             }
-            else if ("center".equals(startTag)) {
+            else if ("center".equals(name)) {
 
             }
-            else if ("body".equals(startTag)) {
+            else if ("body".equals(name)) {
 
             }
-            else if ("p".equals(startTag)) {
+            else if ("p".equals(name)) {
                 // do nothing
             }
-            else if ("title".equals(startTag)) {
+            else if ("title".equals(name)) {
                 // do nothing
             }
-            else if ("html".equals(startTag)) {
+            else if ("html".equals(name)) {
                 // do nothing
             }
-            else if ("head".equals(startTag)) {
+            else if ("head".equals(name)) {
                 // do nothing
             }
             else {
-                Logger.info("unknwon start: "+startTag);
+                Logger.info("unknwon start: "+name);
             }
             //#enddebug
 
@@ -552,28 +585,27 @@ Logger.debug("START: "+startTag);
         }
 
         public void processEndElement(KXmlParser parser) {
-            String endTag = parser.getName();
 
-            if ("select".equals(endTag)) {
+            if ("select".equals(name)) {
                 endComponent();
             }
-            else if ("input".equals(endTag)) {
+            else if ("input".equals(name)) {
                 endComponent();
             }
-            else if ("button".equals(endTag)) {
+            else if ("button".equals(name)) {
                 endComponent();
             }
-            else if ("textarea".equals(endTag)) {
+            else if ("textarea".equals(name)) {
                 endComponent();
             }
-            else if ("tr".equals(endTag)) {
+            else if ("tr".equals(name)) {
                 // TODO set marker for end of row, we will need to insert a empty panl
                 // at this marker if the row does not have enough elements to fill it up
             }
-            else if ("th".equals(endTag) || "td".equals(endTag)) {
+            else if ("th".equals(name) || "td".equals(name)) {
                 endPanel();
             }
-            else if ("table".equals(endTag)) {
+            else if ("table".equals(name)) {
                 int biggest = 0;
                 for (int a=0;a<rows.size();a++) {
                     Integer row = (Integer)rows.elementAt(a);
@@ -587,51 +619,51 @@ Logger.debug("START: "+startTag);
                 Logger.debug("bigget "+rows+" "+biggest);
                 endComponent();
             }
-            else if ("li".equals(endTag)) {
+            else if ("li".equals(name)) {
                 endPanel();
             }
-            else if ("ul".equals(endTag) || "ol".equals(endTag)) {
+            else if ("ul".equals(name) || "ol".equals(name)) {
                 endComponent();
             }
             //#mdebug info
-            else if ("b".equals(endTag)) {
+            else if ("b".equals(name)) {
 
             }
-            else if ("i".equals(endTag)) {
+            else if ("i".equals(name)) {
 
             }
-            else if ("u".equals(endTag)) {
+            else if ("u".equals(name)) {
 
             }
-            else if ("center".equals(endTag)) {
+            else if ("center".equals(name)) {
 
             }
-            else if ("a".equals(endTag)) {
+            else if ("a".equals(name)) {
 
             }
-            else if ("body".equals(endTag)) {
+            else if ("body".equals(name)) {
 
             }
-            else if ("p".equals(endTag)) {
+            else if ("p".equals(name)) {
                 // do nothing
             }
-            else if ("html".equals(endTag)) {
+            else if ("html".equals(name)) {
                 // do nothing
             }
-            else if ("head".equals(endTag)) {
+            else if ("head".equals(name)) {
                 // do nothing
             }
-            else if ("title".equals(endTag)) {
+            else if ("title".equals(name)) {
                 // do nothing
             }
-            else if ("option".equals(endTag)) {
+            else if ("option".equals(name)) {
                 // do nothing
             }
-            else if ("br".equals(endTag)) {
+            else if ("br".equals(name)) {
                 // do nothing
             }
             else {
-                Logger.info("unknown end: "+endTag);
+                Logger.info("unknown end: "+name);
             }
             //#enddebug
         }
@@ -645,14 +677,23 @@ Logger.debug("START: "+startTag);
             //#debug debug
             Logger.debug("    text: \""+string+"\"");
             if (currentComponent instanceof TextPane) { // should be TextComponent
-                TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
-                // if we are the start of a new block of text, get rid of any spaces at the start of the line
-                if (inlineText.getText().length()==0 || inlineText.getText().endsWith(" ")) {
-                    while (string.length()!=0 && string.charAt(0)==' ') {
-                        string = string.substring(1);
+
+                if (string.length()>0) {
+                    TextPane inlineText = (TextPane)XHTMLLoader.this.currentComponent;
+
+                    if (newBlock && inlineText.getText().length()!=0) {
+                        inlineText.append("\n");
+                        newBlock=false;
                     }
+
+                    // if we are the start of a new block of text, get rid of any spaces at the start of the line
+                    if (inlineText.getText().length()==0 || inlineText.getText().endsWith(" ") || inlineText.getText().endsWith("\n")) {
+                        while (string.length()!=0 && string.charAt(0)==' ') {
+                            string = string.substring(1);
+                        }
+                    }
+                    inlineText.append( string );
                 }
-                inlineText.append( string );
             }
             else if (currentComponent instanceof ComboBox) {
                 ComboBox inlineText = (ComboBox)XHTMLLoader.this.currentComponent;
