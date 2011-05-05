@@ -673,6 +673,13 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             dataVector.setElementAt(object, index);
         }
 
+        public Component prepareRenderer(int r,int c) {
+            if (convertLin(r, c)>=getSize()) {
+                return null;
+            }
+            return super.prepareRenderer(r, c);
+        }
+
     }
 
     class SelectableFile {
