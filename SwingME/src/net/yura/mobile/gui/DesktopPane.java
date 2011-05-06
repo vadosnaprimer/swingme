@@ -18,14 +18,14 @@ package net.yura.mobile.gui;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
-import net.yura.mobile.gui.plaf.LookAndFeel;
-import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
@@ -37,6 +37,8 @@ import net.yura.mobile.gui.components.ScrollPane;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.ToolTip;
 import net.yura.mobile.gui.components.Window;
+import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.SystemUtil;
 
@@ -273,7 +275,11 @@ public class DesktopPane extends Canvas implements Runnable {
         }
 
         // Set thread to maximum priority (smother animations and text input)
-        Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        // Changing the UI thread priority should only be done in platforms
+        // were actually improve performance.
+        if (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID) {
+            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+        }
 
         while (true) {
           try {
@@ -478,7 +484,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
         if (!paintdone) {
 
-            Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            // Changing the UI thread priority should only be done in platforms
+            // were actually improve performance.
+            if (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID) {
+                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+            }
 
             if (background != Style.NO_COLOR) {
                 gtmp.setColor(background);

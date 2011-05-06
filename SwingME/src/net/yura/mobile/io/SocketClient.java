@@ -83,7 +83,7 @@ public abstract class SocketClient implements Runnable {
     }
 
     public static String connectAppend;
-    
+
     protected StreamConnection openConnection(String serv) throws IOException {
 
         // TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
@@ -97,7 +97,7 @@ public abstract class SocketClient implements Runnable {
 
         return (StreamConnection)Connector.open(protocol + serv);
     }
-    
+
     public void addToOutbox(Object obj) {
 
         if (writeThread==null) {
@@ -354,7 +354,12 @@ public abstract class SocketClient implements Runnable {
             Logger.info("[SocketClient] STARTING "+ name +" "+id);
             //#enddebug
 
-            Thread.currentThread().setPriority( Thread.MIN_PRIORITY );
+            // Changing thread priority should only be done in platforms
+            // were actually improve performance.
+            if (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID) {
+                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            }
+
             InputStream myin=in;
 
             try {
