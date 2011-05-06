@@ -1,6 +1,8 @@
 package net.yura.mobile.util;
 
 import java.util.Vector;
+
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -24,66 +26,74 @@ public abstract class QueueProcessorThread extends Thread {
     }
 
     public void kill() {
-           synchronized(this) {
-                runnning = false;
-                notify();
-            }
+        synchronized(this) {
+            runnning = false;
+            notify();
+        }
     }
 
     public void run() {
 
-      try {
-        Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+        try {
+            // Changing thread priority should only be done in platforms
+            // were actually improve performance.
+            boolean doThreadYield = (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID);
+            if (doThreadYield) {
+                Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
+            }
 
-        runnning = true;
+            runnning = true;
 
-        runLoop: while (runnning) {
+            runLoop: while (runnning) {
 
-            Object object=null;
+                Object object=null;
 
-            try {
+                try {
 
                     synchronized(this) {
                         while(inbox.isEmpty()) {
-                                if (!runnning) {
-                                    break runLoop;
-                                }
-                                try {
-                                    wait();
-                                }
-                                catch (InterruptedException ex) {
-                                    Logger.info(ex);
-                                    // TODO do something!!!!
-                                }
+                            if (!runnning) {
+                                break runLoop;
+                            }
+                            try {
+                                wait();
+                            }
+                            catch (InterruptedException ex) {
+                                Logger.info(ex);
+                                // TODO do something!!!!
+                            }
                         }
                         object = inbox.elementAt(0);
                         inbox.removeElementAt(0);
                     }
 
                     // try not to slow down the UI
-                    Thread.yield();
-                    Thread.sleep(0);
+                    if (doThreadYield) {
+                        Thread.yield();
+                        Thread.sleep(0);
+                    }
 
                     process(object);
 
-                    Thread.yield();
-                    Thread.sleep(0);
-
-            }
-            catch (Exception ex) {
-                //#mdebug warn
-                Logger.warn("[QueueProcessorThread-"+getName()+"] error processing "+object);
-                Logger.warn(ex);
-                //#enddebug
+                    if (doThreadYield) {
+                        Thread.yield();
+                        Thread.sleep(0);
+                    }
+                }
+                catch (Exception ex) {
+                    //#mdebug warn
+                    Logger.warn("[QueueProcessorThread-"+getName()+"] error processing "+object);
+                    Logger.warn(ex);
+                    //#enddebug
+                }
             }
         }
-      }
-      catch(Throwable t) {
-        //#mdebug error
-        Logger.error("[QueueProcessorThread-"+getName()+"] fatal error: "+t.toString());
-        Logger.error(t);
-        //#enddebug
-      }
+        catch(Throwable t) {
+            //#mdebug error
+            Logger.error("[QueueProcessorThread-"+getName()+"] fatal error: "+t.toString());
+            Logger.error(t);
+            //#enddebug
+        }
     }
 
     public void addToInbox(Object obj) {
