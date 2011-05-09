@@ -401,14 +401,24 @@ public class SynthLookAndFeel extends LookAndFeel {
                     }
                 }
 
-                if ("SMALL".equals(fontSize)) {
-                    fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
-                }
-                else if ("MEDIUM".equals(fontSize)) {
-                    fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
-                }
-                else if ("LARGE".equals(fontSize)) {
-                    fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
+                if (fontSize!=null) {
+	                if ("SMALL".equals(fontSize)) {
+	                    fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
+	                }
+	                else if ("MEDIUM".equals(fontSize)) {
+	                    fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
+	                }
+	                else if ("LARGE".equals(fontSize)) {
+	                    fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
+	                }
+	                else {
+	                	try {
+	                		fsize = -Integer.parseInt(fontSize);
+	                	}
+	                	catch(Exception ex) {
+	                		ex.printStackTrace();
+	                	}
+	                }
                 }
 
                 Vector colors = new Vector();
