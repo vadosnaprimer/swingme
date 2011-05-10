@@ -2,6 +2,7 @@ package net.yura.android.plaf;
 
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.Sprite;
+
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 
@@ -50,7 +51,7 @@ public class AndroidSprite extends Sprite {
             return ((AnimationDrawable)spin).getNumberOfFrames();
         }
         if (spin.getClass().getName().equals("android.graphics.drawable.AnimatedRotateDrawable")) {
-            return 25;
+            return 12;
         }
         return 1;
     }
