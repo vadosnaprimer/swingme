@@ -59,6 +59,7 @@ public final class Font {
 
 	private int height = -1;
 
+	// NOTE: We support negative sizes, meaning literal font sizes.
 	private Font(int face, int style, int size) {
 		if ((face != FACE_SYSTEM) && (face != FACE_MONOSPACE)
 				&& (face != FACE_PROPORTIONAL)) {
@@ -67,8 +68,7 @@ public final class Font {
 		if (!(isPlain() || isBold() || isItalic() || isUnderlined())) {
 			throw new IllegalArgumentException();
 		}
-		if ((size != SIZE_SMALL) && (size != SIZE_MEDIUM)
-				&& (size != SIZE_LARGE)) {
+		if (size >= 0 && size != SIZE_SMALL && size != SIZE_MEDIUM && size != SIZE_LARGE) {
 			throw new IllegalArgumentException();
 		}
 
@@ -89,7 +89,7 @@ public final class Font {
 	}
 
 	public static Font getFont(int face, int style, int size) {
-		Integer key = new Integer(style + size + face);
+		String key = "st" + style + "sz" + size + "fc" + face;
 		Font result = (Font) fonts.get(key);
 		if (result == null) {
 			result = new Font(face, style, size);

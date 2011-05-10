@@ -32,11 +32,10 @@ import java.util.HashMap;
 import javax.microedition.lcdui.Font;
 
 import net.yura.android.AndroidMeApp;
-
 import android.content.Context;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.graphics.Paint.FontMetricsInt;
+import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 
 public class FontManager {
@@ -86,17 +85,25 @@ public class FontManager {
 				underlined = true;
 			}
 
-			int textAppearance;
+			int meFontSize = meFont.getSize();
 			int size;
- 			if (meFont.getSize() == Font.SIZE_SMALL) {
-				size = SIZE_SMALL;
-				textAppearance = android.R.style.TextAppearance_Small;
-			} else if (meFont.getSize() == Font.SIZE_MEDIUM) {
-				size = SIZE_MEDIUM;
-				textAppearance = android.R.style.TextAppearance_Medium;
-			} else {
-				size = SIZE_LARGE;
-				textAppearance = android.R.style.TextAppearance_Large;
+			if (meFontSize < 0) {
+			    // If the font has a negative number, we will interpreter it
+			    // as a literal size.
+			    size = -meFontSize;
+			}
+			else {
+			    int textAppearance;
+			    if (meFontSize == Font.SIZE_SMALL) {
+    				size = SIZE_SMALL;
+    				textAppearance = android.R.style.TextAppearance_Small;
+    			} else if (meFontSize == Font.SIZE_MEDIUM) {
+    				size = SIZE_MEDIUM;
+    				textAppearance = android.R.style.TextAppearance_Medium;
+    			} else {
+    				size = SIZE_LARGE;
+    				textAppearance = android.R.style.TextAppearance_Large;
+    			}
 			}
 
 			Context ctx = AndroidMeApp.getContext();
