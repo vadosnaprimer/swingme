@@ -11,13 +11,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Html;
-import android.view.ViewTreeObserver;
-import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 
-public class OptionPaneActivity extends Activity implements OnCancelListener, OnClickListener, OnGlobalLayoutListener {
+public class OptionPaneActivity extends Activity implements OnCancelListener, OnClickListener {
 
 
     private static final int[] BUTTON_TYPE = {DialogInterface.BUTTON_POSITIVE, DialogInterface.BUTTON_NEUTRAL, DialogInterface.BUTTON_NEGATIVE};
@@ -85,7 +82,6 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
             alertDialog.setOnCancelListener(this);
             alertDialog.show();
 
-            fixButtonsHeight();
         } catch (Throwable ex) {
             //#debug warn
             Logger.warn(ex);
@@ -186,80 +182,4 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
 
         return buttonsText;
     }
-
-    // ------------------- START HACK: dialog buttons height ----------------
-    // See bug http://code.google.com/p/android/issues/detail?id=15246
-    // The layout manager of Dialog does not insure all buttons
-    // have the same height. To work we need to run on the UI thread,
-    // so the buttons height is already calculated.
-
-    private ViewTreeObserver treeObserver;
-    private void fixButtonsHeight() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (treeObserver == null) {
-                    for (int i = 0; i < BUTTON_TYPE.length; i++) {
-                        android.widget.Button btn = alertDialog.getButton(BUTTON_TYPE[i]);
-                        resetButtonSize(btn);
-
-                        if (btn != null && treeObserver == null) {
-                            treeObserver = btn.getRootView().getViewTreeObserver();
-                            treeObserver.addOnGlobalLayoutListener(OptionPaneActivity.this);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    private final int BUTTON_MAX_TEXT_LINES = 3;
-
-    private void resetButtonSize(android.widget.Button btn) {
-        if (btn != null) {
-            btn.setMinLines(1);
-            btn.setMaxLines(BUTTON_MAX_TEXT_LINES);
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        for (int i = 0; i < BUTTON_TYPE.length; i++) {
-            resetButtonSize(alertDialog.getButton(BUTTON_TYPE[i]));
-        }
-    }
-
-    @Override
-    public void onGlobalLayout() {
-
-        //#debug info
-        System.out.println(">>>>> OptionPaneActivity: onGlobalLayout");
-
-        int maxH = 0;
-        for (int i = 0; i < BUTTON_TYPE.length; i++) {
-            android.widget.Button btn = alertDialog.getButton(BUTTON_TYPE[i]);
-            if (btn != null) {
-                maxH = Math.max(btn.getHeight(), maxH);
-
-                // Even the height of a multi-line is wrong in some phones, so
-                // we make sure we have at least enough to show the text.
-                // Some (SE x10) report more lines that the maximum set.
-                int numLines = btn.getLineCount();
-                if (numLines <= BUTTON_MAX_TEXT_LINES) {
-                    int h = (numLines + 1) * btn.getLineHeight();
-                    maxH = Math.max(h, maxH);
-                }
-            }
-        }
-
-        for (int i = 0; i < BUTTON_TYPE.length; i++) {
-            android.widget.Button btn = alertDialog.getButton(BUTTON_TYPE[i]);
-            if (btn != null && btn.getHeight() > 0 && btn.getHeight() != maxH) {
-                btn.setHeight(maxH);
-            }
-        }
-    }
-    // ------------------- END HACK: dialog buttons height --------------------
 }
