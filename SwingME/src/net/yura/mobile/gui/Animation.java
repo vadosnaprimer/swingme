@@ -10,7 +10,7 @@ public class Animation extends Thread{
 
 	static Animation animation;
 
-	static final int fps = 7;
+	static final int fps = 10;
 
 	static final Vector components = new Vector();
 
