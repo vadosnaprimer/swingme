@@ -294,7 +294,11 @@ public class List extends Component implements ActionListener {
         //workoutItemSize();
     }
 
-    private int[] getComponentAt(int x,int y) {
+    /**
+     * will return a int[] of size 2, at 0 is the index, at 1 is the offset of that index
+     * @see javax.swing.JList#locationToIndex(java.awt.Point) JList.locationToIndex
+     */
+    public int[] locationToIndex(int x,int y) {
 
         int ri = -1;
         int roffset=0;
@@ -353,7 +357,7 @@ public class List extends Component implements ActionListener {
         int clipx = g.getClipX();
         int clipy = g.getClipY();
 
-        int[] objects=getComponentAt(clipx,clipy);
+        int[] objects=locationToIndex(clipx,clipy);
         int i = objects[0];
         int offset = objects[1];
         if (i<0) { // if clip is too up/left
@@ -496,7 +500,7 @@ public class List extends Component implements ActionListener {
             // if we are disabled then we do not do anything!
         }
         else if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
-            int i = getComponentAt(x, y)[0];
+            int i = locationToIndex(x, y)[0];
 
             if (i>=0 && i<getSize()) {
                 selectNewPointer(i,keys);
@@ -511,7 +515,7 @@ public class List extends Component implements ActionListener {
                 long time = System.currentTimeMillis();
 
                 if (time < doubleClickTime + 300 && x>(doubleClickX-5) && x<(doubleClickX+5) && y>(doubleClickY-5) && y<(doubleClickY+5) ) {
-                    fireActionPerformed();
+                    mouseClicked(x,y);
                 }
 
                 doubleClickTime = time;
@@ -519,11 +523,18 @@ public class List extends Component implements ActionListener {
                 doubleClickY = y;
             }
             else {
-                fireActionPerformed();
+                mouseClicked(x,y);
             }
-
         }
+    }
 
+    /**
+     * works for normal and double click mode
+     * @see #setDoubleClick(boolean) 
+     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent) MouseListener.mouseClicked
+     */
+    public void mouseClicked(int x,int y) {
+        fireActionPerformed();
     }
 
     public boolean consumesMotionEvents() {
