@@ -22,7 +22,9 @@ import java.io.Reader;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Graphics;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.Graphics2D;
@@ -58,6 +60,7 @@ import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
+
 import org.kxml2.io.KXmlParser;
 
 /**
@@ -240,7 +243,7 @@ public class XULLoader {
         while (componentNames.hasMoreElements()) {
             String componentName = (String) componentNames.nextElement();
             Object value = data.get( componentName );
-            Component component = (Component) find(componentName);
+            Component component = find(componentName);
             if (component != null) {
                 if (component instanceof TextComponent) {
                     ((TextComponent) component).setText((String)value);
@@ -436,16 +439,8 @@ public class XULLoader {
 
             readButton(parser,combobox,listener);
 
-            int selectedIndex = -1;
-
-            final int count = parser.getAttributeCount();
-            for (int c=0;c<count;c++) {
-                String key = parser.getAttributeName(c);
-                String value = parser.getAttributeValue(c);
-                if ("selected".equals(key)) {
-                    selectedIndex = Integer.parseInt(value);
-                }
-            }
+            String selected = parser.getAttributeValue(null, "selected");
+            int selectedIndex = (selected == null) ? - 1 : Integer.parseInt(selected);
 
             GridBagConstraints constraints = readUIObject(parser, combobox,listener);
 
@@ -569,7 +564,7 @@ public class XULLoader {
             return readUIObject(parser, slider,listener);
         }
         else if ("popupmenu".equals(name)) {
-            
+
             Window popupmenu = Menu.makePopup();
 
             return readUIObject(parser, popupmenu,listener);
@@ -1066,8 +1061,8 @@ public class XULLoader {
     	int r = Integer.parseInt(value);
     	return adjustSizeToDensity(r);
     }
-    
-    //TODO: OREN: we better off caching the dpi rather than 
+
+    //TODO: OREN: we better off caching the dpi rather than
     //calling the System.getProperty("display.dpi") every time
     public static int adjustSizeToDensity(int value) {
         String dpi;
@@ -1087,7 +1082,7 @@ public class XULLoader {
                 // There is no Math.round in J2ME so we do the calculation ourselves.
             	// To correctly round a fraction we need to add half of the denominator to the numerator.
             	// Hence the rounded value of "value * 1.5" is equivalent to "value + (int)( (value+1) / 2 )";
-            	value += (value + 1) / 2; 
+            	value += (value + 1) / 2;
             }
             // else ldpi
             // we dont need to do anything
