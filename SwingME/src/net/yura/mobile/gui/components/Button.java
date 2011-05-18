@@ -493,7 +493,8 @@ public class Button extends Label implements ActionListener {
             int cState = getCurrentState();
 
             if ((cState&Style.FOCUSED)!=0 && focusedImage!=null) {
-                    focusedImage.paintIcon(this, g, x, y);
+                // this is a bit of a hack to center the focusedImage over the location of the icon, in the event that the focusedImage is bigger or smaller then the icon
+                    focusedImage.paintIcon(this, g, x + (icon.getIconWidth()-focusedImage.getIconWidth())/2, y + (icon.getIconHeight()-focusedImage.getIconHeight())/2);
             }
             else {
                 super.paintIcon(g, x, y);
