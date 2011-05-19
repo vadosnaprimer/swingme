@@ -18,10 +18,10 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -134,6 +134,16 @@ public class TextField extends TextComponent {
          * @see javax.swing.JTextField#addActionListener(java.awt.event.ActionListener) JTextField.addActionListener
          */
         public void addActionListener(ActionListener al) {
+            //#mdebug warn
+            if (this.al!=null) {
+                Logger.warn("trying to add a ActionListener when there is already one registered "+this);
+                Logger.dumpStack();
+            }
+            if (al==null) {
+                Logger.warn("trying to add a null ActionListener "+this);
+                Logger.dumpStack();
+            }
+            //#enddebug
             this.al = al;
         }
 
