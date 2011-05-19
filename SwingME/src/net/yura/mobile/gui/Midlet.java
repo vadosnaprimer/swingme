@@ -25,6 +25,7 @@ import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 import net.yura.mobile.logging.DesktopLogger;
 import net.yura.mobile.logging.Logger;
+import net.yura.mobile.util.QueueProcessorThread;
 
 /**
  * @author Yura Mamyrin
@@ -55,6 +56,10 @@ public abstract class Midlet extends MIDlet {
     private Hashtable platformReqParams;
 
     public Midlet() {
+
+            // Changing thread priority should only be done in platforms
+            // were actually improve performance.
+            QueueProcessorThread.DROP_PRIORITY = (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID);
 
             rootpane = makeNewRootPane();
 
