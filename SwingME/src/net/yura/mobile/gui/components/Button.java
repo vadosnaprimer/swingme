@@ -198,11 +198,11 @@ public class Button extends Label implements ActionListener {
 	public void addActionListener(ActionListener l) {
                 //#mdebug warn
                 if (al!=null) {
-                    Logger.warn("trying to add a ActionListener when there is already one registered");
+                    Logger.warn("trying to add a ActionListener when there is already one registered "+this);
                     Logger.dumpStack();
                 }
                 if (l==null) {
-                    Logger.warn("trying to add a null ActionListener");
+                    Logger.warn("trying to add a null ActionListener "+this);
                     Logger.dumpStack();
                 }
                 //#enddebug
@@ -216,11 +216,11 @@ public class Button extends Label implements ActionListener {
 		if (al == l) { al = null; }
                 //#mdebug warn
                 else {
-                    Logger.warn("trying to remove a ActionListener that is not registered");
+                    Logger.warn("trying to remove a ActionListener that is not registered "+this);
                     Logger.dumpStack();
                 }
                 if (l==null) {
-                    Logger.warn("trying to remove a null ActionListener");
+                    Logger.warn("trying to remove a null ActionListener "+this);
                     Logger.dumpStack();
                 }
                 //#enddebug

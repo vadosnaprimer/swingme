@@ -24,6 +24,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
@@ -104,6 +105,8 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         protected char tmpChar;
         private long lastKeyEvent;
+
+        private ChangeListener caretListener;
 
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
@@ -460,12 +463,32 @@ public abstract class TextComponent extends Component implements ActionListener,
         }
 
         /**
+         * @see javax.swing.text.JTextComponent#addCaretListener(javax.swing.event.CaretListener)
+         */
+        public void addCaretListener(ChangeListener listener) {
+            //#mdebug warn
+            if (caretListener!=null) {
+                Logger.warn("trying to add a ChangeListener when there is already one registered "+this);
+                Logger.dumpStack();
+            }
+            if (listener==null) {
+                Logger.warn("trying to add a null ChangeListener "+this);
+                Logger.dumpStack();
+            }
+            //#enddebug
+            caretListener = listener;
+        }
+
+        /**
          * @param a position in the text
          * @see javax.swing.text.JTextComponent#setCaretPosition(int) JTextComponent.setCaretPosition
          */
         public void setCaretPosition(int a) {
-
+            int old = caretPosition;
             caretPosition = a;
+            if (old!=caretPosition && caretListener!=null) {
+                caretListener.changeEvent(this, caretPosition);
+            }
             repaint();
             updateSoftKeys();
         }
