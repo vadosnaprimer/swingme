@@ -268,7 +268,8 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Drawable d1 = getDrawable(ctx, "btn_circle");
         Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
 
-        Rect comboBox2Padding = getAdjustedDensityRect(ctx, 5, 8, 5, 8);
+        Rect comboBox2Padding = getAdjustedDensityRect(ctx, 9, 17, 9, 17);
+
         comboStyle2.addBorder( new IconBorder(comboBox2Padding.top,comboBox2Padding.left,comboBox2Padding.bottom,comboBox2Padding.right,new AndroidIcon(d1),new AndroidIcon(d2)) ,Style.ALL);
         setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
         setStyleFor("ComboBox2",comboStyle2);
