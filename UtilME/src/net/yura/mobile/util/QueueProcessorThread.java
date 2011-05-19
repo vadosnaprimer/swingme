@@ -1,8 +1,6 @@
 package net.yura.mobile.util;
 
 import java.util.Vector;
-
-import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -10,11 +8,13 @@ import net.yura.mobile.logging.Logger;
  */
 public abstract class QueueProcessorThread extends Thread {
 
+    public static boolean DROP_PRIORITY=true;
+
     private Vector inbox = new Vector();
     private boolean runnning;
 
     /**
-     * @deprecated
+     * @deprecated should provide a name for the thread with the {@link #QueueProcessorThread(String)} constructor
      */
     public QueueProcessorThread() {
         //#debug debug
@@ -35,10 +35,11 @@ public abstract class QueueProcessorThread extends Thread {
     public void run() {
 
         try {
-            // Changing thread priority should only be done in platforms
-            // were actually improve performance.
-            boolean doThreadYield = (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID);
-            if (doThreadYield) {
+
+            //#debug info
+            Logger.info("[QueueProcessorThread-"+getName()+"] START DROP_PRIORITY=="+DROP_PRIORITY);
+
+            if (DROP_PRIORITY) {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             }
 
@@ -68,14 +69,14 @@ public abstract class QueueProcessorThread extends Thread {
                     }
 
                     // try not to slow down the UI
-                    if (doThreadYield) {
+                    if (DROP_PRIORITY) {
                         Thread.yield();
                         Thread.sleep(0);
                     }
 
                     process(object);
 
-                    if (doThreadYield) {
+                    if (DROP_PRIORITY) {
                         Thread.yield();
                         Thread.sleep(0);
                     }
