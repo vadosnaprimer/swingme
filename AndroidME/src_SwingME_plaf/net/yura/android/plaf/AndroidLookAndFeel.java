@@ -302,13 +302,17 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Style indeterminateSpinner = new Style(defaultStyle);
         Drawable spin = getDrawable(ctx,android.R.style.Widget_ProgressBar,android.R.attr.indeterminateDrawable);
         spin.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
-        indeterminateSpinner.addProperty( new AndroidSprite(spin), "sprite", Style.ALL);
+        int w1 = getDimension(ctx,android.R.style.Widget_ProgressBar,android.R.attr.minWidth);
+        int h1 = getDimension(ctx,android.R.style.Widget_ProgressBar,android.R.attr.minHeight);
+        indeterminateSpinner.addProperty( new AndroidSprite(spin, w1, h1), "sprite", Style.ALL);
         setStyleFor("IndeterminateSpinner",indeterminateSpinner);
 
         Style indeterminateSpinner2 = new Style(defaultStyle);
         Drawable spin2 = getDrawable(ctx,android.R.style.Widget_ProgressBar_Small,android.R.attr.indeterminateDrawable);
+        int w2 = getDimension(ctx,android.R.style.Widget_ProgressBar_Small,android.R.attr.minWidth);
+        int h2 = getDimension(ctx,android.R.style.Widget_ProgressBar_Small,android.R.attr.minHeight);
         spin2.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
-        indeterminateSpinner2.addProperty( new AndroidSprite(spin2), "sprite", Style.ALL);
+        indeterminateSpinner2.addProperty( new AndroidSprite(spin2, w2, h2), "sprite", Style.ALL);
         setStyleFor("IndeterminateSpinnerSmall",indeterminateSpinner2);
 
 
@@ -467,6 +471,16 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         if (res==null) {
             System.out.println("no Drawable found for: defStyle="+defStyle+", defAttr="+defAttr);
         }
+
+        return res;
+    }
+
+    private static int getDimension(Context ctx, int defStyle, int defAttr) {
+        int attrsWanted[] = { defAttr };
+
+        TypedArray a = ctx.obtainStyledAttributes(defStyle, attrsWanted);
+        int res = (int) a.getDimension(0, -1);
+        a.recycle();
 
         return res;
     }

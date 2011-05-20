@@ -11,8 +11,8 @@ public class AndroidSprite extends Sprite {
     Drawable spin;
     int frame;
 
-    public AndroidSprite(Drawable d) {
-        super(d.getIntrinsicWidth(),d.getIntrinsicHeight());
+    public AndroidSprite(Drawable d, int w, int h) {
+        super(w > 1 ? w : d.getIntrinsicWidth(), h > 1 ? h : d.getIntrinsicHeight());
         spin = d;
     }
 
