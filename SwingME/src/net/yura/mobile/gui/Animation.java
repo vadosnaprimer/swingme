@@ -19,15 +19,20 @@ public class Animation extends Thread{
 	public void run() {
 
 		try {
+
+                        long lastWait = System.currentTimeMillis();
+                        int sleep = 1000/fps;
+
 			while (true) {
+
 
 				synchronized (components) {
 					if (components.isEmpty()) {
 						components.wait();
+
+                                                lastWait = System.currentTimeMillis();
 					}
 				}
-
-				long start = System.currentTimeMillis();
 
 				for (int c=components.size()-1;c>=0;c--) { // need to count down as we may be removing object from the vector
 
@@ -35,7 +40,7 @@ public class Animation extends Thread{
 
 					// we only want to animate something if its asked for in in the past second
 					long lastPaint = ((Long)lastcall.get(cmp)).longValue();
-					if (System.currentTimeMillis()-lastPaint > 1000) {
+					if (lastWait-lastPaint > 1000) {
 						deregisterAnimated(cmp);
 						continue;
 					}
@@ -43,9 +48,13 @@ public class Animation extends Thread{
 					cmp.animate();
 				}
 
-				long end = System.currentTimeMillis();
+				long time = System.currentTimeMillis();
 
-				Thread.sleep( Math.max(0, 1000/fps - (end-start) ) );
+                                long wait = Math.min(sleep, Math.max(0, sleep - (time-lastWait) ));
+//System.out.println("wait "+wait);
+				Thread.sleep( wait );
+
+                                lastWait = time + wait;
 
 			}
 		}

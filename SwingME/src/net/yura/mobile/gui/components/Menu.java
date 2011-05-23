@@ -391,7 +391,7 @@ public class Menu extends Button {
                     travelDistance = destX - popup.getX();
                 }
 
-            	int menuMoveSpeed = travelDistance/4 + 1;
+            	int menuMoveSpeed = travelDistance/3 + 1;
 		int step = menuMoveSpeed/10 + 1;
 
                 while (true) {

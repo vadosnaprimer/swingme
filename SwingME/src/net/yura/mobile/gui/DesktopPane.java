@@ -18,12 +18,10 @@ package net.yura.mobile.gui;
 
 import java.util.Hashtable;
 import java.util.Vector;
-
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
-
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
@@ -302,6 +300,8 @@ public class DesktopPane extends Canvas implements Runnable {
                     continue; // Go to while (true) again
                 }
 
+                lastWait = System.currentTimeMillis();
+
                 try {
                     currentAnimatedComponent.run();
                 }
@@ -340,8 +340,20 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
-    public void aniWait(Object component,int a) throws InterruptedException{
-        uiLock.wait(a);
+    private long lastWait;
+    public void aniWait(Component component,int a) throws InterruptedException{
+
+        long time = System.currentTimeMillis();
+        // no idea how, but sometimes time-lastWait can give a negative number?!
+        // so we do Math.min so that the max possible wait is a
+        long wait = Math.min(a, Math.max(0,a - (time-lastWait)) );
+//System.out.println("wait "+wait);
+        if (wait>0) { // can not wait for 0, as that will cause it to wait until notified
+            uiLock.wait( wait );
+        }
+
+        lastWait = time+wait;
+
         if (currentAnimatedComponent != component) {
             throw new InterruptedException();
         }
@@ -620,6 +632,10 @@ public class DesktopPane extends Canvas implements Runnable {
                         fullrepaint = true;
                     }
                     repaint(clipx, clipy, clipw, cliph);
+                    bbfix();
+                    // the fact that we return here CAN cause problems
+                    // as if the system has told us to repaint, and we ignore it,
+                    // we may get a black area flash on the screen for a second
                     return;
                 }
 
@@ -728,12 +744,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 gtmp.drawString(m, (getWidth() - (font.stringWidth(m) + 10)) / 2 + 5, (getHeight() - (font.getHeight() + 10)) / 2 + 5, Graphics.TOP | Graphics.LEFT);
             }
 
-            // there is a bug on blackberry that if it is processing a repaint and it is the last thing on the event queue
-            // and in that repaint we call repaint again, the 2nd repaint will never get called, even though it does get put on the queue
-            // we want the queue to have something more on it, so we put a empty task if we know we need another repaint
-            if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY && (fullrepaint || !repaintComponent.isEmpty())) {
-                invokeLater(dummyThread);
-            }
+            bbfix();
 
         }
         catch (Throwable th) {
@@ -747,6 +758,14 @@ public class DesktopPane extends Canvas implements Runnable {
     static {
         if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
             dummyThread=new Thread();
+        }
+    }
+    private void bbfix() {
+        // there is a bug on blackberry that if it is processing a repaint and it is the last thing on the event queue
+        // and in that repaint we call repaint again, the 2nd repaint will never get called, even though it does get put on the queue
+        // we want the queue to have something more on it, so we put a empty task if we know we need another repaint
+        if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY && (fullrepaint || !repaintComponent.isEmpty())) {
+            invokeLater(dummyThread);
         }
     }
 
