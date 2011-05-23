@@ -32,7 +32,7 @@ public class AndroidOptionPane extends OptionPane {
             else {
                 //#debug warn
                 Logger.warn("this should never happen!!!! setVisible(false) in AndroidOptionPane");
-                super.setVisible(b);
+                super.setVisible(b); // in case something went wrong with opening the native OptionPane, we want to be able to close it
             }
         }
         else {

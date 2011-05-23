@@ -58,6 +58,7 @@ public abstract class Canvas extends Displayable {
      * the crop rect on every paint, and currently SwingME does not
      */
     private Bitmap graphicsBitmap;
+    private int usedWidth,usedHeight;
 
     protected Canvas() {
 
@@ -324,18 +325,31 @@ public abstract class Canvas extends Displayable {
             if (graphicsBitmap != null) {
 
                 // Check for size changes...
-                if (graphicsBitmap.getWidth() != this.getWidth() ||
-                        graphicsBitmap.getHeight() != canvasH) {
+                if (usedWidth != this.getWidth() || usedHeight != canvasH) {
 
                     // Notify Canvas clients
                     try {
                         sizeChanged(Canvas.this.getWidth(), Canvas.this.getHeight());
-                    } catch (Throwable e) {
+                    }
+                    catch (Throwable e) {
                         e.printStackTrace();
                     }
 
-                    graphicsBitmap.recycle();
-                    graphicsBitmap = null;
+                    // only get rid of bitmap if the new screen size is bigger in either dimension
+                    if (graphicsBitmap.getWidth() < this.getWidth() || graphicsBitmap.getHeight() < canvasH) {
+                    
+	                    graphicsBitmap.recycle();
+	                    graphicsBitmap = null;
+	                    
+	                    //#debug info
+	                    System.out.println("[Canvas] getting rid of old bitmap");
+                    }
+                    else {
+                    	
+                    	// we dont really NEED a new bitmap, so we just update the usedSize
+                    	usedWidth = this.getWidth();
+                    	usedHeight = canvasH;
+                    }
                 }
             }
 
@@ -353,6 +367,9 @@ public abstract class Canvas extends Displayable {
                     graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 }
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
+                
+            	usedWidth = graphicsBitmap.getWidth();
+            	usedHeight = graphicsBitmap.getHeight();
             }
 
             graphics.reset();
