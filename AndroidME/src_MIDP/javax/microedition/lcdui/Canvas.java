@@ -151,7 +151,7 @@ public abstract class Canvas extends Displayable {
             y = y+graphicsY;
 
             this.canvasView.postInvalidate(x, y, x+w, y+h);
-            
+
             //#mdebug debug
             this.canvasView.postInvalidate(0, 0, 10, 10);
             //#enddebug
@@ -337,15 +337,15 @@ public abstract class Canvas extends Displayable {
 
                     // only get rid of bitmap if the new screen size is bigger in either dimension
                     if (graphicsBitmap.getWidth() < this.getWidth() || graphicsBitmap.getHeight() < canvasH) {
-                    
+
 	                    graphicsBitmap.recycle();
 	                    graphicsBitmap = null;
-	                    
+
 	                    //#debug info
 	                    System.out.println("[Canvas] getting rid of old bitmap");
                     }
                     else {
-                    	
+
                     	// we dont really NEED a new bitmap, so we just update the usedSize
                     	usedWidth = this.getWidth();
                     	usedHeight = canvasH;
@@ -367,7 +367,7 @@ public abstract class Canvas extends Displayable {
                     graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
                 }
                 graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
-                
+
             	usedWidth = graphicsBitmap.getWidth();
             	usedHeight = graphicsBitmap.getHeight();
             }
@@ -418,59 +418,66 @@ public abstract class Canvas extends Displayable {
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
 //            System.out.println("onKeyDown -> " + keyCode);
+            boolean isKeyHandled = isKeyHandled(keyCode);
 
-            int keyCount = event.getRepeatCount();
-            if (keyCode == KeyEvent.KEYCODE_MENU) {
-                keyMenuCount = keyCount;
-                if (keyMenuCount == 1) {
-                    toggleNativeTextInput();
+            if (isKeyHandled) {
+                int keyCount = event.getRepeatCount();
+                if (keyCode == KeyEvent.KEYCODE_MENU) {
+                    keyMenuCount = keyCount;
+                    if (keyMenuCount == 1) {
+                        toggleNativeTextInput();
+                    }
                 }
-            }
-            else if (keyCode == KeyEvent.KEYCODE_BACK) {
-                keyBackCount = keyCount;
-                if (keyCount == 1) {
-                    // kill the application on a "long back key" press
-                    // TODO: Should show some native Android UI for confirmation
-                    AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+                else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    keyBackCount = keyCount;
+                    if (keyCount == 1) {
+                        // kill the application on a "long back key" press
+                        // TODO: Should show some native Android UI for confirmation
+                        AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+                    }
                 }
-            }
-            else {
-                int meKeyCode = getKeyCode(event);
-                if (keyCount == 0) {
-                    keyPressed(meKeyCode);
-                } else {
-                    keyRepeated(meKeyCode);
+                else {
+                    int meKeyCode = getKeyCode(event);
+                    if (keyCount == 0) {
+                        keyPressed(meKeyCode);
+                    } else {
+                        keyRepeated(meKeyCode);
+                    }
                 }
             }
 
-            return isKeyHandled(keyCode);
+            return isKeyHandled;
         }
 
         @Override
         public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-            int meKeyCode = getKeyCode(event);
-            if (keyCode == KeyEvent.KEYCODE_MENU) {
-                if (keyMenuCount == 0) {
-                    // Simulate a press on menu
-                    keyPressed(meKeyCode);
+            boolean isKeyHandled = isKeyHandled(keyCode);
+
+            if (isKeyHandled) {
+                int meKeyCode = getKeyCode(event);
+                if (keyCode == KeyEvent.KEYCODE_MENU) {
+                    if (keyMenuCount == 0) {
+                        // Simulate a press on menu
+                        keyPressed(meKeyCode);
+                        keyReleased(meKeyCode);
+                    }
+                    keyMenuCount = -1;
+                }
+                else if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    if (keyBackCount == 0) {
+                        // Simulate a press on menu
+                        keyPressed(meKeyCode);
+                        keyReleased(meKeyCode);
+                    }
+                    keyBackCount = -1;
+                }
+                else {
                     keyReleased(meKeyCode);
                 }
-                keyMenuCount = -1;
-            }
-            else if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (keyBackCount == 0) {
-                    // Simulate a press on menu
-                    keyPressed(meKeyCode);
-                    keyReleased(meKeyCode);
-                }
-                keyBackCount = -1;
-            }
-            else {
-                keyReleased(meKeyCode);
             }
 
-            return isKeyHandled(keyCode);
+            return isKeyHandled;
         }
 
         private boolean isKeyHandled(int keyCode) {
