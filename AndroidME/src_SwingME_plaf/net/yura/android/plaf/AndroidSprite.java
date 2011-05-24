@@ -57,15 +57,32 @@ public class AndroidSprite extends Sprite {
         return 12; // Android default implementation value.
     }
 
+    private long lastSetFrameTime;
+
     @Override
-    public void setFrame(int frame) {
-        // HACK: android.graphics.drawable.AnimatedRotateDrawable class implements
+    public void setFrame(int newFrame) {
+        // HACK 1: android.graphics.drawable.AnimatedRotateDrawable class implements
         // Runnable. Calling run() will make it rotate one position. We are
         // ignoring the requesting frame, but that is OK for a spinner.
-        if (this.frame != frame && spin instanceof Runnable) {
-            ((Runnable) spin).run();
-        }
+        if (frame != newFrame && spin instanceof Runnable) {
 
-        this.frame = frame;
+            // HACK 2: The same Sprite is shared between animations, and the "newFrame"
+            // sequence of each of animation is independent, we need to somehow respond
+            // to only of them, otherwise the spinner will spin a lot faster than intended.
+            // 1 - If the frame set is the next from the previous one, we accept it.
+            // 2 - Otherwise we accept it if the latest successful rotation happened
+            // more than 200 ms ago.
+
+            int nextFrame = (frame + 1) % getFrameSequenceLength();
+            long now = System.currentTimeMillis();
+
+            if (newFrame == nextFrame || (lastSetFrameTime - now) > 200) {
+                frame = newFrame;
+                // System.out.println(">> frame = " + frame);
+
+                ((Runnable) spin).run();
+                lastSetFrameTime = now;
+            }
+        }
     }
 }
