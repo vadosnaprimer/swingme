@@ -3,18 +3,18 @@ package javax.microedition.lcdui;
 import java.util.ArrayList;
 
 import javax.microedition.midlet.MIDlet;
+
 import net.yura.android.AndroidMeActivity;
-
-
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.CompletionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
+import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
 
@@ -101,6 +101,17 @@ public class TextBox extends Screen {
     // Making composingText member static will keep the composing text from older
     // TextBox's, in case restartInput() doesn't clean it.
     private static CharSequence composingText = "";
+    private static boolean hasRestartInputBug;
+
+    static {
+        try {
+            String phone = Build.MODEL + Build.VERSION.SDK_INT;
+            hasRestartInputBug = phone.equalsIgnoreCase("E15i7");
+        } catch (Throwable e) {
+            //#debug debug
+            e.printStackTrace();
+        }
+    }
 
     private class TextBoxView extends View implements InputConnection {
         private CharSequence textBeforeCursor = " ";
@@ -112,6 +123,10 @@ public class TextBox extends Screen {
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 
             // System.out.println("TextBoxView: onCreateInputConnection " + this);
+
+            if (!hasRestartInputBug) {
+                composingText = "";
+            }
 
             EditText editText = new EditText(getContext());
             editText.onCreateInputConnection(outAttrs);

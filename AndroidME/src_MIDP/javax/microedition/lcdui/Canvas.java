@@ -251,6 +251,7 @@ public abstract class Canvas extends Displayable {
         private View inputConnectionView;
         private int keyboardMode; // KEYBOARD_SHOW/HIDE or 0
         private boolean hasWindowFocus = true;
+        private boolean restartKeyboardInput;
 
         // Reflection methods for Multitouch
         Method methodGetPointerCount;
@@ -421,6 +422,8 @@ public abstract class Canvas extends Displayable {
             boolean isKeyHandled = isKeyHandled(keyCode);
 
             if (isKeyHandled) {
+                this.restartKeyboardInput = true;
+
                 int keyCount = event.getRepeatCount();
                 if (keyCode == KeyEvent.KEYCODE_MENU) {
                     keyMenuCount = keyCount;
@@ -455,6 +458,8 @@ public abstract class Canvas extends Displayable {
             boolean isKeyHandled = isKeyHandled(keyCode);
 
             if (isKeyHandled) {
+                this.restartKeyboardInput = true;
+
                 int meKeyCode = getKeyCode(event);
                 if (keyCode == KeyEvent.KEYCODE_MENU) {
                     if (keyMenuCount == 0) {
@@ -543,6 +548,11 @@ public abstract class Canvas extends Displayable {
                 eventY = y;
 
                 try {
+                    if (restartKeyboardInput) {
+                        restartKeyboardInput = false;
+                        getInputManager().restartInput(this);
+                    }
+
                     switch (action) {
                         case POINTER_PRESSED:
                             if (pointerCount == 1) {
@@ -756,6 +766,7 @@ public abstract class Canvas extends Displayable {
         private void showNativeTextInput() {
             fixVirtualKeyboard();
 //            System.out.println(">>>>>> showNativeTextInput");
+            restartKeyboardInput = false;
             InputMethodManager m = getInputManager();
             m.restartInput(this);
             m.showSoftInput(this, InputMethodManager.SHOW_FORCED);
@@ -763,6 +774,7 @@ public abstract class Canvas extends Displayable {
 
         private void hideNativeTextInput() {
             fixVirtualKeyboard();
+            restartKeyboardInput = false;
             getInputManager().hideSoftInputFromWindow(getWindowToken(), 0);
         }
 
@@ -799,6 +811,7 @@ public abstract class Canvas extends Displayable {
         public void sendText(CharSequence text) {
             int count = text.length();
             for (int i = 0; i < count; i++) {
+                restartKeyboardInput = true;
                 int meKeyCode = text.charAt(i);
                 keyPressed(meKeyCode);
                 keyReleased(meKeyCode);
