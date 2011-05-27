@@ -5,8 +5,10 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import org.kxml2.io.KXmlParser;
-import org.kxml2.io.KXmlSerializer;
+
+import net.yura.mobile.io.kxml2.KXmlParser;
+import net.yura.mobile.io.kxml2.KXmlSerializer;
+
 import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import net.yura.mobile.logging.Logger;
