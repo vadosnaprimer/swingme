@@ -263,9 +263,12 @@ public abstract class MIDlet {
             super.onCellLocationChanged(location);
 
             try {
-                GsmCellLocation gsmLocation = (GsmCellLocation) location;
-                setProperty("CellID", "" + gsmLocation.getCid());
-                setProperty("LAC", "" + gsmLocation.getLac());
+            	
+            	if (location instanceof GsmCellLocation) {
+            		GsmCellLocation gsmLocation = (GsmCellLocation) location;
+	                setProperty("CellID", "" + gsmLocation.getCid());
+	                setProperty("LAC", "" + gsmLocation.getLac());
+            	}
 
                 TelephonyManager tm = getTelephonyManager();
                 setProperty("CMCC", tm.getNetworkCountryIso());
