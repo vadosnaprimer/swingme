@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -206,7 +207,23 @@ public abstract class Canvas extends Displayable {
     public View getView() {
 
         if (linearLayout==null) {
-            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
+            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY)
+            // SE HACK
+            {
+                // See: WORK-AROUND for restartInput() broken on SE
+                {
+                    setFocusable(true);
+                    setFocusableInTouchMode(true);
+                }
+                protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
+                    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+                    if (gainFocus) {
+                        canvasView.getInputManager().restartInput(this);
+                        canvasView.requestFocus();
+                    }
+                }
+            };
+            // END HACK
             this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
             canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -733,6 +750,12 @@ public abstract class Canvas extends Displayable {
             return resultKeyCode;
         }
 
+        // having this or not having this makes no change
+        // Override
+        public boolean onCheckIsTextEditor() {
+            return (inputConnectionView == null) ? super.onCheckIsTextEditor() : inputConnectionView.onCheckIsTextEditor();
+        }
+
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
             return (inputConnectionView == null) ? null : inputConnectionView.onCreateInputConnection(outAttrs);
         }
@@ -770,6 +793,21 @@ public abstract class Canvas extends Displayable {
             InputMethodManager m = getInputManager();
             m.restartInput(this);
             m.showSoftInput(this, InputMethodManager.SHOW_FORCED);
+
+            // HACK/WORK-AROUND for restartInput(): Sony Ericsson
+            // InputMethodManager.restartInput() method is buggy and does not clean the composing text.
+
+            // Changing the focus to another view, and then back to the
+            // canvas fixes the problem on SE Phones, but breaks Samsung's (Galaxy S, etc).
+
+            // Making composingText member static will keep the composing text from older
+            // TextBox's, in case restartInput() doesn't clean it. but this does not work
+            // if you move the caret to the middle of a line on a motorola after typing text in another box
+
+            if ("Sony Ericsson".equals(Build.MANUFACTURER)) {
+                linearLayout.requestFocus();
+            }
+
         }
 
         private void hideNativeTextInput() {
