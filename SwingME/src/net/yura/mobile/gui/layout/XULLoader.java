@@ -61,7 +61,7 @@ import net.yura.mobile.util.Option;
 import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
 
-import org.kxml2.io.KXmlParser;
+import net.yura.mobile.io.kxml2.KXmlParser;
 
 /**
  * @author Yura Mamyrin

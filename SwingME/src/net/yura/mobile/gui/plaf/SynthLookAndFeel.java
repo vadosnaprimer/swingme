@@ -30,7 +30,7 @@ import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.StringUtil;
-import org.kxml2.io.KXmlParser;
+import net.yura.mobile.io.kxml2.KXmlParser;
 
 /**
  * @author Yura Mamyrin
