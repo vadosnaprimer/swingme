@@ -1,5 +1,7 @@
 package net.yura.android.plaf;
 
+import java.lang.reflect.Method;
+
 import javax.microedition.lcdui.Graphics;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
@@ -106,15 +108,18 @@ public class AndroidBorder implements Border {
         }
 
         if ((state & Style.SELECTED) != 0) {
-            if (cclass!=null && RadioButton.class.isAssignableFrom(cclass)) {
+        	//ListCellRenderer check needs to be first, as it could be extended from a button
+        	// TODO this is still not perfect, as a renderer can return a button, but that button not implement the renderer
+        	if (cclass!=null && ListCellRenderer.class.isAssignableFrom(cclass)) {
+                stateList[count++] = android.R.attr.state_focused;
+            }
+        	else if (cclass!=null && RadioButton.class.isAssignableFrom(cclass)) {
                 stateList[count++] = android.R.attr.state_checked;
             }
             else if (cclass!=null && Button.class.isAssignableFrom(cclass)) {
                 stateList[count++] = android.R.attr.state_pressed;
             }
-            else if (cclass!=null && ListCellRenderer.class.isAssignableFrom(cclass)) {
-                stateList[count++] = android.R.attr.state_focused;
-            }
+            
             // commenting out the else seems to fix the foreground color of Lists
             //else {// other things ???? this is not currently used for anything ????
             //    System.out.println(" SELECTED ########################## "+cclass);
@@ -125,9 +130,30 @@ public class AndroidBorder implements Border {
         return stateList;
     }
 
+    static Method jumpToCurrentState;
+    static {
+    	try {
+    		jumpToCurrentState = Drawable.class.getMethod("jumpToCurrentState", null);
+    	}
+    	catch(Throwable th) {
+    		
+    	}
+    }
+    
     static void setDrawableState(Component comp, Drawable drawable) {
         Window w = comp.getWindow();
         drawable.setState(getDrawableState(comp.getCurrentState(),comp.getClass(), w==null || w.isFocused() ));
+        
+        // as we do not support animation
+        // for API 11 honeycomb, we need to call jumpToCurrentState
+        if (jumpToCurrentState!=null) {
+        	try {
+        		jumpToCurrentState.invoke(drawable,null);
+        	}
+        	catch(Throwable th) {
+        		
+        	}
+        }
     }
 
 }
