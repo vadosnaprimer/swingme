@@ -269,6 +269,9 @@ public abstract class MIDlet {
 	                setProperty("CellID", "" + gsmLocation.getCid());
 	                setProperty("LAC", "" + gsmLocation.getLac());
             	}
+            	else {
+            		System.out.println("[MIDlet] unknown location object "+location);
+            	}
 
                 TelephonyManager tm = getTelephonyManager();
                 setProperty("CMCC", tm.getNetworkCountryIso());
