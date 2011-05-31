@@ -133,7 +133,7 @@ public class AndroidBorder implements Border {
     static Method jumpToCurrentState;
     static {
     	try {
-    		jumpToCurrentState = Drawable.class.getMethod("jumpToCurrentState", null);
+    		jumpToCurrentState = Drawable.class.getMethod("jumpToCurrentState");
     	}
     	catch(Throwable th) {
     		
@@ -148,10 +148,10 @@ public class AndroidBorder implements Border {
         // for API 11 honeycomb, we need to call jumpToCurrentState
         if (jumpToCurrentState!=null) {
         	try {
-        		jumpToCurrentState.invoke(drawable,null);
+        		jumpToCurrentState.invoke(drawable);
         	}
         	catch(Throwable th) {
-        		
+        		th.printStackTrace();
         	}
         }
     }

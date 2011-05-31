@@ -15,6 +15,6 @@
 	<classpathentry kind="src" path="src_JSR179_Location"/>
 	<classpathentry kind="src" path="src_Test"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry kind="lib" path="E:/My_World/6_Yura/linuxhome/UtilME/lib/kxml2.jar" sourcepath="E:/My_World/6_Yura/linuxhome/J2ME/kxml2-src-2.3.0/src"/>
+	<classpathentry kind="lib" path="I:/6_Yura/linuxhome/UtilME/lib/xmlpull_1_1_3_1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
