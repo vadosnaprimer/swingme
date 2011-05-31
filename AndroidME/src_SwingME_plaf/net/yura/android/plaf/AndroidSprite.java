@@ -76,9 +76,8 @@ public class AndroidSprite extends Sprite {
             int nextFrame = (frame + 1) % getFrameSequenceLength();
             long now = System.currentTimeMillis();
 
-            if (newFrame == nextFrame || (lastSetFrameTime - now) > 200) {
+            if (newFrame == nextFrame || (now - lastSetFrameTime) > 100) {
                 frame = newFrame;
-                // System.out.println(">> frame = " + frame);
 
                 ((Runnable) spin).run();
                 lastSetFrameTime = now;
