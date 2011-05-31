@@ -1,6 +1,6 @@
 package net.yura.mobile.gen;
-import net.yura.tools.mobilegen.model.TestObject;
 import net.yura.tools.mobilegen.model.Test;
+import net.yura.tools.mobilegen.model.TestObject;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.io.IOException;
@@ -11,8 +11,8 @@ import java.io.DataInputStream;
  * THIS FILE IS GENERATED, DO NOT EDIT
  */
 public class BinAccess extends BinUtil {
-    public static final int TYPE_TESTOBJECT=20;
-    public static final int TYPE_TEST=21;
+    public static final int TYPE_TEST=20;
+    public static final int TYPE_TESTOBJECT=21;
     public BinAccess() {
     }
     protected void writeObject(DataOutputStream out, Object object) throws IOException {

@@ -25,7 +25,7 @@ import net.yura.mobile.io.JSONUtil;
 import net.yura.mobile.io.ProtoUtil;
 import net.yura.tools.mobilegen.model.Test;
 import net.yura.tools.mobilegen.model.TestObject;
-import org.kxml2.io.KXmlParser;
+import net.yura.mobile.io.kxml2.KXmlParser;
 
 /**
  * @author Yura Mamyrin

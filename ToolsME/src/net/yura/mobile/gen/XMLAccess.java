@@ -3,7 +3,7 @@ import net.yura.tools.mobilegen.model.TestObject;
 import net.yura.tools.mobilegen.model.Test;
 import java.util.Hashtable;
 import java.util.Vector;
-import org.kxml2.io.KXmlParser;
+import net.yura.mobile.io.kxml2.KXmlParser;
 import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import net.yura.mobile.io.XMLUtil;
@@ -36,11 +36,11 @@ public class XMLAccess extends XMLUtil {
             //serializer.attribute(null,"image", new String( org.bouncycastle.util.encoders.Base64.encode( object.getImage() ) ) );
         }
         serializer.attribute(null,"lastUpdated", String.valueOf( object.getLastUpdated() ) );
-        serializer.attribute(null,"age", String.valueOf( object.getAge() ) );
         serializer.attribute(null,"things", String.valueOf( object.getThings() ) );
         if (object.getMyType()!=null) {
             serializer.attribute(null,"myType", object.getMyType() );
         }
+        serializer.attribute(null,"age", String.valueOf( object.getAge() ) );
         serializer.attribute(null,"heads", String.valueOf( object.getHeads() ) );
         serializer.attribute(null,"isAlive", String.valueOf( object.getIsAlive() ) );
         saveTest(serializer, object);

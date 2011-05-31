@@ -56,7 +56,7 @@ ps.println("import "+c.getName().replaceAll("\\$", "\\.")+";");
 
 ps.println("import java.util.Hashtable;");
 ps.println("import java.util.Vector;");
-ps.println("import org.kxml2.io.KXmlParser;");
+ps.println("import net.yura.mobile.io.kxml2.KXmlParser;");
 ps.println("import org.xmlpull.v1.XmlSerializer;");
 ps.println("import java.io.IOException;");
 ps.println("import net.yura.mobile.io.XMLUtil;");
