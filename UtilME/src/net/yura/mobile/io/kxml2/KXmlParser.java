@@ -957,10 +957,10 @@ public class KXmlParser implements XmlPullParser {
         if (reader == null)
             return;
 
-        srcPos = 0;
-        srcCount = 0;
-        peekCount = 0;
-        depth = 0;
+        // YURA srcPos = 0;
+        // YURA srcCount = 0;
+        // YURA peekCount = 0;
+        // YURA depth = 0;
 
         entityMap = new Hashtable();
         entityMap.put("amp", "&");
@@ -968,6 +968,7 @@ public class KXmlParser implements XmlPullParser {
         entityMap.put("gt", ">");
         entityMap.put("lt", "<");
         entityMap.put("quot", "\"");
+        entityMap.put("nbsp", " "); // ADDED BY YURA, ALSO ADDED IN FIRE
     }
 
     public void setInput(InputStream is, String _enc)
@@ -1080,6 +1081,11 @@ public class KXmlParser implements XmlPullParser {
                 enc = "UTF-8";
 
             int sc = srcCount;
+
+            srcPos = 0; // YURA
+            srcCount = 0; // YURA
+            peekCount = 0; // YURA
+            depth = 0; // YURA
             setInput(new InputStreamReader(is, enc));
             encoding = _enc;
             srcCount = sc;
