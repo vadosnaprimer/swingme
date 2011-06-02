@@ -595,7 +595,8 @@ public class List extends Component implements ActionListener {
             return false;
         }
 
-        if (isCtrlKeyDown(keypad)) {
+        if (keypad.justPressedKey(KeyEvent.KEY_EDIT) || keypad.justPressedKey('#')) {
+        //if (isCtrlKeyDown(keypad)) { // CAN NOT USE THIS, as this checks isDownKey and we need justPressedKey
             addMode = selected == null || !isSelectedIndex(current);
         }
 
