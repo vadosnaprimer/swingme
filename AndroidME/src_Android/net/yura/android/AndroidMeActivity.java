@@ -1,8 +1,7 @@
 package net.yura.android;
 
-
 import java.util.Vector;
-
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
@@ -10,7 +9,9 @@ import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -116,6 +117,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     protected void onStart() {
         super.onStart();
         backgroundTime = 0L;
+        
+        hardKeyboardHidden = getResources().getConfiguration().hardKeyboardHidden;
+        
     }
 
     public long getInBackgroundTime() {
@@ -287,4 +291,39 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         MIDlet midlet = getMIDlet();
         midlet.onResult(resultCode, result);
     }
+    
+    private int hardKeyboardHidden;
+    
+    /**
+     * @see javax.microedition.lcdui.Canvas.CanvasView#onCreateInputConnection(android.view.inputmethod.EditorInfo)
+     */
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        try {
+	        
+	        // Checks the orientation of the screen
+	        //if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+	        //}
+	        //else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
+	        //}
+	
+	        // Checks whether a hardware keyboard is available
+	        // this is part of the HTC Hack 
+	
+	        if ("HTC".equals(Build.MANUFACTURER)) {
+		        if ( hardKeyboardHidden != newConfig.hardKeyboardHidden ) {
+		        	hardKeyboardHidden = newConfig.hardKeyboardHidden;
+		        	((Canvas)Display.getDisplay(AndroidMeApp.getMIDlet()).getCurrent()).restartInput();
+		        }
+	        }
+        }
+        catch(Throwable th) {
+        	//#debug debug
+        	th.printStackTrace();
+        }
+    }
+
+
 }

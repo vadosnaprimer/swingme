@@ -2,12 +2,11 @@ package javax.microedition.lcdui;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -207,23 +206,7 @@ public abstract class Canvas extends Displayable {
     public View getView() {
 
         if (linearLayout==null) {
-            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY)
-            // SE HACK
-            {
-                // See: WORK-AROUND for restartInput() broken on SE
-                {
-                    setFocusable(true);
-                    setFocusableInTouchMode(true);
-                }
-                protected void onFocusChanged(boolean gainFocus, int direction, Rect previouslyFocusedRect) {
-                    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-                    if (gainFocus) {
-                        canvasView.getInputManager().restartInput(this);
-                        canvasView.requestFocus();
-                    }
-                }
-            };
-            // END HACK
+            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
             this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
             canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -255,6 +238,9 @@ public abstract class Canvas extends Displayable {
         canvasView.setTextInputView(null);
     }
 
+    public void restartInput() {
+    	canvasView.getInputManager().restartInput(canvasView);
+    }
 
     class CanvasView extends View {
         private static final int KEYBOARD_SHOW = 1;
@@ -435,10 +421,8 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
-//            System.out.println("onKeyDown -> " + keyCode);
-            boolean isKeyHandled = isKeyHandled(keyCode);
-
-            if (isKeyHandled) {
+        	
+            if ( isKeyHandled(keyCode) ) {
                 this.restartKeyboardInput = true;
 
                 int keyCount = event.getRepeatCount();
@@ -464,17 +448,16 @@ public abstract class Canvas extends Displayable {
                         keyRepeated(meKeyCode);
                     }
                 }
+                return true;
             }
 
-            return isKeyHandled;
+            return super.onKeyDown(keyCode, event);
         }
 
         @Override
         public boolean onKeyUp(int keyCode, KeyEvent event) {
 
-            boolean isKeyHandled = isKeyHandled(keyCode);
-
-            if (isKeyHandled) {
+            if ( isKeyHandled(keyCode) ) {
                 this.restartKeyboardInput = true;
 
                 int meKeyCode = getKeyCode(event);
@@ -497,15 +480,26 @@ public abstract class Canvas extends Displayable {
                 else {
                     keyReleased(meKeyCode);
                 }
+                
+                return true;
             }
 
-            return isKeyHandled;
+            return super.onKeyUp(keyCode, event);
         }
 
+        /**
+         * these are keys we DEF will NEVER want to be able to make use of in SwingME
+         */
         private boolean isKeyHandled(int keyCode) {
-            return !(keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
-                     keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
-                     keyCode == KeyEvent.KEYCODE_CAMERA);
+        	
+        	//boolean sys = event.isSystem(); // search is a system key
+        	
+            return !(
+            		keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
+                    keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
+                    keyCode == KeyEvent.KEYCODE_CAMERA
+                    //keyCode == 97 // this is the SYM key of HTC Desire Z, putting it here does not help anything
+            );
         }
 
         private static final int POINTER_DRAGGED = 0;
@@ -567,7 +561,7 @@ public abstract class Canvas extends Displayable {
                 try {
                     if (restartKeyboardInput) {
                         restartKeyboardInput = false;
-                        getInputManager().restartInput(this);
+                        restartInput();
                     }
 
                     switch (action) {
@@ -756,8 +750,23 @@ public abstract class Canvas extends Displayable {
             return (inputConnectionView == null) ? super.onCheckIsTextEditor() : inputConnectionView.onCheckIsTextEditor();
         }
 
+        /**
+         * @see net.yura.android.AndroidMeActivity#onConfigurationChanged(android.content.res.Configuration)
+         */
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-            return (inputConnectionView == null) ? null : inputConnectionView.onCreateInputConnection(outAttrs);
+        	
+        	// this is a hack to fix a problem on the HTC Desire Z, where the hardware keyboard does NOT work
+        	// with out InputConnection, the problem with this is the keyboard now does not do some of the
+        	// things we expect, such as holding down a button does not open a popup with options, and instead
+        	// just types the letter over and over again
+        	if (
+        			getResources().getConfiguration().hardKeyboardHidden==Configuration.HARDKEYBOARDHIDDEN_NO &&
+        			"HTC".equals(Build.MANUFACTURER)
+        	) {
+        		return super.onCreateInputConnection(outAttrs);
+        	}
+        	
+            return (inputConnectionView == null) ? super.onCreateInputConnection(outAttrs) : inputConnectionView.onCreateInputConnection(outAttrs);
         }
 
         private InputMethodManager getInputManager() {
@@ -794,20 +803,6 @@ public abstract class Canvas extends Displayable {
             m.restartInput(this);
             m.showSoftInput(this, InputMethodManager.SHOW_FORCED);
 
-            // HACK/WORK-AROUND for restartInput(): Sony Ericsson
-            // InputMethodManager.restartInput() method is buggy and does not clean the composing text.
-
-            // Changing the focus to another view, and then back to the
-            // canvas fixes the problem on SE Phones, but breaks Samsung's (Galaxy S, etc).
-
-            // Making composingText member static will keep the composing text from older
-            // TextBox's, in case restartInput() doesn't clean it. but this does not work
-            // if you move the caret to the middle of a line on a motorola after typing text in another box
-
-            if ("Sony Ericsson".equals(Build.MANUFACTURER)) {
-                linearLayout.requestFocus();
-            }
-
         }
 
         private void hideNativeTextInput() {
@@ -839,6 +834,10 @@ public abstract class Canvas extends Displayable {
 
         public void setTextInputView(View view) {
 //            if (inputConnectionView != view) {
+        	
+        	
+        	
+        	
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
 
