@@ -89,9 +89,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         }
 
         // When we resume, we want to have a nice pool of memory. At the moment
-        // we ask for 3/5 of the max memory. If the max is 25Mb, this is 15Mb.
+        // we ask for 1/2 of the max memory. If the max is 25Mb, this is 12.5Mb.
         Runtime rt = Runtime.getRuntime();
-        long allocMem = (3 * rt.maxMemory()) / 5;
+        long allocMem = rt.maxMemory() / 2;
 
         // NOTE: This code is not doing the trick... We need to use brute force.
         // VMRuntime.getRuntime().setMinimumHeapSize(allocMem);
