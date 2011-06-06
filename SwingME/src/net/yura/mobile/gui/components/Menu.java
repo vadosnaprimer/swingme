@@ -128,6 +128,14 @@ public class Menu extends Button {
         }
 
         /**
+         * @see javax.swing.JMenu#getMenuComponents() JMenu.getMenuComponents
+         */
+        public Vector getMenuComponents() {
+            MenuBar bar = getPopupMenu(popup);
+            return bar.getItems();
+        }
+
+        /**
          * @see javax.swing.JSeparator
          */
         public static Component makeSeparator() {
