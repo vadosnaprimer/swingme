@@ -1,12 +1,6 @@
 package net.yura.android;
 
 import java.util.Vector;
-
-import javax.microedition.lcdui.Graphics;
-
-import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.components.Component;
-
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
