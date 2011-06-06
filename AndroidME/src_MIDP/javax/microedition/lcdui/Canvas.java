@@ -497,7 +497,8 @@ public abstract class Canvas extends Displayable {
             return !(
             		keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
                     keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
-                    keyCode == KeyEvent.KEYCODE_CAMERA
+                    keyCode == KeyEvent.KEYCODE_CAMERA || 
+                    (AndroidMeActivity.menuSystem!=null && keyCode == KeyEvent.KEYCODE_MENU)
                     //keyCode == 97 // this is the SYM key of HTC Desire Z, putting it here does not help anything
             );
         }

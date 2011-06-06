@@ -2,6 +2,7 @@ package net.yura.android.plaf;
 
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidOptionPane;
+import net.yura.android.NativeAndroidMenu;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
@@ -377,6 +378,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
 
         OptionPane.optionPaneClass = AndroidOptionPane.class;
+        AndroidMeActivity.menuSystem = new NativeAndroidMenu();
     }
 
     private Drawable getDrawable(Context ctx, String name) {

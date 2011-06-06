@@ -31,6 +31,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     private long backgroundTime;
 
     public static AndroidMeActivity DEFAULT_ACTIVITY;
+    public static MenuSystem menuSystem;
 
     public MIDlet getMIDlet() {
         return AndroidMeApp.getMIDlet();
@@ -218,48 +219,64 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        MIDlet midlet = AndroidMeApp.getMIDlet();
-        if (midlet == null) {
-            return super.onPrepareOptionsMenu(menu);
-        }
-
-        boolean result = false;
-        Display display = Display.getDisplay(midlet);
-        Displayable current = display.getCurrent();
-        if (current != null) {
-            // load the menu items
-            menu.clear();
-            Vector<Command> commands = current.getCommands();
-            for (int i = 0; i < commands.size(); i++) {
-                result = true;
-                Command cmd = commands.get(i);
-                if (cmd.getCommandType() != Command.BACK && cmd.getCommandType() != Command.EXIT) {
-                    menu.addSubMenu(Menu.NONE, i + Menu.FIRST, Menu.NONE, cmd.getLabel());
-                }
+        if (menuSystem==null) {
+        	
+            MIDlet midlet = AndroidMeApp.getMIDlet();
+            if (midlet == null) {
+                return super.onPrepareOptionsMenu(menu);
             }
+        	
+	        boolean result = false;
+	    	Display display = Display.getDisplay( midlet );
+	        Displayable current = display.getCurrent();
+	        if (current != null) {
+	            // load the menu items
+	            menu.clear();
+	            Vector<Command> commands = current.getCommands();
+	            for (int i = 0; i < commands.size(); i++) {
+	                result = true;
+	                Command cmd = commands.get(i);
+	                if (cmd.getCommandType() != Command.BACK && cmd.getCommandType() != Command.EXIT) {
+	                	// TODO YURA: why is this addSubMenu????
+	                    menu.addSubMenu(Menu.NONE, i + Menu.FIRST, Menu.NONE, cmd.getLabel());
+	                }
+	            }
+	        }
+	        return result;
+        	
         }
-        return result;
+        
+        return menuSystem.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        MIDlet midlet = AndroidMeApp.getMIDlet();
-        Display display = Display.getDisplay(midlet);
-        Displayable current = display.getCurrent();
-        if (current != null) {
-            Vector<Command> commands = current.getCommands();
 
-            int commandIndex = item.getItemId() - Menu.FIRST;
-            Command c = commands.get(commandIndex);
-            CommandListener l = current.getCommandListener();
+    	if (menuSystem==null) {
 
-            if (c != null && l != null) {
-                l.commandAction(c, current);
-                return true;
-            }
-        }
+    		MIDlet midlet = AndroidMeApp.getMIDlet();
+	        Display display = Display.getDisplay( midlet );
+	        Displayable current = display.getCurrent();
 
-        return false;
+	        if (current != null) {
+	            Vector<Command> commands = current.getCommands();
+
+	            int commandIndex = item.getItemId() - Menu.FIRST;
+	            Command c = commands.get(commandIndex);
+	            CommandListener l = current.getCommandListener();
+
+	            if (c != null && l != null) {
+	                l.commandAction(c, current);
+	                return true;
+	            }
+	        }
+
+	        return false;
+    		
+    	}
+
+    	return menuSystem.onOptionsItemSelected(item);
+    	
     }
 
     public int getScreenHeight() {
@@ -324,6 +341,4 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         	th.printStackTrace();
         }
     }
-
-
 }
