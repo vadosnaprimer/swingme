@@ -2,14 +2,21 @@ package net.yura.android;
 
 import java.util.Vector;
 
+import javax.microedition.lcdui.Graphics;
+
+import net.yura.mobile.gui.Graphics2D;
+import net.yura.mobile.gui.components.Component;
+
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 
 public class NativeAndroidMenu implements MenuSystem {
-
-	
-
 
     @Override
     public boolean onPrepareOptionsMenu(Menu androidMenu) {
@@ -68,13 +75,59 @@ public class NativeAndroidMenu implements MenuSystem {
 					});
 
                 	// set the icon
-	                net.yura.mobile.gui.Icon icon = menuItem.getIcon();
+	                final net.yura.mobile.gui.Icon icon = menuItem.getIcon();
 	                if (icon != null) {
-	                	javax.microedition.lcdui.Image img = icon.getImage();
-	                    if (img != null) {
-	                    	android.graphics.drawable.Drawable d = new android.graphics.drawable.BitmapDrawable(img.getBitmap());
-	                    	androidMenuItem.setIcon( d );
-	                    }
+	                	Drawable drawable = new Drawable() {
+	                		//android.graphics.Bitmap bmp;
+	                		private android.graphics.Paint paint = new Paint();
+	                		private int tries; // number of retries to draw a valid image
+							@Override
+							public void setColorFilter(ColorFilter cf) {
+								paint.setColorFilter(cf);
+							}
+							@Override
+							public void setAlpha(int alpha) {
+								paint.setAlpha(alpha);
+							}
+							@Override
+							public int getOpacity() {
+								return PixelFormat.TRANSLUCENT; // TODO we are guessing here, but this is a good guess
+							}
+							@Override
+							public void draw(Canvas canvas) {
+								javax.microedition.lcdui.Image img = icon.getImage();
+								if (img!=null) {
+									tries = 0;
+									canvas.drawBitmap(img.getBitmap(), 0, 0, paint);
+								}
+								else if (tries<10) {
+									//#debug debug
+									System.out.println("[NativeAndroidMenu] icon in menu has no image, trying again: "+icon+" "+menuItem);
+									tries++;
+									invalidateSelf();
+								}
+								else {
+									//#debug debug
+									System.out.println("[NativeAndroidMenu] Failed to draw icon in menu: "+icon+" "+menuItem);
+								}
+							}
+						    @Override
+						    public int getIntrinsicWidth() {
+						        return icon.getIconWidth();
+						    }
+						    @Override
+						    public int getIntrinsicHeight() {
+						        return icon.getIconHeight();
+						    }
+						}; 
+						androidMenuItem.setIcon( drawable );
+	                	
+						// this causes lots of problems as BitmapDrawable makes the size go wrong
+	                	//javax.microedition.lcdui.Image img = icon.getImage();
+	                    //if (img != null) {
+	                    //	android.graphics.drawable.Drawable d = new android.graphics.drawable.BitmapDrawable(img.getBitmap());
+	                    //	androidMenuItem.setIcon( d );
+	                    //}
 	                }
                 }
         	}
