@@ -794,16 +794,12 @@ public class DesktopPane extends Canvas implements Runnable {
     //}
 
     private void paintComponent(Graphics2D g, Component com) {
-
         int[] a = g.getClip();
-
-        if (com.getParent() != null) {
-            com.getParent().clip(g);
-        }
-
+        int[] v = com.getVisibleRect();
+        g.clipRect(v[0],v[1],v[2],v[3]);// in almost all situations this is not needed
+                                        // but sometimes like in scrolltest3
         int x = com.getXOnScreen();
         int y = com.getYOnScreen();
-
         g.translate(x, y);
         com.paint(g);
         g.translate(-x, -y);
@@ -867,8 +863,13 @@ public class DesktopPane extends Canvas implements Runnable {
                 addToComponentVector(p, repaintComponent);
             }
         }
-        Border insets = rc.getInsets();
-        repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
+        //Border insets = rc.getInsets();
+        //repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
+
+        int[] v = rc.getVisibleRect();
+        repaint(v[0],v[1],v[2],v[3]);
+
+
     }
 
     public void repaintHole(final Component rc) {

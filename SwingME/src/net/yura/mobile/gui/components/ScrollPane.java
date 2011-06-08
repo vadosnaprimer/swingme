@@ -573,16 +573,36 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
         }
     }
 
-
-    public void clip(Graphics2D g) {
+    /**
+     * will crop down v to the size of the vewport
+     */
+    public void computeVisibleRect(int[] v) {
         if (clip) {
-            int viewX=getXOnScreen()+getViewPortX();
-            int viewY=getYOnScreen()+getViewPortY();
+            // work out intersection of v and the vewport, in MY co-od space
+            int viewX=getViewPortX();
+            int viewY=getViewPortY();
             int viewHeight=getViewPortHeight();
             int viewWidth=getViewPortWidth(viewHeight);
-            g.clipRect(viewX, viewY, viewWidth, viewHeight);
+            if (viewX>v[0]) {
+                v[2] = v[2] - (viewX-v[0]);
+                v[0] = viewX;
+            }
+            if (viewY>v[1]) {
+                v[3] = v[3] - (viewY-v[1]);
+                v[1] = viewY;
+            }
+            int a = viewX+viewWidth;
+            int b = v[0]+v[2];
+            if (a<b) {
+                v[2] = v[2]-(b-a);
+            }
+            int c = viewY+viewHeight;
+            int d = v[1]+v[3];
+            if (c<d) {
+                v[3] = v[3]-(d-c);
+            }
         }
-        super.clip(g);
+        super.computeVisibleRect(v);
     }
 
     /**

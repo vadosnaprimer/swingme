@@ -305,7 +305,7 @@ public class List extends Component implements ActionListener {
 
         int size = getSize();
 
-        if (size==0 || (layoutOrientation==HORIZONTAL && x<=0) || (layoutOrientation==VERTICAL && y<=0)) {
+        if (size==0 || (layoutOrientation==HORIZONTAL && x<0) || (layoutOrientation==VERTICAL && y<0)) {
             // dont do anything
         }
         else if (x > width || y > height) {
@@ -350,6 +350,8 @@ public class List extends Component implements ActionListener {
     }
 
     public void paintComponent(Graphics2D g) {
+
+        //System.out.println("list "+getFirstVisibleIndex()+"-"+getLastVisibleIndex());
 
         ensureIndexIsVisible = -1;
 
@@ -932,6 +934,22 @@ public class List extends Component implements ActionListener {
         c.workoutPreferredSize();
         setFixedCellHeight( c.getHeightWithBorder() );
 
+    }
+
+    /**
+     * @see javax.swing.JList#getFirstVisibleIndex() JList.getFirstVisibleIndex
+     */
+    public int getFirstVisibleIndex() {
+        int[] v = getVisibleRect();
+        return locationToIndex(v[0]-getXOnScreen(),v[1]-getYOnScreen())[0];
+    }
+
+    /**
+     * @see javax.swing.JList#getLastVisibleIndex() JList.getLastVisibleIndex
+     */
+    public int getLastVisibleIndex() {
+        int[] v = getVisibleRect();
+        return locationToIndex((v[0]+v[2])-getXOnScreen()-1,(v[1]+v[3])-getYOnScreen()-1)[0];
     }
 
     /**
