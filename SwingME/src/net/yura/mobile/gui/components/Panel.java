@@ -342,7 +342,7 @@ public class Panel extends Component {
         // only scroll in the direction if the child is NONE-selectable
         // as if it IS selectable, it should handel its own moving around and scrolling
         if (scrolltothere && this instanceof ScrollPane && !component.isFocusable()) {
-            scrolled = ((ScrollPane)this).getView().scrollUpDown(direction);
+            scrolled = ((ScrollPane)this).scrollUpDown(direction);
         }
 
         if (!scrolled) {

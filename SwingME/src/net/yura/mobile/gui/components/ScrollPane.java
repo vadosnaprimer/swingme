@@ -17,6 +17,7 @@
 
 package net.yura.mobile.gui.components;
 
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.layout.Layout;
@@ -156,7 +157,69 @@ public class ScrollPane extends Panel implements Runnable {
         // TODO does it take into account the border?
     }
 
-    public boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
+    public boolean scrollRectToVisible(int x,int y,int w,int h,boolean smart) {
+
+        Component v = getView();
+        int oldx = v.getX();
+        int oldy = v.getY();
+        boolean reached = makeVisible(x-oldx,y-oldy,w,h,smart);
+
+        if ( oldx!=v.getX() || oldy!=v.getY() ) {
+            return reached;
+        }
+        return super.scrollRectToVisible(x, y, w, h, smart);
+    }
+
+    /**
+     * check if something is currently visible or as visible as it can be
+     * i.e. scrolling wont make it more visible, even if its not all currently visible
+     */
+    public boolean isRectVisible(int ox,int oy,int w,int h) {
+
+        Component v = getView();
+        int x = ox-v.getX();
+        int y = oy-v.getY();
+
+        Component component = getView();
+        int viewX= -component.getX() + getViewPortX();
+        int viewY= -component.getY() + getViewPortY();
+        int viewHeight = getViewPortHeight();
+        int viewWidth = getViewPortWidth(viewHeight);
+
+        boolean visible = ( ((x>=viewX && x+w<=viewX+viewWidth)||(x<=viewX && x+w>=viewX+viewWidth)) &&
+                ((y>=viewY && y+h<=viewY+viewHeight)||(y<=viewY && y+h>=viewY+viewHeight))
+        );
+        if (!visible) {
+            return false;
+        }
+        return super.isRectVisible(ox, oy, w, h);
+    }
+
+    public boolean scrollUpDown(int d) {
+
+        Component v = getView();
+
+        int oldx = v.getX();
+        int oldy = v.getY();
+
+        if (d==Canvas.RIGHT) {
+                makeVisible(v.getWidth()-1,-oldy+getViewPortY(),1,1,true);
+        }
+        else if (d==Canvas.LEFT) {
+                makeVisible(0,-oldy+getViewPortY(),1,1,true);
+        }
+        else if (d==Canvas.UP) {
+                makeVisible(-oldx+getViewPortX(),0,1,1,true);
+        }
+        else { // DOWN
+                makeVisible(-oldx+getViewPortX(),v.getHeight()-1,1,1,true);
+        }
+
+        return oldx!=v.getX() || oldy!=v.getY();
+
+    }
+
+    private boolean makeVisible(int x,int y,int w,int h,boolean smartscroll) {
         return makeVisible(x, y, w, h, smartscroll, true);
     }
 
@@ -252,23 +315,6 @@ public class ScrollPane extends Panel implements Runnable {
 
         return goodscroll;
 
-    }
-
-    /**
-     * check if something is currently visible or as visible as it can be
-     * i.e. scrolling wont make it more visible, even if its not all currently visible
-     */
-    public boolean isRectVisible(int x,int y,int w,int h) {
-
-        Component component = getView();
-        int viewX= -component.getX() + getViewPortX();
-        int viewY= -component.getY() + getViewPortY();
-        int viewHeight = getViewPortHeight();
-        int viewWidth = getViewPortWidth(viewHeight);
-
-        return ( ((x>=viewX && x+w<=viewX+viewWidth)||(x<=viewX && x+w>=viewX+viewWidth)) &&
-                ((y>=viewY && y+h<=viewY+viewHeight)||(y<=viewY && y+h>=viewY+viewHeight))
-        );
     }
 
     public int getViewPortHeight() {
