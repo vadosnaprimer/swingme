@@ -174,15 +174,10 @@ public class ScrollPane extends Panel implements Runnable {
      * check if something is currently visible or as visible as it can be
      * i.e. scrolling wont make it more visible, even if its not all currently visible
      */
-    public boolean isRectVisible(int ox,int oy,int w,int h) {
+    public boolean isRectVisible(int x,int y,int w,int h) {
 
-        Component v = getView();
-        int x = ox-v.getX();
-        int y = oy-v.getY();
-
-        Component component = getView();
-        int viewX= -component.getX() + getViewPortX();
-        int viewY= -component.getY() + getViewPortY();
+        int viewX= getViewPortX();
+        int viewY= getViewPortY();
         int viewHeight = getViewPortHeight();
         int viewWidth = getViewPortWidth(viewHeight);
 
@@ -192,7 +187,7 @@ public class ScrollPane extends Panel implements Runnable {
         if (!visible) {
             return false;
         }
-        return super.isRectVisible(ox, oy, w, h);
+        return super.isRectVisible(x, y, w, h);
     }
 
     public boolean scrollUpDown(int d) {
