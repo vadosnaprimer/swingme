@@ -93,7 +93,7 @@ public class Menu extends Button {
             return getPopupMenu(popup).findMneonicButton(mnu);
         }
 
-	public void workoutMinimumSize() {
+	protected void workoutMinimumSize() {
             super.workoutMinimumSize();
 
             if (!isTopLevelMenu()) {

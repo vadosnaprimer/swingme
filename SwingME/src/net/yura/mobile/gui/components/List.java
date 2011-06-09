@@ -156,7 +156,7 @@ public class List extends Component implements ActionListener {
     }
     //#enddebug
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
         if (fixedCellWidth!=-1 && fixedCellHeight!=-1) {
             int s = getSize();

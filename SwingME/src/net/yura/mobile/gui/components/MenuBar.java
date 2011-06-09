@@ -328,7 +328,7 @@ public class MenuBar extends List implements ActionListener {
         return c;
     }
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
         if (getDesktopPane().GRID_MENU) {
 

@@ -40,7 +40,7 @@ public class ImageView extends Component {
     }
 
     // Override
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
         width = (bgImage == null) ? 1 : 100;
         height = (bgImage == null) ? 1 : 100;
     }

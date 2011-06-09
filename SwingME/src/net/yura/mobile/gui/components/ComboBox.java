@@ -71,7 +71,7 @@ public class ComboBox extends Button implements ActionListener{
             list.setLoop(b);
         }
 
-	public void workoutMinimumSize() {
+	protected void workoutMinimumSize() {
 		if (list!=null && list.getSize()>0) {
 
                     int count = 0;

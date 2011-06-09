@@ -369,7 +369,7 @@ public class Slider extends Component {
         return (keypad.justReleasedAction(left) || keypad.justReleasedAction(right));
     }
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
         Border track = getTrack();
 

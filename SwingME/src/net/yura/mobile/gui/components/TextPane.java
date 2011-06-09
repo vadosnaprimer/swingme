@@ -102,7 +102,7 @@ public class TextPane extends Component {
     }
 
     // Overwrites Component.workoutMinimumSize()
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
             if (getPreferredWidth()!=-1) {
                 // this method can be used to determin the size of a dialog suring a pack

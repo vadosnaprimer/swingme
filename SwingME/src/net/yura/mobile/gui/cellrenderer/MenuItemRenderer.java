@@ -51,7 +51,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
         component.paintComponent(g);
     }
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
         component.workoutPreferredSize();
         width = component.getWidth();
         height = component.getHeight();

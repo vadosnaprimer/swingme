@@ -124,7 +124,7 @@ public class ProgressBar extends Component {
         loading = v;
     }
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
         if (sprite!=null) {
             width = sprite.getWidth();

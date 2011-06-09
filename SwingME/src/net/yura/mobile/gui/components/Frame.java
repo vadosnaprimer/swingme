@@ -207,7 +207,7 @@ public class Frame extends Window {
             return null;
         }
 
-        public void workoutMinimumSize() {
+        protected void workoutMinimumSize() {
 
             int w=0;
             int h=0;

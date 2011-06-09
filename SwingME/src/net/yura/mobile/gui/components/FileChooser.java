@@ -588,7 +588,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         private int widthUsed = -1;
-        public void workoutMinimumSize() {
+        protected void workoutMinimumSize() {
             if (getPreferredWidth()!=-1) {
                 width = getPreferredWidth();
                 widthUsed = width;

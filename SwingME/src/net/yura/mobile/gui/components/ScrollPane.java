@@ -67,18 +67,12 @@ public class ScrollPane extends Panel implements Runnable {
 
     public ScrollPane(int m) {
         super(null);
-        setMode(m);
-        super.setName("ScrollPane");
+        setName("ScrollPane");
 
         slider = new Slider();
         slider.setName("ScrollBar");
-    }
 
-    public void setLayout(Layout lt) {
-        if (lt!=null) throw new IllegalArgumentException();
-    }
-    public void setClip(boolean c) {
-        clip = c;
+        setMode(m);
     }
 
     public ScrollPane(Component view,int a) {
@@ -86,9 +80,18 @@ public class ScrollPane extends Panel implements Runnable {
         add(view);
     }
 
-    public void setMode(int m) {
+    //#mdebug debug
+    public void setLayout(Layout lt) {
+        if (lt!=null) throw new IllegalArgumentException();
+    }
+    //#enddebug
 
+    public void setMode(int m) {
         mode = m;
+    }
+
+    public void setClip(boolean c) {
+        clip = c;
     }
 
     final int BOUNCE_LEFT = 0x01;
@@ -108,30 +111,11 @@ public class ScrollPane extends Panel implements Runnable {
         return slider.getHeight();
     }
 
-    public void setSize(int w, int h) {
-
-        switch (mode) {
-            case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
-            case MODE_SCROLLARROWS: // fall though
-            case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : 0; break;
-            case MODE_NONE: barThickness = 0; break;
-            default: throw new RuntimeException();
-        }
-
-        super.setSize(w, h);
-
-        // Size of the scroll changed, we need to reset the component location
-        // this is NOT how Swing does it, need to find a better method!
-        //setViewLocation(getViewPortX(), getViewPortY());
-    }
-
     /**
      * @see javax.swing.JViewport#getView() JViewport.getView
      */
     public Component getView() {
-
         return ((Component)getComponents().elementAt(0));
-
     }
 
     protected void addImpl(Component component, Object cons, int index) {
@@ -152,13 +136,17 @@ public class ScrollPane extends Panel implements Runnable {
         // ((Panel)a).setScrollPanel(this);
         //}
 
+        // TODO this does not work as the size of the component is not set yet
+        // and so we do not know if we need to scroll, and so do not know the size taken
+        // up by any scroll arrows or scrollbars
+        // so all this ever does it reset the view to 0,0
         setViewLocation(getViewPortX(), getViewPortY());
 
         // TODO does it take into account the border?
     }
 
     public boolean scrollRectToVisible(int x,int y,int w,int h,boolean smart) {
-
+        
         Component v = getView();
         int oldx = v.getX();
         int oldy = v.getY();
@@ -224,39 +212,41 @@ public class ScrollPane extends Panel implements Runnable {
         int oldX = component.getX();
         int oldY = component.getY();
 
+        int viewPortX=getViewPortX();
+        int viewPortY=getViewPortY();
+        int viewPortHeight = getViewPortHeight();
+        int viewPortWidth = getViewPortWidth(viewPortHeight);
+
         //Logger.debug("x="+x+" y="+y+" w="+w+" h="+h);
-        //Logger.debug("viewPortX="+viewPortX+" viewPortY="+viewPortY+" width="+width+" height="+height);
+        //Logger.debug("ViewPortX="+viewPortX+" ViewPortY="+viewPortY+" ViewPortWidth="+viewPortWidth+" ViewPortHeight="+viewPortHeight);
 
         int right = x+w;
         int bottom = y+h;
 
-        int componentX = -component.getX();
-        int componentY = -component.getY();
+        int componentX = -oldX;
+        int componentY = -oldY;
 
-        int viewX=getViewPortX();
-        int viewY=getViewPortY();
-        int viewHeight = getViewPortHeight();
-        int viewWidth = getViewPortWidth(viewHeight);
+
 
         // check if the viewport is maybe already looks at part of this bigger area
         // if it is, then we dont want to scroll to any part of it
-        if (!(x<=componentX+viewX && right>=componentX+viewX+viewWidth)) {
-            if (right > (viewX + componentX + viewWidth)){
-                componentX = right - viewWidth;
+        if (!(x<=componentX+viewPortX && right>=componentX+viewPortX+viewPortWidth)) {
+            if (right > (viewPortX + componentX + viewPortWidth)){
+                componentX = right - viewPortWidth - viewPortX;
             }
 
-            if (x < (viewX + componentX)){
-                componentX = x-viewX;
+            if (x < (viewPortX + componentX)){
+                componentX = x-viewPortX;
             }
         }
 
-        if (!(y<=componentY+viewY && bottom>=componentY+viewY+viewHeight)) {
-            if (bottom > (viewY + componentY + viewHeight)){
-                componentY = bottom - viewHeight;
+        if (!(y<=componentY+viewPortY && bottom>=componentY+viewPortY+viewPortHeight)) {
+            if (bottom > (viewPortY + componentY + viewPortHeight)){
+                componentY = bottom - viewPortHeight - viewPortY;
             }
 
-            if (y < (viewY + componentY)){
-                componentY = y-viewY;
+            if (y < (viewPortY + componentY)){
+                componentY = y-viewPortY;
             }
         }
 
@@ -265,38 +255,33 @@ public class ScrollPane extends Panel implements Runnable {
 
         // check we r not scrolling off the content panel
         if (bond) {
-            componentX = Math.min(componentX, component.getWidth() - viewWidth - viewX);
-            componentY = Math.min(componentY, component.getHeight() - viewHeight - viewY);
+            componentX = Math.min(componentX, component.getWidth() - viewPortWidth - viewPortX);
+            componentY = Math.min(componentY, component.getHeight() - viewPortHeight - viewPortY);
 
-            componentX = Math.max(componentX, -viewX);
-            componentY = Math.max(componentY, -viewY);
+            componentX = Math.max(componentX, -viewPortX);
+            componentY = Math.max(componentY, -viewPortY);
         }
 
-        int xdiff=-componentX -component.getX();
-        int ydiff=-componentY -component.getY();
+        int xdiff=-componentX -oldX;
+        int ydiff=-componentY -oldY;
 
         boolean goodscroll=true;
 
         if (smartscroll) {
 
-            if (Math.abs(xdiff) > viewWidth) {
-
-                xdiff = (xdiff>0)?viewWidth*2/3:-viewWidth*2/3;
-
+            if (Math.abs(xdiff) > viewPortWidth) {
+                xdiff = (xdiff>0)?viewPortWidth*2/3:-viewPortWidth*2/3;
                 goodscroll = false;
-
             }
 
-            if (Math.abs(ydiff) > viewHeight) {
-
-                ydiff = (ydiff>0)?viewHeight*2/3:-viewHeight*2/3;
-
+            if (Math.abs(ydiff) > viewPortHeight) {
+                ydiff = (ydiff>0)?viewPortHeight*2/3:-viewPortHeight*2/3;
                 goodscroll = false;
-
             }
         }
 
-        setViewLocation( component.getX()+xdiff , component.getY()+ydiff );
+        int newX = oldX+xdiff;
+        int newY = oldY+ydiff;
 
         // NEVER CALL setBounds here as it will call setSize and that will cause a revalidate
         //component.setBounds(15, 15, component.getWidth(), component.getHeight());
@@ -304,7 +289,8 @@ public class ScrollPane extends Panel implements Runnable {
         //Logger.debug("new pos: x="+component.getX()+" y="+component.getY() );
 
         // only repint if we have moved
-        if (oldX!=component.getX() || oldY!=component.getY()) {
+        if (oldX!=newX || oldY!=newY) {
+            setViewLocation( newX , newY );
             repaint();
         }
 
@@ -353,9 +339,17 @@ public class ScrollPane extends Panel implements Runnable {
         }
     }
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
         slider.workoutPreferredSize();
+
+        switch (mode) {
+            case MODE_SCROLLBARS: barThickness = getBarThickness(); break;
+            case MODE_SCROLLARROWS: // fall though
+            case MODE_INDICATOR: barThickness = (rightArrow != null) ? rightArrow.getIconWidth() : 0; break;
+            case MODE_NONE: barThickness = 0; break;
+            default: throw new RuntimeException();
+        }
 
         super.workoutMinimumSize();
 

@@ -184,7 +184,7 @@ public class Panel extends Component {
      * works out the current size of this panel
      * (SHOULD NOT BE CALLED OUTSIDE THE FRAMEWORK)
      */
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
 
         for(int i = 0; i < components.size(); i++) {
 

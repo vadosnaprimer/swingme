@@ -82,7 +82,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         return "Camera";
     }
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
         width = 10;
         height = 10;
     }

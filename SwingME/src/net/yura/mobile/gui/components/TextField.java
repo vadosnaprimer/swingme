@@ -105,7 +105,7 @@ public class TextField extends TextComponent {
 
         }
 
-        public void workoutMinimumSize() {
+        protected void workoutMinimumSize() {
             width = 10;
             height = font.getHeight() + padding*2; // put some padding in
         }

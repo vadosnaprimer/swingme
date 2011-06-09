@@ -408,7 +408,7 @@ public class TextArea extends TextComponent {
         }
 
 
-    public void workoutMinimumSize() {
+    protected void workoutMinimumSize() {
         if (wrap) {
             if (getPreferredWidth()!=-1) {
                 // this method can be used to determin the size of a dialog suring a pack
