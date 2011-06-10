@@ -414,18 +414,20 @@ public class Slider extends Component {
         return name;
     }
 
+    Style theme1,theme2;
     public void updateUI() {
         super.updateUI();
         font = theme.getFont(Style.ALL);
+
+        theme1 = DesktopPane.getDefaultTheme(getName()+"Thumb");
+        theme2 = DesktopPane.getDefaultTheme(getName()+"Track");
     }
 
     protected Border getThumb() {
-        Style theme1 = DesktopPane.getDefaultTheme(getName()+"Thumb");
         return theme1.getBorder( getCurrentState() );
     }
 
     protected Border getTrack() {
-        Style theme2 = DesktopPane.getDefaultTheme(getName()+"Track");
         return theme2.getBorder( getCurrentState() );
     }
 
