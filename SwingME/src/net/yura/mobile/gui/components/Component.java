@@ -828,8 +828,6 @@ public abstract class Component {
      * @see javax.swing.JComponent#computeVisibleRect(java.awt.Rectangle) JComponent.computeVisibleRect
      */
     public void computeVisibleRect(int[] v) {
-        v[0] = v[0] + posX;
-        v[1] = v[1] + posY;
         if (parent!=null) {
             parent.computeVisibleRect(v);
         }
@@ -841,8 +839,8 @@ public abstract class Component {
     public int[] getVisibleRect() {
         int[] v = new int[4];
         Border insets = getInsets();
-        v[0] = posX-insets.getLeft();
-        v[1] = posY-insets.getTop();
+        v[0] = getXOnScreen()-insets.getLeft();
+        v[1] = getYOnScreen()-insets.getTop();
         v[2] = getWidthWithBorder();
         v[3] = getHeightWithBorder();
         if (parent!=null) {

@@ -795,16 +795,23 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private void paintComponent(Graphics2D g, Component com) {
         int[] a = g.getClip();
-        int[] v = com.getVisibleRect();
-        g.clipRect(v[0],v[1],v[2],v[3]);// in almost all situations this is not needed
+        int ax=a[0],ay=a[1],aw=a[2],ah=a[3]; // keep original refs
+
+        Component p = com.getParent();
+        if (p!=null) {
+            // we do NOT want to call getVisibleRect, as components are allowed to paint outside of there bounds
+            p.computeVisibleRect(a); // we never want to call this on ourselves, only our parent
+        }
+        g.clipRect(a[0],a[1],a[2],a[3]);// in almost all situations this is not needed
                                         // but sometimes like in scrolltest3
+
         int x = com.getXOnScreen();
         int y = com.getYOnScreen();
         g.translate(x, y);
         com.paint(g);
         g.translate(-x, -y);
 
-        g.setClip(a);
+        g.setClip(ax,ay,aw,ah);
     }
 
     private void validateComponents(Vector v) {
@@ -868,7 +875,6 @@ public class DesktopPane extends Canvas implements Runnable {
 
         int[] v = rc.getVisibleRect();
         repaint(v[0],v[1],v[2],v[3]);
-
 
     }
 

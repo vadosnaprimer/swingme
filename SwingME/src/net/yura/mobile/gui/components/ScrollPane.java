@@ -610,28 +610,29 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
     /**
      * will crop down v to the size of the vewport
+     * @see javax.swing.SwingUtilities#computeIntersection(int, int, int, int, java.awt.Rectangle) SwingUtilities.computeIntersection
      */
     public void computeVisibleRect(int[] v) {
         if (clip) {
-            // work out intersection of v and the vewport, in MY co-od space
-            int viewX=getViewPortX();
-            int viewY=getViewPortY();
-            int viewHeight=getViewPortHeight();
-            int viewWidth=getViewPortWidth(viewHeight);
-            if (viewX>v[0]) {
-                v[2] = v[2] - (viewX-v[0]);
-                v[0] = viewX;
+            int viewPortX=getXOnScreen()+getViewPortX();
+            int viewPortY=getYOnScreen()+getViewPortY();
+            int viewPortHeight=getViewPortHeight();
+            int viewPortWidth=getViewPortWidth(viewPortHeight);
+
+            if (viewPortX>v[0]) {
+                v[2] = v[2] - (viewPortX-v[0]);
+                v[0] = viewPortX;
             }
-            if (viewY>v[1]) {
-                v[3] = v[3] - (viewY-v[1]);
-                v[1] = viewY;
+            if (viewPortY>v[1]) {
+                v[3] = v[3] - (viewPortY-v[1]);
+                v[1] = viewPortY;
             }
-            int a = viewX+viewWidth;
+            int a = viewPortX+viewPortWidth;
             int b = v[0]+v[2];
             if (a<b) {
                 v[2] = v[2]-(b-a);
             }
-            int c = viewY+viewHeight;
+            int c = viewPortY+viewPortHeight;
             int d = v[1]+v[3];
             if (c<d) {
                 v[3] = v[3]-(d-c);

@@ -103,7 +103,10 @@ public class FileUtil {
                     long earliestAcceptableTime = System.currentTimeMillis()-RECENT_PICTURE_TIME_INTERVAL;
                     int dircount = 1;
 
-                    for (Enumeration enu = fc.list(); enu.hasMoreElements();) {
+                    for (Enumeration enu = fc.list(
+                            //#debug debug
+                            "*",true
+                            ); enu.hasMoreElements();) {
                         String fname = (String) enu.nextElement();
                         //filter item from file type
                         if ( isFileType(fname, TYPE_FOLDER) ) {
