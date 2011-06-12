@@ -333,8 +333,8 @@ public class List extends Component implements ActionListener {
                 int cy = comp.getYWithBorder();
 
                 if (
-                        (layoutOrientation==VERTICAL || x>=cx && x <=(cw+cx) ) &&
-                        (layoutOrientation==HORIZONTAL || y>=cy && y <=(ch+cy))
+                        (layoutOrientation==VERTICAL || x>=cx && x<(cx+cw) ) &&
+                        (layoutOrientation==HORIZONTAL || y>=cy && y<(cy+ch))
                 ) {
                     ri = i;
                     roffset = offset;
