@@ -212,6 +212,24 @@ public abstract class HTTPClient extends QueueProcessorThread {
     }
 
     /**
+     * @see java.net.URLEncoder#encode(java.lang.String) URLEncoder.encode
+     */
+    public static String encode(String s) {
+        try {
+            ByteArrayOutputStream b = new ByteArrayOutputStream(s.length());
+            Writer w = new OutputStreamWriter(b);
+            encode(s,w);
+            w.flush();
+            return b.toString();
+        }
+        catch(IOException ex) {
+            //#debug debug
+            ex.printStackTrace();
+            throw new RuntimeException( ex.toString() );
+        }
+    }
+
+    /**
      * @see java.net.URLEncoder#encode(java.lang.String, java.lang.String) URLEncoder.encode
      */
     public static void encode(String s,Writer ret) throws IOException {
