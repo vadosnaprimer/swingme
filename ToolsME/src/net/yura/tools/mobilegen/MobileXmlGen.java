@@ -382,10 +382,10 @@ ps.println("    }");
         ArrayList<Method> result = new ArrayList<Method>();
 
         for (Method method:mymethods) {
-            if (set && method.getName().startsWith("set") && hasBeanProperty(mymethods, method.getName().substring(3)) && simple == isSimpleType(method.getParameterTypes()[0]) ) {
+            if (set && method.getName().startsWith("set") && hasBeanProperty(theclass,mymethods, method.getName().substring(3)) && simple == isSimpleType(method.getParameterTypes()[0]) ) {
                 result.add(method);
             }
-            else if (!set && method.getName().startsWith("get") && hasBeanProperty(mymethods, method.getName().substring(3))&& simple == isSimpleType(method.getReturnType()) ) {
+            else if (!set && method.getName().startsWith("get") && hasBeanProperty(theclass,mymethods, method.getName().substring(3))&& simple == isSimpleType(method.getReturnType()) ) {
                 result.add(method);
             }
         }

@@ -18,13 +18,13 @@ public class TestObject extends Test {
     private byte[] image;
     private Object[] objects;
     private String myType;
-    private Vector arms;
-    private Hashtable organs;
-    private boolean isAlive;
-    private int heads;
-    private long lastUpdated;
-    private int things;
-    private Test andOneInside;
+    private transient Vector arms;
+    private transient Hashtable organs;
+    private transient boolean isAlive;
+    private transient int heads;
+    private transient long lastUpdated;
+    private transient int things;
+    private transient Test andOneInside;
 
     public Test getAndOneInside() {
         return andOneInside;
@@ -129,7 +129,7 @@ public class TestObject extends Test {
 
     @Override
     public String toString() {
-        return "TestObject:"+name+","+age;
+        return "TestObject:"+name+","+age+","+numbers;
     }
 
     @Override

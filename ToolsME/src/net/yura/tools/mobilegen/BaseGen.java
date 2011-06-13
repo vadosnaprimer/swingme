@@ -7,6 +7,7 @@ package net.yura.tools.mobilegen;
 import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -111,11 +112,23 @@ public abstract class BaseGen extends Task {
 
         return classes;
     }
-    public static boolean hasBeanProperty(Method[] mymethods, String name) {
+    public static boolean hasBeanProperty(Class theclass,Method[] mymethods, String name) {
+
+        String fieldName = Character.toLowerCase(name.charAt(0))+name.substring(1);
+
+        try {
+            Field field = theclass.getDeclaredField(fieldName);
+            if ( Modifier.isTransient(field.getModifiers()) ) {
+                return false;
+            }
+        }
+        catch(Exception ex) {
+            // field not found
+        }
+
         boolean hasset = false;
         boolean hasget = false;
         for (Method method:mymethods) {
-
             if (method.getName().equals("get"+name) && method.getReturnType()!=void.class && method.getParameterTypes().length == 0 && Modifier.isPublic( method.getModifiers() ) ) {
                 hasget = true;
             }

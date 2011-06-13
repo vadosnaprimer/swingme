@@ -79,6 +79,10 @@ public class Test1 {
                 // never store something and not return it to the kxml reader on a read request
                 return xml.load( new BufferedReader( new InputStreamReader( new BufferedInputStream(is)) ) );
             }
+            @Override
+            public String toString() {
+                return xml.toString();
+            }
         };
 
         doTest(kxml);
@@ -92,6 +96,10 @@ public class Test1 {
             @Override
             Object read() throws Exception {
                 return bin.load(is);
+            }
+            @Override
+            public String toString() {
+                return bin.toString();
             }
         };
 
@@ -107,6 +115,10 @@ public class Test1 {
             @Override
             Object read() throws Exception {
                 return json.load(is);
+            }
+            @Override
+            public String toString() {
+                return json.toString();
             }
         };
 
@@ -128,6 +140,10 @@ public class Test1 {
                 DataInputStream din = new DataInputStream(is);
                 int size = din.readInt();
                 return proto.load(is,size);
+            }
+            @Override
+            public String toString() {
+                return proto.toString();
             }
         };
 
@@ -257,14 +273,26 @@ public class Test1 {
 
         System.out.println();
 
-        //XMLAccess kxml = new XMLAccess();
-        JSONAccess kxml = new JSONAccess();
+        XMLAccess kxml = new XMLAccess();
+        //JSONAccess kxml = new JSONAccess();
 
         for (Object obj:objects) {
             o1 = util.read();
-            System.out.println("equals=" +obj.equals(o1) +" "+o1);
-            kxml.save(System.out, o1);
-            System.out.println();
+            boolean equals = obj.equals(o1);
+            if (equals) {
+                System.out.println("equals="+equals+" "+o1);
+                kxml.save(System.out, o1);
+                System.out.println();
+            }
+            if (!equals) {
+                System.err.println("ERROR IN "+util);
+                System.err.print("OBJ1 = ");
+                kxml.save(System.err, obj);
+                System.err.println();
+                System.err.print("OBJ2 = ");
+                kxml.save(System.err, o1);
+                System.err.println();
+            }
         }
 
     }
@@ -318,7 +346,15 @@ public class Test1 {
     public static Object getTestObject3() {
 
         Hashtable table1 = new Hashtable();
-        table1.put(new Test(), new TestObject());
+
+        TestObject t1 = new TestObject();
+        Vector ns = new Vector();
+        ns.add(new Integer(5));
+        ns.add(new Integer(50));
+        ns.add(new Integer(500));
+        t1.setNumbers(ns);
+
+        table1.put(new Test(), t1);
         Vector vector1 = new Vector();
         TestObject to1 = new TestObject();
 

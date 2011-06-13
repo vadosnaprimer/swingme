@@ -376,14 +376,17 @@ ps.println("    }");
 
 	}
 
+        /**
+         * find all methods
+         */
     private static ArrayList<Method> getMethods(Class theclass, boolean set) {
         Method[] mymethods = theclass.getDeclaredMethods();
         ArrayList<Method> result = new ArrayList<Method>();
         for (Method method:mymethods) {
-            if (set && method.getName().startsWith("set") && hasBeanProperty(mymethods,method.getName().substring(3)) ) {
+            if (set && method.getName().startsWith("set") && hasBeanProperty(theclass,mymethods,method.getName().substring(3)) ) {
                 result.add(method);
             }
-            else if (!set && method.getName().startsWith("get") && hasBeanProperty(mymethods,method.getName().substring(3)) ) {
+            else if (!set && method.getName().startsWith("get") && hasBeanProperty(theclass,mymethods,method.getName().substring(3)) ) {
                 result.add(method);
             }
         }
