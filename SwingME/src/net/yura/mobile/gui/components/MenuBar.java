@@ -376,8 +376,9 @@ public class MenuBar extends List implements ActionListener {
                 w = h;
             }
 
-            setFixedCellHeight(h);
-            setFixedCellWidth(w);
+            // we should NEVER set a size to 0, so instead we use -1
+            setFixedCellHeight(h==0?-1:h);
+            setFixedCellWidth(w==0?-1:w);
 
             if (firstMenu()) {
 

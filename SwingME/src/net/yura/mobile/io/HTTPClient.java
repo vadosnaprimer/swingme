@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -46,21 +48,9 @@ public abstract class HTTPClient extends QueueProcessorThread {
         Request request = (Request)arg0;
 
         String url = request.url;
-        String getpost = null;
-        if ((!request.post || request.postData!=null) && request.params !=null) {
-            StringBuffer getpostb = new StringBuffer();
-            Enumeration enu = request.params.keys();
-            while(enu.hasMoreElements()) {
-                Object key = enu.nextElement();
-                getpostb.append( encode( String.valueOf( key ) ) );
-                getpostb.append("=");
-                getpostb.append(encode( String.valueOf( request.params.get(key) ) ));
-                getpostb.append("&");
-            }
-            if (getpostb.length() >0) {
-                getpostb.deleteCharAt( getpostb.length()-1 );
-                getpost = getpostb.toString();
-            }
+        boolean getpost = false;
+        if (request.params !=null && request.params.size()>0) {
+            getpost = true;
         }
 
         HttpConnection httpConn = null;
@@ -71,13 +61,38 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
         try {
 
-            if ((!request.post || request.postData!=null) && getpost!=null) {
+            // if this is a GET, or we have other data to POST
+            if ((!request.post || request.postData!=null) && getpost) {
+
+                ByteArrayOutputStream b = new ByteArrayOutputStream();
+                Writer w = new OutputStreamWriter(b);
+                getPostString(request.params,w);
+                w.flush();
+                String getpostString = b.toString(); // this should be safe, as URL Encoded String will not have any UTF
+
+/*              // this does the same but creates a new class "java.io.StringWriter" that we can use
+                final StringBuffer buff = new StringBuffer();
+                Writer writer = new Writer() { // in JavaSE we have a class
+                    public void write(char[] cbuf, int off, int len) {
+                        buff.append(cbuf, off, len);
+                    }
+                    public void flush() { }
+                    public void close() { }
+                };
+                getPostString(request.params,writer);
+                String getpostString = buff.toString();
+*/
+
                 if (url.indexOf('?') >=0) {
-                    url = url +"&"+getpost;
+                    url = url +"&"+getpostString;
                 }
                 else {
-                    url = url +"?"+getpost;
+                    url = url +"?"+getpostString;
                 }
+            }
+
+            if (SocketClient.connectAppend!=null) {
+                url = url + SocketClient.connectAppend;
             }
 
             httpConn = (HttpConnection)Connector.open(url);
@@ -96,14 +111,24 @@ public abstract class HTTPClient extends QueueProcessorThread {
             if(request.post) {
             	// opening an output stream will automatically set the request method to POST
             	// BE Careful!!!!!
+                try {
 	            os = httpConn.openOutputStream();
 	            if (request.postData!=null ) {
 	                os.write(request.postData);
 	            }
-	            else if(request.post && getpost!=null) {
-	                os.write(getpost.getBytes());
+	            else if(request.post && getpost) {
+
+                        Writer w = new OutputStreamWriter(os);
+                        getPostString(request.params,w);
+                        w.flush();
+
+	                //os.write(getpost.getBytes());
 	            }
 	            os.flush();
+                }
+                finally {
+                    FileUtil.close(os);
+                }
             }
             /** Initiate connection and check for the response code. If the
             response code is HTTP_OK then get the content from the target
@@ -155,45 +180,74 @@ public abstract class HTTPClient extends QueueProcessorThread {
         finally {
             FileUtil.close(httpConn);
             FileUtil.close(is);
-            FileUtil.close(os);
         }
+    }
+
+
+
+    public void getPostString(Hashtable params,Writer getpostb) throws IOException {
+
+            //StringBuffer getpostb = new StringBuffer();
+            Enumeration enu = params.keys();
+
+            boolean first=true;
+
+            while(enu.hasMoreElements()) {
+                Object key = enu.nextElement();
+
+                if (first) {
+                    first=false;
+                }
+                else {
+                    getpostb.write('&');
+                }
+
+                encode( String.valueOf( key ), getpostb );
+                getpostb.write('=');
+                encode( String.valueOf( params.get(key)), getpostb );
+            }
+
+            //return getpostb.toString();
+
     }
 
     /**
      * @see java.net.URLEncoder#encode(java.lang.String, java.lang.String) URLEncoder.encode
      */
-    public static String encode(String s) {
-        byte[] bytes = s.getBytes();
-        StringBuffer ret = new StringBuffer(s.length());
-        for (int a=0;a<bytes.length;a++) {
-            byte c = bytes[a];
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
-                    || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*' || c == '_')
-                ret.append((char)c);
-            else if (c == ' ')
-                ret.append('+');
+    public static void encode(String s,Writer ret) throws IOException {
+        for (int a=0;a<s.length();a++) {
+            char c = s.charAt(a);
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*' || c == '_') {
+                ret.write(c);
+            }
+            else if (c == ' ') {
+                ret.write('+');
+            }
             else {
-                appendHex(c, ret);
-                if (c >=128) {
-                    appendHex(bytes[++a], ret);
-                }
-                if (c >= 224) {
-                    appendHex(bytes[++a], ret);
+                // we do not convert the whole string to UTF-8, but only the current char, this is better for memory
+                byte[] ba = String.valueOf(c).getBytes("UTF-8"); // YURA this can fail if the system default is not UTF-8
+                for (int j = 0; j < ba.length; j++) {
+
+                    int n = ba[j] & 0xFF;
+                    ret.write('%');
+                    if (n < 16) {
+                        ret.write('0');
+                    }
+                    ret.write(Integer.toHexString(n));
+
+                    // THIS IS THE SAME AS ABOVE, ALSO WORKS
+                    // the only difference is that it uses A-F and not a-f
+                    //ret.write('%');
+                    //int d1 = (ba[j] >> 4) & 0xF;
+                    //int d2 = ba[j] & 0xF;
+                    //char ch1 = (char) ((d1<10)?('0' + d1):('A' - 10 + d1));
+                    //char ch2 = (char) ((d2<10)?('0' + d2):('A' - 10 + d2));
+		    //ret.write( ch1 );
+		    //ret.write( ch2 );
                 }
             }
         }
-        return ret.toString();
     }
-
-    private static void appendHex(byte b, StringBuffer buff){
-        int n = b & 0xFF;
-        buff.append('%');
-        if (n < 16) {
-            buff.append('0');
-        }
-        buff.append(Integer.toHexString(n));
-    }
-
 
     /**
      * @see java.net.URLDecoder#decode(java.lang.String, java.lang.String) URLDecoder.decode
@@ -249,7 +303,12 @@ public abstract class HTTPClient extends QueueProcessorThread {
 			throw new IllegalArgumentException(
 		         "URLDecoder: Incomplete trailing escape (%) pattern");
 
-		    sb.append(new String(bytes, 0, pos));
+                    try {
+                        sb.append(new String(bytes, 0, pos,"UTF-8")); // YURA this can fail if the system default is not UTF-8
+                    }
+                    catch(Exception ex) {
+                        throw new RuntimeException();
+                    }
 		} catch (NumberFormatException e) {
 		    throw new IllegalArgumentException(
                     "URLDecoder: Illegal hex characters in escape (%) pattern - "

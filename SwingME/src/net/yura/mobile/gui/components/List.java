@@ -908,6 +908,11 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#setFixedCellHeight(int) JList.setFixedCellHeight
      */
     public void setFixedCellHeight(int height) {
+        //#mdebug debug
+        if (height==0) {
+            throw new RuntimeException("trying to setFixedCellHeight to 0");
+        }
+        //#enddebug
         fixedCellHeight = height;
     }
 
@@ -920,6 +925,11 @@ public class List extends Component implements ActionListener {
      * @see javax.swing.JList#setFixedCellWidth(int) JList.setFixedCellWidth
      */
     public void setFixedCellWidth(int width) {
+        //#mdebug debug
+        if (width==0) {
+            throw new RuntimeException("trying to setFixedCellWidth to 0");
+        }
+        //#enddebug
         fixedCellWidth = width;
     }
 
