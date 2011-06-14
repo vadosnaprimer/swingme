@@ -133,6 +133,8 @@ public class ImageUtil {
 
         if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
 
+            byte[] img=null;
+
             try {
 
                 // OLD BlackBerry
@@ -141,12 +143,22 @@ public class ImageUtil {
                     InputStream in = FileUtil.getInputStreamFromFileConnector(bbThumbs);
                     String file = fileName.substring(fileName.lastIndexOf('/')+1);
                     byte[] data = FileUtil.getData(in, -1);
-                    byte[] img = readThumbs(data, file);
+                    img = readThumbs(data, file);
                     return Image.createImage(img, 0, img.length);
                 }
 
                 // NEW BlackBerry                                               can be "pictures" or "camera" after the "user"
-                String bbThumbsNew = fileName.startsWith("file:///store/home/user/")?"file:///store/appdata/rim/media/":"file:///SDCard/BlackBerry/system/media/";
+                String bbThumbsNew;
+                if (fileName.startsWith("file:///store/")) { // home/user/
+                    bbThumbsNew="file:///store/appdata/rim/media/";
+                }
+                else if (fileName.startsWith("file:///system/")) {
+                    bbThumbsNew="file:///system/appdata/rim/media/";
+                }
+                else {
+                    bbThumbsNew="file:///SDCard/BlackBerry/system/media/";
+                }
+
                 String[] names = {"thumbs116x116.dat","thumbs480x360.dat","thumbs86x86.dat","thumbs480x480.dat"};
 
                 for (int c=0;c<names.length;c++) {
@@ -154,14 +166,17 @@ public class ImageUtil {
                     if (FileUtil.localFileExists(thumbs)) {
                         InputStream in = FileUtil.getInputStreamFromFileConnector(thumbs);
                         byte[] data = FileUtil.getData(in, -1);
-                        byte[] img = readThumbsAlternative(data, fileName);
+                        img = readThumbsAlternative(data, fileName);
                         return Image.createImage(img, 0, img.length);
                     }
                 }
 
             }
             catch (Exception ex) {
-                    ex.printStackTrace();
+                //#mdebug debug
+                System.err.println("error "+ex+" "+img+" "+(img!=null?img.length:-1));
+                ex.printStackTrace();
+                //#enddebug
             }
 
         } // end blackberry

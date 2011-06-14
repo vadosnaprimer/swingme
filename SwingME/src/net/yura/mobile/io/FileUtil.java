@@ -28,7 +28,7 @@ public class FileUtil {
 
     private static final int[] TYPES_KNOWN = {TYPE_PICTURE,TYPE_AUDIO,TYPE_VIDEO};
     public static final String[][] EXTS_FILENAME = {
-        { "JPG", "JPEG","JPE","PNG","GIF","BMP" },
+        { "JPG", "JPEG","JPE","PNG","GIF","BMP","PNG.REM" /* .png.rem used on blackberry */ },
         {"AMR","MP3","MP4","AAC","WMA","WAV","MID","MIDI","M4A"},
         {"3GP"},};
 
