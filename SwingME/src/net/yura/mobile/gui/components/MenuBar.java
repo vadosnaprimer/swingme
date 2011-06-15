@@ -232,7 +232,8 @@ public class MenuBar extends List implements ActionListener {
                 int minWidth=0;
                 ListCellRenderer renderer = getCellRenderer();
                 int current = getSelectedIndex();
-                for(int i = 0; i < getSize(); i++){
+                int size = getSize();
+                for(int i = 0; i < size; i++){
                     Object item = getElementAt(i);
                     Component c = renderer.getListCellRendererComponent(this, item, i, i == current, false);
                     c.workoutPreferredSize();
@@ -330,7 +331,27 @@ public class MenuBar extends List implements ActionListener {
 
     protected void workoutMinimumSize() {
 
-        if (getDesktopPane().GRID_MENU) {
+        DesktopPane dp = getDesktopPane();
+        
+        // in softkey mode if the bar is at the bottom of a window
+        // we do not want it getting focus when we click on it
+        // unless we have something focusable in it, but thats rare
+        // TODO, if we mix focuable AND softkeys, this will make the
+        // menu bar draw over the top of the softkeys, should not.
+        if (dp.SOFT_KEYS && isFrameMenuBar() ) {
+            boolean focus=false;
+            int size = getSize();
+            for(int i = 0; i < size; i++){
+                Component item = (Component)getElementAt(i);
+                if (item.isFocusable()) {
+                    focus = true;
+                    break;
+                }
+            }
+            setFocusable(focus);
+        }
+        
+        if (dp.GRID_MENU) {
 
             int size = getSize();
             ListCellRenderer renderer = getCellRenderer();
@@ -389,7 +410,7 @@ public class MenuBar extends List implements ActionListener {
                 for (Component p=this;p!=null;p=p.getParent()) {
                     in = p.getInsets().getRight() + p.getInsets().getLeft();
                 }
-                width = getDesktopPane().getWidth() -in;
+                width = dp.getWidth() -in;
 
                 cols = Math.max(Math.min( (width+getDividerWidth()) / (w+getDividerWidth() ),size),1); // TODO very long buttons will be truncated, is this ok?
 
