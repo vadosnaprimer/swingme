@@ -476,6 +476,9 @@ public abstract class Component {
     }
 
     public boolean consumesMotionEvents() {
+        if (parent!=null) {
+            return parent.consumesMotionEvents();
+        }
         return false;
     }
 
