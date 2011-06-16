@@ -20,6 +20,14 @@ import net.yura.tools.mobilegen.ProtoLoader.MessageDefinition;
  */
 public class MobileProtoGen extends BaseGen {
 
+    public boolean obfuscate = false;
+    
+    
+    public static String compute="compute";
+    public static String encode="encode";
+    public static String decode="decode";
+    public static String size="Size";
+    
     String protoSource    = null;
     String[] objectPackage  = null;
     String extendClass = "ProtoUtil";
@@ -37,6 +45,17 @@ public class MobileProtoGen extends BaseGen {
     }
     public void setExtendClass(String cl) {
         extendClass = cl;
+    }
+    
+    public void setObfuscate(boolean o) {
+        obfuscate = o;
+        
+        if (obfuscate) {
+            compute="c"; // compute
+            encode="e"; // encode
+            decode="d"; // decode
+            size=""; // Size
+        }
     }
 
     @Override
@@ -127,7 +146,7 @@ Hashtable<String,MessageDefinition> messageDefs;
 
         for (MessageDefinition message:messages) {
 
-            ps.println("private int compute"+message.getName()+"Size("+message.getImplementation().getSimpleName()+" object) {");
+            ps.println("private int "+compute+getMessageID(message)+size+"("+message.getImplementation().getSimpleName()+" object) {");
             ps.println("    int size=0;");
 
             printSaveComputeMethod(ps,message,true);
@@ -143,7 +162,7 @@ Hashtable<String,MessageDefinition> messageDefs;
 
         for (MessageDefinition message:messages) {
 
-            ps.println("private void encode"+message.getName()+"(CodedOutputStream out, "+message.getImplementation().getSimpleName()+" object) throws IOException {");
+            ps.println("private void "+encode+getMessageID(message)+"(CodedOutputStream out, "+message.getImplementation().getSimpleName()+" object) throws IOException {");
 
             printSaveComputeMethod(ps,message,false);
 
@@ -157,7 +176,7 @@ Hashtable<String,MessageDefinition> messageDefs;
 
         for (MessageDefinition message:messages) {
 
-            ps.println("private "+message.getImplementation().getSimpleName()+" decode"+message.getName()+"(CodedInputStream in2) throws IOException {");
+            ps.println("private "+message.getImplementation().getSimpleName()+" "+decode+getMessageID(message)+"(CodedInputStream in2) throws IOException {");
             ps.println("    "+message.getImplementation().getSimpleName()+" object = new "+message.getImplementation().getSimpleName()+"();");
 
             printLoadMethod(ps,message);
@@ -188,7 +207,7 @@ Hashtable<String,MessageDefinition> messageDefs;
                         type = primitiveToJavaType(field.getType(),false);
                     }
                     else {
-                        MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                        MessageDefinition mesDef = messageDefs.get(unCamel(field.getType()));
                         if (mesDef!=null) {
                             type = mesDef.getImplementation().getSimpleName();
                         }
@@ -212,7 +231,7 @@ Hashtable<String,MessageDefinition> messageDefs;
                             type = primitiveToJavaType(field.getType(),false);
                         }
                         else {
-                            MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                            MessageDefinition mesDef = messageDefs.get(unCamel(field.getType()));
                             if (mesDef!=null) {
                                 type = mesDef.getImplementation().getSimpleName();
                             }
@@ -283,17 +302,37 @@ Hashtable<String,MessageDefinition> messageDefs;
         }
 
         if (field.getEnumeratedType()!=null) {
-            thing = "get"+field.getType()+"Enum("+thing+")";
+            thing = "get"+type+"Enum("+thing+")";
             type = "int32";
         }
 
+        String id=null;
+        String c = null;
+        String e = null;
         String s = null;
+        
+        String computeString = null;
         if ( !isPrimitive(type) ) {
                 if ( "Object".equals(type) ) {
-                    s = "computeAnonymousObjectSize( "+thing+" )";
+                    computeString = "computeAnonymousObjectSize( "+thing+" )";
                 }
                 else {
-                    s = "compute"+type+"Size( "+thing+" )";
+
+                    MessageDefinition mesDef = messageDefs.get(unCamel(type));
+                    if (mesDef!=null) {
+                        id = getMessageID(mesDef);
+                        c = compute;
+                        e = encode;
+                        s = size;
+                    }
+                    else {
+                        id = type;
+                        c = "compute";
+                        e = "encode";
+                        s = "Size";
+                    }
+                    
+                    computeString = c+id+s+"( "+thing+" )";
                 }
         }
 
@@ -303,7 +342,7 @@ Hashtable<String,MessageDefinition> messageDefs;
                 ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+t1+" );");
             }
             else {
-                ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", "+s+");");
+                ps.println("    size = size + CodedOutputStream.computeBytesSize("+field.getID()+", "+computeString+");");
             }
         }
         else {
@@ -312,12 +351,12 @@ Hashtable<String,MessageDefinition> messageDefs;
                 if ("bytes".equals(type)) { ps.println("encodeByteArray(out,"+thing+");"); }
             }
             else {
-                ps.println("out.writeBytes("+field.getID()+","+s+");");
+                ps.println("out.writeBytes("+field.getID()+","+computeString+");");
                 if ( "Object".equals(type) ) {
                     ps.println("encodeAnonymousObject( out, "+thing+" );");
                 }
                 else {
-                    ps.println("encode"+type+"( out, "+thing+" );");
+                    ps.println(e+id+"( out, "+thing+" );");
                 }
             }
         }
@@ -364,6 +403,7 @@ ps.println("            switch(fieldNo) {");
 
 for (ProtoLoader.FieldDefinition field:fields) {
 
+    String type = field.getType();
 
     if (message.getImplementation() != Hashtable.class && !field.getRequired() && field.getImplementation()==null) {
         System.out.println("Skipping field: "+field+" message="+message+" load");
@@ -374,26 +414,26 @@ for (ProtoLoader.FieldDefinition field:fields) {
     ps.println("            case "+field.getID()+": {");
 
     if (field.getEnumeratedType() !=null) {
-        ps.println("String value = get"+field.getType()+"String( in2.readInt32() );");
+        ps.println("String value = get"+type+"String( in2.readInt32() );");
     }
-    else if (isPrimitive(field.getType())) {
-        if ("string".equals(field.getType()) || "bytes".equals(field.getType())) {
-            ps.println("        "+primitiveToJavaType(field.getType(),true)+" value = in2.read"+firstUp(field.getType())+"();");
+    else if (isPrimitive(type)) {
+        if ("string".equals(type) || "bytes".equals(type)) {
+            ps.println("        "+primitiveToJavaType(type,true)+" value = in2.read"+firstUp(type)+"();");
         }
         else {
             if (field.getRepeated() || message.getImplementation() == Hashtable.class) {
-                if ("bool".equals(field.getType())) {
-                    ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = in2.read"+firstUp(field.getType())+"()?Boolean.TRUE:Boolean.FALSE;");
+                if ("bool".equals(type)) {
+                    ps.println("    "+primitiveToJavaType(type,true)+" value = in2.read"+firstUp(type)+"()?Boolean.TRUE:Boolean.FALSE;");
                 }
                 else {
-                    ps.println("    "+primitiveToJavaType(field.getType(),true)+" value = new "+primitiveToJavaType(field.getType(),true)+"(in2.read"+firstUp(field.getType())+"() );");
+                    ps.println("    "+primitiveToJavaType(type,true)+" value = new "+primitiveToJavaType(type,true)+"(in2.read"+firstUp(type)+"() );");
                 }
             }   // only cast things that are not supported by protobuff
             else if (field.getImplementation()==byte.class || field.getImplementation()==char.class || field.getImplementation()==short.class) {
-                ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(field.getType())+"();");
+                ps.println("    "+field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")in2.read"+firstUp(type)+"();");
             }
             else {
-                ps.println("    "+field.getImplementation().getSimpleName()+" value = in2.read"+firstUp(field.getType())+"();");
+                ps.println("    "+field.getImplementation().getSimpleName()+" value = in2.read"+firstUp(type)+"();");
             }
         }
     }
@@ -401,22 +441,28 @@ for (ProtoLoader.FieldDefinition field:fields) {
         ps.println("            int size = in2.readBytesSize();");
         ps.println("            int lim = in2.pushLimit(size);");
                         //System.out.println("object size "+size);
-        if ("Object".equals(field.getType())) {
-            ps.println("        "+field.getType()+" value = decodeAnonymousObject(in2);");
+        if ("Object".equals(type)) {
+            ps.println("        "+type+" value = decodeAnonymousObject(in2);");
         }
         else {
 
-                final String type;
-                MessageDefinition mesDef = messageDefs.get(field.getType().toUpperCase());
+                final String implType;
+                final String id;
+                final String d;
+                MessageDefinition mesDef = messageDefs.get(unCamel(type));
                 if (mesDef!=null) {
-                    type = mesDef.getImplementation().getSimpleName();
+                    implType = mesDef.getImplementation().getSimpleName();
+                    id = getMessageID(mesDef);
+                    d = decode;
                 }
                 else {
-                    type = field.getType();
+                    implType = type;
+                    id = type;
+                    d = "decode";
                 }
 
 
-            ps.println("        "+type+" value = decode"+field.getType()+"(in2);");
+            ps.println("        "+implType+" value = "+d+id+"(in2);");
         }
         ps.println("            in2.popLimit(lim);");
     }
@@ -498,7 +544,7 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-ps.println("            case "+enu.getKey()+": return decode"+getMessageFromEnum(enu.getKey()).getName()+"(in2);");
+ps.println("            case "+enu.getKey()+": return "+decode+getMessageID(getMessageFromEnum(enu.getKey()))+"(in2);");
     }
 }
 
@@ -515,7 +561,7 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-ps.println("            case "+enu.getKey()+": return compute"+getMessageFromEnum(enu.getKey()).getName()+"Size( ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj );");
+ps.println("            case "+enu.getKey()+": return "+compute+getMessageID(getMessageFromEnum(enu.getKey()))+size+"( ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj );");
     }
 }
 
@@ -530,7 +576,7 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-        ps.println("    case "+enu.getKey()+": encode"+getMessageFromEnum(enu.getKey()).getName()+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
+        ps.println("    case "+enu.getKey()+": "+encode+getMessageID(getMessageFromEnum(enu.getKey()))+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
     }
 }
 
@@ -623,7 +669,22 @@ ps.println("    }");
         }
     }
 
+    /**
+     * @see MigwClient#unCamel(GeneratedMessage)
+     */
+    	public static String unCamel(String gm) {
+            if (gm==null)
+                    return "TYPE_NULL" ;
 
+            String cc = "" ;
+            for (char c:gm.toCharArray()) {
+                    if (Character.isUpperCase(c)) {
+                            cc += "_" ;
+                    }
+                    cc += Character.toUpperCase(c) ; 
+            }
+            return "TYPE"+cc ;
+	}
 
     public static String firstUp(String type) {
         int i;
@@ -634,10 +695,23 @@ ps.println("    }");
     }
 
     private MessageDefinition getMessageFromEnum(String key) {
-        String name = key.substring(5).replaceAll("\\_", ""); // remove the "TYPE_"
-        MessageDefinition md = messageDefs.get(name);
+        //key = key.substring(5).replaceAll("\\_", ""); // remove the "TYPE_"
+        MessageDefinition md = messageDefs.get(key);
         if (md==null) throw new RuntimeException("no message found for type "+key);
         return md;
+    }
+    private String getMessageID(MessageDefinition md) {
+        EnumDefinition edef = enumDefs.get("ObjectType");
+        String type = unCamel(md.getName());
+        Integer id = edef.getValues().get(type);
+        if (id==null) {
+            System.out.println("NO TYPE ENUM FOR "+md);
+            return md.getName();
+        }
+        if (obfuscate) {
+            return id.toString();
+        }
+        return md.getName();
     }
 
     private static boolean isPrimitive( String type ) {

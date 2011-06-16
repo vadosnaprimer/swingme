@@ -188,7 +188,7 @@ public class ProtoLoader {
             }
 
             //this.messages.addElement( md );
-            this.messageDefs.put( name.toUpperCase() , md );
+            this.messageDefs.put( MobileProtoGen.unCamel(name) , md );
         //}
     }
 
