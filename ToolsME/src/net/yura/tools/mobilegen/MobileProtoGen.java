@@ -686,6 +686,11 @@ ps.println("    }");
             return "TYPE"+cc ;
 	}
 
+        /**
+         * this converts the proto notation for field names into java with first letter capitalised
+         * @param type hello_world
+         * @return HelloWorld
+         */
     public static String firstUp(String type) {
         int i;
         while ((i=type.indexOf('_'))>=0) {
