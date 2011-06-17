@@ -10,7 +10,7 @@ public class ClassComparator implements Comparator {
 
     public int compare(Object o1, Object o2) {
         Class class1 = null;
-        Class class2 = null;;
+        Class class2 = null;
         if (o1 instanceof MessageDefinition) {
             class1 = ((MessageDefinition)o1).getImplementation();
         }
@@ -25,6 +25,9 @@ public class ClassComparator implements Comparator {
         }
 
         if (class1 == class2) {
+            if (o1 instanceof MessageDefinition && o2 instanceof MessageDefinition) {
+                return ((MessageDefinition)o1).getName().compareTo( ((MessageDefinition)o2).getName() );
+            }
             return 0;
         }
         if (class1 == null) {
