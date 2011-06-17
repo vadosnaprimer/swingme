@@ -96,8 +96,11 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
 
             httpConn = (HttpConnection)Connector.open(url);
+            
+            boolean post = request.post || request.postData!=null;
+            
             // Setup HTTP Request
-            httpConn.setRequestMethod(request.post || request.postData!=null ? HttpConnection.POST : HttpConnection.GET);
+            httpConn.setRequestMethod(post ? HttpConnection.POST : HttpConnection.GET);
 
             if(request.headers!=null) {
             	Enumeration e = request.headers.keys();
@@ -108,7 +111,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
             //httpConn.setRequestProperty("User-Agent",
             //  "Profile/MIDP-1.0 Confirguration/CLDC-1.0");
-            if(request.post) {
+            if(post) {
             	// opening an output stream will automatically set the request method to POST
             	// BE Careful!!!!!
                 try {
@@ -148,28 +151,31 @@ public abstract class HTTPClient extends QueueProcessorThread {
                 }
             }
 
-            switch(respCode)
-            {
+            switch(respCode) {
+            	// ================= OK =================
                 case HttpConnection.HTTP_OK:
                     is = httpConn.openInputStream();
                     onResult(request, respCode, headers, is, httpConn.getLength());
                     break;
-                    //case HttpConnection.HTTP_MOVED_PERM:
+
+                // ================= MOVE =================
+                //case HttpConnection.HTTP_MOVED_PERM:
                 case HttpConnection.HTTP_SEE_OTHER:
                     request.post = false;
                     request.postData = null;
                 case HttpConnection.HTTP_MOVED_TEMP:
                 case HttpConnection.HTTP_TEMP_REDIRECT:
                     request.url = httpConn.getHeaderField("Location");
-                    if(request.url != null && request.redirects>0)
-                    {
+                    if(request.url != null && request.redirects>0) {
                         addToInbox(request);
                         request.redirects--;
                         break;
                     }
+                    // we can not retry any more, fall though to error
+
+                // ================= ERORRS =================
                 default:
-                    is = httpConn.openInputStream();
-                    onResult(request, respCode, headers, is, httpConn.getLength());
+                	onError(request, respCode, headers, null);
                     break;
             }
         }
