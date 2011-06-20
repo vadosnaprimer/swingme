@@ -21,7 +21,7 @@ import net.yura.tools.mobilegen.ProtoLoader.MessageDefinition;
 public class MobileProtoGen extends BaseGen {
 
     public boolean obfuscate = false;
-    
+    public boolean split = false;
     
     public static String compute="compute";
     public static String encode="encode";
@@ -57,6 +57,10 @@ public class MobileProtoGen extends BaseGen {
             size=""; // Size
         }
     }
+    
+    public void setSplit(boolean o) {
+        split = o;
+    }
 
     @Override
     public void doGen() throws Exception {
@@ -70,7 +74,43 @@ loader.process(protoSource, objectPackage);
 enumDefs = loader.getEnumDefs();
 messageDefs = loader.getMessageDefs();
 
-File output = getGeneratedFile();
+
+
+
+        File outFile = getGeneratedFile();
+
+        PrintStream ps = printClass( outFile , getOutputClass(), split? getOutputClass()+"Enum" :extendClass);
+
+        if (!split) {
+            printEnummethod(ps);
+        }
+        
+        printIDs(ps);
+        printEncDecComp(ps);
+        
+        List<MessageDefinition> messages = new ArrayList<MessageDefinition>( messageDefs.values() );
+        Collections.sort(messages, new ClassComparator());
+        System.out.println( messages );
+        
+        printComp(ps,messages);
+        printEnc(ps,messages);
+        printDec(ps,messages);
+
+        ps.println("}");
+        
+        
+        if (split) {
+        
+            ps = printClass( new File(outFile.getParentFile(),outFile.getName().substring(0, outFile.getName().lastIndexOf('.'))+"Enum.java") , getOutputClass()+"Enum", extendClass );
+        
+            printEnummethod(ps);
+            
+            ps.println("}");
+            
+        }
+    }
+
+    private PrintStream printClass(File output,String outClass, String extClass) throws Exception {
 
 PrintStream ps = new PrintStream( output ) {
     private int indent=0;
@@ -89,8 +129,7 @@ PrintStream ps = new PrintStream( output ) {
         }
     }
 };
-
-
+        
 ps.println("package "+getOutputPackage()+";");
 
 for (String c:this.objectPackage) {
@@ -108,11 +147,11 @@ ps.println("import net.yura.mobile.io.proto.WireFormat;");
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
 ps.println(" */");
-ps.println("public class "+getOutputClass()+" extends "+extendClass+" {");
+ps.println("public class "+outClass+" extends "+extClass+" {");
 
-printBody(ps);
+//ps.println("public "+outClass+"() { }"); // empty constructor
 
-ps.println("}");
+    return ps;
 
     }
 
@@ -120,29 +159,203 @@ Hashtable<String,EnumDefinition> enumDefs;
 Hashtable<String,MessageDefinition> messageDefs;
 
 
-    public void printBody(PrintStream ps) {
 
+
+
+
+
+
+    private void printEnummethod(PrintStream ps) {
+
+        Set<String> keys = enumDefs.keySet();
+
+        for (String name:keys) {
+            EnumDefinition edef = enumDefs.get(name);
+            Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+
+            if (!"ObjectType".equals(name) ) {
+
+
+ps.println("    public static int get"+name+"Enum(String enu) {");
+
+for (Map.Entry<String,Integer> enu:set) {
+    ps.println("    if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue()+";");
+}
+
+ps.println("        return -1;");
+ps.println("    }");
+ps.println("    public static String get"+name+"String(int i) {");
+ps.println("        switch (i) {");
+
+for (Map.Entry<String,Integer> enu:set) {
+    ps.println("        case "+enu.getValue()+": return \""+enu.getKey()+"\";");
+}
+
+ps.println("            default: return \"unknown \"+i;");
+ps.println("        }");
+ps.println("    }");
+
+            }
+
+        }
+    }
+
+
+
+
+
+    private void printIDs(PrintStream ps) {
+        
         EnumDefinition edef = enumDefs.get("ObjectType");
-
         Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+                
         for (Map.Entry<String,Integer> enu:set) {
             int num = enu.getValue();
             if (num >= 20) {
                 ps.println("public static final int "+enu.getKey()+"="+num+";");
             }
         }
+                
+                
+//ps.println("    @Override");
+ps.println("    protected int getObjectTypeEnum(Object obj) {");
 
-        ps.println("public "+getOutputClass()+"() { }"); // empty constructor
+ps.println("        if (obj instanceof Hashtable) {");
+ps.println("            Hashtable table = (Hashtable)obj;");
 
-        printEnummethod(ps);
 
-        List<MessageDefinition> messages = new ArrayList<MessageDefinition>( messageDefs.values() );
-        Collections.sort(messages, new ClassComparator());
-        System.out.println( messages );
+for (Map.Entry<String,Integer> enu:set) {
+    int num = enu.getValue();
+    if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() == Hashtable.class) {
+
+        String line1 ="";
+        String line2 ="";
+        Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
+        for (ProtoLoader.FieldDefinition field:fields) {
+            if (field.required) { //  || field.repeated (we dont need a null vector)
+                line1 = line1 +"\""+field.getName()+"\",";
+            }
+            else {
+                line2 = line2 +"\""+field.getName()+"\",";
+            }
+        }
+        if (line1.endsWith(",")) line1 = line1.substring(0, line1.length() - 1);
+        if (line2.endsWith(",")) line2 = line2.substring(0, line2.length() - 1);
+        
+        String req = "".equals(line1)?"EMPTY":"new String[] {"+line1+"}";
+        String opt = "".equals(line2)?"EMPTY":"new String[] {"+line2+"}";
+        
+        ps.println("    if (hashtableIsMessage(table,"+req+","+opt+")) {");
+
+        ps.println("        return "+enu.getKey()+";");
+        ps.println("    }");
+    }
+}
+
+ps.println("        }");
+
+List<MessageDefinition> messages = new ArrayList<MessageDefinition>();
+Hashtable<MessageDefinition,String> messageNames = new Hashtable<MessageDefinition,String>();
+for (Map.Entry<String,Integer> enu:set) {
+    int num = enu.getValue();
+    if (num >= 20) {
+        String messageName = enu.getKey();
+        MessageDefinition message = getMessageFromEnum(messageName);
+        if(message.getImplementation() != Hashtable.class) {
+            messages.add(message);
+            messageNames.put(message, messageName);
+        }
+    }
+}
+
+Collections.sort(messages,new ClassComparator());
+
+for (MessageDefinition message:messages) {
+    ps.println("    if (obj instanceof "+message.getImplementation().getSimpleName()+") {");
+    ps.println("        return "+messageNames.get(message)+";");
+    ps.println("    }");
+}
+
+ps.println("        return super.getObjectTypeEnum(obj);");
+
+ps.println("    }");
+
+        
+        
+    }
+
+
+
+
+
+
+
+
+    private void printEncDecComp(PrintStream ps) {
+
+        EnumDefinition edef = enumDefs.get("ObjectType");
+        Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+
+        
+        
+        
+//ps.println("    @Override");
+ps.println("    protected Object decodeObject(CodedInputStream in2,int type) throws IOException {");
+ps.println("        switch (type) {");
+
+
+
+for (Map.Entry<String,Integer> enu:set) {
+    int num = enu.getValue();
+    if (num >= 20) {
+ps.println("            case "+enu.getKey()+": return "+decode+getMessageID(getMessageFromEnum(enu.getKey()))+"(in2);");
+    }
+}
+
+
+ps.println("            default: return super.decodeObject(in2, type);");
+ps.println("        }");
+ps.println("    }");
+//ps.println("    @Override");
+ps.println("    protected int computeObjectSize(Object obj,int type) {");
+ps.println("        switch (type) {");
+
+
+
+for (Map.Entry<String,Integer> enu:set) {
+    int num = enu.getValue();
+    if (num >= 20) {
+ps.println("            case "+enu.getKey()+": return "+compute+getMessageID(getMessageFromEnum(enu.getKey()))+size+"( ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj );");
+    }
+}
+
+ps.println("            default: return super.computeObjectSize(obj,type);");
+ps.println("        }");
+ps.println("    }");
+//ps.println("    @Override");
+ps.println("    protected void encodeObject(CodedOutputStream out, Object obj,int type) throws IOException {");
+ps.println("        switch (type) {");
+
+
+for (Map.Entry<String,Integer> enu:set) {
+    int num = enu.getValue();
+    if (num >= 20) {
+        ps.println("    case "+enu.getKey()+": "+encode+getMessageID(getMessageFromEnum(enu.getKey()))+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
+    }
+}
+
+ps.println("            default: super.encodeObject(out,obj,type); break;");
+ps.println("        }");
+ps.println("    }");
+        
+
+
+    }
 
 // #############################################################################
 // ############################## compute ######################################
 // #############################################################################
+    private void printComp(PrintStream ps,List<MessageDefinition> messages) {
 
         for (MessageDefinition message:messages) {
 
@@ -155,10 +368,12 @@ Hashtable<String,MessageDefinition> messageDefs;
             ps.println("}");
 
         }
+    }
 
 // #############################################################################
 // ############################### encode ######################################
 // #############################################################################
+    private void printEnc(PrintStream ps,List<MessageDefinition> messages) {
 
         for (MessageDefinition message:messages) {
 
@@ -169,11 +384,13 @@ Hashtable<String,MessageDefinition> messageDefs;
             ps.println("}");
 
         }
+    }
 
 // #############################################################################
 // ################################# decode ####################################
 // #############################################################################
-
+    private void printDec(PrintStream ps,List<MessageDefinition> messages) {
+    
         for (MessageDefinition message:messages) {
 
             ps.println("private "+message.getImplementation().getSimpleName()+" "+decode+getMessageID(message)+"(CodedInputStream in2) throws IOException {");
@@ -190,7 +407,7 @@ Hashtable<String,MessageDefinition> messageDefs;
 
 
 
-    public void printSaveComputeMethod(PrintStream ps,MessageDefinition message,boolean calc) {
+    private void printSaveComputeMethod(PrintStream ps,MessageDefinition message,boolean calc) {
 
         Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
         for (ProtoLoader.FieldDefinition field:fields) {
@@ -380,7 +597,7 @@ Hashtable<String,MessageDefinition> messageDefs;
 
 
 
-    public void printLoadMethod(PrintStream ps,MessageDefinition message) {
+    private void printLoadMethod(PrintStream ps,MessageDefinition message) {
 
         Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
 
@@ -513,161 +730,6 @@ ps.println("        }");
 
 
 
-
-
-
-
-
-
-
-
-    
-
-
-
-    private void printEnummethod(PrintStream ps) {
-
-        Set<String> keys = enumDefs.keySet();
-
-        for (String name:keys) {
-            EnumDefinition edef = enumDefs.get(name);
-            Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
-
-            if ("ObjectType".equals(name) ) {
-
-//ps.println("    @Override");
-ps.println("    protected Object decodeObject(CodedInputStream in2,int type) throws IOException {");
-ps.println("        switch (type) {");
-
-
-
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
-    if (num >= 20) {
-ps.println("            case "+enu.getKey()+": return "+decode+getMessageID(getMessageFromEnum(enu.getKey()))+"(in2);");
-    }
-}
-
-
-ps.println("            default: return super.decodeObject(in2, type);");
-ps.println("        }");
-ps.println("    }");
-//ps.println("    @Override");
-ps.println("    protected int computeObjectSize(Object obj,int type) {");
-ps.println("        switch (type) {");
-
-
-
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
-    if (num >= 20) {
-ps.println("            case "+enu.getKey()+": return "+compute+getMessageID(getMessageFromEnum(enu.getKey()))+size+"( ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj );");
-    }
-}
-
-ps.println("            default: return super.computeObjectSize(obj,type);");
-ps.println("        }");
-ps.println("    }");
-//ps.println("    @Override");
-ps.println("    protected void encodeObject(CodedOutputStream out, Object obj,int type) throws IOException {");
-ps.println("        switch (type) {");
-
-
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
-    if (num >= 20) {
-        ps.println("    case "+enu.getKey()+": "+encode+getMessageID(getMessageFromEnum(enu.getKey()))+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
-    }
-}
-
-ps.println("            default: super.encodeObject(out,obj,type); break;");
-ps.println("        }");
-ps.println("    }");
-//ps.println("    @Override");
-ps.println("    protected int getObjectTypeEnum(Object obj) {");
-
-ps.println("        if (obj instanceof Hashtable) {");
-ps.println("            Hashtable table = (Hashtable)obj;");
-
-
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
-    if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() == Hashtable.class) {
-
-        String line1 ="";
-        String line2 ="";
-        Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
-        for (ProtoLoader.FieldDefinition field:fields) {
-            if (field.required) { //  || field.repeated (we dont need a null vector)
-                line1 = line1 +"\""+field.getName()+"\",";
-            }
-            else {
-                line2 = line2 +"\""+field.getName()+"\",";
-            }
-        }
-        if (line1.endsWith(",")) line1 = line1.substring(0, line1.length() - 1);
-        if (line2.endsWith(",")) line2 = line2.substring(0, line2.length() - 1);
-        ps.println("    if (hashtableIsMessage(table,new String[] {"+line1+"},new String[] {"+line2+"})) {");
-
-        ps.println("        return "+enu.getKey()+";");
-        ps.println("    }");
-    }
-}
-
-ps.println("        }");
-
-List<MessageDefinition> messages = new ArrayList<MessageDefinition>();
-Hashtable<MessageDefinition,String> messageNames = new Hashtable<MessageDefinition,String>();
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
-    if (num >= 20) {
-        String messageName = enu.getKey();
-        MessageDefinition message = getMessageFromEnum(messageName);
-        if(message.getImplementation() != Hashtable.class) {
-            messages.add(message);
-            messageNames.put(message, messageName);
-        }
-    }
-}
-
-Collections.sort(messages,new ClassComparator());
-
-for (MessageDefinition message:messages) {
-    ps.println("    if (obj instanceof "+message.getImplementation().getSimpleName()+") {");
-    ps.println("        return "+messageNames.get(message)+";");
-    ps.println("    }");
-}
-
-ps.println("        return super.getObjectTypeEnum(obj);");
-
-ps.println("    }");
-
-            }
-            else {
-
-ps.println("    public static int get"+name+"Enum(String enu) {");
-
-for (Map.Entry<String,Integer> enu:set) {
-    ps.println("    if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue()+";");
-}
-
-ps.println("        return -1;");
-ps.println("    }");
-ps.println("    public static String get"+name+"String(int i) {");
-ps.println("        switch (i) {");
-
-for (Map.Entry<String,Integer> enu:set) {
-    ps.println("        case "+enu.getValue()+": return \""+enu.getKey()+"\";");
-}
-
-ps.println("            default: return \"unknown \"+i;");
-ps.println("        }");
-ps.println("    }");
-
-            }
-
-        }
-    }
 
     /**
      * @see MigwClient#unCamel(GeneratedMessage)
