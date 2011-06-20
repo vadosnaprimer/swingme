@@ -15,6 +15,8 @@ import net.yura.mobile.io.proto.WireFormat;
  */
 public class ProtoUtil {
 
+    protected static final String[] EMPTY = new String[0];
+    
     private static final int OBJECT_TYPE = 1; // from proto file
     private static final int OBJECT_VALUE = 2; // from proto file
     
