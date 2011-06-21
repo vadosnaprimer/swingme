@@ -10,6 +10,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.Vector;
 import net.yura.tools.mobilegen.ProtoLoader.EnumDefinition;
 import net.yura.tools.mobilegen.ProtoLoader.FieldDefinition;
@@ -22,6 +24,7 @@ public class MobileProtoGen extends BaseGen {
 
     public boolean obfuscate = false;
     public boolean split = false;
+    public boolean publicEnums = false;
     
     public static String compute="compute";
     public static String encode="encode";
@@ -60,6 +63,10 @@ public class MobileProtoGen extends BaseGen {
     
     public void setSplit(boolean o) {
         split = o;
+    }
+    
+    public void setPublicEnums(boolean o) {
+        publicEnums = o;
     }
 
     @Override
@@ -169,6 +176,31 @@ Hashtable<String,MessageDefinition> messageDefs;
 
         Set<String> keys = enumDefs.keySet();
 
+        SortedSet<String> enums = new TreeSet<String>();
+        
+        String quote = "\"";
+        
+        if (publicEnums) {
+            
+            for (String name:keys) {
+                EnumDefinition edef = enumDefs.get(name);
+                Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+                if (!"ObjectType".equals(name) ) {
+                    for (Map.Entry<String,Integer> enu:set) {
+                        enums.add( enu.getKey() );
+                    }
+                }
+            }
+            
+            quote="";
+            
+            for (String name:enums) {
+                ps.println("public static final String "+name+" = \""+name+"\";");
+            }
+            
+        }
+        
+        
         for (String name:keys) {
             EnumDefinition edef = enumDefs.get(name);
             Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
@@ -179,7 +211,7 @@ Hashtable<String,MessageDefinition> messageDefs;
 ps.println("    public static int get"+name+"Enum(String enu) {");
 
 for (Map.Entry<String,Integer> enu:set) {
-    ps.println("    if (\""+enu.getKey()+"\".equals(enu)) return "+enu.getValue()+";");
+    ps.println("    if ("+quote+enu.getKey()+quote+".equals(enu)) return "+enu.getValue()+";");
 }
 
 ps.println("        return -1;");
@@ -188,10 +220,10 @@ ps.println("    public static String get"+name+"String(int i) {");
 ps.println("        switch (i) {");
 
 for (Map.Entry<String,Integer> enu:set) {
-    ps.println("        case "+enu.getValue()+": return \""+enu.getKey()+"\";");
+    ps.println("        case "+enu.getValue()+": return "+quote+enu.getKey()+quote+";");
 }
 
-ps.println("            default: return \"unknown \"+i;");
+ps.println("            default: return unknown+i;");
 ps.println("        }");
 ps.println("    }");
 
