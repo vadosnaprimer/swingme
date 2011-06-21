@@ -52,12 +52,18 @@ public class TextArea extends TextComponent {
         private int caretPixelOffset;
         private boolean doNotUpdateCaretPixelOffset;
 
+        /**
+         * @see javax.swing.JTextArea#JTextArea() JTextArea.JTextArea
+         */
         public TextArea() {
             this("");
         }
 
+        /**
+         * @see javax.swing.JTextArea#JTextArea(java.lang.String) JTextArea.JTextArea
+         */
 	public TextArea(String text) {
-            super("TextArea",text, 1000, TextComponent.ANY);
+            super(text, 1000, TextComponent.ANY);
 	}
 
 /*

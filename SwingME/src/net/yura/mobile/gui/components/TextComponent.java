@@ -86,7 +86,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int MODE_ABC = 2;
         public static final int MODE_123 = 3;
 
-        private String label;
+        protected String label="";
 	private int constraints;
         private int mode;
 
@@ -107,14 +107,13 @@ public abstract class TextComponent extends Component implements ActionListener,
         private long lastKeyEvent;
 
         private ChangeListener caretListener;
-
+        
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
          */
-	public TextComponent(String title,String initialText,int max, int constraints) {
+	public TextComponent(String initialText,int max, int constraints) {
 
 		maxSize = max;
-                label = title;
 
                 setConstraints(constraints);
                 setText(initialText);
@@ -406,7 +405,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void openNativeEditor() {
                 // can not reuse this because of problems on S60
-                textbox = new TextBox(label, getText(), maxSize, constraints);
+        	
+        	String hint = (label==null||"".equals(label)) ? getName() : label;
+        	
+                textbox = new TextBox(hint, getText(), maxSize, constraints);
 
                 Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
                 Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);

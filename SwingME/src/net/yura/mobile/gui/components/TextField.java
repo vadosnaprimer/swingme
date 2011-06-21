@@ -33,15 +33,20 @@ public class TextField extends TextComponent {
         private ActionListener al;
         private String action;
     
+        /**
+         * @see javax.swing.JTextField#JTextField() JTextField.JTextField
+         */
         public TextField() {
             this(TextComponent.ANY);
         }
         
-        public TextField(int a) {
-            super("TextField", "", 100, a);
+        /**
+         * @param constraints the type of text, {@link #ANY } is default
+         */
+        public TextField(int constraints) {
+            super("", 100, constraints);
             
             offset = padding;
-            //preferredPercentWidth = 0.5;
             
             workoutPreferredSize();
         }
