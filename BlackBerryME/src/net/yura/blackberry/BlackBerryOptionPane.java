@@ -45,7 +45,7 @@ public class BlackBerryOptionPane extends OptionPane {
             	//synchronized(Application.getEventLock()) {
             	    	try {
             	    		String command=null;
-            	    		loop: while (command==null) { // this will keep bringing the dialog up until the user selects a valid option
+            	    		loop: while (true) { // this will keep bringing the dialog up until the user selects a valid option
 		            	    	int result = Dialog.ask( string, (Object[])options, d );
 		            	    	if (result<0) { // if the user dismissed the dialog with the 'back' key we get -1
 		            	    		for (int c=0;c<buttons.length;c++) {
