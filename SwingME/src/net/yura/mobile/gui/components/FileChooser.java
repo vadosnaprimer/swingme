@@ -639,7 +639,62 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
         }
 
+        public Component prepareRenderer(int r,int c) {
+            if (convertLin(r, c)>=getSize()) {
+                return null;
+            }
+            return super.prepareRenderer(r, c);
+        }
 
+        private int[] getVisibleIndexs() {
+            int[] v = getVisibleRect();
+
+            int ys = getYOnScreen();
+            int top = v[1]-ys;
+            int bottom = (v[1]+v[3])-ys-1;
+            int h = getRowHeight(0);
+            int row1 = top/h;
+            int row2 = bottom/h;
+            int rows = getRowCount();
+
+            if ((row1<0&&row2<0)||(row1>=rows&&row2>=rows)) {
+                row1=-1;
+                row2=-1;
+            }
+            else {
+                if (row1<0) {
+                    row1=0;
+                }
+                if (row2>=rows) {
+                    row2=rows-1;
+                }
+            }
+            return new int[] {row1,row2};
+        }
+
+        /**
+         * @see List#getFirstVisibleIndex() 
+         * @see javax.swing.JList#getFirstVisibleIndex() JList.getFirstVisibleIndex
+         */
+        public int getFirstVisibleIndex() {
+            int r = getVisibleIndexs()[0];
+            if (r==-1) return -1;
+            return convertLin(r,0);
+        }
+
+        /**
+         * @see List#getLastVisibleIndex() 
+         * @see javax.swing.JList#getLastVisibleIndex() JList.getLastVisibleIndex
+         */
+        public int getLastVisibleIndex() {
+            int r = getVisibleIndexs()[1];
+            if (r==-1) return -1;
+            int i = convertLin(r,getColumnCount()-1);
+            int s = getSize();
+            return i>=s?s-1:i;
+        }
+    
+    
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== DefaultListModel ====================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
@@ -671,13 +726,6 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
          */
         public void setElementAt(Object object, int index) {
             dataVector.setElementAt(object, index);
-        }
-
-        public Component prepareRenderer(int r,int c) {
-            if (convertLin(r, c)>=getSize()) {
-                return null;
-            }
-            return super.prepareRenderer(r, c);
         }
 
     }
