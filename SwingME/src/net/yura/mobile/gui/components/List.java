@@ -295,7 +295,8 @@ public class List extends Component implements ActionListener {
     }
 
     /**
-     * will return a int[] of size 2, at 0 is the index, at 1 is the offset of that index
+     * will return a int[] of size 2, at 0 is the index, at 1 is the offset of that index.
+     * will return -1 if no cell is found
      * @see javax.swing.JList#locationToIndex(java.awt.Point) JList.locationToIndex
      */
     public int[] locationToIndex(int x,int y) {
@@ -305,19 +306,31 @@ public class List extends Component implements ActionListener {
 
         int size = getSize();
 
-        if (size==0 || (layoutOrientation==HORIZONTAL && x<0) || (layoutOrientation==VERTICAL && y<0)) {
+        if (size==0 || 
+                (layoutOrientation==HORIZONTAL && x<0) || 
+                (layoutOrientation==VERTICAL && y<0) ||
+                (layoutOrientation==HORIZONTAL && x>width) || 
+                (layoutOrientation==VERTICAL && y>height)
+                ) {
             // dont do anything
-        }
-        else if (x > width || y > height) {
-            ri = size; // skip everything
         }
         else if (layoutOrientation==HORIZONTAL && fixedCellWidth!=-1) {
             ri = x/fixedCellWidth;
-            roffset = ri*fixedCellWidth;
+            if (ri<0||ri>=size) {
+                ri = -1;
+            }
+            else {
+                roffset = ri*fixedCellWidth;
+            }
         }
         else if (layoutOrientation==VERTICAL && fixedCellHeight!=-1) {
             ri = y/fixedCellHeight;
-            roffset = ri*fixedCellHeight;
+            if (ri<0||ri>=size) {
+                ri = -1;
+            }
+            else {
+                roffset = ri*fixedCellHeight;
+            }
         }
         else {
 
@@ -349,6 +362,9 @@ public class List extends Component implements ActionListener {
         return new int[] {ri,roffset} ;
     }
 
+    /**
+     * @see Table#paintComponent(net.yura.mobile.gui.Graphics2D) 
+     */
     public void paintComponent(Graphics2D g) {
 
         //System.out.println("list "+getFirstVisibleIndex()+"-"+getLastVisibleIndex());
@@ -358,13 +374,20 @@ public class List extends Component implements ActionListener {
         boolean good=false;
         int clipx = g.getClipX();
         int clipy = g.getClipY();
+        int clipw = g.getClipWidth();
+        int cliph = g.getClipHeight();
 
         int[] objects=locationToIndex(clipx,clipy);
         int i = objects[0];
         int offset = objects[1];
-        if (i<0) { // if clip is too up/left
-            i=0;
-            offset=0;
+        if (i<0) { // if clip is too up/left or bottom/right
+            if ((layoutOrientation==HORIZONTAL && clipx<0) || (layoutOrientation==VERTICAL && clipy<0)) {
+                i=0;
+                offset=0;
+            }
+            else {
+                return;
+            }
         }
         for(; i < getSize(); i++){
             Component c = getComponentFor(i,offset);
@@ -375,9 +398,9 @@ public class List extends Component implements ActionListener {
             int x = c.getXWithBorder();
             int y = c.getYWithBorder();
 
-            if (x < clipx+g.getClipWidth() &&
+            if (x < clipx+clipw &&
                 x + c.getWidthWithBorder() > clipx &&
-                y < clipy+g.getClipHeight() &&
+                y < clipy+cliph &&
                 y + c.getHeightWithBorder() > clipy
             ) {
                     x=c.getX();
@@ -504,7 +527,7 @@ public class List extends Component implements ActionListener {
         else if (type == DesktopPane.PRESSED || type == DesktopPane.DRAGGED) {
             int i = locationToIndex(x, y)[0];
 
-            if (i>=0 && i<getSize()) {
+            if (i>=0) { // if (ri<0||ri>=size) { this check is not needed any more
                 selectNewPointer(i,keys);
             }
         }
@@ -536,6 +559,7 @@ public class List extends Component implements ActionListener {
      * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent) MouseListener.mouseClicked
      */
     public void mouseClicked(int x,int y) {
+        // TODO maybe only fire the action if we are clicking on a cell and not an empty space
         fireActionPerformed();
     }
 
@@ -947,19 +971,33 @@ public class List extends Component implements ActionListener {
     }
 
     /**
+     * if either getFirstVisibleIndex OR getLastVisibleIndex return -1 then nothing is visible
      * @see javax.swing.JList#getFirstVisibleIndex() JList.getFirstVisibleIndex
      */
     public int getFirstVisibleIndex() {
         int[] v = getVisibleRect();
-        return locationToIndex(v[0]-getXOnScreen(),v[1]-getYOnScreen())[0];
+        int x = v[0]-getXOnScreen();
+        int y = v[1]-getYOnScreen();
+        int i = locationToIndex(x,y)[0];
+        if (i<0 && ((layoutOrientation==HORIZONTAL && x<0) || (layoutOrientation==VERTICAL && y<0)) ) {
+            return 0;
+        }
+        return i;
     }
 
     /**
+     * if either getFirstVisibleIndex OR getLastVisibleIndex return -1 then nothing is visible
      * @see javax.swing.JList#getLastVisibleIndex() JList.getLastVisibleIndex
      */
     public int getLastVisibleIndex() {
         int[] v = getVisibleRect();
-        return locationToIndex((v[0]+v[2])-getXOnScreen()-1,(v[1]+v[3])-getYOnScreen()-1)[0];
+        int x = (v[0]+v[2])-getXOnScreen()-1;
+        int y = (v[1]+v[3])-getYOnScreen()-1;
+        int i = locationToIndex(x,y)[0];
+        if (i<0 && ((layoutOrientation==HORIZONTAL && x>=0) || (layoutOrientation==VERTICAL && y>=0)) ) {
+            return getSize()-1;
+        }
+        return i;
     }
 
     /**
