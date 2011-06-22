@@ -19,10 +19,10 @@ import android.widget.EditText;
 
 
 public class TextBox extends Screen {
-	
+
 	//debug debug
-	private final static boolean debug = false; 
-	
+	private final static boolean debug = false;
+
     private String text;
     private int maxSize;
     private int constraints;
@@ -99,7 +99,7 @@ public class TextBox extends Screen {
     }
 
     private static CharSequence composingText = "";
-    
+
     private class TextBoxView extends View implements InputConnection {
         private CharSequence textBeforeCursor = " ";
 
@@ -109,7 +109,7 @@ public class TextBox extends Screen {
 
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 
-        	
+
             // HACK/WORK-AROUND for restartInput(): Sony Ericsson
             // InputMethodManager.restartInput() method is buggy and does not clean the composing text.
             // Changing the focus to another view, and then back to the
@@ -121,7 +121,7 @@ public class TextBox extends Screen {
             	composingText = "";
             }
             // END HACK
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] onCreateInputConnection " + this);
@@ -174,19 +174,19 @@ public class TextBox extends Screen {
         // this does not change anything on any phone tested so far
         @Override
         public boolean onCheckIsTextEditor() {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] onCheckIsTextEditor " + this);
         	}
         	//#enddebug
-        	
+
         	return true;
         }
 
         //Override
         public boolean beginBatchEdit() {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] beginBatchEdit");
@@ -198,7 +198,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean endBatchEdit() {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] endBatchEdit");
@@ -210,7 +210,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean clearMetaKeyStates(int states) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] clearMetaKeyStates "+states);
@@ -222,7 +222,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean commitCompletion(CompletionInfo text) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] commitCompletion >"+text+"<");
@@ -234,7 +234,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean commitText(CharSequence text, int newCursorPosition) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] commitText >"+text+"< "+newCursorPosition);
@@ -249,7 +249,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean deleteSurroundingText(int leftLength, int rightLength) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] deleteSurroundingText: leftLength = " + leftLength + " rightLength = " + rightLength);
@@ -268,7 +268,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean finishComposingText() {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] finishComposingText");
@@ -281,7 +281,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean setComposingText(CharSequence text, int newCursorPosition) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] setComposingText: >" + text + "< "+newCursorPosition);
@@ -294,7 +294,7 @@ public class TextBox extends Screen {
 
         //Override
         public int getCursorCapsMode(int reqModes) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] getCursorCapsMode "+reqModes);
@@ -316,7 +316,7 @@ public class TextBox extends Screen {
 
         //Override
         public ExtractedText getExtractedText(ExtractedTextRequest request, int flags) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] getExtractedText "+request+" "+flags);
@@ -330,7 +330,7 @@ public class TextBox extends Screen {
 
         //Override
         public CharSequence getTextAfterCursor(int n, int flags) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] getTextAfterCursor "+n+" "+flags);
@@ -342,7 +342,7 @@ public class TextBox extends Screen {
 
         //Override
         public CharSequence getTextBeforeCursor(int n, int flags) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] getTextBeforeCursor: " + textBeforeCursor+" "+n+" "+flags);
@@ -354,7 +354,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean performEditorAction(int actionCode) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] performEditorAction "+actionCode);
@@ -370,7 +370,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean performContextMenuAction(int id) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] performContextMenuAction "+id);
@@ -382,19 +382,19 @@ public class TextBox extends Screen {
 
         //Override
         public boolean performPrivateCommand(String action, Bundle data) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] performPrivateCommand "+action+" "+data);
         	}
         	//#enddebug
-        	
+
             return true;
         }
 
         //Override
         public boolean sendKeyEvent(KeyEvent event) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] sendKeyEvent " + event);
@@ -416,7 +416,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean setSelection(int start, int end) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] setSelection "+start+" "+end);
@@ -428,7 +428,7 @@ public class TextBox extends Screen {
 
         //Override
         public boolean reportFullscreenMode(boolean enabled) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] reportFullscreenMode " +enabled);
@@ -440,7 +440,7 @@ public class TextBox extends Screen {
         }
 
         private void sendText(CharSequence text) {
-        	
+
         	//#mdebug debug
         	if (debug) {
         		System.out.println("[TextBoxView] sendText: >" + text + "<");
@@ -461,7 +461,7 @@ public class TextBox extends Screen {
         		System.out.println("[TextBoxView] sendComposingText >"+text+"<"+done);
         	}
         	//#enddebug
-        	
+
             // How many chars are the same?
             int nEqual = 0;
             for (int i = 0; i < text.length() && i < composingText.length(); i++) {
@@ -482,6 +482,21 @@ public class TextBox extends Screen {
             }
 
             composingText = done ? "" : text;
+        }
+
+//        // Override API 11
+//        public boolean commitCorrection(CorrectionInfo arg0) {
+//            return true;
+//        }
+
+        // Override API 11
+        public CharSequence getSelectedText(int arg0) {
+            return "";
+        }
+
+        // Override API 11
+        public boolean setComposingRegion(int arg0, int arg1) {
+            return false;
         }
     }
 }
