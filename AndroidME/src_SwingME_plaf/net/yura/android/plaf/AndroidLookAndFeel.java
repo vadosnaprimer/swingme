@@ -315,6 +315,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         spin2.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
         indeterminateSpinner2.addProperty( new AndroidSprite(spin2, w2, h2), "sprite", Style.ALL);
         setStyleFor("IndeterminateSpinnerSmall",indeterminateSpinner2);
+        
+        Style indeterminateSpinner3 = new Style(defaultStyle);
+        Drawable spin3 = getDrawable(ctx,android.R.style.Widget_ProgressBar_Small_Inverse,android.R.attr.indeterminateDrawable);
+        int w3 = getDimension(ctx,android.R.style.Widget_ProgressBar_Small_Inverse,android.R.attr.minWidth);
+        int h3 = getDimension(ctx,android.R.style.Widget_ProgressBar_Small_Inverse,android.R.attr.minHeight);
+        spin3.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
+        indeterminateSpinner3.addProperty( new AndroidSprite(spin3, w3, h3), "sprite", Style.ALL);
+        setStyleFor("IndeterminateSpinnerSmallInverse",indeterminateSpinner3);
 
 
         // yes = ok, no = cencel, dont use this as it seems to be wrong
