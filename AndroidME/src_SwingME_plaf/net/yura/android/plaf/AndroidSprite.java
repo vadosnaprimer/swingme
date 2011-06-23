@@ -33,7 +33,7 @@ public class AndroidSprite extends Sprite {
             draw = spin;
         }
         else if (spin instanceof RotateDrawable) {
-            spin.setLevel(frame);
+            spin.setLevel( frame*10000/getFrameSequenceLength() );
             draw = spin;
         }
         else {
@@ -63,7 +63,7 @@ public class AndroidSprite extends Sprite {
             return 12; // Android default implementation value.
         }
         if (spin instanceof RotateDrawable) {
-            return 10000; // default value for Drawable that use setLevel
+            return 12; // a guess, this is used by the SE Xperia X10 Android 1.6 by the inverted spinner
         }
         return 1; // we do not know how to animate this, so it only has 1 frame
     }
