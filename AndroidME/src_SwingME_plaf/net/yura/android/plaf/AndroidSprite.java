@@ -5,6 +5,7 @@ import javax.microedition.lcdui.game.Sprite;
 
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RotateDrawable;
 
 public class AndroidSprite extends Sprite {
 
@@ -23,14 +24,18 @@ public class AndroidSprite extends Sprite {
         if (spin instanceof AnimationDrawable) {
             draw = ((AnimationDrawable)spin).getFrame(frame);
         }
+//      else if (spin.getClass().getName().equals("android.graphics.drawable.AnimatedRotateDrawable")) {
+//          int totalFrame = getFrameSequenceLength();
+//          canvas.rotate((frame*360)/totalFrame, x+width/2, y+height/2);
+//          draw = spin;
+//      }
         else if (spin instanceof Runnable) {
             draw = spin;
         }
-//        else if (spin.getClass().getName().equals("android.graphics.drawable.AnimatedRotateDrawable")) {
-//            int totalFrame = getFrameSequenceLength();
-//            canvas.rotate((frame*360)/totalFrame, x+width/2, y+height/2);
-//            draw = spin;
-//        }
+        else if (spin instanceof RotateDrawable) {
+            spin.setLevel(frame);
+            draw = spin;
+        }
         else {
             draw = spin;
             System.out.println("DO NOT KNOW HOW TO DRAW "+spin);
@@ -51,36 +56,49 @@ public class AndroidSprite extends Sprite {
         if (spin instanceof AnimationDrawable) {
             return ((AnimationDrawable)spin).getNumberOfFrames();
         }
-//        if (spin.getClass().getName().equals("android.graphics.drawable.AnimatedRotateDrawable")) {
-//            return 12;
-//        }
-        return 12; // Android default implementation value.
+//      if (spin.getClass().getName().equals("android.graphics.drawable.AnimatedRotateDrawable")) {
+//          return 12;
+//      }
+        if (spin instanceof Runnable) {
+            return 12; // Android default implementation value.
+        }
+        if (spin instanceof RotateDrawable) {
+            return 10000; // default value for Drawable that use setLevel
+        }
+        return 1; // we do not know how to animate this, so it only has 1 frame
     }
 
     private long lastSetFrameTime;
 
     @Override
     public void setFrame(int newFrame) {
-        // HACK 1: android.graphics.drawable.AnimatedRotateDrawable class implements
-        // Runnable. Calling run() will make it rotate one position. We are
-        // ignoring the requesting frame, but that is OK for a spinner.
-        if (frame != newFrame && spin instanceof Runnable) {
 
-            // HACK 2: The same Sprite is shared between animations, and the "newFrame"
-            // sequence of each of animation is independent, we need to somehow respond
-            // to only of them, otherwise the spinner will spin a lot faster than intended.
-            // 1 - If the frame set is the next from the previous one, we accept it.
-            // 2 - Otherwise we accept it if the latest successful rotation happened
-            // more than 200 ms ago.
+        if (frame != newFrame) {
+            
+            // HACK 1: android.graphics.drawable.AnimatedRotateDrawable class implements
+            // Runnable. Calling run() will make it rotate one position. We are
+            // ignoring the requesting frame, but that is OK for a spinner.
+            if (spin instanceof Runnable) {
 
-            int nextFrame = (frame + 1) % getFrameSequenceLength();
-            long now = System.currentTimeMillis();
-
-            if (newFrame == nextFrame || (now - lastSetFrameTime) > 100) {
-                frame = newFrame;
-
-                ((Runnable) spin).run();
-                lastSetFrameTime = now;
+                // HACK 2: The same Sprite is shared between animations, and the "newFrame"
+                // sequence of each of animation is independent, we need to somehow respond
+                // to only of them, otherwise the spinner will spin a lot faster than intended.
+                // 1 - If the frame set is the next from the previous one, we accept it.
+                // 2 - Otherwise we accept it if the latest successful rotation happened
+                // more than 200 ms ago.
+    
+                int nextFrame = (frame + 1) % getFrameSequenceLength();
+                long now = System.currentTimeMillis();
+    
+                if (newFrame == nextFrame || (now - lastSetFrameTime) > 100) {
+                    frame = newFrame;
+    
+                    ((Runnable) spin).run();
+                    lastSetFrameTime = now;
+                }
+            }
+            else {
+        	frame = newFrame;
             }
         }
     }
