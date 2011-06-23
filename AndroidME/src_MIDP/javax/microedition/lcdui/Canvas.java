@@ -2,7 +2,9 @@ package javax.microedition.lcdui;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
 import javax.microedition.midlet.MIDlet;
+
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
 import android.content.Context;
@@ -421,11 +423,12 @@ public abstract class Canvas extends Displayable {
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
-        	
+
+            int keyCount = event.getRepeatCount();
+
             if ( isKeyHandled(keyCode) ) {
                 this.restartKeyboardInput = true;
 
-                int keyCount = event.getRepeatCount();
                 if (keyCode == KeyEvent.KEYCODE_MENU) {
                     keyMenuCount = keyCount;
                     if (keyMenuCount == 1) {
@@ -449,6 +452,11 @@ public abstract class Canvas extends Displayable {
                     }
                 }
                 return true;
+            }
+            else if (keyCode == KeyEvent.KEYCODE_MENU && keyCount == 0) {
+                // HACK: Work around for issue:
+                // http://code.google.com/p/android/issues/detail?id=11833
+                AndroidMeActivity.DEFAULT_ACTIVITY.onPrepareOptionsMenu();
             }
 
             return super.onKeyDown(keyCode, event);
@@ -480,7 +488,7 @@ public abstract class Canvas extends Displayable {
                 else {
                     keyReleased(meKeyCode);
                 }
-                
+
                 return true;
             }
 
@@ -491,13 +499,13 @@ public abstract class Canvas extends Displayable {
          * these are keys we DEF will NEVER want to be able to make use of in SwingME
          */
         private boolean isKeyHandled(int keyCode) {
-        	
+
         	//boolean sys = event.isSystem(); // search is a system key
-        	
+
             return !(
             		keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
                     keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
-                    keyCode == KeyEvent.KEYCODE_CAMERA || 
+                    keyCode == KeyEvent.KEYCODE_CAMERA ||
                     (AndroidMeActivity.menuSystem!=null && keyCode == KeyEvent.KEYCODE_MENU)
                     //keyCode == 97 // this is the SYM key of HTC Desire Z, putting it here does not help anything
             );
@@ -755,7 +763,7 @@ public abstract class Canvas extends Displayable {
          * @see net.yura.android.AndroidMeActivity#onConfigurationChanged(android.content.res.Configuration)
          */
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
-        	
+
         	// this is a hack to fix a problem on the HTC Desire Z, where the hardware keyboard does NOT work
         	// with out InputConnection, the problem with this is the keyboard now does not do some of the
         	// things we expect, such as holding down a button does not open a popup with options, and instead
@@ -766,7 +774,7 @@ public abstract class Canvas extends Displayable {
         	) {
         		return super.onCreateInputConnection(outAttrs);
         	}
-        	
+
             return (inputConnectionView == null) ? super.onCreateInputConnection(outAttrs) : inputConnectionView.onCreateInputConnection(outAttrs);
         }
 
@@ -835,10 +843,10 @@ public abstract class Canvas extends Displayable {
 
         public void setTextInputView(View view) {
 //            if (inputConnectionView != view) {
-        	
-        	
-        	
-        	
+
+
+
+
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
 

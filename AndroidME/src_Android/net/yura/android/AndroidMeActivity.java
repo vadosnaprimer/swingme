@@ -1,12 +1,14 @@
 package net.yura.android;
 
 import java.util.Vector;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -118,9 +120,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     protected void onStart() {
         super.onStart();
         backgroundTime = 0L;
-        
+
         hardKeyboardHidden = getResources().getConfiguration().hardKeyboardHidden;
-        
+
     }
 
     public long getInBackgroundTime() {
@@ -215,17 +217,36 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         }
     }
 
+    private Menu menu;
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
+        onPrepareOptionsMenu();
+        return true;
+    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    // HACK: Work around for issue:
+    // http://code.google.com/p/android/issues/detail?id=11833
+    // We now call this method ourself, instead of relying on the call of
+    // onPrepareOptionsMenu(Menu menu)
+    public boolean onPrepareOptionsMenu() {
+        if (menu == null) {
+            return false;
+        }
 
         if (menuSystem==null) {
-        	
+
             MIDlet midlet = AndroidMeApp.getMIDlet();
             if (midlet == null) {
                 return super.onPrepareOptionsMenu(menu);
             }
-        	
+
 	        boolean result = false;
 	    	Display display = Display.getDisplay( midlet );
 	        Displayable current = display.getCurrent();
@@ -243,9 +264,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 	            }
 	        }
 	        return result;
-        	
+
         }
-        
+
         return menuSystem.onPrepareOptionsMenu(menu);
     }
 
@@ -272,11 +293,11 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 	        }
 
 	        return false;
-    		
+
     	}
 
     	return menuSystem.onOptionsItemSelected(item);
-    	
+
     }
 
     public int getScreenHeight() {
@@ -308,9 +329,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         MIDlet midlet = getMIDlet();
         midlet.onResult(resultCode, result);
     }
-    
+
     private int hardKeyboardHidden;
-    
+
     /**
      * @see javax.microedition.lcdui.Canvas.CanvasView#onCreateInputConnection(android.view.inputmethod.EditorInfo)
      */
@@ -319,16 +340,16 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         super.onConfigurationChanged(newConfig);
 
         try {
-	        
+
 	        // Checks the orientation of the screen
 	        //if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 	        //}
 	        //else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){
 	        //}
-	
+
 	        // Checks whether a hardware keyboard is available
-	        // this is part of the HTC Hack 
-	
+	        // this is part of the HTC Hack
+
 	        if ("HTC".equals(Build.MANUFACTURER)) {
 		        if ( hardKeyboardHidden != newConfig.hardKeyboardHidden ) {
 		        	hardKeyboardHidden = newConfig.hardKeyboardHidden;
