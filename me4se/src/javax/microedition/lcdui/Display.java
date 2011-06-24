@@ -130,9 +130,14 @@ public class Display {
    * @API MIDP-1.0
    */
   public void callSerially(Runnable r) {
-    callSerially.addElement(r);
-    if (current != null)
-      current.container.repaint();
+    //callSerially.addElement(r);
+    //if (current != null)
+    //  current.container.repaint();
+
+      // YURA this is more correct as its not happening in the start of the paint
+      // and any calls to paint while this is happening will also be honered
+      //javax.swing.SwingUtilities.invokeLater(r);
+      java.awt.EventQueue.invokeLater(r);
   }
 
   /**

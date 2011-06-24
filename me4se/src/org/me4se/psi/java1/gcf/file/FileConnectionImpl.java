@@ -75,15 +75,24 @@ public class FileConnectionImpl extends ConnectionImpl implements FileConnection
 		this.mode = mode;
 		//url = url.substring(5); 
 		
+                Enumeration keys = FileSystemRegistry.remap.keys();
+                while (keys.hasMoreElements()) {
+                    String key = (String)keys.nextElement();
+                    if (url.startsWith(key)) {
+                        file = new File( (String)FileSystemRegistry.remap.get(key), url.substring(key.length()) );
+                        return;
+                    }
+                }
+                
 		int cut = 5; // file://
 		while(cut < url.length() && url.charAt(cut)=='/')
 			cut++;
 		
-		if(cut+1 >= url.length() || url.charAt(cut+1) != ':')
+		if(cut+1 >= url.length() || url.charAt(cut+1) != ':') // "/C:/" -> "C:/"
 			cut--;
 			
 		String path = url.substring(cut);
-		//System.out.println("opening file: "+path);
+		//System.out.println("opening file: "+path+" URL="+url);
 		file = new File(path);
 	}
 
@@ -207,7 +216,7 @@ public class FileConnectionImpl extends ConnectionImpl implements FileConnection
 	}
 
 	public Enumeration list(String filter, boolean includeHidden) throws IOException {
-		throw new RuntimeException("FileConnection.list(String filter, boolean includeHidden) not yet implemented.");
+		return list();
 	}
 
 	/* This method is used to create a directory that is specified in the 
