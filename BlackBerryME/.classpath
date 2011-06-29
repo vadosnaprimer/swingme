@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="src" path="src_UtilME"/>
-	<classpathentry kind="src" path="res"/>
-	<classpathentry exported="true" kind="lib" path="E:/My_World/6_Yura/linuxhome/UtilME/lib/kxml2.jar"/>
+	<classpathentry kind="src" path="src_SwingME"/>
+	<classpathentry kind="src" path="src_SwingMETest"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/net.rim.ejde.BlackBerryVMInstallType/BlackBerry JRE 4.6.0"/>
+	<classpathentry exported="true" kind="lib" path="C:/Users/Anton/workspace/UtilME/lib/xmlpull_1_1_3_1.jar"/>
+	<classpathentry kind="lib" path="lib/DummyM3G.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

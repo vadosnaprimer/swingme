@@ -1,111 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- You may freely edit this file. See commented blocks below for -->
-<!-- some examples of how to customize the build. -->
-<!-- (If you delete it and reopen the project it will be recreated.) -->
-<project name="BlackBerryMETest" default="swingmetest" basedir=".">
-    <description>Builds, tests, and runs the project .</description>
 
+<project name="${description}" default="build" basedir=".\build">
 
-    <property name="blackberryme.dir" value="." />
+	<taskdef resource="bb-ant-defs.xml" classpath="lib/bb-ant-tools.jar" />
 
-    
-    <import file="${blackberryme.dir}/build_gen.xml"/>
-    
-    
-    <property name="gen.dir" location="gen"/>
-    
-        
-    <property name="swingmetest.src" value="../SwingMETest/src/" />
-    
+	<!-- Project properties -->
+	<property name="project.title" value="BlackBerryME" />
+	<property name="project.version" value="1.0.0" />
+	<property name="build.directory" value="${basedir}" />
+	<property name="release.directory" value="${basedir}" />
+	<property name="dist.directory" value="${basedir}/../dist" />
 
-    <target name="swingmetest" depends="preprocess" description="Badoo BlackBerry.">
-    
-    	<copy todir="${gen.dir}" overwrite="true">
-			<fileset dir="${swingmetest.src}" includes="**/*.java"/>
+	<!-- JDE properties -->
+	<property name="simulator.directory" value="${jdehome}\simulator" />
+	<property name="bin" value="${jdehome}\bin" />
+
+	<!-- Source path -->
+	<property name="workspace.directory" value="${basedir}/../.." />
+	<property name="swingme.src" value="${workspace.directory}/SwingME/src" />
+	<property name="utilme.src" value="${workspace.directory}/UtilME/src" />
+	<property name="swingmetest.src" value="${workspace.directory}/SwingMETest/src" />
+	<property name="test.src" value="${workspace.directory}/BlackBerryME/src" />
+	<property name="bbme.src" value="${workspace.directory}/BlackBerryME/test" />
+	
+
+	<!-- Resources path -->
+	<property name="res.src" value="${workspace.directory}/SwingMETest/resources/" />
+
+	<target name="clean">
+
+		<description>
+				Delete all the previous built projects.
+		</description>
+
+		<delete includeEmptyDirs="false" failonerror="no">
+			<fileset dir="${build.directory}" />
+			<fileset dir="${release.directory}" />
+			<fileset dir="${dist.directory}" />
+		</delete>
+
+		<delete file="${jde.home}/simulator/${project.title}.cod" failonerror="no" />
+	</target>
+
+	<target name="clean-simulator">
+		<description>
+	    		1. Run the simulator's clean file.
+	    		2. Delete the application from the simulator
+	    </description>
+
+		<exec executable="${jdehome}\simulator\clean.bat" dir="${jdehome}\simulator" />
+		<exec executable="${jdehome}\simulator\fledge.exe" dir="${basedir}\simulator-data">
+			<arg value="/app=${jdehome}\simulator\Jvm.dll" />
+			<arg value="/clear-flash" />
+			<arg value="/shutdown-after-startup" />
+		</exec>
+	</target>
+
+	<target name="setup" depends="clean">
+		<description>
+	    		Create a build directory to hold exactly the source
+	    		and resource files for the selected device model.	    		
+	    		Then copy all the necesary files.
+	    </description>
+
+		<!-- -->
+		<echo>Base directory: ${basedir} </echo>
+		<echo>Build dir: ${build.directory} </echo>
+		<echo>Workspace dir: ${workspace.directory} </echo>
+		<echo>Release dir: ${release.directory} </echo>
+		<echo>Dist dir: ${dist.directory} </echo>
+		<echo>Simulator dir: ${simulator.directory} </echo>
+		
+
+		<mkdir dir="${build.directory}" />
+		<mkdir dir="${release.directory}" />
+		<mkdir dir="${dist.directory}" />
+
+		<copy todir="${build.directory}">
+			<fileset dir="${swingme.src}" includes="**" />
+			<fileset dir="${swingmetest.src}" includes="**" />
+			<fileset dir="${utilme.src}" includes="**" />
 		</copy>
 
-		<antcall target="genswingme"/>
-    
-    </target>
-    
-    
-    
-    
-    
-    
-    <!--
+		<echo>replacing_imports</echo>
 
-            There exist several targets which are by default empty and which can be
-            used for execution of your tasks. These targets are usually executed
-            before and after some main targets. They are:
+		<replaceregexp byline="true" match="javax.microedition.midlet.MIDlet(\W)" replace="net.yura.blackberry.midlet.MIDlet\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
 
-            pre-init:                 called before initialization of project properties
-            post-init:                called after initialization of project properties
-            pre-preprocess:           called before text preprocessing of sources
-            post-preprocess:          called after text preprocessing of sources
-            pre-compile:              called before source compilation
-            post-compile:             called after source compilation
-            pre-obfuscate:            called before obfuscation 
-            post-obfuscate:           called after obfuscation
-            pre-preverify:            called before preverification
-            post-preverify:           called after preverification
-            pre-jar:                  called before jar building
-            post-jar:                 called after jar building
-            pre-build:                called before final distribution building
-            post-build:               called after final distribution building
-            pre-clean:                called before cleaning build products
-            post-clean:               called after cleaning build products
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Background(\W)" replace="net.yura.blackberry.midlet.m3g.Background\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
 
-            Example of pluging a my-special-task after the compilation could look like
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Graphics3D(\W)" replace="net.yura.blackberry.midlet.m3g.Graphics3D\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
 
-            <target name="post-compile">
-            <my-special-task>
-            <fileset dir="${build.classes.dir}"/>
-            </my-special-task>
-            </target>
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Image2D(\W)" replace="net.yura.blackberry.midlet.m3g.Image2D\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
 
-            For list of available properties check the imported
-            nbproject/build-impl.xml file.
+		<echo>copying_more_files</echo>
 
-            Other way how to customize the build is by overriding existing main targets.
-            The target of interest are:
+		<copy todir="${build.directory}">
+			<fileset dir="${bbme.src}" includes="**/*.java" />
+			<fileset dir="${test.src}" includes="**/*.java" />
+		</copy>
 
-            preprocess:               preprocessing
-            extract-libs:             extraction of libraries and resources
-            compile:                  compilation
-            create-jad:               construction of jad and jar manifest source
-            obfuscate:                obfuscation
-            preverify:                preverification
-            jar:                      jar archive building
-            run:                      execution
-            debug:                    execution in debug mode
-            build:                    building of the final distribution
-            javadoc:                  javadoc generation
+		<copy todir="${build.directory}">
+			<fileset dir="${res.src}" includes="**" />
+		</copy>
 
-            Example of overriding the target for project execution could look like
+	</target>
 
-            <target name="run" depends="init,jar">
-            <my-special-exec jadfile="${dist.dir}/${dist.jad}"/>
-            </target>
+	<target name="build" depends="setup" description="Builds Project">
+		<rapc jdehome="${jdehome}" destdir="${release.directory}" noconvert="true" generatesourcelist="true" verbose="false" output="${project.title}" quiet="true">
+			<jdp type="midlet" midletclass="net.yura.mobile.test.MyMidlet" title="${project.title}" 
+				vendor="Badoo Ltd." version="${project.version}" description="" arguments="" systemmodule="false" runonstartup="false" startuptier="7" ribbonposition="0">
+			</jdp>
+			<src>
+				<fileset dir="${build.directory}" includes="**" />
+				<fileset file="${workspace.directory}\UtilME\lib\xmlpull_1_1_3_1.jar" />
+			</src>
+		</rapc>
+		<alx destdir="${dist.directory}" filename="${project.title}.alx">
+			<application id="${project.title}" name="${project.title}" copyright="Copyright (c) 2011 Badoo Limited" version="${project.version}" vendor="Badoo Limited">
+				<codset greaterthanequal="4.6.0">
+					<fileset dir="${release.directory}" includes="*.cod" />
+				</codset>
+			</application>
+		</alx>
+	</target>
+	
+	<target name="debug" depends="deploy" description="Builds, Deploys Project and Launches Remote Debug Server">
+		<exec executable="cmd.exe" dir="${bin}" spawn="true">
+			<arg value="/c" />
+			<arg value="jdwp.bat" />
+		</exec>
+	</target>
 
-            Be careful about correct dependencies when overriding original target. 
-            Again, for list of available properties which you can use check the target 
-            you are overriding in nbproject/build-impl.xml file.
+	<target name="simulate" depends="deploy" description="Builds, Deploys Project and Launches Simulator">
+		<!--<exec executable="cmd.exe" dir="${simulator.directory}" spawn="true">
+			<arg value="/c" />
+			<arg value="9000.bat" />
+		</exec>-->
+		<echo>here the simulator should be launched, check if the correct files were copied to the simulator directory</echo>
+	</target>
 
-            A special target for-all-configs can be used to run some specific targets for
-            all project configurations in a sequence. File nbproject/build-impl.xml 
-            already contains some "for-all" targets:
-    
-            jar-all
-            javadoc-all
-            clean-all
-      
-            Example of definition of target iterating over all project configurations:
-    
-            <target name="jar-all">
-            <property name="target.to.call" value="jar"/>
-            <antcall target="for-all-configs"/>
-            </target>
+	<target name="deploy" depends="build" description="Builds and Deploys Project">
+		<copy todir="${simulator.directory}" overwrite="true">
+			<fileset dir="${release.directory}">
+				<include name="*.cod" />
+				<include name="*.debug" />
+				<include name="*.csl" />
+				<include name="*.cso" />
+			</fileset>
+		</copy>
+	</target>
 
-            -->
+	<target name="deliver" depends="clean, build">
+		<copy file="${build.directory}\${project.title}\${project.title}.cod" tofile="${jde.home}\simulator\${project.title}.cod" />
+		<copy file="${build.directory}\${project.title}\${project.title}.cod" tofile="${basedir}\delivery\${project.title}.cod" />
+		<delete dir="${build.directory}" />
+	</target>
+
 </project>
+
