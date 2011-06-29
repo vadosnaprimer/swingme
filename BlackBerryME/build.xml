@@ -32,13 +32,13 @@
 		<description>
 				Delete all the previous built projects.
 		</description>
-<!--
+<!-- -->
 		<delete includeEmptyDirs="false" failonerror="no">
 			<fileset dir="${build.directory}" />
 			<fileset dir="${release.directory}" />
 			<fileset dir="${dist.directory}" />
 		</delete>
- -->
+
 		<delete file="${jde.home}/simulator/${project.title}.cod" failonerror="no" />
 	</target>
 
