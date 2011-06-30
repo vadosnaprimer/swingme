@@ -17,8 +17,6 @@
 
 package net.yura.mobile.util;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -40,7 +38,7 @@ public class SystemUtil {
                 dest.put(key, src.get(key));
             }
     }
-    
+
     /**
      * @param a array
      * @return a Vector
@@ -53,7 +51,7 @@ public class SystemUtil {
         }
         return vec;
     }
-    
+
     /**
      * @param des
      * @param src
@@ -64,12 +62,13 @@ public class SystemUtil {
         for (int c=0;c<src.size();c++) {
             des.addElement(src.elementAt(c));
         }
-        
+
     }
 
     public static boolean equals(Object obj1, Object obj2) {
-        if (obj1 ==null && obj2 == null) return true;
-        if (obj1==null || obj2 == null) return false;
+        if (obj1 == null && obj2 == null) return true;
+        if (obj1 == null || obj2 == null) return false;
+        if (obj1.equals(obj2)) return true;
 
         if (obj1 instanceof Hashtable && obj2 instanceof Hashtable) {
             Hashtable hash1 = (Hashtable) obj1;
@@ -87,8 +86,10 @@ public class SystemUtil {
                    if (!equals(objValue1,objValue2))
                        return false;
             }
+            return true;
         }
-        else if (obj1 instanceof Vector && obj2 instanceof Vector) {
+
+        if (obj1 instanceof Vector && obj2 instanceof Vector) {
             Vector vector1 = (Vector) obj1;
             Vector vector2 = (Vector) obj2;
             if (vector1.size() != vector2.size())
@@ -97,8 +98,10 @@ public class SystemUtil {
                 if (!equals(vector1.elementAt(i),vector2.elementAt(i)))
                     return false;
             }
+            return true;
         }
-        else if (obj1 instanceof Object[] && obj2 instanceof Object[]) {
+
+        if (obj1 instanceof Object[] && obj2 instanceof Object[]) {
             Object[] objArray1 = (Object[])obj1;
             Object[] objArray2 = (Object[])obj2;
             if (objArray1.length != objArray2.length) return false;
@@ -106,11 +109,10 @@ public class SystemUtil {
                 if (!equals(objArray1[i], objArray2[i]))
                     return false;
             }
+            return true;
         }
-        else {
-            return obj1.equals(obj2);
-        }
-        return true;
+
+        return false;
     }
 
 
