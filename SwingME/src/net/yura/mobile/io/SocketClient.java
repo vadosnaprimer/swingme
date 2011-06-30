@@ -239,7 +239,7 @@ public abstract class SocketClient implements Runnable {
                         //#enddebug
 
                         // move this and any queued objects to offline inbox
-                        addToOfflineBox( object );
+                        addToOfflineBox(object, true);
                         // TODO note that other objects may have already been moved into the offlineInbox
                         // by this time by the shutdownConnection() being called from the read thread
 
@@ -258,9 +258,14 @@ public abstract class SocketClient implements Runnable {
     /**
      * if we are in the DISCONNECTED_AND_PAUSED state, wake us up
      */
-    public void addToOfflineBox(Object t) {
+    public void addToOfflineBox(Object t, boolean isFront) {
         if (!offlineBox.contains(t)) {
-            offlineBox.addElement(t);
+            if (isFront) {
+                offlineBox.insertElementAt(t, 0);
+            }
+            else {
+                offlineBox.addElement(t);
+            }
         }
 
         wake();
@@ -319,7 +324,7 @@ public abstract class SocketClient implements Runnable {
         if (writeThread!=null){
             Vector inbox = writeThread.getInbox();
             for (int c=0;c<inbox.size();c++) {
-                addToOfflineBox(inbox.elementAt(c));
+                addToOfflineBox(inbox.elementAt(c), false);
             }
             writeThread.clearInbox();
 
