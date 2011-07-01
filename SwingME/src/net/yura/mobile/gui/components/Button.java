@@ -299,6 +299,7 @@ public class Button extends Label implements ActionListener {
         }
 
         /**
+         * @see javax.swing.AbstractButton#doClick() AbstractButton.doClick
          * @see javax.swing.AbstractButton#fireActionPerformed(java.awt.event.ActionEvent) AbstractButton.fireActionPerformed
          */
 	public void fireActionPerformed() {

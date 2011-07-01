@@ -10,7 +10,7 @@ public class Animation extends Thread{
 
 	static Animation animation;
 
-	static final int fps = 10;
+	public static int FPS = 10;
 
 	static final Vector components = new Vector();
 
@@ -21,7 +21,7 @@ public class Animation extends Thread{
 		try {
 
                         long lastWait = System.currentTimeMillis();
-                        int sleep = 1000/fps;
+                        int sleep = 1000/FPS;
 
 			while (true) {
 
