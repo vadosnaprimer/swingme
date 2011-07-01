@@ -124,7 +124,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] onCreateInputConnection " + this);
+        		System.out.println("[TextBoxView] onCreateInputConnection " + this+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -177,7 +177,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] onCheckIsTextEditor " + this);
+        		System.out.println("[TextBoxView] onCheckIsTextEditor " + this+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -189,7 +189,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] beginBatchEdit");
+        		System.out.println("[TextBoxView] beginBatchEdit composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -201,7 +201,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] endBatchEdit");
+        		System.out.println("[TextBoxView] endBatchEdit composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -213,7 +213,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] clearMetaKeyStates "+states);
+        		System.out.println("[TextBoxView] clearMetaKeyStates "+states+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -225,7 +225,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] commitCompletion >"+text+"<");
+        		System.out.println("[TextBoxView] commitCompletion >"+text+"< composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -237,7 +237,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] commitText >"+text+"< "+newCursorPosition);
+        		System.out.println("[TextBoxView] commitText >"+text+"< "+newCursorPosition+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -252,7 +252,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] deleteSurroundingText: leftLength = " + leftLength + " rightLength = " + rightLength);
+        		System.out.println("[TextBoxView] deleteSurroundingText: leftLength = " + leftLength + " rightLength = " + rightLength+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -271,7 +271,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] finishComposingText");
+        		System.out.println("[TextBoxView] finishComposingText composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -284,7 +284,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] setComposingText: >" + text + "< "+newCursorPosition);
+        		System.out.println("[TextBoxView] setComposingText: >" + text + "< "+newCursorPosition+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -297,7 +297,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] getCursorCapsMode "+reqModes);
+        		System.out.println("[TextBoxView] getCursorCapsMode "+reqModes+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -319,7 +319,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] getExtractedText "+request+" "+flags);
+        		System.out.println("[TextBoxView] getExtractedText "+request+" "+flags+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -333,7 +333,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] getTextAfterCursor "+n+" "+flags);
+        		System.out.println("[TextBoxView] getTextAfterCursor "+n+" "+flags+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -345,7 +345,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] getTextBeforeCursor: " + textBeforeCursor+" "+n+" "+flags);
+        		System.out.println("[TextBoxView] getTextBeforeCursor: " + textBeforeCursor+" "+n+" "+flags+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -357,7 +357,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] performEditorAction "+actionCode);
+        		System.out.println("[TextBoxView] performEditorAction "+actionCode+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -373,7 +373,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] performContextMenuAction "+id);
+        		System.out.println("[TextBoxView] performContextMenuAction "+id+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -385,7 +385,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] performPrivateCommand "+action+" "+data);
+        		System.out.println("[TextBoxView] performPrivateCommand "+action+" "+data+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -397,7 +397,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] sendKeyEvent " + event);
+        		System.out.println("[TextBoxView] sendKeyEvent " + event+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -419,7 +419,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] setSelection "+start+" "+end);
+        		System.out.println("[TextBoxView] setSelection "+start+" "+end+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -431,7 +431,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] reportFullscreenMode " +enabled);
+        		System.out.println("[TextBoxView] reportFullscreenMode " +enabled+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -443,7 +443,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] sendText: >" + text + "<");
+        		System.out.println("[TextBoxView private] sendText: >" + text + "< composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
@@ -458,7 +458,7 @@ public class TextBox extends Screen {
 
         	//#mdebug debug
         	if (debug) {
-        		System.out.println("[TextBoxView] sendComposingText >"+text+"<"+done);
+        		System.out.println("[TextBoxView private] sendComposingText >"+text+"< "+done+" composingText: >"+composingText+"<");
         	}
         	//#enddebug
 
