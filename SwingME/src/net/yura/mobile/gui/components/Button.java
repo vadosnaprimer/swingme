@@ -457,7 +457,7 @@ public class Button extends Label implements ActionListener {
 
         public void setValue(Object obj) {
             if (obj instanceof Boolean) {
-                setSelected( ((Boolean)obj).booleanValue() );
+                setSelected(Boolean.TRUE.equals(obj));
             }
             else {
                 super.setValue(obj);
