@@ -891,12 +891,20 @@ public class DesktopPane extends Canvas implements Runnable {
     public void revalidateComponent(Component rc) {
         //#mdebug info
         if (rc.getWidth() == 0 || rc.getHeight() ==0 ) {
-            Logger.info("revalidate called on a component with 0 width and 0 height");
+            Logger.info("revalidate called on a component with 0 width and 0 height, this means nothing will happen to it");
             //dumpStack();
         }
         //#enddebug
 
         synchronized (uiLock) {
+
+            //#mdebug info
+            if (validating!=0) {
+                System.out.println("##### calling revalidate from inside the ui thread during a revalidate, this is odd!!! and may break things");
+                Logger.dumpStack();
+            }
+            //#enddebug
+
             addToComponentVector(rc, revalidateComponents1);
         }
     }
