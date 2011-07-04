@@ -940,6 +940,9 @@ public class List extends Component implements ActionListener {
         fixedCellHeight = height;
     }
 
+    /**
+     * @see javax.swing.JList#getFixedCellHeight() JList.getFixedCellHeight
+     */
     public int getFixedCellHeight(){
         return fixedCellHeight;
     }
@@ -957,6 +960,12 @@ public class List extends Component implements ActionListener {
         fixedCellWidth = width;
     }
 
+    /**
+     * @see javax.swing.JList#getFixedCellWidth() JList.getFixedCellWidth
+     */
+    public int getFixedCellWidth(){
+        return fixedCellWidth;
+    }
 
     /**
      * maybe should be in list, but is used in a few places
@@ -966,8 +975,13 @@ public class List extends Component implements ActionListener {
 
         Component c = renderer.getListCellRendererComponent(this, prototypeCellValue, 0, false, false);
         c.workoutPreferredSize();
-        setFixedCellHeight( c.getHeightWithBorder() );
-
+        // TODO is is enough that we set one and not the other?
+        if (getLayoutOrientation()==List.VERTICAL) {
+            setFixedCellHeight( c.getHeightWithBorder() );
+        }
+        else {
+            setFixedCellWidth( c.getWidthWithBorder() );
+        }
     }
 
     /**
