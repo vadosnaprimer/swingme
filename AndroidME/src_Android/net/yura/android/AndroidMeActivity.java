@@ -252,6 +252,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 	        Displayable current = display.getCurrent();
 	        if (current != null) {
 	            // load the menu items
+	            menu.close();
 	            menu.clear();
 	            Vector<Command> commands = current.getCommands();
 	            for (int i = 0; i < commands.size(); i++) {

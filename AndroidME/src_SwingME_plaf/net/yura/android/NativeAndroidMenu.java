@@ -1,6 +1,7 @@
 package net.yura.android;
 
 import java.util.Vector;
+
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
@@ -16,10 +17,11 @@ public class NativeAndroidMenu implements MenuSystem {
     public boolean onPrepareOptionsMenu(Menu androidMenu) {
 
         try {
+            androidMenu.close();
             androidMenu.clear();
 
             net.yura.mobile.gui.components.Window currentWindow = net.yura.mobile.gui.DesktopPane.getDesktopPane().getSelectedFrame();
-            
+
             net.yura.mobile.gui.components.Button mneonicButton = currentWindow.findMneonicButton(net.yura.mobile.gui.KeyEvent.KEY_MENU);
             if ( mneonicButton==null ) {
                 mneonicButton = currentWindow.findMneonicButton(net.yura.mobile.gui.KeyEvent.KEY_SOFTKEY1);
@@ -27,7 +29,7 @@ public class NativeAndroidMenu implements MenuSystem {
             if (mneonicButton==null) {
             	return false; // there is no menu!
             }
-            
+
             fireActionPerformed(mneonicButton,androidMenu);
 
         }
@@ -36,7 +38,7 @@ public class NativeAndroidMenu implements MenuSystem {
 	    }
 	    return true;
     }
-        
+
     private void addItemsToMenu(Menu androidMenu,net.yura.mobile.gui.components.Menu menu) {
 
     	Vector menuItems = menu.getMenuComponents();
@@ -113,9 +115,9 @@ public class NativeAndroidMenu implements MenuSystem {
 						    public int getIntrinsicHeight() {
 						        return icon.getIconHeight();
 						    }
-						}; 
+						};
 						androidMenuItem.setIcon( drawable );
-	                	
+
 						// this causes lots of problems as BitmapDrawable makes the size go wrong
 	                	//javax.microedition.lcdui.Image img = icon.getImage();
 	                    //if (img != null) {
@@ -133,9 +135,9 @@ public class NativeAndroidMenu implements MenuSystem {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		throw new RuntimeException();
 	}
-	
+
 	private void fireActionPerformed(net.yura.mobile.gui.components.Button button,android.view.Menu menu) {
-		
+
 		// we do NOT want to call fireActionPerformed on menus, as that will cause the SwingME menu to open
 		// and we want to use native menus instead
 		if (button instanceof net.yura.mobile.gui.components.Menu) {
