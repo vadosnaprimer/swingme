@@ -7,7 +7,7 @@ import net.yura.mobile.logging.Logger;
 public class AndroidOptionPane extends OptionPane {
 
     // Make sure we have unique url's, so we can have as many activities (pop-ups) as needed.
-    public static int optionPaneCounter;
+    private static int optionPaneCounter;
 
     @Override
     public void setVisible(boolean b) {
