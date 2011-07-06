@@ -25,7 +25,6 @@ import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.io.FileUtil;
 import net.yura.mobile.logging.Logger;
 
@@ -124,64 +123,22 @@ public class ImageUtil {
         }
     }
 
-
+    public interface ThumbnailLoader {
+        Image getThumbnailFromFile(String fileName);
+    }
+    public static ThumbnailLoader thumbLoader;
 
     /**
      * will return null if no thumb found
      */
     public static Image getThumbnailFromFile(final String fileName) {
 
-        if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
-
-            byte[] img=null;
-
-            try {
-
-                // OLD BlackBerry
-                String bbThumbs = fileName.substring(0, fileName.lastIndexOf('/')) +"/BBThumbs.dat";
-                if (FileUtil.localFileExists(bbThumbs)) {
-                    InputStream in = FileUtil.getInputStreamFromFileConnector(bbThumbs);
-                    String file = fileName.substring(fileName.lastIndexOf('/')+1);
-                    byte[] data = FileUtil.getData(in, -1);
-                    img = readThumbs(data, file);
-                    return Image.createImage(img, 0, img.length);
-                }
-
-                // NEW BlackBerry                                               can be "pictures" or "camera" after the "user"
-                String bbThumbsNew;
-                if (fileName.startsWith("file:///store/")) { // home/user/
-                    bbThumbsNew="file:///store/appdata/rim/media/";
-                }
-                else if (fileName.startsWith("file:///system/")) {
-                    bbThumbsNew="file:///system/appdata/rim/media/";
-                }
-                else {
-                    bbThumbsNew="file:///SDCard/BlackBerry/system/media/";
-                }
-
-                String[] names = {"thumbs116x116.dat","thumbs480x360.dat","thumbs86x86.dat","thumbs480x480.dat"};
-
-                for (int c=0;c<names.length;c++) {
-                    String thumbs = bbThumbsNew+names[c];
-                    if (FileUtil.localFileExists(thumbs)) {
-                        InputStream in = FileUtil.getInputStreamFromFileConnector(thumbs);
-                        byte[] data = FileUtil.getData(in, -1);
-                        img = readThumbsAlternative(data, fileName);
-                        return Image.createImage(img, 0, img.length);
-                    }
-                }
-
+        if (thumbLoader!=null) {
+            Image img = thumbLoader.getThumbnailFromFile(fileName);
+            if (img!=null) {
+                return img;
             }
-            catch (Exception ex) {
-                //#mdebug debug
-                System.err.println("error "+ex+" "+img+" "+(img!=null?img.length:-1));
-                ex.printStackTrace();
-                //#enddebug
-            }
-
-        } // end blackberry
-
-
+        }
 
         InputStream dis = null;
         try {
@@ -199,177 +156,6 @@ public class ImageUtil {
             FileUtil.close(dis);
         }
     }
-
-
-
-
-
-
-
-
-
-
-        /**
-	 * @param byte[] search refers to BBThumbs.dat file already opened previously and
-	 * indexed for faster
-
-	 * lookups
-
-	 * @param String szSearch refers to the image we want the thumbnail of, so if
-	 * picture01.jpg is in the //folder with the current BBThumbs.dat then that
-	 * will be my search String
-
-	 * Also now with BB 5.0 we have random file access which will make this
-	 * method of lookup even
-
-	 * faster for single file thumbnail creation
-         */
-	public static byte[] readThumbs(byte[] search, String szSearch) {
-
-		// convert the search string to bytes for easier comparison
-
-		byte[] searchtmp = szSearch.getBytes();
-		for (int x = 0; x < search.length; x++) {
-			boolean found = false;
-			int lastbyte = 0;
-
-			// For the length of searchtmp trying to find a match in the byte
-			// file
-
-			// we could also have converted search to String [new
-			// String(search)]
-
-			// and have done an index of however I prefer direct byte access as
-
-			// lookups tend to be faster
-
-			for (int y = 0; y < searchtmp.length; y++) {
-				if (search[x + y] == searchtmp[y]) {
-					lastbyte = x + y + 1;
-					found = true;
-				} else {
-					found = false;
-					break;
-				}
-			}
-
-			if (found) {
-
-				// we found our search string so next we want to see how long in
-
-				// bytes the files is so we only read untill end of this PNG
-
-				// without needing to search for the AE 42 50 82 Hex String,
-
-				// also there might be a chance that AE 42 50 82 repeats itself
-
-				// as such it is highly recommended to get the size
-
-				byte[] tmpB = new byte[4];
-				tmpB[0] = search[lastbyte + 20];
-				tmpB[1] = search[lastbyte + 19];
-				tmpB[2] = search[lastbyte + 18];
-				tmpB[3] = search[lastbyte + 17];
-				long readsize = 0;
-				int t = 0;
-
-				// convert and retrieve the size
-
-				for (int shiftBy = 0; shiftBy < 32; shiftBy += 8) {
-					readsize |= (long) (tmpB[t++] & 0xff) << shiftBy;
-				}
-				tmpB = null;
-				tmpB = new byte[(int) readsize];
-				t = 0;
-
-				// now we read from the start of the image untill the end of
-
-				// the image
-
-				for (int y = lastbyte + 21; y < (int) readsize + lastbyte + 21; y++) {
-					tmpB[t++] = search[y];
-				}
-
-				// and like that we have our bitmap
-
-				// now all that is left to do is to convert it using
-
-				// Bitmap.createBitmapFromBytes(tmpB, x, y, z);
-
-				return tmpB;
-
-			}
-		}
-		return null;
-	}
-
-
-
-
-    public static byte[] readThumbsAlternative(byte[] search, String szSearch) {
-        // file:///SDCard/BlackBerry/pictures/image.jpg
-        szSearch = szSearch.substring(szSearch.lastIndexOf('/') + 1, szSearch.length());
-        // convert the search string to bytes for easier comparison
-        byte[] searchtmp = szSearch.getBytes();
-        int lastbyte = 0;
-        int endIndex = 0;
-        for (int x = 0; x < search.length; x++) {
-            boolean found = false;
-            // For the length of searchtmp trying to find a match in the byte file
-            // we could also have converted search to String [new String(search)]
-            // and have done an index of however I prefer direct byte access as lookups tend to be faster
-            for (int y = 0; y < searchtmp.length; y++) {
-                if (search[x + y] == searchtmp[y]) {
-                    lastbyte = x + y + 1;
-                    found = true;
-                }
-                else {
-                    found = false;
-                    break;
-                }
-            }
-            if (found) {
-                for (int y = lastbyte; y < search.length; y++) {
-                    byte first = search[y];
-                    byte second = (y < search.length - 1) ? search[y + 1] : search[y];
-                    String firstS = Integer.toString((first & 0xff) + 0x100, 16).substring(1);
-                    String secondS = Integer.toString((second & 0xff) + 0x100, 16).substring(1);
-                    if (firstS.equals("ff") && secondS.equals("d9")) {
-                        endIndex = y + 1;
-                        break;
-                    }
-                }
-                if (endIndex > 0) {
-                    break;
-                }
-            }
-        }
-        if (lastbyte > 0 && endIndex > 0) {
-            byte[] b = new byte[lastbyte + endIndex];
-            int counter = 0;
-            for (int i = lastbyte; i <= endIndex; i++) {
-                b[counter] = search[i];
-                counter++;
-            }
-            return b;
-
-        }
-        return null;
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
   public static int LARGESTBYTESTREAM = 170000;   // Current maximum byte stream allowed
