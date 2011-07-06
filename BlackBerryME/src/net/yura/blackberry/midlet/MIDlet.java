@@ -15,11 +15,13 @@ import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.FullScreen;
 // import net.rim.device.api.ui.VirtualKeyboard; // API - 4.7.0 does not work on 'BlackBerry Bold (4.6)'
 import net.yura.blackberry.BlackBerryOptionPane;
+import net.yura.blackberry.BlackBerryThumbLoader;
 import net.yura.mobile.gui.Animation;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.io.SocketClient;
 import net.yura.mobile.logging.Logger;
+import net.yura.mobile.util.ImageUtil;
 
 public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements KeyListener{
 
@@ -45,6 +47,7 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         
         KeyEvent.BLACKBERRY_QWERTY = qwerty;
         
+        ImageUtil.thumbLoader = new BlackBerryThumbLoader();
         
         setInternetConnectionString();
     }
