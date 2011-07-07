@@ -50,6 +50,13 @@
             <fileset dir="${gen.dir}" includes="**/*.java"/>
         </replaceregexp>
         
+        <replaceregexp byline="true"
+               match="javax.microedition.lcdui.Canvas(\W)"
+               replace="net.yura.blackberry.midlet.Canvas\1"
+        >
+            <fileset dir="${gen.dir}" includes="**/*.java"/>
+        </replaceregexp>
+    	
         
         
         <replaceregexp byline="true" flags="g"
@@ -73,6 +80,31 @@
             <fileset dir="${gen.dir}" includes="**/*.java"/>
         </replaceregexp>
         
+    	
+    	
+    	
+    	
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.amms.MediaProcessor(\W)"
+               replace="net.yura.blackberry.amms.MediaProcessor\1"
+        >
+            <fileset dir="${gen.dir}" includes="**/*.java"/>
+        </replaceregexp>
+
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.amms.GlobalManager(\W)"
+               replace="net.yura.blackberry.amms.GlobalManager\1"
+        >
+            <fileset dir="${gen.dir}" includes="**/*.java"/>
+        </replaceregexp>
+
+        <replaceregexp byline="true" flags="g"
+               match="javax.microedition.amms.control.ImageFormatControl(\W)"
+               replace="net.yura.blackberry.amms.ImageFormatControl\1"
+        >
+            <fileset dir="${gen.dir}" includes="**/*.java"/>
+        </replaceregexp>
+    	
 
 <!-- -->
 
