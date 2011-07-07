@@ -20,6 +20,7 @@ package net.yura.mobile.util;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Graphics;
@@ -467,8 +468,34 @@ public class ImageUtil {
 
 
 
-
-
+    public static void saveImage(Image image, OutputStream outputStream) {
+        
+        try {
+            
+            //Create MediaProcessor for raw Image
+            javax.microedition.amms.MediaProcessor mediaProc = javax.microedition.amms.GlobalManager.createMediaProcessor("image/raw");
+            
+            //Get control over the format
+            javax.microedition.amms.control.ImageFormatControl formatControl =
+                    (javax.microedition.amms.control.ImageFormatControl)mediaProc.getControl("javax.microedition.amms.control.ImageFormatControl");
+            //Set necessary format
+            formatControl.setFormat("image/jpeg");
+            
+            //formatControl.setParameter("quality", 80);
+            
+            mediaProc.setInput(image);
+            mediaProc.setOutput(outputStream); 
+            
+            // Do the actual processing. If you do not want to use a blocking call, 
+            // use start() and MediaProcessorListener.
+            mediaProc.complete();
+            
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        
+    }
 
 
 }

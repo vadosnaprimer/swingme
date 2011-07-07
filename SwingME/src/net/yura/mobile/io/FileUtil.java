@@ -213,7 +213,7 @@ public class FileUtil {
     }
 
     public static FileConnection getWriteFileConnection(String fullName) throws IOException {
-                FileConnection fc = (FileConnection)Connector.open(fullName,Connector.WRITE);
+                FileConnection fc = (FileConnection)Connector.open(fullName,Connector.READ_WRITE); // we need read and write here, as exists needs read access
                 if (fc != null) {
                     //create new file when there is not a existed file
                     if (fc.exists()) {
