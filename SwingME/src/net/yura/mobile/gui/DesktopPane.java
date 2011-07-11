@@ -1349,6 +1349,7 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public void pointerPressed(int x, int y) {
+        if (x<0&&y<0) return; // this is needed as blackberry sometimes sends this on the emulator in multitouch mode
         pointerEvent(PRESSED, x, y);
     }
 
@@ -1361,6 +1362,9 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public void multitouchEvent(int[] type, int[] x, int[] y) {
+        
+        //System.out.println("SM multitouchEvent "+pointerComponent+" point1="+type[0]+" "+x[0]+" "+y[0]+" point2="+type[1]+" "+x[1]+" "+y[1]);
+        
         if (pointerComponent!=null) {
             int pcX = pointerComponent.getXOnScreen();
             int pcY = pointerComponent.getYOnScreen();
@@ -1377,6 +1381,9 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     private void pointerEvent(int type, int x, int y) {
+        
+        //System.out.println("SM pointerEvent "+pointerComponent+" point="+type+" "+x+" "+y);
+        
         try {
 
             Window currentWindow = getSelectedFrame();
