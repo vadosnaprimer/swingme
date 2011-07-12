@@ -8,7 +8,7 @@ import net.yura.mobile.logging.Logger;
  */
 public abstract class QueueProcessorThread extends Thread {
 
-    public static boolean DROP_PRIORITY=true;
+    public static boolean CHANGE_PRIORITY=true;
 
     private Vector inbox = new Vector();
     private boolean runnning;
@@ -37,9 +37,9 @@ public abstract class QueueProcessorThread extends Thread {
         try {
 
             //#debug info
-            Logger.info("[QueueProcessorThread-"+getName()+"] START DROP_PRIORITY=="+DROP_PRIORITY);
+            Logger.info("[QueueProcessorThread-"+getName()+"] START DROP_PRIORITY=="+CHANGE_PRIORITY);
 
-            if (DROP_PRIORITY) {
+            if (CHANGE_PRIORITY) {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             }
 
@@ -69,14 +69,14 @@ public abstract class QueueProcessorThread extends Thread {
                     }
 
                     // try not to slow down the UI
-                    if (DROP_PRIORITY) {
+                    if (CHANGE_PRIORITY) {
                         Thread.yield();
                         Thread.sleep(0);
                     }
 
                     process(object);
 
-                    if (DROP_PRIORITY) {
+                    if (CHANGE_PRIORITY) {
                         Thread.yield();
                         Thread.sleep(0);
                     }
