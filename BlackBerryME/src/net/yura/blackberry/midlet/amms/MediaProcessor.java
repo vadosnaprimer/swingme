@@ -1,4 +1,4 @@
-package net.yura.blackberry.amms;
+package net.yura.blackberry.midlet.amms;
 
 import java.io.OutputStream;
 import javax.microedition.lcdui.Image;
