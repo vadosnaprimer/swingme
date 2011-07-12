@@ -49,14 +49,15 @@
         >
             <fileset dir="${gen.dir}" includes="**/*.java"/>
         </replaceregexp>
-        
+
+<!-- this is 1.7 and up - ->
         <replaceregexp byline="true"
                match="javax.microedition.lcdui.Canvas(\W)"
                replace="net.yura.blackberry.midlet.Canvas\1"
         >
             <fileset dir="${gen.dir}" includes="**/*.java"/>
         </replaceregexp>
-    	
+<!- - -->
         
         
         <replaceregexp byline="true" flags="g"
