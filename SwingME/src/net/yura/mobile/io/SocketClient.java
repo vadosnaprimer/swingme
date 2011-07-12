@@ -361,7 +361,7 @@ public abstract class SocketClient implements Runnable {
 
             // Changing thread priority should only be done in platforms
             // were actually improve performance.
-            if (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID) {
+            if (net.yura.mobile.util.QueueProcessorThread.CHANGE_PRIORITY) {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             }
 

@@ -275,7 +275,7 @@ public class DesktopPane extends Canvas implements Runnable {
         // Set thread to maximum priority (smother animations and text input)
         // Changing the UI thread priority should only be done in platforms
         // were actually improve performance.
-        if (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID) {
+        if (net.yura.mobile.util.QueueProcessorThread.CHANGE_PRIORITY) {
             Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
         }
 
@@ -498,7 +498,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
             // Changing the UI thread priority should only be done in platforms
             // were actually improve performance.
-            if (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID) {
+            if (net.yura.mobile.util.QueueProcessorThread.CHANGE_PRIORITY) {
                 Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
             }
 

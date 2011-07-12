@@ -59,7 +59,7 @@ public abstract class Midlet extends MIDlet {
 
             // Changing thread priority should only be done in platforms
             // were actually improve performance.
-            QueueProcessorThread.DROP_PRIORITY = (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID);
+            QueueProcessorThread.CHANGE_PRIORITY = (Midlet.getPlatform() != Midlet.PLATFORM_ANDROID);
 
             rootpane = makeNewRootPane();
 
