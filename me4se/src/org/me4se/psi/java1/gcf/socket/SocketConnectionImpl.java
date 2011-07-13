@@ -22,6 +22,10 @@ public class SocketConnectionImpl extends ConnectionImpl implements StreamConnec
 	public void open(String url, int mode, boolean timeouts) throws IOException {
 		// socket://
 		
+                if (new java.io.File("no.socket").exists()) {
+                    throw new IOException("socket blocked by no.socket file");
+                }
+            
 		String proxy = ApplicationManager.getInstance().getProperty("me4se.socketproxy");
         
         // System.out.println("Connecting to: "+url);
