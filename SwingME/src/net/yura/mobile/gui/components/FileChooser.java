@@ -887,21 +887,19 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
         }
 
-        public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            setupState(list, isSelected, cellHasFocus);
-            return getTableCellEditorComponent(null, value, isSelected, 0, 0);
+        public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected_IGNORE, boolean cellHasFocus) {
+            setupState(list, ((SelectableFile)value).isSelected(), cellHasFocus);
+            return getTableCellEditorComponent(null, value, isSelected_IGNORE, 0, 0);
         }
 
-        public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected, int row, int column) {
-
+        public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected_IGNORE, int row, int column) {
             tbOption = (SelectableFile) value;
-
             if (tbOption != null) {
                 setSelected(tbOption.isSelected());
-            } else {
+            }
+            else {
                 return null;
             }
-
             return this;
         }
 
