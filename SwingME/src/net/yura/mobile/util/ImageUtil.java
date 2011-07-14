@@ -36,6 +36,9 @@ public class ImageUtil {
 
     public static Image makeImage(int w,int h,int color) {
 
+        // this is not a good way of making a new image
+        // buts its the only way if your color has a alpha component
+        
                 int[] rgbBuff = new int[w*h];
 
                 for (int i = 0; i < rgbBuff.length; i++) {
@@ -48,7 +51,7 @@ public class ImageUtil {
 
     }
 
-    public static final void imageColor(int pixels[], int color) {
+    public static void imageColor(int pixels[], int color) {
         int r = (color & 0xff0000) >> 16;
         int g = (color & 0xff00) >> 8;
         int b = (color & 0xff) >> 0;
@@ -63,7 +66,7 @@ public class ImageUtil {
     /**
      * replaces all values of the blue channel with a color
      */
-    public static final Image imageColor(Image image, int i) {
+    public static Image imageColor(Image image, int i) {
 
         int ai[] = new int[image.getWidth() * image.getHeight()];
         image.getRGB(ai, 0, image.getWidth(), 0, 0, image.getWidth(), image.getHeight());
