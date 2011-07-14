@@ -894,12 +894,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected_IGNORE, int row, int column) {
             tbOption = (SelectableFile) value;
-            if (tbOption != null) {
-                setSelected(tbOption.isSelected());
-            }
-            else {
-                return null;
-            }
+            // used when in editor mode, but not by the renderer
+            setSelected(tbOption.isSelected());
             return this;
         }
 
