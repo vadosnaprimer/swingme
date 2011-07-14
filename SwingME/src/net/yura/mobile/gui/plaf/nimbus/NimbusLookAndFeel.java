@@ -356,6 +356,10 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
         //setUIDefault("CheckBox[focused].property[icon]",checkboxFocusedIcon);
         setUIDefault("CheckBox[selected].property[icon]",checkboxSelectedIcon);
 
+        setUIDefault("CheckBoxRenderer.property[icon]",checkboxIcon);
+        //setUIDefault("CheckBoxRenderer[focused].property[icon]",checkboxFocusedIcon);
+        setUIDefault("CheckBoxRenderer[selected].property[icon]",checkboxSelectedIcon);
+        
         // RADIOBUTTON
 
         Vector radioSettings = new Vector();
