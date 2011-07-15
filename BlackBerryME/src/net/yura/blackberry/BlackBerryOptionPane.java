@@ -33,7 +33,7 @@ public class BlackBerryOptionPane extends OptionPane {
             	//final int result;
             	
             	// if the message is null, try use the title
-            	if (obj==null) {
+            	if (obj==null || "".equals(obj) ) {
             		obj = getTitle();
             	}
             	
