@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.celleditor.TableCellEditor;
@@ -42,6 +43,8 @@ import net.yura.mobile.util.ImageUtil;
  */
 public class FileChooser extends Frame implements Runnable, ActionListener {
 
+	public static final String NO_FILE_SELECTED = "no_file_selected";
+    	
     private SelectableFileRenderer thumbOptionRenderer;
     private List fileList;
     private GridList fileTable;
@@ -441,6 +444,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         if ("cancel".equals(myaction)) {
             setVisible(false);
             lastFewImages.removeAllElements();
+            actionListener.actionPerformed(NO_FILE_SELECTED);
         }
         else if ("mainMenu".equals(myaction)) {
             if (fileTable != null) {
