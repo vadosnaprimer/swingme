@@ -2,6 +2,8 @@ package net.yura.blackberry.midlet;
 
 import javax.microedition.lcdui.Display;
 
+import net.rim.device.api.applicationcontrol.ApplicationPermissions;
+import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
 import net.rim.device.api.servicebook.ServiceBook;
 import net.rim.device.api.servicebook.ServiceRecord;
 import net.rim.device.api.system.Application;
@@ -10,10 +12,7 @@ import net.rim.device.api.system.DeviceInfo;
 import net.rim.device.api.system.KeyListener;
 import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
-import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
-import net.rim.device.api.ui.container.FullScreen;
-// import net.rim.device.api.ui.VirtualKeyboard; // API - 4.7.0 does not work on 'BlackBerry Bold (4.6)'
 import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.blackberry.BlackBerryThumbLoader;
 import net.yura.mobile.gui.Animation;
@@ -50,8 +49,31 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
         
         setInternetConnectionString();
+        setPermissions(); 
     }
 
+    /* This method asserts the permissions that Badoo requires to run */
+    private void setPermissions(){
+    	final ApplicationPermissionsManager apm = ApplicationPermissionsManager.getInstance();	
+    	ApplicationPermissions desiredPermissions = new ApplicationPermissions();
+    	
+    	// INPUT_SIMULATION is required to dismiss the camera after a photo has been taken
+    	desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_INPUT_SIMULATION);
+    	desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_WIFI);
+    	// LOCATION_DATA is required for GPS
+    	desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_LOCATION_DATA);
+    	desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_FILE_API);
+    	ApplicationPermissions currentPermissions = apm.getApplicationPermissions();
+    	    	
+    	if (currentPermissions.getPermission(ApplicationPermissions.PERMISSION_INPUT_SIMULATION) == ApplicationPermissions.VALUE_ALLOW
+    			&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_WIFI) == ApplicationPermissions.VALUE_ALLOW
+    			&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_LOCATION_DATA) == ApplicationPermissions.VALUE_ALLOW
+    			&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_FILE_API) == ApplicationPermissions.VALUE_ALLOW) {
+    		// permissions are fine
+    	} else {
+    		apm.invokePermissionsRequest(desiredPermissions);
+    	}      
+    }
 
     public boolean keyChar(char key, int status, int time) {
         return false;
@@ -192,19 +214,15 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
      * Looks through the phone's service book for a carrier provided BIBS network
      * @return The uid used to connect to that network.
      */
-    private static String getCarrierBIBSUid() {
-    	
-    	// TODO: API needs signing!!!
-    	
-//        ServiceRecord[] records = ServiceBook.getSB().getRecords();
-//        for(int currentRecord = 0; currentRecord < records.length; currentRecord++) {
-//            if(records[currentRecord].getCid().toLowerCase().equals("ippp")) {
-//                if(records[currentRecord].getName().toLowerCase().indexOf("bibs") >= 0) {
-//                    return records[currentRecord].getUid();
-//                }
-//            }
-//        }
-        
+    private static String getCarrierBIBSUid() {   	
+        ServiceRecord[] records = ServiceBook.getSB().getRecords();
+        for(int currentRecord = 0; currentRecord < records.length; currentRecord++) {
+            if(records[currentRecord].getCid().toLowerCase().equals("ippp")) {                
+            	if(records[currentRecord].getName().toLowerCase().indexOf("bibs") >= 0) {
+                    return records[currentRecord].getUid();
+                }
+            }
+        }
         return null;
     } 
     
