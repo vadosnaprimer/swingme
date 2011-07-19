@@ -9,23 +9,24 @@ import net.rim.device.api.io.file.FileSystemJournalListener;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.EventInjector;
 import net.rim.device.api.ui.UiApplication;
+import net.rim.device.api.ui.container.MainScreen;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 
 public class CameraInvoker implements com.badoo.mobile.BlackBerryNativeScreen , FileSystemJournalListener {
-
+	
 	long _lastUSN;
 	String capturedImgPath = "";
 	byte[] ImageData = null;
 	String full_path;
 
 	public CameraInvoker() {
+		super();
 		UiApplication.getUiApplication().addFileSystemJournalListener(this);
 		_lastUSN = FileSystemJournal.getNextUSN();
 	}
-
+	
 	public void show() {
-		Logger.info("Invoking camera");
 		Invoke.invokeApplication(Invoke.APP_TYPE_CAMERA, new CameraArguments());
 	}
 
@@ -62,7 +63,6 @@ public class CameraInvoker implements com.badoo.mobile.BlackBerryNativeScreen , 
 			inject.post();
 			inject.post();
 		} catch (Exception e) {
-			Logger.warn("Could not close camera with injected events: " + e.getMessage());
 		}
 	}
 
