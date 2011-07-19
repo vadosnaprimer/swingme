@@ -1,24 +1,21 @@
 package net.yura.blackberry;
 
-
 import net.rim.blackberry.api.invoke.CameraArguments;
 import net.rim.blackberry.api.invoke.Invoke;
 import net.rim.device.api.io.file.FileSystemJournal;
 import net.rim.device.api.io.file.FileSystemJournalEntry;
 import net.rim.device.api.io.file.FileSystemJournalListener;
+import net.rim.device.api.system.Application;
 import net.rim.device.api.system.Characters;
 import net.rim.device.api.system.EventInjector;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
 import net.yura.mobile.gui.Midlet;
-import net.yura.mobile.logging.Logger;
 
-public class CameraInvoker implements com.badoo.mobile.BlackBerryNativeScreen , FileSystemJournalListener {
+public class CameraInvoker extends MainScreen implements com.badoo.mobile.BlackBerryNativeScreen , FileSystemJournalListener {
 	
 	long _lastUSN;
-	String capturedImgPath = "";
-	byte[] ImageData = null;
-	String full_path;
+	String capturedImgPath = null;
 
 	public CameraInvoker() {
 		super();
@@ -26,7 +23,18 @@ public class CameraInvoker implements com.badoo.mobile.BlackBerryNativeScreen , 
 		_lastUSN = FileSystemJournal.getNextUSN();
 	}
 	
+	protected void onExposed(){
+		super.onExposed();
+		close();
+		Midlet.getMidlet().onResult(-1, capturedImgPath);
+	}
+	
 	public void show() {
+		Application.getApplication().invokeLater (new Runnable() {
+    	    public void run() {
+    	    	UiApplication.getUiApplication().pushScreen(CameraInvoker.this);
+    	    }
+		});		
 		Invoke.invokeApplication(Invoke.APP_TYPE_CAMERA, new CameraArguments());
 	}
 
@@ -44,7 +52,6 @@ public class CameraInvoker implements com.badoo.mobile.BlackBerryNativeScreen , 
 				switch (entry.getEvent()) {
 				case FileSystemJournalEntry.FILE_ADDED:
 					if (path.indexOf(".jpg") > 0) {
-						Logger.info("New image captured with camera: " + path);
 						capturedImgPath = path;
 						UiApplication.getUiApplication().removeFileSystemJournalListener(this);
 						closeCamera();
@@ -57,7 +64,6 @@ public class CameraInvoker implements com.badoo.mobile.BlackBerryNativeScreen , 
 	}
 
 	private void closeCamera() {
-		Midlet.getMidlet().onResult(-1, capturedImgPath);
 		try {
 			EventInjector.KeyEvent inject = new EventInjector.KeyEvent(EventInjector.KeyEvent.KEY_DOWN, Characters.ESCAPE,  50);
 			inject.post();
