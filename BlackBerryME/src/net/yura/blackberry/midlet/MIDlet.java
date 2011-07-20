@@ -49,13 +49,14 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
         
         setInternetConnectionString();
-        setPermissions(); 
+        setPermissions();
+        
     }
-
+    
     /* This method asserts the permissions that Badoo requires to run */
     private void setPermissions(){
     	final ApplicationPermissionsManager apm = ApplicationPermissionsManager.getInstance();	
-    	ApplicationPermissions desiredPermissions = new ApplicationPermissions();
+    	final ApplicationPermissions desiredPermissions = new ApplicationPermissions();
     	
     	// INPUT_SIMULATION is required to dismiss the camera after a photo has been taken
     	desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_INPUT_SIMULATION);
@@ -70,8 +71,12 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     			&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_LOCATION_DATA) == ApplicationPermissions.VALUE_ALLOW
     			&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_FILE_API) == ApplicationPermissions.VALUE_ALLOW) {
     		// permissions are fine
-    	} else {
-    		apm.invokePermissionsRequest(desiredPermissions);
+    	} else {    		
+    		UiApplication.getUiApplication().invokeLater(new Runnable() {				
+				public void run() {
+					apm.invokePermissionsRequest(desiredPermissions);
+				}
+			});    		
     	}      
     }
 

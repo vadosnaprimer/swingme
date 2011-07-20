@@ -12,6 +12,15 @@ import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
 import net.yura.mobile.gui.Midlet;
 
+/**
+ * @author Anton
+ * This class invokes the Native BlackBerry camera. It extends net.rim.device.api.ui.container.MainScreen because we
+ * are interested in knowing when the app takes focus again after a picture has either been taken or the camera has been
+ * dismissed without a picture being taken.
+ * 
+ * onExposed() is called when the app takes focus. The result (either the file path or null is no picture was taken) is 
+ * sent to AddPhotosViewController and the main screen closes itself.
+ */
 public class CameraInvoker extends MainScreen implements com.badoo.mobile.BlackBerryNativeScreen , FileSystemJournalListener {
 	
 	long _lastUSN;
