@@ -43,8 +43,15 @@ public class XHTMLLoader {
     ActionListener al;
 
     public static Component load(String text, ActionListener listener) {
+        byte[] bytes;
+        try {
+            bytes = text.getBytes("UTF-8"); // if we do not use UTF-8 here, the £ symbol gets converted to a ? on BB
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex.toString());
+        }
         XHTMLLoader xhtmlLoader = new XHTMLLoader();
-        xhtmlLoader.gotResult( new ByteArrayInputStream( text.getBytes() ) ,listener);
+        xhtmlLoader.gotResult( new ByteArrayInputStream( bytes ) ,listener);
         return xhtmlLoader.getRoot();
     }
 
@@ -75,8 +82,7 @@ public class XHTMLLoader {
         currentComponent = pane;
         try {
             KXmlParser parser = new KXmlParser();
-            parser.setInput(new ByteArrayInputStream( string.getBytes() ), null);
-
+            parser.setInput(new ByteArrayInputStream( string.getBytes("UTF-8") ), null); // as we decode by default as UTF-8, we need to encode as UTF-8 too
             read(parser);
         }
         catch(Exception ex) {
