@@ -38,6 +38,13 @@ public class TextBox extends Screen {
         this.currentCanvasView = getCanvasView(oldView);
 
         textBoxView = new TextBoxView();
+        
+        //textBoxView = new net.yura.android.NativeAndroidTextField();
+
+    }
+    
+    public View getCanvasView() {
+        return currentCanvasView;
     }
 
     private Canvas.CanvasView getCanvasView(View view) {
@@ -64,11 +71,20 @@ public class TextBox extends Screen {
         return null;
     }
 
+    /**
+     * this is called so start the text entry by AndroidME
+     */
     @Override
     public void initDisplayable(MIDlet midlet) {
+        
+        // we need to call this so the keyboard is opened
         if (currentCanvasView != null) {
             currentCanvasView.setTextInputView(textBoxView);
         }
+        
+        // need to call this after we bring the keyboard up, or that does not work
+        textBoxView.start(this);
+        
     }
 
     public int getMaxSize() {
@@ -121,6 +137,9 @@ public class TextBox extends Screen {
 
         public TextBoxView() {
         }
+        
+        public void start(TextBox tb) { }
+        public void onDraw() { }
         
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 

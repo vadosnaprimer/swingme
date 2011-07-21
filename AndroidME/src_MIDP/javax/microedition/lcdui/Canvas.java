@@ -261,6 +261,9 @@ public abstract class Canvas extends Displayable {
         // used by old style connector
         public boolean onCheckIsTextEditor();
         public InputConnection onCreateInputConnection(EditorInfo outAttrs);
+
+        public void start(TextBox tb);
+        public void onDraw();
     }
     
     class CanvasView extends View {
@@ -429,6 +432,10 @@ public abstract class Canvas extends Displayable {
             //#debug debug
             showFramesPerSec(androidCanvas);
 
+            if (inputConnectionView!=null) {
+                inputConnectionView.onDraw();
+            }
+            
             time = System.currentTimeMillis();
         }
 
@@ -864,7 +871,7 @@ public abstract class Canvas extends Displayable {
 //            if (inputConnectionView != view) {
 
 
-
+            
 
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
