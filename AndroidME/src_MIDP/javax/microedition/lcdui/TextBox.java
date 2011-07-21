@@ -1,11 +1,9 @@
 package javax.microedition.lcdui;
 
 import java.util.ArrayList;
-
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.android.AndroidMeActivity;
-import android.content.Context;
+import javax.microedition.lcdui.Canvas.InputHelper;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -17,7 +15,6 @@ import android.view.inputmethod.ExtractedTextRequest;
 import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 
-
 public class TextBox extends Screen {
 
 	//debug debug
@@ -27,8 +24,8 @@ public class TextBox extends Screen {
     private int maxSize;
     private int constraints;
     private Canvas.CanvasView currentCanvasView;
-    private TextBoxView textBoxView;
-
+    private InputHelper textBoxView;
+    
     public TextBox(String title, String text, int maxSize, int constraints) {
         this.text = text;
         this.maxSize = maxSize;
@@ -40,7 +37,7 @@ public class TextBox extends Screen {
         View oldView = Display.getDisplay(midlet).getCurrent().getView();
         this.currentCanvasView = getCanvasView(oldView);
 
-        textBoxView = new TextBoxView(AndroidMeActivity.DEFAULT_ACTIVITY);
+        textBoxView = new TextBoxView();
     }
 
     private Canvas.CanvasView getCanvasView(View view) {
@@ -97,16 +94,34 @@ public class TextBox extends Screen {
     public void setConstraints(int constraints) {
         this.constraints = constraints;
     }
+    
+    
+
+    public void fireCommand(int type) {
+        java.util.List<Command> commands = getCommands();
+        for (Command command:commands) {
+            if (command.getCommandType()==type) {
+                CommandListener cl = getCommandListener();
+                if (cl!=null) {
+                    cl.commandAction(command, this);
+                }
+                // we have found a command we can fire, now we can exit
+                return;
+            }
+        }
+        //#debug debug
+        System.out.println("[TextBox] NO BUTTON FOUND! "+type);
+    }
+    
 
     private static CharSequence composingText = "";
 
-    private class TextBoxView extends View implements InputConnection {
+    private class TextBoxView implements InputHelper,InputConnection {
         private CharSequence textBeforeCursor = " ";
 
-        public TextBoxView(Context context) {
-            super(context);
+        public TextBoxView() {
         }
-
+        
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 
 
@@ -128,7 +143,7 @@ public class TextBox extends Screen {
         	}
         	//#enddebug
 
-            EditText editText = new EditText(getContext());
+            EditText editText = new EditText( AndroidMeActivity.DEFAULT_ACTIVITY );
             editText.onCreateInputConnection(outAttrs);
 
             outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;

@@ -21,7 +21,7 @@ import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 
 public abstract class Canvas extends Displayable {
     public static final int UP = 1;
@@ -52,7 +52,7 @@ public abstract class Canvas extends Displayable {
      * the extra LinearLayout is needed so we can put other components ontop of the
      * normal Canvas like the camera view
      */
-    private LinearLayout linearLayout;
+    private ViewGroup linearLayout;
     private CanvasView canvasView;
 
     /**
@@ -208,7 +208,20 @@ public abstract class Canvas extends Displayable {
     public View getView() {
 
         if (linearLayout==null) {
-            this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
+            //this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
+            this.linearLayout = new ViewGroup(AndroidMeActivity.DEFAULT_ACTIVITY) {
+                @Override
+                protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                    final int count = getChildCount();
+                    for (int i = 0; i < count; i++) {
+                        final View child = getChildAt(i);
+                        // streach the CanvasView child to full size
+                        if (child instanceof CanvasView) {
+                            child.layout(0, 0, getWidth(), getHeight());
+                        }
+                    }
+                }
+            };
             this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
             canvasView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -244,6 +257,12 @@ public abstract class Canvas extends Displayable {
     	canvasView.getInputManager().restartInput(canvasView);
     }
 
+    public interface InputHelper {
+        // used by old style connector
+        public boolean onCheckIsTextEditor();
+        public InputConnection onCreateInputConnection(EditorInfo outAttrs);
+    }
+    
     class CanvasView extends View {
         private static final int KEYBOARD_SHOW = 1;
         private static final int KEYBOARD_HIDE = -1;
@@ -253,7 +272,7 @@ public abstract class Canvas extends Displayable {
         private int canvasH;
         private int keyMenuCount = -1;
         private int keyBackCount = -1;
-        private View inputConnectionView;
+        private InputHelper inputConnectionView;
         private int keyboardMode; // KEYBOARD_SHOW/HIDE or 0
         private boolean hasWindowFocus = true;
         private boolean restartKeyboardInput;
@@ -644,7 +663,7 @@ public abstract class Canvas extends Displayable {
                 catch (Throwable e) {
                 }
             }
-
+            
             return true;
         }
 
@@ -671,11 +690,11 @@ public abstract class Canvas extends Displayable {
         }
 
         private int[] clone(int[] a) {
-
             int[] b = new int[a.length];
-            for (int i = 0; i < b.length; i++) {
-                b[i] = a[i];
-            }
+            System.arraycopy(a, 0, b, 0, a.length);
+            //for (int i = 0; i < b.length; i++) {
+            //    b[i] = a[i];
+            //}
             return b;
         }
 
@@ -841,7 +860,7 @@ public abstract class Canvas extends Displayable {
             }
         }
 
-        public void setTextInputView(View view) {
+        public void setTextInputView(InputHelper view) {
 //            if (inputConnectionView != view) {
 
 

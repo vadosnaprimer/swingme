@@ -6,6 +6,7 @@
             <name>AndroidME</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <source-roots>
+                <root id="src.src_JSR234_Advanced_Multimedia.dir"/>
                 <root id="src.src_Android.dir"/>
                 <root id="src.src_SwingME_plaf.dir"/>
                 <root id="src.src_MIDP.dir"/>
