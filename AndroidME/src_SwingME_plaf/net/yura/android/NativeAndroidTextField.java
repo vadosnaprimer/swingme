@@ -1,29 +1,28 @@
 package net.yura.android;
 
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.microedition.lcdui.Canvas.InputHelper;
 import javax.microedition.lcdui.TextBox;
-
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextComponent;
+import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.Window;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
+import javax.microedition.lcdui.Canvas.InputHelper;
 
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
+    private EditText editText; // this is the Android Component
+    private TextBox textBox; // this is the J2ME component
     private Component textField; // this is the SwingME component
-    private EditText editText; // this is the J2ME component
-    private TextBox textBox; // this is the Android Component
 
     public NativeAndroidTextField() {
 
@@ -51,53 +50,29 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         this.textBox = textBox;
 
-        editText = new EditText( AndroidMeActivity.DEFAULT_ACTIVITY ) {
-
-            @Override
-            public boolean onKeyDown(int keyCode, KeyEvent event) {
-                boolean use = super.onKeyDown(keyCode, event);
-                if (!use) return view.onKeyDown(keyCode, event);
-                return true;
-            }
-
-            @Override
-            public boolean onKeyUp(int keyCode, KeyEvent event) {
-                boolean use = super.onKeyUp(keyCode, event);
-                if (!use) return view.onKeyUp(keyCode, event);
-                return true;
-            }
-
-            @Override
-            public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
-                boolean use = super.onKeyMultiple(keyCode, repeatCount, event);
-                if (!use) return view.onKeyMultiple(keyCode, repeatCount, event);
-                return true;
-            }
-
-            @Override
-            public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-                boolean use = super.onKeyLongPress(keyCode, event);
-                if (!use) return view.onKeyLongPress(keyCode, event);
-                return true;
-            }
-
-            @Override
-            public boolean onKeyPreIme(int keyCode, KeyEvent event) {
-                boolean use = super.onKeyPreIme(keyCode, event);
-                if (!use) return view.onKeyPreIme(keyCode, event);
-                return true;
-            }
-
-            @Override
-            public boolean onKeyShortcut(int keyCode, KeyEvent event) {
-                boolean use = super.onKeyShortcut(keyCode, event);
-                if (!use) return view.onKeyShortcut(keyCode, event);
-                return true;
-            }
-
-        };
+        editText = new NativeEditText(view);
 
         editText.setText(textBox.getString());
+
+
+
+
+        editText.setSingleLine( (textField instanceof TextField) );
+
+
+        int caret = ((TextComponent)textField).getCaretPosition();
+
+        // HACK to put the caret at the start of the line if your text is longer then 0
+        // http://groups.google.com/group/android-developers/browse_thread/thread/d1c64f4c23b3c83b
+        if (caret==0 && editText.getText().length() > 0) {
+            editText.setSelection(1);
+            editText.extendSelection(0);
+        }
+        // END HACK
+
+        editText.setSelection( caret );
+
+
 
 
 
@@ -189,6 +164,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             }
         }
 
+
         // hide it from everything first, or it will be visible for the next paint
         for (View child:remove) {
            child.setVisibility( View.GONE );
@@ -220,6 +196,81 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         // just set the text back on the text component
         ((TextComponent)textField).setText( textBox.getString() );
 
+        ((TextComponent)textField).setCaretPosition( editText.getSelectionEnd() ); // in android no direct way to get the caret
+
     }
+
+
+
+
+
+
+    class NativeEditText extends EditText {
+
+        View view;
+
+        @Override
+        public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+                InputConnection in = super.onCreateInputConnection(outAttrs);
+
+                // do not expand out the UI
+                outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
+
+                return in;
+        }
+
+        public NativeEditText(View view) {
+            super( AndroidMeActivity.DEFAULT_ACTIVITY );
+            this.view = view;
+        }
+
+        @Override
+        public boolean onKeyDown(int keyCode, KeyEvent event) {
+            boolean use = super.onKeyDown(keyCode, event);
+            if (!use) return view.onKeyDown(keyCode, event);
+            return true;
+        }
+
+        @Override
+        public boolean onKeyUp(int keyCode, KeyEvent event) {
+            boolean use = super.onKeyUp(keyCode, event);
+            if (!use) return view.onKeyUp(keyCode, event);
+            return true;
+        }
+
+        @Override
+        public boolean onKeyMultiple(int keyCode, int repeatCount, KeyEvent event) {
+            boolean use = super.onKeyMultiple(keyCode, repeatCount, event);
+            if (!use) return view.onKeyMultiple(keyCode, repeatCount, event);
+            return true;
+        }
+
+        @Override
+        public boolean onKeyPreIme(int keyCode, KeyEvent event) {
+            boolean use = super.onKeyPreIme(keyCode, event);
+            if (!use) return view.onKeyPreIme(keyCode, event);
+            return true;
+        }
+
+        @Override
+        public boolean onKeyShortcut(int keyCode, KeyEvent event) {
+            boolean use = super.onKeyShortcut(keyCode, event);
+            if (!use) return view.onKeyShortcut(keyCode, event);
+            return true;
+        }
+
+        /* need new version of sdk for this
+        @Override
+        public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+            boolean use = super.onKeyLongPress(keyCode, event);
+            if (!use) return view.onKeyLongPress(keyCode, event);
+            return true;
+        }
+        */
+
+    }
+
+
+
 
 }
