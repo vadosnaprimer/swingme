@@ -321,14 +321,19 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
     //Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Object result = null;
-        if(data != null && data.getExtras() != null) {
-        	result = data.getExtras().get("data");
-        }
+        try {
+            super.onActivityResult(requestCode, resultCode, data);
+            Object result = null;
+            if(data != null && data.getExtras() != null) {
+                result = data.getExtras().get("data");
+            }
 
-        MIDlet midlet = getMIDlet();
-        midlet.onResult(resultCode, result);
+            MIDlet midlet = getMIDlet();
+            midlet.onResult(resultCode, result);
+        } catch (Throwable e) {
+            //#debug info
+            e.printStackTrace();
+        }
     }
 
     private int hardKeyboardHidden;
