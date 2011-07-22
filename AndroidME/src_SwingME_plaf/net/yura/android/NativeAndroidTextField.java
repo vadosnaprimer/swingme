@@ -19,13 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Canvas.InputHelper;
 
 /**
  * TODO:
  *      expand on multi-line text does not work
+ *      when the theme is anything but the standard does not use it
  *      addCaretListener does not work
  *      addFocusListener does not work if there is already one set
+ *      {@link TextComponent#changedUpdate(int, int) } is not called when text is entered
  * @author Yura Mamyrin
  */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
@@ -272,19 +275,19 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-            if (keyCode == KeyEvent.KEYCODE_ENTER) {
-                Window win = textField.getWindow();
-                Button b = win.findMnemonicButton(10); // 10 is the mnemonic for the enter key
-                if (b!=null) {
-                    android2swing();
-                    b.fireActionPerformed();
+            int swingMeCode = Canvas.getKeyCode(event);
 
-                    // this is not normally needed
-                    textBox.setString( ((TextComponent)textField).getText() );
+            Window win = textField.getWindow();
+            Button b = win.findMnemonicButton(swingMeCode);
+            if (b!=null) {
+                android2swing(); // send text to swingME
+                b.fireActionPerformed();
 
-                    swing2android();
-                    return true;
-                }
+                // get the text from swingME to J2ME
+                textBox.setString( ((TextComponent)textField).getText() );
+
+                swing2android(); // set the text back into the android editText
+                return true;
             }
 
             boolean use = super.onKeyDown(keyCode, event);
