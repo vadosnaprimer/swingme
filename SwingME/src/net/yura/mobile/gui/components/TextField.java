@@ -32,32 +32,32 @@ public class TextField extends TextComponent {
         private int offset;
         private ActionListener al;
         private String action;
-    
+
         /**
          * @see javax.swing.JTextField#JTextField() JTextField.JTextField
          */
         public TextField() {
             this(TextComponent.ANY);
         }
-        
+
         /**
          * @param constraints the type of text, {@link #ANY } is default
          */
         public TextField(int constraints) {
             super("", 100, constraints);
-            
+
             offset = padding;
-            
+
             workoutPreferredSize();
         }
-    
+
     	public void paintComponent(Graphics2D g) {
-            
+
 		String textString = getDisplayString();
 
 		int[] oldClip = g.getClip();
 		g.clipRect(0, 0, width, height);
-                
+
                 g.setColor( getForeground() );
                 g.setFont(font);
 		g.drawString( textString, offset, (height-font.getHeight())/2 );
@@ -85,7 +85,7 @@ public class TextField extends TextComponent {
         }
 
         public void setCaretPosition(int a) {
-            
+
             super.setCaretPosition(a);
 
             if (isFocusOwner()) {
@@ -136,6 +136,7 @@ public class TextField extends TextComponent {
         }
 
         /**
+         * @see Button#addActionListener(ActionListener)
          * @see javax.swing.JTextField#addActionListener(java.awt.event.ActionListener) JTextField.addActionListener
          */
         public void addActionListener(ActionListener al) {
@@ -153,9 +154,26 @@ public class TextField extends TextComponent {
         }
 
         /**
+         * @see Button#setActionCommand(String)
          * @see javax.swing.JTextField#setActionCommand(java.lang.String) JTextField.setActionCommand
          */
         public void setActionCommand(String action) {
             this.action = action;
+        }
+
+        /**
+         * @see Button#getActionCommand() 
+         * @see javax.swing.JTextField#getActionCommand() JTextField.getActionCommand
+         */
+        public String getActionCommand() {
+            return action;
+        }
+        
+        /**
+         * @see Button#getActionListeners()
+         * @see javax.swing.JTextField#getActionListeners() JTextField.getActionListeners
+         */
+        public ActionListener[] getActionListeners() {
+            return al==null?new ActionListener[0]:new ActionListener[] { al };
         }
 }
