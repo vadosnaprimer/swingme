@@ -66,7 +66,9 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         editText = new NativeEditText(view);
 
         swing2android();
-
+        
+        editText.setSingleLine( (textField instanceof TextField) );        
+        editText.setInputType( TextBox.getInputType( textBox.getConstraints() ) ); // this has to be done AFTER setSingleLine or passwords will break
 
         if (textField instanceof TextField) {
             final TextField tf = (TextField)textField;
@@ -203,11 +205,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
     void swing2android() {
 
 
-
         editText.setText(textBox.getString());
-
-
-        editText.setSingleLine( (textField instanceof TextField) );
 
 
         int caret = ((TextComponent)textField).getCaretPosition();

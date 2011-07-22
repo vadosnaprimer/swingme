@@ -129,6 +129,41 @@ public class TextBox extends Screen {
         System.out.println("[TextBox] NO BUTTON FOUND! "+type);
     }
     
+    public static int getInputType(int constraints) {
+        
+            int inputType;
+
+            switch (constraints & TextField.CONSTRAINT_MASK) {
+				case TextField.NUMERIC:
+				case TextField.DECIMAL:
+					inputType = EditorInfo.TYPE_CLASS_NUMBER;
+					break;
+				case TextField.PHONENUMBER:
+					inputType = EditorInfo.TYPE_CLASS_PHONE;
+					break;
+				case TextField.EMAILADDR:
+					inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
+					break;
+				case TextField.URL:
+					inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI;
+					break;
+				default: // TextField.ANY:
+					inputType = EditorInfo.TYPE_CLASS_TEXT;
+					break;
+			}
+
+            if ((constraints & TextField.PASSWORD) > 0) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD;
+            }
+            if ((constraints & TextField.INITIAL_CAPS_SENTENCE) > 0) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES;
+            }
+            if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
+            }
+        
+            return inputType;
+    }
 
     private static CharSequence composingText = "";
 
@@ -167,36 +202,7 @@ public class TextBox extends Screen {
 
             outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
-            int inputType;
-
-            switch (constraints & TextField.CONSTRAINT_MASK) {
-				case TextField.NUMERIC:
-				case TextField.DECIMAL:
-					inputType = EditorInfo.TYPE_CLASS_NUMBER;
-					break;
-				case TextField.PHONENUMBER:
-					inputType = EditorInfo.TYPE_CLASS_PHONE;
-					break;
-				case TextField.EMAILADDR:
-					inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_EMAIL_ADDRESS;
-					break;
-				case TextField.URL:
-					inputType = EditorInfo.TYPE_CLASS_TEXT | EditorInfo.TYPE_TEXT_VARIATION_URI;
-					break;
-				default: // TextField.ANY:
-					inputType = EditorInfo.TYPE_CLASS_TEXT;
-					break;
-			}
-
-            if ((constraints & TextField.PASSWORD) > 0) {
-                inputType = inputType | EditorInfo.TYPE_TEXT_VARIATION_PASSWORD;
-            }
-            if ((constraints & TextField.INITIAL_CAPS_SENTENCE) > 0) {
-                inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES;
-            }
-            if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
-                inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
-            }
+            int inputType= getInputType(constraints);
 
             outAttrs.inputType = inputType;
 
