@@ -6,6 +6,8 @@ import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.microedition.lcdui.TextBox;
+
+import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
@@ -16,6 +18,8 @@ import net.yura.mobile.gui.components.Window;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
+
 import javax.microedition.lcdui.Canvas.InputHelper;
 
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
@@ -73,6 +77,23 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         editText.setSelection( caret );
 
 
+        if (textField instanceof TextField) {
+            final TextField tf = (TextField)textField;
+            if (tf.getActionListeners().length>0) {
+
+                editText.setImeOptions( EditorInfo.IME_ACTION_DONE ); // DONE is returned by default (IME_ACTION_UNSPECIFIED), but we STILL have to set it, or getImeOptions will return 0
+
+                editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == editText.getImeOptions() ) { // actionId is 6(IME_ACTION_DONE) is none is set. getImeOptions returns 0(IME_NULL) if none is set
+                            fireActionPerformed(tf);
+                        }
+                        return true;
+                    }
+                });
+            }
+        }
 
 
 
@@ -202,6 +223,12 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
 
 
+    private static void fireActionPerformed(TextField tf) {
+        final ActionListener[] als = tf.getActionListeners();
+        for (ActionListener al:als) {
+            al.actionPerformed( tf.getActionCommand() );
+        }
+    }
 
 
 
