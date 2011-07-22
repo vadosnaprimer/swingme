@@ -1,5 +1,7 @@
 package net.yura.android;
 
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -66,11 +68,16 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         editText = new NativeEditText(view);
 
         swing2android();
-        
-        editText.setSingleLine( (textField instanceof TextField) );        
-        editText.setInputType( TextBox.getInputType( textBox.getConstraints() ) ); // this has to be done AFTER setSingleLine or passwords will break
 
-        if (textField instanceof TextField) {
+        boolean singleLine = (textField instanceof TextField);
+        editText.setSingleLine( singleLine );
+        int inputType = TextBox.getInputType( textBox.getConstraints() );
+        if (!singleLine) {
+            inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE;
+        }
+        editText.setInputType( inputType ); // this has to be done AFTER setSingleLine or passwords will break
+
+        if (singleLine) { // actions only supported on single friend
             final TextField tf = (TextField)textField;
             if (tf.getActionListeners().length>0) {
 
@@ -87,6 +94,33 @@ System.out.println("[NativeAndroidTextField] ##################### start");
                 });
             }
         }
+
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence cs, int i, int i1, int i2) {
+
+            }
+            @Override
+            public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
+                Object val = textField.getValue();
+                if (val == null || val instanceof String) {
+                    String text = (String)val;
+                    if (!cs.equals(text)) {
+                        textField.setValue(cs);
+                    }
+                }
+                //#mdebug debug
+                else {
+                    System.err.println("[NativeAndroidTextField] ER1 UNKNOWN VALUE IN textField: "+val);
+                    Thread.dumpStack();
+                }
+                //#enddebug
+            }
+            @Override
+            public void afterTextChanged(Editable edtbl) {
+
+            }
+        });
 
 
 
@@ -125,28 +159,31 @@ System.out.println("[NativeAndroidTextField] ##################### start");
     }
 
 
-    int tx=-100,ty=-100; // some random none valid numbers
+    int tx=-100,ty=-100,tw=-100,th=-100; // some random none valid numbers
     public void onDraw() {
-
-System.out.println("[NativeAndroidTextField] ##################### layout");
 
         // this is the only swing me specific method
 
-
         int x = textField.getXOnScreen();
         int y = textField.getYOnScreen();
+        int w = textField.getWidthWithBorder();
+        int h = textField.getHeightWithBorder();
 
         // if the location has changed since last paint we need to move the component
-        if (x!=tx || y!=ty) {
+        if (x!=tx || y!=ty || w!=tw || h!=th) {
+
+System.out.println("[NativeAndroidTextField] ##################### layout");
 
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
             int sy = y-insets.getTop();
 
-            editText.layout(sx, sy, sx+textField.getWidthWithBorder(), sy+textField.getHeightWithBorder() );
+            editText.layout(sx, sy, sx+w, sy+h );
 
             tx=x;
             ty=y;
+            tw=w;
+            th=h;
         }
     }
 
@@ -232,7 +269,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         //textBox.fireCommand(javax.microedition.lcdui.Command.OK);
 
         // just set the text back on the text component
-        ((TextComponent)textField).setText( textBox.getString() );
+        textField.setValue( textBox.getString() );
 
         ((TextComponent)textField).setCaretPosition( editText.getSelectionEnd() ); // in android no direct way to get the caret
     }
@@ -282,7 +319,16 @@ System.out.println("[NativeAndroidTextField] ##################### close");
                 b.fireActionPerformed();
 
                 // get the text from swingME to J2ME
-                textBox.setString( ((TextComponent)textField).getText() );
+                Object val = textField.getValue();
+                if (val instanceof String) {
+                    textBox.setString( (String)val );
+                }
+                //#mdebug debug
+                else {
+                    System.err.println("[NativeAndroidTextField] ER2 UNKNOWN VALUE IN textField: "+val);
+                    Thread.dumpStack();
+                }
+                //#enddebug
 
                 swing2android(); // set the text back into the android editText
                 return true;
