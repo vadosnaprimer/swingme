@@ -6,11 +6,11 @@ import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.microedition.lcdui.TextBox;
-
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
@@ -19,9 +19,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-
 import javax.microedition.lcdui.Canvas.InputHelper;
 
+/**
+ * TODO:
+ *      expand on multi-line text does not work
+ *      addCaretListener does not work
+ *      addFocusListener does not work if there is already one set
+ * @author Yura Mamyrin
+ */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     private EditText editText; // this is the Android Component
@@ -56,25 +62,7 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         editText = new NativeEditText(view);
 
-        editText.setText(textBox.getString());
-
-
-
-
-        editText.setSingleLine( (textField instanceof TextField) );
-
-
-        int caret = ((TextComponent)textField).getCaretPosition();
-
-        // HACK to put the caret at the start of the line if your text is longer then 0
-        // http://groups.google.com/group/android-developers/browse_thread/thread/d1c64f4c23b3c83b
-        if (caret==0 && editText.getText().length() > 0) {
-            editText.setSelection(1);
-            editText.extendSelection(0);
-        }
-        // END HACK
-
-        editText.setSelection( caret );
+        swing2android();
 
 
         if (textField instanceof TextField) {
@@ -203,8 +191,36 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         });
 
 
+        android2swing();
 
 
+
+    }
+
+    void swing2android() {
+
+
+
+        editText.setText(textBox.getString());
+
+
+        editText.setSingleLine( (textField instanceof TextField) );
+
+
+        int caret = ((TextComponent)textField).getCaretPosition();
+
+        // HACK to put the caret at the start of the line if your text is longer then 0
+        // http://groups.google.com/group/android-developers/browse_thread/thread/d1c64f4c23b3c83b
+        if (caret==0 && editText.getText().length() > 0) {
+            editText.setSelection(1);
+            editText.extendSelection(0);
+        }
+        // END HACK
+
+        editText.setSelection( caret );
+    }
+
+    void android2swing() {
         // set text back
 
         textBox.setString(editText.getText().toString());
@@ -218,7 +234,6 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         ((TextComponent)textField).setText( textBox.getString() );
 
         ((TextComponent)textField).setCaretPosition( editText.getSelectionEnd() ); // in android no direct way to get the caret
-
     }
 
 
@@ -236,6 +251,8 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
         View view;
 
+        /*
+        // THIS DOES NOT WORK ON HTC DESIRE, does lots of crazy jumping around as soon as you start to type
         @Override
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
                 InputConnection in = super.onCreateInputConnection(outAttrs);
@@ -245,6 +262,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
                 return in;
         }
+        */
 
         public NativeEditText(View view) {
             super( AndroidMeActivity.DEFAULT_ACTIVITY );
@@ -253,6 +271,22 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                Window win = textField.getWindow();
+                Button b = win.findMnemonicButton(10); // 10 is the mnemonic for the enter key
+                if (b!=null) {
+                    android2swing();
+                    b.fireActionPerformed();
+
+                    // this is not normally needed
+                    textBox.setString( ((TextComponent)textField).getText() );
+
+                    swing2android();
+                    return true;
+                }
+            }
+
             boolean use = super.onKeyDown(keyCode, event);
             if (!use) return view.onKeyDown(keyCode, event);
             return true;
