@@ -22,9 +22,9 @@ public class NativeAndroidMenu implements MenuSystem {
 
             net.yura.mobile.gui.components.Window currentWindow = net.yura.mobile.gui.DesktopPane.getDesktopPane().getSelectedFrame();
 
-            net.yura.mobile.gui.components.Button mneonicButton = currentWindow.findMneonicButton(net.yura.mobile.gui.KeyEvent.KEY_MENU);
+            net.yura.mobile.gui.components.Button mneonicButton = currentWindow.findMnemonicButton(net.yura.mobile.gui.KeyEvent.KEY_MENU);
             if ( mneonicButton==null ) {
-                mneonicButton = currentWindow.findMneonicButton(net.yura.mobile.gui.KeyEvent.KEY_SOFTKEY1);
+                mneonicButton = currentWindow.findMnemonicButton(net.yura.mobile.gui.KeyEvent.KEY_SOFTKEY1);
             }
             if (mneonicButton==null) {
             	return false; // there is no menu!
