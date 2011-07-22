@@ -1,10 +1,9 @@
 package net.yura.android;
 
-import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.microedition.lcdui.Canvas.InputHelper;
 import javax.microedition.lcdui.TextBox;
 
 import net.yura.mobile.gui.ChangeListener;
@@ -13,21 +12,23 @@ import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.Window;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
-import javax.microedition.lcdui.Canvas.InputHelper;
 
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     private Component textField; // this is the SwingME component
     private EditText editText; // this is the J2ME component
     private TextBox textBox; // this is the Android Component
-    
+
     public NativeAndroidTextField() {
 
 System.out.println("[NativeAndroidTextField] ##################### construct");
-        
+
     }
 
 
@@ -42,14 +43,14 @@ System.out.println("[NativeAndroidTextField] ##################### construct");
     public void start(TextBox textBox) {
 
         final View view = textBox.getCanvasView();
-        
+
 System.out.println("[NativeAndroidTextField] ##################### start");
-        
+
         Window window = DesktopPane.getDesktopPane().getSelectedFrame();
         textField = window.getFocusOwner();
 
         this.textBox = textBox;
-        
+
         editText = new EditText( AndroidMeActivity.DEFAULT_ACTIVITY ) {
 
             @Override
@@ -93,21 +94,21 @@ System.out.println("[NativeAndroidTextField] ##################### start");
                 if (!use) return view.onKeyShortcut(keyCode, event);
                 return true;
             }
-            
-        };
-        
-        editText.setText(textBox.getString());
-        
 
-        
+        };
+
+        editText.setText(textBox.getString());
+
+
+
         // this updates the position of the component
         onDraw();
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
         // add it to the parent
         ViewGroup group = (ViewGroup)view.getParent();
         int count = group.getChildCount();
@@ -128,33 +129,33 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         // get focus
         editText.requestFocus();
-        
-        
+
+
         textField.addFocusListener(this);
-        
+
     }
-    
-    
+
+
     int tx=-100,ty=-100; // some random none valid numbers
     public void onDraw() {
 
 System.out.println("[NativeAndroidTextField] ##################### layout");
-        
+
         // this is the only swing me specific method
 
-        
+
         int x = textField.getXOnScreen();
         int y = textField.getYOnScreen();
-        
+
         // if the location has changed since last paint we need to move the component
         if (x!=tx || y!=ty) {
-        
+
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
             int sy = y-insets.getTop();
 
             editText.layout(sx, sy, sx+textField.getWidthWithBorder(), sy+textField.getHeightWithBorder() );
-        
+
             tx=x;
             ty=y;
         }
@@ -167,17 +168,17 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
             close();
         }
     }
-    
+
     public void close() {
 
 System.out.println("[NativeAndroidTextField] ##################### close");
-        
+
         View view = textBox.getCanvasView();
-        
+
         view.requestFocus();
-        
+
         // remove it
-        
+
         final ViewGroup group = (ViewGroup)view.getParent();
         int count = group.getChildCount();
         final List<View> remove = new ArrayList<View>(1);
@@ -187,7 +188,13 @@ System.out.println("[NativeAndroidTextField] ##################### close");
                 remove.add(child);
             }
         }
-        
+
+        // hide it from everything first, or it will be visible for the next paint
+        for (View child:remove) {
+           child.setVisibility( View.GONE );
+        }
+
+
         // this is some fucked up crack induced crazy shit that android makes you do to simply remove a view
         group.post(new Runnable() {
             @Override
@@ -198,18 +205,18 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             }
         });
 
-        
-        
-        
+
+
+
         // set text back
-        
+
         textBox.setString(editText.getText().toString());
-        
+
         // fire ok button
         // this will set the text back into SwingME, and then close the native input
         // we do NOT want to do this as this closes the keyboard, and we do not want to do that
         //textBox.fireCommand(javax.microedition.lcdui.Command.OK);
-        
+
         // just set the text back on the text component
         ((TextComponent)textField).setText( textBox.getString() );
 
