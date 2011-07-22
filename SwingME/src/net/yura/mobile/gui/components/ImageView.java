@@ -6,6 +6,8 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.util.ImageUtil;
 
 public class ImageView extends Component {
 
@@ -74,10 +76,20 @@ public class ImageView extends Component {
 
             if (img == null) {
                 bgImage.paintIcon(this, g, imgX, imgY);
-            }
-            else {
-                g.drawScaledImage( img, imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
-            }
+            } else {
+                // in current version of BB, we can not scale images on the fly
+                if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
+                	System.out.println(">> Ratio: " + Double.toString(ratio));
+                    if (ratio > 1.1 || ratio < 0.9) {
+                        img = ImageUtil.scaleImage(img, (int)(imgW * ratio), (int)(imgH * ratio) );
+                        setBackgroundImage( new Icon(img) );
+                    }
+                    g.drawImage(img, imgX, imgY);
+                }
+                else {
+                    g.drawScaledImage( img, imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
+                }
+            }            
         }
 
 
