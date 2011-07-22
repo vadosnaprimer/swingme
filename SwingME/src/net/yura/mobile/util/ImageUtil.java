@@ -34,21 +34,22 @@ import net.yura.mobile.logging.Logger;
  */
 public class ImageUtil {
 
+    /**
+     * @see com.nokia.mid.ui.DirectUtils#createImage(int, int, int)
+     */
     public static Image makeImage(int w,int h,int color) {
 
         // this is not a good way of making a new image
         // buts its the only way if your color has a alpha component
         
-                int[] rgbBuff = new int[w*h];
+        int[] rgbBuff = new int[w*h];
+        for (int i = 0; i < rgbBuff.length; i++) {
+            rgbBuff[i] = color;
+        }
+        return Image.createRGBImage(rgbBuff, w, h, true);
 
-                for (int i = 0; i < rgbBuff.length; i++) {
-
-                    rgbBuff[i] = color;
-
-                }
-
-                return Image.createRGBImage(rgbBuff, w, h, true);
-
+        // should use this
+        //return com.nokia.mid.ui.DirectUtils.createImage(w,h,color);
     }
 
     public static void imageColor(int pixels[], int color) {

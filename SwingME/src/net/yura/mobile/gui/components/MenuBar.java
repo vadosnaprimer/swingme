@@ -219,11 +219,11 @@ public class MenuBar extends List implements ActionListener {
         int off = 0;
         // if we are on a phone, and the window is not maximised, this bar is not visible
         if (dp.SOFT_KEYS && isFrameMenuBar() ) {
-            Button b1 = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_SOFTKEY1);
+            Button b1 = dp.getSelectedFrame().findMnemonicButton(KeyEvent.KEY_SOFTKEY1);
             if (b1!=null) {
                 off = b1.getWidthWithBorder();
             }
-            Button b2 = dp.getSelectedFrame().findMneonicButton(KeyEvent.KEY_MENU);
+            Button b2 = dp.getSelectedFrame().findMnemonicButton(KeyEvent.KEY_MENU);
             if (b2!=null) {
                 off = b2.getWidthWithBorder();
             }

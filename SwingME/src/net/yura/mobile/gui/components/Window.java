@@ -272,7 +272,7 @@ public class Window extends Panel {
                             case 4: key = KeyEvent.KEY_END; break;
                         }
 
-                        Button b = findMneonicButton(key);
+                        Button b = findMnemonicButton(key);
                         if (b!=null) {
 
                             if (
@@ -323,7 +323,7 @@ public class Window extends Panel {
                     }
 
                     if (key!=0) {
-                        Button b = getSoftkeyForMneonic(key);
+                        Button b = getSoftkeyForMnemonic(key);
 
                         if (b!=null) {
                             // if we find the softkey we should not look for the other one,
@@ -350,7 +350,7 @@ public class Window extends Panel {
 
         }
 
-        private Button getSoftkeyForMneonic(int mnu) {
+        private Button getSoftkeyForMnemonic(int mnu) {
             if (softkeys != null ) {
                 for (int c=softkeys.size()-1;c>=0;c--) {
                     Button button = (Button)softkeys.elementAt(c);
@@ -365,7 +365,7 @@ public class Window extends Panel {
                     }
                 }
             }
-            return super.findMneonicButton(mnu);
+            return super.findMnemonicButton(mnu);
         }
 
     public Component getRendererComponentOnScreen(Button button){
@@ -502,9 +502,9 @@ public class Window extends Panel {
               ((Component)softkeys.elementAt(c)).updateUI();
         }
 
-        public Button findMneonicButton(int mn) {
+        public Button findMnemonicButton(int mn) {
 
-            Button b = getSoftkeyForMneonic(mn);
+            Button b = getSoftkeyForMnemonic(mn);
             if (b!=null && !b.isVisible() && getDesktopPane().SOFT_KEYS) {
                     Component comp = getRendererComponentOnScreen(b);
                     b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());

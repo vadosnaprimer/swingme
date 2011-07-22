@@ -412,7 +412,7 @@ public class Panel extends Component {
         return "Panel";
     }
 
-    public Button findMneonicButton(int mnu) {
+    public Button findMnemonicButton(int mnu) {
         for(int i = 0; i < components.size(); i++) {
             Component component = (Component)components.elementAt(i);
             if (component instanceof Button) {
@@ -434,7 +434,7 @@ public class Panel extends Component {
                 }
             }
             else if (component instanceof Panel) {
-                Button button = ((Panel)component).findMneonicButton(mnu);
+                Button button = ((Panel)component).findMnemonicButton(mnu);
                 if (button!=null) {
                     return button;
                 }

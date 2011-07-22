@@ -1242,7 +1242,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (key != 0) {
                     if ( key==KeyEvent.KEY_MENU || key==KeyEvent.KEY_END ) {
                         if (Midlet.getPlatform() != Midlet.PLATFORM_NOKIA_S60) {
-                            mneonicButton = currentWindow.findMneonicButton(key);
+                            mneonicButton = currentWindow.findMnemonicButton(key);
                             if ( mneonicButton==null ) {
                                 if ( key==KeyEvent.KEY_MENU ) {
                                     key = KeyEvent.KEY_SOFTKEY1;
@@ -1250,14 +1250,14 @@ public class DesktopPane extends Canvas implements Runnable {
                                 else if ( key==KeyEvent.KEY_END ) {
                                     key = KeyEvent.KEY_SOFTKEY2; // for sony-ericson, back is save as softkey 2
                                 }
-                                mneonicButton = currentWindow.findMneonicButton(key);
+                                mneonicButton = currentWindow.findMnemonicButton(key);
                             }
                         }
                         //else
                         // on S60 MENU and END should not do anything
                     }
                     else {
-                        mneonicButton = currentWindow.findMneonicButton(key);
+                        mneonicButton = currentWindow.findMnemonicButton(key);
                         if ( mneonicButton==null && ( key==KeyEvent.KEY_SOFTKEY1 || key==KeyEvent.KEY_SOFTKEY2 ) ) {
                             if ( key==KeyEvent.KEY_SOFTKEY1 ) {
                                 key = KeyEvent.KEY_MENU;
@@ -1265,7 +1265,7 @@ public class DesktopPane extends Canvas implements Runnable {
                             else if ( key==KeyEvent.KEY_SOFTKEY2 ) {
                                 key = KeyEvent.KEY_END;
                             }
-                            mneonicButton = currentWindow.findMneonicButton(key);
+                            mneonicButton = currentWindow.findMnemonicButton(key);
                         }
                     }
                 }
