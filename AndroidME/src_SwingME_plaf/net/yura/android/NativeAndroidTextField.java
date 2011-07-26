@@ -310,7 +310,8 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-            int swingMeCode = Canvas.getKeyCode(event);
+        	//YURA: THIS CREATED A COMPILATION ERROR
+            int swingMeCode = 0; //Canvas.getKeyCode(event.getKeyCode());
 
             Window win = textField.getWindow();
             Button b = win.findMnemonicButton(swingMeCode);
