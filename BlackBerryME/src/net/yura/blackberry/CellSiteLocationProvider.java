@@ -15,7 +15,6 @@ import javax.microedition.location.LocationProvider;
 import javax.microedition.location.QualifiedCoordinates;
 
 import net.rim.device.api.system.GPRSInfo;
-import net.yura.blackberry.midlet.MIDlet;
 
 public class CellSiteLocationProvider extends LocationProvider {
 
@@ -55,14 +54,7 @@ public class CellSiteLocationProvider extends LocationProvider {
 		_currentState = state;
 		notifyStateChanged();
 	}
-	
-	/**
-	 * @return The current CellID. -1 When a cell id could not be found
-	 */
-	public int getCellID(){
-		return _lastKnownCellID;
-	}
-		
+
 	public CellSiteLocationProvider(){
 		_currentLocation = null;
 		listeners = new Vector();		
@@ -175,7 +167,7 @@ public class CellSiteLocationProvider extends LocationProvider {
 	private String tryToLocate(int aCellID, int aLAC) {
 		try {
 			HttpConnection conn = null;
-			conn = (HttpConnection) Connector.open("http://www.google.com/glm/mmap"	+ MIDlet.getInternetConnectionString());
+			conn = (HttpConnection) Connector.open("http://www.google.com/glm/mmap"	+ ConnectionManager.mostRecentAppendString);
 
 			conn.setRequestMethod("POST");
 			DataOutputStream os = new DataOutputStream(conn.openOutputStream());

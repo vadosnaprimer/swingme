@@ -4,33 +4,37 @@ import javax.microedition.lcdui.Display;
 
 import net.rim.device.api.applicationcontrol.ApplicationPermissions;
 import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
-import net.rim.device.api.servicebook.ServiceBook;
-import net.rim.device.api.servicebook.ServiceRecord;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.CoverageInfo;
-import net.rim.device.api.system.DeviceInfo;
 import net.rim.device.api.system.KeyListener;
 import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
 import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.blackberry.BlackBerryThumbLoader;
+import net.yura.blackberry.ConnectionManager;
 import net.yura.mobile.gui.Animation;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.io.SocketClient;
-import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 
 public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements KeyListener{
 
     int keyPressed;
 
+    ConnectionManager conManager;
+    
     public MIDlet() {
         // Register RIM key listener
         Application.getApplication().addKeyListener(this);
         
+        
         BlackBerryOptionPane.init();
+        
+        conManager = ConnectionManager.getInstance();
+        UiApplication.getUiApplication().addGlobalEventListener(conManager); // Listen to service books changes
+        WLANInfo.addListener(conManager.getConnWIFIListener()); // Listen to WIFI changes
+        CoverageInfo.addListener(conManager.getConnRadioListener()); // Listen to radio coverage changes
         
         Animation.FPS = 2;       
         
@@ -47,9 +51,11 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         KeyEvent.BLACKBERRY_QWERTY = qwerty;
         
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
-                
-        SocketClient.connectAppend = getInternetConnectionString();
         setPermissions();
+    }
+    
+    public String getInternetConnectionString(){
+    	return conManager.getInternetConnectionString();
     }
     
     /* This method asserts the permissions that Badoo requires to run */
@@ -149,10 +155,12 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         }
     }
     
+    
     /**
      * Determines what connection type to use. 
      * See http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
      */
+    /*
     public static String getInternetConnectionString() {
     	
         // This code is based on the connection code developed by Mike Nelson of AccelGolf.
@@ -212,10 +220,10 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         return connStr;
     }
     
-    /**
+    **
      * Looks through the phone's service book for a carrier provided BIBS network
      * @return The uid used to connect to that network.
-     */
+     *
     private static String getCarrierBIBSUid() {   	
         ServiceRecord[] records = ServiceBook.getSB().getRecords();
         for(int currentRecord = 0; currentRecord < records.length; currentRecord++) {
@@ -228,7 +236,7 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         return null;
     } 
     
-
+    */
 	/**
 	 * Shows the softkeyboard if the device supports it. This method is only supported on the Android platform at the moment.
 	 * @see #hideSoftKeyboard()
