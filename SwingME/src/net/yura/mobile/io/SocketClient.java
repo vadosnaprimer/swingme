@@ -49,9 +49,9 @@ public abstract class SocketClient implements Runnable {
     protected int retryWaitMultiplier = 2;
     protected int initialWaitValue = 1000;
     protected int maxWaitTimeMillis = 30000;
-    boolean pauseReconnectOnFailure = false;
+    boolean pauseReconnectOnFailure;
 
-    private int retryCount = 0;
+    private int retryCount;
     protected String protocol = "socket://";
     private final String server;
 
