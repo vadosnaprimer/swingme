@@ -32,7 +32,7 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         
         BlackBerryOptionPane.init();
         
-        Animation.FPS = 2;
+        Animation.FPS = 2;       
         
         int keyLayout = Keypad.getHardwareLayout();
         
@@ -47,10 +47,9 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         KeyEvent.BLACKBERRY_QWERTY = qwerty;
         
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
-        
-        setInternetConnectionString();
+                
+        SocketClient.connectAppend = getInternetConnectionString();
         setPermissions();
-        
     }
     
     /* This method asserts the permissions that Badoo requires to run */
@@ -139,13 +138,11 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
 
     void processKey(DesktopPane canvas, int key) {
         try {
-
             //#debug debug
             System.out.println(">>>> Found a DesktopPane to fw event");
 
             ((DesktopPane)canvas).keyPressed(key);
             ((DesktopPane)canvas).keyReleased(key);
-
         }
         catch (Throwable e) {
             e.printStackTrace();
@@ -156,11 +153,11 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
      * Determines what connection type to use. 
      * See http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
      */
-    private void setInternetConnectionString() {
+    public static String getInternetConnectionString() {
     	
         // This code is based on the connection code developed by Mike Nelson of AccelGolf.
         // http://blog.accelgolf.com/2009/05/22/blackberry-cross-carrier-and-cross-network-http-connection        
-        String connStr;                
+        String connStr = null;                
                         
         // Simulator behaviour is controlled by the USE_MDS_IN_SIMULATOR variable.
         if(DeviceInfo.isSimulator()) {
@@ -210,9 +207,9 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         	//#debug debug
             Logger.debug("Setup Internet: no option found.");
             connStr = ";deviceside=true";
-        }        
+        }
         
-        SocketClient.connectAppend = connStr;
+        return connStr;
     }
     
     /**
