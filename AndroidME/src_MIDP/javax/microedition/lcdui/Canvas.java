@@ -926,7 +926,7 @@ public abstract class Canvas extends Displayable {
     }
 
     public boolean isShown() {
-        return Display.getDisplay(AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
+        return AndroidMeActivity.DEFAULT_ACTIVITY != null && Display.getDisplay(AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
     }
 
     public void setTitle(Object object) {
