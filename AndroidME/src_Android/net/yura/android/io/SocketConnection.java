@@ -34,7 +34,6 @@ import java.net.Socket;
 import java.util.Vector;
 
 import net.yura.android.AndroidMeApp;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -212,11 +211,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
         private boolean isConnected;
 
         private ConnectivityBroadcastReceiver() throws IOException {
-            updateConnectivity(false); // Initialize
-
-            if (!isConnected) {
-                throw new IOException("Not Connected");
-            }
+            updateConnectivity(); // Initialize
 
             //#debug debug
             System.out.println(">>> SocketBroadcastReceiver: registerReceiver");
@@ -231,11 +226,11 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             //#debug debug
             System.out.println(">>> SocketBroadcastReceiver: received " + intent.getAction() + ": " + intent.getExtras());
 
-            updateConnectivity(true);
+            updateConnectivity();
         }
 
         private void addSocketConnectionImpl(SocketConnection socket) throws IOException {
-            cleanSocketConnections(false); // Clean weak references
+            cleanSocketConnections(!isConnected); // Clean weak references
 
             if (!isConnected) {
                 throw new IOException("Not Connected");
@@ -243,7 +238,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             socketWeakList.add(new WeakReference<SocketConnection>(socket));
         }
 
-        private void updateConnectivity(boolean closeConnections) {
+        private void updateConnectivity() {
             boolean isConnected = false;
             boolean hasStateChanged = false;
 
@@ -273,7 +268,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 
             this.isConnected = isConnected;
             if (!isConnected || hasStateChanged) {
-                cleanSocketConnections(closeConnections);
+                cleanSocketConnections(true);
             }
         }
 
@@ -293,15 +288,6 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 
                 if (conn == null) {
                     socketWeakList.removeElementAt(i);
-                }
-            }
-
-            if (closeConnections) {
-                if (socketBroadcastReceiver != null && socketWeakList.size() == 0) {
-                    //#debug debug
-                    System.out.println(">>> SocketBroadcastReceiver: close");
-                    AndroidMeApp.getIntance().unregisterReceiver(socketBroadcastReceiver);
-                    socketBroadcastReceiver = null;
                 }
             }
         }
