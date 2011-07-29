@@ -223,10 +223,16 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            //#debug debug
-            System.out.println(">>> SocketBroadcastReceiver: received " + intent.getAction() + ": " + intent.getExtras());
+            try {
 
-            updateConnectivity();
+                //#debug debug
+                System.out.println(">>> SocketBroadcastReceiver: received " + intent.getAction() + ": " + intent.getExtras());
+
+                updateConnectivity();
+            } catch (Throwable e) {
+                //#debug info
+                e.printStackTrace();
+            }
         }
 
         private void addSocketConnectionImpl(SocketConnection socket) throws IOException {
@@ -249,7 +255,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
                 if (netInfo != null) {
                     State state = netInfo.getState();
                     int type = netInfo.getType();
-                    isConnected = netInfo.isConnected();
+                    isConnected = netInfo.isConnected() && netInfo.isAvailable();
 
                     //#mdebug debug
                     System.out.println(">>> SocketBroadcastReceiver: state = " + state +
@@ -277,17 +283,19 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
             System.out.println(">>> SocketBroadcastReceiver: closeSocketConnections() " + socketWeakList.size());
 
             // NOTE: Looping from the end of the vector, so we can safely delete vector elements
-            for (int i = socketWeakList.size() - 1; i >= 0; i--) {
-                SocketConnection conn = socketWeakList.elementAt(i).get();
-                if (closeConnections) {
-                    try {
-                        conn.close();
-                    } catch (Throwable e) {}
-                    conn = null;
-                }
+            synchronized (socketWeakList) {
+                for (int i = socketWeakList.size() - 1; i >= 0; i--) {
+                    SocketConnection conn = socketWeakList.elementAt(i).get();
+                    if (closeConnections) {
+                        try {
+                            conn.close();
+                        } catch (Throwable e) {}
+                        conn = null;
+                    }
 
-                if (conn == null) {
-                    socketWeakList.removeElementAt(i);
+                    if (conn == null) {
+                        socketWeakList.removeElementAt(i);
+                    }
                 }
             }
         }
