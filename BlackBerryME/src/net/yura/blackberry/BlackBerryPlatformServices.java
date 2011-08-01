@@ -17,11 +17,12 @@ public class BlackBerryPlatformServices extends PlatformServices {
 	}
 	
 	public String getAppVersion(){
-		String appVersion = Midlet.getMidlet().getAppProperty("MIDlet-Version");
+		return "1.6.1"; //TODO This is hard coded to version 1.6.1 at the moment, for the server does not support a blackberry specific version yet. Using android version 1.6.1. 
+		/*String appVersion = Midlet.getMidlet().getAppProperty("MIDlet-Version");
         if (appVersion==null) {
         	appVersion="unknown version";
         }
-        return appVersion;
+        return appVersion;*/
 	}
 	
 }
