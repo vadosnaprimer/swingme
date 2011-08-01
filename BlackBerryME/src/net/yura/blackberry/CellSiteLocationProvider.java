@@ -15,41 +15,31 @@ import javax.microedition.location.LocationProvider;
 import javax.microedition.location.QualifiedCoordinates;
 
 import net.rim.device.api.system.GPRSInfo;
+import net.yura.mobile.logging.Logger;
 
 public class CellSiteLocationProvider extends LocationProvider {
 
 	private Vector listeners;
 	
-	private int _waitTime = 300000; // 5m
+	private int _waitTime = 30000; // 5m
 	
 	private boolean hasStarted = false;
 	
 	public static final int STATE_NO_CELL_ID = 0;
 	public static final int STATE_CONTACTING_GOOGLE = 1;
 	public static final int STATE_UNKNOWN_CELL = 2;
-	public static final int STATE_CONN_ERROR = 2;
-	public static final int STATE_LOCATION_FOUND = 3;
-	public static final int STATE_SLEEPING = 4;
-	public static final int STATE_CELL_ID_FOUND = 5;
-	public static final int STATE_CELL_ID_NO_CHANGE = 6;
-	
-	//private static CellSiteLocationProvider _instance;
+	public static final int STATE_CONN_ERROR = 3;
+	public static final int STATE_LOCATION_FOUND = 4;
+	public static final int STATE_SLEEPING = 5;
+	public static final int STATE_CELL_ID_FOUND = 6;
+	public static final int STATE_CELL_ID_NO_CHANGE = 7;
 	
 	private Location _currentLocation;
 	private int _lastKnownCellID;
+	private int _lastKnownCellLAC;
 	private int _currentState;
 	private boolean _quit = false;
-	
-	/**
-	 * @param cr This parameter is ignored
-	 * @return An instance of the location provider
-	 */
-	/*public static LocationProvider getInstance(Criteria cr){
-		if (_instance == null)
-			_instance = new CellSiteLocationProvider();
-		return _instance;
-	}*/
-	
+		
 	private void setState(int state){
 		_currentState = state;
 		notifyStateChanged();
@@ -57,15 +47,39 @@ public class CellSiteLocationProvider extends LocationProvider {
 
 	public CellSiteLocationProvider(){
 		_currentLocation = null;
-		listeners = new Vector();		
+		listeners = new Vector();
+		_lastKnownCellID = -1;
+		_lastKnownCellLAC = -1;
 	}
 	
 	public Location getLocation(int timeout) throws LocationException, InterruptedException {
 		return _currentLocation;
 	}
-
+	
 	public int getState() {
 		return _currentState;
+	}
+	
+	private String getStateDescription(int state){
+		switch (state){
+		case STATE_NO_CELL_ID:
+			return "STATE_NO_CELL_ID";
+		case STATE_CONTACTING_GOOGLE:
+			return "STATE_CONTACTING_GOOGLE";
+		case STATE_UNKNOWN_CELL:
+			return "STATE_UNKNOWN_CELL";
+		case STATE_CONN_ERROR:
+			return "STATE_CONN_ERROR";
+		case STATE_LOCATION_FOUND:
+			return "STATE_LOCATION_FOUND";
+		case STATE_SLEEPING:
+			return "STATE_SLEEPING";
+		case STATE_CELL_ID_FOUND:
+			return "STATE_CELL_ID_FOUND";
+		case STATE_CELL_ID_NO_CHANGE:
+			return "STATE_CELL_ID_NO_CHANGE";
+		}
+		return "";
 	}
 	
 	public void reset() {
@@ -74,7 +88,10 @@ public class CellSiteLocationProvider extends LocationProvider {
 		hasStarted = false;
 	}
 
-	private void notifyLocationChanged(){
+	private void notifyLocationChanged() {
+		 //#debug info
+		Logger.info("Cell site location provider location changed: " + _currentLocation.getQualifiedCoordinates().getLatitude() + ", " + _currentLocation.getQualifiedCoordinates().getLongitude());
+		
 		Enumeration e = listeners.elements();
 		if (e.hasMoreElements()){
 			LocationListener ll = (LocationListener) e.nextElement();
@@ -83,6 +100,9 @@ public class CellSiteLocationProvider extends LocationProvider {
 	}
 	
 	private void notifyStateChanged(){
+		 //#debug info
+		Logger.info("Cell site location provider state changed: " + getStateDescription(_currentState));
+				
 		Enumeration e = listeners.elements();
 		if (e.hasMoreElements()){
 			LocationListener ll = (LocationListener) e.nextElement();
@@ -122,10 +142,12 @@ public class CellSiteLocationProvider extends LocationProvider {
 					if (cellID == 0) {
 						setState(STATE_NO_CELL_ID);
 						
-					} else if (cellID == _lastKnownCellID && _currentLocation != null) {
+					} else if (cellID == _lastKnownCellID && lac == _lastKnownCellLAC) {
 						setState(STATE_CELL_ID_NO_CHANGE);
 					} else {
 						_lastKnownCellID = cellID;
+						_lastKnownCellLAC = lac;
+						
 						setState(STATE_CELL_ID_FOUND);
 						final String s = tryToLocate(cellID, lac);
 						if (s.equalsIgnoreCase("UNKNOWN")){
