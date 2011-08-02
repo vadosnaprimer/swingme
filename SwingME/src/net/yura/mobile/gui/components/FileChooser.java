@@ -43,8 +43,11 @@ import net.yura.mobile.util.ImageUtil;
  */
 public class FileChooser extends Frame implements Runnable, ActionListener {
 
-	public static final String NO_FILE_SELECTED = "no_file_selected";
-    	
+    /**
+     * @see javax.swing.JFileChooser#CANCEL_OPTION JFileChooser.CANCEL_OPTION
+     */
+    public static final String NO_FILE_SELECTED = "no_file_selected";
+
     private SelectableFileRenderer thumbOptionRenderer;
     private List fileList;
     private GridList fileTable;
@@ -677,7 +680,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         /**
-         * @see List#getFirstVisibleIndex() 
+         * @see List#getFirstVisibleIndex()
          * @see javax.swing.JList#getFirstVisibleIndex() JList.getFirstVisibleIndex
          */
         public int getFirstVisibleIndex() {
@@ -687,7 +690,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
 
         /**
-         * @see List#getLastVisibleIndex() 
+         * @see List#getLastVisibleIndex()
          * @see javax.swing.JList#getLastVisibleIndex() JList.getLastVisibleIndex
          */
         public int getLastVisibleIndex() {
@@ -697,8 +700,8 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             int s = getSize();
             return i>=s?s-1:i;
         }
-    
-    
+
+
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
     //==== DefaultListModel ====================================================
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
