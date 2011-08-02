@@ -727,58 +727,6 @@ public abstract class Canvas extends Displayable {
             return (Float) methodGetY.invoke(event, pointerIndex);
         }
 
-        private int getKeyCode(KeyEvent keyEvent) {
-            // TODO implement as lookup table
-            int deviceKeyCode = keyEvent.getKeyCode();
-
-            int resultKeyCode;
-            switch (deviceKeyCode) {
-                case KeyEvent.KEYCODE_DPAD_UP :
-                    resultKeyCode = -1;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_DOWN :
-                    resultKeyCode = -2;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_LEFT :
-                    resultKeyCode = -3;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_RIGHT :
-                    resultKeyCode = -4;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_CENTER :
-                    resultKeyCode = -5;
-                    break;
-                case KeyEvent.KEYCODE_MENU :
-                    resultKeyCode = -12;
-                    break;
-                case KeyEvent.KEYCODE_BACK :
-                    resultKeyCode = -11;
-                    break;
-                case KeyEvent.KEYCODE_DEL :
-                    resultKeyCode = -8; // Backspace ascii
-                    break;
-                case KeyEvent.KEYCODE_CALL :
-                    resultKeyCode = -10;
-                    break;
-                case KeyEvent.KEYCODE_ENDCALL :
-                    resultKeyCode = -11; // Never called on Android...
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_UP :
-                    resultKeyCode = -36;
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_DOWN :
-                    resultKeyCode = -37;
-                    break;
-                default:
-                    resultKeyCode = keyEvent.getUnicodeChar();
-                    if (resultKeyCode == 0) {
-                        resultKeyCode = -deviceKeyCode;
-                    }
-            }
-
-            return resultKeyCode;
-        }
-
         // having this or not having this makes no change
         // Override
         public boolean onCheckIsTextEditor() {
@@ -941,6 +889,61 @@ public abstract class Canvas extends Displayable {
         linearLayout.removeView(v);
     }
 
+    
+    
+    
+        public static int getKeyCode(KeyEvent keyEvent) {
+            // TODO implement as lookup table
+            int deviceKeyCode = keyEvent.getKeyCode();
+
+            int resultKeyCode;
+            switch (deviceKeyCode) {
+                case KeyEvent.KEYCODE_DPAD_UP :
+                    resultKeyCode = -1;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN :
+                    resultKeyCode = -2;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT :
+                    resultKeyCode = -3;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT :
+                    resultKeyCode = -4;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_CENTER :
+                    resultKeyCode = -5;
+                    break;
+                case KeyEvent.KEYCODE_MENU :
+                    resultKeyCode = -12;
+                    break;
+                case KeyEvent.KEYCODE_BACK :
+                    resultKeyCode = -11;
+                    break;
+                case KeyEvent.KEYCODE_DEL :
+                    resultKeyCode = -8; // Backspace ascii
+                    break;
+                case KeyEvent.KEYCODE_CALL :
+                    resultKeyCode = -10;
+                    break;
+                case KeyEvent.KEYCODE_ENDCALL :
+                    resultKeyCode = -11; // Never called on Android...
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_UP :
+                    resultKeyCode = -36;
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_DOWN :
+                    resultKeyCode = -37;
+                    break;
+                default:
+                    resultKeyCode = keyEvent.getUnicodeChar();
+                    if (resultKeyCode == 0) {
+                        resultKeyCode = -deviceKeyCode;
+                    }
+            }
+
+            return resultKeyCode;
+        }
+    
 
     // -- debug code ---
     private long lastDrawTime;
