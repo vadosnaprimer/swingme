@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
+import javax.microedition.location.Criteria;
 import javax.microedition.location.Location;
 import javax.microedition.location.LocationException;
 import javax.microedition.location.LocationListener;
@@ -20,6 +21,15 @@ import net.yura.mobile.logging.Logger;
 public class CellSiteLocationProvider extends LocationProvider {
 
 	private Vector listeners;
+	
+	private static CellSiteLocationProvider _instance;
+	
+	public static LocationProvider getInstance(Criteria c){
+		if (_instance==null){
+			_instance = new CellSiteLocationProvider();
+		}
+		return _instance;			
+	}
 	
 	private int _waitTime = 30000; // 5m
 	
@@ -45,7 +55,7 @@ public class CellSiteLocationProvider extends LocationProvider {
 		notifyStateChanged();
 	}
 
-	public CellSiteLocationProvider(){
+	protected CellSiteLocationProvider(){
 		_currentLocation = null;
 		listeners = new Vector();
 		_lastKnownCellID = -1;
