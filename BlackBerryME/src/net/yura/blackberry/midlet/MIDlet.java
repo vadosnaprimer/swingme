@@ -3,25 +3,15 @@ package net.yura.blackberry.midlet;
 import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDletStateChangeException;
 
-import com.badoo.mobile.platform.PlatformServices;
-import com.badoo.mobile.ui.BadgeManager;
-import com.badoo.mobile.ui.BadgeManager.BadgeListener;
-
-import net.rim.blackberry.api.homescreen.HomeScreen;
-import net.rim.blackberry.api.messagelist.ApplicationIcon;
-import net.rim.blackberry.api.messagelist.ApplicationIndicator;
-import net.rim.blackberry.api.messagelist.ApplicationIndicatorRegistry;
 import net.rim.device.api.applicationcontrol.ApplicationPermissions;
 import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
 import net.rim.device.api.system.Application;
 import net.rim.device.api.system.CoverageInfo;
-import net.rim.device.api.system.EncodedImage;
 import net.rim.device.api.system.KeyListener;
 import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
 import net.yura.blackberry.BlackBerryOptionPane;
-import net.yura.blackberry.BlackBerryPlatformServices;
 import net.yura.blackberry.BlackBerryThumbLoader;
 import net.yura.blackberry.ConnectionManager;
 import net.yura.mobile.gui.Animation;
@@ -29,20 +19,16 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.util.ImageUtil;
 
-public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements KeyListener, BadgeListener {
+public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements KeyListener {
 
     int keyPressed;
 
     ConnectionManager conManager;
-
-    boolean appIndicatorRegistered = false;
     
     public MIDlet() {
         // Register RIM key listener
         Application.getApplication().addKeyListener(this);
-        
-        PlatformServices.setIntance(new BlackBerryPlatformServices());
-        
+                
         BlackBerryOptionPane.init();
         
         conManager = ConnectionManager.getInstance();
@@ -111,14 +97,7 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         return false;
     }
 
-    public void deregisterNotifications() {
-    	if (appIndicatorRegistered) {		
-    		ApplicationIndicatorRegistry reg = ApplicationIndicatorRegistry.getInstance();
-    		reg.unregister();
-
-			HomeScreen.updateIcon(EncodedImage.getEncodedImageResource("52x52.png").getBitmap());
-    	} 
-    }
+    
     
     protected void destroyApp(boolean arg0) throws MIDletStateChangeException {
     	   			
@@ -224,32 +203,5 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     
     */
     
-    public void badgeChanged(String badgeType, int newCount, int oldCount) {    	
-    	if (badgeType.equals(BadgeManager.BADGE_TYPE_MESSAGES)) {    		
-    		if (appIndicatorRegistered) {
-    			if (newCount == 0) {
-        			ApplicationIndicatorRegistry reg = ApplicationIndicatorRegistry.getInstance();
-        			reg.unregister();
-        			HomeScreen.updateIcon(EncodedImage.getEncodedImageResource("52x52.png").getBitmap());
-
-        			appIndicatorRegistered = false;
-        		} else {        		
-            		ApplicationIndicatorRegistry reg = ApplicationIndicatorRegistry.getInstance();
-        			ApplicationIndicator AppIndicator = reg.getApplicationIndicator();
-        			AppIndicator.setValue(newCount);
-        		}
-    		} else {
-    			if (newCount > 0){
-    				ApplicationIndicatorRegistry reg = ApplicationIndicatorRegistry.getInstance();
-					EncodedImage image = EncodedImage.getEncodedImageResource("24x24notify.png");
-					ApplicationIcon icon = new ApplicationIcon(image);
-					ApplicationIndicator indicator = reg.register(icon,  false, true);
-					indicator.setValue(newCount);
-					appIndicatorRegistered = true;
-					HomeScreen.updateIcon(EncodedImage.getEncodedImageResource("52x52notify.png").getBitmap());
-    			}
-    		}    		
-    	}    	
-    }
     
 }

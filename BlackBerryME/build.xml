@@ -11,8 +11,9 @@
 	<property name="dist.directory" value="${basedir}/../dist" />
 
 	<!-- JDE properties -->
-	<property name="simulator.directory" value="${jdehome}\simulator" />
-	<property name="bin" value="${jdehome}\bin" />
+	<property name="jde.home" value="C:/Eclipse/plugins/net.rim.eide.componentpack4.6.0_4.6.0.19/components/" />
+	<property name="simulator.directory" value="${jde.home}\simulator" />
+	<property name="bin" value="${jde.home}\bin" />
 
 	<!-- Source path -->
 	<property name="workspace.directory" value="${basedir}/../.." />
@@ -22,7 +23,7 @@
 	<property name="test.src" value="${workspace.directory}/BlackBerryME/src" />
 	<property name="bbme.src" value="${workspace.directory}/BlackBerryME/test" />
 	
-	<taskdef resource="bb-ant-defs.xml" classpath="${workspace.directory}/BlackBerryME/tools/bb-ant-tools.jar" />
+	<taskdef resource="bb-ant-defs.xml" classpath="${workspace.directory}/BlackBerryME/lib/bb-ant-tools.jar" />
 
 	<!-- Resources path -->
 	<property name="res.src" value="${workspace.directory}/SwingMETest/resources/" />
@@ -48,9 +49,9 @@
 	    		2. Delete the application from the simulator
 	    </description>
 
-		<exec executable="${jdehome}\simulator\clean.bat" dir="${jdehome}\simulator" />
-		<exec executable="${jdehome}\simulator\fledge.exe" dir="${basedir}\simulator-data">
-			<arg value="/app=${jdehome}\simulator\Jvm.dll" />
+		<exec executable="${jde.home}\simulator\clean.bat" dir="${jde.home}\simulator" />
+		<exec executable="${jde.home}\simulator\fledge.exe" dir="${basedir}\simulator-data">
+			<arg value="/app=${jde.home}\simulator\Jvm.dll" />
 			<arg value="/clear-flash" />
 			<arg value="/shutdown-after-startup" />
 		</exec>
@@ -84,6 +85,18 @@
 
 		<echo>replacing_imports</echo>
 
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.MediaProcessor(\W)" replace="net.yura.blackberry.midlet.amms.MediaProcessor\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.GlobalManager(\W)" replace="net.yura.blackberry.midlet.amms.GlobalManager\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.control.ImageFormatControl(\W)" replace="net.yura.blackberry.midlet.amms.ImageFormatControl\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+		
 		<replaceregexp byline="true" match="javax.microedition.midlet.MIDlet(\W)" replace="net.yura.blackberry.midlet.MIDlet\1">
 			<fileset dir="${build.directory}" includes="**/*.java" />
 		</replaceregexp>
@@ -114,7 +127,7 @@
 	</target>
 
 	<target name="build" depends="setup" description="Builds Project">
-		<rapc jdehome="${jdehome}" destdir="${release.directory}" noconvert="true" generatesourcelist="true" verbose="false" output="${project.title}" quiet="true">
+		<rapc jdehome="${jde.home}" destdir="${release.directory}" noconvert="true" generatesourcelist="true" verbose="false" output="${project.title}" quiet="true">
 			<jdp type="midlet" midletclass="net.yura.mobile.test.MyMidlet" title="${project.title}" 
 				vendor="Badoo Ltd." version="${project.version}" description="" arguments="" systemmodule="false" runonstartup="false" startuptier="7" ribbonposition="0">
 			</jdp>
