@@ -23,7 +23,7 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
 
     int keyPressed;
 
-    ConnectionManager conManager;
+    protected ConnectionManager conManager;
     
     public MIDlet() {
         // Register RIM key listener
@@ -53,11 +53,7 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
         setPermissions();
     }
-    
-    public String getInternetConnectionString(){
-    	return conManager.getInternetConnectionString();
-    }
-    
+        
     /* This method asserts the permissions that Badoo requires to run */
     private void setPermissions(){
     	final ApplicationPermissionsManager apm = ApplicationPermissionsManager.getInstance();	

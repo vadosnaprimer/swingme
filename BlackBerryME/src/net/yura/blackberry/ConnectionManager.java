@@ -1,5 +1,7 @@
 package net.yura.blackberry;
 
+import com.badoo.mobile.Events;
+
 import net.rim.device.api.servicebook.ServiceBook;
 import net.rim.device.api.servicebook.ServiceRecord;
 import net.rim.device.api.system.CoverageInfo;
@@ -10,12 +12,25 @@ import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.component.Dialog;
 import net.yura.mobile.io.SocketClient;
 
-public class ConnectionManager implements GlobalEventListener   {
+public class ConnectionManager implements GlobalEventListener {
+	
+	public final static int WIFI = 0;
+	public final static int BIS_B = 1;
+	public final static int DIRECT_TCP = 2;
+	public final static int WAP = 3;
+	public final static int MDS = 4;
+	public final static int NO_CONNECTION = 5;
+	
+	private int currentConnectionMethod = -1;
 	
 	private WIFIListener connWIFIListener;
 	private RadioListener connRadioListener;
 	
 	public static String mostRecentAppendString = null;
+	
+	public int getCurrentConnectionMethod(){
+		return currentConnectionMethod;
+	}
 	
 	public WIFIListener getConnWIFIListener(){
 		return connWIFIListener ;
@@ -54,6 +69,10 @@ public class ConnectionManager implements GlobalEventListener   {
 	private boolean _wifiSupport;
 	private boolean _tcpSupport;
 
+	private void publishEvent(){
+		Events.BLACKBERRY_CONNECTION_STATE.publish(new Integer(currentConnectionMethod), this);
+	}
+	
 	private ConnectionManager() {
 		setCoverage();
 		updateConnection();
@@ -72,10 +91,13 @@ public class ConnectionManager implements GlobalEventListener   {
 		String connStr = null;
 		if (_wifiSupport){
 			connStr = ";interface=wifi";
+			currentConnectionMethod = WIFI;
 		} else if (_mdsSupport) {
 			connStr = ";deviceside=false";
+			currentConnectionMethod = MDS;
 		} else if (_bisSupport) {
 			connStr = ";deviceside=false;ConnectionType=mds-public";
+			currentConnectionMethod = BIS_B;
 		} else if (_tcpSupport ) {
 			 String carrierUid = getCarrierBIBSUid();
 	            if (carrierUid == null) {
@@ -83,24 +105,16 @@ public class ConnectionManager implements GlobalEventListener   {
 	            } else {	                
 	                connStr = ";deviceside=false;connectionUID="+carrierUid + ";ConnectionType=mds-public";
 	            }
+	            currentConnectionMethod = DIRECT_TCP;
 		} else if (_wapSupport) {
+			currentConnectionMethod = WAP;
 			// TODO: WAP support
 		} else {
+			currentConnectionMethod = NO_CONNECTION;
 			// TODO: No internet connection
 		}
+		publishEvent();
 		return connStr;
-	}
-
-	public String getConnectionType() {
-		if (_mdsSupport) {
-			return "MDS";
-		} else if (_bisSupport) {
-			return "BIS-B";
-		} else if (_wapSupport) {
-			return "WAP";
-		} else {
-			return "Direct TCP";
-		}
 	}
 
 	private void setCoverage() {
@@ -155,9 +169,7 @@ public class ConnectionManager implements GlobalEventListener   {
     } 
 	
 	public void eventOccurred(long guid, int data0, int data1, Object object0, Object object1) {
-		if (guid == ServiceBook.GUID_SB_ADDED || guid == ServiceBook.GUID_SB_CHANGED || guid == ServiceBook.GUID_SB_OTA_SWITCH || guid == ServiceBook.GUID_SB_OTA_UPDATE
-				|| guid == ServiceBook.GUID_SB_REMOVED) {
-			Dialog.inform("Service Book Global Event Received");
+		if (guid == ServiceBook.GUID_SB_ADDED || guid == ServiceBook.GUID_SB_CHANGED || guid == ServiceBook.GUID_SB_OTA_SWITCH || guid == ServiceBook.GUID_SB_OTA_UPDATE || guid == ServiceBook.GUID_SB_REMOVED) {
 			parseServiceBooks();
 			updateConnection();
 		}
