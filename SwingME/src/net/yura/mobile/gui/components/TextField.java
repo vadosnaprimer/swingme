@@ -51,22 +51,30 @@ public class TextField extends TextComponent {
             workoutPreferredSize();
         }
 
+        /**
+         * @see TextArea#paintComponent(Graphics2D) 
+         */
     	public void paintComponent(Graphics2D g) {
 
-		String textString = getDisplayString();
+                int f = getForeground();
+                
+                if (!Graphics2D.isTransparent(f)) { // we need to support transparent foreground as Swing does and we need it for android
+            
+                    String textString = getDisplayString();
 
-		int[] oldClip = g.getClip();
-		g.clipRect(0, 0, width, height);
+                    int[] oldClip = g.getClip();
+                    g.clipRect(0, 0, width, height);
 
-                g.setColor( getForeground() );
-                g.setFont(font);
-		g.drawString( textString, offset, (height-font.getHeight())/2 );
+                    g.setColor( f );
+                    g.setFont(font);
+                    g.drawString( textString, offset, (height-font.getHeight())/2 );
 
-                if (showCaret) {
-                    int x = font.getWidth(textString.substring(0, caretPosition));
-                    g.drawLine(offset+x, padding, offset+x, height-padding-1);
+                    if (showCaret) {
+                        int x = font.getWidth(textString.substring(0, caretPosition));
+                        g.drawLine(offset+x, padding, offset+x, height-padding-1);
+                    }
+                    g.setClip(oldClip);
                 }
-		g.setClip(oldClip);
 	}
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
@@ -162,13 +170,13 @@ public class TextField extends TextComponent {
         }
 
         /**
-         * @see Button#getActionCommand() 
+         * @see Button#getActionCommand()
          * @see javax.swing.JTextField#getActionCommand() JTextField.getActionCommand
          */
         public String getActionCommand() {
             return action;
         }
-        
+
         /**
          * @see Button#getActionListeners()
          * @see javax.swing.JTextField#getActionListeners() JTextField.getActionListeners

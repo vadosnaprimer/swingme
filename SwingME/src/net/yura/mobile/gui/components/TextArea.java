@@ -98,10 +98,14 @@ public class TextArea extends TextComponent {
         }
 
 	/**
-	 * @param g The Graphics object
+         * @see TextField#paintComponent(Graphics2D)
 	 */
 	public void paintComponent(Graphics2D g) {
 
+            int f = getForeground();
+            
+            if (!Graphics2D.isTransparent(f)) {
+            
                 String text = getDisplayString();
 
 		int y = 0;
@@ -127,7 +131,7 @@ public class TextArea extends TextComponent {
 			y -= height;
 		}
 */
-                g.setColor( getForeground() );
+                g.setColor( f );
 
                 int i, startLine, endLine, lineHeight;
 
@@ -181,8 +185,7 @@ public class TextArea extends TextComponent {
                         beginIndex = lines[i];
                     }
 		}
-
-
+            }
 	}
 
 	/**
