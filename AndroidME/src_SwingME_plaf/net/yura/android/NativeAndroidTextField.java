@@ -2,6 +2,7 @@ package net.yura.android;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -83,7 +84,7 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         // if we are using a system font in this text field, lets use it in the edittext
         javax.microedition.lcdui.Font font = ((TextComponent)textField).getFont().getFont();
         if (font!=null) {
-            editText.setTextSize( FontManager.getFont(font).getPaint().getTextSize() );
+            editText.setTextSize( TypedValue.COMPLEX_UNIT_PX, FontManager.getFont(font).getPaint().getTextSize() );
         }
 
 
