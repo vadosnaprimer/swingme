@@ -1,6 +1,6 @@
 package net.yura.blackberry;
 
-import com.badoo.mobile.Events;
+import java.util.Vector;
 
 import net.rim.device.api.servicebook.ServiceBook;
 import net.rim.device.api.servicebook.ServiceRecord;
@@ -9,7 +9,6 @@ import net.rim.device.api.system.CoverageStatusListener;
 import net.rim.device.api.system.GlobalEventListener;
 import net.rim.device.api.system.WLANConnectionListener;
 import net.rim.device.api.system.WLANInfo;
-import net.rim.device.api.ui.component.Dialog;
 import net.yura.mobile.io.SocketClient;
 
 public class ConnectionManager implements GlobalEventListener {
@@ -20,6 +19,48 @@ public class ConnectionManager implements GlobalEventListener {
 	public final static int WAP = 3;
 	public final static int MDS = 4;
 	public final static int NO_CONNECTION = 5;
+	 //#mdebug info
+	private Vector observers = new Vector();
+	
+	public interface ConnectionStateObserver {
+	     public void update(String status);	  
+	}	  
+	
+    public void addObserver(ConnectionStateObserver oi){ 
+        observers.addElement(oi);
+        notifyObservers();
+    }  
+ 
+    public void removeObserver(ConnectionStateObserver oi){ 
+        observers.removeElement(oi);  
+    }
+ 
+    public void notifyObservers(){ 
+    	String message = getConnectionDescription(currentConnectionMethod);
+    	
+        for(int i=0;i<observers.size();i++){            
+        	((ConnectionStateObserver)observers.elementAt(i)).update(message); 
+        }
+    }
+    //#enddebug
+    
+    private String getConnectionDescription(int connectionMethod){
+		switch (connectionMethod) {
+		case WIFI:
+			return "WIFI";
+		case BIS_B:
+			return "BIS";
+		case DIRECT_TCP:
+			return "TCP";
+		case WAP:
+			return "WAP";
+		case MDS:
+			return "MDS";
+		case NO_CONNECTION:
+			return "NONE";
+		}
+		return "XXX";
+	}
 	
 	private int currentConnectionMethod = -1;
 	
@@ -28,8 +69,8 @@ public class ConnectionManager implements GlobalEventListener {
 	
 	public static String mostRecentAppendString = null;
 	
-	public int getCurrentConnectionMethod(){
-		return currentConnectionMethod;
+	public String getCurrentConnectionMethod(){
+		return getConnectionDescription(currentConnectionMethod);
 	}
 	
 	public WIFIListener getConnWIFIListener(){
@@ -68,10 +109,6 @@ public class ConnectionManager implements GlobalEventListener {
 	private boolean _wapSupport;
 	private boolean _wifiSupport;
 	private boolean _tcpSupport;
-
-	private void publishEvent(){
-		Events.BLACKBERRY_CONNECTION_STATE.publish(new Integer(currentConnectionMethod), this);
-	}
 	
 	private ConnectionManager() {
 		setCoverage();
@@ -113,7 +150,7 @@ public class ConnectionManager implements GlobalEventListener {
 			currentConnectionMethod = NO_CONNECTION;
 			// TODO: No internet connection
 		}
-		publishEvent();
+		notifyObservers();
 		return connStr;
 	}
 
