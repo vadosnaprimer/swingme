@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.microedition.lcdui.TextBox;
 
+import net.yura.android.lcdui.FontManager;
 import net.yura.android.plaf.AndroidBorder;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
@@ -38,8 +38,6 @@ import javax.microedition.lcdui.Canvas.InputHelper;
  * @author Yura Mamyrin
  */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
-
-    private static final int NO_COLOR = 0x00FFFFFF;
 
     private EditText editText; // this is the Android Component
     private TextBox textBox; // this is the J2ME component
@@ -77,11 +75,17 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         // if we are not using the native android border
         if (!(textField.getBorder() instanceof AndroidBorder)) {
-
-            textField.setForeground( NO_COLOR );
-
-            editText.setBackgroundDrawable(null);
+            textField.setForeground( 0x00FFFFFF ); // make it not have any foreground color, so it paints nothing
+            editText.setBackgroundDrawable(null); // this removed the border from the edittext
         }
+
+
+        // if we are using a system font in this text field, lets use it in the edittext
+        javax.microedition.lcdui.Font font = ((TextComponent)textField).getFont().getFont();
+        if (font!=null) {
+            editText.setTextSize( FontManager.getFont(font).getPaint().getTextSize() );
+        }
+
 
         swing2android();
 
