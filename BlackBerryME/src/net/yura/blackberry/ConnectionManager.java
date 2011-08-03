@@ -150,6 +150,7 @@ public class ConnectionManager implements GlobalEventListener {
 			currentConnectionMethod = NO_CONNECTION;
 			// TODO: No internet connection
 		}
+		 //#debug info
 		notifyObservers();
 		return connStr;
 	}
