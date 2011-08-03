@@ -8,15 +8,19 @@ import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.microedition.lcdui.TextBox;
+
+import net.yura.android.plaf.AndroidBorder;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.Window;
+import net.yura.mobile.gui.plaf.Style;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -34,6 +38,8 @@ import javax.microedition.lcdui.Canvas.InputHelper;
  * @author Yura Mamyrin
  */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
+
+    private static final int NO_COLOR = 0x00FFFFFF;
 
     private EditText editText; // this is the Android Component
     private TextBox textBox; // this is the J2ME component
@@ -60,12 +66,22 @@ System.out.println("[NativeAndroidTextField] ##################### construct");
 
 System.out.println("[NativeAndroidTextField] ##################### start");
 
+        //textField = (Component)textBox.getCommandListener();
+
         Window window = DesktopPane.getDesktopPane().getSelectedFrame();
         textField = window.getFocusOwner();
 
         this.textBox = textBox;
 
         editText = new NativeEditText(view);
+
+        // if we are not using the native android border
+        if (!(textField.getBorder() instanceof AndroidBorder)) {
+
+            textField.setForeground( NO_COLOR );
+
+            editText.setBackgroundDrawable(null);
+        }
 
         swing2android();
 
@@ -232,10 +248,10 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             }
         });
 
+        // if we cleared the font, set it back
+        textField.setForeground( Style.NO_COLOR );
 
         android2swing();
-
-
 
     }
 
