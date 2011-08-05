@@ -1,8 +1,11 @@
 package net.yura.blackberry;
 
-import java.io.DataInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -16,6 +19,8 @@ import javax.microedition.location.LocationProvider;
 import javax.microedition.location.QualifiedCoordinates;
 
 import net.rim.device.api.system.GPRSInfo;
+import net.rim.device.api.system.RadioInfo;
+import net.yura.mobile.io.json.JSONWriter;
 import net.yura.mobile.logging.Logger;
 
 public class CellSiteLocationProvider extends LocationProvider {
@@ -142,12 +147,13 @@ public class CellSiteLocationProvider extends LocationProvider {
 					GPRSInfo.GPRSCellInfo ci = GPRSInfo.getCellInfo();
 					int cellID = ci.getCellId();
 					int lac = ci.getLAC();
+					int mcc = -1;
+					int mnc = -1;
 					
-					/*					
-					Testing CellID and LAC  
-					int cellID = 47871;
-					int lac = 50022;						
-					*/
+					if (RadioInfo.getNumberOfNetworks() > 0){
+						mcc = RadioInfo.getMCC(0);
+						mnc = RadioInfo.getMNC(0);
+					}
 					
 					if (cellID == 0) {
 						setState(STATE_NO_CELL_ID);
@@ -159,7 +165,7 @@ public class CellSiteLocationProvider extends LocationProvider {
 						_lastKnownCellLAC = lac;
 						
 						setState(STATE_CELL_ID_FOUND);
-						final String s = tryToLocate(cellID, lac);
+						final String s = googleLocate(cellID, lac, mnc, mcc);
 						if (s.equalsIgnoreCase("UNKNOWN")){
 							setState(STATE_UNKNOWN_CELL);
 						} else if (s.equalsIgnoreCase("CONN_ERROR")){
@@ -191,57 +197,82 @@ public class CellSiteLocationProvider extends LocationProvider {
 		t.start();		
 	}
 	
-	/**
-	 * @param aCellID The cell ID of the cell tower
-	 * @param aLAC The LAC for the cell tower
-	 * @return The GPS location of the cell tower.
-	 */
-	private String tryToLocate(int aCellID, int aLAC) {
-		try {
+	private String googleLocate(int cellid, int lac, int carrier, int country) {
+		try {						
+			
+			// request
+			//{"version":"1.1.0","host":"maps.google.com","cell_towers":[{"cell_id":44049,"location_area_code":201,"mobile_country_code":234,"mobile_network_code":15}]}
+			
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();			
+			Writer writer = new OutputStreamWriter(bos);	
+			
+			System.out.println(Integer.toHexString(country));
+			System.out.println(Integer.toHexString(carrier));
+			
+			new JSONWriter(writer)
+		    .object()
+		    	.key("version").value("1.1.0")
+		        .key("host").value("maps.google.com")
+		        .key("cell_towers")
+			        .array()
+			        	.object()
+			         		.key("cell_id").value(cellid)
+			         		.key("location_area_code").value(lac)
+			         		.key("mobile_country_code").value(country)
+			         		.key("mobile_network_code").value(carrier)
+			         	.endObject()
+			        .endArray()
+		    .endObject();		     
+			String request = new String(bos.toByteArray());
+			
 			HttpConnection conn = null;
-			conn = (HttpConnection) Connector.open("http://www.google.com/glm/mmap"	+ ConnectionManager.mostRecentAppendString);
-
+			conn = (HttpConnection) Connector.open("http://www.google.com/loc/json"	+ ConnectionManager.mostRecentAppendString);
+			conn.setRequestProperty("Content-Type", "application / requestJson");
 			conn.setRequestMethod("POST");
-			DataOutputStream os = new DataOutputStream(conn.openOutputStream());
-			os.writeShort(21);
-			os.writeLong(0);
-			os.writeUTF("fr");
-			os.writeUTF("Sony_Ericsson-K750");
-			os.writeUTF("1.3.1");
-			os.writeUTF("Web");
-			os.writeByte(27);
-
-			os.writeInt(0);
-			os.writeInt(0);
-			os.writeInt(3);
-			os.writeUTF("");
-			os.writeInt(aCellID);
-			os.writeInt(aLAC);
-			os.writeInt(0);
-			os.writeInt(0);
-			os.writeInt(0);
-			os.writeInt(0);
-			os.flush();
-
+			byte[] b = request.getBytes();
+			conn.setRequestProperty("Content-Length", Integer.toString(b.length));
+			OutputStream os = new DataOutputStream(conn.openOutputStream());
+			os.write(b);
+			os.close();
 			int response = conn.getResponseCode();
 			if (response == HttpConnection.HTTP_OK) {
-				InputStream in = conn.openInputStream();
-				DataInputStream dis = new DataInputStream(in);
-
-				// Read some prior data
-				dis.readShort();
-				dis.readByte();
-				// Read the error-code
-				int errorCode = dis.readInt();
-				if (errorCode == 0) {
-					double lat = dis.readInt() / 1000000D;
-					double lng = dis.readInt() / 1000000D;
-					// Read the rest of the data
-					dis.readInt();
-					dis.readInt();
-					dis.readUTF();					
-					return lat + "," + lng;
+			    
+				String lat, lng = "";
+				
+				InputStream is = conn.openInputStream();
+				byte[] responseBytes = new byte[is.available()];
+				is.read(responseBytes);
+				String responseString = new String(responseBytes);
+				
+				int i = responseString.indexOf("latitude");
+				if (i == -1){
+					return "UNKNOWN";
+				} else {
+					lat = responseString.substring(i + 10, responseString.indexOf(',', i));
+					// ensure that lat can be parsed as a double
+					try {
+						Double.parseDouble(lat);
+					} catch (Exception e){
+						return "UNKNOWN";
+					}
 				}
+				
+				int j = responseString.indexOf("longitude");
+				if (j == -1){
+					return "UNKNOWN";
+				} else {
+					lng = responseString.substring(j + 11, responseString.indexOf(',', j));
+					// ensure that lng can be parsed as a double
+					try {
+						Double.parseDouble(lng);
+					} catch (Exception e){
+						return "UNKNOWN";
+					}
+				}				
+				// response
+				// {"location":{"latitude":51.5160886,"longitude":-0.1352067,"accuracy":875.0},"access_token":"2:kyblhV7chWDTogPd:_Q_sxZ-WacfwJqM_"}
+				
+                return lat + "," + lng;
 			}
 			return "UNKNOWN";
 		} catch (Exception e) {

@@ -15,10 +15,11 @@ public class ConnectionManager implements GlobalEventListener {
 	
 	public final static int WIFI = 0;
 	public final static int BIS_B = 1;
-	public final static int DIRECT_TCP = 2;
-	public final static int WAP = 3;
-	public final static int MDS = 4;
-	public final static int NO_CONNECTION = 5;
+	public final static int DIRECT_TCP_1 = 2;
+	public final static int DIRECT_TCP_2 = 3;
+	public final static int WAP = 4;
+	public final static int MDS = 5;
+	public final static int NO_CONNECTION = 6;
 	 //#mdebug info
 	private Vector observers = new Vector();
 	
@@ -50,8 +51,10 @@ public class ConnectionManager implements GlobalEventListener {
 			return "WIFI";
 		case BIS_B:
 			return "BIS";
-		case DIRECT_TCP:
-			return "TCP";
+		case DIRECT_TCP_1:
+			return "TCP1";
+		case DIRECT_TCP_2:
+			return "TCP2";
 		case WAP:
 			return "WAP";
 		case MDS:
@@ -135,31 +138,49 @@ public class ConnectionManager implements GlobalEventListener {
 		} else if (_bisSupport) {
 			connStr = ";deviceside=false;ConnectionType=mds-public";
 			currentConnectionMethod = BIS_B;
+		} else if (_wapSupport) {
+			currentConnectionMethod = WAP;
+			connStr = ";ConnectionUID=" + getWAP2UID();
 		} else if (_tcpSupport ) {
 			 String carrierUid = getCarrierBIBSUid();
 	            if (carrierUid == null) {
+	            	currentConnectionMethod = DIRECT_TCP_1;
 	                connStr = ";deviceside=true";
-	            } else {	                
+	            } else {
+	            	currentConnectionMethod = DIRECT_TCP_2;
 	                connStr = ";deviceside=false;connectionUID="+carrierUid + ";ConnectionType=mds-public";
-	            }
-	            currentConnectionMethod = DIRECT_TCP;
-		} else if (_wapSupport) {
-			currentConnectionMethod = WAP;
-			// TODO: WAP support
+	            }	            
 		} else {
 			currentConnectionMethod = NO_CONNECTION;
-			// TODO: No internet connection
 		}
 		 //#debug info
 		notifyObservers();
 		return connStr;
 	}
 
+	private String getWAP2UID(){
+		ServiceBook sb = ServiceBook.getSB();
+		ServiceRecord[] records = sb.findRecordsByCid("WPTCP");
+		String uid = null;
+		for(int i=0; i < records.length; i++) {
+		    if (records[i].isValid() && !records[i].isDisabled()) {
+		        if (records[i].getUid() != null && records[i].getUid().length() != 0) {
+		            if ((records[i].getUid().toLowerCase().indexOf("wifi") == -1) && (records[i].getUid().toLowerCase().indexOf("mms") == -1)) {
+	                    uid = records[i].getUid();
+	                    break;
+		            }
+		        }
+		    }
+		}
+		return uid;
+	}
+	
 	private void setCoverage() {
 		_mdsSupport = CoverageInfo.isCoverageSufficient(CoverageInfo.COVERAGE_MDS);
 		_bisSupport = (CoverageInfo.isCoverageSufficient(CoverageInfo.COVERAGE_BIS_B));
 		_wifiSupport = (WLANInfo.getWLANState() == WLANInfo.WLAN_STATE_CONNECTED);
 		_tcpSupport = ((CoverageInfo.getCoverageStatus() & CoverageInfo.COVERAGE_DIRECT) == CoverageInfo.COVERAGE_DIRECT);
+		_wapSupport = getWAP2UID() != null;
 	}
 
 	private void updateConnection(){
@@ -177,8 +198,6 @@ public class ConnectionManager implements GlobalEventListener {
 		int numRecords = records.length;
 		for (int i = 0; i < numRecords; i++) {
 			ServiceRecord myRecord = records[i];
-			String name = myRecord.getName();
-			String uid = myRecord.getUid();
 			if (myRecord.isValid() && !myRecord.isDisabled()) {
 				int encryptionMode = myRecord.getEncryptionMode();
 				if (encryptionMode == ServiceRecord.ENCRYPT_RIM) {
