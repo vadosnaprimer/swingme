@@ -37,9 +37,9 @@ public class TextBox extends Screen {
         View oldView = Display.getDisplay(midlet).getCurrent().getView();
         this.currentCanvasView = getCanvasView(oldView);
 
-        textBoxView = new TextBoxView();
+//        textBoxView = new TextBoxView();
         
-        //textBoxView = new net.yura.android.NativeAndroidTextField();
+        textBoxView = new net.yura.android.NativeAndroidTextField();
 
     }
     
