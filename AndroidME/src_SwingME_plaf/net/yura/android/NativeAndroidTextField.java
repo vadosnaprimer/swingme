@@ -22,6 +22,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.Style;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -31,9 +32,9 @@ import javax.microedition.lcdui.Canvas.InputHelper;
 
 /**
  * TODO:
- *      when the theme is anything but the standard does not use it
  *      addFocusListener does not work if there is already one set
- *      {@link TextComponent#changedUpdate(int, int) } is not called when text is entered
+ *      when the textbox is inside a scrollpane it does not crop it when it slides out
+ *      when the textbot is too big for the screen, dragging it does not scroll swingme
  *      first click does not set the carret position to the correct place
  *      first long press opens the swingme popup menu and not the native one
  *
@@ -41,6 +42,8 @@ import javax.microedition.lcdui.Canvas.InputHelper;
  * DONEish:
  *      expand on multi-line text does not work
  *      addCaretListener does not work
+ *      {@link TextComponent#changedUpdate(int, int) } is not called when text is entered
+ *
  *
  * a letter is added
  * we get a onTextChanged event
@@ -101,7 +104,8 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
             // does not get it 100% correct, so we only use it when we remove the native border
             Border insets = textField.getInsets();
-            editText.setPadding(insets.getLeft(), insets.getTop(), insets.getRight(), insets.getBottom());
+            int margin = ((TextComponent)textField).getMargin();
+            editText.setPadding(insets.getLeft()+margin, insets.getTop()+margin, insets.getRight()+margin, insets.getBottom()+margin);
 
         }
 
@@ -363,10 +367,70 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         }
         */
 
+        /**
+         * in Android style, NOT swingME style
+         * [0] = left
+         * [1] = top
+         * [2] = right
+         * [3] = bottom
+         */
+        public int[] getVisibleRect() {
+            int[] vis = textField.getVisibleRect();
+            Border insets = textField.getInsets();
+            vis[0] = vis[0] - textField.getXOnScreen()+insets.getLeft();
+            vis[1] = vis[1] - textField.getYOnScreen()+insets.getTop();
+            vis[2] = vis[0]+vis[2];
+            vis[3] = vis[1]+vis[3];
+            return vis;
+        }
+
+        @Override
+        public void draw(android.graphics.Canvas canvas) {
+
+            canvas.save();
+
+            int[] vis = getVisibleRect();
+            canvas.clipRect(vis[0], vis[1], vis[2], vis[3]);
+
+            super.draw(canvas);
+
+            canvas.restore();
+        }
+
         public NativeEditText(View view) {
             super( AndroidMeActivity.DEFAULT_ACTIVITY );
             this.view = view;
         }
+
+        //private boolean mScrolled;
+        //@Override
+        //public void cancelLongPress() {
+        //    super.cancelLongPress();
+        //    mScrolled = true;
+        //}
+
+        @Override
+        public boolean onTouchEvent(MotionEvent event) {
+
+            final int action = event.getAction();
+            if (action == MotionEvent.ACTION_DOWN) {
+
+                int[] vis = getVisibleRect();
+
+                // person has clicked somewhere outside us, we should not consume the event
+                if (event.getX()<vis[0] || event.getX()>vis[2] || event.getY()<vis[1] || event.getY()>vis[3]) {
+                    return false;
+                }
+
+                //mScrolled = false;
+            }
+            //if (mScrolled) {
+            //    return true;
+            //}
+
+            return super.onTouchEvent(event);
+        }
+
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
