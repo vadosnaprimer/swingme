@@ -1,5 +1,6 @@
 package net.yura.android;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
@@ -9,7 +10,6 @@ import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
 import javax.microedition.lcdui.TextBox;
-
 import net.yura.android.lcdui.FontManager;
 import net.yura.android.plaf.AndroidBorder;
 import net.yura.mobile.gui.ActionListener;
@@ -31,11 +31,23 @@ import javax.microedition.lcdui.Canvas.InputHelper;
 
 /**
  * TODO:
- *      expand on multi-line text does not work
  *      when the theme is anything but the standard does not use it
- *      addCaretListener does not work
  *      addFocusListener does not work if there is already one set
  *      {@link TextComponent#changedUpdate(int, int) } is not called when text is entered
+ *      first click does not set the carret position to the correct place
+ *      first long press opens the swingme popup menu and not the native one
+ *
+ *
+ * DONEish:
+ *      expand on multi-line text does not work
+ *      addCaretListener does not work
+ *
+ * a letter is added
+ * we get a onTextChanged event
+ * this updates the text in SwingME and asks for a repaint and revalidate
+ * onDraw is called after the swingme repaint happens
+ * this updats the size of the android editText
+ *
  * @author Yura Mamyrin
  */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
@@ -74,10 +86,23 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         editText = new NativeEditText(view);
 
+
+        //ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+        //editText.setLayoutParams( lp ); // does nothing
+        //editText.setScrollContainer(false); // does nothing
+        //editText.setScroller(null); // does nothing
+
+
+
         // if we are not using the native android border
         if (!(textField.getBorder() instanceof AndroidBorder)) {
             textField.setForeground( 0x00FFFFFF ); // make it not have any foreground color, so it paints nothing
             editText.setBackgroundDrawable(null); // this removed the border from the edittext
+
+            // does not get it 100% correct, so we only use it when we remove the native border
+            Border insets = textField.getInsets();
+            editText.setPadding(insets.getLeft(), insets.getTop(), insets.getRight(), insets.getBottom());
+
         }
 
 
@@ -201,6 +226,23 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
 
             editText.layout(sx, sy, sx+w, sy+h );
 
+            Handler handler = editText.getHandler();
+            if (handler!=null) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            // this NEEDS to run on the handler thread or it will throw nullpointer
+                            editText.bringPointIntoView( editText.getSelectionEnd() );
+                        }
+                        catch(Throwable th) {
+                            //#debug debug
+                            th.printStackTrace();
+                        }
+                    }
+                });
+            }
+
             tx=x;
             ty=y;
             tw=w;
@@ -303,8 +345,6 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             al.actionPerformed( tf.getActionCommand() );
         }
     }
-
-
 
     class NativeEditText extends EditText {
 
