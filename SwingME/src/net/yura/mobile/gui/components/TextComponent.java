@@ -119,6 +119,22 @@ public abstract class TextComponent extends Component implements ActionListener,
                 setText(initialText);
         }
 
+        /**
+         * @see Label#getMargin()
+         * @see javax.swing.text.JTextComponent#getMargin() JTextComponent.getMargin
+         */
+        public int getMargin() {
+            return padding;
+        }
+        
+        /**
+         * @see Label#setMargin(int)
+         * @see javax.swing.text.JTextComponent#setMargin(java.awt.Insets) JTextComponent.setMargin
+         */
+        public void setMargin(int m) {
+            padding=m;
+        }
+        
         public boolean allowChar(char ch) {
 
             // TODO somehow open the blackberry symbol dialog

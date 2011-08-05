@@ -91,6 +91,7 @@ public class Label extends Component {
         }
 
         /**
+         * @see TextComponent#setMargin(int)
          * @see javax.swing.AbstractButton#setMargin(java.awt.Insets) AbstractButton.setMargin
          */
         public void setMargin(int padding) {
@@ -99,6 +100,7 @@ public class Label extends Component {
 
         /**
          * @return The padding of the label
+         * @see TextComponent#getMargin()
          * @see javax.swing.AbstractButton#getMargin() AbstractButton.getMargin
          */
         public int getMargin() {
