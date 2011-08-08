@@ -33,7 +33,7 @@ import javax.microedition.lcdui.Canvas.InputHelper;
 /**
  * TODO:
  *      addFocusListener does not work if there is already one set
- *      when the textbox is inside a scrollpane it does not crop it when it slides out
+ *      when the textbox is inside a scrollpane it does not crop it when it slides out in the correct place
  *      when the textbot is too big for the screen, dragging it does not scroll swingme
  *      first click does not set the carret position to the correct place
  *      first long press opens the swingme popup menu and not the native one
@@ -76,6 +76,11 @@ System.out.println("[NativeAndroidTextField] ##################### construct");
 
     public void start(TextBox textBox) {
 
+        // if we are already started, do not start again, or screen will flicker
+        if (editText!=null) {
+            return;
+        }
+
         final View view = textBox.getCanvasView();
 
 System.out.println("[NativeAndroidTextField] ##################### start");
@@ -117,7 +122,7 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         }
 
 
-        swing2android();
+        midp2android();
 
         boolean singleLine = (textField instanceof TextField);
         editText.setSingleLine( singleLine );
@@ -152,6 +157,9 @@ System.out.println("[NativeAndroidTextField] ##################### start");
             }
             @Override
             public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
+
+                android2swing();
+/*
                 Object val = textField.getValue();
                 if (val == null || val instanceof String) {
                     String text = (String)val;
@@ -165,6 +173,8 @@ System.out.println("[NativeAndroidTextField] ##################### start");
                     Thread.dumpStack();
                 }
                 //#enddebug
+
+*/
             }
             @Override
             public void afterTextChanged(Editable edtbl) {
@@ -306,7 +316,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
     }
 
-    void swing2android() {
+    void midp2android() {
 
 
         editText.setText(textBox.getString());
@@ -328,7 +338,11 @@ System.out.println("[NativeAndroidTextField] ##################### close");
     void android2swing() {
         // set text back
 
-        textBox.setString(editText.getText().toString());
+        String aText = editText.getText().toString();
+
+        if (!aText.equals(textBox.getString())) {
+            textBox.setString(aText);
+        }
 
         // fire ok button
         // this will set the text back into SwingME, and then close the native input
@@ -336,9 +350,17 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         //textBox.fireCommand(javax.microedition.lcdui.Command.OK);
 
         // just set the text back on the text component
-        textField.setValue( textBox.getString() );
+        String mText = textBox.getString();
+        if (!mText.equals(textField.getValue())) {
+            textField.setValue( mText );
+        }
 
-        ((TextComponent)textField).setCaretPosition( editText.getSelectionEnd() ); // in android no direct way to get the caret
+        TextComponent tc = (TextComponent)textField;
+        int caret = editText.getSelectionEnd();
+
+        if (tc.getCaretPosition() != caret) {
+            tc.setCaretPosition( caret ); // in android no direct way to get the caret
+        }
     }
 
 
@@ -431,6 +453,18 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             return super.onTouchEvent(event);
         }
 
+        @Override
+        protected void onSelectionChanged(int selStart, int selEnd) {
+
+            TextComponent tc = (TextComponent)textField;
+
+            int caretPosition = tc.getCaretPosition();
+
+            if (caretPosition!= selEnd) {
+                tc.setCaretPosition(selEnd);
+            }
+
+        }
 
         @Override
         public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -443,6 +477,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
                 android2swing(); // send text to swingME
                 b.fireActionPerformed();
 
+                // ========== SWING 2 MIDP ==========
                 // get the text from swingME to J2ME
                 Object val = textField.getValue();
                 if (val instanceof String) {
@@ -455,7 +490,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
                 }
                 //#enddebug
 
-                swing2android(); // set the text back into the android editText
+                midp2android(); // set the text back into the android editText
                 return true;
             }
 
