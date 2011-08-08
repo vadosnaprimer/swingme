@@ -427,10 +427,9 @@ public abstract class TextComponent extends Component implements ActionListener,
         	String text = getText();
 
         	// only make a new TextBox if the current one is not the same
-        	if (textbox==null || !textbox.getString().equals(text) || !textbox.getTitle().equals(hint) || textbox.getMaxSize()!=maxSize || textbox.getConstraints()!=constraints || textbox.getCommandListener()!=this) {
+        	if (textbox==null || !textbox.getString().equals(text) || !textbox.getTitle().equals(hint) || textbox.getMaxSize()!=maxSize || textbox.getConstraints()!=constraints) {
 
                     textbox = new TextBox(hint, text , maxSize, constraints);
-                    textbox.setCommandListener(this);
 
                     Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
                     Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);
@@ -439,6 +438,8 @@ public abstract class TextComponent extends Component implements ActionListener,
                     textbox.addCommand(cancel);
 
         	}
+
+                textbox.setCommandListener(this); // replaces old one
 
                 Display.getDisplay(Midlet.getMidlet()).setCurrent(textbox);
 
