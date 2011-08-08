@@ -107,7 +107,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         private long lastKeyEvent;
 
         private ChangeListener caretListener;
-        
+
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
          */
@@ -126,7 +126,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public int getMargin() {
             return padding;
         }
-        
+
         /**
          * @see Label#setMargin(int)
          * @see javax.swing.text.JTextComponent#setMargin(java.awt.Insets) JTextComponent.setMargin
@@ -134,7 +134,7 @@ public abstract class TextComponent extends Component implements ActionListener,
         public void setMargin(int m) {
             padding=m;
         }
-        
+
         public boolean allowChar(char ch) {
 
             // TODO somehow open the blackberry symbol dialog
@@ -223,7 +223,7 @@ public abstract class TextComponent extends Component implements ActionListener,
          * @see javax.swing.text.JTextComponent#paste() JTextComponent.paste
          */
 	public void paste() {
-		
+
         String txt = ClipboardManager.getInstance().getText();
         if (txt!=null) {
             autoAccept();
@@ -236,7 +236,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             //}
 
         }
-		
+
 	}
 
         private void clear(boolean back) {
@@ -266,6 +266,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                     ) {
                 // TODO check if we have a qwerty keyboard
                 openNativeEditor();
+
             }
         }
 
@@ -421,18 +422,24 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         public void openNativeEditor() {
                 // can not reuse this because of problems on S60
-        	
+
         	String hint = (label==null||"".equals(label)) ? getName() : label;
-        	
-                textbox = new TextBox(hint, getText(), maxSize, constraints);
+        	String text = getText();
 
-                Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
-                Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);
+        	// only make a new TextBox if the current one is not the same
+        	if (textbox==null || !textbox.getString().equals(text) || !textbox.getTitle().equals(hint) || textbox.getMaxSize()!=maxSize || textbox.getConstraints()!=constraints || textbox.getCommandListener()!=this) {
 
-                textbox.addCommand(ok);
-                textbox.addCommand(cancel);
+                    textbox = new TextBox(hint, text , maxSize, constraints);
+                    textbox.setCommandListener(this);
 
-                textbox.setCommandListener(this);
+                    Command ok = new Command( (String)DesktopPane.get("okText") , Command.OK, 1);
+                    Command cancel = new Command( (String)DesktopPane.get("cancelText") , Command.CANCEL, 1);
+
+                    textbox.addCommand(ok);
+                    textbox.addCommand(cancel);
+
+        	}
+
                 Display.getDisplay(Midlet.getMidlet()).setCurrent(textbox);
 
         }
@@ -867,7 +874,7 @@ public abstract class TextComponent extends Component implements ActionListener,
             copy.addActionListener(this);
             paste.addActionListener(this);
             delete.addActionListener(this);
-            
+
             Window popup = Menu.makePopup();
             MenuBar menu = Menu.getPopupMenu(popup);
             menu.add(cut);
