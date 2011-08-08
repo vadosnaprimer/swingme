@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
@@ -208,6 +209,10 @@ public abstract class Canvas extends Displayable {
     public View getView() {
 
         if (linearLayout==null) {
+
+            final ViewConfiguration configuration = ViewConfiguration.get(AndroidMeActivity.DEFAULT_ACTIVITY);
+            final int mTouchSlop = configuration.getScaledTouchSlop();
+
             //this.linearLayout = new LinearLayout(AndroidMeActivity.DEFAULT_ACTIVITY);
             this.linearLayout = new ViewGroup(AndroidMeActivity.DEFAULT_ACTIVITY) {
                 @Override
@@ -220,6 +225,83 @@ public abstract class Canvas extends Displayable {
                             child.layout(0, 0, getWidth(), getHeight());
                         }
                     }
+                }
+
+                float mLastMotionY;
+                boolean mIsBeingDragged;
+                /**
+                 * this will make sure we send all drag events to the Canvas and not any of the floating children
+                 * this code is taken from android ScrollView code
+                 * this makes sure that when the native textbox is open, when we drag up and down, we scroll the view
+                 * @see android.widget.ScrollView#onInterceptTouchEvent(MotionEvent)
+                 */
+                public boolean onInterceptTouchEvent(MotionEvent ev) {
+
+                    if (canvasView.isFocused()) {
+                        return false;
+                    }
+
+
+                    final int action = ev.getAction();
+                    if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
+                        return true;
+                    }
+
+                    //if (!canScroll()) {
+                    //    mIsBeingDragged = false;
+                    //    return false;
+                    //}
+
+                    final float y = ev.getY();
+
+                    switch (action) {
+                        case MotionEvent.ACTION_MOVE:
+                            /*
+                             * mIsBeingDragged == false, otherwise the shortcut would have caught it. Check
+                             * whether the user has moved far enough from his original down touch.
+                             */
+
+                            /*
+                            * Locally do absolute value. mLastMotionY is set to the y value
+                            * of the down event.
+                            */
+                            final int yDiff = (int) Math.abs(y - mLastMotionY);
+                            if (yDiff > mTouchSlop) {
+
+                                pointerPressed((int)ev.getX(), (int)y);
+
+                                mIsBeingDragged = true;
+                            }
+                            break;
+
+                        case MotionEvent.ACTION_DOWN:
+                            /* Remember location of down touch */
+                            mLastMotionY = y;
+
+                            /*
+                            * If being flinged and user touches the screen, initiate drag;
+                            * otherwise don't.  mScroller.isFinished should be false when
+                            * being flinged.
+                            */
+                            mIsBeingDragged = false;//!mScroller.isFinished();
+                            break;
+
+                        case MotionEvent.ACTION_CANCEL:
+                        case MotionEvent.ACTION_UP:
+                            /* Release the drag */
+                            mIsBeingDragged = false;
+                            break;
+                    }
+
+                    /*
+                    * The only time we want to intercept motion events is if we are in the
+                    * drag mode.
+                    */
+                    return mIsBeingDragged;
+                };
+                @Override
+                public boolean onTouchEvent(MotionEvent ev) {
+                    return canvasView.onTouchEvent(ev);
                 }
             };
             this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
@@ -265,7 +347,7 @@ public abstract class Canvas extends Displayable {
         public void start(TextBox tb);
         public void onDraw();
     }
-    
+
     class CanvasView extends View {
         private static final int KEYBOARD_SHOW = 1;
         private static final int KEYBOARD_HIDE = -1;
@@ -435,7 +517,7 @@ public abstract class Canvas extends Displayable {
             if (inputConnectionView!=null) {
                 inputConnectionView.onDraw();
             }
-            
+
             time = System.currentTimeMillis();
         }
 
@@ -670,7 +752,7 @@ public abstract class Canvas extends Displayable {
                 catch (Throwable e) {
                 }
             }
-            
+
             return true;
         }
 
@@ -819,7 +901,7 @@ public abstract class Canvas extends Displayable {
 //            if (inputConnectionView != view) {
 
 
-            
+
 
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
@@ -889,9 +971,9 @@ public abstract class Canvas extends Displayable {
         linearLayout.removeView(v);
     }
 
-    
-    
-    
+
+
+
         public static int getKeyCode(KeyEvent keyEvent) {
             // TODO implement as lookup table
             int deviceKeyCode = keyEvent.getKeyCode();
@@ -943,7 +1025,7 @@ public abstract class Canvas extends Displayable {
 
             return resultKeyCode;
         }
-    
+
 
     // -- debug code ---
     private long lastDrawTime;
