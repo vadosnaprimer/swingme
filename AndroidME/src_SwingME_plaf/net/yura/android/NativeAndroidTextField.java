@@ -310,6 +310,8 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
         android2swing();
 
+        editText = null;
+
     }
 
     void midp2android() {
@@ -409,6 +411,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
             int[] vis = getVisibleRect();
 
+            // we need to take internal scrolling into account, as none wraping textfields scroll left and right
             int mScrollX = getScrollX();
             int mScrollY = getScrollY();
 
