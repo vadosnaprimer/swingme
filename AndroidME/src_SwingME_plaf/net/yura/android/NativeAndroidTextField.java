@@ -33,17 +33,13 @@ import javax.microedition.lcdui.Canvas.InputHelper;
 /**
  * TODO:
  *      addFocusListener does not work if there is already one set
- *      when the textbox is inside a scrollpane it does not crop it when it slides out in the correct place
- *      when the textbot is too big for the screen, dragging it does not scroll swingme
  *      first click does not set the carret position to the correct place
  *      first long press opens the swingme popup menu and not the native one
- *
  *
  * DONEish:
  *      expand on multi-line text does not work
  *      addCaretListener does not work
  *      {@link TextComponent#changedUpdate(int, int) } is not called when text is entered
- *
  *
  * a letter is added
  * we get a onTextChanged event
@@ -412,7 +408,11 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             canvas.save();
 
             int[] vis = getVisibleRect();
-            canvas.clipRect(vis[0], vis[1], vis[2], vis[3]);
+
+            int mScrollX = getScrollX();
+            int mScrollY = getScrollY();
+
+            canvas.clipRect(vis[0] + mScrollX, vis[1] + mScrollY, vis[2] + mScrollX, vis[3] + mScrollY);
 
             super.draw(canvas);
 
