@@ -25,7 +25,7 @@ public class TextBox extends Screen {
     private int constraints;
     private Canvas.CanvasView currentCanvasView;
     private InputHelper textBoxView;
-    
+
     public TextBox(String title, String text, int maxSize, int constraints) {
         this.text = text;
         this.maxSize = maxSize;
@@ -37,12 +37,22 @@ public class TextBox extends Screen {
         View oldView = Display.getDisplay(midlet).getCurrent().getView();
         this.currentCanvasView = getCanvasView(oldView);
 
-//        textBoxView = new TextBoxView();
-        
+        setTitle(title);
+
+        //textBoxView = new TextBoxView();
+
         textBoxView = new net.yura.android.NativeAndroidTextField();
 
     }
-    
+
+    private String title;
+    public String getTitle() {
+        return title;
+    }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public View getCanvasView() {
         return currentCanvasView;
     }
@@ -76,15 +86,15 @@ public class TextBox extends Screen {
      */
     @Override
     public void initDisplayable(MIDlet midlet) {
-        
+
         // we need to call this so the keyboard is opened
         if (currentCanvasView != null) {
             currentCanvasView.setTextInputView(textBoxView);
         }
-        
+
         // need to call this after we bring the keyboard up, or that does not work
         textBoxView.start(this);
-        
+
     }
 
     public int getMaxSize() {
@@ -110,8 +120,8 @@ public class TextBox extends Screen {
     public void setConstraints(int constraints) {
         this.constraints = constraints;
     }
-    
-    
+
+
 
     public void fireCommand(int type) {
         java.util.List<Command> commands = getCommands();
@@ -128,9 +138,9 @@ public class TextBox extends Screen {
         //#debug debug
         System.out.println("[TextBox] NO BUTTON FOUND! "+type);
     }
-    
+
     public static int getInputType(int constraints) {
-        
+
             int inputType;
 
             switch (constraints & TextField.CONSTRAINT_MASK) {
@@ -161,7 +171,7 @@ public class TextBox extends Screen {
             if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
                 inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
             }
-        
+
             return inputType;
     }
 
@@ -172,10 +182,10 @@ public class TextBox extends Screen {
 
         public TextBoxView() {
         }
-        
+
         public void start(TextBox tb) { }
         public void onDraw() { }
-        
+
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 
 
