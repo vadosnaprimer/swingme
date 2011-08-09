@@ -36,6 +36,9 @@ public abstract class Displayable {
 		return this.commands;
 	}
 
+	/**
+	 * NOT MIDP!
+	 */
 	public CommandListener getCommandListener() {
 		return this.commandListener;
 	}

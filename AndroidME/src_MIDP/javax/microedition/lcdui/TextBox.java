@@ -53,7 +53,7 @@ public class TextBox extends Screen {
         this.title = title;
     }
 
-    public View getCanvasView() {
+    public Canvas.CanvasView getCanvasView() {
         return currentCanvasView;
     }
 

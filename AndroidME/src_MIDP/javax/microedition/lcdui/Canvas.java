@@ -299,6 +299,65 @@ public abstract class Canvas extends Displayable {
                     */
                     return mIsBeingDragged;
                 };
+
+                int children;
+                int x,y;
+                public boolean dispatchTouchEvent(MotionEvent ev) {
+
+                    final int action = ev.getAction();
+                    final int x = (int)ev.getX();
+                    final int y = (int)ev.getY();
+
+                    if (action == MotionEvent.ACTION_DOWN) {
+                        this.x = x;
+                        this.y = y;
+                        this.children = getChildCount();
+                    }
+                    else {
+
+                        int newCount = getChildCount();
+
+                        // if during the process of this mouse event a child has been added
+                        if (children != newCount) {
+
+                            for (int i = newCount - 1; i >= children; i--) {
+                                final View child = getChildAt(i);
+
+                                Rect frame = new Rect();
+                                child.getHitRect(frame);
+                                if (frame.contains(this.x, this.y)) {
+
+                                    this.children = newCount;
+
+                                    // not good as action cancelled sends pointerUp to j2me, and after a long time this can cause a popup menu
+                                    //ev.setAction( MotionEvent.ACTION_CANCEL );
+                                    //ev.setLocation(this.x, this.y);
+
+                                    // not good as sends pointer up and this can do things like move the caret
+                                    //ev.setAction( MotionEvent.ACTION_UP );
+                                    //ev.setLocation(-1, -1);
+                                    //super.dispatchTouchEvent(ev);
+
+                                    ev.setAction( MotionEvent.ACTION_DOWN );
+                                    ev.setLocation(this.x, this.y);
+                                    super.dispatchTouchEvent(ev);
+
+                                    ev.setAction( action );
+                                    ev.setLocation(x, y);
+                                    return super.dispatchTouchEvent(ev);
+
+                                }
+
+                            }
+                        }
+
+                    }
+
+
+                    return super.dispatchTouchEvent(ev);
+
+                }
+
                 @Override
                 public boolean onTouchEvent(MotionEvent ev) {
                     return canvasView.onTouchEvent(ev);
@@ -348,7 +407,7 @@ public abstract class Canvas extends Displayable {
         public void onDraw();
     }
 
-    class CanvasView extends View {
+    public class CanvasView extends View {
         private static final int KEYBOARD_SHOW = 1;
         private static final int KEYBOARD_HIDE = -1;
 
@@ -895,6 +954,13 @@ public abstract class Canvas extends Displayable {
 
                 keyboardMode = 0;
             }
+        }
+
+        /**
+         * this gets rid of the input helper but does NOT remove the keyboard
+         */
+        public void clearInputHelper() {
+            inputConnectionView = null;
         }
 
         public void setTextInputView(InputHelper view) {

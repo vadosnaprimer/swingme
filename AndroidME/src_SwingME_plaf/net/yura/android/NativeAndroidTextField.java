@@ -272,7 +272,7 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
 
 System.out.println("[NativeAndroidTextField] ##################### close");
 
-        View view = textBox.getCanvasView();
+        Canvas.CanvasView view = textBox.getCanvasView();
 
         view.requestFocus();
 
@@ -310,17 +310,18 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
         android2swing();
 
+        // reset everything in the class
+        view.clearInputHelper();
         editText = null;
+        tx=-100;ty=-100;tw=-100;th=-100;
 
     }
 
     void midp2android() {
 
-
-        editText.setText(textBox.getString());
-
-
         int caret = ((TextComponent)textField).getCaretPosition();
+
+        editText.setText(textBox.getString()); // this resets caret to 0 in the EditText
 
         // HACK to put the caret at the start of the line if your text is longer then 0
         // http://groups.google.com/group/android-developers/browse_thread/thread/d1c64f4c23b3c83b
@@ -374,6 +375,11 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
         View view;
 
+        public NativeEditText(View view) {
+            super( AndroidMeActivity.DEFAULT_ACTIVITY );
+            this.view = view;
+        }
+
         /*
         // THIS DOES NOT WORK ON HTC DESIRE, does lots of crazy jumping around as soon as you start to type
         @Override
@@ -422,10 +428,6 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             canvas.restore();
         }
 
-        public NativeEditText(View view) {
-            super( AndroidMeActivity.DEFAULT_ACTIVITY );
-            this.view = view;
-        }
 
         //private boolean mScrolled;
         //Override
@@ -456,17 +458,22 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             return super.onTouchEvent(event);
         }
 
+        /**
+         * this is called from the constructor, on creation of the NativeEditText with a value of 0
+         */
         @Override
         protected void onSelectionChanged(int selStart, int selEnd) {
 
-            TextComponent tc = (TextComponent)textField;
+            if (view!=null) { // we check the view is not null to make sure this is not the call from the constructor
 
-            int caretPosition = tc.getCaretPosition();
+                TextComponent tc = (TextComponent)textField;
 
-            if (caretPosition!= selEnd) {
-                tc.setCaretPosition(selEnd);
+                int caretPosition = tc.getCaretPosition();
+
+                if (caretPosition!= selEnd) {
+                    tc.setCaretPosition(selEnd);
+                }
             }
-
         }
 
         @Override
