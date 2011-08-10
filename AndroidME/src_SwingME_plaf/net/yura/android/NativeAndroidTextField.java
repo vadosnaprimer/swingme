@@ -95,7 +95,6 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         editText = new NativeEditText(view);
 
-
         //ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         //editText.setLayoutParams( lp ); // does nothing
         //editText.setScrollContainer(false); // does nothing
@@ -114,6 +113,9 @@ System.out.println("[NativeAndroidTextField] ##################### start");
             editText.setPadding(insets.getLeft()+margin, insets.getTop()+margin, insets.getRight()+margin, insets.getBottom()+margin);
 
         }
+
+        // to avoid internal scrolling, we remove any bottom padding, at worst, it may overlap the bottom border
+        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop(), editText.getPaddingRight(), 0);
 
 
         // if we are using a system font in this text field, lets use it in the edittext
