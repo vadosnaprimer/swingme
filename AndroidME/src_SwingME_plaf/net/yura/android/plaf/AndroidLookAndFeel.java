@@ -3,6 +3,7 @@ package net.yura.android.plaf;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidOptionPane;
 import net.yura.android.NativeAndroidMenu;
+import net.yura.android.NativeAndroidTextField;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.border.Border;
@@ -15,6 +16,7 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.TextArea;
+import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
@@ -315,7 +317,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         spin2.setState( new int[] {android.R.attr.state_window_focused,android.R.attr.state_enabled} );
         indeterminateSpinner2.addProperty( new AndroidSprite(spin2, w2, h2), "sprite", Style.ALL);
         setStyleFor("IndeterminateSpinnerSmall",indeterminateSpinner2);
-        
+
         Style indeterminateSpinner3 = new Style(defaultStyle);
         Drawable spin3 = getDrawable(ctx,android.R.style.Widget_ProgressBar_Small_Inverse,android.R.attr.indeterminateDrawable);
         int w3 = getDimension(ctx,android.R.style.Widget_ProgressBar_Small_Inverse,android.R.attr.minWidth);
@@ -387,6 +389,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         OptionPane.optionPaneClass = AndroidOptionPane.class;
         AndroidMeActivity.menuSystem = new NativeAndroidMenu();
+        TextComponent.STAR = NativeAndroidTextField.DOT;
     }
 
     private Drawable getDrawable(Context ctx, String name) {

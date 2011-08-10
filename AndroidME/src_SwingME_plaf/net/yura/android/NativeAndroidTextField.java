@@ -51,6 +51,8 @@ import javax.microedition.lcdui.Canvas.InputHelper;
  */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
+    public static char DOT = '\u2022';
+
     private EditText editText; // this is the Android Component
     private TextBox textBox; // this is the J2ME component
     private Component textField; // this is the SwingME component
