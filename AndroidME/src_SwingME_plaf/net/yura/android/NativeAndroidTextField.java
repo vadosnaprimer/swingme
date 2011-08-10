@@ -114,8 +114,10 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         }
 
+        android.graphics.Paint.FontMetricsInt fm = editText.getPaint().getFontMetricsInt();
+        int mTopPadding = fm.top - fm.ascent; // this gives a negative number, {@link android.text.StaticLayout#getTopPadding()} we add it to the current top padding to make it smaller
         // to avoid internal scrolling, we remove any bottom padding, at worst, it may overlap the bottom border
-        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop(), editText.getPaddingRight(), 0);
+        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), 0);
 
 
         // if we are using a system font in this text field, lets use it in the edittext
