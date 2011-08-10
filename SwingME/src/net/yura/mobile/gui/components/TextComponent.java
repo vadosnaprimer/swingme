@@ -53,6 +53,8 @@ public abstract class TextComponent extends Component implements ActionListener,
         public static final int UNEDITABLE=javax.microedition.lcdui.TextField.UNEDITABLE;
         public static final int URL=javax.microedition.lcdui.TextField.URL;
 
+        public static char STAR = '*';
+
         private static TextBox textbox;
 
 	private Button SOFTKEY_CLEAR;
@@ -594,13 +596,13 @@ public abstract class TextComponent extends Component implements ActionListener,
             if (password) {
                 StringBuffer buffer = new StringBuffer();
                 for (int c=0;c<st1.length();c++) {
-                    buffer.append('*');
+                    buffer.append(STAR);
                 }
                 if (tmpChar!=0) {
                      buffer.append(tmpChar);
                 }
                 for (int c=0;c<st2.length();c++) {
-                    buffer.append('*');
+                    buffer.append(STAR);
                 }
 
                 return buffer.toString();
