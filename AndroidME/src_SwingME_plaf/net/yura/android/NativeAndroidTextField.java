@@ -51,6 +51,9 @@ import javax.microedition.lcdui.Canvas.InputHelper;
  */
 public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
+    /**
+     * @see android.text.method.PasswordTransformationMethod
+     */
     public static char DOT = '\u2022';
 
     private EditText editText; // this is the Android Component
