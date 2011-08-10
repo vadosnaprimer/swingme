@@ -102,31 +102,6 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
 
 
-        // if we are not using the native android border
-        if (!(textField.getBorder() instanceof AndroidBorder)) {
-            textField.setForeground( 0x00FFFFFF ); // make it not have any foreground color, so it paints nothing
-            editText.setBackgroundDrawable(null); // this removed the border from the edittext
-
-            // does not get it 100% correct, so we only use it when we remove the native border
-            Border insets = textField.getInsets();
-            int margin = ((TextComponent)textField).getMargin();
-            editText.setPadding(insets.getLeft()+margin, insets.getTop()+margin, insets.getRight()+margin, insets.getBottom()+margin);
-
-        }
-
-        android.graphics.Paint.FontMetricsInt fm = editText.getPaint().getFontMetricsInt();
-        int mTopPadding = fm.top - fm.ascent; // this gives a negative number, {@link android.text.StaticLayout#getTopPadding()} we add it to the current top padding to make it smaller
-        // to avoid internal scrolling, we remove any bottom padding, at worst, it may overlap the bottom border
-        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), 0);
-
-
-        // if we are using a system font in this text field, lets use it in the edittext
-        javax.microedition.lcdui.Font font = ((TextComponent)textField).getFont().getFont();
-        if (font!=null) {
-            editText.setTextSize( TypedValue.COMPLEX_UNIT_PX, FontManager.getFont(font).getPaint().getTextSize() );
-        }
-
-
         midp2android();
 
         boolean singleLine = (textField instanceof TextField);
@@ -186,6 +161,35 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
             }
         });
+
+
+
+        // if we are not using the native android border
+        if (!(textField.getBorder() instanceof AndroidBorder)) {
+            textField.setForeground( 0x00FFFFFF ); // make it not have any foreground color, so it paints nothing
+            editText.setBackgroundDrawable(null); // this removed the border from the edittext
+
+            // does not get it 100% correct, so we only use it when we remove the native border
+            Border insets = textField.getInsets();
+            int margin = ((TextComponent)textField).getMargin();
+            editText.setPadding(insets.getLeft()+margin, insets.getTop()+margin, insets.getRight()+margin, insets.getBottom()+margin);
+
+        }
+
+
+        // if we are using a system font in this text field, lets use it in the edittext
+        javax.microedition.lcdui.Font font = ((TextComponent)textField).getFont().getFont();
+        if (font!=null) {
+            editText.setTextSize( TypedValue.COMPLEX_UNIT_PX, FontManager.getFont(font).getPaint().getTextSize() );
+        }
+
+
+
+        android.graphics.Paint.FontMetricsInt fm = editText.getPaint().getFontMetricsInt();
+        int mTopPadding = fm.top - fm.ascent; // this gives a negative number, {@link android.text.StaticLayout#getTopPadding()} we add it to the current top padding to make it smaller
+        // to avoid internal scrolling, we remove any bottom padding, at worst, it may overlap the bottom border
+        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), 0);
+
 
 
 
