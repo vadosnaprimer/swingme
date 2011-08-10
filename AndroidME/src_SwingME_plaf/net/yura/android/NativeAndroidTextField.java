@@ -490,7 +490,9 @@ System.out.println("[NativeAndroidTextField] ##################### close");
             Button b = win.findMnemonicButton(swingMeCode);
             if (b!=null) {
                 android2swing(); // send text to swingME
-                b.fireActionPerformed();
+
+                //b.fireActionPerformed();// WE CAN NOT FIRE THE BUTTON DIRECTLY, as this may be the menu button
+                boolean use = view.onKeyDown(keyCode, event); // we pass this event to AndroidME, for it to send it to SwingME
 
                 // ========== SWING 2 MIDP ==========
                 // get the text from swingME to J2ME
@@ -506,7 +508,7 @@ System.out.println("[NativeAndroidTextField] ##################### close");
                 //#enddebug
 
                 midp2android(); // set the text back into the android editText
-                return true;
+                return use;
             }
 
             boolean use = super.onKeyDown(keyCode, event);
