@@ -22,6 +22,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.Style;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,6 +95,7 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         this.textBox = textBox;
 
         editText = new NativeEditText(view);
+        editText.setGravity( Gravity.TOP ); // on HTC the defualt is center, so we need to set it to top
 
         //ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
         //editText.setLayoutParams( lp ); // does nothing
@@ -246,6 +248,10 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
             int sy = y-insets.getTop();
+
+            // we need to set the width and height AS WELL as the layout, or HTC phones will not wrap the text correctly
+            editText.setWidth(w);
+            editText.setHeight(h);
 
             editText.layout(sx, sy, sx+w, sy+h );
 
