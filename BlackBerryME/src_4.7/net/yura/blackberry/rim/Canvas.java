@@ -1,6 +1,7 @@
 package net.yura.blackberry.rim;
 
 import net.rim.device.api.ui.container.FullScreen;
+import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.TouchEvent;
@@ -149,6 +150,7 @@ public abstract class Canvas extends FullScreen {
       * @see javax.microedition.lcdui.Canvas#pointerDragged(int, int)
       */
      protected void pointerDragged(int x, int y) {
+
      }
      
      public void multitouchEvent(int[] type, int[] x, int[] y) {
@@ -261,6 +263,8 @@ public abstract class Canvas extends FullScreen {
 	    
 	    if (key == Keypad.KEY_ESCAPE) {
 	        return KEY_END;
+	    } else if (key == Keypad.KEY_MENU){
+	    	return MENU_KEY;
 	    }
 	    
              return character;
@@ -333,6 +337,7 @@ public abstract class Canvas extends FullScreen {
     /**
      * @see net.rim.device.api.ui.Screen#trackwheelRoll(int, int, int)
      */
+	/*
     protected boolean trackwheelRoll( int amount, int status, int time ) {
         try {
                 boolean callSuper = false;
@@ -388,14 +393,14 @@ public abstract class Canvas extends FullScreen {
                 return true;
         }
     }
-    
+    */
     
     
     
     
 
     protected boolean keyDown(int keyCode, int status) {
-
+    	/*return super.keyDown(keyCode, status);*/
         // note: the BlackBerry JavaDocs say that true is returned, when the event is consumed.
         // This is correct, but it seems that native components do not return true,
         // even though they (should have) handled the event. Text entry, for example, works
@@ -426,28 +431,25 @@ public abstract class Canvas extends FullScreen {
 	
 	
 	protected boolean keyUp(int keyCode, int status) {
+		try {
+			boolean processed = super.keyUp(keyCode, status);
+			if (processed) {
+				return true;
+			}
+		}
+		catch (Exception e) {
+			// #debug error
+			System.out.println("super.keyUp(" + keyCode + ", " + status	+ ") failed" + e);
+		}
 
+		// #debug
+		System.out.println("keyUp: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
+		keyCode = getMidpKeyCode(keyCode, status);
+		keyReleased(keyCode);
 
-	                                   try {
-	                                       boolean processed = super.keyUp(keyCode, status);
-	                                       if (processed) {
-	                                           return true;
-	                                       }
-	                                   }
-	                                   catch (Exception e) {
-	                                           //#debug error
-	                                           System.out.println("super.keyUp(" + keyCode + ", " + status + ") failed" + e );
-	                                   }
+		return true; // consume the key event
 
-	                        //#debug
-	                        System.out.println("keyUp: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
-	                        keyCode = getMidpKeyCode(keyCode,status);
-	                        keyReleased( keyCode );
-
-	                        return true; // consume the key event
-
-
-	   }
+	}
 
 	    /**
 	     * @see net.rim.device.api.ui.Screen#keyRepeat(int, int)
@@ -544,22 +546,6 @@ public abstract class Canvas extends FullScreen {
 	        return super.touchEvent(message);
 	    }
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	    protected boolean navigationClick(int status, int time)
 	    {
 	                /* From Blackberry Java Development Guide, might be useful in the future.
@@ -597,10 +583,10 @@ public abstract class Canvas extends FullScreen {
 	        return processed;
 	    }
 
-	    /*
+	    
 	    protected boolean navigationMovement(int dx, int dy, int status, int time) {
 	        boolean processed = false;
-	        Screen screen = getPolishScreen();
+	        /*Screen screen = getPolishScreen();
 	        boolean superImplementationCalled = false;
 	        if ( screen != null ) {
 	           if ( !screen.isMenuOpened() 
@@ -633,7 +619,7 @@ public abstract class Canvas extends FullScreen {
 	                   }
 	           }
 	        }
-	        
+	        */
 	        int absDx = dx < 0 ? -dx : dx;
 	        int absDy = dy < 0 ? -dy : dy;
 	        if (absDx > absDy) {
@@ -676,14 +662,14 @@ public abstract class Canvas extends FullScreen {
 //	                              return true;
 //	                      }
 	                }
-	        if (!superImplementationCalled) {
+	        //if (!superImplementationCalled) {
 	                processed = super.navigationMovement(dx, dy, status, time);
-	        }
+	        //}
 	                return processed;
 	    }
 	
 	
-*/
+	    /**/
 	
 }
 
