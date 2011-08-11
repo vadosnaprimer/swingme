@@ -1,9 +1,9 @@
 package net.yura.blackberry.rim;
 
-import net.rim.device.api.ui.component.RichTextField;
 import net.rim.device.api.ui.container.FullScreen;
-import net.rim.device.api.ui.container.MainScreen;
+import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Keypad;
+import net.rim.device.api.ui.TouchEvent;
 
 public abstract class Canvas extends FullScreen {
 
@@ -30,223 +30,661 @@ public abstract class Canvas extends FullScreen {
     public static final int KEY_NUM9 = javax.microedition.lcdui.Canvas.KEY_NUM9;
     public static final int KEY_STAR = javax.microedition.lcdui.Canvas.KEY_NUM9;
     public static final int KEY_POUND = javax.microedition.lcdui.Canvas.KEY_POUND;
-	
+    
+    
+    
+    public static final int KEY_END  = -11; // copy from SwingME
+    public static final int MENU_KEY = -12; // copy value from SwingME
+
+    public static final int KEY_BB_FIRE=-8; // normally its -5, but BB is crazy
+    public static final int KEY_BB_UP=1; // -1 normally all these are negative values, but BB is crazy
+    public static final int KEY_BB_DOWN=6; // -2
+    public static final int KEY_BB_LEFT=2; // -3
+    public static final int KEY_BB_RIGHT=5; // -4
+
     Graphics graphics;
+    Field dummyField; // invisible field thats always on the screen
+    Field menuField; // hold the current textfield while the menu is open, so the m
 
- protected Canvas() {
+    /**
+     * @see javax.microedition.lcdui.Canvas#Canvas()
+     */
+     protected Canvas() {
+    
+    	 graphics = new Graphics();
+    	 
+    	this.dummyField = new Field() {
+            protected void paint(net.rim.device.api.ui.Graphics graphics) { }
+            protected void layout(int width, int height) { }
+        };
 
-	 graphics = new Graphics();
-	 
-	 add(new RichTextField("Hello YURA World!"));
-	 
-	 
-	try {
-		//add(new RichTextField("hello "+net.rim.device.api.ui.TouchEvent.class) );
-	}
-	catch(Exception th) {
-		add(new RichTextField(th.toString())); 
-	}
-	catch(Error th) {
-		add(new RichTextField(th.toString()));
-	}
-	catch(Throwable th) {
-		add(new RichTextField(th.toString()));
-	}
-	 
- }
-
- public int getKeyCode(int gameAction)
- {
-     switch ( gameAction ) {
-	     case Canvas.FIRE: return -5;
-	     case Canvas.UP: return -1;
-	     case Canvas.DOWN: return -2;
-	     case Canvas.LEFT: return -3;
-	     case Canvas.RIGHT: return -4;
-     }
-     return 0;
- }
-
- public String getKeyName(int keyCode)
- {
-         return "" + Keypad.getUnaltedChar( (char) keyCode );
- }
-
- public int getGameAction(int keyCode)
- {
-     switch (keyCode) {
-	     case -1: 	return Canvas.UP;
-	     case -2:	return Canvas.DOWN;
-	     case -3: 	return Canvas.LEFT;
-	     case -4: 	return Canvas.RIGHT;
-	     case '\n':
-	     case ' ':
-	     case -5: 	return Canvas.FIRE;
-	     case Canvas.KEY_NUM2: 		return Canvas.UP; // 2
-	     case Canvas.KEY_NUM4: 		return Canvas.LEFT; // 4
-	     case Canvas.KEY_NUM6: 		return Canvas.RIGHT; // 6
-	     case Canvas.KEY_NUM8: 		return Canvas.DOWN; // 8
-     }
-     int key = Keypad.key( keyCode );
-     switch ( key ) {
-     	case Keypad.KEY_ENTER: return Canvas.FIRE;
-     	case Keypad.KEY_SPACE: return Canvas.FIRE;
-     	case Keypad.KEY_NEXT: return Canvas.DOWN;
+        add( this.dummyField );
+    	 
      }
 
-     return 0;
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#getKeyCode(int)
+      */
+     public int getKeyCode(int gameAction) {
+         switch ( gameAction ) {
+    	     case Canvas.FIRE: return KEY_BB_FIRE;
+    	     case Canvas.UP: return KEY_BB_UP;
+    	     case Canvas.DOWN: return KEY_BB_DOWN;
+    	     case Canvas.LEFT: return KEY_BB_LEFT;
+    	     case Canvas.RIGHT: return KEY_BB_RIGHT;
+         }
+         return 0;
+     }
 
- public void setFullScreenMode(boolean mode) {
+     /**
+      * @see javax.microedition.lcdui.Canvas#getKeyName(int)
+      */
+     public String getKeyName(int keyCode) {
+             return "" + Keypad.getUnaltedChar( (char) keyCode );
+     }
 
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#getGameAction(int)
+      */
+     public int getGameAction(int keyCode) {
+         switch (keyCode) {
+    	     case KEY_BB_UP: 	return Canvas.UP;
+    	     case KEY_BB_DOWN:	return Canvas.DOWN;
+    	     case KEY_BB_LEFT: 	return Canvas.LEFT;
+    	     case KEY_BB_RIGHT: return Canvas.RIGHT;
+    	     case '\n':
+    	     case ' ':
+    	     case KEY_BB_FIRE: 	return Canvas.FIRE;
+	     case Canvas.KEY_NUM2: 	return Canvas.UP; // 2
+	     case Canvas.KEY_NUM4: 	return Canvas.LEFT; // 4
+	     case Canvas.KEY_NUM6: 	return Canvas.RIGHT; // 6
+	     case Canvas.KEY_NUM8: 	return Canvas.DOWN; // 8
+         }
+         int key = Keypad.key( keyCode );
+         switch ( key ) {
+         	case Keypad.KEY_ENTER: return Canvas.FIRE;
+         	case Keypad.KEY_SPACE: return Canvas.FIRE;
+         	case Keypad.KEY_NEXT: return Canvas.DOWN;
+         }
+         return 0;
+     }
 
- protected void keyPressed(int keyCode)
- {
-         // do nothing
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#setFullScreenMode(boolean)
+      */
+     public void setFullScreenMode(boolean mode) {
+     }
 
- protected void keyRepeated(int keyCode)
- {
-         // do nothing
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#keyPressed(int)
+      */
+     protected void keyPressed(int keyCode) {
+     }
 
- protected void keyReleased(int keyCode)
- {
-         // do nothing
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#keyRepeated(int)
+      */
+     protected void keyRepeated(int keyCode) {
+     }
 
- protected void pointerPressed(int x, int y)
- {
-         // do nothing
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#keyReleased(int)
+      */
+     protected void keyReleased(int keyCode) {
+     }
 
- protected void pointerReleased(int x, int y)
- {
-         // do nothing
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#pointerPressed(int, int)
+      */
+     protected void pointerPressed(int x, int y) {
+     }
 
- protected void pointerDragged(int x, int y)
- {
-         // do nothing
- }
+     /**
+      * @see javax.microedition.lcdui.Canvas#pointerReleased(int, int)
+      */
+     protected void pointerReleased(int x, int y) {
+     }
 
-	public boolean handlePointerTouchDown( int x, int y ) {
-		return false;
+     /**
+      * @see javax.microedition.lcdui.Canvas#pointerDragged(int, int)
+      */
+     protected void pointerDragged(int x, int y) {
+     }
+     
+     public void multitouchEvent(int[] type, int[] x, int[] y) {
+         // SwingME method for multi-touch
+     }
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#repaint(int, int, int, int)
+      */
+     public final void repaint(int x, int y, int width, int height) {
+         invalidate( x, y, width, height );
+     }
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#repaint()
+      */
+     public final void repaint() {
+         invalidate();
+     }
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#serviceRepaints()
+      */
+     public final void serviceRepaints() {
+    	 // not used in SwingME
+     }
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#showNotify()
+      */
+     protected void showNotify() {
+     }
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#hideNotify()
+      */
+     protected void hideNotify() {
+     }
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#paint(Graphics)
+      */
+     protected abstract void paint( Graphics g);
+
+     /**
+      * @see javax.microedition.lcdui.Canvas#sizeChanged(int, int)
+      */
+     protected void sizeChanged(int w, int h) {
+
+     }
+
+     
+    
+     protected void paint( net.rim.device.api.ui.Graphics g ) {
+    	    // when extending the BB MainScreen, super.paint(g) will
+     	    // clear the paint area, subpaint(g) will only render the fields.
+    	    super.subpaint(g);
+    }
+    
+    
+     protected void paintBackground( net.rim.device.api.ui.Graphics g ) {
+         //System.out.println("Canvas.paintBackground(): enter");
+     	try {
+    	        this.graphics.setGraphics( g );
+    	    	paint( this.graphics );
+     	}
+     	catch (Exception e) {
+     		//#debug error
+     		System.out.println("unable to paint screen " + this + e );
+     	}
+     }
+    
+    	protected void onExposed() {
+    		//this.isObscured = false;
+    		super.onExposed();
+    	}
+    
+    	protected void onObscured() {
+    		//this.isObscured = true;
+    		super.onObscured();
+    	}
+    	
+    protected void onDisplay() {
+         super.onDisplay();
+         showNotify();
+     }
+     
+     protected void onUndisplay() {
+         super.onUndisplay();
+         hideNotify();
+     }
+    
+    
+     protected void sublayout(int width, int height) {
+             super.sublayout(width, height);
+             int w = net.rim.device.api.ui.Graphics.getScreenWidth();
+             int h = net.rim.device.api.ui.Graphics.getScreenHeight();
+             //if (w != this.lastWidth || h != this.lastHeight) {
+             	//this.lastWidth = w;
+             	//this.lastHeight = h;
+             	setExtent( w,  h );
+             	sizeChanged( w, h );
+             //}
+     }
+
+	private int getMidpKeyCode(int keyCode,int status) {
+	     
+	    int key = Keypad.key(keyCode);
+	    char character = Keypad.map(key, status);
+	    
+	    if (key == Keypad.KEY_ESCAPE) {
+	        return KEY_END;
+	    }
+	    
+             return character;
 	}
 
-	public boolean handlePointerTouchUp( int x, int y ) {
-		return false;
-	}
-
- public final void repaint(int x, int y, int width, int height)
- {
-     invalidate( x, y, width, height );
- }
-
- public final void repaint()
- {
-     invalidate();
- }
-
- public final void serviceRepaints()
- {
-	 // not used in SwingME
- }
-
- protected void showNotify()
- {
- 	// do nothing
- }
-
- protected void hideNotify()
- {
- 	// do nothing
-
- }
-
- protected abstract void paint( Graphics g);
-
- protected void sizeChanged(int w, int h)
- {
-         // do nothing
- }
-
-// protected void paint( net.rim.device.api.ui.Graphics g ) {
-//   // do nothing..
-// }
- 
-
- protected void paint( net.rim.device.api.ui.Graphics g ) {
-	    // when extending the BB MainScreen, super.paint(g) will
- 	// clear the paint area, subpaint(g) will only render the fields.
-	    super.subpaint(g);
-}
-
-
- protected void paintBackground( net.rim.device.api.ui.Graphics g ) {
-     //System.out.println("Canvas.paintBackground(): enter");
- 	try {
-	        this.graphics.setGraphics( g );
-	    	paint( this.graphics );
- 	}
- 	catch (Exception e) {
- 		//#debug error
- 		System.out.println("unable to paint screen " + this + e );
- 	}
- }
-
-	protected void onExposed() {
-		//this.isObscured = false;
-		super.onExposed();
-	}
-
-	protected void onObscured() {
-		//this.isObscured = true;
-		super.onObscured();
-	}
 	
-protected void onDisplay() {
-     super.onDisplay();
-     showNotify();
- }
- 
- protected void onUndisplay() {
-     super.onUndisplay();
-     hideNotify();
- }
+	
+	
+	
+	/*
+	 * onMenu
+	 * 
+	 * trackwheelRoll
+	 * 
+	 * 
+	 * keyDown
+	 * keyUp
+	 * keyRepeat
+	 * 
+	 * 
+	 * touchEvent
+	 * 
+	 * navigationClick
+	 * navigationUnclick
+	 * 
+	 * 
+	 * navigationMovement
+	 * 
+	 */
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public boolean onMenu( int instance ) {
+            boolean processed = super.onMenu( instance );
+            if (processed) {
+                return true;
+            }
+
+                    // unfocus the current item
+                    Field nativeFocusedField = super.getFieldWithFocus();
+                    if (nativeFocusedField != this.dummyField) {
+                        Object lock = MIDlet.getEventLock();
+                        synchronized (lock) {
+                            setFocus( this.dummyField, 0, 0, 0, 0 );
+                            this.menuField = nativeFocusedField;
+                        }
+                    }
+                    else if (this.menuField != null) {
+                        Object lock = MIDlet.getEventLock();
+                        synchronized (lock) {
+                            setFocus( this.menuField, 0, 0, 0, 0 );
+                            this.menuField = null;
+                        }
+                    }
+
+            keyPressed( MENU_KEY );
+            keyReleased( MENU_KEY );
+
+            return true;
+    }
 
 
- protected void sublayout(int width, int height) {
-         super.sublayout(width, height);
-         int w = net.rim.device.api.ui.Graphics.getScreenWidth();
-         int h = net.rim.device.api.ui.Graphics.getScreenHeight();
-         //if (w != this.lastWidth || h != this.lastHeight) {
-         	//this.lastWidth = w;
-         	//this.lastHeight = h;
-         	setExtent( w,  h );
-         	sizeChanged( w, h );
-         //}
- }
+    /**
+     * @see net.rim.device.api.ui.Screen#trackwheelRoll(int, int, int)
+     */
+    protected boolean trackwheelRoll( int amount, int status, int time ) {
+        try {
+                boolean callSuper = false;
 
-	private int getMidpKeyCode(int keyCode, int status)
-	{
-		int key = Keypad.key( keyCode );
-     switch ( Keypad.map( key, 1 ) ) { // 1 is the ALT status
-	        case '0': keyCode = Canvas.KEY_NUM0; break;
-	        case '1': keyCode = Canvas.KEY_NUM1; break;
-	        case '2': keyCode = Canvas.KEY_NUM2; break;
-	        case '3': keyCode = Canvas.KEY_NUM3; break;
-	        case '4': keyCode = Canvas.KEY_NUM4; break;
-	        case '5': keyCode = Canvas.KEY_NUM5; break;
-	        case '6': keyCode = Canvas.KEY_NUM6; break;
-	        case '7': keyCode = Canvas.KEY_NUM7; break;
-	        case '8': keyCode = Canvas.KEY_NUM8; break;
-	        case '9': keyCode = Canvas.KEY_NUM9; break;
-     }
-     return keyCode;
-	}
+                boolean processed = false;
+                if (callSuper) {
+                    try {
+                                processed = super.trackwheelRoll(amount, status, time);
+                                if (processed) {
+                                        // YURA: whats this all about??
+                                        //if (focusChangeDetected(screen)) {
+                                        //        processed = false;
+                                        //}
+                                        //else {
+                                                //#debug
+                                                System.out.println("Canvas.trackwheel-roll: super processed the call.");
+                                                return true;
+                                        //}
+                                }
+                   }
+                   catch (Exception e) {
+                           //#debug error
+                           System.out.println("super.trackwheelRoll(" + amount + ", " + status + ", " + time + ") failed" + e );                           
+                   }
+                        
+                }
+            int keyCode;
+            if ( amount < 0 ) {
+                    amount *= -1;
+                    if ( status == net.rim.device.api.system.TrackwheelListener.STATUS_ALT ) {
+                            keyCode = KEY_BB_UP;
+                    } else {
+                            keyCode = KEY_BB_LEFT;
+                    }
+            } else {
+                    if ( status == net.rim.device.api.system.TrackwheelListener.STATUS_ALT ) {
+                            keyCode = KEY_BB_DOWN;
+                    } else {
+                            keyCode = KEY_BB_RIGHT;
+                    }
+            }
+            // for loop outcommented, so that only one scroll step within each event is processed
+            //for (; --amount >= 0; ) {
+                    keyPressed( keyCode );
+                    keyReleased( keyCode );
+            //}
 
+            return true;
+
+        } catch (Exception e) {
+                //#debug error
+                System.out.println("error while processing trackwheel roll" + e);
+                return true;
+        }
+    }
+    
+    
+    
+    
+    
+
+    protected boolean keyDown(int keyCode, int status) {
+
+        // note: the BlackBerry JavaDocs say that true is returned, when the event is consumed.
+        // This is correct, but it seems that native components do not return true,
+        // even though they (should have) handled the event. Text entry, for example, works
+        // only ok, when we return false, so that the Blackberry is forwarding the event
+        // to the corresponding consumer. Weird, really. This means that text input seems
+        // to be handled differently from keyDown. And it's not keyChar.
+
+       try {
+               boolean processed = super.keyDown(keyCode, status);
+               if (processed) {
+                   return true;
+               }
+       }
+       catch (Exception e) {
+               //#debug error
+               System.out.println("super.keyDown(" + keyCode + ", " + status + ") failed" + e );
+       }
+
+        //#debug
+        System.out.println("keyDown: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
+        keyCode = getMidpKeyCode(keyCode,status);
+        keyPressed( keyCode );
+
+        return true; // consume the key event
+
+    }
+    
+	
+	
+	protected boolean keyUp(int keyCode, int status) {
+
+
+	                                   try {
+	                                       boolean processed = super.keyUp(keyCode, status);
+	                                       if (processed) {
+	                                           return true;
+	                                       }
+	                                   }
+	                                   catch (Exception e) {
+	                                           //#debug error
+	                                           System.out.println("super.keyUp(" + keyCode + ", " + status + ") failed" + e );
+	                                   }
+
+	                        //#debug
+	                        System.out.println("keyUp: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
+	                        keyCode = getMidpKeyCode(keyCode,status);
+	                        keyReleased( keyCode );
+
+	                        return true; // consume the key event
+
+
+	   }
+
+	    /**
+	     * @see net.rim.device.api.ui.Screen#keyRepeat(int, int)
+	     */
+	    protected boolean keyRepeat(int keyCode, int status) {
+
+	                   try {
+	                       boolean processed = super.keyRepeat(keyCode, status);
+	                       if (processed) {
+                                   return true;
+                               }
+	                   }
+	                   catch (Exception e) {
+	                           //#debug error
+	                           System.out.println("super.keyRepeat(" + keyCode + ", " + status + ") failed" + e );
+	                   }
+
+	        //#debug
+	        System.out.println("keyRepeat: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
+	        keyCode = getMidpKeyCode(keyCode,status);
+	        keyRepeated(keyCode);
+	        return true; // consume the key event
+	    }
+	
+	
+	
+	
+	protected boolean touchEvent(TouchEvent message) {
+	    
+	    int event = message.getEvent();
+            int x = message.getGlobalX(1);
+            int y = message.getGlobalY(1);
+	    
+	    /*
+	        Screen screen = getPolishScreen();
+	        boolean isSuperCalled = false;
+
+	                
+	        if ( screen != null && forwardEventToNativeField( screen, 0)) {
+	                boolean forwardEvent = true;
+	                Item item = this.currentItem;
+	                Field field = item != null ? this.currentItem._bbField : null;
+	                boolean isTextField = field instanceof PolishTextField; 
+	                if (isTextField) {
+	                        int absX = item.getAbsoluteX();
+	                        int absY = item.getAbsoluteY();
+	                        if ( x < absX || y < absY || x > absX + item.itemWidth || y > absY + item.itemHeight) {
+	                                forwardEvent = false;
+	                        }
+	                }
+	                if (forwardEvent) {
+	                        isSuperCalled = true;
+	                        if (super.touchEvent( message ) && !focusChangeDetected(screen) && (!isTextField)) {
+	                                return true;
+	                        }
+	                }
+	        }
+	        */
+	                if (event == TouchEvent.CLICK) {
+	                        pointerPressed( x, y );
+	                        return true;
+	                } else if (event == TouchEvent.UNCLICK) {
+	                        pointerReleased( x, y );
+	                        return true;
+	                } else {
+	                        if (event == TouchEvent.MOVE) {
+	                                pointerDragged( x, y );
+	                                invalidate();
+	                                return true;
+	                        }
+	                        
+	                        // maybe 1 day support the touch of the storm
+	                        
+	                        /*
+	                        else if (event == TouchEvent.UP) {
+	                                        if (handlePointerTouchUp(x, y)) {
+	                                                invalidate();
+	                                                return true;
+	                                        }
+	                                        return false;
+	                        }
+	                        else if (event == TouchEvent.DOWN) {
+	                                if (handlePointerTouchDown(x, y)) {
+	                                        invalidate();
+	                                        return true;
+	                                }
+	                                return false;
+	                        }
+	                        */
+	        }
+	                //if (isSuperCalled) {
+	                //        return false;
+	                //}
+	        return super.touchEvent(message);
+	    }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	    protected boolean navigationClick(int status, int time)
+	    {
+	                /* From Blackberry Java Development Guide, might be useful in the future.
+	                  if ((status & KeypadListener.STATUS_TRACKWHEEL) == KeypadListener.STATUS_TRACKWHEEL)
+	                  {
+	                    // TODO: Do something here.
+	                  }
+	                  else if ((status & KeypadListener.STATUS_FOUR_WAY) == KeypadListener.STATUS_FOUR_WAY)
+	                  {
+	                    // TODO: Do something here.
+	                  }
+	                */
+	        boolean processed = super.navigationClick(status, time);
+	        if (!processed) {
+	                keyPressed( KEY_BB_FIRE );
+	                processed = true;
+	        }
+	        return processed;
+	    }
+	    //#endif
+	    
+	    
+	    
+	    //#if polish.hasTrackballEvents
+	    /* (non-Javadoc)
+	     * @see net.rim.device.api.ui.Screen#navigationUnclick(int, int)
+	     */
+	    protected boolean navigationUnclick(int status, int time)
+	    {
+	        boolean processed = super.navigationUnclick(status, time);
+	        if (!processed) {
+	                keyReleased( KEY_BB_FIRE );
+	                processed = true;
+	        }
+	        return processed;
+	    }
+
+	    /*
+	    protected boolean navigationMovement(int dx, int dy, int status, int time) {
+	        boolean processed = false;
+	        Screen screen = getPolishScreen();
+	        boolean superImplementationCalled = false;
+	        if ( screen != null ) {
+	           if ( !screen.isMenuOpened() 
+	                   && this.currentItem != null) 
+	           { 
+	                   try {
+	                           if (this.currentItem._bbField instanceof AccessibleField) {
+	                                   processed = ((AccessibleField)this.currentItem._bbField).navigationMovement(dx, dy, status, time);                     
+	                           } else {
+	                                   processed = super.navigationMovement(dx, dy, status, time);                     
+	                           }
+	                   if (processed) {
+	                           if (focusChangeDetected(screen)) {
+	                                   processed = false;
+	                           } else {
+	                                   //#debug 
+	                                   System.out.println("super implementation handled navigationMovement()");
+	                                   // possiblyt adjust scrolling:
+	                                   Item item = this.currentItem;
+	                                   if (item != null) {
+	                                           item.updateInternalArea();
+	                                   }
+	                                   return true;
+	                           }
+	                   }
+	                   superImplementationCalled = true;
+	                   } catch (Exception e) {
+	                           //#debug error
+	                           System.out.println("super.navigationMovement(" + dx+ ", " + dy+ ", " + status+ ", " + time + ") failed" + e );
+	                   }
+	           }
+	        }
+	        
+	        int absDx = dx < 0 ? -dx : dx;
+	        int absDy = dy < 0 ? -dy : dy;
+	        if (absDx > absDy) {
+	                dy = 0;
+	        } else {
+	                dx = 0;
+	        }
+	        
+	        int keyCode = 0;
+	                // Trackball up.
+	                if (dy < 0)
+	                {
+	                        keyCode = KEY_BB_UP;
+	                }
+	                // Trackball down.
+	                else if (dy > 0)
+	                {
+	                        keyCode = KEY_BB_DOWN;
+	                }
+	                // Trackball left.
+	                else if (dx < 0)
+	                {
+	                        keyCode = KEY_BB_LEFT;
+	                }
+	                // Trackball right.
+	                else if (dx > 0)
+	                {
+	                        keyCode = KEY_BB_RIGHT;
+	                }
+	                if (keyCode != 0) {
+	                        keyPressed( keyCode );
+	                        keyReleased( keyCode );
+	                        // when false is returned, the BlackBerry will generate a trackwheelRoll event which we don't want,
+	                        // so true is always returned:
+	                        return true;
+//	                      if ( (Object)this instanceof Screen) {
+//	                              Screen scr = (Screen) (Object) this;
+//	                              return scr.keyPressedProcessed || scr.keyReleasedProcessed;
+//	                      } else {
+//	                              return true;
+//	                      }
+	                }
+	        if (!superImplementationCalled) {
+	                processed = super.navigationMovement(dx, dy, status, time);
+	        }
+	                return processed;
+	    }
+	
+	
+*/
+	
 }
 
 
