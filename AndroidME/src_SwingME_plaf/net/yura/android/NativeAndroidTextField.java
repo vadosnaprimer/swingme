@@ -18,6 +18,7 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.Window;
@@ -95,6 +96,7 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         this.textBox = textBox;
 
         editText = new NativeEditText(view);
+
         editText.setGravity( Gravity.TOP ); // on HTC the defualt is center, so we need to set it to top
 
         //ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -254,6 +256,13 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
             editText.setHeight(h);
 
             editText.layout(sx, sy, sx+w, sy+h );
+
+            // this is a bit of a hack, not sure why this should be here, but without it, when we rotate the screen the line wrap does not adjust
+            // but for some reason if we do not call this every time after changing the width it does not wrap the lines correctly
+            if (textField instanceof TextArea) {
+                // the method we need this to call is nullLayouts(); but in other version of android this method may not call nullLayouts();, so what then???
+                editText.setHorizontallyScrolling( false ); // !((TextArea)textField).getLineWrap() // even when we do NOT wrap lines, in SwingME its not the TextArea that does the scrolling but the ScrollPane its in
+            }
 
             Handler handler = editText.getHandler();
             if (handler!=null) {
