@@ -35,7 +35,13 @@ public class AndroidIcon extends Icon {
         width = drawable.getIntrinsicWidth();
         height = drawable.getIntrinsicHeight();
     }
-
+    
+    public AndroidIcon(Drawable drawable, int h, int w) {
+    	this.drawable= drawable;
+    	width = w;
+    	height = h;
+    }
+    
     public void paintIcon(Component c, Graphics2D g, int x, int y) {
         AndroidBorder.setDrawableState( c, drawable);
         android.graphics.Canvas canvas = g.getGraphics().getCanvas();
