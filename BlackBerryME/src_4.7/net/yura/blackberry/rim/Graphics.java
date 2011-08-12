@@ -823,8 +823,21 @@ public class Graphics {
 	 * @throws IllegalArgumentException - if the region to be copied exceeds the bounds of the source image
 	 * @since  MIDP 2.0
 	 */
-	public void drawRegion( Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest, int anchor)
-	{
+	public void drawRegion( Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest, int anchor) {
+	    
+	    
+	    
+            if (swapWidthHeight(transform)) {
+                int w = width;
+                width = height;
+                height = w;
+                
+                int x = x_src;
+                x_src = y_src;
+                y_src = x;
+            }
+	    
+	    
 		if ( (anchor & RIGHT) == RIGHT ) {
 			x_dest -= width;
 		} else if ( (anchor & HCENTER) == HCENTER ) {
@@ -893,22 +906,14 @@ public class Graphics {
         	        }
 		    
         		
-        		if (swapWidthHeight(transform)) {
-        		    int w = width;
-        		    width = height;
-        		    height = w;
-        		    
-        		    int x = x_src;
-        		    x_src = y_src;
-        		    y_src = x;
-        		}
+
         		
 		    
-		    //int[] x = new int[] {0, width, width, 0};
-		    //int[] y = new int[] {0, 0, height, height};
+		    int[] x = new int[] {0, width, width, 0};
+		    int[] y = new int[] {0, 0, height, height};
 		    
-		    int[] x = new int[] {x_src, x_src+width, x_src+width, x_src};
-                    int[] y = new int[] {y_src, y_src, y_src+height, y_src+height};
+		    //int[] x = new int[] {x_src, x_src+width, x_src+width, x_src};
+                    //int[] y = new int[] {y_src, y_src, y_src+height, y_src+height};
 		    int angle32 = Fixed32.toFP(rotate);
 		    int dux = Fixed32.cosd(angle32);
 		    int dvx = -Fixed32.sind(angle32);
@@ -922,7 +927,7 @@ public class Graphics {
 		    
 		    g.translate(x_dest, y_dest);
 
-		    g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, src.bitmap);
+		    g.drawTexturedPath(x, y, null, null, -x_src, -y_src, dux, dvx, duy, dvy, src.bitmap);
 
 		    g.translate(-x_dest, -y_dest);
 		    
