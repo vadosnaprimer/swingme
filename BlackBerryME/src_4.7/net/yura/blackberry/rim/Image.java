@@ -419,7 +419,7 @@ public class Image {
 	        }
 
 	        // MIDP: the result image width/height depends on the transform
-	        Image res;
+	        Bitmap res;
 	        
 	        boolean swap = Graphics.swapWidthHeight(transform);
 /*
@@ -437,17 +437,33 @@ public class Image {
 	                res = new Image(bmp);
                 }
 */
+                int type = image.bitmap.getType();
+                
 	        if (swap) {
-	            res = Image.createImage( height, width );
+	            res = new Bitmap( type , height, width );
 	        }
 	        else {
-	            res = Image.createImage(width, height );
+	            res = new Bitmap( type, width, height );
 	        }
 
-	        Graphics g = res.getGraphics();
+	        // oh shit, our bitmap has alpha, and BB does not know how to handle that!!!
+	        if (type==Bitmap.ROWWISE_16BIT_COLOR && image.bitmap.hasAlpha()) {
+	            res.createAlpha(Bitmap.ALPHA_BITDEPTH_8BPP);
+	            // TODO
+	            // TODO we should NOT need to create a huge empty array here
+	            // TODO 
+	            System.out.println("TODO, find a better way to do this!!! createImage( Image image, int x, int y, int width, int height, int transform)");
+	            // TODO 
+	            int[] data = new int[width * height];
+	            res.setARGB(data, 0, res.getWidth(), 0, 0, res.getWidth(), res.getHeight());
+	        }
+
+	        
+	        Image img = new Image(res);
+	        Graphics g = img.getGraphics();
 	        g.drawRegion(image, x, y, width, height, transform, 0, 0, 0);
 	        
-	        return res;
+	        return img;
 	    }
 	
 
@@ -608,12 +624,11 @@ public class Image {
 	 * @throws ArrayIndexOutOfBoundsException - if the length of rgb is less than width&nbsp;*&nbsp;height.
 	 * @since  MIDP 2.0
 	 */
-	public static Image createRGBImage(int[] rgb, int width, int height, boolean processAlpha)
-	{
-		 Bitmap bitmap = new Bitmap(width,height);
-      bitmap.setARGB(rgb,0,width,0,0,width,height);
-      Image newImage = new Image(bitmap);
-      return newImage;
+       public static Image createRGBImage(int[] rgb, int width, int height, boolean processAlpha) {
+            Bitmap bitmap = new Bitmap(width,height);
+            bitmap.setARGB(rgb,0,width,0,0,width,height);
+            Image newImage = new Image(bitmap);
+            return newImage;
 	}
 
 	/**
