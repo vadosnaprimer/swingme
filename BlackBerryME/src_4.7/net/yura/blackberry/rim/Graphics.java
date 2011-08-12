@@ -1,5 +1,6 @@
 package net.yura.blackberry.rim;
 
+import net.rim.device.api.math.Fixed32;
 import net.rim.device.api.system.Bitmap;
 import net.rim.device.api.ui.DrawStyle;
 import net.rim.device.api.ui.XYRect;
@@ -834,10 +835,120 @@ public class Graphics {
 		} else if ( (anchor & VCENTER) == VCENTER ) {
 			y_dest -= height / 2;
 		}
-		this.g.drawBitmap( x_dest + this.translateX, y_dest + this.translateY, width, height, src.bitmap, x_src, y_src );
-		//TODO allow transformation
+		
+		if (transform == Sprite.TRANS_NONE) {
+		
+		    this.g.drawBitmap( x_dest + this.translateX, y_dest + this.translateY, width, height, src.bitmap, x_src, y_src );
+		    
+		}
+		else {
+		    
+		        int rotate;
+		        boolean mirror;
+		    
+        		switch (transform) {
+            	            case Sprite.TRANS_NONE: {
+            	                rotate = 0;
+            	                mirror = false;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_ROT90: {
+            	                rotate = 90;
+            	                mirror = false;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_ROT180: {
+            	                rotate = 180;
+            	                mirror = false;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_ROT270: {
+            	                rotate = 270;
+            	                mirror = false;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_MIRROR: {
+            	                rotate = 0;
+            	                mirror = true;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_MIRROR_ROT90: {
+            	                rotate = 90;
+            	                mirror = true;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_MIRROR_ROT180: {
+            	                rotate = 180;
+            	                mirror = true;
+            	                break;
+            	            }
+            	            case Sprite.TRANS_MIRROR_ROT270: {
+            	                rotate = 270;
+            	                mirror = true;
+            	                break;
+            	            }
+            	            default: {
+            	                throw new IllegalArgumentException("Bad transform");
+        	            }
+        	        }
+		    
+        		
+        		if (swapWidthHeight(transform)) {
+        		    int w = width;
+        		    width = height;
+        		    height = w;
+        		    
+        		    int x = x_src;
+        		    x_src = y_src;
+        		    y_src = x;
+        		}
+        		
+		    
+		    //int[] x = new int[] {0, width, width, 0};
+		    //int[] y = new int[] {0, 0, height, height};
+		    
+		    int[] x = new int[] {x_src, x_src+width, x_src+width, x_src};
+                    int[] y = new int[] {y_src, y_src, y_src+height, y_src+height};
+		    int angle32 = Fixed32.toFP(rotate);
+		    int dux = Fixed32.cosd(angle32);
+		    int dvx = -Fixed32.sind(angle32);
+		    int duy = Fixed32.sind(angle32);
+		    int dvy = Fixed32.cosd(angle32);
+
+		    if (mirror) {
+		        dux = Fixed32.mul(dux, Fixed32.toFP(-1));
+		        duy = Fixed32.mul(duy, Fixed32.toFP(-1));
+		    }
+		    
+		    g.translate(x_dest, y_dest);
+
+		    g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, src.bitmap);
+
+		    g.translate(-x_dest, -y_dest);
+		    
+		}
+
 	}
 
+	
+	public static boolean swapWidthHeight(int transform) {
+
+            switch (transform) {
+                case Sprite.TRANS_ROT90:
+                case Sprite.TRANS_ROT270:
+                case Sprite.TRANS_MIRROR_ROT90:
+                case Sprite.TRANS_MIRROR_ROT270: {
+                    return true;
+                }
+                default: {
+                    return false;
+                }
+            }
+	    
+	}
+	
+	
+	
 	/**
 	 * Copies the contents of a rectangular area
 	 * <code>(x_src, y_src, width, height)</code> to a destination area,

@@ -411,11 +411,45 @@ public class Image {
 	 * @throws IllegalArgumentException - if the transform is not valid
 	 * @since  MIDP 2.0
 	 */
-	public static Image createImage( Image image, int x, int y, int width, int height, int transform)
-	{
-		return null;
-		//TODO implement createImage
-	}
+	public static Image createImage( Image image, int x, int y, int width, int height, int transform) {
+
+	        if (x + width > image.getWidth() || y + height > image.getHeight() ||
+	            width <= 0 || height <= 0 || x < 0 || y < 0) {
+	            throw new IllegalArgumentException("Area out of Image");
+	        }
+
+	        // MIDP: the result image width/height depends on the transform
+	        Image res;
+	        
+	        boolean swap = Graphics.swapWidthHeight(transform);
+/*
+ // TODO this needs to be done better to not waste all that mem 
+
+	        if (transform==Sprite.TRANS_NONE)
+	                Bitmap bmp;
+	                try {
+	                    bmp = Bitmap.createBitmap(image.bitmap, x, y, width, height);
+
+	                } catch (OutOfMemoryError e) {
+	                    cleanMem();
+	                    bmp = Bitmap.createBitmap(image.bitmap, x, y, width, height);
+	                }
+	                res = new Image(bmp);
+                }
+*/
+	        if (swap) {
+	            res = Image.createImage( height, width );
+	        }
+	        else {
+	            res = Image.createImage(width, height );
+	        }
+
+	        Graphics g = res.getGraphics();
+	        g.drawRegion(image, x, y, width, height, transform, 0, 0, 0);
+	        
+	        return res;
+	    }
+	
 
 	/**
 	 * Creates a new <code>Graphics</code> object that renders to this
@@ -448,15 +482,6 @@ public class Image {
 	 * @throws IllegalStateException - if the image is immutable
 	 */
 	public Graphics getGraphics()
-	{
-		if (this.graphics == null) {
-			this.graphics = new Graphics();
-			this.graphics.g = new net.rim.device.api.ui.Graphics( this.bitmap );
-		}
-		return this.graphics;
-	}
-	
-	public Graphics getPolishGraphics()
 	{
 		if (this.graphics == null) {
 			this.graphics = new Graphics();
