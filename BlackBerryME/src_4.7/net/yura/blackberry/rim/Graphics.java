@@ -925,11 +925,11 @@ public class Graphics {
 		        duy = Fixed32.mul(duy, Fixed32.toFP(-1));
 		    }
 		    
-		    g.translate(x_dest, y_dest);
+		    g.translate(translateX+x_dest, translateY+y_dest);
 
 		    g.drawTexturedPath(x, y, null, null, -x_src, -y_src, dux, dvx, duy, dvy, src.bitmap);
 
-		    g.translate(-x_dest, -y_dest);
+		    g.translate(-translateX-x_dest, -translateY-y_dest);
 		    
 		}
 
