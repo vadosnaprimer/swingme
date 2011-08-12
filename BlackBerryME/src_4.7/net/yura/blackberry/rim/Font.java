@@ -38,15 +38,16 @@ public final class Font {
 		this.style = style;
 		this.size = size;
 		this.isItalic = (style & STYLE_ITALIC) == STYLE_ITALIC;
-		//#if !building.theme
+		//if !building.theme
 			if ( face == FACE_SYSTEM && style == STYLE_PLAIN && size == SIZE_MEDIUM) {
 				this.font = net.rim.device.api.ui.Font.getDefault();
 			} else {
-				//#if polish.blackberry.font.family:defined
-				//#= FontFamily family = FontFamily.forName( "${polish.blackberry.font.family}" );
-				//#else
+				//if polish.blackberry.font.family:defined
+				//= FontFamily family = FontFamily.forName( "${polish.blackberry.font.family}" );
+				//else
 				FontFamily family = FontFamily.forName( FontFamily.FAMILY_SYSTEM );
-				//#endif
+				//endif
+				
 				
 				int bbStyle = 0;
 				if ( (style & STYLE_BOLD) == STYLE_BOLD  ) {
@@ -81,10 +82,10 @@ public final class Font {
 				this.height = 12;
 				this.baselinePosition = 10;
 			}
-		//#else
-			//# this.height = 0;
-			//# this.baselinePosition = 0;
-		//#endif
+		//else
+			// this.height = 0;
+			// this.baselinePosition = 0;
+		//endif
 	}
 	
 	/**

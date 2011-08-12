@@ -34,10 +34,10 @@ public class Graphics {
 	
 	protected Graphics() {
 		this.font = Font.getDefaultFont();
-		//#if polish.ScreenSize:defined
-			//#= this.clipWidth = ${polish.ScreenWidth}; 
-			//#= this.clipHeight = ${polish.ScreenHeight}; 
-		//#endif
+		//if polish.ScreenSize:defined
+			//= this.clipWidth = ${polish.ScreenWidth}; 
+			//= this.clipHeight = ${polish.ScreenHeight}; 
+		//endif
 	}
 
 	/**

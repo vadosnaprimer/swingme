@@ -1,7 +1,6 @@
 package net.yura.blackberry.rim;
 
 import net.rim.device.api.ui.container.FullScreen;
-import net.rim.device.api.ui.container.MainScreen;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.TouchEvent;
@@ -63,6 +62,10 @@ public abstract class Canvas extends FullScreen {
     	 
      }
 
+     protected boolean isShown(){
+    	 return this.isVisible();
+	 }
+     
      /**
       * @see javax.microedition.lcdui.Canvas#getKeyCode(int)
       */
@@ -256,23 +259,16 @@ public abstract class Canvas extends FullScreen {
              //}
      }
 
-	private int getMidpKeyCode(int keyCode,int status) {
-	     
-	    int key = Keypad.key(keyCode);
-	    char character = Keypad.map(key, status);
-	    
+	private int getMidpKeyCode(int keyCode) {
+		int key = Keypad.key(keyCode);
+	    char character = Keypad.map(key, Keypad.status(keyCode));
 	    if (key == Keypad.KEY_ESCAPE) {
 	        return KEY_END;
 	    } else if (key == Keypad.KEY_MENU){
 	    	return MENU_KEY;
-	    }
-	    
-             return character;
+	    }	    
+        return character;
 	}
-
-	
-	
-	
 	
 	/*
 	 * onMenu
@@ -294,45 +290,32 @@ public abstract class Canvas extends FullScreen {
 	 * navigationMovement
 	 * 
 	 */
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	public boolean onMenu( int instance ) {
-            boolean processed = super.onMenu( instance );
-            if (processed) {
-                return true;
-            }
-
-                    // unfocus the current item
-                    Field nativeFocusedField = super.getFieldWithFocus();
-                    if (nativeFocusedField != this.dummyField) {
-                        Object lock = MIDlet.getEventLock();
-                        synchronized (lock) {
-                            setFocus( this.dummyField, 0, 0, 0, 0 );
-                            this.menuField = nativeFocusedField;
-                        }
+		
+	public boolean onMenu(int instance) {
+		boolean processed = super.onMenu(instance);
+		if (processed) {
+			return true;
+		}
+		// unfocus the current item
+		Field nativeFocusedField = super.getFieldWithFocus();
+		if (nativeFocusedField != this.dummyField) {
+			Object lock = MIDlet.getEventLock();
+			synchronized (lock) {
+				setFocus(this.dummyField, 0, 0, 0, 0);
+				this.menuField = nativeFocusedField;
+			}
                     }
                     else if (this.menuField != null) {
-                        Object lock = MIDlet.getEventLock();
-                        synchronized (lock) {
-                            setFocus( this.menuField, 0, 0, 0, 0 );
-                            this.menuField = null;
-                        }
-                    }
-
-            keyPressed( MENU_KEY );
-            keyReleased( MENU_KEY );
-
-            return true;
-    }
-
+			Object lock = MIDlet.getEventLock();
+			synchronized (lock) {
+				setFocus(this.menuField, 0, 0, 0, 0);
+				this.menuField = null;
+			}
+		}
+		keyPressed(MENU_KEY);
+		keyReleased(MENU_KEY);
+		return true;
+	}
 
     /**
      * @see net.rim.device.api.ui.Screen#trackwheelRoll(int, int, int)
@@ -399,7 +382,7 @@ public abstract class Canvas extends FullScreen {
     
     
 
-    protected boolean keyDown(int keyCode, int status) {
+    protected boolean keyDown(int keyCode, int time) {
     	/*return super.keyDown(keyCode, status);*/
         // note: the BlackBerry JavaDocs say that true is returned, when the event is consumed.
         // This is correct, but it seems that native components do not return true,
@@ -408,43 +391,46 @@ public abstract class Canvas extends FullScreen {
         // to the corresponding consumer. Weird, really. This means that text input seems
         // to be handled differently from keyDown. And it's not keyChar.
 
-       try {
-               boolean processed = super.keyDown(keyCode, status);
-               if (processed) {
-                   return true;
-               }
-       }
-       catch (Exception e) {
-               //#debug error
-               System.out.println("super.keyDown(" + keyCode + ", " + status + ") failed" + e );
-       }
+		try {
+			//if (keyCode == 1179648 || keyCode == 1114112) {
+			//	return super.keyDown(keyCode, time);
+			//}
+			boolean processed = super.keyDown(keyCode, time);
+			if (processed) {
+				return true;
+			}
+		} 
+		catch (Exception e) {
+			// #debug error
+			System.out.println("super.keyDown(" + keyCode + ", " + time + ") failed" + e);
+		}
 
-        //#debug
-        System.out.println("keyDown: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
-        keyCode = getMidpKeyCode(keyCode,status);
-        keyPressed( keyCode );
+		// #debug
+		System.out.println("keyDown: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
+		keyCode = getMidpKeyCode(keyCode);
+		keyPressed(keyCode);
 
-        return true; // consume the key event
+		return true; // consume the key event
 
     }
     
 	
 	
-	protected boolean keyUp(int keyCode, int status) {
+	protected boolean keyUp(int keyCode, int time) {
 		try {
-			boolean processed = super.keyUp(keyCode, status);
+			boolean processed = super.keyUp(keyCode, time);
 			if (processed) {
 				return true;
 			}
-		}
+		} 
 		catch (Exception e) {
 			// #debug error
-			System.out.println("super.keyUp(" + keyCode + ", " + status	+ ") failed" + e);
+			System.out.println("super.keyUp(" + keyCode + ", " + time	+ ") failed" + e);
 		}
 
 		// #debug
 		System.out.println("keyUp: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
-		keyCode = getMidpKeyCode(keyCode, status);
+		keyCode = getMidpKeyCode(keyCode);
 		keyReleased(keyCode);
 
 		return true; // consume the key event
@@ -454,22 +440,22 @@ public abstract class Canvas extends FullScreen {
 	    /**
 	     * @see net.rim.device.api.ui.Screen#keyRepeat(int, int)
 	     */
-	    protected boolean keyRepeat(int keyCode, int status) {
+	    protected boolean keyRepeat(int keyCode, int time) {
 
 	                   try {
-	                       boolean processed = super.keyRepeat(keyCode, status);
+	                       boolean processed = super.keyRepeat(keyCode, time);
 	                       if (processed) {
                                    return true;
                                }
 	                   }
 	                   catch (Exception e) {
 	                           //#debug error
-	                           System.out.println("super.keyRepeat(" + keyCode + ", " + status + ") failed" + e );
+	                           System.out.println("super.keyRepeat(" + keyCode + ", " + time + ") failed" + e );
 	                   }
 
 	        //#debug
 	        System.out.println("keyRepeat: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
-	        keyCode = getMidpKeyCode(keyCode,status);
+	        keyCode = getMidpKeyCode(keyCode);
 	        keyRepeated(keyCode);
 	        return true; // consume the key event
 	    }
@@ -565,11 +551,10 @@ public abstract class Canvas extends FullScreen {
 	        }
 	        return processed;
 	    }
-	    //#endif
 	    
 	    
 	    
-	    //#if polish.hasTrackballEvents
+	   
 	    /* (non-Javadoc)
 	     * @see net.rim.device.api.ui.Screen#navigationUnclick(int, int)
 	     */

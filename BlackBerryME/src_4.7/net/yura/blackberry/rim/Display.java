@@ -3,6 +3,7 @@ package net.yura.blackberry.rim;
 import java.util.Hashtable;
 
 import net.rim.device.api.ui.Screen;
+import net.rim.device.api.ui.UiApplication;
 
 
 public class Display {
@@ -27,6 +28,9 @@ public class Display {
 	public void setCurrent(Object screen) {
 		if (screen instanceof Screen) {
 			midlet.pushScreen((Screen)screen);
+		}
+		if (screen == null) {
+			UiApplication.getUiApplication().requestBackground();
 		}
 	}
 
