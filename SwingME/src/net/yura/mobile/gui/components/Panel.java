@@ -30,6 +30,8 @@ import net.yura.mobile.gui.layout.Layout;
  */
 public class Panel extends Component {
 
+    public static boolean LOOP_PANEL = true;
+    
     private static Layout defaultLayout;
 
     private Layout layout;
@@ -350,7 +352,7 @@ public class Panel extends Component {
                 // passes onto parent
                 ((Panel)parent).breakOutAction(this, direction ,scrolltothere,forceFocus);
             }
-            else if (getWindow().getFocusOwner()!=null) {
+            else if (LOOP_PANEL && getWindow().getFocusOwner()!=null) {
                 // done for loop to first/last component
                 breakOutAction(null, direction, scrolltothere,true);
             }

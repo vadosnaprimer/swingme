@@ -34,6 +34,8 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class Menu extends Button {
 
+        public static boolean LOOP_MENU = true;
+    
         private boolean useAnimation=true;
         private boolean open;
         private int slide = Graphics.BOTTOM;
@@ -155,7 +157,7 @@ public class Menu extends Button {
 
             MenuBar menuItems = new MenuBar();
             menuItems.setLayoutOrientation(List.VERTICAL);
-            menuItems.setLoop(true);
+            menuItems.setLoop( LOOP_MENU );
 
             popup.addWindowListener(menuItems);
 
