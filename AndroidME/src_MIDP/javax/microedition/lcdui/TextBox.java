@@ -186,7 +186,7 @@ public class TextBox extends Screen {
         public void start(TextBox tb) {
 
             // open the keyboard
-            currentCanvasView.checkKeyboardState();
+            currentCanvasView.showNativeTextInput();
 
         }
         public void onDraw() { }

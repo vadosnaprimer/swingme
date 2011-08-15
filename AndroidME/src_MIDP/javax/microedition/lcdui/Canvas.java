@@ -951,7 +951,7 @@ public abstract class Canvas extends Displayable {
             }
         }
 
-        private void showNativeTextInput() {
+        public void showNativeTextInput() {
             fixVirtualKeyboard();
 //            System.out.println(">>>>>> showNativeTextInput");
             restartKeyboardInput = false;
@@ -972,12 +972,14 @@ public abstract class Canvas extends Displayable {
             getInputManager().toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
 
-        public void checkKeyboardState() {
+        private void checkKeyboardState() {
 //          System.out.println(">>>>>> checkKeyboardState " + hasWindowFocus);
             if (hasWindowFocus) {
                 if (keyboardMode == KEYBOARD_SHOW) {
 //                    System.out.println(">>>>>> showNativeTextInput2");
-                    showNativeTextInput();
+
+                    // its up to the InputHelper to show the keyboard
+                    //showNativeTextInput();
                 }
                 else if (keyboardMode == KEYBOARD_HIDE) {
 //                    System.out.println(">>>>>> hideNativeTextInput2");
@@ -1004,10 +1006,7 @@ public abstract class Canvas extends Displayable {
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
 
-            // if we put a null InputHelper, then we want to remove the keyboard, otherwise its up to the InputHelper
-            if (view==null) {
-                checkKeyboardState();
-            }
+            checkKeyboardState();
 
 //            }
         }
