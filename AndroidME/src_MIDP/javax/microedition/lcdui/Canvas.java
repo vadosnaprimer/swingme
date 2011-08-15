@@ -1004,6 +1004,11 @@ public abstract class Canvas extends Displayable {
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
 
+            // if we put a null InputHelper, then we want to remove the keyboard, otherwise its up to the InputHelper
+            if (view==null) {
+                checkKeyboardState();
+            }
+
 //            }
         }
 
