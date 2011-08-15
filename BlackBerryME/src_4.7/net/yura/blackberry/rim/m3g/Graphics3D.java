@@ -2,6 +2,8 @@ package net.yura.blackberry.rim.m3g;
 
 import java.util.Hashtable;
 
+import net.rim.device.api.math.Fixed32;
+import net.rim.device.api.system.Bitmap;
 import net.yura.blackberry.rim.Graphics;
 
 public final class Graphics3D {
@@ -48,8 +50,28 @@ public final class Graphics3D {
             targetGraphics.fillRect(vpX, vpY, vpW, vpH);
         }
         else {
-        	// TODO keep a back buffer, and the scale the bitmap onto it, then paint it to the normal display!
-            //targetGraphics.g.drawImage( background.getImage().getImage().getBitmap(), vpX, vpY, vpX + vpW, vpY + vpH, 0, 0, background.getImage().getImage().getWidth(), background.getImage().getImage().getHeight(), null);
+
+            // here is code showing how to scale a image into a destination x,y,w,h
+            
+            Bitmap img = background.getImage().getImage().getBitmap();
+            
+            int width = img.getWidth();
+            int height = img.getHeight();
+            
+            // destination box
+            int[] x = new int[] {0, vpW, vpW, 0};
+            int[] y = new int[] {0, 0, vpH, vpH};
+            
+            // make a scale matrix
+            int dux = Fixed32.div(Fixed32.toFP(width), Fixed32.toFP(vpW));
+            int dvx = Fixed32.toFP(0);
+            int duy = Fixed32.toFP(0);
+            int dvy = Fixed32.div(Fixed32.toFP(height), Fixed32.toFP(vpH));
+            
+            targetGraphics.g.translate(vpX, vpY);
+            targetGraphics.g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, img);
+            targetGraphics.g.translate(-vpX, -vpY);
+            
         }
     }
 
