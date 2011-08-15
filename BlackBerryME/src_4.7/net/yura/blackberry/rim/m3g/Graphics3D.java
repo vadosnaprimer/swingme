@@ -70,9 +70,13 @@ public final class Graphics3D {
             int duy = zero;
             int dvy = Fixed32.div(Fixed32.toFP(height), Fixed32.toFP(vpH));
             
-            targetGraphics.g.translate(vpX, vpY);
+            targetGraphics.translate(vpX, vpY);
+            
+            targetGraphics.g.translate(targetGraphics.getTranslateX(),targetGraphics.getTranslateY());
             targetGraphics.g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, img);
-            targetGraphics.g.translate(-vpX, -vpY);
+            targetGraphics.g.translate(-targetGraphics.getTranslateX(),-targetGraphics.getTranslateY());
+            
+            targetGraphics.translate(-vpX, -vpY);
             
         }
     }

@@ -493,11 +493,13 @@ public abstract class Canvas extends FullScreen {
 	                        }
 	                }
 	        }
-	        */
-	                if (event == TouchEvent.CLICK) {
+	        */		//TODO BlackBerry CLICK and UNCLICK events should be handled for storm 1/2
+//            		if (event == TouchEvent.CLICK) {
+	                if (event == TouchEvent.DOWN) {
 	                        pointerPressed( x, y );
 	                        return true;
-	                } else if (event == TouchEvent.UNCLICK) {
+//	                } else if (event == TouchEvent.UNCLICK) {	                        
+	                } else if (event == TouchEvent.UP) {
 	                        pointerReleased( x, y );
 	                        return true;
 	                } else {
