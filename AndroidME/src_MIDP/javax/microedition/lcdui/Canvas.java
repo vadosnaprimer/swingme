@@ -234,13 +234,10 @@ public abstract class Canvas extends Displayable {
                  * this code is taken from android ScrollView code
                  * this makes sure that when the native textbox is open, when we drag up and down, we scroll the view
                  * @see android.widget.ScrollView#onInterceptTouchEvent(MotionEvent)
+
+                 * intercept events and check if we want to pass them onto the parent
                  */
                 public boolean onInterceptTouchEvent(MotionEvent ev) {
-
-                    if (canvasView.isFocused()) {
-                        return false;
-                    }
-
 
                     final int action = ev.getAction();
                     if ((action == MotionEvent.ACTION_MOVE) && (mIsBeingDragged)) {
@@ -261,6 +258,11 @@ public abstract class Canvas extends Displayable {
                              * whether the user has moved far enough from his original down touch.
                              */
 
+                            // if mMotionTarget is the canvasView, we do not want to intercept as we will just end up sending the event to the canvas anyway
+                            if (mMotionTarget == canvasView) {
+                                return false;
+                            }
+
                             /*
                             * Locally do absolute value. mLastMotionY is set to the y value
                             * of the down event.
@@ -268,7 +270,11 @@ public abstract class Canvas extends Displayable {
                             final int yDiff = (int) Math.abs(y - mLastMotionY);
                             if (yDiff > mTouchSlop) {
 
-                                pointerPressed((int)ev.getX(), (int)y);
+                                // here we have decided that we will send events back to the canvas and away from the textbox
+
+                                pointerPressed(this.x, this.y);
+
+                                mMotionTarget = canvasView;
 
                                 mIsBeingDragged = true;
                             }
@@ -298,10 +304,22 @@ public abstract class Canvas extends Displayable {
                     * drag mode.
                     */
                     return mIsBeingDragged;
-                };
+                }
 
-                int children;
+                /**
+                 * once we have Intercept a TouchEvent in {@link #onInterceptTouchEvent} we must send events to the correct place
+                 */
+                @Override
+                public boolean onTouchEvent(MotionEvent ev) {
+                    return canvasView.onTouchEvent(ev);
+                }
+
+                View mMotionTarget;
+                //int children;
                 int x,y;
+                /**
+                 * intercept events and check if we want to pass them onto a child
+                 */
                 public boolean dispatchTouchEvent(MotionEvent ev) {
 
                     final int action = ev.getAction();
@@ -311,43 +329,45 @@ public abstract class Canvas extends Displayable {
                     if (action == MotionEvent.ACTION_DOWN) {
                         this.x = x;
                         this.y = y;
-                        this.children = getChildCount();
+                        //this.children = getChildCount();
+
+                        mMotionTarget = getChildAt(x,y,0);
+
                     }
                     else {
 
                         int newCount = getChildCount();
 
+                        // this is not a good test as we could have gone from 2 to 2 textboxs, but 2 different ones
+                        //if (children != newCount) {
+
                         // if during the process of this mouse event a child has been added
-                        if (children != newCount) {
+                        if (newCount>1 && !mIsBeingDragged && mMotionTarget==canvasView) {
 
-                            for (int i = newCount - 1; i >= children; i--) {
-                                final View child = getChildAt(i);
+                            View newChild = getChildAt(this.x,this.y,1);
 
-                                Rect frame = new Rect();
-                                child.getHitRect(frame);
-                                if (frame.contains(this.x, this.y)) {
+                            // we found a child at this point, and its not the current child, we we want to start sending events to it
+                            if (newChild!=null && newChild!=mMotionTarget) {
 
-                                    this.children = newCount;
+                                mMotionTarget = newChild;
+                                //this.children = newCount;
 
-                                    // not good as action cancelled sends pointerUp to j2me, and after a long time this can cause a popup menu
-                                    //ev.setAction( MotionEvent.ACTION_CANCEL );
-                                    //ev.setLocation(this.x, this.y);
+                                // not good as action cancelled sends pointerUp to j2me, and after a long time this can cause a popup menu
+                                //ev.setAction( MotionEvent.ACTION_CANCEL );
+                                //ev.setLocation(this.x, this.y);
 
-                                    // not good as sends pointer up and this can do things like move the caret
-                                    //ev.setAction( MotionEvent.ACTION_UP );
-                                    //ev.setLocation(-1, -1);
-                                    //super.dispatchTouchEvent(ev);
+                                // not good as sends pointer up and this can do things like move the caret
+                                //ev.setAction( MotionEvent.ACTION_UP );
+                                //ev.setLocation(-1, -1);
+                                //super.dispatchTouchEvent(ev);
 
-                                    ev.setAction( MotionEvent.ACTION_DOWN );
-                                    ev.setLocation(this.x, this.y);
-                                    super.dispatchTouchEvent(ev);
+                                ev.setAction( MotionEvent.ACTION_DOWN );
+                                ev.setLocation(this.x, this.y);
+                                super.dispatchTouchEvent(ev);
 
-                                    ev.setAction( action );
-                                    ev.setLocation(x, y);
-                                    return super.dispatchTouchEvent(ev);
-
-                                }
-
+                                ev.setAction( action );
+                                ev.setLocation(x, y);
+                                return super.dispatchTouchEvent(ev);
                             }
                         }
 
@@ -358,10 +378,20 @@ public abstract class Canvas extends Displayable {
 
                 }
 
-                @Override
-                public boolean onTouchEvent(MotionEvent ev) {
-                    return canvasView.onTouchEvent(ev);
+                public View getChildAt(int x,int y,int children) {
+                    int newCount = getChildCount();
+                    Rect frame = new Rect();
+                    for (int i = newCount - 1; i >= children; i--) {
+                        final View child = getChildAt(i);
+                        child.getHitRect(frame);
+                        if (frame.contains(x, y)) {
+                            return child;
+                        }
+                    }
+                    return null;
                 }
+
+
             };
             this.canvasView = new CanvasView(AndroidMeActivity.DEFAULT_ACTIVITY);
 
@@ -697,6 +727,8 @@ public abstract class Canvas extends Displayable {
         @Override
         public boolean onTouchEvent(MotionEvent event) {
 
+            //System.out.println("[AndroidME] onTouchEvent "+event);
+
             int actionCode = event.getAction() & 0xFF;
 
             int pointerCount = getPointerCount(event);
@@ -940,7 +972,7 @@ public abstract class Canvas extends Displayable {
             getInputManager().toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
         }
 
-        private void checkKeyboardState() {
+        public void checkKeyboardState() {
 //          System.out.println(">>>>>> checkKeyboardState " + hasWindowFocus);
             if (hasWindowFocus) {
                 if (keyboardMode == KEYBOARD_SHOW) {
@@ -972,7 +1004,6 @@ public abstract class Canvas extends Displayable {
             this.inputConnectionView = view;
             this.keyboardMode = (view == null) ? KEYBOARD_HIDE : KEYBOARD_SHOW;
 
-            checkKeyboardState();
 //            }
         }
 

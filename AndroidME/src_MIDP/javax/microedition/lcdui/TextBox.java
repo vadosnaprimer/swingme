@@ -183,7 +183,12 @@ public class TextBox extends Screen {
         public TextBoxView() {
         }
 
-        public void start(TextBox tb) { }
+        public void start(TextBox tb) {
+
+            // open the keyboard
+            currentCanvasView.checkKeyboardState();
+
+        }
         public void onDraw() { }
 
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
