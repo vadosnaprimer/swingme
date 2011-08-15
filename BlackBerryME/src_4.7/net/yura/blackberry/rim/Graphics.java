@@ -904,31 +904,30 @@ public class Graphics {
             	                throw new IllegalArgumentException("Bad transform");
         	            }
         	        }
-		    
-        		
 
-        		
-		    
 		    int[] x = new int[] {0, width, width, 0};
 		    int[] y = new int[] {0, 0, height, height};
 		    
 		    //int[] x = new int[] {x_src, x_src+width, x_src+width, x_src};
                     //int[] y = new int[] {y_src, y_src, y_src+height, y_src+height};
 		    int angle32 = Fixed32.toFP(rotate);
-		    int dux = Fixed32.cosd(angle32);
-		    int dvx = -Fixed32.sind(angle32);
-		    int duy = Fixed32.sind(angle32);
-		    int dvy = Fixed32.cosd(angle32);
+		    
+		    int cosd = Fixed32.cosd(angle32);
+		    int sind = Fixed32.sind(angle32);
+		    
+		    int dux = cosd;
+		    int dvx = -sind;
+		    int duy = sind;
+		    int dvy = cosd;
 
 		    if (mirror) {
-		        dux = Fixed32.mul(dux, Fixed32.toFP(-1));
-		        duy = Fixed32.mul(duy, Fixed32.toFP(-1));
+		        int minus1 = Fixed32.toFP(-1);
+		        dux = Fixed32.mul(dux, minus1);
+		        duy = Fixed32.mul(duy, minus1);
 		    }
 		    
 		    g.translate(translateX+x_dest, translateY+y_dest);
-
 		    g.drawTexturedPath(x, y, null, null, -x_src, -y_src, dux, dvx, duy, dvy, src.bitmap);
-
 		    g.translate(-translateX-x_dest, -translateY-y_dest);
 		    
 		}
