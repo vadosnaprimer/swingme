@@ -78,17 +78,17 @@ public class ImageView extends Component {
                 bgImage.paintIcon(this, g, imgX, imgY);
             } else {
                 // in current version of BB, we can not scale images on the fly
-                if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
-                	System.out.println(">> Ratio: " + Double.toString(ratio));
-                    if (ratio > 1.1 || ratio < 0.9) {
-                        img = ImageUtil.scaleImage(img, (int)(imgW * ratio), (int)(imgH * ratio) );
-                        setBackgroundImage( new Icon(img) );
-                    }
-                    g.drawImage(img, imgX, imgY);
-                }
-                else {
+                //if (Midlet.getPlatform()==Midlet.PLATFORM_BLACKBERRY) {
+                //	System.out.println(">> Ratio: " + Double.toString(ratio));
+                //    if (ratio > 1.1 || ratio < 0.9) {
+                //        img = ImageUtil.scaleImage(img, (int)(imgW * ratio), (int)(imgH * ratio) );
+                //        setBackgroundImage( new Icon(img) );
+                //    }
+                //    g.drawImage(img, imgX, imgY);
+                //}
+                //else {
                     g.drawScaledImage( img, imgX, imgY, (int)(imgW * ratio), (int)(imgH * ratio));
-                }
+                //}
             }            
         }
 
