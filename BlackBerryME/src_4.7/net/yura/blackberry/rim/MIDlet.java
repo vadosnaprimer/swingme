@@ -4,10 +4,16 @@ import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.location.Location;
 import javax.microedition.location.LocationProvider;
 
+import net.rim.blackberry.api.browser.Browser;
 import net.rim.device.api.applicationcontrol.ApplicationPermissions;
 import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
 import net.rim.device.api.system.Application;
+import net.rim.device.api.system.ApplicationDescriptor;
+import net.rim.device.api.system.CodeModuleGroup;
+import net.rim.device.api.system.CodeModuleGroupManager;
 import net.rim.device.api.system.CoverageInfo;
+import net.rim.device.api.system.Device;
+import net.rim.device.api.system.DeviceInfo;
 import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
@@ -36,7 +42,7 @@ public abstract class MIDlet extends UiApplication {
         
         Animation.FPS = 2;
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
-        setPermissions();
+        //setPermissions();
         
     }
 	
@@ -75,19 +81,52 @@ public abstract class MIDlet extends UiApplication {
     	System.exit(0);	
     }
 	
-    //user_agent=null, app_version=1.6.2, device_id=0000000000000000000000000357841030097477, language=0, app_build=Android, app_name=BMA/Android, screen_height=800}
-    public String getAppProperty(String s) {
-    	if (s.equals("App-Build")) {
-    		return "blackberry";
-    	} else if (s.equalsIgnoreCase("App-Name")) {
-    		return "BMA/BlackBerry";
-    	} else {
-    		return null;
+     //user_agent=null, app_version=1.6.2, device_id=0000000000000000000000000357841030097477, language=0, app_build=Android, app_name=BMA/Android, screen_height=800}
+     public String getAppProperty(String s) { 	
+    	//#mdebug info
+    	// These app properties are added to the JAD at compile time in the ANT build file, this will thus not be available when debugging on the simulator, also: 
+    	// http://supportforums.blackberry.com/t5/Java-Development/Read-Jad-properties-from-emulator-OS-4-5/td-p/85069
+    	if (DeviceInfo.isSimulator()) {
+    		if (s.equals("App-Build")) {
+        		return "blackberry";
+        	} else if (s.equalsIgnoreCase("App-Name")) {
+        		return "BMA/BlackBerry";
+        	} else if (s.equalsIgnoreCase("Help-Url")) {
+        		return "http://badoo.com/help/";
+        	} else if (s.equalsIgnoreCase("Terms-Url")) {
+        		return "http://badoo.com/terms/";
+        	} else if (s.equalsIgnoreCase("Server-Url")) {
+        		return "bma.badoo.com:2121";
+        	} else {
+        		return null;
+        	}
     	}
+    	else {
+    	//#enddebug
+    		CodeModuleGroup[] allModuleGroups = CodeModuleGroupManager.loadAll();
+    		CodeModuleGroup codeModuleGroup = null;
+    		String moduleName = ApplicationDescriptor.currentApplicationDescriptor().getModuleName();
+    		for (int i = 0; i < allModuleGroups.length; i++) {
+    		   if (allModuleGroups[i].containsModule(moduleName)) {
+    			   codeModuleGroup = allModuleGroups[i];
+    			   break;
+    		    }
+    		}
+    		if (codeModuleGroup!=null) {
+    			String property = codeModuleGroup.getProperty(s);
+    			System.out.println(property);
+    			return property;
+    		}
+    	//#mdebug info
+    	}  
+    	//#enddebug
+    	return null;
     }
     
     public boolean platformRequest(String url) throws ConnectionNotFoundException {
-    	
+    	if (url.startsWith("http://")) {
+    		Browser.getDefaultSession().displayPage(url);
+    	}
     	// launch native date picker?
     	
     	/*
