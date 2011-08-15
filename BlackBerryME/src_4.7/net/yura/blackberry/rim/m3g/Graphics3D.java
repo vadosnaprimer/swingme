@@ -62,10 +62,12 @@ public final class Graphics3D {
             int[] x = new int[] {0, vpW, vpW, 0};
             int[] y = new int[] {0, 0, vpH, vpH};
             
+            int zero = Fixed32.toFP(0);
+            
             // make a scale matrix
             int dux = Fixed32.div(Fixed32.toFP(width), Fixed32.toFP(vpW));
-            int dvx = Fixed32.toFP(0);
-            int duy = Fixed32.toFP(0);
+            int dvx = zero;
+            int duy = zero;
             int dvy = Fixed32.div(Fixed32.toFP(height), Fixed32.toFP(vpH));
             
             targetGraphics.g.translate(vpX, vpY);
