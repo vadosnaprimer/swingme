@@ -392,9 +392,9 @@ public abstract class Canvas extends FullScreen {
         // to be handled differently from keyDown. And it's not keyChar.
 
 		try {
-			//if (keyCode == 1179648 || keyCode == 1114112) {
-			//	return super.keyDown(keyCode, time);
-			//}
+			if (Keypad.key(keyCode) == Keypad.KEY_SEND || Keypad.key(keyCode) == Keypad.KEY_END) {
+				return super.keyDown(keyCode, time);
+			}
 			boolean processed = super.keyDown(keyCode, time);
 			if (processed) {
 				return true;
@@ -418,6 +418,11 @@ public abstract class Canvas extends FullScreen {
 	
 	protected boolean keyUp(int keyCode, int time) {
 		try {
+			
+			if (Keypad.key(keyCode) == Keypad.KEY_SEND || Keypad.key(keyCode) == Keypad.KEY_END) {
+				return super.keyUp(keyCode, time);
+			}
+			
 			boolean processed = super.keyUp(keyCode, time);
 			if (processed) {
 				return true;
