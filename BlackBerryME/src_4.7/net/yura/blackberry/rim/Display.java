@@ -27,7 +27,12 @@ public class Display {
 
 	public void setCurrent(Object screen) {
 		if (screen instanceof Screen) {
-			midlet.pushScreen((Screen)screen);
+		    Screen src = (Screen)screen;
+		    
+		    // if this screen is already the current one, we do not want to push it a second time
+		    if (src != midlet.getActiveScreen()) {
+		        midlet.pushScreen(src);
+		    }
 		}
 		if (screen == null) {
 			UiApplication.getUiApplication().requestBackground();
