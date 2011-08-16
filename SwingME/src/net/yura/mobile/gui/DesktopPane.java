@@ -1362,9 +1362,9 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public void multitouchEvent(int[] type, int[] x, int[] y) {
-        
+
         //System.out.println("SM multitouchEvent "+pointerComponent+" point1="+type[0]+" "+x[0]+" "+y[0]+" point2="+type[1]+" "+x[1]+" "+y[1]);
-        
+
         if (pointerComponent!=null) {
             int pcX = pointerComponent.getXOnScreen();
             int pcY = pointerComponent.getYOnScreen();
@@ -1381,9 +1381,9 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     private void pointerEvent(int type, int x, int y) {
-        
+
         //System.out.println("SM pointerEvent "+pointerComponent+" point="+type+" "+x+" "+y);
-        
+
         try {
 
             Window currentWindow = getSelectedFrame();
@@ -1425,6 +1425,25 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                 }
 
+                // When pointer released, reset pointer Component/ScrollPane
+                if (type == RELEASED) {
+
+                    long time = System.currentTimeMillis();
+                    // TODO we need a better way to decide when to open a popup that does not wait for the user to let go
+                    if (time - pointerFristTime > 1000 && isAccurate(pointerFirstX, pointerFirstY, x, y)) {
+                        if (pointerComponent!=null) {
+                            Window popup = pointerComponent.getPopupMenu();
+                            if (popup!=null && !popup.isVisible()) {
+                                popup.show(pointerComponent, x, y);
+
+                                // as we have triggered a popup menu, we want to send this as a cancel to the component
+                                type = CANCEL;
+                            }
+                        }
+                    }
+
+                }
+
                 // Handle events for pointer component
                 if (pointerComponent != null) {
                         int pcX = x - pointerComponent.getXOnScreen();
@@ -1453,18 +1472,7 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
                 //#enddebug
 
-                // When pointer released, reset pointer Component/ScrollPane
-                if (type == RELEASED) {
-
-                    long time = System.currentTimeMillis();
-                    if (time - pointerFristTime > 1000 && isAccurate(pointerFirstX, pointerFirstY, x, y)) {
-                        if (pointerComponent!=null) {
-                            Window popup = pointerComponent.getPopupMenu();
-                            if (popup!=null && !popup.isVisible()) {
-                                popup.show(pointerComponent, x, y);
-                            }
-                        }
-                    }
+                if (type == RELEASED || type==CANCEL) {
 
                     currentWindow.setNothingFocused();
 
@@ -1472,6 +1480,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     pointerComponent = null;
 
                 }
+
             }
 
             // TODO: if dragged by only a little bit, should not hide the tooltip

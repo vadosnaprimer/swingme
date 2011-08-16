@@ -1001,8 +1001,11 @@ public class XULLoader {
 
             Object obj = readObject(parser,listener);
 
-
-            if (comp instanceof Frame) {
+            // the object is a window, the only way we can be adding a window to another component is as a popup menu
+            if (obj instanceof GridBagConstraints && ((GridBagConstraints)obj).component instanceof Window) {
+                comp.setPopupMenu( (Window) ((GridBagConstraints)obj).component );
+            }
+            else if (comp instanceof Frame) {
                 Panel panel = ((Frame)comp).getContentPane();
                 if (panel instanceof ScrollPane) { panel = (Panel)((ScrollPane)panel).getView(); }
 
@@ -1035,13 +1038,14 @@ public class XULLoader {
                 ((Menu)comp).add( ((GridBagConstraints)obj).component );
             }
             else if (comp instanceof MenuBar) {
-                ((MenuBar)comp).add( (Button) ((GridBagConstraints)obj).component );
+                ((MenuBar)comp).add( ((GridBagConstraints)obj).component );
             }
             else if (comp instanceof List) {
                 ((List)comp).getItems().addElement(obj);
             }
             else { // any component can have a popup
-                comp.setPopupMenu( (Window) ((GridBagConstraints)obj).component );
+                //#debug debug
+                throw new RuntimeException("why are we here???");
             }
             //else {
             //    //#debug debug
