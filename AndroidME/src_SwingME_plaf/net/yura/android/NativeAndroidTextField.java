@@ -452,6 +452,14 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         */
 
         /**
+         * this normally returns the min height of the background Drawable
+         * so as we want there not to be any special min height, we return 0
+         */
+        protected int getSuggestedMinimumHeight() {
+            return 0;
+        }
+
+        /**
          * in Android style, NOT swingME style
          * [0] = left
          * [1] = top
