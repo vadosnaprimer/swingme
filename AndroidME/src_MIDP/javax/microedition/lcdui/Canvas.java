@@ -217,6 +217,7 @@ public abstract class Canvas extends Displayable {
             this.linearLayout = new ViewGroup(AndroidMeActivity.DEFAULT_ACTIVITY) {
                 @Override
                 protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
                     final int count = getChildCount();
                     for (int i = 0; i < count; i++) {
                         final View child = getChildAt(i);
@@ -225,6 +226,11 @@ public abstract class Canvas extends Displayable {
                             child.layout(0, 0, getWidth(), getHeight());
                         }
                     }
+
+                    if (canvasView.inputConnectionView!=null) {
+                        canvasView.inputConnectionView.onLayout();
+                    }
+
                 }
 
                 float mLastMotionY;
@@ -431,6 +437,7 @@ public abstract class Canvas extends Displayable {
     public interface InputHelper {
         // used by old style connector
         public boolean onCheckIsTextEditor();
+        public void onLayout();
         public InputConnection onCreateInputConnection(EditorInfo outAttrs);
 
         public void start(TextBox tb);

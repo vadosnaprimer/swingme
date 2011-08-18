@@ -26,6 +26,7 @@ import net.yura.mobile.gui.plaf.Style;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -166,11 +167,11 @@ System.out.println("[NativeAndroidTextField] ##################### start");
             }
         });
 
-
+        textField.setForeground( 0x00FFFFFF ); // make it not have any foreground color, so it paints nothing
 
         // if we are not using the native android border
         if (!(textField.getBorder() instanceof AndroidBorder)) {
-            textField.setForeground( 0x00FFFFFF ); // make it not have any foreground color, so it paints nothing
+
             editText.setBackgroundDrawable(null); // this removed the border from the edittext
 
             // does not get it 100% correct, so we only use it when we remove the native border
@@ -192,7 +193,9 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         android.graphics.Paint.FontMetricsInt fm = editText.getPaint().getFontMetricsInt();
         int mTopPadding = fm.top - fm.ascent; // this gives a negative number, {@link android.text.StaticLayout#getTopPadding()} we add it to the current top padding to make it smaller
         // to avoid internal scrolling, we remove any bottom padding, at worst, it may overlap the bottom border
-        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), 0);
+        //editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), 0);
+        //editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), editText.getPaddingBottom());
+        editText.setPadding(editText.getPaddingLeft(), editText.getPaddingTop()+ mTopPadding, editText.getPaddingRight(), textField.getInsets().getBottom()+((TextComponent)textField).getMargin() );
 
 
 
@@ -232,6 +235,28 @@ System.out.println("[NativeAndroidTextField] ##################### start");
     }
 
 
+    public void onLayout() {
+
+        Border insets = textField.getInsets();
+
+        int w = textField.getWidthWithBorder();
+        int h = textField.getPreferredHeight() +insets.getTop() +insets.getBottom();
+
+        editText.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED) );
+
+        int h2 = editText.getMeasuredHeight();
+
+        if (h!=h2) {
+
+System.out.println("[NativeAndroidTextField] ##################### layout");
+
+            textField.setPreferredSize(textField.getPreferredWidth(), h2 -insets.getTop() -insets.getBottom() );
+
+            DesktopPane.mySizeChanged(textField);
+        }
+
+    }
+
     int tx=-100,ty=-100,tw=-100,th=-100; // some random none valid numbers
     public void onDraw() {
 
@@ -245,15 +270,15 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         // if the location has changed since last paint we need to move the component
         if (x!=tx || y!=ty || w!=tw || h!=th) {
 
-System.out.println("[NativeAndroidTextField] ##################### layout");
+System.out.println("[NativeAndroidTextField] ##################### draw");
 
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
             int sy = y-insets.getTop();
 
             // we need to set the width and height AS WELL as the layout, or HTC phones will not wrap the text correctly
-            editText.setWidth(w);
-            editText.setHeight(h);
+            editText.setWidth(w); // the width is def wrong on HTC so we HAVE to set it
+            //editText.setHeight(h);
 
             editText.layout(sx, sy, sx+w, sy+h );
 
@@ -335,6 +360,10 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
         // if we cleared the font, set it back
         textField.setForeground( Style.NO_COLOR );
+
+
+        textField.setPreferredSize(textField.getPreferredWidth(), -1 );
+        DesktopPane.mySizeChanged(textField);
 
         android2swing();
 

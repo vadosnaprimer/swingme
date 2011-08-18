@@ -190,6 +190,7 @@ public class TextBox extends Screen {
 
         }
         public void onDraw() { }
+        public void onLayout() { }
 
         public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
 
