@@ -241,17 +241,18 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         Border insets = textField.getInsets();
 
         int w = textField.getWidthWithBorder();
-        int h = textField.getPreferredHeight() +insets.getTop() +insets.getBottom();
+
+        int h = textField.getPreferredHeight();
 
         editText.measure(MeasureSpec.makeMeasureSpec(w, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED) );
 
-        int h2 = editText.getMeasuredHeight();
+        int h2 = editText.getMeasuredHeight() -insets.getTop() -insets.getBottom();
 
         if (h!=h2) {
 
 System.out.println("[NativeAndroidTextField] ##################### layout");
 
-            textField.setPreferredSize(textField.getPreferredWidth(), h2 -insets.getTop() -insets.getBottom() );
+            textField.setPreferredSize(textField.getPreferredWidth(), h2 );
 
             DesktopPane.mySizeChanged(textField);
         }
@@ -265,8 +266,8 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
 
         int x = textField.getXOnScreen();
         int y = textField.getYOnScreen();
-        int w = textField.getWidthWithBorder();
-        int h = textField.getHeightWithBorder();
+        int w = textField.getWidth();
+        int h = textField.getHeight();
 
         // if the location has changed since last paint we need to move the component
         if (x!=tx || y!=ty || w!=tw || h!=th) {
@@ -276,12 +277,14 @@ System.out.println("[NativeAndroidTextField] ##################### draw");
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
             int sy = y-insets.getTop();
+            int sw = w+insets.getLeft()+insets.getRight();
+            int sh = h+insets.getTop()+insets.getBottom();
 
             // we need to set the width and height AS WELL as the layout, or HTC phones will not wrap the text correctly
-            editText.setWidth(w); // the width is def wrong on HTC so we HAVE to set it
+            editText.setWidth(sw); // the width is def wrong on HTC so we HAVE to set it
             //editText.setHeight(h);
 
-            editText.layout(sx, sy, sx+w, sy+h );
+            editText.layout(sx, sy, sx+sw, sy+sh );
 
             // this is a bit of a hack, not sure why this should be here, but without it, when we rotate the screen the line wrap does not adjust
             // but for some reason if we do not call this every time after changing the width it does not wrap the lines correctly
