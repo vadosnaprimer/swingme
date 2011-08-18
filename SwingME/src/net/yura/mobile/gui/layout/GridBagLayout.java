@@ -33,8 +33,28 @@ import net.yura.mobile.gui.components.Panel;
 public class GridBagLayout implements Layout {
 
     int columns;
+    
+    /**
+     * @see java.awt.GridBagConstraints#insets GridBagConstraints.insets
+     */
     int gap;
     int top,bottom,right,left;
+
+    public int getBottom() {
+        return bottom;
+    }
+
+    public int getLeft() {
+        return left;
+    }
+
+    public int getRight() {
+        return right;
+    }
+
+    public int getTop() {
+        return top;
+    }
 
     public GridBagLayout(int columns, int gap, int top, int bottom, int left, int right) {
         this.columns = columns;
