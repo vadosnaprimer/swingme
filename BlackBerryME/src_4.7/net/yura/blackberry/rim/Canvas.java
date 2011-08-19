@@ -4,6 +4,7 @@ import net.rim.device.api.ui.container.FullScreen;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.TouchEvent;
+import net.rim.device.api.ui.UiApplication;
 
 public abstract class Canvas extends FullScreen {
 
@@ -420,6 +421,10 @@ public abstract class Canvas extends FullScreen {
 		// we need to do this check as passing 0 can cause strange events
 		if (midpKeyCode!=0) {
 		    keyPressed(midpKeyCode);
+		    
+		    if (UiApplication.getUiApplication().getActiveScreen()!=this) {
+                        keyReleased(midpKeyCode);
+                    }
 		}
 		//#mdebug debug
 		else {
@@ -491,6 +496,10 @@ public abstract class Canvas extends FullScreen {
 	                           System.out.println("super.keyRepeat(" + keyCode + ", " + time + ") failed" + e );
 	                   }
 
+	                   if (Keypad.map(keyCode)==Keypad.KEY_ESCAPE) {
+	                       System.exit(1);
+	                   }
+	                   
 	        //#debug
 	        System.out.println("keyRepeat: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
 	        int midpKeyCode = getMidpKeyCode(keyCode);
@@ -655,6 +664,11 @@ public abstract class Canvas extends FullScreen {
 	        boolean processed = super.navigationClick(status, time);
 	        if (!processed) {
 	                keyPressed( KEY_BB_FIRE );
+
+	                if (UiApplication.getUiApplication().getActiveScreen()!=this) {
+	                    keyReleased(KEY_BB_FIRE);
+	                }
+
 	                processed = true;
 	        }
 	        return processed;
