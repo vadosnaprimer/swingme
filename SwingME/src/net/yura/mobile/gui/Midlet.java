@@ -281,13 +281,18 @@ public abstract class Midlet extends MIDlet {
      * name MUST start with a "/"
      * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
      */
+    
+    public static String resdir;
+    
     public static InputStream getResourceAsStream(String name) {
 
         try {
-            String resdir;
+            
             try {
                 // when running as a me4se applet, this can throw a SecurityException
-                resdir = System.getProperty("resdir");
+            	if (System.getProperty("resdir") != null) {
+            		resdir = System.getProperty("resdir");
+            	}
             }
             catch (Throwable th) {
                 resdir = null;
