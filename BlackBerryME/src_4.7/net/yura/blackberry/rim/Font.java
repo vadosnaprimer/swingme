@@ -63,17 +63,22 @@ public final class Font {
 				int defaultSize = net.rim.device.api.ui.Font.getDefault().getHeight();
 				if (size == SIZE_SMALL ) {
 					bbSize = defaultSize - ((defaultSize * 30) / 100);
-				} else if (size == SIZE_MEDIUM) {
+				} 
+				else if (size == SIZE_MEDIUM) {
 					bbSize = defaultSize; 
-				} else {
+				} 
+				else if (size == SIZE_LARGE){
 					bbSize = defaultSize + ((defaultSize * 30) / 100);
+				}
+				else {
+					bbSize = -size;
 				}
 				this.font = family.getFont( bbStyle, bbSize, Ui.UNITS_px  );
 				if (this.font == null) {
 					//#debug
 					System.out.println("Unable to retrieve font...");
 					this.font = net.rim.device.api.ui.Font.getDefault();
-				}
+				}				
 			}
 			if (this.font != null) {
 				this.height = this.font.getHeight();
