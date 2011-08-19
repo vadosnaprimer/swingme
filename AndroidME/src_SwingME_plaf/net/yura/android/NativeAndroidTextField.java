@@ -2,6 +2,7 @@ package net.yura.android;
 
 import android.os.Handler;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -117,6 +118,8 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         }
         editText.setInputType( inputType ); // this has to be done AFTER setSingleLine or passwords will break
 
+        ((NativeEditText)editText).setMaxLength( ((TextComponent)textField).getMaxSize() );
+
         if (singleLine) { // actions only supported on single friend
             final TextField tf = (TextField)textField;
             if (tf.getActionListeners().length>0) {
@@ -145,11 +148,11 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
                 android2swing();
 /*
-                Object val = textField.getValue();
+                Object val = textField.getValue(); // DO NOT USE GET VALUE, as it returns a Integer sometimes if constraints are NUMERIC
                 if (val == null || val instanceof String) {
                     String text = (String)val;
                     if (!cs.equals(text)) {
-                        textField.setValue(cs);
+                        textField.setValue(cs); // DO NOT USE SET VALUE!!!
                     }
                 }
                 //#mdebug debug
@@ -409,13 +412,14 @@ System.out.println("[NativeAndroidTextField] ##################### close");
         // we do NOT want to do this as this closes the keyboard, and we do not want to do that
         //textBox.fireCommand(javax.microedition.lcdui.Command.OK);
 
+        TextComponent tc = (TextComponent)textField;
+
         // just set the text back on the text component
         String mText = textBox.getString();
-        if (!mText.equals(textField.getValue())) {
-            textField.setValue( mText );
+        if (!mText.equals( tc.getText() )) {
+            tc.setText( mText );
         }
 
-        TextComponent tc = (TextComponent)textField;
         int caret = editText.getSelectionEnd();
 
         if (tc.getCaretPosition() != caret) {
@@ -453,6 +457,13 @@ System.out.println("[NativeAndroidTextField] ##################### close");
                 return in;
         }
         */
+
+        /**
+         * for some crazy reason, this method does not exist in normal android API
+         */
+        public void setMaxLength(int maxlength) {
+            setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxlength) });
+        }
 
         /**
          * this normally returns the min height of the background Drawable
@@ -560,16 +571,8 @@ System.out.println("[NativeAndroidTextField] ##################### close");
 
                 // ========== SWING 2 MIDP ==========
                 // get the text from swingME to J2ME
-                Object val = textField.getValue();
-                if (val instanceof String) {
-                    textBox.setString( (String)val );
-                }
-                //#mdebug debug
-                else {
-                    System.err.println("[NativeAndroidTextField] ER2 UNKNOWN VALUE IN textField: "+val);
-                    Thread.dumpStack();
-                }
-                //#enddebug
+                String val = ((TextComponent)textField).getText();
+                textBox.setString( val );
 
                 midp2android(); // set the text back into the android editText
                 return use;
