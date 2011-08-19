@@ -59,7 +59,7 @@ public abstract class Canvas extends FullScreen {
         };
 
         add( this.dummyField );
-    	 
+
      }
 
      protected boolean isShown(){
@@ -414,8 +414,18 @@ public abstract class Canvas extends FullScreen {
 
 		// #debug
 		System.out.println("keyDown: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
-		keyCode = getMidpKeyCode(keyCode);
-		keyPressed(keyCode);
+		int midpKeyCode = getMidpKeyCode(keyCode);
+		
+		// we get events here when mouse clicks on the screen for some strange reason
+		// we need to do this check as passing 0 can cause strange events
+		if (midpKeyCode!=0) {
+		    keyPressed(midpKeyCode);
+		}
+		//#mdebug debug
+		else {
+		    System.out.println("############################# keyDown SKIP keyCode "+keyCode+" midpKeyCode "+midpKeyCode);
+		}
+		//#enddebug
 
 		return true; // consume the key event
 
@@ -448,8 +458,18 @@ public abstract class Canvas extends FullScreen {
 
 		// #debug
 		System.out.println("keyUp: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
-		keyCode = getMidpKeyCode(keyCode);
-		keyReleased(keyCode);
+		int midpKeyCode = getMidpKeyCode(keyCode);
+		
+                // we get events here when mouse clicks on the screen for some strange reason
+                // we need to do this check as passing 0 can cause strange events
+	        if (midpKeyCode!=0) {
+	            keyReleased(midpKeyCode);
+	        }
+	        //#mdebug debug
+	        else {
+	            System.out.println("############################# keyUp SKIP keyCode "+keyCode+" midpKeyCode "+midpKeyCode);
+	        }
+	        //#enddebug
 
 		return true; // consume the key event
 
@@ -473,8 +493,20 @@ public abstract class Canvas extends FullScreen {
 
 	        //#debug
 	        System.out.println("keyRepeat: keyCode=" + keyCode + ", key=" + Keypad.key( keyCode) + ", char=" + Keypad.map( keyCode ) );
-	        keyCode = getMidpKeyCode(keyCode);
-	        keyRepeated(keyCode);
+	        int midpKeyCode = getMidpKeyCode(keyCode);
+	        
+                // we get events here when mouse clicks on the screen for some strange reason
+                // we need to do this check as passing 0 can cause strange events
+	        if (midpKeyCode!=0) {
+	            keyRepeated(midpKeyCode);
+	        }
+	        //#mdebug debug
+	        else {
+	            System.out.println("############################# keyRepeat SKIP keyCode "+keyCode+" midpKeyCode "+midpKeyCode);
+	        }
+	        //#enddebug
+	        
+	        
 	        return true; // consume the key event
 	    }
 	
