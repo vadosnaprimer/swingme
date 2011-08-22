@@ -173,8 +173,8 @@ public class KeyEvent {
             //}
         }
 
-        // sometimes blackberry is NOT qwerty
-        public static boolean BLACKBERRY_QWERTY = false; // HAS to be false, or all phones will be qwerty, is set to true by BlackBerryME
+        // sometimes blackberry is NOT qwerty, this is a override to make a blackberry use a numpad keypad
+        public static boolean BLACKBERRY_ITUT = false; // by default blackberry is a qwert phone
 
         private static final String CHARS_PHONE = "*+pw";
         private static final String CHARS_DECIMAL = ".-";
