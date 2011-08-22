@@ -12,7 +12,7 @@ import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
 import net.yura.blackberry.BlackBerryOptionPane;
-import net.yura.blackberry.BlackBerryThumbLoader;
+import net.yura.mobile.util.BlackBerryThumbLoader;
 import net.yura.blackberry.ConnectionManager;
 import net.yura.mobile.gui.Animation;
 import net.yura.mobile.gui.DesktopPane;
@@ -24,7 +24,9 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
     int keyPressed;
 
     protected ConnectionManager conManager;
-    
+
+    public static final int HW_LAYOUT_ITUT = 1230263636; // BB 9105, came with OS-5, but constant only came in OS-6
+
     public MIDlet() {
         // Register RIM key listener
         Application.getApplication().addKeyListener(this);
@@ -37,21 +39,26 @@ public abstract class MIDlet extends javax.microedition.midlet.MIDlet implements
         CoverageInfo.addListener(conManager.getConnRadioListener()); // Listen to radio coverage changes
         
         Animation.FPS = 2;       
-        
+
+
         int keyLayout = Keypad.getHardwareLayout();
-        
-        boolean qwerty =keyLayout==Keypad.HW_LAYOUT_32 ||
-        				keyLayout==Keypad.HW_LAYOUT_39 ||
-        				keyLayout==Keypad.HW_LAYOUT_LEGACY ||
-        				keyLayout==Keypad.HW_LAYOUT_PHONE;
-        
-        boolean qw_er_ty=keyLayout==Keypad.HW_LAYOUT_REDUCED ||
-						 keyLayout==Keypad.HW_LAYOUT_REDUCED_24;
-        
-        KeyEvent.BLACKBERRY_QWERTY = qwerty;
+
+// this method causes too many problems and cant really be used as returns different results depending on if the hardware keyboard is opened or not
+// would have to use DeviceCapability.isPhysicalKeyboardAvaible too, but then we do not know what type of keyboard it is
+// http://supportforums.blackberry.com/t5/Java-Development/Keypad-getHardwareLayout/td-p/743935
+//                   boolean qwerty = keyLayout == Keypad.HW_LAYOUT_32
+//                                   || keyLayout == Keypad.HW_LAYOUT_39
+//                                   || keyLayout == Keypad.HW_LAYOUT_LEGACY
+//                                   || keyLayout == Keypad.HW_LAYOUT_PHONE;
+//
+//                   boolean qw_er_ty = keyLayout == Keypad.HW_LAYOUT_REDUCED
+//                                   || keyLayout == Keypad.HW_LAYOUT_REDUCED_24;
+
+        KeyEvent.BLACKBERRY_ITUT = keyLayout == HW_LAYOUT_ITUT;
+
         
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
-        setPermissions();
+        //setPermissions();
     }
         
     /* This method asserts the permissions that Badoo requires to run */

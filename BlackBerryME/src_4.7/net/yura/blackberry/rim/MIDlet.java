@@ -1,28 +1,20 @@
 package net.yura.blackberry.rim;
 
 import javax.microedition.io.ConnectionNotFoundException;
-import javax.microedition.location.Location;
-import javax.microedition.location.LocationProvider;
-
 import net.rim.blackberry.api.browser.Browser;
 import net.rim.device.api.applicationcontrol.ApplicationPermissions;
 import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
-import net.rim.device.api.system.Application;
 import net.rim.device.api.system.ApplicationDescriptor;
 import net.rim.device.api.system.CodeModuleGroup;
 import net.rim.device.api.system.CodeModuleGroupManager;
 import net.rim.device.api.system.CoverageInfo;
-import net.rim.device.api.system.Device;
 import net.rim.device.api.system.DeviceInfo;
 import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.Dialog;
-import net.rim.device.api.ui.container.VerticalFieldManager;
-
 import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.blackberry.ConnectionManager;
-
 import net.yura.mobile.gui.Animation;
 import net.yura.mobile.util.BlackBerryThumbLoader;
 import net.yura.mobile.gui.KeyEvent;
@@ -30,9 +22,11 @@ import net.yura.mobile.util.ImageUtil;
 
 public abstract class MIDlet extends UiApplication {
 
-	protected ConnectionManager conManager;
-    
-	 public MIDlet() {            
+    protected ConnectionManager conManager;
+
+    public static final int HW_LAYOUT_ITUT = 1230263636; // BB 9105, came with OS-5, but constant only came in OS-6
+
+    public MIDlet() {            
         BlackBerryOptionPane.init();
         
         conManager = ConnectionManager.getInstance();
@@ -41,6 +35,24 @@ public abstract class MIDlet extends UiApplication {
         CoverageInfo.addListener(conManager.getConnRadioListener()); // Listen to radio coverage changes
         
         Animation.FPS = 2;
+        
+        
+        int keyLayout = Keypad.getHardwareLayout();
+
+// this method causes too many problems and cant really be used as returns different results depending on if the hardware keyboard is opened or not
+// would have to use DeviceCapability.isPhysicalKeyboardAvaible too, but then we do not know what type of keyboard it is
+// http://supportforums.blackberry.com/t5/Java-Development/Keypad-getHardwareLayout/td-p/743935
+//                   boolean qwerty = keyLayout == Keypad.HW_LAYOUT_32
+//                                   || keyLayout == Keypad.HW_LAYOUT_39
+//                                   || keyLayout == Keypad.HW_LAYOUT_LEGACY
+//                                   || keyLayout == Keypad.HW_LAYOUT_PHONE;
+//
+//                   boolean qw_er_ty = keyLayout == Keypad.HW_LAYOUT_REDUCED
+//                                   || keyLayout == Keypad.HW_LAYOUT_REDUCED_24;
+
+        KeyEvent.BLACKBERRY_ITUT = keyLayout == HW_LAYOUT_ITUT;
+        
+        
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
         //setPermissions();
         
@@ -155,16 +167,7 @@ public abstract class MIDlet extends UiApplication {
 	}
 
 	public static void main(String[] args) {
-		int keyLayout = Keypad.getHardwareLayout();
-		boolean qwerty = keyLayout == Keypad.HW_LAYOUT_32
-				|| keyLayout == Keypad.HW_LAYOUT_39
-				|| keyLayout == Keypad.HW_LAYOUT_LEGACY
-				|| keyLayout == Keypad.HW_LAYOUT_PHONE;
 
-		boolean qw_er_ty = keyLayout == Keypad.HW_LAYOUT_REDUCED
-				|| keyLayout == Keypad.HW_LAYOUT_REDUCED_24;
-
-		KeyEvent.BLACKBERRY_QWERTY = qwerty;
 		if (args.length == 0) {
 			Dialog.alert("no args given, pls give args");
 		}
