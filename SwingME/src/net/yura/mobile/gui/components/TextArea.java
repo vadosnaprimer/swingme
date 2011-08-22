@@ -105,7 +105,8 @@ public class TextArea extends TextComponent {
             int f = getForeground();
             
             if (!Graphics2D.isTransparent(f)) {
-            
+
+                int[] lines = this.lines; // we take a copy of what the lines currently are in case this textbox is appended while we are drawing!
                 String text = getDisplayString();
 
 		int y = 0;
