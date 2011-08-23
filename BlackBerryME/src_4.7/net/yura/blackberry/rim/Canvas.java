@@ -232,9 +232,15 @@ public abstract class Canvas extends FullScreen {
     		super.onExposed();
     	}
     
+    	// called when we stop being the top screen
     	protected void onObscured() {
     		//this.isObscured = true;
     		super.onObscured();
+
+    		if (lastKey!=0) {
+                    keyReleased(lastKey);
+    		}
+    		
     	}
     	
     protected void onDisplay() {
@@ -381,7 +387,7 @@ public abstract class Canvas extends FullScreen {
     
     
     
-    
+    int lastKey;
 
     protected boolean keyDown(int keyCode, int time) {
     	/*return super.keyDown(keyCode, status);*/
@@ -420,11 +426,10 @@ public abstract class Canvas extends FullScreen {
 		// we get events here when mouse clicks on the screen for some strange reason
 		// we need to do this check as passing 0 can cause strange events
 		if (midpKeyCode!=0) {
+
+                    lastKey = midpKeyCode;
 		    keyPressed(midpKeyCode);
-		    
-		    if (UiApplication.getUiApplication().getActiveScreen()!=this) {
-                        keyReleased(midpKeyCode);
-                    }
+
 		}
 		//#mdebug debug
 		else {
@@ -469,6 +474,8 @@ public abstract class Canvas extends FullScreen {
                 // we need to do this check as passing 0 can cause strange events
 	        if (midpKeyCode!=0) {
 	            keyReleased(midpKeyCode);
+	            
+	            lastKey = 0; // reset
 	        }
 	        //#mdebug debug
 	        else {
@@ -663,11 +670,9 @@ public abstract class Canvas extends FullScreen {
 	                */
 	        boolean processed = super.navigationClick(status, time);
 	        if (!processed) {
-	                keyPressed( KEY_BB_FIRE );
 
-	                if (UiApplication.getUiApplication().getActiveScreen()!=this) {
-	                    keyReleased(KEY_BB_FIRE);
-	                }
+	                lastKey = KEY_BB_FIRE;
+	                keyPressed( KEY_BB_FIRE );
 
 	                processed = true;
 	        }
@@ -685,6 +690,9 @@ public abstract class Canvas extends FullScreen {
 	        boolean processed = super.navigationUnclick(status, time);
 	        if (!processed) {
 	                keyReleased( KEY_BB_FIRE );
+	                
+	                lastKey = 0; // reset
+	                
 	                processed = true;
 	        }
 	        return processed;
