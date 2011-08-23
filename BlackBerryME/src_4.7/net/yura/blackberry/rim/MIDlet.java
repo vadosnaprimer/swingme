@@ -54,7 +54,7 @@ public abstract class MIDlet extends UiApplication {
         
         
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
-        //setPermissions();
+        setPermissions();
         
     }
 	
@@ -126,6 +126,7 @@ public abstract class MIDlet extends UiApplication {
     		}
     		if (codeModuleGroup!=null) {
     			String property = codeModuleGroup.getProperty(s);
+    			//#debug info
     			System.out.println(property);
     			return property;
     		}
