@@ -169,6 +169,10 @@ public abstract class MIDlet extends UiApplication {
 	public static void main(String[] args) {
 
 		if (args.length == 0) {
+		    
+		    System.out.println("no args given, pls give args");
+		    
+		    // TODO THIS WILL NOT WORK AS WE ARE NOT THE EVENT THREAD!!
 			Dialog.alert("no args given, pls give args");
 		}
 		else {
@@ -177,6 +181,10 @@ public abstract class MIDlet extends UiApplication {
 				theApp.enterEventDispatcher();
 			}
 			catch (Exception ex) {
+			    
+			    System.out.println("error starting: " + ex.toString());
+			    
+	                    // TODO THIS WILL NOT WORK AS WE ARE NOT THE EVENT THREAD!!
 				Dialog.alert("error starting: " + ex.toString());
 			}
 		}
