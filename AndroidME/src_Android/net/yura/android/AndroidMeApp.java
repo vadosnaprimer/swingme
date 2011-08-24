@@ -195,6 +195,10 @@ public class AndroidMeApp extends Application {
         handler.post(runnable);
     }
 
+    public void invokeLater(final Runnable runnable, long delayMillis) {
+        handler.postDelayed(runnable, delayMillis);
+    }
+
     private void setSystemProperties() {
         System.setProperty("microedition.platform", "androidMe(" + Build.MODEL + " " + Build.VERSION.RELEASE + ")");
         System.setProperty("microedition.locale", Locale.getDefault().toString());
@@ -257,20 +261,20 @@ public class AndroidMeApp extends Application {
         // BlueTooth
         System.setProperty("bluetooth.api.version", "1.1");
     }
-    
+
     private String getUniqueHardwareId(){
     	String uniqueId = "";
     	try
 		{
 			TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-			
+
 			if (telephonyManager != null){
 				uniqueId = telephonyManager.getDeviceId();
 			}
-			
+
 			// if we can't retrieve the IMEI we can try and get the serial hardware number.
-			// this is only on android gingerbread (v2.3) and up. according to google 
-			// devices WITHOUT telephony are required to report a unique device ID here; 
+			// this is only on android gingerbread (v2.3) and up. according to google
+			// devices WITHOUT telephony are required to report a unique device ID here;
 			// http://android-developers.blogspot.com/2011/03/identifying-app-installations.html
 			if((isValidId(uniqueId)) && android.os.Build.VERSION.SDK_INT >= 9 ){
 				//try getting from api 9 and up.
@@ -282,22 +286,22 @@ public class AndroidMeApp extends Application {
 		        	//#debug
 		        	System.out.println(e.getStackTrace());
 		        }
-				
+
 			}
-			
+
 			//fall back to WIFI. Android documentation says:
-			//It may be possible to retrieve a Mac address from a device’s WiFi or Bluetooth hardware. We do not recommend using this as a unique identifier. 
+			//It may be possible to retrieve a Mac address from a device’s WiFi or Bluetooth hardware. We do not recommend using this as a unique identifier.
 			//To start with, not all devices have WiFi. Also, if the WiFi is not turned on, the hardware may not report the Mac address.
 			if(isValidId(uniqueId)) {
 				WifiManager wifiMan = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
 				if(wifiMan != null){
 					WifiInfo wifiInf = wifiMan.getConnectionInfo();
 					if(wifiInf != null){
-						uniqueId = wifiInf.getMacAddress(); 
+						uniqueId = wifiInf.getMacAddress();
 					}
 				}
 			}
-			
+
         } catch (Throwable e) {
         	//#debug
         	System.out.println(e.getStackTrace());
@@ -310,7 +314,7 @@ public class AndroidMeApp extends Application {
 	private boolean isValidId(String uniqueId) {
 		return uniqueId == null || uniqueId.length() == 0 || uniqueId.equals("000000000000000") || uniqueId.equals("unknown") || uniqueId.equals("0");
 	}
-    
+
 
     private void setFileSystemProperties() {
 
@@ -424,7 +428,7 @@ public class AndroidMeApp extends Application {
     	System.setProperty("microedition.locale", newConfig.locale.toString());
     	super.onConfigurationChanged(newConfig);
     }
-    
+
     class SystemChangedBroadcastReceiver extends BroadcastReceiver {
 
         @Override
