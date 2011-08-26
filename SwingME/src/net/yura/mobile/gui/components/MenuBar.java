@@ -348,7 +348,9 @@ public class MenuBar extends List implements ActionListener {
                     break;
                 }
             }
-            setFocusable(focus);
+            this.focusable = focus;
+            //setFocusable(focus); // we can NOT call this method, as if we do, it tries to setup the newFocusedComponent, and it will get this wrong
+                                   // as it has not layed out the panel yet, as we are only in the workoutMinimumSize stage at this time
         }
         
         if (dp.GRID_MENU) {
