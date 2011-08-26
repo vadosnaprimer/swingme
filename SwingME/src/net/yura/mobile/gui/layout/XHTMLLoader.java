@@ -688,8 +688,8 @@ Logger.debug("START: "+name);
 
                     if (newBlock && inlineText.getText().length()!=0) {
                         inlineText.append("\n");
-                        newBlock=false;
                     }
+                    newBlock=false; // we are now adding some text, and we should already know if we needed or didnt need to start it with a \n
 
                     // if we are the start of a new block of text, get rid of any spaces at the start of the line
                     if (inlineText.getText().length()==0 || inlineText.getText().endsWith(" ") || inlineText.getText().endsWith("\n")) {
