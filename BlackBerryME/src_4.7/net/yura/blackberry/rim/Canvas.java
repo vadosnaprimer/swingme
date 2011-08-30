@@ -29,7 +29,7 @@ public abstract class Canvas extends FullScreen {
     public static final int KEY_NUM7 = javax.microedition.lcdui.Canvas.KEY_NUM7;
     public static final int KEY_NUM8 = javax.microedition.lcdui.Canvas.KEY_NUM8;
     public static final int KEY_NUM9 = javax.microedition.lcdui.Canvas.KEY_NUM9;
-    public static final int KEY_STAR = javax.microedition.lcdui.Canvas.KEY_NUM9;
+    public static final int KEY_STAR = javax.microedition.lcdui.Canvas.KEY_STAR;
     public static final int KEY_POUND = javax.microedition.lcdui.Canvas.KEY_POUND;
     
     
