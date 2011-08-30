@@ -183,12 +183,18 @@ public class Graphics {
 	 * order byte of
 	 * this value is ignored.
 	 * 
+	 * YURA:EDIT this method now supports a alpha component
+	 * 
 	 * @param RGB - the color being set
 	 * @see #getColor()
 	 */
-	public void setColor(int RGB)
-	{
+	public void setColor(int RGB) {
 		this.g.setColor( RGB );
+		
+		int alpha = (RGB >> 24) & 0xFF;
+		
+		this.g.setGlobalAlpha( alpha );
+		
 	}
 
 	/**
@@ -733,7 +739,13 @@ public class Graphics {
 		} else if ( (anchor & VCENTER) == VCENTER ) {
 			y -= height / 2;
 		}
+		
+	        int a = this.g.getGlobalAlpha();
+	        this.g.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
+		
 		this.g.drawBitmap( x + this.translateX, y + this.translateY, width, height, bitmap, 0, 0 );
+		
+		this.g.setGlobalAlpha(a);
 	}
 
 	/**
@@ -825,7 +837,8 @@ public class Graphics {
 	 */
 	public void drawRegion( Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest, int anchor) {
 	    
-	    
+            int a = this.g.getGlobalAlpha();
+            this.g.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
 	    
             if (swapWidthHeight(transform)) {
                 int w = width;
@@ -932,6 +945,8 @@ public class Graphics {
 		    
 		}
 
+		this.g.setGlobalAlpha(a);
+		
 	}
 
 	
