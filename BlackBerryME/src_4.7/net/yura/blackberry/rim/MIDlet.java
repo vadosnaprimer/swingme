@@ -52,40 +52,10 @@ public abstract class MIDlet extends UiApplication {
 
         KeyEvent.BLACKBERRY_ITUT = keyLayout == HW_LAYOUT_ITUT;
         
-        
         ImageUtil.thumbLoader = new BlackBerryThumbLoader();
-        setPermissions();
         
     }
-	
-	
-	 
-	 private void setPermissions() {		
-		final ApplicationPermissionsManager apm = ApplicationPermissionsManager.getInstance();	
-		final ApplicationPermissions desiredPermissions = new ApplicationPermissions();
-		
-		// INPUT_SIMULATION is required to dismiss the camera after a photo has been taken
-		desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_INPUT_SIMULATION);
-		desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_WIFI);
-		// LOCATION_DATA is required for GPS
-		desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_LOCATION_DATA);
-		desiredPermissions.addPermission(ApplicationPermissions.PERMISSION_FILE_API);
-		ApplicationPermissions currentPermissions = apm.getApplicationPermissions();
-		    	
-		if (currentPermissions.getPermission(ApplicationPermissions.PERMISSION_INPUT_SIMULATION) == ApplicationPermissions.VALUE_ALLOW
-				&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_WIFI) == ApplicationPermissions.VALUE_ALLOW
-				&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_LOCATION_DATA) == ApplicationPermissions.VALUE_ALLOW
-				&& currentPermissions.getPermission(ApplicationPermissions.PERMISSION_FILE_API) == ApplicationPermissions.VALUE_ALLOW) {
-			// permissions are fine
-		} else {			
-			UiApplication.getUiApplication().invokeLater(new Runnable() {				
-				public void run() {
-					apm.invokePermissionsRequest(desiredPermissions);					
-				}
-			});	
-		}      
-	}
-	 
+		 
 	public int checkPermission(String string) {
 		return 0;
 	}
