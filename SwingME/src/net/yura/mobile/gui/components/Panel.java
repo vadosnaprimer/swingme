@@ -344,7 +344,7 @@ public class Panel extends Component {
         // only scroll in the direction if the child is NONE-selectable
         // as if it IS selectable, it should handel its own moving around and scrolling
         if (scrolltothere && this instanceof ScrollPane && !component.isFocusable()) {
-            scrolled = ((ScrollPane)this).scrollUpDown(direction);
+            scrolled = scrollUpDown(direction);
         }
 
         if (!scrolled) {
@@ -352,15 +352,38 @@ public class Panel extends Component {
                 // passes onto parent
                 ((Panel)parent).breakOutAction(this, direction ,scrolltothere,forceFocus);
             }
-            else if (LOOP_PANEL && getWindow().getFocusOwner()!=null) {
-                // done for loop to first/last component
-                breakOutAction(null, direction, scrolltothere,true);
+            else if (getWindow().getFocusOwner()!=null) {
+                if (LOOP_PANEL) {
+                    // done for loop to first/last component
+                    breakOutAction(null, direction, scrolltothere,true);
+                }
+                else {
+                    scrollUpDown( direction );
+                }
             }
         }
 
-
     }
 
+    /**
+     * this method is called to tell one of the children to scroll in a direction, and when it gets to a ScrollPane,
+     * it will actually attempt to scroll, and return true if it manages
+     * TODO: the ScrollPane will NOT pass this call onto its children if it does not scroll itself
+     * @see ScrollPane#scrollUpDown(int)
+     */
+    protected boolean scrollUpDown(int direction) {
+        for(int i = 0; i < components.size(); i++) {
+            Component component = (Component)components.elementAt(i);
+            if (component instanceof Panel) {
+                boolean scrolled = ((Panel)component).scrollUpDown(direction);
+                if (scrolled) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
     /**
      * @return an array of all the components in this container
      * @see java.awt.Container#getComponents() Container.getComponents

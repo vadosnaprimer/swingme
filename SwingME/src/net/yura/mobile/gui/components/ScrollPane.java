@@ -178,7 +178,7 @@ public class ScrollPane extends Panel implements Runnable {
         return super.isRectVisible(x, y, w, h);
     }
 
-    public boolean scrollUpDown(int d) {
+    protected boolean scrollUpDown(int d) {
 
         Component v = getView();
 
