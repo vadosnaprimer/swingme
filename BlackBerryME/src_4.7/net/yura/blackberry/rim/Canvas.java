@@ -3,8 +3,9 @@ package net.yura.blackberry.rim;
 import net.rim.device.api.ui.container.FullScreen;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Keypad;
+import net.rim.device.api.ui.Manager;
 import net.rim.device.api.ui.TouchEvent;
-import net.rim.device.api.ui.UiApplication;
+import net.yura.blackberry.rim.TextBox.InputHelper;
 
 public abstract class Canvas extends FullScreen {
 
@@ -51,6 +52,7 @@ public abstract class Canvas extends FullScreen {
      * @see javax.microedition.lcdui.Canvas#Canvas()
      */
      protected Canvas() {
+         super( new CanvasManager() , 0);
     
     	 graphics = new Graphics();
     	 
@@ -63,6 +65,28 @@ public abstract class Canvas extends FullScreen {
 
      }
 
+     static class CanvasManager extends Manager {
+
+         private CanvasManager() {
+             super(Manager.NO_HORIZONTAL_SCROLL | Manager.NO_VERTICAL_SCROLL);
+         }
+
+        protected void sublayout(int width, int height) {
+
+            
+            
+            
+        }
+
+        public void setPositionChild2(Field field, int x, int y) {
+            super.setPositionChild(field, x, y);
+        }
+        public void layoutChild2(Field field, int w, int h) {
+            super.layoutChild(field, w, h);
+        }
+        
+     }
+     
      protected boolean isShown(){
     	 return this.isVisible();
 	 }
@@ -206,7 +230,15 @@ public abstract class Canvas extends FullScreen {
 
      }
 
-     
+     InputHelper helper;
+     public void setInputHelper(InputHelper helper) {
+         
+         if (helper==null && this.helper!=null) {
+             this.helper.stop();
+         }
+         
+         this.helper = helper;
+     }
     
      protected void paint( net.rim.device.api.ui.Graphics g ) {
     	    // when extending the BB MainScreen, super.paint(g) will
@@ -218,8 +250,20 @@ public abstract class Canvas extends FullScreen {
      protected void paintBackground( net.rim.device.api.ui.Graphics g ) {
          //System.out.println("Canvas.paintBackground(): enter");
      	try {
+     	    
+     	        // TODO as BB paints all children such as EditField in the default color, we need to save this color and restore it.
+     	        int color = g.getColor();
+     	        int alpha = g.getGlobalAlpha();
+     	    
     	        this.graphics.setGraphics( g );
     	    	paint( this.graphics );
+    	    	
+    	    	g.setColor(color);
+    	    	g.setGlobalAlpha(alpha);
+    	    	
+    	    	if (helper!=null) {
+    	    	    helper.onDraw();
+    	    	}
      	}
      	catch (Exception e) {
      		//#debug error
@@ -277,26 +321,6 @@ public abstract class Canvas extends FullScreen {
         return character;
 	}
 	
-	/*
-	 * onMenu
-	 * 
-	 * trackwheelRoll
-	 * 
-	 * 
-	 * keyDown
-	 * keyUp
-	 * keyRepeat
-	 * 
-	 * 
-	 * touchEvent
-	 * 
-	 * navigationClick
-	 * navigationUnclick
-	 * 
-	 * 
-	 * navigationMovement
-	 * 
-	 */
 		
 	public boolean onMenu(int instance) {
 		boolean processed = super.onMenu(instance);
@@ -397,7 +421,7 @@ public abstract class Canvas extends FullScreen {
         // only ok, when we return false, so that the Blackberry is forwarding the event
         // to the corresponding consumer. Weird, really. This means that text input seems
         // to be handled differently from keyDown. And it's not keyChar.
-
+        
 		try {
 			int key = Keypad.key(keyCode);
 			if (key == Keypad.KEY_SEND 
@@ -423,6 +447,13 @@ public abstract class Canvas extends FullScreen {
 		System.out.println("keyDown: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
 		int midpKeyCode = getMidpKeyCode(keyCode);
 		
+		if (helper!=null && midpKeyCode==KEY_END) {
+		    boolean result = helper.back();
+		    if (result) {
+		        return true;
+		    }
+		}
+		
 		// we get events here when mouse clicks on the screen for some strange reason
 		// we need to do this check as passing 0 can cause strange events
 		if (midpKeyCode!=0) {
@@ -444,6 +475,7 @@ public abstract class Canvas extends FullScreen {
 	
 	
 	protected boolean keyUp(int keyCode, int time) {
+
 		try {
 			int key = Keypad.key(keyCode);
 			if (key == Keypad.KEY_SEND 
@@ -534,14 +566,38 @@ public abstract class Canvas extends FullScreen {
 	    //private static final int CANCEL = 3;
 
 	    int x1=-1,x2=-1,y1=-1,y2=-1;
-	
+
+	    Field touchField;
+	    
 	protected boolean touchEvent(TouchEvent message) {
 
-	    
-	    
-	    int event = message.getEvent();
+            int event = message.getEvent();
             int x = message.getGlobalX(1);
             int y = message.getGlobalY(1);
+	    
+	    if (event == TouchEvent.DOWN) {
+	        int c = getFieldAtLocation(x,y);
+	        if (c>=0) {
+	            touchField = getField(c);
+	            return super.touchEvent(message);
+	        }
+	        else {
+	            touchField = null;
+	        }
+	    }
+	    
+	    if (touchField!=null) {
+	        return super.touchEvent(message);
+	    }
+	    
+	    // TODO:YURA not sure what this does
+	    boolean result = super.touchEvent(message);
+	    if (result) {
+	        return result;
+	    }
+	    
+
+
 	    
 	    /*
 	        Screen screen = getPolishScreen();
@@ -658,6 +714,7 @@ public abstract class Canvas extends FullScreen {
 	
 	    protected boolean navigationClick(int status, int time)
 	    {
+	        
 	                /* From Blackberry Java Development Guide, might be useful in the future.
 	                  if ((status & KeypadListener.STATUS_TRACKWHEEL) == KeypadListener.STATUS_TRACKWHEEL)
 	                  {

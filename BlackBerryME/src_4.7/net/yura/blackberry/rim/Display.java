@@ -43,15 +43,39 @@ public class Display {
 		    if (current != src) {
 		        midlet.pushScreen(src);
 		    }
+		    else {
+		        ((Canvas)screen).setInputHelper( (TextBox.InputHelper)null );
+		    }
+		    
+		    hereAndNow = null;
 		}
 		
 		if (screen instanceof TextBox) {
-		    midlet.pushScreen( ((TextBox)screen).open() );
+		    
+		    if (hereAndNow != screen) {
+		        hereAndNow = ((TextBox)screen);
+		        
+                        Canvas current = (Canvas)midlet.getActiveScreen();
+		        
+		        TextBox.InputHelper helper = new TextBox.TextBoxDialog();
+		        //TextBox.InputHelper helper = new TextBox.TextBoxKeyboard();
+		        //TextBox.InputHelper helper = new TextBox.TextBoxNative();
+		        helper.start(hereAndNow,midlet);
+
+		        current.setInputHelper(helper);
+		    }
+
 		}
 		
 		if (screen == null) {
 			UiApplication.getUiApplication().requestBackground();
 		}
+	}
+	
+	TextBox hereAndNow;
+	
+	public Object getCurrent() {
+	    return midlet.getActiveScreen();
 	}
 
 	public void callSerially(Runnable runner) {
