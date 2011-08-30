@@ -374,6 +374,9 @@ public class Panel extends Component {
     protected boolean scrollUpDown(int direction) {
         for(int i = 0; i < components.size(); i++) {
             Component component = (Component)components.elementAt(i);
+            if (!component.isVisible()) {
+                continue;
+            }
             if (component instanceof Panel) {
                 boolean scrolled = ((Panel)component).scrollUpDown(direction);
                 if (scrolled) {
