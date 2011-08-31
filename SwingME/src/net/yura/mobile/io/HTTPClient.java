@@ -37,6 +37,13 @@ public abstract class HTTPClient extends QueueProcessorThread {
         public Object id;
         public int redirects = 5;
         public byte[] postData;
+        
+        //#mdebug debug
+        public String toString() {
+            return url+" "+headers+" "+params+" "+post+" "+id+" "+redirects+" "+postData;
+        }
+        //#enddebug
+        
     }
 
     protected abstract void onError(Request request, int responseCode, Hashtable headers, Exception ex);
