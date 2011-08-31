@@ -1,10 +1,9 @@
 package net.yura.blackberry.rim;
 
 import java.util.Hashtable;
-
 import net.rim.device.api.ui.Screen;
 import net.rim.device.api.ui.UiApplication;
-
+import net.rim.device.api.system.Alert;
 
 public class Display {
 
@@ -83,7 +82,9 @@ public class Display {
 	}
 
 	public void vibrate(int duration) {
-		// TODO 
+		if (Alert.isVibrateSupported()) {
+			Alert.startVibrate(duration);
+		} 
 	}
 
 }

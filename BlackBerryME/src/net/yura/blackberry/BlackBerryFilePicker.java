@@ -20,7 +20,8 @@ public class BlackBerryFilePicker extends MainScreen {
 	private void show() {		
          FilePickListener fileListener = new FilePickListener();
          fp.setListener(fileListener);
-         fp.setPath(System.getProperty("fileconn.dir.photos"));             
+         fp.setPath(System.getProperty("fileconn.dir.photos"));
+         fp.setFilter(".jpg");
          //fp.setView(FilePicker.VIEW_PICTURES);              
          fp.show();
 	}
