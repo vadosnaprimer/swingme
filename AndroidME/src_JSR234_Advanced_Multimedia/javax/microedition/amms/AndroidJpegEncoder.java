@@ -12,10 +12,14 @@ public class AndroidJpegEncoder implements MediaProcessor, ImageFormatControl {
 
     Image image;
     OutputStream outputStream;
-    
+
     public void complete() throws javax.microedition.media.MediaException {
-        Bitmap b = image.getBitmap();
-        b.compress(CompressFormat.JPEG, 95, outputStream);
+
+        boolean result = image.getBitmap().compress(CompressFormat.JPEG, 95, outputStream);
+
+        if (!result) {
+            throw new javax.microedition.media.MediaException("saving failed, compress returned false");
+        }
     }
 
     public void setInput(Image inputStream) {

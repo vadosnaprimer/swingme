@@ -13,7 +13,10 @@ import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.Bitmap.Config;
 
-
+/**
+ * for saving of image please use
+ * @see net.yura.mobile.util.ImageUtil#saveImage(Image, OutputStream)
+ */
 public class Image {
 
     private Bitmap bitmap;
@@ -214,13 +217,6 @@ public class Image {
         new Canvas(bm.bitmap).drawBitmap(source.bitmap, 0, 0, paint);
 
         // return bm;
-    }
-    
-    public static void saveImage(Image img, OutputStream out) {
-    	boolean good = img.bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
-    	if (!good) {
-    		throw new RuntimeException("save failed of img: "+img);
-    	}
     }
 
     private static void cleanMem() {
