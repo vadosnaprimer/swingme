@@ -107,9 +107,40 @@ public abstract class MIDlet extends UiApplication {
     }
     
     public boolean platformRequest(String url) throws ConnectionNotFoundException {
-    	if (url.startsWith("http://")) {
+
+    	if (url.startsWith("http://") || url.startsWith("https://")) {
     		Browser.getDefaultSession().displayPage(url);
     	}
+    	else if (url.equals("clipboard://get")) {
+            
+            // Retrieve the Clipboard object.
+            net.rim.device.api.system.Clipboard  cp = net.rim.device.api.system.Clipboard.getClipboard();
+            
+            Object obj = cp.get();
+            if (obj==null) {
+                    // TODO System.clearProperty("clipboard.text");
+            }
+            else {
+                    // TODO System.setProperty("clipboard.text", obj.toString()); // so far we only support Strings
+            }
+            
+        }
+        else if (url.startsWith("clipboard://put/")) {
+
+            // Retrieve the Clipboard object.
+            net.rim.device.api.system.Clipboard  cp = net.rim.device.api.system.Clipboard.getClipboard();
+                        
+            String text = url.substring( "clipboard://put/".length() );
+            if (!"".equals(text)) {
+                cp.put( text );
+            }
+            
+        }
+        else {
+            throw new ConnectionNotFoundException();
+        }
+    	
+    	
     	// launch native date picker?
     	
     	/*
