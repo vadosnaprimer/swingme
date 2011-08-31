@@ -44,8 +44,8 @@ public class AwtJpegEncoder implements MediaProcessor, ImageFormatControl {
 
     }
 
-    public void setInput(Image inputStream) {
-        this.image = inputStream;
+    public void setInput(Object inputStream) {
+        this.image = (Image)inputStream;
     }
 
     public void setOutput(OutputStream outputStream) {
