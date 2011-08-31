@@ -163,6 +163,7 @@
 	<jar jarfile="dist/m3gbasic.jar">
 	  <fileset dir="build">
 	    <include name="javax/microedition/m3g/**"/>
+            <include name="javax/microedition/amms/**"/>
           </fileset>
         </jar>
 

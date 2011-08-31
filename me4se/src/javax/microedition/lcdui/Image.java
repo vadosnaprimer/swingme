@@ -624,27 +624,4 @@ public class Image {
         //return img;
     }
 
-    public static void saveImage(Image img, OutputStream out) throws Exception {
-
-        try {
-             if (javax.imageio.ImageIO.write(img._image, "jpg", out) ) {
-                 return;
-             }
-        }
-        catch(Throwable th) {
-            th.printStackTrace();
-        }
-
-        System.out.print("failed to save with ImageIO, falling back to com.sun.image.codec.jpeg");
-
-        BufferedImage image = img._image;
-        com.sun.image.codec.jpeg.JPEGImageEncoder encoder = com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(out);
-        com.sun.image.codec.jpeg.JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(image);
-        param.setQuality( 0.5f, false);
-        encoder.setJPEGEncodeParam(param);
-        encoder.encode(image);
-        out.close();
-
-    }
-
 }
