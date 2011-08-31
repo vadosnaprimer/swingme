@@ -21,7 +21,7 @@ import net.yura.mobile.gui.Midlet;
  * onExposed() is called when the app takes focus. The result (either the file path or null is no picture was taken) is 
  * sent to AddPhotosViewController and the main screen closes itself.
  */
-public class CameraInvoker extends MainScreen implements com.badoo.mobile.BlackBerryNativeScreen , FileSystemJournalListener {
+public class CameraInvoker extends MainScreen implements FileSystemJournalListener {
 	
 	long _lastUSN;
 	String capturedImgPath = null;
@@ -30,6 +30,8 @@ public class CameraInvoker extends MainScreen implements com.badoo.mobile.BlackB
 		super();
 		UiApplication.getUiApplication().addFileSystemJournalListener(this);
 		_lastUSN = FileSystemJournal.getNextUSN();
+		
+		show();
 	}
 	
 	protected void onExposed(){
@@ -38,7 +40,7 @@ public class CameraInvoker extends MainScreen implements com.badoo.mobile.BlackB
 		Midlet.getMidlet().onResult(-1, capturedImgPath);
 	}
 	
-	public void show() {
+	private void show() {
 		Application.getApplication().invokeLater (new Runnable() {
     	    public void run() {
     	    	UiApplication.getUiApplication().pushScreen(CameraInvoker.this);
@@ -81,7 +83,4 @@ public class CameraInvoker extends MainScreen implements com.badoo.mobile.BlackB
 		}
 	}
 
-	public Object getResult() {
-		return null;
-	}
 }

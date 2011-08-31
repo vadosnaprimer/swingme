@@ -7,15 +7,17 @@ import net.yura.mobile.gui.Midlet;
 /**
  * @author Anton
  */
-public class BlackBerryFilePicker extends MainScreen implements com.badoo.mobile.BlackBerryNativeScreen {
+public class BlackBerryFilePicker extends MainScreen {
 	
 	FilePicker fp = FilePicker.getInstance();
 	
 	public BlackBerryFilePicker() {
-		super();		
+		super();
+		
+		show();
 	}
 	
-	public void show() {		
+	private void show() {		
          FilePickListener fileListener = new FilePickListener();
          fp.setListener(fileListener);
          fp.setPath(System.getProperty("fileconn.dir.photos"));             
@@ -31,9 +33,5 @@ public class BlackBerryFilePicker extends MainScreen implements com.badoo.mobile
         	close();
         }
     }
-	
-	public Object getResult() {
-		return null;
-	}
 
 }
