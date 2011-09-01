@@ -59,7 +59,7 @@ public class Animation extends Thread{
 			}
 		}
 		catch (Throwable th) {
-			th.printStackTrace();
+			Logger.warn(th);
 		}
 	}
 
