@@ -1,12 +1,14 @@
 package javax.microedition.media.player;
 
 import java.util.Vector;
+
 import javax.microedition.media.Control;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.Player;
 import javax.microedition.media.PlayerListener;
-import net.yura.android.AndroidMeActivity;
+
 import net.yura.android.AndroidMeApp;
+import net.yura.mobile.logging.Logger;
 
 public abstract class BasicPlayer implements Player {
 
@@ -292,7 +294,7 @@ public abstract class BasicPlayer implements Player {
             if (playerException instanceof MediaException) {
                 throw (MediaException) playerException;
             }
-            playerException.printStackTrace();
+            Logger.warn(playerException);
         }
     }
 

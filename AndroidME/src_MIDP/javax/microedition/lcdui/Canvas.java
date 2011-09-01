@@ -7,6 +7,7 @@ import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
+import net.yura.mobile.logging.Logger;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -18,11 +19,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
-import android.view.ViewGroup;
 
 public abstract class Canvas extends Displayable {
     public static final int UP = 1;
@@ -493,7 +494,7 @@ public abstract class Canvas extends Displayable {
             }
             catch (Throwable e) {
                 //#debug info
-                e.printStackTrace();
+                Logger.warn(e);
             }
         }
 
@@ -538,7 +539,7 @@ public abstract class Canvas extends Displayable {
                         sizeChanged(Canvas.this.getWidth(), Canvas.this.getHeight());
                     }
                     catch (Throwable e) {
-                        e.printStackTrace();
+                        Logger.warn(e);
                     }
 
                     // only get rid of bitmap if the new screen size is bigger in either dimension
@@ -795,7 +796,7 @@ public abstract class Canvas extends Displayable {
                             break;
                     }
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    Logger.warn(e);
                 }
             }
 
@@ -1044,7 +1045,7 @@ public abstract class Canvas extends Displayable {
                 }
             } catch (Throwable e) {
                 //#debug debug
-                e.printStackTrace();
+                Logger.warn(e);
             }
         }
     }

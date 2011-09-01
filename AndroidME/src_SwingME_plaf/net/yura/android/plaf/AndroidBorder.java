@@ -3,6 +3,7 @@ package net.yura.android.plaf;
 import java.lang.reflect.Method;
 
 import javax.microedition.lcdui.Graphics;
+
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
@@ -13,6 +14,7 @@ import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.Slider;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -119,7 +121,7 @@ public class AndroidBorder implements Border {
             else if (cclass!=null && Button.class.isAssignableFrom(cclass)) {
                 stateList[count++] = android.R.attr.state_pressed;
             }
-            
+
             // commenting out the else seems to fix the foreground color of Lists
             //else {// other things ???? this is not currently used for anything ????
             //    System.out.println(" SELECTED ########################## "+cclass);
@@ -136,14 +138,14 @@ public class AndroidBorder implements Border {
     		jumpToCurrentState = Drawable.class.getMethod("jumpToCurrentState");
     	}
     	catch(Throwable th) {
-    		
+
     	}
     }
-    
+
     static void setDrawableState(Component comp, Drawable drawable) {
         Window w = comp.getWindow();
         drawable.setState(getDrawableState(comp.getCurrentState(),comp.getClass(), w==null || w.isFocused() ));
-        
+
         // as we do not support animation
         // for API 11 honeycomb, we need to call jumpToCurrentState
         if (jumpToCurrentState!=null) {
@@ -151,7 +153,7 @@ public class AndroidBorder implements Border {
         		jumpToCurrentState.invoke(drawable);
         	}
         	catch(Throwable th) {
-        		th.printStackTrace();
+        		Logger.warn(th);
         	}
         }
     }

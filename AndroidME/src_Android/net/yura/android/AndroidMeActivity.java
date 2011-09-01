@@ -9,6 +9,7 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 
+import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -106,7 +107,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             }
         } catch (Throwable e) {
             //#debug debug
-            e.printStackTrace();
+            Logger.warn(e);
         }
     }
 
@@ -160,7 +161,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
                 System.out.println("Waiting for view...");
                 Thread.sleep(100);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Logger.warn(ex);
             }
         }
     }
@@ -176,7 +177,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
                     AndroidMeApp.createMIDlet(midletClassName);
                     AndroidMeApp.startMIDlet();
                 } catch (Throwable ex) {
-                    ex.printStackTrace();
+                    Logger.warn(ex);
                 }
             }
         }.start();
@@ -332,7 +333,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             midlet.onResult(resultCode, result);
         } catch (Throwable e) {
             //#debug info
-            e.printStackTrace();
+            Logger.warn(e);
         }
     }
 
@@ -365,7 +366,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         }
         catch(Throwable th) {
         	//#debug debug
-        	th.printStackTrace();
+        	Logger.warn(th);
         }
     }
 }

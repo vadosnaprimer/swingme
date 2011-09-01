@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Stefano Sanna
- * 
+ *
  * gerdavax@gmail.com - http://www.gerdavax.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import net.yura.mobile.logging.Logger;
+
 public class ReflectionUtils {
 
 	private ReflectionUtils() {
@@ -36,12 +38,12 @@ public class ReflectionUtils {
 		try {
 			printMethods(Class.forName(myClassName));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.warn(e);
 		}
-			
-		
+
+
 	}
-	
+
 	/*** SCUOTING METHODS ***/
 	public static void printMethods(Class myClass) {
 		System.out.println("\n*** METHODS OF " + myClass.toString());

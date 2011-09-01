@@ -2,6 +2,7 @@ package net.yura.android;
 
 import java.util.Vector;
 
+import net.yura.mobile.logging.Logger;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
@@ -34,7 +35,7 @@ public class NativeAndroidMenu implements MenuSystem {
 
         }
 	    catch (Throwable e) {
-	        e.printStackTrace();
+	        Logger.warn(e);
 	    }
 	    return true;
     }
@@ -64,7 +65,7 @@ public class NativeAndroidMenu implements MenuSystem {
 								fireActionPerformed(menuItem,submenu);
 							}
 							catch (Throwable th) {
-								th.printStackTrace();
+								Logger.warn(th);
 							}
 							return true;
 						}

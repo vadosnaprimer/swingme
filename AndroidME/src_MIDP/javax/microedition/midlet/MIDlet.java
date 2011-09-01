@@ -2,10 +2,13 @@ package javax.microedition.midlet;
 
 
 import java.util.Properties;
+
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
+
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
+import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -62,7 +65,7 @@ public abstract class MIDlet {
                     sleep(2000);
                     System.exit(0);
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    Logger.warn(e);
                 }
             }
         }.start();
@@ -127,7 +130,7 @@ public abstract class MIDlet {
                 showNotification(content);
             }
             else if (url.equals("clipboard://get")) {
-            	
+
             	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
             	Object obj = clipboardManager.getText();
             	if (obj==null) {
@@ -136,23 +139,23 @@ public abstract class MIDlet {
             	else {
             		System.setProperty("clipboard.text", obj.toString()); // so far we only support Strings
             	}
-            	
+
             }
             else if (url.startsWith("clipboard://put/")) {
             	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
-            	
+
             	// this makes us link to SwingME where we do not really want to, as me4se would need to too
             	//net.yura.mobile.gui.Midlet midlet = net.yura.mobile.gui.Midlet.getMidlet();
             	//Object obj = midlet.retrievePlatformRequestParam(url);
             	//if (obj instanceof String) {
             	//	clipboardManager.setText( (String)obj );
             	//}
-            	
+
             	String text = url.substring( "clipboard://put/".length() );
             	if (!"".equals(text)) {
             		clipboardManager.setText( text );
             	}
-            	
+
             }
             else {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
@@ -162,7 +165,7 @@ public abstract class MIDlet {
             }
         } catch (Throwable e) {
             //#debug debug
-            e.printStackTrace();
+            Logger.warn(e);
 
             ConnectionNotFoundException connEx = new ConnectionNotFoundException(url);
             connEx.initCause(e);
@@ -239,7 +242,7 @@ public abstract class MIDlet {
                     // Request Cell Location
                     CellLocation.requestLocationUpdate();
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    Logger.warn(e);
                 }
             }
         }
@@ -263,7 +266,7 @@ public abstract class MIDlet {
             super.onCellLocationChanged(location);
 
             try {
-            	
+
             	if (location instanceof GsmCellLocation) {
             		GsmCellLocation gsmLocation = (GsmCellLocation) location;
 	                setProperty("CellID", "" + gsmLocation.getCid());
@@ -285,7 +288,7 @@ public abstract class MIDlet {
                     setProperty("MNC", op.substring(3));
                 }
             } catch (Throwable e) {
-                e.printStackTrace();
+                Logger.warn(e);
             }
         }
 
@@ -310,7 +313,7 @@ public abstract class MIDlet {
             im.hideSoftInputFromWindow(view.getWindowToken(), 0);
         } catch (Throwable e) {
             //#debug info
-            e.printStackTrace();
+            Logger.warn(e);
         }
     }
 }

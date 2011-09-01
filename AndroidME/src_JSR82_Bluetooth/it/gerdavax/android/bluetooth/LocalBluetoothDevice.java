@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Stefano Sanna
- * 
+ *
  * gerdavax@gmail.com - http://www.gerdavax.it
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,8 +26,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.UUID;
 
+import net.yura.mobile.logging.Logger;
 import android.app.NotificationManager;
 import android.bluetooth.IBluetoothDeviceCallback;
 import android.content.BroadcastReceiver;
@@ -41,64 +41,64 @@ import android.util.Log;
 /**
  * This class is the entry point of the Android Bluetooth Library. It implements
  * a singleton pattern.
- * 
+ *
  * <br/>
  * <b>WARNING: do not forget to invoke close(Context) when your application
  * leaves, otherwise the LocalBluetoothDevice may not work on next
  * invocations.</b><br/>
- * 
- * 
+ *
+ *
  * First step for using the Bluetooth services is to initialize the instance of
  * the LocalBluetoothDevice:
- * 
+ *
  * <pre>
  * LocalBluetoothDevice localBluetoothDevice = LocalBluetoothDevice.init(context);
  * </pre>
- * 
+ *
  * where <code>context</code> is the context of Activity which manages the
  * LocalBluetoothDevice instance. Bluetooth service status (enabled/disabled)
  * can be retrieved using method
- * 
+ *
  * <pre>
  * localBluetoothDevice.isEnabled();
  * </pre>
- * 
+ *
  * and the service can be enabled and disabled using method
- * 
+ *
  * <pre>
  * localBluetoothDevice.setEnabled(boolean);
  * </pre>
- * 
+ *
  * To start scanning (discovery) of surrounding Bluetooth devices just invoke
  * the
- * 
+ *
  * <pre>
  * localBluetoothDevice.scan();
  * </pre>
- * 
+ *
  * method. Both service on/off and device scanning are asynchronous processes,
  * therefore to receive notification about that, the application must provide a
  * LocalBluetoothDeviceListener and set it to the LocalBluetoothDevice instance.
- * 
+ *
  * @author Stefano Sanna - gerdavax@gmail.com - http://www.gerdavax.it
- * 
+ *
  */
 public final class LocalBluetoothDevice implements BluetoothDevice {
 	/**
 	 * The local device is not discoverable nor connectable
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public static final int SCAN_MODE_NONE = 0;
 	/**
 	 * The local device is connectable, however it is not discoverable
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public static final int SCAN_MODE_CONNECTABLE = 1;
 	/**
 	 * The local device is both discoverable and connectable
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public static final int SCAN_MODE_CONNECTABLE_DISCOVERABLE = 3;
@@ -269,7 +269,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 					createBond(address);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logger.warn(e);
 			}
 		}
 
@@ -303,7 +303,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 						return false;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logger.warn(e);
 			}
 			return false;
 		}
@@ -338,7 +338,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				try {
 					sockets.get(keys.nextElement()).closeSocket();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.warn(e);
 				}
 			}
 		}
@@ -418,7 +418,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				try {
 					closeInputStream();
 				} catch (Exception e) {
-					e.printStackTrace();
+					Logger.warn(e);
 				}
 
 				this.target.close();
@@ -851,7 +851,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				Log.d(TAG_RECEIVER, "Unregistering");
 				context.unregisterReceiver(this);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Logger.warn(e);
 			} finally {
 				registered = false;
 			}
@@ -864,7 +864,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param context
 	 *            the context of the Activity which uses the
 	 *            LocalBluetoothDevice
@@ -907,7 +907,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Gets unique instance of LocalBluetoothDevice.
-	 * 
+	 *
 	 * @return
 	 * @throws IllegalStateException
 	 */
@@ -920,7 +920,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Gets the BD Address of local device
-	 * 
+	 *
 	 * @return
 	 * @throws Exception
 	 */
@@ -935,7 +935,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Gets friendly name assigned to local device
-	 * 
+	 *
 	 * @return The friendly name of this device
 	 */
 	public String getName() throws BluetoothException {
@@ -959,7 +959,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Starts discovery process for remote Bluetooth devices
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void scan() throws Exception {
@@ -971,7 +971,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Checks if scanning is in progress
-	 * 
+	 *
 	 * @return true device discovery is running
 	 * @throws Exception
 	 * @since 0.2
@@ -986,7 +986,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	/**
 	 * Stops current device scanning (only if it has been started by this
 	 * LocalBluetoothDevice)
-	 * 
+	 *
 	 * @throws Exception
 	 * @since 0.2
 	 */
@@ -1000,11 +1000,11 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * DOES NOT WORK! (keeping it private)
-	 * 
+	 *
 	 * Native error is: ERROR/bluetooth_common.cpp(56):
 	 * dbus_func_args_timeout_valist: D-Bus error in GetRemoteFeatures:
 	 * org.bluez.Error.NotAvailable (Not Available)
-	 * 
+	 *
 	 * @param address
 	 * @return
 	 * @throws Exception
@@ -1039,10 +1039,10 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	/**
 	 * Sets the LocalBluetoothDeviceListener which will receive events about
 	 * Bluetooth activation and device discovery progress
-	 * 
+	 *
 	 * WARNING: all invocations to the listener are synchronous, therefore
 	 * listener's method implementation must avoid long operations.
-	 * 
+	 *
 	 * @param listener
 	 */
 	public void setListener(LocalBluetoothDeviceListener listener) {
@@ -1050,7 +1050,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param address
 	 * @return
 	 * @throws Exception
@@ -1064,7 +1064,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	/**
 	 * Closes the LocalBluetoothDevice and unregisters any Bluetooth service
 	 * broadcast listener. All opened BluetoothSocket will be closed.
-	 * 
+	 *
 	 */
 	public void close() {
 		// close all sockets
@@ -1136,7 +1136,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true is Bluetooth is enabled
 	 * @throws Exception
 	 */
@@ -1148,7 +1148,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Enables the Bluetooth service on this handset
-	 * 
+	 *
 	 * @param enabled
 	 * @return true if the Bluetooth service can be enabled
 	 * @throws BluetoothException
@@ -1169,7 +1169,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param address
 	 *            the BDADDR (address) of required device
 	 * @return the RemoteBluetoothDevice instance associated with assigned
@@ -1209,13 +1209,13 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 			PLATFORM_SCAN_MODE_CONNECTABLE = ReflectionUtils.readStaticConstantValue(bluetoothServiceClass, "SCAN_MODE_CONNECTABLE");
 			PLATFORM_SCAN_MODE_CONNECTABLE_DISCOVERABLE = ReflectionUtils.readStaticConstantValue(bluetoothServiceClass, "SCAN_MODE_CONNECTABLE_DISCOVERABLE");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.warn(e);
 		}
 	}
 
 	/**
 	 * Returns current scan mode
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public int getScanMode() throws Exception {
@@ -1243,7 +1243,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Configures current scan mode
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public void setScanMode(int mode) throws Exception {
@@ -1275,7 +1275,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Opens a server socket on the first available channel (between 12 and 30)
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public BluetoothSocket openServerSocket() throws BluetoothException {
@@ -1285,7 +1285,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Opens a server socket on given channel (between 12 and 30)
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public BluetoothSocket openServerSocket(int channel) throws BluetoothException {
@@ -1308,7 +1308,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * TO BE TESTED; keeping it private
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	private String lastSeen(String address) throws Exception {
@@ -1318,9 +1318,9 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Shows system activity to input PIN for assigned device
-	 * 
+	 *
 	 * Thanks to Emanuele Di Saverio
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public void showDefaultPinInputActivity(String address, boolean clearSystemNotification) {
@@ -1334,7 +1334,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 
 	/**
 	 * Removes the "Pin requested" notification from the notification area
-	 * 
+	 *
 	 * @since 0.3
 	 */
 	public void clearSystemNotification() {

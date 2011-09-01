@@ -6,13 +6,14 @@ import javax.microedition.media.Control;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.control.VideoControl;
 
+import net.yura.android.AndroidMeActivity;
+import net.yura.mobile.logging.Logger;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup.LayoutParams;
-import net.yura.android.AndroidMeActivity;
 
 public class CameraPlayer extends BasicPlayer implements VideoControl {
 
@@ -141,7 +142,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
                     snapshotLock.wait();
                 }
                 catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Logger.warn(e);
                 }
             }
         }
@@ -331,7 +332,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
                 try {
                     camera.setParameters(params);
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    Logger.warn(e);
                 }
             }
 
@@ -339,7 +340,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
                 camera.setPreviewDisplay(holder);
             }
             catch (IOException e) {
-                e.printStackTrace();
+                Logger.warn(e);
             }
         }
     }

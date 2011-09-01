@@ -34,6 +34,7 @@ import java.net.Socket;
 import java.util.Vector;
 
 import net.yura.android.AndroidMeApp;
+import net.yura.mobile.logging.Logger;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -231,7 +232,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
                 updateConnectivity();
             } catch (Throwable e) {
                 //#debug info
-                e.printStackTrace();
+                Logger.warn(e);
             }
         }
 

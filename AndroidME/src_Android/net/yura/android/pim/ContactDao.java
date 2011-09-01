@@ -2,6 +2,10 @@ package net.yura.android.pim;
 
 import java.util.Enumeration;
 
+import javax.microedition.pim.Contact;
+
+import net.yura.android.AndroidMeApp;
+import net.yura.mobile.logging.Logger;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -9,9 +13,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.Contacts;
 import android.provider.Contacts.People;
-import javax.microedition.pim.Contact;
-
-import net.yura.android.AndroidMeApp;
 
 /**
  * This Data Access Object will manage JavaME PIM contact objects and talks to the sqlite3 database on android.
@@ -70,7 +71,7 @@ public class ContactDao {
             try {
                 Contacts.People.addToMyContactsGroup(this.contentResolver, id);
             } catch (Throwable e) {
-                e.printStackTrace();
+                Logger.warn(e);
             }
         } else {
             long id = contact.getId();

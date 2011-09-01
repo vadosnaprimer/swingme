@@ -1,17 +1,17 @@
 package net.yura.android.bluetooth;
 
-import java.util.ArrayList;
-
 import it.gerdavax.android.bluetooth.LocalBluetoothDevice;
 import it.gerdavax.android.bluetooth.LocalBluetoothDeviceListener;
 import it.gerdavax.android.bluetooth.RemoteBluetoothDevice;
+
+import java.util.ArrayList;
 
 import javax.bluetooth.DeviceClass;
 import javax.bluetooth.DiscoveryListener;
 import javax.bluetooth.RemoteDevice;
 
 import net.yura.android.AndroidMeApp;
-
+import net.yura.mobile.logging.Logger;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -139,7 +139,7 @@ public class BluetoothManager {
 
                     listener.deviceDiscovered(btDevice, deviceClass);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.warn(e);
                 }
             }
         }

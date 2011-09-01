@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import net.yura.mobile.logging.Logger;
+
 public class FileSystemRegistry {
 
     public static boolean addFileSystemListener(FileSystemListener listener) {
@@ -22,7 +24,7 @@ public class FileSystemRegistry {
                 String path = root.getCanonicalPath();
                 rootsArray.add(path);
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.warn(e);
             }
         }
         return rootsArray.elements();

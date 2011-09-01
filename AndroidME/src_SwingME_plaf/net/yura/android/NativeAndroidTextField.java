@@ -1,16 +1,12 @@
 package net.yura.android;
 
-import android.os.Handler;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.TextWatcher;
-import android.util.TypedValue;
-import android.view.KeyEvent;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.microedition.lcdui.Canvas;
+import javax.microedition.lcdui.Canvas.InputHelper;
 import javax.microedition.lcdui.TextBox;
+
 import net.yura.android.lcdui.FontManager;
 import net.yura.android.plaf.AndroidBorder;
 import net.yura.mobile.gui.ActionListener;
@@ -24,15 +20,22 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.logging.Logger;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 import android.widget.TextView;
-import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Canvas.InputHelper;
 
 /**
  * TODO:
@@ -307,7 +310,7 @@ System.out.println("[NativeAndroidTextField] ##################### draw");
                         }
                         catch(Throwable th) {
                             //#debug debug
-                            th.printStackTrace();
+                            Logger.warn(th);
                         }
                     }
                 });

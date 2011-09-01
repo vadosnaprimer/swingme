@@ -22,7 +22,7 @@ public class AndroidOptionPane extends OptionPane {
                 }
                 catch(Exception ex) {
                     //#debug debug
-                    ex.printStackTrace();
+                    Logger.warn(ex);
 
                     //#debug warn
                     Logger.warn("failed to start OptionPaneActivity, falling back to SwingME OptionPane");

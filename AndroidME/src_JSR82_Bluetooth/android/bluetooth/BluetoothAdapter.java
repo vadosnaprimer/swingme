@@ -1,8 +1,9 @@
 package android.bluetooth;
 
 
-import net.yura.android.bluetooth.BluetoothManager;
 import it.gerdavax.android.bluetooth.LocalBluetoothDevice;
+import net.yura.android.bluetooth.BluetoothManager;
+import net.yura.mobile.logging.Logger;
 
 public class BluetoothAdapter {
 
@@ -34,7 +35,7 @@ public class BluetoothAdapter {
         try {
             return localBT.isEnabled();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
 
         return false;
@@ -44,7 +45,7 @@ public class BluetoothAdapter {
         try {
             return localBT.isScanning();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
 
         return false;
@@ -55,7 +56,7 @@ public class BluetoothAdapter {
             localBT.stopScanning();
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
 
         return false;
@@ -65,7 +66,7 @@ public class BluetoothAdapter {
         try {
             return localBT.getName();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
         return null;
     }
@@ -74,7 +75,7 @@ public class BluetoothAdapter {
         try {
             return localBT.getAddress();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
         return null;
     }
@@ -83,7 +84,7 @@ public class BluetoothAdapter {
         try {
             localBT.scan();
         } catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
 
         return true;

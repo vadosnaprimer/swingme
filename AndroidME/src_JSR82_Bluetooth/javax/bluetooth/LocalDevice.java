@@ -9,12 +9,12 @@
 
 package javax.bluetooth;
 
-import android.bluetooth.BluetoothAdapter;
 import javax.microedition.io.Connection;
 
-import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
 import net.yura.android.bluetooth.BluetoothManager;
+import net.yura.mobile.logging.Logger;
+import android.bluetooth.BluetoothAdapter;
 
 /**
  * The <code>LocalDevice</code> class defines the basic functions of the
@@ -76,7 +76,7 @@ public class LocalDevice {
         	    }
         	    catch (Throwable e) {
         	        ex.initCause(e);
-        	        e.printStackTrace();
+        	        Logger.warn(e);
                 }
             }
 	    });

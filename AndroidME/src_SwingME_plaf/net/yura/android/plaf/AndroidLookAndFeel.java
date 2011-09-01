@@ -20,6 +20,7 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
+import net.yura.mobile.logging.Logger;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -203,19 +204,19 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         buttonStyle.addBorder(new AndroidBorder(but, padding),Style.ALL);
         setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("Button", buttonStyle);
-        
+
         Style helpButtonStyle = new Style(defaultStyle);
         Drawable btn_circle = getDrawable(ctx, "btn_circle");
         Drawable helpDrawable = getDrawable(ctx, 0, android.R.drawable.ic_menu_help);
         Rect padding2 = getAdjustedDensityRect(ctx, 7, 17, 7, 17);
-        // the height on circle on 
+        // the height on circle on
         int w = btn_circle.getIntrinsicWidth();
         AndroidIcon helpIcon = new AndroidIcon(helpDrawable, w, w);
         helpButtonStyle.addBorder( new IconBorder(padding2.top,padding2.left,padding2.bottom,padding2.right,helpIcon,null) ,Style.ALL);
         setForegroundColor(ctx, helpButtonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("helpButton", helpButtonStyle);
-        
-        
+
+
         Style sbuttonStyle = new Style(defaultStyle);
         sbuttonStyle.addBorder(getBorder(ctx, android.R.attr.buttonStyle, android.R.attr.background),Style.ALL);
         setForegroundColor(ctx, sbuttonStyle, android.R.style.Widget_Button,Button.class);
@@ -408,7 +409,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
             return ctx.getResources().getDrawable(attrIdx);
         }
         catch (Throwable e) {
-            e.printStackTrace();
+            Logger.warn(e);
         }
         return null;
     }
