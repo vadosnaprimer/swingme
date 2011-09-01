@@ -57,7 +57,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug debug
-			e.printStackTrace();
+			Logger.warn(e);
 		}
     return false;
 	}
@@ -74,7 +74,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug debug
-			e.printStackTrace();
+			Logger.warn(e);
 		}
     return null;
 	}
@@ -95,7 +95,7 @@ public class CallStack
 		catch(Exception e)
 		{
 			//#debug debug
-			e.printStackTrace();
+			Logger.warn(e);
 		}
   }
 
@@ -110,7 +110,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug debug
-			e.printStackTrace();
+			Logger.warn(e);
 		}
 	}
 
@@ -307,7 +307,7 @@ public class CallStack
 			catch(RecordStoreException e)
 			{
 				//#debug debug
-				e.printStackTrace();
+				Logger.warn(e);
 			}
 		}
 	}

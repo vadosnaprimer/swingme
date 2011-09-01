@@ -237,7 +237,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
         }
         catch(IOException ex) {
             //#debug debug
-            ex.printStackTrace();
+            Logger.warn(ex);
             throw new RuntimeException( ex.toString() );
         }
     }

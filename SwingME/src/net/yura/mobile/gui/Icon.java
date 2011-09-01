@@ -19,8 +19,11 @@ package net.yura.mobile.gui;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.microedition.lcdui.Image;
+
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -57,7 +60,7 @@ public class Icon {
                 initImage( Image.createImage( in ) );
             }
             catch(IOException ex) {
-                ex.printStackTrace();
+                Logger.warn(ex);
             }
         }
     }

@@ -26,7 +26,7 @@ public class RMSUtil {
                 catch (Exception ex) {
                     //#mdebug info
                     Logger.info("can not del RMS, this should not happen");
-                    ex.printStackTrace();
+                    Logger.warn(ex);
                     //#enddebug
                 }
 

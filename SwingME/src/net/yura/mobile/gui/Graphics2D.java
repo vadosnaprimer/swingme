@@ -229,7 +229,7 @@ public class Graphics2D {
             }
             catch (Throwable e) {
                 //#debug debug
-                e.printStackTrace();
+                Logger.warn(e);
                 // failed to scale, will draw none-scalled but centered
                 drawImage(img, x+w/2-img.getWidth()/2, y+h/2-img.getHeight()/2);
             }

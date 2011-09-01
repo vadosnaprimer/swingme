@@ -3,13 +3,16 @@ package net.yura.mobile.util;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Hashtable;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.file.FileConnection;
 import javax.microedition.lcdui.Image;
 
+import net.yura.mobile.logging.Logger;
+
 public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
 
-    
+
 
     public Image getThumbnailFromFile(String fileName) {
 
@@ -23,10 +26,10 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
                 if (img!=null) {
                     return Image.createImage(img, 0, img.length);
                 }
-                
+
                 /*
-                 THIS IS A BAD METHOD 
-                  
+                 THIS IS A BAD METHOD
+
                 // OLD BlackBerry
                 String bbThumbs = fileName.substring(0, fileName.lastIndexOf('/')) +"/BBThumbs.dat";
                 if (FileUtil.localFileExists(bbThumbs)) {
@@ -39,9 +42,9 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
                 */
 
                 /*
-                 
+
                   THIS DOES NOT WORK!!
-                 
+
                 // NEW BlackBerry                                               can be "pictures" or "camera" after the "user"
                 String bbThumbsNew;
                 if (fileName.startsWith("file:///store/")) { // home/user/
@@ -70,15 +73,15 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
             catch (Exception ex) {
                 //#mdebug debug
                 System.err.println("error "+ex+" "+img+" "+(img!=null?img.length:-1));
-                ex.printStackTrace();
+                Logger.warn(ex);
                 //#enddebug
             }
-        
-        
+
+
             return null;
     }
 
-  
+
 
     private static Hashtable thumbsMap;
     private static String currentDB;
@@ -229,16 +232,16 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
 
 
 
-    
-    
-    
-    
 
-  
+
+
+
+
+
 /*
-  
+
       This is for loading the new files but does NOT work
-  
+
     public static class TagGroup
     {
         public int Reserved1;
@@ -246,9 +249,9 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
         public Vector Tags;
 
         public TagGroup(InputStream st, long length) {
-            
+
             try {
-            
+
                 DataInputStream br = new DataInputStream(st);
                 if (br.readShort() != 8710)
                 {
@@ -279,7 +282,7 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
                 //Not sure what other tags are
             }
             catch (Exception ex) {
-                ex.printStackTrace();
+                Logger.warn(ex);
             }
         }
     }
@@ -340,19 +343,19 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
         }
     }
 */
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
 
 
     /**
      * YURA: this works but is very very bad on memory
-     * 
+     *
      * @param byte[] search refers to BBThumbs.dat file already opened previously and
      * indexed for faster
 
@@ -497,10 +500,10 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
                 counter++;
             }
             return b;
-    
+
         }
         return null;
     }
 */
-    
+
 }

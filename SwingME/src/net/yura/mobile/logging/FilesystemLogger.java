@@ -66,7 +66,7 @@ public class FilesystemLogger extends Logger {
     }
     catch(IOException e)
     {
-      e.printStackTrace();
+      Logger.warn(e);
     }
   }
 }

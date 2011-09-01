@@ -496,7 +496,7 @@ public class ImageUtil {
             
         }
         catch(Exception ex) {
-            ex.printStackTrace();
+            Logger.warn(ex);
         }
         
     }

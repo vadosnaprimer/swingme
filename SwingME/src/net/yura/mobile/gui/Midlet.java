@@ -209,7 +209,7 @@ public abstract class Midlet extends MIDlet {
             platformRequest(url);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            Logger.warn(e);
             throw new RuntimeException(e.toString());
         }
     }
@@ -305,7 +305,7 @@ public abstract class Midlet extends MIDlet {
             }
         }
         catch(Throwable th) {
-            th.printStackTrace();
+            Logger.warn(th);
         }
 
         return Midlet.class.getResourceAsStream(name);

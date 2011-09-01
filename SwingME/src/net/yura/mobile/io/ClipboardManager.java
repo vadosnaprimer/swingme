@@ -6,6 +6,7 @@ package net.yura.mobile.io;
 
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.io.ServiceLink.Task;
+import net.yura.mobile.logging.Logger;
 
 /**
  *
@@ -75,7 +76,7 @@ public class ClipboardManager implements ServiceLink.TaskHandler {
                 midlet.platformRequest("clipboard://put/"+text);
             }
             catch(Exception ex) {
-                ex.printStackTrace();
+                Logger.warn(ex);
             }
         }
     }

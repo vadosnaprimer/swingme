@@ -164,7 +164,7 @@ public class FileUtil {
                 return fc.isDirectory();
             }
             catch (IOException e) {
-                e.printStackTrace();
+                Logger.warn(e);
             }
 */
             return name.endsWith("/");
