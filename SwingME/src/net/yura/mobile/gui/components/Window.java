@@ -35,7 +35,7 @@ import net.yura.mobile.logging.Logger;
 public class Window extends Panel {
 
         private DesktopPane desktop;
-        private Component focusedComponent;
+        /* package */ Component focusedComponent;
         boolean closeOnFocusLost;
         public int snap;
         private Vector softkeys;
