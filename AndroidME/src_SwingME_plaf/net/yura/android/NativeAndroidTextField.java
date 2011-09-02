@@ -69,7 +69,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     public NativeAndroidTextField() {
 
-System.out.println("[NativeAndroidTextField] ##################### construct");
+//System.out.println("[NativeAndroidTextField] ##################### construct");
 
     }
 
@@ -91,7 +91,7 @@ System.out.println("[NativeAndroidTextField] ##################### construct");
 
         final View view = textBox.getCanvasView();
 
-System.out.println("[NativeAndroidTextField] ##################### start");
+//System.out.println("[NativeAndroidTextField] ##################### start");
 
         //textField = (Component)textBox.getCommandListener();
 
@@ -237,10 +237,19 @@ System.out.println("[NativeAndroidTextField] ##################### start");
         editText.requestFocus();
 
 
+
+        // get old focusListeners, we will keep this copy
+        focusListeners = textField.getFocusListeners();
+        // remove old focusListeners
+        for (int c=0;c<focusListeners.length;c++) {
+            textField.removeFocusListener( focusListeners[c] );
+        }
+        // add ourselves to listen for focus
         textField.addFocusListener(this);
 
     }
 
+    ChangeListener[] focusListeners;
 
     public void onLayout() {
 
@@ -256,7 +265,7 @@ System.out.println("[NativeAndroidTextField] ##################### start");
 
         if (h!=h2) {
 
-System.out.println("[NativeAndroidTextField] ##################### layout");
+//System.out.println("[NativeAndroidTextField] ##################### layout");
 
             textField.setPreferredSize(textField.getPreferredWidth(), h2 );
 
@@ -278,7 +287,7 @@ System.out.println("[NativeAndroidTextField] ##################### layout");
         // if the location has changed since last paint we need to move the component
         if (x!=tx || y!=ty || w!=tw || h!=th) {
 
-System.out.println("[NativeAndroidTextField] ##################### draw");
+//System.out.println("[NativeAndroidTextField] ##################### draw");
 
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
@@ -327,13 +336,24 @@ System.out.println("[NativeAndroidTextField] ##################### draw");
     public void changeEvent(Component source, int num) {
         if (num==Component.FOCUS_LOST) {
             textField.removeFocusListener(this);
+
+            // set old focusListeners back
+            for (int c=0;c<focusListeners.length;c++) {
+                textField.addFocusListener( focusListeners[c] );
+            }
+            // fire old focusListeners
+            for (int c=0;c<focusListeners.length;c++) {
+                focusListeners[c].changeEvent(source, num);
+            }
+            focusListeners = null;
+
             close();
         }
     }
 
     public void close() {
 
-System.out.println("[NativeAndroidTextField] ##################### close");
+//System.out.println("[NativeAndroidTextField] ##################### close");
 
         Canvas.CanvasView view = textBox.getCanvasView();
 
