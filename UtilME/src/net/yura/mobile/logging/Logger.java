@@ -2,6 +2,8 @@ package net.yura.mobile.logging;
 
 import java.io.PrintStream;
 
+import net.yura.mobile.gui.components.OptionPane;
+
 /**
  *
  * @author Orens
@@ -166,8 +168,11 @@ public class Logger {
 
     protected synchronized void log(Throwable throwable, int level)
     {
-      System.err.print(toString(level));
-      throwable.printStackTrace();
+        //#debug debug
+        OptionPane.showMessageDialog(null, "->" + throwable.getMessage(), "Exception", OptionPane.WARNING_MESSAGE);
+
+        System.err.print(toString(level));
+        throwable.printStackTrace();
     }
 }
 
