@@ -1,5 +1,7 @@
 package net.yura.mobile.util;
 
+import net.yura.mobile.io.HTTPClient;
+
 public class Url {
     // url > protocol://host[:port][/file][?query] http://g.com/home/h?a=1
     private String protocol;
@@ -85,7 +87,7 @@ public class Url {
         if (query.length() > 0) {
             query += '&';
         }
-        query += key + '=' + value;
+        query += key + '=' + HTTPClient.encode(value);
     }
 
     public String getQueryParameter(String key) {
@@ -98,7 +100,7 @@ public class Url {
             startIdx += v.length() + 1;
 
             if (key.equals(k)) {
-                return v;
+                return HTTPClient.decode(v);
             }
         }
 
@@ -113,7 +115,7 @@ public class Url {
             startIdx += res.length() + 1;
         }
 
-        return res;
+        return HTTPClient.decode(res);
     }
 
     public void addPathSegment(String newSeg) {
@@ -121,7 +123,7 @@ public class Url {
         if (path.length() > 0) {
             path += '/';
         }
-        path += newSeg;
+        path += HTTPClient.encode(newSeg);
     }
 
     // Override
