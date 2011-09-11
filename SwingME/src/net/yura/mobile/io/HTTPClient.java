@@ -15,6 +15,7 @@ import javax.microedition.io.HttpConnection;
 
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
+import net.yura.mobile.util.Url;
 
 /**
  * @author Yura Mamyrin
@@ -71,24 +72,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
             // if this is a GET, or we have other data to POST
             if ((!request.post || request.postData!=null) && getpost) {
 
-                ByteArrayOutputStream b = new ByteArrayOutputStream();
-                Writer w = new OutputStreamWriter(b);
-                getPostString(request.params,w);
-                w.flush();
-                String getpostString = b.toString(); // this should be safe, as URL Encoded String will not have any UTF
-
-/*              // this does the same but creates a new class "java.io.StringWriter" that we can use
-                final StringBuffer buff = new StringBuffer();
-                Writer writer = new Writer() { // in JavaSE we have a class
-                    public void write(char[] cbuf, int off, int len) {
-                        buff.append(cbuf, off, len);
-                    }
-                    public void flush() { }
-                    public void close() { }
-                };
-                getPostString(request.params,writer);
-                String getpostString = buff.toString();
-*/
+                String getpostString = Url.toQueryString(request.params);
 
                 if (url.indexOf('?') >=0) {
                     url = url +"&"+getpostString;
@@ -129,7 +113,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
 	            else if(request.post && getpost) {
 
                         Writer w = new OutputStreamWriter(os);
-                        getPostString(request.params,w);
+                        Url.writeQueryString(request.params,w);
                         w.flush();
 
 	                //os.write(getpost.getBytes());
@@ -196,166 +180,6 @@ public abstract class HTTPClient extends QueueProcessorThread {
         }
     }
 
-
-
-    public void getPostString(Hashtable params,Writer getpostb) throws IOException {
-
-            //StringBuffer getpostb = new StringBuffer();
-            Enumeration enu = params.keys();
-
-            boolean first=true;
-
-            while(enu.hasMoreElements()) {
-                Object key = enu.nextElement();
-
-                if (first) {
-                    first=false;
-                }
-                else {
-                    getpostb.write('&');
-                }
-
-                encode( String.valueOf( key ), getpostb );
-                getpostb.write('=');
-                encode( String.valueOf( params.get(key)), getpostb );
-            }
-
-            //return getpostb.toString();
-
-    }
-
-    /**
-     * @see java.net.URLEncoder#encode(java.lang.String) URLEncoder.encode
-     */
-    public static String encode(String s) {
-        try {
-            ByteArrayOutputStream b = new ByteArrayOutputStream(s.length());
-            Writer w = new OutputStreamWriter(b);
-            encode(s,w);
-            w.flush();
-            return b.toString();
-        }
-        catch(IOException ex) {
-            //#debug debug
-            Logger.warn(ex);
-            throw new RuntimeException( ex.toString() );
-        }
-    }
-
-    /**
-     * @see java.net.URLEncoder#encode(java.lang.String, java.lang.String) URLEncoder.encode
-     */
-    public static void encode(String s,Writer ret) throws IOException {
-        for (int a=0;a<s.length();a++) {
-            char c = s.charAt(a);
-            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*' || c == '_') {
-                ret.write(c);
-            }
-            else if (c == ' ') {
-                ret.write('+');
-            }
-            else {
-                // we do not convert the whole string to UTF-8, but only the current char, this is better for memory
-                byte[] ba = String.valueOf(c).getBytes("UTF-8"); // YURA this can fail if the system default is not UTF-8
-                for (int j = 0; j < ba.length; j++) {
-
-                    int n = ba[j] & 0xFF;
-                    ret.write('%');
-                    if (n < 16) {
-                        ret.write('0');
-                    }
-                    ret.write(Integer.toHexString(n));
-
-                    // THIS IS THE SAME AS ABOVE, ALSO WORKS
-                    // the only difference is that it uses A-F and not a-f
-                    //ret.write('%');
-                    //int d1 = (ba[j] >> 4) & 0xF;
-                    //int d2 = ba[j] & 0xF;
-                    //char ch1 = (char) ((d1<10)?('0' + d1):('A' - 10 + d1));
-                    //char ch2 = (char) ((d2<10)?('0' + d2):('A' - 10 + d2));
-		    //ret.write( ch1 );
-		    //ret.write( ch2 );
-                }
-            }
-        }
-    }
-
-    /**
-     * @see java.net.URLDecoder#decode(java.lang.String, java.lang.String) URLDecoder.decode
-     */
-    public static String decode(String s) {
-
-	boolean needToChange = false;
-	int numChars = s.length();
-	StringBuffer sb = new StringBuffer(numChars > 500 ? numChars / 2 : numChars);
-	int i = 0;
-
-	char c;
-	byte[] bytes = null;
-	while (i < numChars) {
-            c = s.charAt(i);
-            switch (c) {
-	    case '+':
-		sb.append(' ');
-		i++;
-		needToChange = true;
-		break;
-	    case '%':
-		/*
-		 * Starting with this instance of %, process all
-		 * consecutive substrings of the form %xy. Each
-		 * substring %xy will yield a byte. Convert all
-		 * consecutive  bytes obtained this way to whatever
-		 * character(s) they represent in the provided
-		 * encoding.
-		 */
-
-		try {
-
-		    // (numChars-i)/3 is an upper bound for the number
-		    // of remaining bytes
-		    if (bytes == null)
-			bytes = new byte[(numChars-i)/3];
-		    int pos = 0;
-
-		    while ( ((i+2) < numChars) &&
-			    (c=='%')) {
-			bytes[pos++] =
-			    (byte)Integer.parseInt(s.substring(i+1,i+3),16);
-			i+= 3;
-			if (i < numChars)
-			    c = s.charAt(i);
-		    }
-
-		    // A trailing, incomplete byte encoding such as
-		    // "%x" will cause an exception to be thrown
-
-		    if ((i < numChars) && (c=='%'))
-			throw new IllegalArgumentException(
-		         "URLDecoder: Incomplete trailing escape (%) pattern");
-
-                    try {
-                        sb.append(new String(bytes, 0, pos,"UTF-8")); // YURA this can fail if the system default is not UTF-8
-                    }
-                    catch(Exception ex) {
-                        throw new RuntimeException();
-                    }
-		} catch (NumberFormatException e) {
-		    throw new IllegalArgumentException(
-                    "URLDecoder: Illegal hex characters in escape (%) pattern - "
-		    + e.getMessage());
-		}
-		needToChange = true;
-		break;
-	    default:
-		sb.append(c);
-		i++;
-		break;
-            }
-        }
-
-        return (needToChange? sb.toString() : s);
-    }
 
 
 }
