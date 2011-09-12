@@ -135,9 +135,11 @@ public class Label extends Component {
                 int iconWidth = getIconWidth();
 
                 String drawString = this.string;
+                if ("".equals(drawString)) { drawString=null; } // when you draw, null or empty string are the same thing
+                
 		int combinedwidth = getCombinedWidth();
 
-                if (font!=null && drawString!=null && !"".equals(drawString) && combinedwidth > width-(padding*2)) {
+                if (font!=null && drawString!=null && combinedwidth > width-(padding*2)) {
                     combinedwidth = width-(padding*2);
                     int w = ((((textPosition & Graphics.HCENTER) == 0) && iconWidth>0)?(combinedwidth-iconWidth-gap):combinedwidth) - font.getWidth(extension);
                     int a = TextArea.searchStringCharOffset(drawString, font, w);
