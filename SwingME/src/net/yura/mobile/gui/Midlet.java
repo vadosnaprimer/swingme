@@ -19,13 +19,16 @@ package net.yura.mobile.gui;
 
 import java.io.InputStream;
 import java.util.Hashtable;
+
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
+
 import net.yura.mobile.logging.DesktopLogger;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
+import net.yura.mobile.util.Url;
 
 /**
  * @author Yura Mamyrin
@@ -196,6 +199,13 @@ public abstract class Midlet extends MIDlet {
     }
 
     // This will only be called on Android.
+    public void platformRequestForResult(String url, Object arg, int requestCode) {
+        Url u = new Url(url);
+        u.addQueryParameter("requestCode", String.valueOf(requestCode));
+        platformRequest(u.toString(), arg);
+    }
+
+    // This will only be called on Android.
     public void platformRequest(String url, Object arg) {
         try {
             if (platformReqParams == null) {
@@ -281,13 +291,13 @@ public abstract class Midlet extends MIDlet {
      * name MUST start with a "/"
      * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
      */
-    
+
     public static String resdir;
-    
+
     public static InputStream getResourceAsStream(String name) {
 
         try {
-            
+
             try {
                 // when running as a me4se applet, this can throw a SecurityException
             	if (System.getProperty("resdir") != null) {
@@ -310,9 +320,9 @@ public abstract class Midlet extends MIDlet {
 
         return Midlet.class.getResourceAsStream(name);
     }
-    
-    public void onResult(int code, Object obj) {
-    	
+
+    public void onResult(int requestCode, int resultCode, Object obj) {
+
     }
 
 }
