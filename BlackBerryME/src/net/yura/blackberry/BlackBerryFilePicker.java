@@ -30,7 +30,7 @@ public class BlackBerryFilePicker extends MainScreen {
     {   
         public void selectionDone(String str)
         {
-        	Midlet.getMidlet().onResult(-1, str);
+        	Midlet.getMidlet().onResult(0, -1, str);
         	close();
         }
     }

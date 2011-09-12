@@ -37,7 +37,7 @@ public class CameraInvoker extends MainScreen implements FileSystemJournalListen
 	protected void onExposed(){
 		super.onExposed();
 		close();
-		Midlet.getMidlet().onResult(-1, capturedImgPath);
+		Midlet.getMidlet().onResult(0, -1, capturedImgPath);
 	}
 	
 	private void show() {
