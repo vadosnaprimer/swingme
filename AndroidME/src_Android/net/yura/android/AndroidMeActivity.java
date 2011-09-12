@@ -330,7 +330,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             }
 
             MIDlet midlet = getMIDlet();
-            midlet.onResult(resultCode, result);
+            midlet.onResult(requestCode, resultCode, result);
         } catch (Throwable e) {
             //#debug info
             Logger.warn(e);
