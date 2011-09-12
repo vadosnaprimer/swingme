@@ -118,8 +118,11 @@ public abstract class MIDlet {
                         i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     }
 
+                    String reqStr = content.getQueryParameter("requestCode");
+                    int reqCode = reqStr == null ? 0 : Integer.parseInt(reqStr);
+
                     if (isProtoNative) {
-                        activity.startActivityForResult(i, 0);
+                        activity.startActivityForResult(i, reqCode);
                     }
                     else {
                         activity.startActivity(i);
@@ -301,7 +304,7 @@ public abstract class MIDlet {
     }
 
     // To be overload by children
-    public void onResult(int resultCode, Object result) {
+    public void onResult(int requestCode, int resultCode, Object result) {
 
     }
 
