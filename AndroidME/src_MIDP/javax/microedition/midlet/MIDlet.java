@@ -160,6 +160,13 @@ public abstract class MIDlet {
             	}
 
             }
+            else if (url.startsWith("geo:")) {
+            	
+            	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url) );
+            	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            	AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(intent);
+            	
+            }
             else {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
                      Intent.ACTION_DIAL : Intent.ACTION_DEFAULT;
