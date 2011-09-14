@@ -252,9 +252,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         // --- Window ---
         Style windowStyle = new Style(defaultStyle);
-        DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
-        int size = Math.max(dm.widthPixels, dm.heightPixels);
-        windowStyle.addProperty(new FadeIcon(0x80000000, size), "dim", Style.ALL);
+        //DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
+        //int size = Math.max(dm.widthPixels, dm.heightPixels);
+        windowStyle.addProperty( new Integer(0x80000000), "dim", Style.ALL);
         setStyleFor("Window", windowStyle);
 
         // --- TextField ---
