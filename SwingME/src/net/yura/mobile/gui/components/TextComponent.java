@@ -26,6 +26,7 @@ import javax.microedition.lcdui.TextBox;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
@@ -641,7 +642,6 @@ public abstract class TextComponent extends Component implements ActionListener,
 
                 Window w = getWindow();
 
-		w.getDesktopPane().animateComponent(this);
                 setMode(mode);
 
                 if (w.getDesktopPane().USE_SOFT_KEY_CLEAR) {
@@ -666,6 +666,12 @@ public abstract class TextComponent extends Component implements ActionListener,
                 if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
                     openNativeEditor();
                 }
+
+                // if we have no Foreground, there is no point in starting the animation
+                if (!Graphics2D.isTransparent( getForeground() )) {
+                    w.getDesktopPane().animateComponent(this);
+                }
+
 	}
 
 //        protected void paintBorder(Graphics2D g) {

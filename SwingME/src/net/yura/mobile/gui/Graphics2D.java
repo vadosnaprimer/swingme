@@ -59,7 +59,7 @@ public class Graphics2D {
          * @see java.awt.Graphics#setColor(java.awt.Color) Graphics.setColor
          */
         public void setColor(int c) {
-                //#mdebug warn
+                //#mdebug debug
                 if (isTransparent(c)) {
                     Logger.warn("trying to set a transparent color: "+Integer.toHexString(c));
                     Logger.dumpStack();
