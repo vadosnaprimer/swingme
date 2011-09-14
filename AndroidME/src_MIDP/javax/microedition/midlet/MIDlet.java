@@ -13,6 +13,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -161,10 +162,19 @@ public abstract class MIDlet {
 
             }
             else if (url.startsWith("geo:")) {
-            	
-            	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url) );
+            	// eg (with the brackets and everything else past the = URL encoded): geo://lat,long?q=lat,long(description)
+            	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            	AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(intent);
+            	try {
+            		AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(intent);
+            	}
+            	catch (ActivityNotFoundException anf) {
+            		// there's nothing on the phone that knows how to process a geo: URI.
+            		url = "http://maps.google.com/" + url.substring(url.indexOf("?q="));
+            		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url) );
+            		browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+               		AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(browserIntent);
+            	}
             	
             }
             else {
