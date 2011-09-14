@@ -148,7 +148,7 @@ public abstract class MIDlet extends UiApplication {
         	int ilong = (int) (Double.parseDouble(longi)*100000);
             mapView.setLatitude(ilat);
             mapView.setLongitude(ilong);
-            mapView.setZoom(10);
+            mapView.setZoom(MapView.MAX_ZOOM);
             MapsArguments mapsArgs = new MapsArguments(mapView);
             Invoke.invokeApplication(Invoke.APP_TYPE_MAPS, mapsArgs);
         }
