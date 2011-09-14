@@ -2,6 +2,9 @@ package net.yura.blackberry.rim;
 
 import javax.microedition.io.ConnectionNotFoundException;
 import net.rim.blackberry.api.browser.Browser;
+import net.rim.blackberry.api.invoke.Invoke;
+import net.rim.blackberry.api.invoke.MapsArguments;
+import net.rim.blackberry.api.maps.MapView;
 import net.rim.device.api.applicationcontrol.ApplicationPermissions;
 import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
 import net.rim.device.api.system.ApplicationDescriptor;
@@ -135,6 +138,19 @@ public abstract class MIDlet extends UiApplication {
                 cp.put( text );
             }
             
+        }
+        else if (url.startsWith("geo:")) {
+        	//geo:51.47342,-0.172655?q=51.47342%2c-0.172655%28Candy+was+here%29
+        	String lat = url.substring(4,url.indexOf(","));
+        	String longi = url.substring(url.indexOf(",")+1, url.indexOf("?"));
+        	MapView mapView = new MapView();
+        	int ilat = (int) (Double.parseDouble(lat)*100000);
+        	int ilong = (int) (Double.parseDouble(longi)*100000);
+            mapView.setLatitude(ilat);
+            mapView.setLongitude(ilong);
+            mapView.setZoom(10);
+            MapsArguments mapsArgs = new MapsArguments(mapView);
+            Invoke.invokeApplication(Invoke.APP_TYPE_MAPS, mapsArgs);
         }
         else {
             throw new ConnectionNotFoundException();
