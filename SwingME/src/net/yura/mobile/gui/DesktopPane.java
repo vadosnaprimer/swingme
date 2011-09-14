@@ -161,7 +161,7 @@ public class DesktopPane extends Canvas implements Runnable {
     private Component nextAnimatedComponent;
     private Image splash;
     private int background;
-    private Icon fade;
+    private Object fade;
     private boolean paintdone;
     private boolean fullrepaint;
     private boolean killflag;
@@ -433,7 +433,7 @@ public class DesktopPane extends Canvas implements Runnable {
             updateComponentTreeUI(dummy);
         }
 
-        fade = (Icon)getDefaultTheme(dummy).getProperty("dim", Style.ALL);
+        fade = getDefaultTheme(dummy).getProperty("dim", Style.ALL);
 
     }
 
@@ -677,14 +677,16 @@ public class DesktopPane extends Canvas implements Runnable {
                         //}
                         paintComponent(graphics, (Window) windows.elementAt(c));
                         if (c == (windows.size() - 2) && fade != null) {
-                            Image i = fade.getImage();
-                            if (i==null) {
-                                // hack for android
-                                fade.paintIcon(null, graphics, 0, 0);
+                            int w = getWidth();
+                            int h = getHeight();
+                            if (fade instanceof Icon) {
+                                Image i = ((Icon)fade).getImage();
+                                // hack for synth and MIDP, here we tile some poor image to fill the whole screen
+                                graphics.drawImage(i, 0, 0, i.getWidth(), i.getHeight(), 0, 0, w, h );
                             }
                             else {
-                                // hack for synth and MIDP
-                                graphics.drawImage(i, 0, 0, fade.getIconWidth(), fade.getIconHeight(), 0, 0, getWidth(), getHeight() );
+                                graphics.setColor( ((Integer)fade).intValue() );
+                                graphics.fillRect(0, 0, w, h);
                             }
                         }
     /*
