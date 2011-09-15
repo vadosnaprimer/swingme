@@ -1,25 +1,35 @@
 package net.yura.blackberry.rim;
 
+import java.util.Calendar;
+
 import javax.microedition.io.ConnectionNotFoundException;
+
+import com.badoo.mobile.util.BadooStringUtil;
+
 import net.rim.blackberry.api.browser.Browser;
 import net.rim.blackberry.api.invoke.Invoke;
 import net.rim.blackberry.api.invoke.MapsArguments;
 import net.rim.blackberry.api.maps.MapView;
 import net.rim.device.api.applicationcontrol.ApplicationPermissions;
 import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
+import net.rim.device.api.i18n.DateFormat;
 import net.rim.device.api.system.ApplicationDescriptor;
 import net.rim.device.api.system.CodeModuleGroup;
 import net.rim.device.api.system.CodeModuleGroupManager;
+import net.rim.device.api.system.CodeModuleManager;
 import net.rim.device.api.system.CoverageInfo;
 import net.rim.device.api.system.DeviceInfo;
 import net.rim.device.api.system.WLANInfo;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.component.Dialog;
+import net.rim.device.api.ui.picker.DateTimePicker;
 import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.blackberry.ConnectionManager;
 import net.yura.mobile.gui.Animation;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.util.BlackBerryThumbLoader;
+import net.yura.mobile.util.Url;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.util.ImageUtil;
 
@@ -139,18 +149,45 @@ public abstract class MIDlet extends UiApplication {
             }
             
         }
-        else if (url.startsWith("geo:")) {
-        	//geo:51.47342,-0.172655?q=51.47342%2c-0.172655%28Candy+was+here%29
-        	String lat = url.substring(4,url.indexOf(","));
-        	String longi = url.substring(url.indexOf(",")+1, url.indexOf("?"));
-        	MapView mapView = new MapView();
-        	int ilat = (int) (Double.parseDouble(lat)*100000);
-        	int ilong = (int) (Double.parseDouble(longi)*100000);
-            mapView.setLatitude(ilat);
-            mapView.setLongitude(ilong);
-            mapView.setZoom(MapView.MAX_ZOOM);
-            MapsArguments mapsArgs = new MapsArguments(mapView);
-            Invoke.invokeApplication(Invoke.APP_TYPE_MAPS, mapsArgs);
+        else if (url.startsWith("geo:")) {        	
+        	if ((CodeModuleManager.getModuleHandle("net_rim_bb_lbs") > 0) || (CodeModuleManager.getModuleHandle("net_rim_bb_maps") > 0)) {
+        		//geo:51.47342,-0.172655?q=51.47342%2c-0.172655%28Candy+was+here%29
+            	String lat = url.substring(4,url.indexOf(","));
+            	String longi = url.substring(url.indexOf(",")+1, url.indexOf("?"));            	
+            	int ilat = (int) (Double.parseDouble(lat) * 100000);
+            	int ilong = (int) (Double.parseDouble(longi) * 100000);
+                String description = Url.decode(url.substring(url.indexOf("%28")+3,url.indexOf("%29")));
+                String document = "<lbs clear='ALL' id='yura'><location x='" + Integer.toString(ilong) + "' y='" + Integer.toString(ilat) + "' label='" + description + "' description='" + description + "' zoom='0' /></lbs>";
+                Invoke.invokeApplication(Invoke.APP_TYPE_MAPS, new MapsArguments(MapsArguments.ARG_LOCATION_DOCUMENT, document));
+        	} 
+        	else {
+                Browser.getDefaultSession().displayPage("http://maps.google.com/" + url.substring(url.indexOf("?q=")));
+        	}          
+        } 
+        else if (url.startsWith("native://com.badoo.mobile.android.CalendarPickerActivity/")) {
+        	String date = url.substring(url.lastIndexOf('/') + 1 ,url.length());
+        	System.out.println("Date popup with startup value: " + date);
+        	
+        	Calendar initialDate = Calendar.getInstance();
+        	String day = date.substring(8,10);
+        	String month = date.substring(5,7);
+        	String year = date.substring(0,4);
+        	initialDate.set(Calendar.DATE, Integer.parseInt(day));
+        	initialDate.set(Calendar.MONTH, Integer.parseInt(month)-1);
+        	initialDate.set(Calendar.YEAR, Integer.parseInt(year));
+        	
+        	final DateTimePicker datePicker = DateTimePicker.createInstance( initialDate,  DateFormat.DATE_SHORT, -1);
+	        datePicker.doModal();
+	        Calendar selectedDate = datePicker.getDateTime();
+	        
+	        int selectedDay = selectedDate.get(Calendar.DATE);
+	        int selectedMonth = selectedDate.get(Calendar.MONTH);
+	        int selectedYear = selectedDate.get(Calendar.YEAR);
+	        if (selectedYear < 1000){
+	        	selectedYear = Integer.parseInt(year);
+	        }
+	        Midlet.getMidlet().onResult(0, -1, BadooStringUtil.getFormattedDate(Integer.toString(selectedDay), Integer.toString(selectedMonth+1), Integer.toString(selectedYear)));
+	        
         }
         else {
             throw new ConnectionNotFoundException();
