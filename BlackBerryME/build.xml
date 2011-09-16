@@ -178,8 +178,8 @@
 
 	<target name="build" depends="setup" description="Builds Project">
 		<rapc jdehome="${jde.home}" destdir="${release.directory}" noconvert="true" generatesourcelist="true" verbose="false" output="${project.title}" quiet="true">
-			<jdp type="midlet" midletclass="net.yura.mobile.test.MyMidlet" title="${project.title}" 
-				vendor="Badoo Ltd." version="${project.version}" description="" arguments="" systemmodule="false" runonstartup="false" startuptier="7" ribbonposition="0">
+			<jdp type="cldc" arguments="net.yura.blackberry.TestMIDlet" title="${project.title}" 
+				vendor="yura.net" version="${project.version}" description="" systemmodule="false" runonstartup="false" startuptier="7" ribbonposition="0">
 			</jdp>
 			<src>
 				<fileset dir="${build.directory}" includes="**" />
