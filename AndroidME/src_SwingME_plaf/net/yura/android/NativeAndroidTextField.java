@@ -25,6 +25,7 @@ import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -287,7 +288,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         // if the location has changed since last paint we need to move the component
         if (x!=tx || y!=ty || w!=tw || h!=th) {
 
-//System.out.println("[NativeAndroidTextField] ##################### draw");
+//Log.d("YURA", "[NativeAndroidTextField] ##################### draw "+x+" "+tx+" "+y+" "+ty+" "+w+" "+tw+" "+h+" "+th);
 
             Border insets = textField.getInsets();
             int sx = x-insets.getLeft();
@@ -304,8 +305,11 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
             // this is a bit of a hack, not sure why this should be here, but without it, when we rotate the screen the line wrap does not adjust
             // but for some reason if we do not call this every time after changing the width it does not wrap the lines correctly
             if (textField instanceof TextArea) {
-                // the method we need this to call is nullLayouts(); but in other version of android this method may not call nullLayouts();, so what then???
-                editText.setHorizontallyScrolling( false ); // !((TextArea)textField).getLineWrap() // even when we do NOT wrap lines, in SwingME its not the TextArea that does the scrolling but the ScrollPane its in
+                // Calling this on honeycomb has a side-effect of removing the keyboard controls, so we can not call it every time
+                if (w!=tw) {
+                    // the method we need this to call is nullLayouts(); but in other version of android this method may not call nullLayouts();, so what then???
+                    editText.setHorizontallyScrolling( false ); // !((TextArea)textField).getLineWrap() // even when we do NOT wrap lines, in SwingME its not the TextArea that does the scrolling but the ScrollPane its in
+                }
             }
 
             Handler handler = editText.getHandler();
