@@ -2,16 +2,16 @@
 
 <project name="${description}" default="build" basedir=".\build">
 
-	
+
 	<!-- Project properties -->
 	<property name="project.title" value="BlackBerryME" />
 	<property name="project.version" value="1.0.0" />
 	<property name="build.directory" value="${basedir}" />
 	<property name="release.directory" value="${basedir}" />
+	<property name="ota.directory" value="${basedir}/../ota" />
 	<property name="dist.directory" value="${basedir}/../dist" />
 
 	<!-- JDE properties -->
-	<property name="jde.home" value="C:/Eclipse/plugins/net.rim.eide.componentpack4.6.0_4.6.0.19/components/" />
 	<property name="simulator.directory" value="${jde.home}\simulator" />
 	<property name="bin" value="${jde.home}\bin" />
 
@@ -22,7 +22,11 @@
 	<property name="swingmetest.src" value="${workspace.directory}/SwingMETest/src" />
 	<property name="test.src" value="${workspace.directory}/BlackBerryME/src" />
 	<property name="bbme.src" value="${workspace.directory}/BlackBerryME/test" />
-	
+
+	<!-- > 4.7 source files -->
+	<property name="bbme47.src" value="${workspace.directory}/BlackBerryME/src_4.7" />
+
+
 	<taskdef resource="bb-ant-defs.xml" classpath="${workspace.directory}/BlackBerryME/lib/bb-ant-tools.jar" />
 
 	<!-- Resources path -->
@@ -33,11 +37,12 @@
 		<description>
 				Delete all the previous built projects.
 		</description>
-<!-- -->
+		<!-- -->
 		<delete includeEmptyDirs="false" failonerror="no">
 			<fileset dir="${build.directory}" />
 			<fileset dir="${release.directory}" />
 			<fileset dir="${dist.directory}" />
+			<fileset dir="${ota.directory}" includes="**/*" />
 		</delete>
 
 		<delete file="${jde.home}/simulator/${project.title}.cod" failonerror="no" />
@@ -71,53 +76,98 @@
 		<echo>Release dir: ${release.directory} </echo>
 		<echo>Dist dir: ${dist.directory} </echo>
 		<echo>Simulator dir: ${simulator.directory} </echo>
-		
+
 
 		<mkdir dir="${build.directory}" />
 		<mkdir dir="${release.directory}" />
 		<mkdir dir="${dist.directory}" />
-
+		<mkdir dir="${ota.directory}" />
+		
 		<copy todir="${build.directory}">
-			<fileset dir="${swingme.src}" includes="**" />
+			<fileset dir="${swingme.src}" includes="**"  />
 			<fileset dir="${swingmetest.src}" includes="**" />
 			<fileset dir="${utilme.src}" includes="**" />
 		</copy>
 
 		<echo>replacing_imports</echo>
 
-		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.MediaProcessor(\W)" replace="net.yura.blackberry.midlet.amms.MediaProcessor\1">
+
+		<!-- this is 4.7 and up - ->
+		<replaceregexp byline="true" match="javax.microedition.lcdui.Canvas(\W)" replace="net.yura.blackberry.midlet.Canvas\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+		<!- - -->
+
+
+		<!-- this is 4.7 and up and uses native rim ui -->
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.midlet.MIDlet(\W)" replace="net.yura.blackberry.rim.MIDlet\1">
 			<fileset dir="${build.directory}" includes="**/*.java" />
 		</replaceregexp>
 
-		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.GlobalManager(\W)" replace="net.yura.blackberry.midlet.amms.GlobalManager\1">
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Canvas(\W)" replace="net.yura.blackberry.rim.Canvas\1">
 			<fileset dir="${build.directory}" includes="**/*.java" />
 		</replaceregexp>
 
-		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.control.ImageFormatControl(\W)" replace="net.yura.blackberry.midlet.amms.ImageFormatControl\1">
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Font(\W)" replace="net.yura.blackberry.rim.Font\1">
 			<fileset dir="${build.directory}" includes="**/*.java" />
 		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Graphics(\W)" replace="net.yura.blackberry.rim.Graphics\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Image(\W)" replace="net.yura.blackberry.rim.Image\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Display(\W)" replace="net.yura.blackberry.rim.Display\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.game.Sprite(\W)" replace="net.yura.blackberry.rim.Sprite\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Background(\W)" replace="net.yura.blackberry.rim.m3g.Background\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Graphics3D(\W)" replace="net.yura.blackberry.rim.m3g.Graphics3D\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Image2D(\W)" replace="net.yura.blackberry.rim.m3g.Image2D\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.MediaProcessor(\W)" replace="net.yura.blackberry.rim.amms.MediaProcessor\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.GlobalManager(\W)" replace="net.yura.blackberry.rim.amms.GlobalManager\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.control.ImageFormatControl(\W)" replace="net.yura.blackberry.rim.amms.ImageFormatControl\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="false" flags="gs" match="catch\s*\(Throwable\s*(.*?)\)(.*?\})" replace="catch (Error \1)\2 catch (Exception \1)\2">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.TextBox(\W)" replace="net.yura.blackberry.rim.TextBox\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
 		
-		<replaceregexp byline="true" match="javax.microedition.midlet.MIDlet(\W)" replace="net.yura.blackberry.midlet.MIDlet\1">
-			<fileset dir="${build.directory}" includes="**/*.java" />
-		</replaceregexp>
-
-		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Background(\W)" replace="net.yura.blackberry.midlet.m3g.Background\1">
-			<fileset dir="${build.directory}" includes="**/*.java" />
-		</replaceregexp>
-
-		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Graphics3D(\W)" replace="net.yura.blackberry.midlet.m3g.Graphics3D\1">
-			<fileset dir="${build.directory}" includes="**/*.java" />
-		</replaceregexp>
-
-		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Image2D(\W)" replace="net.yura.blackberry.midlet.m3g.Image2D\1">
-			<fileset dir="${build.directory}" includes="**/*.java" />
-		</replaceregexp>
-
 		<echo>copying_more_files</echo>
 
 		<copy todir="${build.directory}">
-			<fileset dir="${bbme.src}" includes="**/*.java" />
+			<fileset dir="${bbme.src}" includes="**/*.java" excludes="net/yura/blackberry/midlet/" />
 			<fileset dir="${test.src}" includes="**/*.java" />
+			<fileset dir="${bbme47.src}" includes="**/*.java" excludes="net/yura/blackberry/midlet/"/>
 		</copy>
 
 		<copy todir="${build.directory}">
@@ -143,6 +193,12 @@
 				</codset>
 			</application>
 		</alx>
+		
+		<echo>creating_jad_file</echo>
+		<jadtool input="BlackBerryME.jad" destdir="${ota.directory}">
+			<fileset dir="${release.directory}" includes="*.cod" />
+		</jadtool>
+
 	</target>
 	
 	<target name="debug" depends="deploy" description="Builds, Deploys Project and Launches Remote Debug Server">

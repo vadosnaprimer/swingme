@@ -4,14 +4,11 @@ import java.util.Calendar;
 
 import javax.microedition.io.ConnectionNotFoundException;
 
-import com.badoo.mobile.util.BadooStringUtil;
+import net.yura.blackberry.WebPayment;
 
 import net.rim.blackberry.api.browser.Browser;
 import net.rim.blackberry.api.invoke.Invoke;
 import net.rim.blackberry.api.invoke.MapsArguments;
-import net.rim.blackberry.api.maps.MapView;
-import net.rim.device.api.applicationcontrol.ApplicationPermissions;
-import net.rim.device.api.applicationcontrol.ApplicationPermissionsManager;
 import net.rim.device.api.i18n.DateFormat;
 import net.rim.device.api.system.ApplicationDescriptor;
 import net.rim.device.api.system.CodeModuleGroup;
@@ -163,61 +160,29 @@ public abstract class MIDlet extends UiApplication {
         	else {
                 Browser.getDefaultSession().displayPage("http://maps.google.com/" + url.substring(url.indexOf("?q=")));
         	}          
-        } 
-        else if (url.startsWith("native://com.badoo.mobile.android.CalendarPickerActivity/")) {
-        	String date = url.substring(url.lastIndexOf('/') + 1 ,url.length());
-        	System.out.println("Date popup with startup value: " + date);
-        	
+        }
+        else if (url.startsWith("native://net.yura.android.datepicker.CalendarPickerActivity/")) {
+        	Url u = new Url(url);
+        	String date = u.getPathSegment(0);        	
         	Calendar initialDate = Calendar.getInstance();
-        	String day = date.substring(8,10);
-        	String month = date.substring(5,7);
-        	String year = date.substring(0,4);
-        	initialDate.set(Calendar.DATE, Integer.parseInt(day));
-        	initialDate.set(Calendar.MONTH, Integer.parseInt(month)-1);
-        	initialDate.set(Calendar.YEAR, Integer.parseInt(year));
-        	
+        	initialDate.set(Calendar.DATE, Integer.parseInt(date.substring(8,10)));
+        	initialDate.set(Calendar.MONTH, Integer.parseInt(date.substring(5,7))-1);
+        	initialDate.set(Calendar.YEAR, Integer.parseInt(date.substring(0,4)));        	
         	final DateTimePicker datePicker = DateTimePicker.createInstance( initialDate,  DateFormat.DATE_SHORT, -1);
-	        datePicker.doModal();
-	        Calendar selectedDate = datePicker.getDateTime();
-	        
-	        int selectedDay = selectedDate.get(Calendar.DATE);
-	        int selectedMonth = selectedDate.get(Calendar.MONTH);
-	        int selectedYear = selectedDate.get(Calendar.YEAR);
-	        if (selectedYear < 1000){
-	        	selectedYear = Integer.parseInt(year);
-	        }
-	        Midlet.getMidlet().onResult(0, -1, BadooStringUtil.getFormattedDate(Integer.toString(selectedDay), Integer.toString(selectedMonth+1), Integer.toString(selectedYear)));
-	        
+	        datePicker.doModal();	        
+	        Midlet.getMidlet().onResult(0, -1, datePicker.getDateTime());	        	        
+        }
+        else if (url.startsWith("nativeNoResult://com.badoo.mobile.android.view.WebPaymentAVC")) {
+        	Url u = new Url(url);        	
+        	String startURL = u.getPathSegment(0);
+        	String endURL = u.getPathSegment(1);
+        	String browserTitle = u.getPathSegment(2);        	
+        	WebPayment wp = new WebPayment(startURL, endURL, browserTitle);        	
         }
         else {
             throw new ConnectionNotFoundException();
         }
-    	
-    	
-    	// launch native date picker?
-    	
-    	/*
-    	 * Getting the default date time picker
-
-        final DateTimePicker datePicker = DateTimePicker.createInstance();
-        datePicker.doModal(); 
-
-		Specifying a date format		
-		        final DateTimePicker datePicker = DateTimePicker.createInstance( Calendar.getInstance(), "yyyy-MM-dd", null);
-		        datePicker.doModal();
-		 
-		
-		Specifying a time format		
-		        final DateTimePicker datePicker = DateTimePicker.createInstance( Calendar.getInstance(), null, "hh:mm:ss aa");
-		        datePicker.doModal();
-		 
-		
-		Specifying a preset date format		
-		        final DateTimePicker datePicker = DateTimePicker.createInstance( Calendar.getInstance(), DateFormat.DATE_FULL, -1);
-		        datePicker.doModal();
- 
-    	 * */
-    	
+    	    	
     	return false;
 	}
 
