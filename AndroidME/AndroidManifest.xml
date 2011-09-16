@@ -17,12 +17,14 @@
         <activity android:name="net.yura.android.TestTimePickerActivity" 
                   android:theme="@android:style/Theme.Translucent.NoTitleBar"
         />
+
         <activity android:name="net.yura.android.OptionPaneActivity" android:configChanges="orientation|keyboard|keyboardHidden" android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/android:Theme.Translucent"/>
+	<activity android:name="net.yura.android.datepicker.CalendarPickerActivity" android:configChanges="orientation|keyboard|keyboardHidden" android:windowSoftInputMode="stateHidden" android:theme="@style/android:Theme.Translucent.NoTitleBar"/>
 
     </application>
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />
 
-    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
