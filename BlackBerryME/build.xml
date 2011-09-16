@@ -186,9 +186,12 @@
 				<fileset file="${workspace.directory}\UtilME\lib\xmlpull_1_1_3_1.jar" />
 			</src>
 		</rapc>
+		
+		<sigtool jdehome="${jde.home}" codfile="${release.directory}/BlackBerryME.cod" password="m0nSt3rm4sh" />
+					
 		<alx destdir="${dist.directory}" filename="${project.title}.alx">
-			<application id="${project.title}" name="${project.title}" copyright="Copyright (c) 2011 Badoo Limited" version="${project.version}" vendor="Badoo Limited">
-				<codset greaterthanequal="4.6.0">
+			<application id="${project.title}" name="${project.title}" copyright="Copyright (c) 2011 yura.net" version="${project.version}" vendor="yura.net">
+				<codset greaterthanequal="5.0.0">
 					<fileset dir="${release.directory}" includes="*.cod" />
 				</codset>
 			</application>
