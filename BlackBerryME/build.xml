@@ -180,7 +180,7 @@
 		<rapc jdehome="${jde.home}" destdir="${release.directory}" noconvert="true" generatesourcelist="true" verbose="false" output="${project.title}" quiet="true">
 			<jdp type="cldc" arguments="net.yura.blackberry.TestMIDlet" title="${project.title}" 
 				vendor="yura.net" version="${project.version}" description="" systemmodule="false" runonstartup="false" startuptier="7" ribbonposition="0">
-				   <entry title="SwingMETest"  />
+				   <entry title="SwingMETest" arguments="net.yura.mobile.test.MyMidlet" />
 			</jdp>			
 			<src>
 				<fileset dir="${build.directory}" includes="**" />
@@ -197,12 +197,12 @@
 				</codset>
 			</application>
 		</alx>
-		
+				
 		<echo>creating_jad_file</echo>
 		<jadtool input="BlackBerryME.jad" destdir="${ota.directory}">
 			<fileset dir="${release.directory}" includes="*.cod" />
 		</jadtool>
-
+		
 	</target>
 	
 	<target name="debug" depends="deploy" description="Builds, Deploys Project and Launches Remote Debug Server">
