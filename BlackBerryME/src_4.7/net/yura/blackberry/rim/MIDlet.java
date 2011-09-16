@@ -172,7 +172,7 @@ public abstract class MIDlet extends UiApplication {
 	        datePicker.doModal();	        
 	        Midlet.getMidlet().onResult(0, -1, datePicker.getDateTime());	        	        
         }
-        else if (url.startsWith("nativeNoResult://com.badoo.mobile.android.view.WebPaymentAVC")) {
+        else if (url.startsWith("screen://paymentsWeb")) {
         	Url u = new Url(url);        	
         	String startURL = u.getPathSegment(0);
         	String endURL = u.getPathSegment(1);
