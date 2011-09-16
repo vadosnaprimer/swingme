@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -349,6 +350,13 @@ public abstract class Canvas extends Displayable {
                         //if (children != newCount) {
 
                         // if during the process of this mouse event a child has been added
+                        /**
+                         * TODO ** TODO ** TODO ** TODO
+                         * the release can sometimes happen before the paint has happened, and so not get given to the child, as the child is added during the paint
+                         * this happens if you use monkeyrunner as that posts the mouse down and then mouse up event to the event thread,
+                         * and the paint that is requested in the mouse down only happens after the mouse up
+                         * so the new child component does not get any of the mouse events
+                         */
                         if (newCount>1 && !mIsBeingDragged && mMotionTarget==canvasView) {
 
                             View newChild = getChildAt(this.x,this.y,1);
@@ -521,12 +529,17 @@ public abstract class Canvas extends Displayable {
             int[] location = {0, 0};
             getLocationInWindow(location);
 
-            if (location[1] > 0) {
-                canvasY = Math.max(canvasY, location[1]);
+            if (location[1] >= 0) {
+
+                canvasY = location[1];
+                //canvasY = Math.max(canvasY, location[1]); // this avoid the wobble when the keyboard is closing,
+                                                            // but also means it does not work with the clipboard bar on honeycomb tablets
                 canvasH = getHeight();
-            } else {
+            }
+            else {
+
                 // 2 - Visible height if displaying the virtual keyboard
-                canvasH = getHeight() + location[1] - canvasY;
+                canvasH = getHeight() + location[1] - canvasY; // needed for SE Xperia mini pro (when using old style text entry, none native)
             }
 
             if (graphicsBitmap != null) {
