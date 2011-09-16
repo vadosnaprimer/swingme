@@ -174,13 +174,14 @@
 			<fileset dir="${res.src}" includes="**" />
 		</copy>
 
-	</target>
+	</target> 
 
 	<target name="build" depends="setup" description="Builds Project">
 		<rapc jdehome="${jde.home}" destdir="${release.directory}" noconvert="true" generatesourcelist="true" verbose="false" output="${project.title}" quiet="true">
 			<jdp type="cldc" arguments="net.yura.blackberry.TestMIDlet" title="${project.title}" 
 				vendor="yura.net" version="${project.version}" description="" systemmodule="false" runonstartup="false" startuptier="7" ribbonposition="0">
-			</jdp>
+				   <entry title="SwingMETest"  />
+			</jdp>			
 			<src>
 				<fileset dir="${build.directory}" includes="**" />
 				<fileset file="${workspace.directory}\UtilME\lib\xmlpull_1_1_3_1.jar" />
