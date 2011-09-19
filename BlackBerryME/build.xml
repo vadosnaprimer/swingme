@@ -188,7 +188,7 @@
 			</src>
 		</rapc>
 		
-		<sigtool jdehome="${jde.home}" codfile="${release.directory}/BlackBerryME.cod" password="m0nSt3rm4sh" />
+		<sigtool jdehome="${jde.home}" codfile="${release.directory}/BlackBerryME.cod" password="${sigtool.password}" />
 					
 		<alx destdir="${dist.directory}" filename="${project.title}.alx">
 			<application id="${project.title}" name="${project.title}" copyright="Copyright (c) 2011 yura.net" version="${project.version}" vendor="yura.net">
