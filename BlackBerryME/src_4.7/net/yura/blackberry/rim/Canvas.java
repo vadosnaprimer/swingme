@@ -72,10 +72,7 @@ public abstract class Canvas extends FullScreen {
          }
 
         protected void sublayout(int width, int height) {
-
-            
-            
-            
+            setExtent( width, height ); // BB says we NEED to call setExtent from sublayout or things like text selecting does not work
         }
 
         public void setPositionChild2(Field field, int x, int y) {
