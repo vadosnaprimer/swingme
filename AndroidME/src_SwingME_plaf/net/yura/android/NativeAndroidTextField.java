@@ -74,6 +74,21 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     }
 
+    private static final ChangeListener starter = new ChangeListener() {
+        @Override
+        public void changeEvent(Component source, int num) {
+            if (num==Component.FOCUS_GAINED) {
+                ((TextComponent)source).openNativeEditor();
+            }
+        }
+    };
+
+    public static void init() {
+        TextComponent.STAR = DOT;
+        TextBox.inputHelperClass = NativeAndroidTextField.class;
+        TextComponent.staticFocusListener = starter;
+    }
+
 
     public boolean onCheckIsTextEditor() {
         return false;
@@ -238,19 +253,19 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         editText.requestFocus();
 
 
-
-        // get old focusListeners, we will keep this copy
-        focusListeners = textField.getFocusListeners();
-        // remove old focusListeners
-        for (int c=0;c<focusListeners.length;c++) {
-            textField.removeFocusListener( focusListeners[c] );
-        }
-        // add ourselves to listen for focus
-        textField.addFocusListener(this);
+        TextComponent.staticFocusListener = this;
+//        // get old focusListeners, we will keep this copy
+//        focusListeners = textField.getFocusListeners();
+//        // remove old focusListeners
+//        for (int c=0;c<focusListeners.length;c++) {
+//            textField.removeFocusListener( focusListeners[c] );
+//        }
+//        // add ourselves to listen for focus
+//        textField.addFocusListener(this);
 
     }
 
-    ChangeListener[] focusListeners;
+//    ChangeListener[] focusListeners;
 
     public void onLayout() {
 
@@ -339,17 +354,21 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
     @Override
     public void changeEvent(Component source, int num) {
         if (num==Component.FOCUS_LOST) {
-            textField.removeFocusListener(this);
 
-            // set old focusListeners back
-            for (int c=0;c<focusListeners.length;c++) {
-                textField.addFocusListener( focusListeners[c] );
-            }
-            // fire old focusListeners
-            for (int c=0;c<focusListeners.length;c++) {
-                focusListeners[c].changeEvent(source, num);
-            }
-            focusListeners = null;
+            // set the staticFocusListener back to what it used to be
+            TextComponent.staticFocusListener = starter;
+
+//            textField.removeFocusListener(this);
+//
+//            // set old focusListeners back
+//            for (int c=0;c<focusListeners.length;c++) {
+//                textField.addFocusListener( focusListeners[c] );
+//            }
+//            // fire old focusListeners
+//            for (int c=0;c<focusListeners.length;c++) {
+//                focusListeners[c].changeEvent(source, num);
+//            }
+//            focusListeners = null;
 
             close();
         }

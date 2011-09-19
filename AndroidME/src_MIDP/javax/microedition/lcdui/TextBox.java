@@ -17,6 +17,8 @@ import android.widget.EditText;
 
 public class TextBox extends Screen {
 
+    public static Class<? extends InputHelper> inputHelperClass = TextBoxView.class;
+
 	//debug debug
 	private final static boolean debug = false;
 
@@ -39,10 +41,12 @@ public class TextBox extends Screen {
 
         setTitle(title);
 
-        //textBoxView = new TextBoxView();
-
-        textBoxView = new net.yura.android.NativeAndroidTextField();
-
+        try {
+            textBoxView = inputHelperClass.newInstance();
+        }
+        catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     private String title;

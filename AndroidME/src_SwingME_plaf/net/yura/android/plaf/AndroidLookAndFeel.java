@@ -399,7 +399,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         OptionPane.optionPaneClass = AndroidOptionPane.class;
         AndroidMeActivity.menuSystem = new NativeAndroidMenu();
-        TextComponent.STAR = NativeAndroidTextField.DOT;
+        NativeAndroidTextField.init();
     }
 
     private Drawable getDrawable(Context ctx, String name) {
