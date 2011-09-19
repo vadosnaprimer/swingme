@@ -617,6 +617,10 @@ public abstract class TextComponent extends Component implements ActionListener,
 	public void focusLost() {
 		super.focusLost();
 
+                if (staticFocusListener!=null) {
+                    staticFocusListener.changeEvent(this, FOCUS_LOST);
+                }
+                
 		showCaret = false;
 
                 autoAccept();
@@ -663,8 +667,8 @@ public abstract class TextComponent extends Component implements ActionListener,
                 // if on android the keyboard is already visible
                 // we need to update it to display the correct keyboard
                 //if (textbox!=null) {
-                if (Midlet.getPlatform()==Midlet.PLATFORM_ANDROID) {
-                    openNativeEditor();
+                if (staticFocusListener!=null) {
+                    staticFocusListener.changeEvent(this, FOCUS_GAINED);
                 }
 
                 // if we have no Foreground, there is no point in starting the animation
@@ -673,6 +677,8 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
 
 	}
+        
+        public static ChangeListener staticFocusListener;
 
 //        protected void paintBorder(Graphics2D g) {
 //            	if (!focusable && disabledBorder!=null) {
