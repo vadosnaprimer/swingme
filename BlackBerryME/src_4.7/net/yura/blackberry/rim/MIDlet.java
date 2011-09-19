@@ -38,6 +38,7 @@ public abstract class MIDlet extends UiApplication {
 
     public MIDlet() {            
         BlackBerryOptionPane.init();
+        TextBox.TextBoxNative.init();
         
         conManager = ConnectionManager.getInstance();
         UiApplication.getUiApplication().addGlobalEventListener(conManager); // Listen to service books changes

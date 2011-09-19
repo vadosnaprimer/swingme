@@ -55,13 +55,15 @@ public class Display {
 		        hereAndNow = ((TextBox)screen);
 		        
                         Canvas current = (Canvas)midlet.getActiveScreen();
-		        
-		        TextBox.InputHelper helper = new TextBox.TextBoxDialog();
-		        //TextBox.InputHelper helper = new TextBox.TextBoxKeyboard();
-		        //TextBox.InputHelper helper = new TextBox.TextBoxNative();
-		        helper.start(hereAndNow,midlet);
 
-		        current.setInputHelper(helper);
+                        try {
+                            TextBox.InputHelper helper = (TextBox.InputHelper)TextBox.inputHelperClass.newInstance();
+        		    helper.start(hereAndNow,midlet);
+        		    current.setInputHelper(helper);
+                        }
+                        catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
 		    }
 
 		}

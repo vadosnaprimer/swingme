@@ -26,6 +26,8 @@ import net.yura.mobile.gui.plaf.Style;
 
 public class TextBox {
 
+    public static Class inputHelperClass = TextBox.TextBoxDialog.class;
+    
     String title;
     String text;
     int maxSize;
@@ -174,13 +176,29 @@ public class TextBox {
         }
     }
 
-    public static class TextBoxNative implements InputHelper {
+    public static class TextBoxNative implements InputHelper,ChangeListener {
     
+        public static final ChangeListener starter = new ChangeListener() {
+            public void changeEvent(Component source, int type) {
+                if (type == net.yura.mobile.gui.components.Component.FOCUS_GAINED) {
+                    ((TextComponent)source).openNativeEditor();
+                }
+            }
+        };
+        
+        public static void init() {
+            inputHelperClass = TextBoxNative.class;
+            TextComponent.staticFocusListener = starter;
+        }
+        
         Canvas screen;
         TextField editField;
         net.yura.mobile.gui.components.Component textField;
+        TextBox textBox;
         
         public void start(final TextBox tb, MIDlet midlet) {
+            
+            textBox = tb;
             
             screen = (Canvas)Display.getDisplay(midlet).getCurrent();
             
@@ -202,29 +220,30 @@ public class TextBox {
 
             onDraw();
             
-            textField.addFocusListener( new ChangeListener() {
-                public void changeEvent(Component source, int num) {
-                    if (num==Component.FOCUS_LOST) {
-                        textField.removeFocusListener(this);
-                        
-                        // bb2midp
-                        tb.text = editField.getText();
-                        
-                        // midp2swingme
-                        ((TextComponent)textField).setText( tb.getString() );
-                        
-                        ((TextComponent)textField).setCaretPosition( editField.getCursorPosition() );
-                        
-                        textField.setForeground(Style.NO_COLOR);
-                        
-                        screen.delete(editField);
-                    }
-                }
-            });
+            TextComponent.staticFocusListener = this;
             
             editField.setFocus();
         }
 
+        public void changeEvent(Component source, int num) {
+            if (num==Component.FOCUS_LOST) {
+                
+                TextComponent.staticFocusListener = starter;
+                
+                // bb2midp
+                textBox.text = editField.getText();
+                
+                // midp2swingme
+                ((TextComponent)textField).setText( textBox.getString() );
+                
+                ((TextComponent)textField).setCaretPosition( editField.getCursorPosition() );
+                
+                textField.setForeground(Style.NO_COLOR);
+                
+                screen.delete(editField);
+            }
+        }
+        
         public void onDraw() {
             
             Border insets = textField.getInsets();
