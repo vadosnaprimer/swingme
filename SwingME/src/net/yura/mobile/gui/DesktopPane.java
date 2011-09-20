@@ -18,10 +18,12 @@ package net.yura.mobile.gui;
 
 import java.util.Hashtable;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
+
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.cellrenderer.MenuItemRenderer;
@@ -522,7 +524,7 @@ public class DesktopPane extends Canvas implements Runnable {
             // Initialize wideScreen for the first time
             wideScreen = (oldw > oldh);
 
-            animationThread = new Thread(this, "SwingME-Animation");
+            animationThread = new Thread(this, "SwingME-Animation-One");
             animationThread.start();
 
             paintdone = true;
