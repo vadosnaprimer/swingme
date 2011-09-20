@@ -2,7 +2,6 @@ package javax.microedition.lcdui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.microedition.midlet.MIDlet;
 import net.yura.android.AndroidMeActivity;
 import javax.microedition.lcdui.Canvas.InputHelper;
@@ -21,8 +20,8 @@ public class TextBox extends Screen {
 
     public static Class<? extends InputHelper> inputHelperClass = TextBoxView.class;
 
-	//debug debug
-	private final static boolean debug = false;
+    //debug debug
+    private final static boolean debug = false;
 
     private String text;
     private int maxSize;
@@ -553,9 +552,9 @@ public class TextBox extends Screen {
         }
 
 //        // Override API 11
-//        public boolean commitCorrection(CorrectionInfo arg0) {
-//            return true;
-//        }
+        //public boolean commitCorrection(android.view.inputmethod.CorrectionInfo arg0) {
+        //    return true;
+        //}
 
         // Override API 11
         public CharSequence getSelectedText(int arg0) {
