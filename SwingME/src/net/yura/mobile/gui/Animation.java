@@ -13,6 +13,10 @@ public class Animation extends Thread{
     static final Vector components = new Vector();
     static final Hashtable lastcall = new Hashtable();
 
+    public Animation() {
+        super("SwingMe-Animation-Two");
+    }
+
     public void run() {
         try {
             long lastWait = System.currentTimeMillis();
@@ -64,7 +68,6 @@ public class Animation extends Thread{
 
         if (animation==null) {
             animation = new Animation();
-            animation.setName("SwingMe-Animation-Two");
             animation.start();
         }
 
