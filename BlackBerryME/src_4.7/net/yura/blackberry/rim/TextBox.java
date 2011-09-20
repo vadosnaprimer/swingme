@@ -17,7 +17,13 @@ import net.rim.device.api.ui.container.HorizontalFieldManager;
 import net.rim.device.api.ui.container.PopupScreen;
 import net.rim.device.api.ui.container.VerticalFieldManager;
 import net.rim.device.api.ui.decor.BorderFactory;
+import net.yura.blackberry.rim.Canvas;
+import net.yura.blackberry.rim.Display;
+import net.yura.blackberry.rim.MIDlet;
+import net.yura.blackberry.rim.TextBox;
 import net.yura.blackberry.rim.Canvas.CanvasManager;
+import net.yura.blackberry.rim.TextBox.InputHelper;
+import net.yura.blackberry.rim.TextBox.TextBoxNative;
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.components.Component;
@@ -85,7 +91,7 @@ public class TextBox {
             
             final PopupScreen popup = new PopupScreen(new VerticalFieldManager(),PopupScreen.DEFAULT_CLOSE);
             
-            final TextField editField = getTextFiled(tb);
+            final TextField editField = (TextField)getTextFiled(tb, false);
             
             popup.add(new LabelField(tb.title));
             popup.add(editField);
@@ -177,7 +183,7 @@ public class TextBox {
     }
 
     public static class TextBoxNative implements InputHelper,ChangeListener {
-    
+        
         public static final ChangeListener starter = new ChangeListener() {
             public void changeEvent(Component source, int type) {
                 if (type == net.yura.mobile.gui.components.Component.FOCUS_GAINED) {
@@ -192,7 +198,7 @@ public class TextBox {
         }
         
         Canvas screen;
-        TextField editField;
+        Field editField;
         net.yura.mobile.gui.components.Component textField;
         TextBox textBox;
         
@@ -201,15 +207,17 @@ public class TextBox {
             textBox = tb;
             
             screen = (Canvas)Display.getDisplay(midlet).getCurrent();
-            
-            editField = getTextFiled(tb);
-            
+                      
             final net.yura.mobile.gui.components.Window window = net.yura.mobile.gui.DesktopPane.getDesktopPane().getSelectedFrame();
             textField = window.getFocusOwner();
     
-            editField.setFont( ((TextComponent)textField).getFont().getFont().font );
+            boolean singleLine = (textField instanceof net.yura.mobile.gui.components.TextField);
+
+            editField = getTextFiled(tb, singleLine);
             
-            editField.setCursorPosition( ((TextComponent)textField).getCaretPosition() );
+            editField.setFont( ((TextComponent)textField).getFont().getFont().font );
+
+            getTextField(editField).setCursorPosition(((TextComponent)textField).getCaretPosition()); 
             
             Border insets = textField.getInsets();
             editField.setBorder( BorderFactory.createSimpleBorder( new XYEdges(insets.getTop(),insets.getRight(),insets.getBottom(),insets.getLeft()), net.rim.device.api.ui.decor.Border.STYLE_TRANSPARENT ) );
@@ -224,20 +232,27 @@ public class TextBox {
             
             editField.setFocus();
         }
+        
+        private static TextField getTextField(Field field) {
+        	if (field instanceof HorizontalFieldManager) {
+        		return (TextField) ((HorizontalFieldManager)field).getField(0);
+        	}
+        	return (TextField)field;
+        }
 
         public void changeEvent(Component source, int num) {
             if (num==Component.FOCUS_LOST) {
                 
                 TextComponent.staticFocusListener = starter;
-                
-                // bb2midp
-                textBox.text = editField.getText();
+
+            	 // bb2midp
+                textBox.text = getTextField(editField).getText();
                 
                 // midp2swingme
                 ((TextComponent)textField).setText( textBox.getString() );
                 
-                ((TextComponent)textField).setCaretPosition( editField.getCursorPosition() );
-                
+                ((TextComponent)textField).setCaretPosition( getTextField(editField).getCursorPosition() );
+              
                 textField.setForeground(Style.NO_COLOR);
                 
                 screen.delete(editField);
@@ -277,7 +292,7 @@ public class TextBox {
         }
     }
     
-    private static TextField getTextFiled(TextBox tb) {
+    private static Field getTextFiled(TextBox tb, boolean singleLine) {
         
         final TextField editField;
         
@@ -294,6 +309,10 @@ public class TextBox {
             default: style = BasicEditField.FILTER_DEFAULT; break;
         }
         
+        if (singleLine) {
+        	style |=  EditField.NO_NEWLINE;
+        }
+        
         if (style == BasicEditField.FILTER_EMAIL) {
             editField = new EmailAddressEditField("","");
         }
@@ -305,9 +324,19 @@ public class TextBox {
         }
         
         editField.setText(tb.text);
-        editField.setMaxSize(tb.maxSize);
+        editField.setMaxSize(tb.maxSize);  
         
-        return editField;
+		 if (singleLine) {
+			 HorizontalFieldManager man = new HorizontalFieldManager(HorizontalFieldManager.HORIZONTAL_SCROLL);
+			 man.add(editField);
+			 return man;
+		 } 
+		 else {
+			 return editField;
+		 }
+			 
+		
+        
     }
 
     
