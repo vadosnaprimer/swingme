@@ -52,7 +52,7 @@ public class Display {
 		if (screen instanceof TextBox) {
 		    
 		    if (hereAndNow != screen) {
-		        hereAndNow = ((TextBox)screen);
+		        hereAndNow = (TextBox)screen;
 		        
                         Canvas current = (Canvas)midlet.getActiveScreen();
 

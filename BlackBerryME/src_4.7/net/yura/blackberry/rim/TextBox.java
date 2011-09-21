@@ -256,18 +256,26 @@ public class TextBox {
                 
                 TextComponent.staticFocusListener = starter;
 
-            	 // bb2midp
-                textBox.text = getTextField(editField).getText();
+                bb2swing();
                 
-                // midp2swingme
-                ((TextComponent)textField).setText( textBox.getString() );
-                
-                ((TextComponent)textField).setCaretPosition( getTextField(editField).getCursorPosition() );
-              
                 textField.setForeground(Style.NO_COLOR);
                 
                 screen.delete(editField);
             }
+        }
+        
+        void bb2swing() {
+            
+            TextField field = getTextField(editField);
+            
+            // bb2midp
+            textBox.text = field.getText();
+            
+            // midp2swingme
+            ((TextComponent)textField).setText( textBox.getString() );
+            
+            ((TextComponent)textField).setCaretPosition( field.getCursorPosition() );
+
         }
         
         public void onDraw() {
@@ -307,6 +315,11 @@ public class TextBox {
 
 	public boolean sendToNative(int key) {
 	    	Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMnemonicButton(key);
+	    	
+	    	if (b!=null) {
+	    	    bb2swing();
+	    	}
+	    	
 	    	return b==null;
 	}
     }
