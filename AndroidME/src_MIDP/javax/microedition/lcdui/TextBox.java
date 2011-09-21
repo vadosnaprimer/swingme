@@ -1,6 +1,7 @@
 package javax.microedition.lcdui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.microedition.midlet.MIDlet;
 import net.yura.android.AndroidMeActivity;
 import javax.microedition.lcdui.Canvas.InputHelper;
@@ -9,7 +10,6 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.CompletionInfo;
-import android.view.inputmethod.CorrectionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.ExtractedText;
 import android.view.inputmethod.ExtractedTextRequest;
@@ -20,8 +20,8 @@ public class TextBox extends Screen {
 
     public static Class<? extends InputHelper> inputHelperClass = TextBoxView.class;
 
-	//debug debug
-	private final static boolean debug = false;
+    //debug debug
+    private final static boolean debug = false;
 
     private String text;
     private int maxSize;
@@ -46,6 +46,7 @@ public class TextBox extends Screen {
             textBoxView = inputHelperClass.newInstance();
         }
         catch (Exception ex) {
+            ex.printStackTrace();
             throw new RuntimeException(ex);
         }
     }
@@ -182,16 +183,20 @@ public class TextBox extends Screen {
 
     private static CharSequence composingText = "";
 
-    private class TextBoxView implements InputHelper,InputConnection {
+    public static class TextBoxView implements InputHelper,InputConnection {
         private CharSequence textBeforeCursor = " ";
+
+        private TextBox textBox;
 
         public TextBoxView() {
         }
 
         public void start(TextBox tb) {
 
+            textBox = tb;
+
             // open the keyboard
-            currentCanvasView.showNativeTextInput();
+            textBox.currentCanvasView.showNativeTextInput();
 
         }
         public void onDraw() { }
@@ -223,7 +228,7 @@ public class TextBox extends Screen {
 
             outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
-            int inputType= getInputType(constraints);
+            int inputType= getInputType(textBox.constraints);
 
             outAttrs.inputType = inputType;
 
@@ -363,10 +368,10 @@ public class TextBox extends Screen {
         	//#enddebug
 
             int capitalize;
-            if ((constraints & TextField.INITIAL_CAPS_SENTENCE) > 0) {
+            if ((textBox.constraints & TextField.INITIAL_CAPS_SENTENCE) > 0) {
 
                 capitalize = EditorInfo.TYPE_TEXT_FLAG_CAP_SENTENCES;
-            } else if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
+            } else if ((textBox.constraints & TextField.INITIAL_CAPS_WORD) > 0) {
 
                 capitalize = EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
             } else {
@@ -462,14 +467,15 @@ public class TextBox extends Screen {
         	}
         	//#enddebug
 
-            if (currentCanvasView != null) {
+            if (textBox.currentCanvasView != null) {
                 int keyCode = event.getKeyCode();
                 int action = event.getAction();
 
                 if (action == KeyEvent.ACTION_DOWN) {
-                    currentCanvasView.onKeyDown(keyCode, event);
-                } else if (action == KeyEvent.ACTION_UP) {
-                    currentCanvasView.onKeyUp(keyCode, event);
+                    textBox.currentCanvasView.onKeyDown(keyCode, event);
+                }
+                else if (action == KeyEvent.ACTION_UP) {
+                    textBox.currentCanvasView.onKeyUp(keyCode, event);
                 }
             }
             return true;
@@ -508,8 +514,8 @@ public class TextBox extends Screen {
         	}
         	//#enddebug
 
-            if (currentCanvasView != null) {
-                currentCanvasView.sendText(text);
+            if (textBox.currentCanvasView != null) {
+                textBox.currentCanvasView.sendText(text);
             }
 
             textBeforeCursor = text;
@@ -545,10 +551,10 @@ public class TextBox extends Screen {
             composingText = done ? "" : text;
         }
 
-        // Override API 11
-        public boolean commitCorrection(CorrectionInfo arg0) {
-            return true;
-        }
+//        // Override API 11
+        //public boolean commitCorrection(android.view.inputmethod.CorrectionInfo arg0) {
+        //    return true;
+        //}
 
         // Override API 11
         public CharSequence getSelectedText(int arg0) {
