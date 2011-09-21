@@ -280,13 +280,16 @@ public class TextBox {
         }
 
         public void stop() {
+            // we do not use this, instead we listen for the SwingME textfield to lose focus to remove outselves
         }
         
         public boolean back() {
-            net.rim.device.api.ui.VirtualKeyboard keyboard  = screen.getVirtualKeyboard();
-            if (keyboard.getVisibility()==net.rim.device.api.ui.VirtualKeyboard.SHOW) {
-                keyboard.setVisibility( net.rim.device.api.ui.VirtualKeyboard.HIDE );
-                return true;
+            if (net.rim.device.api.ui.VirtualKeyboard.isSupported()) { // we need to do this check or getVirtualKeyboard will return null
+                net.rim.device.api.ui.VirtualKeyboard keyboard  = screen.getVirtualKeyboard();
+                if (keyboard.getVisibility()==net.rim.device.api.ui.VirtualKeyboard.SHOW) {
+                    keyboard.setVisibility( net.rim.device.api.ui.VirtualKeyboard.HIDE );
+                    return true;
+                }
             }
             return false;
         }
