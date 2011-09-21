@@ -25,7 +25,9 @@ import net.yura.blackberry.rim.Canvas.CanvasManager;
 import net.yura.blackberry.rim.TextBox.InputHelper;
 import net.yura.blackberry.rim.TextBox.TextBoxNative;
 import net.yura.mobile.gui.ChangeListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.plaf.Style;
@@ -77,6 +79,7 @@ public class TextBox {
         public void stop();
         public void onDraw();
         public boolean back();
+        public boolean sendToNative(int key);
     }
     
     //public void open(MIDlet midlet) {
@@ -135,6 +138,10 @@ public class TextBox {
 
         public void onDraw() {
         }
+
+		public boolean sendToNative(int key) {
+			return false;
+		}
     }
     
     public static class TextBoxKeyboard implements InputHelper {
@@ -180,6 +187,10 @@ public class TextBox {
 
         public void onDraw() {
         }
+
+		public boolean sendToNative(int key) {
+			return false;
+		}
     }
 
     public static class TextBoxNative implements InputHelper,ChangeListener {
@@ -293,6 +304,11 @@ public class TextBox {
             }
             return false;
         }
+
+	public boolean sendToNative(int key) {
+	    	Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMnemonicButton(key);
+	    	return b==null;
+	}
     }
     
     private static Field getTextFiled(TextBox tb, boolean singleLine) {

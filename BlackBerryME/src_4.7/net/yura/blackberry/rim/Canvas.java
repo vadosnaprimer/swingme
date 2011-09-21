@@ -1,5 +1,6 @@
 package net.yura.blackberry.rim;
 
+import net.rim.device.api.ui.component.TextField;
 import net.rim.device.api.ui.container.FullScreen;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.Keypad;
@@ -79,6 +80,12 @@ public abstract class Canvas extends FullScreen {
             super.setPositionChild(field, x, y);
         }
         public void layoutChild2(Field field, int w, int h) {
+        	 
+        	if (h>field.getPreferredHeight()) {
+        		int toPad = (h-field.getPreferredHeight()) / 2;
+        		field.setPadding(toPad, field.getPaddingRight(), toPad, field.getPaddingLeft());
+        	}
+        	
             super.layoutChild(field, w, h);
         }
         
@@ -418,7 +425,9 @@ public abstract class Canvas extends FullScreen {
         // only ok, when we return false, so that the Blackberry is forwarding the event
         // to the corresponding consumer. Weird, really. This means that text input seems
         // to be handled differently from keyDown. And it's not keyChar.
-        
+
+		boolean processed=false;
+
 		try {
 			int key = Keypad.key(keyCode);
 			if (key == Keypad.KEY_SEND 
@@ -427,23 +436,30 @@ public abstract class Canvas extends FullScreen {
 					|| key == Keypad.KEY_CONVENIENCE_2
 					|| key == Keypad.KEY_VOLUME_UP
 					|| key == Keypad.KEY_VOLUME_DOWN
-					|| key == Keypad.KEY_LOCK) {
+					|| key == Keypad.KEY_LOCK) {				
 				return super.keyDown(keyCode, time);
 			}
-			boolean processed = super.keyDown(keyCode, time);
+			
+			processed = super.keyDown(keyCode, time);
+			
 			if (processed) {
 				return true;
 			}
+			
 		} 
 		catch (Exception e) {
 			// #debug error
 			System.out.println("super.keyDown(" + keyCode + ", " + time + ") failed" + e);
 		}
 
-		// #debug
+    		// #debug
 		System.out.println("keyDown: keyCode=" + keyCode + ", key=" + Keypad.key(keyCode) + ", char=" + Keypad.map(keyCode));
 		int midpKeyCode = getMidpKeyCode(keyCode);
-		
+
+		// we get events here when mouse clicks on the screen for some strange reason
+		// we need to do this check as passing 0 can cause strange events
+		if (midpKeyCode != 0) {
+
 		if (helper!=null && midpKeyCode==KEY_END) {
 		    boolean result = helper.back();
 		    if (result) {
@@ -451,12 +467,21 @@ public abstract class Canvas extends FullScreen {
 		    }
 		}
 		
-		// we get events here when mouse clicks on the screen for some strange reason
-		// we need to do this check as passing 0 can cause strange events
-		if (midpKeyCode!=0) {
 
-                    lastKey = midpKeyCode;
-		    keyPressed(midpKeyCode);
+		
+		// HACK, as bb returns false instead of true when a child handles a key event, as need to return here if a native child is open
+	    	if (helper!=null && getLeafFieldWithFocus() instanceof TextField) {
+	    		
+	    		boolean sendToNative = helper.sendToNative(midpKeyCode);
+	    		
+		    	if (sendToNative) {
+		    		return processed;
+		    	}
+	    	}
+
+
+			lastKey = midpKeyCode;
+			keyPressed(midpKeyCode);
 
 		}
 		//#mdebug debug
@@ -473,6 +498,8 @@ public abstract class Canvas extends FullScreen {
 	
 	protected boolean keyUp(int keyCode, int time) {
 
+		boolean processed=false;	
+		
 		try {
 			int key = Keypad.key(keyCode);
 			if (key == Keypad.KEY_SEND 
@@ -485,7 +512,7 @@ public abstract class Canvas extends FullScreen {
 				return super.keyUp(keyCode, time);
 			}
 			
-			boolean processed = super.keyUp(keyCode, time);
+			processed = super.keyUp(keyCode, time);
 			if (processed) {
 				return true;
 			}
@@ -502,6 +529,13 @@ public abstract class Canvas extends FullScreen {
                 // we get events here when mouse clicks on the screen for some strange reason
                 // we need to do this check as passing 0 can cause strange events
 	        if (midpKeyCode!=0) {
+	        	
+	        	// HACK, as bb returns false instead of true when a child handles a key event, as need to return here if a native child is open
+	        	if (helper!=null && getLeafFieldWithFocus() instanceof TextField) {
+	        		return processed;
+	        	}
+	        	
+	        	
 	            keyReleased(midpKeyCode);
 	            
 	            lastKey = 0; // reset
@@ -521,8 +555,10 @@ public abstract class Canvas extends FullScreen {
 	     */
 	    protected boolean keyRepeat(int keyCode, int time) {
 
+	    	boolean processed=false;
+	    	
 	                   try {
-	                       boolean processed = super.keyRepeat(keyCode, time);
+	                       processed = super.keyRepeat(keyCode, time);
 	                       if (processed) {
                                    return true;
                                }
@@ -543,6 +579,12 @@ public abstract class Canvas extends FullScreen {
                 // we get events here when mouse clicks on the screen for some strange reason
                 // we need to do this check as passing 0 can cause strange events
 	        if (midpKeyCode!=0) {
+
+			// HACK, as bb returns false instead of true when a child handles a key event, as need to return here if a native child is open
+	        	if (helper!=null && getLeafFieldWithFocus() instanceof TextField) {
+	        		return processed;
+	        	}
+	        	
 	            keyRepeated(midpKeyCode);
 	        }
 	        //#mdebug debug
@@ -789,6 +831,14 @@ public abstract class Canvas extends FullScreen {
 	           }
 	        }
 	        */
+	        
+	        processed = super.navigationMovement(dx, dy, status, time);
+	        
+	        // when we have a natie text box open then processed is true
+	        if (processed) {
+	        	return true;
+	        }
+	        
 	        int absDx = dx < 0 ? -dx : dx;
 	        int absDy = dy < 0 ? -dy : dy;
 	        if (absDx > absDy) {
@@ -819,6 +869,8 @@ public abstract class Canvas extends FullScreen {
 	                        keyCode = KEY_BB_RIGHT;
 	                }
 	                if (keyCode != 0) {
+
+	                	
 	                        keyPressed( keyCode );
 	                        keyReleased( keyCode );
 	                        // when false is returned, the BlackBerry will generate a trackwheelRoll event which we don't want,
@@ -832,7 +884,7 @@ public abstract class Canvas extends FullScreen {
 //	                      }
 	                }
 	        //if (!superImplementationCalled) {
-	                processed = super.navigationMovement(dx, dy, status, time);
+	        //        processed = super.navigationMovement(dx, dy, status, time);
 	        //}
 	                return processed;
 	    }
