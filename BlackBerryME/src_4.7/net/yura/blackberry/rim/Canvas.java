@@ -79,13 +79,7 @@ public abstract class Canvas extends FullScreen {
         public void setPositionChild2(Field field, int x, int y) {
             super.setPositionChild(field, x, y);
         }
-        public void layoutChild2(Field field, int w, int h) {
-        	 
-        	if (h>field.getPreferredHeight()) {
-        		int toPad = (h-field.getPreferredHeight()) / 2;
-        		field.setPadding(toPad, field.getPaddingRight(), toPad, field.getPaddingLeft());
-        	}
-        	
+        public void layoutChild2(Field field, int w, int h) {     	
             super.layoutChild(field, w, h);
         }
         

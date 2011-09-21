@@ -293,6 +293,11 @@ public class TextBox {
                 man.setPositionChild2(editField, x, y);
             }
             if (w!=editField.getWidth() || h!= editField.getHeight()) {
+                Field f = getTextField(editField);                
+                if (h > editField.getPreferredHeight()) {
+                        int toPad = (h-editField.getPreferredHeight()) / 2;
+                        f.setPadding(toPad, f.getPaddingRight(), toPad, f.getPaddingLeft());
+                }                
                 man.layoutChild2(editField, w, h);
             }
 
