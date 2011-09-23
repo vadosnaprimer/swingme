@@ -159,28 +159,6 @@ public class XULLoader {
         load(reader,listener);
     }
 
-    /**
-     * read this:<a href="http://thinlet.sourceforge.net/properties.html">Thinlet Properties</a>
-     */
-    public static Hashtable getProperties(String value) {
-        String[] cProperties = StringUtil.split(value, ';');
-        Hashtable properties = new Hashtable(cProperties.length);
-        if( 0 < cProperties.length ) {
-            for( int x=0; x<cProperties.length; x++ ) {
-                String[] property = StringUtil.split(cProperties[x], '=');
-                if( 2 == property.length ) {
-                    properties.put(property[0], property[1]);
-                }
-                //#mdebug warn
-                else {
-                    Logger.warn("property does not have a key and value: "+cProperties[x]);
-                }
-                //#enddebug
-            }
-        }
-        return properties;
-    }
-
     private String getPropertyText(String key,boolean i18n) {
         if (i18n) {
             if (i18nProperties != null) {
@@ -281,21 +259,54 @@ public class XULLoader {
         }
     }
 
+    public static final Hashtable EMPTY = new Hashtable(0);
+
     public Object readObject(KXmlParser parser,ActionListener listener) throws Exception {
 
         String name = parser.getName();
+        String property = parser.getAttributeValue(null, "property");
+        Hashtable properties;
+        if (property!=null) {
+            String[] cProperties = StringUtil.split(property, ';');
+            properties = new Hashtable(cProperties.length);
+            if( 0 < cProperties.length ) {
+                for( int x=0; x<cProperties.length; x++ ) {
+                    String[] aproperty = StringUtil.split(cProperties[x], '=');
+                    if( 2 == aproperty.length ) {
+                        properties.put(aproperty[0], aproperty[1]);
+                    }
+                    //#mdebug warn
+                    else {
+                        Logger.warn("property does not have a key and value: "+cProperties[x]);
+                    }
+                    //#enddebug
+                }
+            }
+        }
+        else {
+            properties = EMPTY;
+        }
+
+        return readObject(parser, listener, name, properties);
+    }
+
+    /**
+     * read this:<a href="http://thinlet.sourceforge.net/properties.html">Thinlet Properties</a>
+     */
+    public Object readObject(KXmlParser parser,ActionListener listener,String name,Hashtable properties) throws Exception {
 
         if (name.equals("panel")) {
 
-            Panel panel = new Panel();
+            Panel panel = (Panel)newComponent(Panel.class,properties);
 
             panel = readPanel(parser,panel,listener);
 
-            return readUIObject(parser, panel,listener);
+            return readUIObject(parser, panel,listener,properties);
         }
         else if (name.equals("dialog")) {
 
-            Frame frame = new Frame();
+            Frame frame = (Frame)newComponent(Frame.class,properties);
+
             frame.setClosable(false);
             frame.setMaximizable(false);
 
@@ -329,13 +340,6 @@ public class XULLoader {
                 else if ("maximizable".equals(key)) {
                     frame.setMaximizable("true".equalsIgnoreCase(value));
                 }
-                else if("property".equals(key)) {
-                    Hashtable properties = getProperties(value);
-                    String undecorated = (String)properties.get("undecorated");
-                    if (undecorated!=null) {
-                        frame.setUndecorated( "true".equalsIgnoreCase(undecorated) );
-                    }
-                }
 //                else if ("iconifiable".equals(key)) {
 //                    frame.setIconifiable("true".equalsIgnoreCase(value));
 //                }
@@ -344,14 +348,19 @@ public class XULLoader {
 //                }
             }
 
+            String undecorated = (String)properties.get("undecorated");
+            if (undecorated!=null) {
+                frame.setUndecorated( "true".equalsIgnoreCase(undecorated) );
+            }
+
             if (title != null) {
                 frame.setTitle( getPropertyText(title,i18n) );
             }
 
-            return readUIObject(parser, frame,listener);
+            return readUIObject(parser, frame,listener,properties);
         }
         else if (name.equals("tabbedpane")) {
-            TabbedPane tabbedpane = new TabbedPane();
+            TabbedPane tabbedpane = (TabbedPane)newComponent(TabbedPane.class,properties);
 
             String pvalue = parser.getAttributeValue(null, "placement");
             int placement = Graphics.TOP; // default
@@ -369,7 +378,7 @@ public class XULLoader {
 //            }
             tabbedpane.setTabPlacement(placement);
 
-            return readUIObject(parser, tabbedpane,listener);
+            return readUIObject(parser, tabbedpane,listener,properties);
         }
         else if (name.equals("tab")) {
             Tab tab = new Tab();
@@ -387,62 +396,66 @@ public class XULLoader {
             return tab;
         }
         else if (name.equals("progressbar")) {
-            ProgressBar progress = new ProgressBar();
+            ProgressBar progress = (ProgressBar)newComponent(ProgressBar.class,properties);
 
-            return readUIObject(parser, progress,listener);
+            return readUIObject(parser, progress,listener,properties);
         }
         else if (name.equals("spinbox")) {
-            Spinner spinner = new Spinner();
+            Spinner spinner = (Spinner)newComponent(Spinner.class,properties);
 
-            String minimum = parser.getAttributeValue(null, "minimum");
-            String maximum = parser.getAttributeValue(null, "maximum");
-            String text = parser.getAttributeValue(null, "text");
+            final int count = parser.getAttributeCount();
+            for (int c=0;c<count;c++) {
+                String key = parser.getAttributeName(c);
+                String value = parser.getAttributeValue(c);
 
-            if (minimum!=null) {
-                spinner.setMinimum( Integer.parseInt(minimum) );
-            }
-            if (maximum!=null) {
-                spinner.setMaximum( Integer.parseInt(maximum) );
-            }
-            if (text!=null) {
-                spinner.setValue( Integer.valueOf(text) );
+                if ("minimum".equals(key)) {
+                    spinner.setMinimum( Integer.parseInt(value) );
+                }
+                else if ("maximum".equals(key)) {
+                    spinner.setMaximum( Integer.parseInt(value) );
+                }
+                else if ("text".equals(key)) {
+                    spinner.setValue( Integer.valueOf(value) );
+                }
             }
 
-            return readUIObject(parser, spinner,listener);
+            return readUIObject(parser, spinner,listener,properties);
         }
         else if (name.equals("datespinbox")) {
-            Spinner spinner = new Spinner();
+            Spinner spinner = (Spinner)newComponent(Spinner.class,properties);
 
             // TODO do a date spinner
 
-            return readUIObject(parser, spinner,listener);
+            return readUIObject(parser, spinner,listener,properties);
         }
         else if (name.equals("button") || "menuitem".equals(name) || "togglebutton".equals(name)) {
-            Button button = new Button();
+            Button button = (Button)newComponent(Button.class,properties);
 
-            readButton(parser,button,listener);
+            readButton(parser,button,listener,properties);
 
-            return readUIObject(parser, button,listener);
+            return readUIObject(parser, button,listener,properties);
         }
         else if (name.equals("checkbox") || "checkboxmenuitem".equals(name)) {
 
-            Button checkbox = readCheckbox(parser, listener);
+            Button checkbox = readCheckbox(parser, listener,properties);
 
-            return readUIObject(parser, checkbox,listener);
+            return readUIObject(parser, checkbox,listener,properties);
         }
         else if (name.equals("separator")) {
             Component separator = Menu.makeSeparator();
-            return readUIObject(parser, separator,listener);
+            return readUIObject(parser, separator,listener,properties);
         }
         else if (name.equals("combobox")) {
-            ComboBox combobox = new ComboBox(new Vector());
+            ComboBox combobox = (ComboBox)newComponent(ComboBox.class,properties);
 
-            readButton(parser,combobox,listener);
+            combobox.setItems(new Vector());
+
+            readButton(parser,combobox,listener,properties);
 
             String selected = parser.getAttributeValue(null, "selected");
             int selectedIndex = (selected == null) ? - 1 : Integer.parseInt(selected);
 
-            GridBagConstraints constraints = readUIObject(parser, combobox,listener);
+            GridBagConstraints constraints = readUIObject(parser, combobox,listener,properties);
 
             if (combobox.getItemCount() > selectedIndex && selectedIndex != -1) {
                 combobox.setSelectedIndex(selectedIndex);
@@ -451,7 +464,7 @@ public class XULLoader {
             return constraints;
         }
         else if (name.equals("list")) {
-            final List list = new List();
+            final List list = (List)newComponent(List.class,properties);
 
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -463,80 +476,66 @@ public class XULLoader {
                         list.addActionListener(listener);
                     }
                 }
-                else if("property".equals(key)) {
-                    Hashtable properties = getProperties(value);
-                    String fixedCellHeight = (String)properties.get("fixedCellHeight");
-                    if (fixedCellHeight!=null) {
-                        list.setFixedCellHeight( adjustSizeToDensity(fixedCellHeight) );
-                    }
-                }
             }
 
-            return readUIObject(parser, list,listener);
+            String fixedCellHeight = (String)properties.get("fixedCellHeight");
+            if (fixedCellHeight!=null) {
+                list.setFixedCellHeight( adjustSizeToDensity(fixedCellHeight) );
+            }
+
+            return readUIObject(parser, list,listener,properties);
         }
         else if (name.equals("textfield")) {
-            TextField textfield = new TextField();
-
-            readTextComponent(parser,textfield,listener);
-
-            return readUIObject(parser, textfield,listener);
+            TextField textfield = (TextField)newComponent(TextField.class,properties);
+            readTextComponent(parser,textfield,listener,properties);
+            return readUIObject(parser, textfield,listener,properties);
         }
         else if (name.equals("passwordfield")) {
-            TextField textfield = new TextField(TextField.PASSWORD);
-
-            readTextComponent(parser,textfield,listener);
-
-            return readUIObject(parser, textfield,listener);
+            TextField textfield = (TextField)newComponent(TextField.class,properties);
+            textfield.setConstraints( TextField.PASSWORD );
+            readTextComponent(parser,textfield,listener,properties);
+            return readUIObject(parser, textfield,listener,properties);
         }
         else if (name.equals("numericfield")) {
-            TextField textfield = new TextField(TextField.NUMERIC);
-
-            readTextComponent(parser,textfield,listener);
-
-            return readUIObject(parser, textfield,listener);
+            TextField textfield = (TextField)newComponent(TextField.class,properties);
+            textfield.setConstraints( TextField.NUMERIC );
+            readTextComponent(parser,textfield,listener,properties);
+            return readUIObject(parser, textfield,listener,properties);
         }
         else if (name.equals("textarea")) {
 
             Class theclass = TextArea.class;
 
-            final int count = parser.getAttributeCount();
-            for (int c=0;c<count;c++) {
-                String key = parser.getAttributeName(c);
-                String value = parser.getAttributeValue(c);
-                if("property".equals(key)) {
-                    Hashtable properties = getProperties(value);
-                    String tp = (String)properties.get("TextPane");
-                    if ("true".equals(tp)) {
-                        theclass = TextPane.class;
-                    }
-                }
-
+            // TODO is this really needed?
+            String tp = (String)properties.get("TextPane");
+            if ("true".equals(tp)) {
+                theclass = TextPane.class;
             }
 
-            Component textarea = (Component)theclass.newInstance();
+            Component textarea = newComponent(theclass,properties);
 
-            readTextComponent(parser,textarea,listener);
+            readTextComponent(parser,textarea,listener,properties);
 
-            return readUIObject(parser, textarea,listener);
+            return readUIObject(parser, textarea,listener,properties);
         }
         else if (name.equals("label")) {
-            Label label = new Label();
+            Label label = (Label)newComponent(Label.class,properties);
 
-            readLabel(parser,label);
+            readLabel(parser,label,properties);
 
-            return readUIObject(parser, label,listener);
+            return readUIObject(parser, label,listener,properties);
         }
         else if (name.equals("menubar")) {
-            MenuBar menubar = new MenuBar();
+            MenuBar menubar = (MenuBar)newComponent(MenuBar.class,properties);
 
-            return readUIObject(parser, menubar,listener);
+            return readUIObject(parser, menubar,listener,properties);
         }
         else if (name.equals("menu")) {
-            Menu menu = new Menu();
+            Menu menu = (Menu)newComponent(Menu.class,properties);
 
-            readButton(parser,menu,listener);
+            readButton(parser,menu,listener,properties);
 
-            return readUIObject(parser, menu,listener);
+            return readUIObject(parser, menu,listener,properties);
         }
         // TODO add more components
         else if (name.equals("choice") || name.equals("item") ) {
@@ -546,11 +545,11 @@ public class XULLoader {
             return op;
         }
         else if (name.equals("table")) {
-            Table table = new Table();
-            return readUIObject(parser, table,listener);
+            Table table = (Table)newComponent(Table.class,properties);
+            return readUIObject(parser, table,listener,properties);
         }
         else if (name.equals("slider")) {
-            Slider slider = new Slider();
+            Slider slider = (Slider)newComponent(Slider.class,properties);
 
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -561,21 +560,30 @@ public class XULLoader {
                 }
             }
 
-            return readUIObject(parser, slider,listener);
+            return readUIObject(parser, slider,listener,properties);
         }
         else if ("popupmenu".equals(name)) {
 
-            Window popupmenu = Menu.makePopup();
+            Window popupmenu = Menu.makePopup(); // TODO can not subclass
 
-            return readUIObject(parser, popupmenu,listener);
+            return readUIObject(parser, popupmenu,listener,properties);
         }
         else {
             //#debug debug
             Logger.debug("unknown object found: "+name);
 
-            Label slider = new Label("unknown item: "+name);
-            return readUIObject(parser, slider,listener);
+            Component unknown = new Label("unknown item: "+name);
+            return readUIObject(parser, unknown,listener,properties);
         }
+
+    }
+
+    public static Component newComponent(Class theClass,Hashtable properties) throws Exception {
+        String otherClass = (String)properties.get("class");
+        if (otherClass!=null) {
+            theClass = Class.forName( otherClass );
+        }
+        return (Component)theClass.newInstance();
 
     }
 
@@ -617,7 +625,7 @@ public class XULLoader {
             return panel;
     }
 
-    protected void readButton(KXmlParser parser, Button button,ActionListener listener) {
+    protected void readButton(KXmlParser parser, Button button,ActionListener listener,Hashtable properties) {
 
             int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -670,22 +678,20 @@ public class XULLoader {
                     }
                     g.add(button);
                 }
-                else if("property".equals(key)) {
-                    Hashtable properties = getProperties(value);
-                    String rolloverIcon = (String)properties.get("rolloverIcon");
-                    if (rolloverIcon!=null) {
-                        button.setRolloverIcon( loadIcon( rolloverIcon ) );
-                    }
-                }
-
             }
 
-            readLabel(parser, button);
+
+            String rolloverIcon = (String)properties.get("rolloverIcon");
+            if (rolloverIcon!=null) {
+                button.setRolloverIcon( loadIcon( rolloverIcon ) );
+            }
+
+            readLabel(parser, button,properties);
     }
 
 
-    protected Button readCheckbox(KXmlParser parser, ActionListener listener) {
-        Button checkbox;
+    protected Button readCheckbox(KXmlParser parser, ActionListener listener,Hashtable properties) throws Exception {
+        Class theClass;
 
         String group = null;
         final int count = parser.getAttributeCount();
@@ -698,17 +704,19 @@ public class XULLoader {
             }
         }
         if (group == null) {
-            checkbox = new CheckBox();
+            theClass = CheckBox.class;
         }
         else {
-            checkbox = new RadioButton();
+            theClass = RadioButton.class;
         }
 
-        readButton(parser,checkbox,listener);
+        Button checkbox = (Button)newComponent(theClass, properties);
+
+        readButton(parser,checkbox,listener,properties);
         return checkbox;
     }
 
-    public void readLabel(KXmlParser parser, Label label) {
+    public void readLabel(KXmlParser parser, Label label,Hashtable properties) {
             String labelText = null;
             boolean i18n = false;
 
@@ -731,28 +739,26 @@ public class XULLoader {
                 	int pos = position(value, true);
                     label.setHorizontalAlignment(pos);
                 }
-                else if("property".equals(key)) {
-                    Hashtable properties = getProperties(value);
-                    String gap = (String)properties.get("gap");
-                    if (gap!=null) {
-                        label.setIconTextGap( adjustSizeToDensity(gap) );
-                    }
-                    String vAlignment = (String)properties.get("valign");
-                    if (vAlignment!=null) {
-                        int pos = position(vAlignment, false);
-                        label.setVerticalAlignment(pos);
-                    }
-                    String vTextPos = (String)properties.get("vTextPos");
-                    if (vTextPos!=null) {
-                        int pos = position(vTextPos, false);
-                        label.setVerticalTextPosition(pos);
-                    }
-                    String hTextPos = (String)properties.get("hTextPos");
-                    if (hTextPos!=null) {
-                        int pos = position(hTextPos, true);
-                        label.setHorizontalTextPosition(pos);
-                    }
-                }
+            }
+
+            String gap = (String)properties.get("gap");
+            if (gap!=null) {
+                label.setIconTextGap( adjustSizeToDensity(gap) );
+            }
+            String vAlignment = (String)properties.get("valign");
+            if (vAlignment!=null) {
+                int pos = position(vAlignment, false);
+                label.setVerticalAlignment(pos);
+            }
+            String vTextPos = (String)properties.get("vTextPos");
+            if (vTextPos!=null) {
+                int pos = position(vTextPos, false);
+                label.setVerticalTextPosition(pos);
+            }
+            String hTextPos = (String)properties.get("hTextPos");
+            if (hTextPos!=null) {
+                int pos = position(hTextPos, true);
+                label.setHorizontalTextPosition(pos);
             }
 
             if (labelText != null) {
@@ -831,7 +837,7 @@ public class XULLoader {
 
     }
 
-    protected void readTextComponent(KXmlParser parser, Component text,ActionListener listener) {
+    protected void readTextComponent(KXmlParser parser, Component text,ActionListener listener,Hashtable properties) {
             String textLabel = null;
             boolean i18n = false;
 
@@ -844,21 +850,6 @@ public class XULLoader {
                 }
                 else if ("i18n".equals(key)) {
                     i18n = ("true".equals(value));
-                }
-                else if("property".equals(key)) {
-                    Hashtable properties = getProperties(value);
-                    String constraint = (String)properties.get("constraint");
-                    if (constraint!=null) {
-                        if (text instanceof TextComponent) {
-                            ((TextComponent)text).setConstraints( Integer.parseInt(constraint) );
-                        }
-                    }
-                    String maxsize = (String)properties.get("maxsize");
-                    if (maxsize!=null) {
-                        if (text instanceof TextComponent) {
-                            ((TextComponent)text).setMaxSize( Integer.parseInt(maxsize) );
-                        }
-                    }
                 }
                 else if ("editable".equals(key)) {
                     text.setFocusable( "true".equals(value) );
@@ -885,6 +876,19 @@ public class XULLoader {
                             ((TextField)text).addActionListener(listener);
                         }
                     }
+                }
+            }
+
+            String constraint = (String)properties.get("constraint");
+            if (constraint!=null) {
+                if (text instanceof TextComponent) {
+                    ((TextComponent)text).setConstraints( Integer.parseInt(constraint) );
+                }
+            }
+            String maxsize = (String)properties.get("maxsize");
+            if (maxsize!=null) {
+                if (text instanceof TextComponent) {
+                    ((TextComponent)text).setMaxSize( Integer.parseInt(maxsize) );
                 }
             }
 
@@ -932,7 +936,7 @@ public class XULLoader {
         }
     }
 
-    public GridBagConstraints readUIObject(KXmlParser parser,Component comp,ActionListener listener) throws Exception {
+    public GridBagConstraints readUIObject(KXmlParser parser,Component comp,ActionListener listener,Hashtable properties) throws Exception {
 
         GridBagConstraints uiobject = new GridBagConstraints();
         uiobject.component = comp;
@@ -984,13 +988,11 @@ public class XULLoader {
             else if ("enabled".equals(key)) {
                 comp.setFocusable( "true".equals(value) );
             }
-            else if("property".equals(key)) {
-                Hashtable properties = getProperties(value);
-                String plafname = (String)properties.get("plafname");
-                if (plafname!=null) {
-                    comp.setName( plafname );
-                }
-            }
+        }
+
+        String plafname = (String)properties.get("plafname");
+        if (plafname!=null) {
+            comp.setName( plafname );
         }
 
         if (uiobject.weightx > 0 && uiobject.weighty > 0 && comp instanceof Frame) {
