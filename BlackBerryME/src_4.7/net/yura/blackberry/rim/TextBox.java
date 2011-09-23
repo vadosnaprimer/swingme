@@ -231,8 +231,12 @@ public class TextBox {
             getTextField(editField).setCursorPosition(((TextComponent)textField).getCaretPosition()); 
             
             Border insets = textField.getInsets();
-            editField.setBorder( BorderFactory.createSimpleBorder( new XYEdges(insets.getTop(),insets.getRight(),insets.getBottom(),insets.getLeft()), net.rim.device.api.ui.decor.Border.STYLE_TRANSPARENT ) );
+            editField.setBorder(BorderFactory.createSimpleBorder(new XYEdges(insets.getTop(), insets.getRight(), insets.getBottom(), insets.getLeft()), net.rim.device.api.ui.decor.Border.STYLE_TRANSPARENT));
             
+            // the swing margin is the BB padding, its what goes between the content and the border
+            int swingMargin = ((TextComponent)textField).getMargin();
+            getTextField(editField).setPadding(swingMargin, swingMargin, swingMargin, swingMargin);
+
             textField.setForeground( 0x00FFFFFF ); // stops the swingme component from drawing anything
             
             screen.add(editField);
@@ -253,7 +257,7 @@ public class TextBox {
 
         public void changeEvent(Component source, int num) {
             if (num==Component.FOCUS_LOST) {
-                
+
                 TextComponent.staticFocusListener = starter;
 
                 bb2swing();
@@ -261,6 +265,8 @@ public class TextBox {
                 textField.setForeground(Style.NO_COLOR);
                 
                 screen.delete(editField);
+                
+                editField=null;
             }
         }
         
@@ -280,33 +286,43 @@ public class TextBox {
         
         public void onDraw() {
             
-            Border insets = textField.getInsets();
+            if (editField!=null) {
             
-            int x = textField.getXOnScreen()-insets.getLeft();
-            int y = textField.getYOnScreen()-insets.getTop();
-            int w = textField.getWidthWithBorder();
-            int h = textField.getHeightWithBorder();
-            
-            CanvasManager man = (CanvasManager)screen.getDelegate();
-            
-            if (x!=editField.getLeft() || y!= editField.getTop()) {
-                man.setPositionChild2(editField, x, y);
-            }
-            if (w!=editField.getWidth() || h!= editField.getHeight()) {
-                Field f = getTextField(editField);                
-                if (h > editField.getPreferredHeight()) {
-                        int toPad = (h-editField.getPreferredHeight()) / 2;
+                Border insets = textField.getInsets();
+                
+                int x = textField.getXOnScreen()-insets.getLeft();
+                int y = textField.getYOnScreen()-insets.getTop();
+                int w = textField.getWidthWithBorder();
+                int h = textField.getHeightWithBorder();
+                
+                CanvasManager man = (CanvasManager)screen.getDelegate();
+                
+                if (x!=editField.getLeft() || y!= editField.getTop()) {
+                    man.setPositionChild2(editField, x, y);
+                }
+                if (w!=editField.getWidth() || h!= editField.getHeight()) {
+                    System.out.println("The preferred height of the editfield is: " + editField.getPreferredHeight());
+                    
+                    Field f = getTextField(editField);      
+                    int ph = editField.getPreferredHeight() + editField.getBorder().getTop() + editField.getPaddingTop() +  editField.getBorder().getBottom() + editField.getPaddingBottom();
+                    
+                    if (h > ph) {
+                        int toPad = (h - ph) / 2;
                         f.setPadding(toPad, f.getPaddingRight(), toPad, f.getPaddingLeft());
-                }                
-                man.layoutChild2(editField, w, h);
+                        System.out.println("Padding editfield top and bottom with: " + toPad);
+                    }
+                                    
+                    System.out.println("Laying out editField with h=" + h + " and w=" + w);
+                    man.layoutChild2(editField, w, h);
+                }
             }
-
         }
 
         public void stop() {
-            // we do not use this, instead we listen for the SwingME textfield to lose focus to remove outselves
+            back(); // when we change window, this gets called to close the on-screen keyboard
         }
         
+        // hide the keyboard if it is visible
         public boolean back() {
             if (net.rim.device.api.ui.VirtualKeyboard.isSupported()) { // we need to do this check or getVirtualKeyboard will return null
                 net.rim.device.api.ui.VirtualKeyboard keyboard  = screen.getVirtualKeyboard();

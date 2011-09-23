@@ -43,20 +43,21 @@ public class Display {
 		        midlet.pushScreen(src);
 		    }
 		    else {
-		        ((Canvas)screen).setInputHelper( (TextBox.InputHelper)null );
+	                ((Canvas)screen).setInputHelper( (TextBox.InputHelper)null );		    
 		    }
+		    
 		    
 		    hereAndNow = null;
 		}
 		
 		if (screen instanceof TextBox) {
 		    
+		    Canvas current = (Canvas)midlet.getActiveScreen();
 		    if (hereAndNow != screen) {
 		        hereAndNow = (TextBox)screen;
-		        
-                        Canvas current = (Canvas)midlet.getActiveScreen();
 
                         try {
+System.out.println("hereAndNow creating new input helper");
                             TextBox.InputHelper helper = (TextBox.InputHelper)TextBox.inputHelperClass.newInstance();
         		    helper.start(hereAndNow,midlet);
         		    current.setInputHelper(helper);
@@ -64,6 +65,10 @@ public class Display {
                         catch (Exception ex) {
                             ex.printStackTrace();
                         }
+		    }
+		    else {
+System.out.println("hereAndNow restarting existing input helper");
+		        current.helper.start(hereAndNow, midlet);
 		    }
 
 		}
