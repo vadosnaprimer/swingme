@@ -459,28 +459,12 @@ public abstract class Canvas extends FullScreen {
 		// we need to do this check as passing 0 can cause strange events
 		if (midpKeyCode != 0) {
 
-		if (helper!=null && midpKeyCode==KEY_END) {
-		    boolean result = helper.back();
-		    if (result) {
-		        return true;
+		    if (helper!=null) {
+		        return helper.keyPressed(midpKeyCode,processed);
 		    }
-		}
-		
-
-		
-		// HACK, as bb returns false instead of true when a child handles a key event, as need to return here if a native child is open
-	    	if (helper!=null && getLeafFieldWithFocus() instanceof TextField) {
-	    		
-	    		boolean sendToNative = helper.sendToNative(midpKeyCode);
-	    		
-		    	if (sendToNative) {
-		    		return processed;
-		    	}
-	    	}
-
-
-			lastKey = midpKeyCode;
-			keyPressed(midpKeyCode);
+		    else {
+		        sendKeyPressed(midpKeyCode);
+		    }
 
 		}
 		//#mdebug debug
@@ -493,7 +477,10 @@ public abstract class Canvas extends FullScreen {
 
     }
     
-	
+    public void sendKeyPressed(int midpKeyCode) {
+        lastKey = midpKeyCode;
+        keyPressed(midpKeyCode);
+    }
 	
 	protected boolean keyUp(int keyCode, int time) {
 

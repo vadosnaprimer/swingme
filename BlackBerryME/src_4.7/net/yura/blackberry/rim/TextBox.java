@@ -74,14 +74,13 @@ public class TextBox {
     public void setCommandListener(CommandListener textComponent) {
         commandListener = textComponent;
     }
-    
+
     public interface InputHelper {
         public void start(TextBox tb,MIDlet midlet);
         public void stop();
         public void onDraw();
-        public boolean back();
-        public boolean sendToNative(int key);
         public void onLayout();
+        public boolean keyPressed(int midpKeyCode, boolean alreadyProcessed);
     }
     
     //public void open(MIDlet midlet) {
@@ -92,8 +91,7 @@ public class TextBox {
     public static class TextBoxDialog implements InputHelper {
 
         public void start(final TextBox tb,MIDlet midlet) {
-            
-            
+
             final PopupScreen popup = new PopupScreen(new VerticalFieldManager(),PopupScreen.DEFAULT_CLOSE);
             
             final TextField editField = (TextField)getTextFiled(tb, false);
@@ -130,22 +128,16 @@ public class TextBox {
             
         }
 
+        public void onDraw() { }
+        public void onLayout() { }
+        
         public void stop() {
-            // hiding this screen is handled in "Display.setCurrent(desktoppane)"
+            // hiding this screen is handled in "Display.setCurrent(Canvas)"
         }
 
-        public boolean back() {
-            return false; // will never come here, as we opena whole new screen
+        public boolean keyPressed(int midpKeyCode, boolean alreadyProcessed) {
+            return false; // this will never happen, as when the dialog is open all events go to it
         }
-
-        public void onDraw() {
-        }
-        public void onLayout() {
-        }
-
-		public boolean sendToNative(int key) {
-			return false;
-		}
     }
     
     public static class TextBoxKeyboard implements InputHelper {
@@ -161,42 +153,45 @@ public class TextBox {
 
             // there does not seem to be a way to tell it what type of keyboard to open
             // the hack to get round this is to create a EditField and focus it, then open the keyboard, then hide the EditField
-            net.rim.device.api.ui.VirtualKeyboard keyboard  = screen.getVirtualKeyboard();
-            keyboard.setVisibility( net.rim.device.api.ui.VirtualKeyboard.SHOW );
-            
+            if (net.rim.device.api.ui.VirtualKeyboard.isSupported()) {
+                screen.getVirtualKeyboard().setVisibility( net.rim.device.api.ui.VirtualKeyboard.SHOW );
+            }
         }
 
+
+        public void onDraw() { }
+        public void onLayout() { }
+        
         public void stop() {
-            net.rim.device.api.ui.VirtualKeyboard keyboard  = screen.getVirtualKeyboard();
-            keyboard.setVisibility( net.rim.device.api.ui.VirtualKeyboard.HIDE );
+            if (net.rim.device.api.ui.VirtualKeyboard.isSupported()) {
+                screen.getVirtualKeyboard().setVisibility( net.rim.device.api.ui.VirtualKeyboard.HIDE );
+            }
         }
         
-        public boolean back() {
-            
-            net.rim.device.api.ui.VirtualKeyboard keyboard  = screen.getVirtualKeyboard();
-            boolean result = keyboard.getVisibility()==net.rim.device.api.ui.VirtualKeyboard.SHOW;
+        public boolean keyPressed(int midpKeyCode,boolean processed) {
 
-            if (textBox.commandListener!=null) {
-                for (int c=0;c<textBox.commands.size();c++) {
-                    Command command = (Command)textBox.commands.elementAt(c);
-                    if (command.getCommandType()==Command.CANCEL) {
-                        textBox.commandListener.commandAction(command, null); // will in turn call "setCurrent(desktoppane)" that will call "setInputHelper(null)" that will call "stop()"
-                        break;
+            if (midpKeyCode==Canvas.KEY_END) {
+                
+                boolean result = net.rim.device.api.ui.VirtualKeyboard.isSupported() && screen.getVirtualKeyboard().getVisibility()==net.rim.device.api.ui.VirtualKeyboard.SHOW;
+
+                if (textBox.commandListener!=null) {
+                    for (int c=0;c<textBox.commands.size();c++) {
+                        Command command = (Command)textBox.commands.elementAt(c);
+                        if (command.getCommandType()==Command.CANCEL) {
+                            textBox.commandListener.commandAction(command, null); // will in turn call "setCurrent(desktoppane)" that will call "setInputHelper(null)" that will call "stop()"
+                            break;
+                        }
                     }
                 }
+
+                if (result) {
+                    return true; // if we have actually dismissed the keyboard, then consume the event and return true
+                }
             }
-
-            return result; // we want to consume the event if the keyboard was already open
+            
+            screen.sendKeyPressed(midpKeyCode);
+            return true;
         }
-
-        public void onDraw() {
-        }
-        public void onLayout() {
-        }
-
-		public boolean sendToNative(int key) {
-			return false;
-		}
     }
 
     public static class TextBoxNative implements InputHelper,ChangeListener, FieldChangeListener, FocusChangeListener {
@@ -234,7 +229,7 @@ public class TextBox {
             
             editField.setFont( ((TextComponent)textField).getFont().getFont().font );
 
-            getTextField(editField).setCursorPosition(((TextComponent)textField).getCaretPosition()); 
+            swing2bb();
             
             Border insets = textField.getInsets();
             editField.setBorder(BorderFactory.createSimpleBorder(new XYEdges(insets.getTop(), insets.getRight(), insets.getBottom(), insets.getLeft()), net.rim.device.api.ui.decor.Border.STYLE_TRANSPARENT));
@@ -320,6 +315,10 @@ public class TextBox {
             }
         }
         
+        void swing2bb() {
+            getTextField(editField).setCursorPosition( ((TextComponent)textField).getCaretPosition() );
+        }
+        
         public void onLayout() {
 
             // as this get called during the Canvas.add(Field) and we do not yet know the width to use for wraping, we need to call ondraw
@@ -399,16 +398,47 @@ public class TextBox {
             }
             return false;
         }
+        
+        public boolean keyPressed(int midpKeyCode,boolean processed) {
 
-	public boolean sendToNative(int key) {
-	    	Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMnemonicButton(key);
-	    	
-	    	if (b!=null) {
-	    	    bb2swing();
-	    	}
-	    	
-	    	return b==null;
-	}
+            if (midpKeyCode==Canvas.KEY_END) {
+                boolean result = back(); // we do not want to shut down the inputhelper, just dismiss the keyboard, in TextBoxKeyboard we shut down the inputhelper in this event
+                if (result) {
+                    return true; // if we have actually dismissed the keyboard, then return true
+                }
+            }
+
+            if (editField!=null) {
+                    
+                    Button b = DesktopPane.getDesktopPane().getSelectedFrame().findMnemonicButton(midpKeyCode);
+                    
+                    if (b!=null) {
+                        bb2swing();
+
+                        screen.sendKeyPressed(midpKeyCode); // process the event as normal
+
+                        textBox.text = ((TextComponent)textField).getText(); // swing2midp
+                        getTextField(editField).setText( textBox.text ); // midp2bb
+
+                        swing2bb(); // update caret position
+
+                    }
+                    else {
+                        // we have no button to trigger, we just want the event to be sent to the native component
+                        // HACK, as bb returns false instead of true when a child handles a key event, as need to return here if a native child is open
+                        return processed;
+                    }
+            }
+            // if we have no edit field open just do what we normally do, pass the event to the canvas
+            else {
+                screen.sendKeyPressed(midpKeyCode);
+            }
+            
+            return true; // default consume all events as we have dealt with everything
+            
+        }
+
+        
     }
     
     private static Field getTextFiled(TextBox tb, boolean singleLine) {
@@ -445,18 +475,15 @@ public class TextBox {
         editField.setText(tb.text);
         editField.setMaxSize(tb.maxSize);  
         
-		 if (singleLine) {
-			 HorizontalFieldManager man = new HorizontalFieldManager(HorizontalFieldManager.HORIZONTAL_SCROLL);
-			 man.add(editField);
-			 return man;
-		 } 
-		 else {
-			 return editField;
-		 }
-			 
-		
-        
+	if (singleLine) {
+	    HorizontalFieldManager man = new HorizontalFieldManager(HorizontalFieldManager.HORIZONTAL_SCROLL);
+	    man.add(editField);
+	    return man;
+	} 
+	else {
+	    return editField;
+	}
+
     }
 
-    
 }
