@@ -80,6 +80,7 @@ public class TextBox {
         public void onDraw();
         public boolean back();
         public boolean sendToNative(int key);
+        public void onLayout();
     }
     
     //public void open(MIDlet midlet) {
@@ -138,6 +139,8 @@ public class TextBox {
 
         public void onDraw() {
         }
+        public void onLayout() {
+        }
 
 		public boolean sendToNative(int key) {
 			return false;
@@ -186,6 +189,8 @@ public class TextBox {
         }
 
         public void onDraw() {
+        }
+        public void onLayout() {
         }
 
 		public boolean sendToNative(int key) {
@@ -241,7 +246,7 @@ public class TextBox {
             
             screen.add(editField);
 
-            onDraw();
+            //onDraw(); // do not need to call this here, as we will call InputHelper.onLayout() and that will call the InputHelper.onDraw()
             
             TextComponent.staticFocusListener = this;
             
@@ -262,11 +267,17 @@ public class TextBox {
 
                 bb2swing();
                 
+                textField.setPreferredSize(textField.getPreferredWidth(), -1);
+                
                 textField.setForeground(Style.NO_COLOR);
                 
-                screen.delete(editField);
-                
+                Field field = editField;
                 editField=null;
+                screen.delete(field);
+                
+                DesktopPane.mySizeChanged(textField);
+                
+                
             }
         }
         
@@ -281,6 +292,33 @@ public class TextBox {
             ((TextComponent)textField).setText( textBox.getString() );
             
             ((TextComponent)textField).setCaretPosition( field.getCursorPosition() );
+
+        }
+        
+        public void onLayout() {
+
+            // as this get called during the Canvas.add(Field) and we do not yet know the width to use for wraping, we need to call ondraw
+            onDraw();
+            
+            if (editField!=null) {
+                
+                int swingMargin = ((TextComponent)textField).getMargin();
+                
+                // even though this looks like its doing nothing we NEED to call this as
+                // it recalcs the ContentHeight based on the width you pass in and the text in the textbox
+                CanvasManager man = (CanvasManager)screen.getDelegate();
+                man.layoutChild2(editField, editField.getWidth(), editField.getHeight());
+                
+                int preferredHeight = getTextField(editField).getContentHeight() + swingMargin*2;
+
+                if (preferredHeight != textField.getPreferredHeight()) {
+                    textField.setPreferredSize(textField.getPreferredWidth(), preferredHeight);
+                    DesktopPane.mySizeChanged(textField);
+                }
+                
+                System.out.println("==================== Changing swingme textField size to: ContentHeight=" +preferredHeight + " height=" + editField.getHeight() + " PreferredHeight=" + editField.getPreferredHeight());
+
+            }
 
         }
         
@@ -301,19 +339,22 @@ public class TextBox {
                     man.setPositionChild2(editField, x, y);
                 }
                 if (w!=editField.getWidth() || h!= editField.getHeight()) {
-                    System.out.println("The preferred height of the editfield is: " + editField.getPreferredHeight());
-                    
-                    Field f = getTextField(editField);      
-                    int ph = editField.getPreferredHeight() + editField.getBorder().getTop() + editField.getPaddingTop() +  editField.getBorder().getBottom() + editField.getPaddingBottom();
-                    
-                    if (h > ph) {
-                        int toPad = (h - ph) / 2;
-                        f.setPadding(toPad, f.getPaddingRight(), toPad, f.getPaddingLeft());
-                        System.out.println("Padding editfield top and bottom with: " + toPad);
+
+                    // for single line text boxes we want to center the text in the middle vertically
+                    if (textField instanceof net.yura.mobile.gui.components.TextField) {
+                        Field f = getTextField(editField);      
+                        int ph = f.getPreferredHeight() + editField.getBorder().getTop() + f.getPaddingTop() +  editField.getBorder().getBottom() + f.getPaddingBottom();
+                        System.out.println("==================== The preferred height of the editfield is: " + ph );
+                        if (h > ph) {
+                            int toPad = (h - ph) / 2;
+                            f.setPadding(f.getPaddingTop()+toPad, f.getPaddingRight(), f.getPaddingBottom()+toPad + ((h-ph)%2==0?0:1), f.getPaddingLeft());
+                            System.out.println("==================== Padding editfield top and bottom with: " + toPad);
+                        }
                     }
                                     
-                    System.out.println("Laying out editField with h=" + h + " and w=" + w);
+                    System.out.println("==================== Laying out editField with h=" + h + " and w=" + w);
                     man.layoutChild2(editField, w, h);
+                    System.out.println("==================== Actual values after layout h=" + editField.getHeight() + " and w=" + editField.getWidth());
                 }
             }
         }

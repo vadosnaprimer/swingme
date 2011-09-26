@@ -73,12 +73,17 @@ public abstract class Canvas extends FullScreen {
          }
 
         protected void sublayout(int width, int height) {
+            Canvas screen = (Canvas)getScreen();
+            if (screen.helper!=null) {
+                screen.helper.onLayout();
+            }
             setExtent( width, height ); // BB says we NEED to call setExtent from sublayout or things like text selecting does not work
-        }
-
+        }        
+        
         public void setPositionChild2(Field field, int x, int y) {
             super.setPositionChild(field, x, y);
         }
+        
         public void layoutChild2(Field field, int w, int h) {     	
             super.layoutChild(field, w, h);
         }

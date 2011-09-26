@@ -98,6 +98,9 @@ public class CellSiteLocationProvider extends LocationProvider {
 	}
 	
 	public void reset() {
+    	        //#debug info
+                Logger.info("Cell site location provider location has been reset, no location updates should come from here anymore.");
+            
 		_quit = true;
 		listeners = null;
 		hasStarted = false;
