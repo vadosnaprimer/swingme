@@ -24,6 +24,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 
@@ -197,6 +198,10 @@ public class AndroidMeApp extends Application {
 
     public void invokeLater(final Runnable runnable, long delayMillis) {
         handler.postDelayed(runnable, delayMillis);
+    }
+
+    public Looper getLooper() {
+        return handler.getLooper();
     }
 
     private void setSystemProperties() {
