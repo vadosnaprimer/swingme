@@ -5,6 +5,7 @@ import javax.microedition.lcdui.Command;
 import javax.microedition.lcdui.CommandListener;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.FieldChangeListener;
+import net.rim.device.api.ui.FocusChangeListener;
 import net.rim.device.api.ui.XYEdges;
 import net.rim.device.api.ui.component.BasicEditField;
 import net.rim.device.api.ui.component.ButtonField;
@@ -198,7 +199,7 @@ public class TextBox {
 		}
     }
 
-    public static class TextBoxNative implements InputHelper,ChangeListener {
+    public static class TextBoxNative implements InputHelper,ChangeListener, FieldChangeListener, FocusChangeListener {
         
         public static final ChangeListener starter = new ChangeListener() {
             public void changeEvent(Component source, int type) {
@@ -251,6 +252,22 @@ public class TextBox {
             TextComponent.staticFocusListener = this;
             
             editField.setFocus();
+            
+
+
+            getTextField(editField).setChangeListener(this);
+            getTextField(editField).setFocusListener(this);
+            
+        } 
+
+        public void fieldChanged(Field field, int context) {
+            bb2swing();
+        }
+
+        public void focusChanged(Field field, int eventType) {
+            if (eventType == FocusChangeListener.FOCUS_CHANGED) { // caret changed
+                bb2swing();
+            }
         }
         
         private static TextField getTextField(Field field) {
@@ -286,13 +303,21 @@ public class TextBox {
             TextField field = getTextField(editField);
             
             // bb2midp
-            textBox.text = field.getText();
+            String new1 = field.getText();
+            if (!new1.equals(textBox.text)) {
+                textBox.text = new1;
+            }
             
             // midp2swingme
-            ((TextComponent)textField).setText( textBox.getString() );
+            String new2 = textBox.getString();
+            if (!new2.equals( ((TextComponent)textField).getText() )) {
+                ((TextComponent)textField).setText( new2 );
+            }
             
-            ((TextComponent)textField).setCaretPosition( field.getCursorPosition() );
-
+            int caret = field.getCursorPosition();
+            if (caret != ((TextComponent)textField).getCaretPosition()) {
+                ((TextComponent)textField).setCaretPosition( caret );
+            }
         }
         
         public void onLayout() {
