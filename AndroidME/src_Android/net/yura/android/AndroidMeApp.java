@@ -216,8 +216,8 @@ public class AndroidMeApp extends Application {
         String dpi =
             (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "ldpi" :
             (dm.densityDpi == DisplayMetrics.DENSITY_MEDIUM) ? "mdpi" :
-           // TODO enable this (dm.densityDpi == DisplayMetrics.DENSITY_XHIGH) ? "xhdpi" :
-                "hdpi";
+            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "hdpi" :
+                "xhdpi"; // API-11 DisplayMetrics.DENSITY_XHIGH
 
         Configuration config = getResources().getConfiguration();
 
@@ -225,13 +225,13 @@ public class AndroidMeApp extends Application {
 
         String size =
             (screenLayout == Configuration.SCREENLAYOUT_SIZE_SMALL ) ? "small" :
+            (screenLayout == Configuration.SCREENLAYOUT_SIZE_NORMAL) ? "normal" :
             (screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE) ? "large" :
-            (screenLayout == 4) ? "xlarge" : // Configuration.SCREENLAYOUT_SIZE_XLARGE
-                "normal";
+                "xlarge"; // API-11 Configuration.SCREENLAYOUT_SIZE_XLARGE
 
 
         // deprecated
-        System.setProperty("resdir", "/res_" + (( "mdpi".equals(dpi) && "xlarge".equals(size) )?size+"-":"") +dpi);
+        System.setProperty("resdir", "/res_" + (( "mdpi".equals(dpi) && "xlarge".equals(size) )?size+"-":"") + ("xhdpi".equals(dpi)?"hdpi":dpi) );
 
 
         System.setProperty("display.dpi", dpi);
