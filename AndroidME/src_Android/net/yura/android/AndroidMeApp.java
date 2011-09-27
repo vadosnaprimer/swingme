@@ -226,7 +226,7 @@ public class AndroidMeApp extends Application {
         String size =
             (screenLayout == Configuration.SCREENLAYOUT_SIZE_SMALL ) ? "small" :
             (screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE) ? "large" :
-            (screenLayout == Configuration.SCREENLAYOUT_SIZE_XLARGE) ? "xlarge" :
+            (screenLayout == 4) ? "xlarge" : // Configuration.SCREENLAYOUT_SIZE_XLARGE
                 "normal";
 
 
