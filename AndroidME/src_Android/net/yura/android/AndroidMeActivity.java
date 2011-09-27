@@ -45,7 +45,10 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         super.onCreate(icicle);
 
         if (DEFAULT_ACTIVITY != null) {
-            super.finish(); // This can only run as single instance.
+            // This can only run as single instance!!
+            // Forward the intent that started us, and then die.
+            DEFAULT_ACTIVITY.onNewIntent(getIntent());
+            super.finish();
             return;
         }
 
