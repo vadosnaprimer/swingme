@@ -230,7 +230,7 @@ public class AndroidMeApp extends Application {
                 "normal";
 
 
-        // @deprecated
+        // deprecated
         System.setProperty("resdir", "/res_" + (( "mdpi".equals(dpi) && "xlarge".equals(size) )?size+"-":"") +dpi);
 
 
