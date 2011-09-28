@@ -355,7 +355,7 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
                 // YURA sometimes when we are loaded using ME4SEPanel we can not know we are a applet, yet not have a file either, as really we are a applet
 		if (!isApplet() && file!=null && !file.delete()){
-			throw new RecordStoreException("Cannot delete Store " + file.getName());
+			throw new RecordStoreException("Cannot delete Store, File.delete() returned false for file: " + file );
 		}
 		
 		records = null;
