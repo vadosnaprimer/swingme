@@ -63,6 +63,7 @@ public class Graphics {
 	 * @param y - the y coordinate of the new translation origin
 	 * @see #getTranslateX()
 	 * @see #getTranslateY()
+         * @see javax.microedition.lcdui.Graphics#translate(int, int)
 	 */
 	public void translate(int x, int y)
 	{
@@ -77,6 +78,7 @@ public class Graphics {
 	 * Gets the X coordinate of the translated origin of this graphics context.
 	 * 
 	 * @return X of current origin
+	 * @see javax.microedition.lcdui.Graphics#getTranslateX()
 	 */
 	public int getTranslateX()
 	{
@@ -87,6 +89,7 @@ public class Graphics {
 	 * Gets the Y coordinate of the translated origin of this graphics context.
 	 * 
 	 * @return Y of current origin
+         * @see javax.microedition.lcdui.Graphics#getTranslateY()
 	 */
 	public int getTranslateY()
 	{
@@ -98,6 +101,7 @@ public class Graphics {
 	 * 
 	 * @return an integer in form 0x00RRGGBB
 	 * @see #setColor(int, int, int)
+         * @see javax.microedition.lcdui.Graphics#getColor()
 	 */
 	public int getColor()
 	{
@@ -187,6 +191,7 @@ public class Graphics {
 	 * 
 	 * @param RGB - the color being set
 	 * @see #getColor()
+         * @see javax.microedition.lcdui.Graphics#setColor(int)
 	 */
 	public void setColor(int RGB) {
 		this.g.setColor( RGB );
@@ -220,6 +225,7 @@ public class Graphics {
 	 * @return current font
 	 * @see Font
 	 * @see #setFont(Font)
+         * @see javax.microedition.lcdui.Graphics#getFont()
 	 */
 	public Font getFont()
 	{
@@ -262,6 +268,7 @@ public class Graphics {
 	 * @see Font#getFont(int, int, int)
 	 * @see #drawString(java.lang.String, int, int, int)
 	 * @see #drawChars(char[], int, int, int, int, int)
+         * @see javax.microedition.lcdui.Graphics#setFont(Font)
 	 */
 	public void setFont(Font font)
 	{
@@ -279,6 +286,7 @@ public class Graphics {
 	 * @return X offset of the current clipping area
 	 * @see #clipRect(int, int, int, int)
 	 * @see #setClip(int, int, int, int)
+         * @see javax.microedition.lcdui.Graphics#getClipX()
 	 */
 	public int getClipX()
 	{
@@ -295,6 +303,7 @@ public class Graphics {
 	 * @return Y offset of the current clipping area
 	 * @see #clipRect(int, int, int, int)
 * @see #setClip(int, int, int, int)
+         * @see javax.microedition.lcdui.Graphics#getClipY()
 	 */
 	public int getClipY()
 	{
