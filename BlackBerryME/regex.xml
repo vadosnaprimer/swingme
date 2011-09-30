@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="${description}" default="regex" basedir=".\build">
+
+	<target name="regex">
+
+		<echo>replacing_imports</echo>
+
+		<!-- this is 4.7 and up and uses native rim ui -->
+		
+		<replaceregexp byline="true" flags="g" match="javax.microedition.midlet.MIDlet(\W)" replace="net.yura.blackberry.rim.MIDlet\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Canvas(\W)" replace="net.yura.blackberry.rim.Canvas\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Font(\W)" replace="net.yura.blackberry.rim.Font\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Graphics(\W)" replace="net.yura.blackberry.rim.Graphics\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Image(\W)" replace="net.yura.blackberry.rim.Image\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.Display(\W)" replace="net.yura.blackberry.rim.Display\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.game.Sprite(\W)" replace="net.yura.blackberry.rim.Sprite\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Background(\W)" replace="net.yura.blackberry.rim.m3g.Background\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Graphics3D(\W)" replace="net.yura.blackberry.rim.m3g.Graphics3D\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.m3g.Image2D(\W)" replace="net.yura.blackberry.rim.m3g.Image2D\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.MediaProcessor(\W)" replace="net.yura.blackberry.rim.amms.MediaProcessor\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.GlobalManager(\W)" replace="net.yura.blackberry.rim.amms.GlobalManager\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.amms.control.ImageFormatControl(\W)" replace="net.yura.blackberry.rim.amms.ImageFormatControl\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+		<replaceregexp byline="false" flags="gs" match="catch\s*\(Throwable\s*(.*?)\)(.*?\})" replace="catch (Error \1)\2 catch (Exception \1)\2">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp><!---->
+
+		<replaceregexp byline="true" flags="g" match="javax.microedition.lcdui.TextBox(\W)" replace="net.yura.blackberry.rim.TextBox\1">
+			<fileset dir="${build.directory}" includes="**/*.java" />
+		</replaceregexp>
+
+	</target>
+
+</project>
