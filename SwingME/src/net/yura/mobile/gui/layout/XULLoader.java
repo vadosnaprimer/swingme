@@ -332,7 +332,9 @@ public class XULLoader {
                 }
                 else if ("scrollable".equals(key)) {
                     Panel p = frame.getContentPane();
-                    frame.setContentPane( new ScrollPane(p) );
+                    ScrollPane sp = new ScrollPane();
+                    frame.setContentPane( sp );
+                    sp.add(p);
                 }
                 else if ("closable".equals(key)) {
                     frame.setClosable("true".equalsIgnoreCase(value));
