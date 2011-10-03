@@ -110,9 +110,9 @@ public class MenuBar extends List implements ActionListener {
      * @see java.awt.Container#removeAll()
      */
     public void removeAll() {
-        setSelectedIndex(-1);
-        getItems().removeAllElements();
-        // TODO reset parents
+        while (super.getSize()>0) {
+            remove( (Component)super.getElementAt( super.getSize()-1 ) );
+        }
     }
 
     /**
@@ -121,9 +121,15 @@ public class MenuBar extends List implements ActionListener {
      */
     public void remove(Component c) {
         setSelectedIndex(-1); // TODO can be done better
-        getItems().removeElement(c);
+        getItems().removeElement(c); // we can not call removeElement as that will not work on non-visible items
         c.removeParent(this);
     }
+    
+    //#mdebug debug
+    public boolean removeElement(Object obj) {
+        throw new RuntimeException("do not use this as it will fail on removing non-visible components, use remove instead");
+    }
+    //#enddebug
 
     public void actionPerformed(String actionCommand) {
         if ("activate".equals(actionCommand)) {

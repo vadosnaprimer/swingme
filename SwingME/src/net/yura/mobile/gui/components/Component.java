@@ -278,6 +278,10 @@ public abstract class Component {
         if (component instanceof Window) {
             throw new RuntimeException("trying to add a window to a Component: "+component+" to "+this);
         }
+        if (component.parent != null) {
+            System.out.println("this component already has a parent "+component+" PARENT="+component.parent);
+            Logger.dumpStack();
+        }
         //#enddebug
 
         component.parent = this;
@@ -863,6 +867,7 @@ public abstract class Component {
     /**
      * in Swing this is done by adding a MouseListener that will then fire the popup menu
      * @see java.awt.Component#addMouseListener(java.awt.event.MouseListener) Component.addMouseListener
+     * @see java.awt.Component#add(java.awt.PopupMenu)
      */
     public void setPopupMenu(Window component) {
         popup = component;

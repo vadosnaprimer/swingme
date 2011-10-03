@@ -329,6 +329,12 @@ public class Table extends Panel {
 
             editorComp = cellEditor.getTableCellEditorComponent(this, getValueAt(editingRow, editingColumn), true, editingRow, editingColumn);
 
+            // in case we are using the same editor on more then one table
+            Component editParent = editorComp.getParent();
+            if (editParent instanceof Table) {
+                ((Table)editParent).removeEditor(); // HACK, TODO what about if the parent is a Panel or MenuBar?
+            }
+            
             add(editorComp);
 
             doLayout();
