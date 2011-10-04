@@ -69,17 +69,17 @@ public class MatteBorder extends EmptyBorder {
               back=true;
         }
 
-        
+
         public static MatteBorder load9png(String name) throws Exception {
-            
+
             Image img = Image.createImage( Midlet.getResourceAsStream(name) );
 
             int width = img.getWidth();
             int height = img.getHeight();
-            
+
             int[] result = new int[2];
             int[] insets = new int[(height>width?height:width)-2];
-            
+
             img.getRGB(insets, 0, 1, 0, 1, 1, height-2);
             topBotton(insets,result,height-2);
             int imageTop=result[0];
@@ -89,7 +89,7 @@ public class MatteBorder extends EmptyBorder {
             topBotton(insets,result,height-2);
             int top=result[0];
             int bottom=result[1];
-            
+
             img.getRGB(insets, 0, width-2, 1, 0, width-2, 1);
             topBotton(insets,result,width-2);
             int imageLeft=result[0];
@@ -101,32 +101,32 @@ public class MatteBorder extends EmptyBorder {
             int right=result[1];
 
 //System.out.println("Insets= "+top+" "+left+" "+bottom+" "+right+" sourceInsets= "+imageTop+" "+imageLeft+" "+imageBottom+" "+imageRight );
-            
+
             return new MatteBorder(new Icon(img).getSubimage(1, 1, img.getWidth()-2, img.getHeight()-2),top,left,bottom,right,
                     imageTop,imageLeft,imageBottom,imageRight,true,Style.NO_COLOR);
         }
-        
+
         private static void topBotton(int[] insets,int[] result,int length) {
             result[0]=0;
             result[1]=0;
 
 //System.out.print("START");
-            
+
             for (int c=0;c<length;c++) {
-                
-//System.out.print( (insets[c]>0?" ":"#") );
-                
-                if (insets[c] > 0 && result[1]==0) {
+
+//System.out.print( (insets[c]>=0?" ":"#") );
+
+                if (insets[c] >= 0 && result[1]==0) {
                     result[0] = c+1;
                 }
                 else if (insets[c] < 0) {
                     result[1] = length - (c+1);
                 }
             }
-            
+
 //System.out.println("END");
         }
-        
+
         /**
          * This wil create a border with a Image skin
          * The skin file is a text file with the following values
