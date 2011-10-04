@@ -176,17 +176,28 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     String sourceInsets = parser.getAttributeValue(null, "sourceInsets");
                                     String paintCenter = parser.getAttributeValue(null, "paintCenter");
 
-                                    Icon activeimage = getIcon( path,0,0,0,0 );
-                                    if (activeimage!=null) {
-                                        String[] split = StringUtil.split(sourceInsets, ' ');
-                                        border = new MatteBorder(activeimage,
-                                                insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
-                                                Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]),
-                                                "true".equals(paintCenter) || "Y".equals(paintCenter)
-                                                , borderfill);
-                                        border.opaque = opaque;
-                                        newStyle.addBorder(border, st);
+                                    if (sourceInsets!=null) {
+                                        Icon activeimage = getIcon( path,0,0,0,0 );
+                                        if (activeimage!=null) {
+                                            String[] split = StringUtil.split(sourceInsets, ' ');
+                                            border = new MatteBorder(activeimage,
+                                                    insets==null?0:insets.getTop(), insets==null?0:insets.getLeft(), insets==null?0:insets.getBottom(), insets==null?0:insets.getRight(),
+                                                    Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]), Integer.parseInt(split[3]),
+                                                    "true".equals(paintCenter) || "Y".equals(paintCenter)
+                                                    , borderfill);
+                                            border.opaque = opaque;
+                                            newStyle.addBorder(border, st);
+                                        }
                                     }
+                                    else { 
+                                        if (path.indexOf(".9.")>0) {
+                                            border = MatteBorder.load9png(path); // load 9 pacth
+                                        }
+                                        else {
+                                            border = MatteBorder.load(path);
+                                        }
+                                        newStyle.addBorder(border, st);
+                                     }
                                 }
                                 else if ("property".equals(name2)) {
                                     String type = parser.getAttributeValue(null, "type");

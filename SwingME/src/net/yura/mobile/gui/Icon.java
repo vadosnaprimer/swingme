@@ -106,7 +106,11 @@ public class Icon {
                 return img;
             }
             else {
-                return Image.createImage(img, px, py, width, height, 0);
+                img = Image.createImage(img, px, py, width, height, 0);
+                image = img;
+                px=0;
+                py=0;
+                return img;
             }
         }
         return null;
