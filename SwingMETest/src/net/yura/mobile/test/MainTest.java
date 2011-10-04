@@ -127,7 +127,7 @@ public class MainTest extends Section {
             //bar.insert(new Label("a"), 0);
             //bar.insert(new Label("b"), 2);
             //bar.insert(new Label("c"), 4);
-            bar.addElement( new Label(mainPane.image) );
+            bar.add( new Label(mainPane.image) );
             getMainWindow().revalidate();
             getMainWindow().repaint();
         }
