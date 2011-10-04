@@ -79,7 +79,7 @@ public class MenuBar extends List implements ActionListener {
         super.addImpl(button, cons, index);
 
         if (index==-1) {
-            addElement(button);
+            super.addElement(button);
         }
         else {
             setSelectedIndex(-1); // TODO can be done better
@@ -124,10 +124,13 @@ public class MenuBar extends List implements ActionListener {
         getItems().removeElement(c); // we can not call removeElement as that will not work on non-visible items
         c.removeParent(this);
     }
-    
+
     //#mdebug debug
     public boolean removeElement(Object obj) {
-        throw new RuntimeException("do not use this as it will fail on removing non-visible components, use remove instead");
+        throw new RuntimeException("do not use this as it will fail on removing non-visible components, use remove() instead");
+    }
+    public void addElement(Object a) {
+        throw new RuntimeException("do not use this as it will fail, use add() instead");
     }
     //#enddebug
 
@@ -338,7 +341,7 @@ public class MenuBar extends List implements ActionListener {
     protected void workoutMinimumSize() {
 
         DesktopPane dp = getDesktopPane();
-        
+
         // in softkey mode if the bar is at the bottom of a window
         // we do not want it getting focus when we click on it
         // unless we have something focusable in it, but thats rare
@@ -358,7 +361,7 @@ public class MenuBar extends List implements ActionListener {
             //setFocusable(focus); // we can NOT call this method, as if we do, it tries to setup the newFocusedComponent, and it will get this wrong
                                    // as it has not layed out the panel yet, as we are only in the workoutMinimumSize stage at this time
         }
-        
+
         if (dp.GRID_MENU) {
 
             int size = getSize();
