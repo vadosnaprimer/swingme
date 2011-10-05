@@ -80,7 +80,14 @@ public class LocationProvider implements android.location.LocationListener {
         if (locationListener == null) {
             lm.removeUpdates(this);
         } else {
-            lm.requestLocationUpdates(provider, interval * 1000, MINIMUM_MOVEMENT_IN_METRES, this, AndroidMeApp.getIntance().getLooper());
+        	
+        	try {
+        		// this can throw "java.lang.IllegalArgumentException: provider=gps" on the google TV
+        		lm.requestLocationUpdates(provider, interval * 1000, MINIMUM_MOVEMENT_IN_METRES, this, AndroidMeApp.getIntance().getLooper());
+        	}
+        	catch (Throwable th) {
+        		th.printStackTrace();
+        	}
         }
     }
 
