@@ -17,8 +17,11 @@
 
 package net.yura.mobile.gui.border;
 
+import java.io.InputStream;
 import java.util.Random;
+
 import javax.microedition.lcdui.Image;
+
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
@@ -71,8 +74,13 @@ public class MatteBorder extends EmptyBorder {
 
 
         public static MatteBorder load9png(String name) throws Exception {
+            InputStream is = Midlet.getResourceAsStream(name);
+            if (is == null) {
+                // HACK: Jane - temporary hack until 9png are properly supported by apps
+                return null;
+            }
 
-            Image img = Image.createImage( Midlet.getResourceAsStream(name) );
+            Image img = Image.createImage(is);
 
             int width = img.getWidth();
             int height = img.getHeight();
