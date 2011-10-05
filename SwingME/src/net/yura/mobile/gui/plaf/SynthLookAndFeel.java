@@ -189,14 +189,22 @@ public class SynthLookAndFeel extends LookAndFeel {
                                             newStyle.addBorder(border, st);
                                         }
                                     }
-                                    else { 
-                                        if (path.indexOf(".9.")>0) {
-                                            border = MatteBorder.load9png(path); // load 9 pacth
-                                        }
-                                        else {
-                                            border = MatteBorder.load(path);
-                                        }
-                                        newStyle.addBorder(border, st);
+                                    else {
+                                    	try {
+	                                        if (path.indexOf(".9.")>0) {
+	                                            border = MatteBorder.load9png(path); // load 9 pacth
+	                                        }
+	                                        else {
+	                                            border = MatteBorder.load(path);
+	                                        }
+	                                        newStyle.addBorder(border, st);
+                                    	}
+                                    	catch(Exception ex) {
+                                    		//#mdebug debug
+                                    		System.err.println("failed to load: "+path);
+                                    		ex.printStackTrace();
+                                    		//#enddebug
+                                    	}
                                      }
                                 }
                                 else if ("property".equals(name2)) {
