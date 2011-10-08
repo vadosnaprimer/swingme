@@ -23,6 +23,8 @@ import net.rim.device.api.ui.component.Dialog;
 import net.rim.device.api.ui.picker.DateTimePicker;
 import net.yura.blackberry.BlackBerryOptionPane;
 import net.yura.blackberry.ConnectionManager;
+import net.yura.blackberry.rim.TextBox;
+import net.yura.blackberry.rim.TextBox.TextBoxDialog;
 import net.yura.mobile.gui.Animation;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.util.BlackBerryThumbLoader;
@@ -38,14 +40,15 @@ public abstract class MIDlet extends UiApplication {
 
     public MIDlet() {            
         BlackBerryOptionPane.init();
-        TextBox.TextBoxNative.init();
+        //TextBox.TextBoxNative.init();
+        TextBox.inputHelperClass = TextBoxDialog.class;
         
         conManager = ConnectionManager.getInstance();
         UiApplication.getUiApplication().addGlobalEventListener(conManager); // Listen to service books changes
         WLANInfo.addListener(conManager.getConnWIFIListener()); // Listen to WIFI changes
         CoverageInfo.addListener(conManager.getConnRadioListener()); // Listen to radio coverage changes
         
-        Animation.FPS = 2;
+        //Animation.FPS = 2;
         
         
         int keyLayout = Keypad.getHardwareLayout();
