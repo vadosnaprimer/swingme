@@ -6,6 +6,7 @@ import javax.microedition.lcdui.CommandListener;
 import net.rim.device.api.ui.Field;
 import net.rim.device.api.ui.FieldChangeListener;
 import net.rim.device.api.ui.FocusChangeListener;
+import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.XYEdges;
 import net.rim.device.api.ui.component.BasicEditField;
 import net.rim.device.api.ui.component.ButtonField;
@@ -74,6 +75,12 @@ public class TextBox {
     public void setCommandListener(CommandListener textComponent) {
         commandListener = textComponent;
     }
+    
+    public void fireCommand(Command command) {
+        if (commandListener!=null) {
+            commandListener.commandAction(command, null);
+        }
+    }
 
     public interface InputHelper {
         public void start(TextBox tb,MIDlet midlet);
@@ -92,7 +99,21 @@ public class TextBox {
 
         public void start(final TextBox tb,MIDlet midlet) {
 
-            final PopupScreen popup = new PopupScreen(new VerticalFieldManager(),PopupScreen.DEFAULT_CLOSE);
+            final PopupScreen popup = new PopupScreen(new VerticalFieldManager(),PopupScreen.DEFAULT_CLOSE) {
+                protected boolean keyDown(int keyCode, int time) {
+                    if (Keypad.key(keyCode) == Keypad.KEY_ESCAPE) {
+                        for (int c=0;c<tb.commands.size();c++) {
+                            final Command command = (Command)tb.commands.elementAt(c);
+                            if (command.getCommandType() == Command.CANCEL || command.getCommandType() == Command.BACK) {
+                                tb.fireCommand(command);
+                                break;
+                            }
+                        }
+                        return true;
+                    }
+                    return super.keyDown(keyCode, time);
+                }
+            };
             
             final TextField editField = (TextField)getTextFiled(tb, false);
             
@@ -112,9 +133,7 @@ public class TextBox {
                         // set text back from text field
                         tb.text = editField.getText();
                         
-                        if (tb.commandListener!=null) {
-                            tb.commandListener.commandAction(command, null);
-                        }
+                        tb.fireCommand(command);
                     }
                 });
                 
