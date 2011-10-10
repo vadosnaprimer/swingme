@@ -1071,18 +1071,24 @@ public class XULLoader {
     	return adjustSizeToDensity(r);
     }
 
-    //TODO: OREN: we better off caching the dpi rather than
-    //calling the System.getProperty("display.dpi") every time
-    public static int adjustSizeToDensity(int value) {
-        String dpi;
+    private static String dpi;
+    
+    static {
         try {
             // when running as a me4se applet, this can throw a SecurityException
             dpi = System.getProperty("display.dpi");
         }
         catch (Throwable th) {
-            dpi = null;
         }
-        if (dpi!=null) {
+    }
+
+    public static void setDPI(String dpi){
+        XULLoader.dpi = dpi;
+    }
+    
+    public static int adjustSizeToDensity(int value) {
+
+        if ( dpi!=null) {
             if ("hdpi".equals(dpi)) {
                 value = value * 2;
             }
