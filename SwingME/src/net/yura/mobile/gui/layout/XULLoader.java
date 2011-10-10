@@ -56,12 +56,11 @@ import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.io.UTF8InputStreamReader;
+import net.yura.mobile.io.kxml2.KXmlParser;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.Properties;
 import net.yura.mobile.util.StringUtil;
-
-import net.yura.mobile.io.kxml2.KXmlParser;
 
 /**
  * @author Yura Mamyrin
@@ -622,7 +621,9 @@ public class XULLoader {
             if (text!=null) {
                 border2 = new TitledBorder(border2, text, new Label().getFont());
             }
-            panel.setBorder(border2);
+            if (border2!=null) {
+                panel.setBorder(border2);
+            }
 
             return panel;
     }
