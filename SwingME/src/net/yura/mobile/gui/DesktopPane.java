@@ -623,25 +623,33 @@ public class DesktopPane extends Canvas implements Runnable {
 
                 // now start painting ==========================================
 
+                boolean fullPaint = clipx<=0 && clipy<=0 && clipw>=getWidth() && cliph>=getHeight();
+
                 // if while we did the focusGained new components need to be repainted
                 // we want to repaint them in the same repaint cycle as the components themselves
                 // so we move all the current comonents to the next cycle and then return
                 if (!repaintComponent.isEmpty() || fullrepaint) {
-                    for (int c=0;c<repaintComponent2.size();c++) {
-                        repaintComponent((Component)repaintComponent2.elementAt(c));
+                    if (fullPaint) { // we are going to do a full repaint anyway, so just clear everything
+                        repaintComponent.removeAllElements();
+                        fullrepaint = false;
                     }
-                    if (doFullRepaint) {
-                        fullrepaint = true;
+                    else {
+                        for (int c=0;c<repaintComponent2.size();c++) {
+                            repaintComponent((Component)repaintComponent2.elementAt(c));
+                        }
+                        if (doFullRepaint) {
+                            fullrepaint = true;
+                        }
+                        repaint(clipx, clipy, clipw, cliph);
+                        bbfix();
+                        // the fact that we return here CAN cause problems
+                        // as if the system has told us to repaint, and we ignore it,
+                        // we may get a black area flash on the screen for a second
+                        return;
                     }
-                    repaint(clipx, clipy, clipw, cliph);
-                    bbfix();
-                    // the fact that we return here CAN cause problems
-                    // as if the system has told us to repaint, and we ignore it,
-                    // we may get a black area flash on the screen for a second
-                    return;
                 }
 
-                if (clipx<=0 && clipy<=0 && clipw>=getWidth() && cliph>=getHeight()) { // the system wants us to repaint everything
+                if (fullPaint) { // the system wants us to repaint everything
                     doFullRepaint = true;
                 }
                 else if (repaintComponent2.isEmpty()) { // we want to repaint a component but have in a previous repaint cleared our list, so we do not know
