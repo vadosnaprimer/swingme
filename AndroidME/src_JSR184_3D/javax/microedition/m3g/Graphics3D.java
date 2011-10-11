@@ -56,8 +56,10 @@ public final class Graphics3D {
             Paint paint = targetGraphics.getPaint();
 
             Rect src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-            Rect dst = new Rect(vpX, vpY, vpX + vpW, vpY + vpH);
-            
+            int tx = targetGraphics.getTranslateX();
+            int ty = targetGraphics.getTranslateY();
+            Rect dst = new Rect(tx+vpX, ty+vpY, tx+vpX + vpW, ty+vpY + vpH);
+
             int a = paint.getAlpha();
             paint.setAlpha(0xFF); // not not use alpha with images
             canvas.drawBitmap(bitmap, src, dst, paint );

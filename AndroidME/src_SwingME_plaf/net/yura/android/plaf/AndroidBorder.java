@@ -71,8 +71,10 @@ public class AndroidBorder implements Border {
             drawable.setLevel( 10000/(max-min) * value );
         }
         setDrawableState(c, drawable);
-        android.graphics.Canvas canvas = g.getGraphics().getCanvas();
+        Graphics g2 = g.getGraphics();
+        android.graphics.Canvas canvas = g2.getCanvas();
         canvas.save();
+        canvas.translate( g2.getTranslateX() , g2.getTranslateY() );
         canvas.concat( Graphics.getMatrix(g.getTransform()) );
         canvas.clipRect(-getLeft(), -getTop(), width+getRight(), height+getBottom());
         drawable.setBounds(-getLeft(), -getTop(), width+getRight(), height+getBottom());

@@ -45,7 +45,7 @@ public class AndroidSprite extends Sprite {
         canvas.save();
 
         draw.setBounds(0, 0, getWidth(), getHeight());
-        canvas.translate(getX(), getY());
+        canvas.translate(g.getTranslateX()+getX(), g.getTranslateY()+getY());
         draw.draw(canvas);
 
         canvas.restore();
@@ -74,7 +74,7 @@ public class AndroidSprite extends Sprite {
     public void setFrame(int newFrame) {
 
         if (frame != newFrame) {
-            
+
             // HACK 1: android.graphics.drawable.AnimatedRotateDrawable class implements
             // Runnable. Calling run() will make it rotate one position. We are
             // ignoring the requesting frame, but that is OK for a spinner.
@@ -86,13 +86,13 @@ public class AndroidSprite extends Sprite {
                 // 1 - If the frame set is the next from the previous one, we accept it.
                 // 2 - Otherwise we accept it if the latest successful rotation happened
                 // more than 200 ms ago.
-    
+
                 int nextFrame = (frame + 1) % getFrameSequenceLength();
                 long now = System.currentTimeMillis();
-    
+
                 if (newFrame == nextFrame || (now - lastSetFrameTime) > 100) {
                     frame = newFrame;
-    
+
                     ((Runnable) spin).run();
                     lastSetFrameTime = now;
                 }

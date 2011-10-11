@@ -454,6 +454,8 @@ public abstract class Canvas extends Displayable {
     	canvasView.getInputManager().restartInput(canvasView);
     }
 
+    boolean hardwareAccelerated;
+
     public interface InputHelper {
         // used by old style connector
         public boolean onCheckIsTextEditor();
@@ -524,6 +526,13 @@ public abstract class Canvas extends Displayable {
                 return;
             }
 
+            if (usedWidth==0&&usedHeight==0) { // this is the first time paint is called
+                try {
+                    hardwareAccelerated = ((Boolean)getClass().getMethod("isHardwareAccelerated", (Class<?>[])null).invoke(this, (Object[])null));
+                }
+                catch (Throwable th) { }
+            }
+
             // If Possible, try to not use more than 50% on CPU time on painting...
             long elapsed = System.currentTimeMillis() - time;
 
@@ -553,57 +562,57 @@ public abstract class Canvas extends Displayable {
                 canvasH = getHeight() + location[1] - canvasY; // needed for SE Xperia mini pro (when using old style text entry, none native)
             }
 
-            if (graphicsBitmap != null) {
+            int canvasW = this.getWidth();
 
-                // Check for size changes...
-                if (usedWidth != this.getWidth() || usedHeight != canvasH) {
+            // Check for size changes...
+            if (usedWidth != canvasW || usedHeight != canvasH) {
 
-                    // Notify Canvas clients
-                    try {
-                        sizeChanged(Canvas.this.getWidth(), Canvas.this.getHeight());
-                    }
-                    catch (Throwable e) {
-                        Logger.warn(e);
-                    }
-
-                    // only get rid of bitmap if the new screen size is bigger in either dimension
-                    if (graphicsBitmap.getWidth() < this.getWidth() || graphicsBitmap.getHeight() < canvasH) {
-
-	                    graphicsBitmap.recycle();
-	                    graphicsBitmap = null;
-
-	                    //#debug info
-	                    System.out.println("[Canvas] getting rid of old bitmap");
-                    }
-                    else {
-
-                    	// we dont really NEED a new bitmap, so we just update the usedSize
-                    	usedWidth = this.getWidth();
-                    	usedHeight = canvasH;
-                    }
-                }
-            }
-
-            if (graphicsBitmap == null) {
-
-                // Help the GC to collect any previous graphicsBitmap
-                graphics.setCanvas(null);
-
+                // Notify Canvas clients
                 try {
-                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
-                } catch (OutOfMemoryError e) {
-                    System.gc();
-                    Thread.sleep(200);
-
-                    graphicsBitmap = Bitmap.createBitmap(this.getWidth(), canvasH, Bitmap.Config.ARGB_8888);
+                    sizeChanged(Canvas.this.getWidth(), Canvas.this.getHeight());
                 }
-                graphics.setCanvas(new android.graphics.Canvas(graphicsBitmap));
+                catch (Throwable e) {
+                    Logger.warn(e);
+                }
 
-            	usedWidth = graphicsBitmap.getWidth();
-            	usedHeight = graphicsBitmap.getHeight();
+                usedWidth = canvasW;
+                usedHeight = canvasH;
+
             }
 
-            graphics.reset();
+            // if we are not in hardwareAccelerated mode we need to use a buffer bitmap or we will get black flicker
+            if (!hardwareAccelerated) {
+                if (graphicsBitmap != null) {
+                    // only get rid of bitmap if the new screen size is bigger in either dimension
+                    if (graphicsBitmap.getWidth() < canvasW || graphicsBitmap.getHeight() < canvasH) {
+
+                            graphicsBitmap.recycle();
+                            graphicsBitmap = null;
+
+                            //#debug info
+                            System.out.println("[Canvas] getting rid of old bitmap");
+                    }
+                    // we dont really NEED a new bitmap
+                }
+                if (graphicsBitmap == null) {
+                    // Help the GC to collect any previous graphicsBitmap
+                    graphics.setCanvas(null);
+                    try {
+                        graphicsBitmap = Bitmap.createBitmap(canvasW, canvasH, Bitmap.Config.ARGB_8888);
+                    }
+                    catch (OutOfMemoryError e) {
+                        System.gc();
+                        Thread.sleep(200);
+                        graphicsBitmap = Bitmap.createBitmap(canvasW, canvasH, Bitmap.Config.ARGB_8888);
+                    }
+                    graphics.setCanvas( new android.graphics.Canvas(graphicsBitmap) );
+                }
+                graphics.reset(); // reset to the last save, i.e. when the setCanvas was called
+            }
+
+            if (graphicsBitmap==null) {
+                graphics.setCanvas(androidCanvas);
+            }
 
             int graphicsY = getHeight() - canvasH;
 
@@ -622,7 +631,9 @@ public abstract class Canvas extends Displayable {
 
             paint(graphics);
 
-            androidCanvas.drawBitmap(graphicsBitmap, src, dist, null);
+            if (graphicsBitmap!=null) {
+                androidCanvas.drawBitmap(graphicsBitmap, src, dist, null);
+            }
 
 //            if (touchDebug != null) {
 //                Paint paint = new Paint();
@@ -1174,6 +1185,9 @@ public abstract class Canvas extends Displayable {
         if (timeDiff > 1000) {
             long fps = nFrames * 10000 / timeDiff;
             fpsStr = (fps / 10) + "." + (fps % 10) + "fps";
+
+            fpsStr = (hardwareAccelerated?"HW ":"SW ") + fpsStr;
+
             lastDrawTime = timeNow;
             nFrames = 0;
         }

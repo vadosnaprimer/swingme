@@ -37,13 +37,13 @@ public class Graphics {
     public Graphics(android.graphics.Canvas canvas) {
         setFont(Font.getDefaultFont());
         setCanvas(canvas);
-        
+
         //paint.setAntiAlias(true); // breaks all 1px thick lines
         //paint.setStrokeWidth(0); // does NOT fix the AntiAlias problem
-        
+
         paint.setFilterBitmap(true); // this means that when a image is scaled it is smoothed out
         //paint.setDither(true);
-        
+
     }
 
     public android.graphics.Canvas getCanvas() {
@@ -100,13 +100,13 @@ public class Graphics {
 
     public void fillRect(int x, int y, int width, int height) {
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawRect(x, y, x + width, y + height, paint);
+        canvas.drawRect(tx+x, ty+y, tx+x + width, ty+y + height, paint);
     }
 
     public void fillRoundRect(int x, int y, int width, int height, int rx,
             int ry) {
         paint.setStyle(Paint.Style.FILL);
-        canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, y, paint);
+        canvas.drawRoundRect(new RectF(tx+x, ty+y, tx+x + width, ty+y + height), rx, y, paint);
     }
 
     public void drawImage(javax.microedition.lcdui.Image image, int x, int y, int anchor) {
@@ -134,7 +134,7 @@ public class Graphics {
         }
         int a = paint.getAlpha();
         paint.setAlpha(0xFF);// do not want to use alpha with images
-        canvas.drawBitmap(image.getBitmap(), ax, ay, paint);
+        canvas.drawBitmap(image.getBitmap(), tx+ax, ty+ay, paint);
         paint.setAlpha(a);
     }
 
@@ -149,18 +149,18 @@ public class Graphics {
         } else {
             y2++;
         }
-        canvas.drawLine(x1, y1, x2, y2, paint);
+        canvas.drawLine(tx+x1, ty+y1, tx+x2, ty+y2, paint);
     }
 
     public void drawRect(int x, int y, int width, int height) {
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRect(x, y, x + width, y + height, paint);
+        canvas.drawRect(tx+x, ty+y, tx+x + width, ty+y + height, paint);
     }
 
     public void drawRoundRect(int x, int y, int width, int height, int rx,
             int ry) {
         paint.setStyle(Paint.Style.STROKE);
-        canvas.drawRoundRect(new RectF(x, y, x + width, y + height), rx, ry, paint);
+        canvas.drawRoundRect(new RectF(tx+x, ty+y, tx+x + width, ty+y + height), rx, ry, paint);
     }
 
     public javax.microedition.lcdui.Font getFont() {
@@ -195,19 +195,19 @@ public class Graphics {
         }
 
         paintFont.setColor(paint.getColor());
-        canvas.drawText(str, newx, newy, paintFont);
+        canvas.drawText(str, tx+newx, ty+newy, paintFont);
     }
 
     public void clipRect(int x, int y, int w, int h) {
-        canvas.clipRect(x, y, x + w, y + h);
+        canvas.clipRect(tx+x, ty+y, tx+x + w, ty+y + h);
         dirtyClip = true;
     }
 
     public void setClip(int x, int y, int w, int h) {
         canvas.restore();
         canvas.save();
-        canvas.translate(tx, ty);
-        canvas.clipRect(x, y, x + w, y + h);
+        //canvas.translate(tx, ty);
+        canvas.clipRect(tx+x, ty+y, tx+x + w, ty+y + h);
         dirtyClip = true;
     }
 
@@ -215,14 +215,14 @@ public class Graphics {
             int arcAngle) {
 
         paint.setStyle(Paint.Style.FILL);
-        RectF rect = new RectF(x, y, x + width, y + height);
+        RectF rect = new RectF(tx+x, ty+y, tx+x + width, ty+y + height);
         canvas.drawArc(rect, startAngle, arcAngle, false, paint);
     }
 
     public void translate(int x, int y) {
         tx += x;
         ty += y;
-        canvas.translate(x, y);
+        //canvas.translate(x, y);
         dirtyClip = true;
     }
 
@@ -237,14 +237,14 @@ public class Graphics {
     public void drawArc(int x, int y, int width, int height, int startAngle,
             int arcAngle) {
         paint.setStyle(Paint.Style.STROKE);
-        RectF rect = new RectF(x, y, x + width, y + height);
+        RectF rect = new RectF(tx+x, ty+y, tx+x + width, ty+y + height);
         canvas.drawArc(rect, startAngle, arcAngle, false, paint);
     }
 
     public void drawChar(char character, int x, int y, int anchor) {
         char[] carr = new char[1];
         carr[0] = character;
-        drawString(new String(carr), x, y, anchor);
+        drawString(new String(carr), x, y, anchor); // as we send to a public method we do not need to add tx and ty
     }
 
     public void drawRegion(Image src, int xSrc, int ySrc, int width,
@@ -392,7 +392,7 @@ public class Graphics {
         canvas.save();
 
         // Translate for new destination, destination rectangle and anchor
-        canvas.translate((xDst - r.left - anchorX), (yDst - r.top - anchorY));
+        canvas.translate(tx+(xDst - r.left - anchorX), ty+(yDst - r.top - anchorY));
 
         // Apply the transformation matrix
         canvas.concat(matrix);
@@ -400,7 +400,7 @@ public class Graphics {
         // Draw the image
         Rect srcRect = new Rect(xSrc, ySrc, xSrc + width, ySrc + height);
         Rect dstRect = new Rect(0, 0,  width,  height);
-        
+
 
         int a = paint.getAlpha();
         paint.setAlpha(0xFF); // we do not support alpha when drawing images
@@ -421,10 +421,10 @@ public class Graphics {
     public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
         paint.setStyle(Paint.Style.FILL);
         Path path = new Path();
-        path.moveTo(x1, y1);
-        path.lineTo(x2, y2);
-        path.lineTo(x3, y3);
-        path.lineTo(x1, y1);
+        path.moveTo(tx+x1, ty+y1);
+        path.lineTo(tx+x2, ty+y2);
+        path.lineTo(tx+x3, ty+y3);
+        path.lineTo(tx+x1, ty+y1);
         canvas.drawPath(path, paint);
     }
 
@@ -455,7 +455,7 @@ public class Graphics {
 
         int a = paint.getAlpha();
         paint.setAlpha(0xFF); // do not use alpha when drawing images
-        canvas.drawBitmap(rgbData, offset, scanlength, x, y, width, height, processAlpha, paint);
+        canvas.drawBitmap(rgbData, offset, scanlength, tx+x, ty+y, width, height, processAlpha, paint);
         paint.setAlpha(a);
     }
 
@@ -467,6 +467,10 @@ public class Graphics {
     private Rect getClipBounds() {
         if (dirtyClip) {
             canvas.getClipBounds(clipBounds);
+            clipBounds.left = clipBounds.left - tx;
+            clipBounds.right = clipBounds.right - tx;
+            clipBounds.top = clipBounds.top - ty;
+            clipBounds.bottom = clipBounds.bottom - ty;
             dirtyClip = false;
         }
         return clipBounds;
