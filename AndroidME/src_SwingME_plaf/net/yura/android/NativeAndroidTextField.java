@@ -589,17 +589,25 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
          */
         @Override
         protected void onSelectionChanged(int selStart, int selEnd) {
-
-            if (view!=null) { // we check the view is not null to make sure this is not the call from the constructor
-
-                TextComponent tc = (TextComponent)textField;
-
-                int caretPosition = tc.getCaretPosition();
-
-                if (caretPosition!= selEnd) {
-                    tc.setCaretPosition(selEnd);
-                }
-            }
+        	
+        	try {
+	            if (view!=null) { // we check the view is not null to make sure this is not the call from the constructor
+	
+	                TextComponent tc = (TextComponent)textField;
+	
+	                int caretPosition = tc.getCaretPosition();
+	
+	                if (caretPosition!= selEnd) {
+	                    tc.setCaretPosition(selEnd);
+	                }
+	            }
+        	}
+        	catch (Throwable th) {
+        		//#mdebug debug
+        		Logger.warn("Error in onSelectionChanged selStart="+selStart+" selEnd="+selEnd+" textField: >"+textField+"< PLEASE SHOW YURA!!!");
+        		Logger.warn(th);
+        		//#enddebug
+        	}
         }
 
         @Override
