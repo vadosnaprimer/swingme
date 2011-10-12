@@ -45,20 +45,32 @@ public class BlackBerryOptionPane extends OptionPane {
             	//synchronized(Application.getEventLock()) {
             	    	try {
             	    		String command=null;
-            	    		loop: while (true) { // this will keep bringing the dialog up until the user selects a valid option
-		            	    	int result = Dialog.ask( string, (Object[])options, d );
-		            	    	if (result<0) { // if the user dismissed the dialog with the 'back' key we get -1
-		            	    		for (int c=0;c<buttons.length;c++) {
-		            	    			if (buttons[c].getMnemonic()==KeyEvent.KEY_END || buttons[c].getMnemonic()==KeyEvent.KEY_SOFTKEY2) {
-		            	    				command = buttons[c].getActionCommand();
-		            	    				break loop;
-		            	    			}
-		            	    		}
-		            	    	}
-		            	    	else {
-		            	    		command = buttons[result].getActionCommand();
-		            	    		break loop;
-		            	    	}
+            	    		int messageType = getMessageType();
+            	    		
+            	    		if ((messageType==INFORMATION_MESSAGE || messageType==PLAIN_MESSAGE) && buttons.length==1) {
+            	    		    Dialog.inform( string );
+            	    		    command = buttons[0].getActionCommand();
+            	    		}
+            	    		else if ((messageType==WARNING_MESSAGE || messageType==ERROR_MESSAGE) && buttons.length==1) {
+            	    		    Dialog.alert(string);
+            	    		    command = buttons[0].getActionCommand();
+            	    		}
+            	    		else {
+                	    		loop: while (true) { // this will keep bringing the dialog up until the user selects a valid option
+        		            	    	int result = Dialog.ask( string, (Object[])options, d );
+        		            	    	if (result<0) { // if the user dismissed the dialog with the 'back' key we get -1
+        		            	    		for (int c=0;c<buttons.length;c++) {
+        		            	    			if (buttons[c].getMnemonic()==KeyEvent.KEY_END || buttons[c].getMnemonic()==KeyEvent.KEY_SOFTKEY2) {
+        		            	    				command = buttons[c].getActionCommand();
+        		            	    				break loop;
+        		            	    			}
+        		            	    		}
+        		            	    	}
+        		            	    	else {
+        		            	    		command = buttons[result].getActionCommand();
+        		            	    		break loop;
+        		            	    	}
+                	    		}
             	    		}
 	            	    	ActionListener al = getActionListener();
 	            	    	if (al!=null) {
