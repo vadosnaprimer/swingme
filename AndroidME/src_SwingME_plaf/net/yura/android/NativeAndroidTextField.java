@@ -447,7 +447,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
     void android2swing() {
         // set text back
 
-        String aText = editText.getText().toString();
+        String aText = String.valueOf( editText.getText() );
 
         if (!aText.equals(textBox.getString())) {
             textBox.setString(aText);
