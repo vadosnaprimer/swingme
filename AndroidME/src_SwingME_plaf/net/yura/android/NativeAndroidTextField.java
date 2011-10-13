@@ -165,23 +165,16 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
             @Override
             public void onTextChanged(CharSequence cs, int i, int i1, int i2) {
 
-                android2swing();
-/*
-                Object val = textField.getValue(); // DO NOT USE GET VALUE, as it returns a Integer sometimes if constraints are NUMERIC
-                if (val == null || val instanceof String) {
-                    String text = (String)val;
-                    if (!cs.equals(text)) {
-                        textField.setValue(cs); // DO NOT USE SET VALUE!!!
-                    }
+                try {
+                    android2swing();
                 }
-                //#mdebug debug
-                else {
-                    System.err.println("[NativeAndroidTextField] ER1 UNKNOWN VALUE IN textField: "+val);
-                    Thread.dumpStack();
+                catch (Exception ex) {
+                    //#mdebug debug
+                    Logger.warn("[NativeAndroidTextField] error in onTextChanged "+editText+" PLEASE SHOW YURA!!!");
+                    Logger.warn(ex);
+                    //#enddebug
                 }
-                //#enddebug
 
-*/
             }
             @Override
             public void afterTextChanged(Editable edtbl) {
@@ -462,7 +455,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
         // just set the text back on the text component
         String mText = textBox.getString();
-        if (!mText.equals( tc.getText() )) {
+        if (!mText.equals( tc.getText() )) { // ALWAYS USE getText and NOT getValue, as getValue can give a Integer Object back for a number mode textbox
             tc.setText( mText );
         }
 
@@ -589,14 +582,14 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
          */
         @Override
         protected void onSelectionChanged(int selStart, int selEnd) {
-        	
+
         	try {
 	            if (view!=null) { // we check the view is not null to make sure this is not the call from the constructor
-	
+
 	                TextComponent tc = (TextComponent)textField;
-	
+
 	                int caretPosition = tc.getCaretPosition();
-	
+
 	                if (caretPosition!= selEnd) {
 	                    tc.setCaretPosition(selEnd);
 	                }
