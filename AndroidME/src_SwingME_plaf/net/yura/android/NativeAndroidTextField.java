@@ -604,7 +604,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         	}
         	catch (Throwable th) {
         		//#mdebug debug
-        		Logger.warn("Error in onSelectionChanged selStart="+selStart+" selEnd="+selEnd+" textField: >"+textField+"< PLEASE SHOW YURA!!!");
+        		Logger.warn("Error in onSelectionChanged selStart="+selStart+" selEnd="+selEnd+" textField: >"+textField+"< >"+this+"< >"+getText()+"< PLEASE SHOW YURA!!!");
         		Logger.warn(th);
         		//#enddebug
         	}
