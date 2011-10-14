@@ -607,12 +607,15 @@ public abstract class Canvas extends Displayable {
                     }
                     graphics.setCanvas( new android.graphics.Canvas(graphicsBitmap) );
                 }
-                graphics.reset(); // reset to the last save, i.e. when the setCanvas was called
+                
             }
 
             if (graphicsBitmap==null) {
                 graphics.setCanvas(androidCanvas);
             }
+            
+            // in case there was a error in the last paint, we HAVE to call reset here to reset the tx and ty
+            graphics.reset(); // reset to the last save, i.e. when the setCanvas was called
 
             int graphicsY = getHeight() - canvasH;
 
