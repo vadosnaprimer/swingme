@@ -34,7 +34,7 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class Menu extends Button {
 
-        public static boolean LOOP_MENU = true;
+        // public static boolean LOOP_MENU = true; // this is now in DesktopPane#UIManager
     
         private boolean useAnimation=true;
         private boolean open;
@@ -157,7 +157,7 @@ public class Menu extends Button {
 
             MenuBar menuItems = new MenuBar();
             menuItems.setLayoutOrientation(List.VERTICAL);
-            menuItems.setLoop( LOOP_MENU );
+            menuItems.setLoop( (!Boolean.FALSE.equals( DesktopPane.get("LOOP_MENU") )) ); // true by default
 
             popup.addWindowListener(menuItems);
 

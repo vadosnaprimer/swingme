@@ -20,6 +20,7 @@ package net.yura.mobile.gui.components;
 import java.util.Hashtable;
 import java.util.Vector;
 import javax.microedition.lcdui.Canvas;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.Layout;
@@ -30,7 +31,7 @@ import net.yura.mobile.gui.layout.Layout;
  */
 public class Panel extends Component {
 
-    public static boolean LOOP_PANEL = true;
+    //public static boolean LOOP_PANEL = true; // this is now in DesktopPane#UIManager
     
     private static Layout defaultLayout;
 
@@ -360,7 +361,8 @@ public class Panel extends Component {
                 ((Panel)parent).breakOutAction(this, direction ,scrolltothere,forceFocus);
             }
             else if (getWindow().getFocusOwner()!=null) {
-                if (LOOP_PANEL) {
+                //if (LOOP_PANEL) {
+                if (!Boolean.FALSE.equals( DesktopPane.get("LOOP_PANEL") )) { // true by default, can be set to false
                     // done for loop to first/last component
                     breakOutAction(null, direction, scrolltothere,true);
                 }
