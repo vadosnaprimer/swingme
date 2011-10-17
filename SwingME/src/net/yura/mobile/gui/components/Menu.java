@@ -34,6 +34,8 @@ import net.yura.mobile.gui.plaf.Style;
  */
 public class Menu extends Button {
 
+        // this does not work on BlackBerry as when you override it, it gets reset back to true
+        // http://wiki.softartisans.com/display/BLOGS/2010/07/12/Static+initialization+in+the+BlackBerry+JVM
         // public static boolean LOOP_MENU = true; // this is now in DesktopPane#UIManager
     
         private boolean useAnimation=true;
