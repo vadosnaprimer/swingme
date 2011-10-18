@@ -522,8 +522,8 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         public int[] getVisibleRect() {
             int[] vis = textField.getVisibleRect();
             Border insets = textField.getInsets();
-            vis[0] = vis[0] - textField.getXOnScreen()+insets.getLeft();
-            vis[1] = vis[1] - textField.getYOnScreen()+insets.getTop();
+            vis[0] = vis[0] +insets.getLeft();
+            vis[1] = vis[1] +insets.getTop();
             vis[2] = vis[0]+vis[2];
             vis[3] = vis[1]+vis[3];
             return vis;
