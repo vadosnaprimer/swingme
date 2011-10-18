@@ -677,7 +677,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
 
             //#mdebug debug
-            if (v[0]==0&&v[1]==0&&v[2]==0&&v[3]==0&&(row1!=-1||row2!=-1)) {
+            if ((v[2]<=0||v[3]<=0)&&(row1!=-1||row2!=-1)) {
                 throw new RuntimeException("getVisibleIndexs wrong result "+row1+" "+row2);
             }
             //#enddebug
