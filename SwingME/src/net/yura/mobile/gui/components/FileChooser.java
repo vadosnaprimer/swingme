@@ -656,15 +656,14 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         private int[] getVisibleIndexs() {
             int[] v = getVisibleRect();
 
-            int ys = getYOnScreen();
-            int top = v[1]-ys;
-            int bottom = (v[1]+v[3])-ys-1;
+            int top = v[1];
+            int bottom = (v[1]+v[3])-1;
             int h = getRowHeight(0);
             int row1 = top/h;
             int row2 = bottom/h;
             int rows = getRowCount();
 
-            if ((row1<0&&row2<0)||(row1>=rows&&row2>=rows)) {
+            if ((top>bottom)||(row1<0&&row2<0)||(row1>=rows&&row2>=rows)) {
                 row1=-1;
                 row2=-1;
             }
@@ -676,6 +675,13 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     row2=rows-1;
                 }
             }
+
+            //#mdebug debug
+            if (v[0]==0&&v[1]==0&&v[2]==0&&v[3]==0&&(row1!=-1||row2!=-1)) {
+                throw new RuntimeException("getVisibleIndexs wrong result "+row1+" "+row2);
+            }
+            //#enddebug
+
             return new int[] {row1,row2};
         }
 

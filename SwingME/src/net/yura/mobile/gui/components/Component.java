@@ -835,24 +835,53 @@ public abstract class Component {
      * @see javax.swing.JComponent#computeVisibleRect(java.awt.Rectangle) JComponent.computeVisibleRect
      */
     public void computeVisibleRect(int[] v) {
-        if (parent!=null) {
-            parent.computeVisibleRect(v);
+        if (v[2]!=0) { // just check 1 for speed, but all of them should be 0 if v[2]==0
+            if (parent!=null) {
+                parent.computeVisibleRect(v);
+            }
         }
+        //#mdebug debug
+        else if (v[0]!=0||v[1]!=0||v[3]!=0) {
+            throw new RuntimeException("if visible width is 0, all other values should be 0 values=["+v[0]+" "+v[1]+" "+v[2]+" "+v[3]+"]");
+        }
+        //#enddebug
     }
 
     /**
+     * if nothing is visible should return [x=0,y=0,width=0,height=0] this is what Swing does
      * @see javax.swing.JComponent#getVisibleRect() JComponent.getVisibleRect
      */
     public int[] getVisibleRect() {
         int[] v = new int[4];
         Border insets = getInsets();
-        v[0] = getXOnScreen()-insets.getLeft();
-        v[1] = getYOnScreen()-insets.getTop();
+
+        int xs = getXOnScreen();
+        int ys = getYOnScreen();
+
+        v[0] = xs-insets.getLeft();
+        v[1] = ys-insets.getTop();
         v[2] = getWidthWithBorder();
         v[3] = getHeightWithBorder();
-        if (parent!=null) {
-            parent.computeVisibleRect(v);
+
+        if (v[2]>0&&v[3]>0) {
+            if (parent!=null) {
+                parent.computeVisibleRect(v);
+            }
+            if (v[2]>0) { // if we have not been set to all 0s
+                v[0] = v[0] - xs; // make the values relative to the component
+                v[1] = v[1] - ys;
+            }
         }
+        else {
+            v[0]=v[1]=v[2]=v[3]=0; // set all to 0
+        }
+
+        //#mdebug debug
+        if ((v[2]<=0||v[3]<=0) && (v[0]!=0||v[1]!=0||v[2]!=0||v[3]!=0)) {
+            throw new RuntimeException("invalid result");
+        }
+        //#enddebug
+
         return v;
     }
 

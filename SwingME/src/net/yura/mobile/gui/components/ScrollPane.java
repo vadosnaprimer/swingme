@@ -146,7 +146,7 @@ public class ScrollPane extends Panel implements Runnable {
     }
 
     public boolean scrollRectToVisible(int x,int y,int w,int h,boolean smart) {
-        
+
         Component v = getView();
         int oldx = v.getX();
         int oldy = v.getY();
@@ -627,15 +627,18 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
                 v[3] = v[3] - (viewPortY-v[1]);
                 v[1] = viewPortY;
             }
-            int a = viewPortX+viewPortWidth;
-            int b = v[0]+v[2];
+            int a = viewPortX+viewPortWidth; // view right
+            int b = v[0]+v[2]; // clip right
             if (a<b) {
                 v[2] = v[2]-(b-a);
             }
-            int c = viewPortY+viewPortHeight;
-            int d = v[1]+v[3];
+            int c = viewPortY+viewPortHeight; // view bottom
+            int d = v[1]+v[3]; // clip bottom
             if (c<d) {
                 v[3] = v[3]-(d-c);
+            }
+            if (v[2]<=0||v[3]<=0) {
+                v[0]=v[1]=v[2]=v[3]=0; // set all to 0
             }
         }
         super.computeVisibleRect(v);

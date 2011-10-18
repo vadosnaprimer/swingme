@@ -885,8 +885,11 @@ public class DesktopPane extends Canvas implements Runnable {
         //Border insets = rc.getInsets();
         //repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
 
+        int xs = rc.getXOnScreen();
+        int ys = rc.getYOnScreen();
+
         int[] v = rc.getVisibleRect();
-        repaint(v[0],v[1],v[2],v[3]);
+        repaint(xs+v[0],ys+v[1],v[2],v[3]);
 
     }
 

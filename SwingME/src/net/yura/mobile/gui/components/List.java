@@ -306,10 +306,10 @@ public class List extends Component implements ActionListener {
 
         int size = getSize();
 
-        if (size==0 || 
-                (layoutOrientation==HORIZONTAL && x<0) || 
+        if (size==0 ||
+                (layoutOrientation==HORIZONTAL && x<0) ||
                 (layoutOrientation==VERTICAL && y<0) ||
-                (layoutOrientation==HORIZONTAL && x>width) || 
+                (layoutOrientation==HORIZONTAL && x>width) ||
                 (layoutOrientation==VERTICAL && y>height)
                 ) {
             // dont do anything
@@ -363,7 +363,7 @@ public class List extends Component implements ActionListener {
     }
 
     /**
-     * @see Table#paintComponent(net.yura.mobile.gui.Graphics2D) 
+     * @see Table#paintComponent(net.yura.mobile.gui.Graphics2D)
      */
     public void paintComponent(Graphics2D g) {
 
@@ -555,7 +555,7 @@ public class List extends Component implements ActionListener {
 
     /**
      * works for normal and double click mode
-     * @see #setDoubleClick(boolean) 
+     * @see #setDoubleClick(boolean)
      * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent) MouseListener.mouseClicked
      */
     public void mouseClicked(int x,int y) {
@@ -990,8 +990,8 @@ public class List extends Component implements ActionListener {
      */
     public int getFirstVisibleIndex() {
         int[] v = getVisibleRect();
-        int x = v[0]-getXOnScreen();
-        int y = v[1]-getYOnScreen();
+        int x = v[0];
+        int y = v[1];
         int i = locationToIndex(x,y)[0];
         if (i<0 && ((layoutOrientation==HORIZONTAL && x<0) || (layoutOrientation==VERTICAL && y<0)) ) {
             return 0;
@@ -1005,8 +1005,8 @@ public class List extends Component implements ActionListener {
      */
     public int getLastVisibleIndex() {
         int[] v = getVisibleRect();
-        int x = (v[0]+v[2])-getXOnScreen()-1;
-        int y = (v[1]+v[3])-getYOnScreen()-1;
+        int x = (v[0]+v[2])-1;
+        int y = (v[1]+v[3])-1;
         int i = locationToIndex(x,y)[0];
         if (i<0 && ((layoutOrientation==HORIZONTAL && x>=0) || (layoutOrientation==VERTICAL && y>=0)) ) {
             return getSize()-1;
