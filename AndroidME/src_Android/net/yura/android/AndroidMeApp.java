@@ -192,12 +192,23 @@ public class AndroidMeApp extends Application {
         }
     }
 
+    public void removeCallbacks(final Runnable runnable) {
+    	handler.removeCallbacks(runnable);
+    }
+
     public void invokeLater(final Runnable runnable) {
         handler.post(runnable);
     }
 
     public void invokeLater(final Runnable runnable, long delayMillis) {
         handler.postDelayed(runnable, delayMillis);
+    }
+
+    public void invokeLater(final Runnable runnable, long delayMillis, boolean removeAnyExistingInstances) {
+    	if (removeAnyExistingInstances) {
+    		removeCallbacks(runnable);
+    	}
+    	invokeLater(runnable, delayMillis);
     }
 
     public Looper getLooper() {
