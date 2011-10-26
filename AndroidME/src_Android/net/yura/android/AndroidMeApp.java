@@ -112,6 +112,8 @@ public class AndroidMeApp extends Application {
     public void onCreate() {
         super.onCreate();
 
+        //#debug debug
+        Logger.debug("£EP AndroidMeApp onCreate");
         this.eventThread = Thread.currentThread();
 
         try {
@@ -131,6 +133,8 @@ public class AndroidMeApp extends Application {
     @Override
     public void onTerminate() {
         super.onTerminate();
+      //#debug debug
+        Logger.debug("£EP AndroidMeApp onTerminate");
 
         try {
             for (BroadcastReceiver receiver : broadcastReceiverList) {
