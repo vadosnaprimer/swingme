@@ -226,31 +226,32 @@ public class ScrollPane extends Panel implements Runnable {
         int componentX = -oldX;
         int componentY = -oldY;
 
-
-
         // check if the viewport is maybe already looks at part of this bigger area
         // if it is, then we dont want to scroll to any part of it
-        if (!(x<=componentX+viewPortX && right>=componentX+viewPortX+viewPortWidth)) {
-            if (right > (viewPortX + componentX + viewPortWidth)){
+
+        boolean rightTooFar = right > (viewPortX + componentX + viewPortWidth);
+        boolean leftTooFar = x < (viewPortX + componentX);
+        if (!(leftTooFar && rightTooFar)) {
+            boolean tooWide = w > viewPortWidth;
+            if ((rightTooFar && !tooWide) || (leftTooFar && tooWide)) {
                 componentX = right - viewPortWidth - viewPortX;
             }
-
-            if (x < (viewPortX + componentX)){
+            if ((rightTooFar && tooWide) || (leftTooFar && !tooWide)) {
                 componentX = x-viewPortX;
             }
         }
 
-        if (!(y<=componentY+viewPortY && bottom>=componentY+viewPortY+viewPortHeight)) {
-            if (bottom > (viewPortY + componentY + viewPortHeight)){
+        boolean bottomTooFar = bottom > (viewPortY + componentY + viewPortHeight);
+        boolean topTooFar = y < (viewPortY + componentY);
+        if (!(topTooFar && bottomTooFar)) {
+            boolean tooTall = h > viewPortHeight;
+            if ((bottomTooFar && !tooTall) || (topTooFar && tooTall)) {
                 componentY = bottom - viewPortHeight - viewPortY;
             }
-
-            if (y < (viewPortY + componentY)){
+            if ((bottomTooFar && tooTall) || (topTooFar && !tooTall)) {
                 componentY = y-viewPortY;
             }
         }
-
-
 
 
         // check we r not scrolling off the content panel
