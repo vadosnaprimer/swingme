@@ -184,26 +184,28 @@ public class Table extends Panel {
                 if (currentCol==-1 || currentRow==-1) { return; }
 
                 //if (editingColumn == currentCol && editingRow == currentRow)
-                if (type == DesktopPane.PRESSED) {
-                    if(isCellEditable(currentRow, currentCol))
-			    editCellAt(currentRow,currentCol);
+                if(isCellEditable(currentRow, currentCol)) {
+                    if (type == DesktopPane.PRESSED) {
 
-                    // dont pass clicks onto textComponents
-                    if (editorComp!=null &&
-                            x>= editorComp.getXWithBorder() &&
-                            y>=editorComp.getYWithBorder() &&
-                            x< (editorComp.getXWithBorder()+editorComp.getWidthWithBorder()) &&
-                            y< (editorComp.getYWithBorder()+editorComp.getHeightWithBorder())
-                            ) { //  && !(editorComp instanceof TextComponent)
-                        // now pass on the event onto the component
-                        getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
+                        editCellAt(currentRow,currentCol);
+
+                        // dont pass clicks onto textComponents
+                        if (editorComp!=null &&
+                                x>= editorComp.getXWithBorder() &&
+                                y>=editorComp.getYWithBorder() &&
+                                x< (editorComp.getXWithBorder()+editorComp.getWidthWithBorder()) &&
+                                y< (editorComp.getYWithBorder()+editorComp.getHeightWithBorder())
+                                ) { //  && !(editorComp instanceof TextComponent)
+                            // now pass on the event onto the component
+                            getDesktopPane().pointerPressed(x+getXOnScreen(), y+getYOnScreen());
+                        }
+                        //editorComp.pointerEvent(type, x, y);
+
                     }
-                    //editorComp.pointerEvent(type, x, y);
-                }
-                else
-		if(isCellEditable(currentRow, currentCol)){
-
-                    setSelectedCell(currentRow,currentCol);
+                    else {
+                        // when you drag about the selected cell changes to the cell that is editable
+                        setSelectedCell(currentRow,currentCol);
+                    }
                 }
 
         }
@@ -334,7 +336,7 @@ public class Table extends Panel {
             if (editParent instanceof Table) {
                 ((Table)editParent).removeEditor(); // HACK, TODO what about if the parent is a Panel or MenuBar?
             }
-            
+
             add(editorComp);
 
             doLayout();
