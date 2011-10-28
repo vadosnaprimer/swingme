@@ -484,7 +484,16 @@ public class SynthLookAndFeel extends LookAndFeel {
                 }
 
                 if (font==null) {
-                    font = new Font(fname, fstyle, fsize);
+                    try {
+                        font = new Font(fname, fstyle, fsize);
+                    }
+                    catch (Exception ex) {
+                        //#mdebug debug
+                        System.err.println("failed to load font: "+fname+" "+fstyle+" "+fsize);
+                        ex.printStackTrace();
+                        //#enddebug
+                        font = Font.getDefaultSystemFont();
+                    }
                 }
 
                 if (fontId!=null) {
