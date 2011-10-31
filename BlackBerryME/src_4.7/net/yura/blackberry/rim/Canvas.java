@@ -192,14 +192,14 @@ public abstract class Canvas extends FullScreen {
       * @see javax.microedition.lcdui.Canvas#repaint(int, int, int, int)
       */
      public final void repaint(int x, int y, int width, int height) {
-         invalidate( x, y, width, height );
+         super.invalidate( x, y, width, height );
      }
 
      /**
       * @see javax.microedition.lcdui.Canvas#repaint()
       */
      public final void repaint() {
-         invalidate();
+         super.invalidate();
      }
 
      /**
