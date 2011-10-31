@@ -302,6 +302,7 @@ public class TextBox {
                 
                 textField.setForeground(Style.NO_COLOR);
                 
+                screen.setFocus(); // if we remove a field that currently has focus, we risk the caret staying floating over the top of the screen, so we first give focus to something else
                 Field field = editField;
                 editField=null;
                 screen.delete(field);
