@@ -1,10 +1,11 @@
 package javax.microedition.lcdui;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import javax.microedition.midlet.MIDlet;
-import net.yura.android.AndroidMeActivity;
+
 import javax.microedition.lcdui.Canvas.InputHelper;
+import javax.microedition.midlet.MIDlet;
+
+import net.yura.android.AndroidMeActivity;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -551,10 +552,10 @@ public class TextBox extends Screen {
             composingText = done ? "" : text;
         }
 
-//        // Override API 11
-        //public boolean commitCorrection(android.view.inputmethod.CorrectionInfo arg0) {
-        //    return true;
-        //}
+        // Override API 11
+        public boolean commitCorrection(android.view.inputmethod.CorrectionInfo arg0) {
+            return true;
+        }
 
         // Override API 11
         public CharSequence getSelectedText(int arg0) {
