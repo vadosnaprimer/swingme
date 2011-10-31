@@ -894,12 +894,14 @@ public class DesktopPane extends Canvas implements Runnable {
     }
 
     public void repaintHole(final Component rc) {
-
+        Border insets = rc.getInsets();
+        invalidate(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
+    }
+    public void invalidate(int x,int y,int width,int height) {
         synchronized(uiLock) {
             fullrepaint = true;
         }
-        Border insets = rc.getInsets();
-        repaint(rc.getXOnScreen()-insets.getLeft(), rc.getYOnScreen()-insets.getTop(), rc.getWidthWithBorder(), rc.getHeightWithBorder());
+        repaint(x,y,width,height);
     }
 
     private int validating=0;
