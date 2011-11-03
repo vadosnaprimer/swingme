@@ -1393,7 +1393,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
-    public boolean isAccurate(int oldx,int x,int inaccuracy) {
+    public static boolean isAccurate(int oldx,int x,int inaccuracy) {
         return Math.abs(oldx - x) <= inaccuracy;
     }
 
