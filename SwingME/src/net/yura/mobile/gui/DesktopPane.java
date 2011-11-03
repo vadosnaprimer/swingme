@@ -1393,8 +1393,8 @@ public class DesktopPane extends Canvas implements Runnable {
         }
     }
 
-    public boolean isAccurate(int oldx,int oldy,int x,int y) {
-        return (Math.abs(oldx - x) <= inaccuracy && Math.abs(oldy - y) <= inaccuracy);
+    public boolean isAccurate(int oldx,int x,int inaccuracy) {
+        return Math.abs(oldx - x) <= inaccuracy;
     }
 
     private void pointerEvent(int type, int x, int y) {
@@ -1434,7 +1434,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         pointerScrollPane = null;
                     }
                     // check its dragged more then 5px
-                    else if (!isAccurate(pointerFirstX, pointerFirstY, x, y)) {
+                    else if (!(isAccurate(pointerFirstX, x, inaccuracy) && isAccurate(pointerFirstY, y, inaccuracy))) {
                         pointerComponent.processMouseEvent(CANCEL, x, y, keypad);
                         pointerComponent = null;
 
@@ -1447,7 +1447,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
                     long time = System.currentTimeMillis();
                     // TODO we need a better way to decide when to open a popup that does not wait for the user to let go
-                    if (time - pointerFristTime > 1000 && isAccurate(pointerFirstX, pointerFirstY, x, y)) {
+                    if (time - pointerFristTime > 1000 && (isAccurate(pointerFirstX, x, inaccuracy) && isAccurate(pointerFirstY, y, inaccuracy)) ) {
                         if (pointerComponent!=null) {
                             Window popup = pointerComponent.getPopupMenu();
                             if (popup!=null && !popup.isVisible()) {
@@ -1635,6 +1635,10 @@ public class DesktopPane extends Canvas implements Runnable {
                 if (window instanceof Frame && ((Frame) window).isMaximum()) {
                     // if it was max, then make it max again
                     ((Frame) window).setMaximum(true);
+                }
+                else if (isAccurate(window.getX(), (oldw - window.getWidth() - window.getX()), 1) && 
+                         isAccurate(window.getY(), (oldh - window.getHeight() - window.getY()),1) ) {
+                    window.setLocationRelativeTo(null);
                 }
                 else {
 
