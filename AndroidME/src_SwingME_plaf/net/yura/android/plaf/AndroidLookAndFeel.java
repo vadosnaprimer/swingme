@@ -158,7 +158,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // com.android.internal.R.style.Theme_Dialog_Alert
         // Dialog
         Style dialogStyle = new Style(defaultStyle);
-        dialogStyle.addBorder(getBorder(ctx, 0, android.R.drawable.dialog_frame),Style.ALL);
+        Drawable dialog = getDrawable(ctx, 0, android.R.drawable.dialog_frame);
+        dialogStyle.addBorder(new AndroidBorder(dialog),Style.ALL);
+        dialogStyle.addForeground( getTextColorFor( getColorAtCenter(dialog) ) , Style.ALL);
         setStyleFor("Dialog", dialogStyle);
 
         Style titleBarStyle = new Style(defaultStyle);
