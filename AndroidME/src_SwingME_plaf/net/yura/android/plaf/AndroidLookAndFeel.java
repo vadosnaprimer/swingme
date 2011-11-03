@@ -58,7 +58,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         Style defaultStyle = new Style();
         defaultStyle.addFont( new Font(javax.microedition.lcdui.Font.FACE_PROPORTIONAL, javax.microedition.lcdui.Font.STYLE_PLAIN, javax.microedition.lcdui.Font.SIZE_MEDIUM) , Style.ALL);
-        defaultStyle.addForeground(c , Style.ALL);
+        //defaultStyle.addForeground(c , Style.ALL);  // can not have a global default as window and dialog have different defaults
         setStyleFor("", defaultStyle);
 
         Style androidMenuStyle = new Style(defaultStyle);
@@ -67,7 +67,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
         Style menuStyle = new Style(defaultStyle);
         menuStyle.addBorder(getBorder(ctx, 0, android.R.drawable.menu_frame),Style.ALL);
-        //setForegroundColor(ctx, menuStyle, android.R.style.TextAppearance_Widget_IconMenu_Item,null); // a window does not need a foreground
         setStyleFor("Menu", menuStyle);
 
         Style menuBarStyle = new Style(defaultStyle);
@@ -250,6 +249,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // --- Frame ---
         Style frameStyle = new Style(defaultStyle);
         frameStyle.addBorder(getBorder(ctx, 0, android.R.attr.windowBackground),Style.ALL);
+        frameStyle.addForeground(c , Style.ALL);
         setStyleFor("Frame",frameStyle);
 
         // --- Window ---
@@ -257,6 +257,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         //DisplayMetrics dm = ctx.getResources().getDisplayMetrics();
         //int size = Math.max(dm.widthPixels, dm.heightPixels);
         windowStyle.addProperty( new Integer(0x80000000), "dim", Style.ALL);
+        windowStyle.addForeground(c , Style.ALL);
         setStyleFor("Window", windowStyle);
 
         // --- TextField ---
