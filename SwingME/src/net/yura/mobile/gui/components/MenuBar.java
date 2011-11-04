@@ -18,8 +18,10 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -70,7 +72,7 @@ public class MenuBar extends List implements ActionListener {
      * @see java.awt.Container#add(java.awt.Component) Container.add
      */
     public void addImpl(Component button,Object cons, int index) {
-    	//#mdebug
+    	//#mdebug debug
     	if (getItems().contains(button)) {
     		throw new RuntimeException("can not add the same button twice: "+button);
     	}

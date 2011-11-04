@@ -48,7 +48,7 @@ import net.yura.mobile.util.SystemUtil;
  */
 public class DesktopPane extends Canvas implements Runnable {
 
-    //#mdebug
+    //#mdebug debug
     private static Vector keylisteners = new Vector();
 
     public static void addKeyPressListener(KeyListener listener){
@@ -481,7 +481,7 @@ public class DesktopPane extends Canvas implements Runnable {
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
     private Graphics2D graphics;
-    //#debug
+    //#debug debug
     private String mem;
 
     /**
@@ -734,7 +734,7 @@ public class DesktopPane extends Canvas implements Runnable {
             //gtmp.drawRect(clipx, clipy, clipw-1, cliph-1);
 
 
-            //#mdebug
+            //#mdebug debug
             if (mem != null) {
 
                 javax.microedition.lcdui.Font font = gtmp.getFont();
@@ -1215,12 +1215,12 @@ public class DesktopPane extends Canvas implements Runnable {
 
     private final int[] directions = new int[] {Canvas.RIGHT,Canvas.DOWN,Canvas.LEFT,Canvas.UP};
     private void passKeyEvent(KeyEvent keyevent) {
-        //#debug
+        //#debug debug
         notifyKeyListeners(keyevent);
 
         try {
 
-            //#mdebug
+            //#mdebug debug
             if (keyevent.isDownKey(Canvas.KEY_STAR)) {
 //            	System.gc();
                 mem = (Runtime.getRuntime().freeMemory() >> 10) + "K/" + (Runtime.getRuntime().totalMemory() >> 10) + "K";
@@ -1479,7 +1479,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     }
                 }
 
-                //#mdebug
+                //#mdebug debug
                 // Simulate multi touch, when zero is pressed...
                 if (keypad.isDownAction(Canvas.FIRE)) {
                     multitouchEvent(
@@ -1636,7 +1636,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     // if it was max, then make it max again
                     ((Frame) window).setMaximum(true);
                 }
-                else if (isAccurate(window.getX(), (oldw - window.getWidth() - window.getX()), 1) && 
+                else if (isAccurate(window.getX(), (oldw - window.getWidth() - window.getX()), 1) &&
                          isAccurate(window.getY(), (oldh - window.getHeight() - window.getY()),1) ) {
                     window.setLocationRelativeTo(null);
                 }

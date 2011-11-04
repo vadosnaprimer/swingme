@@ -21,13 +21,14 @@ import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
+
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.border.Border;
+import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 
@@ -36,7 +37,7 @@ import net.yura.mobile.util.Option;
  * @see javax.swing.JSpinner
  */
 public class Spinner extends Label {
-    
+
 	private Icon leftSelectedIcon;
 	private Icon leftUnselectedIcon;
 	private Icon rightSelectedIcon;
@@ -44,7 +45,7 @@ public class Spinner extends Label {
 
 //	private Border normalBorder;
 //	private Border activeBorder;
-     
+
 	private boolean leftPress = false;
 	private boolean rightPress = false;
 
@@ -151,14 +152,14 @@ public class Spinner extends Label {
 //                }
 //                super.setFocusable(s);
 //	}
-        
+
 	protected void workoutMinimumSize() {
-            
+
             if (list!=null && !list.isEmpty()) {
 
                     int maxWidth = 0;
                     int maxHeight=0;
-                    
+
                     for (int i = 0; i < list.size(); i ++){
 
                         Object obj = list.elementAt(i);
@@ -192,7 +193,7 @@ public class Spinner extends Label {
                     if (width > dp.getWidth()) {
                         width = dp.getWidth();
                     }
-                    
+
                     //setIndex(index); ????
             }
             else {
@@ -201,7 +202,7 @@ public class Spinner extends Label {
             }
 
 	}
-        
+
 //        private int getArrowWidth() {
 //
 //            if (nonSelectedImage!=null) {
@@ -211,8 +212,8 @@ public class Spinner extends Label {
 //                return getFont().getHeight()/2;
 //            }
 //        }
-        
-	
+
+
 	public boolean processKeyEvent(KeyEvent keypad){
 		if (keypad.justPressedAction(Canvas.LEFT)){
 			leftPress = true;
@@ -226,11 +227,11 @@ public class Spinner extends Label {
 		else if (keypad.justReleasedAction(Canvas.RIGHT)){
 			rightPress = false;
 		}
-		
+
                 fire();
-		
+
                 boolean letgo = keypad.justReleasedAction(Canvas.LEFT) || keypad.justReleasedAction(Canvas.RIGHT);
-                
+
 		if (letgo) repaint();
 		return leftPress || rightPress || letgo;
 	}
@@ -268,10 +269,10 @@ public class Spinner extends Label {
             else if (rightUnselectedIcon != null) {
                 rightUnselectedIcon.paintIcon(this, g, width+insets.getRight()-rightUnselectedIcon.getIconWidth(), (height-rightUnselectedIcon.getIconHeight())/2);
             }
-            
-            
+
+
             //int arrowWidth = getArrowWidth();
-            
+
             //Border b = isFocused()?activeBorder:normalBorder;
 
             //g.translate(arrowWidth+gap+normalBorder.getLeft(), normalBorder.getTop());
@@ -315,7 +316,7 @@ public class Spinner extends Label {
             int old = index;
 
             index = i;
-            
+
             if (list!=null && !list.isEmpty()) {
                 super.setValue( list.elementAt(index) );
             }
@@ -328,9 +329,9 @@ public class Spinner extends Label {
 	}
 */
 
-	//#mdebug
+	//#mdebug debug
 	/**
-	 * This throws an IllegalArgumentException and you should use the 
+	 * This throws an IllegalArgumentException and you should use the
 	 * setIndex method instead
 	 */
 	public void setText(String a) {
@@ -356,7 +357,7 @@ public class Spinner extends Label {
                 leftUnselectedIcon = (Icon) theme.getProperty("iconLeft", Style.ALL);
                 rightSelectedIcon = (Icon) theme.getProperty("iconRight", Style.SELECTED);
                 rightUnselectedIcon = (Icon) theme.getProperty("iconRight", Style.ALL);
-                
+
         }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,

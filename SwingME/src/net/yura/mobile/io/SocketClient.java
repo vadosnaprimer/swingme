@@ -395,7 +395,8 @@ public abstract class SocketClient implements Runnable {
                         //#debug warn
                         Logger.warn("[SocketClient] CAN NOT HANDLE! Task: "+task+" "+x.toString() );
                         //#debug error
-                        Logger.error(x);
+                        x.printStackTrace();
+                        // Logger.error(x);
                     }
 
                     updateState(CONNECTED);
@@ -414,7 +415,8 @@ public abstract class SocketClient implements Runnable {
                 //#mdebug info
                 if (!(ex instanceof IOException) || (!normal && writeThread!=null)) {
                     Logger.info("[SocketClient] strange disconnect in="+in+" myin="+myin);
-                    Logger.info(ex); // this is NOT a normal disconnect
+                    // Logger.info(ex); // this is NOT a normal disconnect
+                    ex.printStackTrace();
                 }
                 //#enddebug
 
@@ -430,7 +432,8 @@ public abstract class SocketClient implements Runnable {
         }
         catch (Throwable t){
             //#debug error
-            Logger.error(t);
+            t.printStackTrace();
+            // Logger.error(t);
         }
     }
 

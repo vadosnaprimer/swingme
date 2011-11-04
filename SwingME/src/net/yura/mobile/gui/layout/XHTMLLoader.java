@@ -9,7 +9,6 @@ import javax.microedition.lcdui.Graphics;
 
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.border.LineBorder;
 import net.yura.mobile.gui.components.Button;
@@ -26,10 +25,10 @@ import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.TextPane.TextStyle;
 import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.io.kxml2.KXmlParser;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Option;
 import net.yura.mobile.util.StringUtil;
-import net.yura.mobile.io.kxml2.KXmlParser;
 
 /**
  * @author Yura Mamyrin
@@ -222,7 +221,7 @@ public class XHTMLLoader {
 
         underline.setUnderline(true);
         underline.setName("u");
-        
+
         center.setAlignment( TextStyle.ALIGN_CENTER );
         center.setName("center");
 
@@ -262,7 +261,7 @@ public class XHTMLLoader {
         TextPane it = new TextPane();
         it.setActionListener(al);
         //TextArea it = new TextArea(); it.setLineWrap(true);
-        //#mdebug
+        //#mdebug debug
         if (DesktopPane.debug) {
             it.setBorder( new LineBorder(0xFFFF0000) );
         }
@@ -485,7 +484,7 @@ Logger.debug("START: "+name);
             }
             else if ("ul".equals(name) || "ol".equals(name)) { // lists
                 Panel p = new Panel(new GridBagLayout(2, 0, 0, 0, 0, 0));
-                //#mdebug
+                //#mdebug debug
                 if (DesktopPane.debug) {
                     p.setBorder( new LineBorder(0xFF00FF00) );
                 }
@@ -533,7 +532,7 @@ Logger.debug("START: "+name);
                 //#enddebug
 
                 Panel p = new Panel(new FlowLayout(Graphics.VCENTER,0));
-                //#mdebug
+                //#mdebug debug
                 if (DesktopPane.debug) {
                     p.setBorder( new LineBorder(0xFF0000FF) );
                 }

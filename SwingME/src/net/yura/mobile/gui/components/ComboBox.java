@@ -18,7 +18,9 @@
 package net.yura.mobile.gui.components;
 
 import java.util.Vector;
+
 import javax.microedition.lcdui.Graphics;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
@@ -281,7 +283,7 @@ public class ComboBox extends Button implements ActionListener{
             else if (Frame.CMD_CLOSE.equals(actionCommand)) {
                 setSelected(false);
             }
-            //#mdebug
+            //#mdebug debug
             else {
                 throw new RuntimeException();
             }

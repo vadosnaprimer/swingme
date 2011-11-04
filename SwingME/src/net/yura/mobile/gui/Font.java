@@ -770,7 +770,7 @@ public class Font {
 							x -= offsetX[charIndex];
 						}
 
-						//#mdebug
+						//#mdebug debug
 						if (DesktopPane.debug) {
 							g.setColor(r.nextInt());
 							g.drawRect(thisx, y + offsetY[charIndex], glyph.getWidth(), glyph.getHeight());

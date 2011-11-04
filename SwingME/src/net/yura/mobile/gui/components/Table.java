@@ -20,7 +20,9 @@ package net.yura.mobile.gui.components;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Canvas;
+
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
@@ -504,7 +506,7 @@ public class Table extends Panel {
      */
     public void setDefaultEditor(Class columnClass, TableCellEditor editor) {
         editors.put(columnClass, editor);
-        //#mdebug
+        //#mdebug debug
         Enumeration elements = renderers.elements();
         while (elements.hasMoreElements()) {
             if (elements.nextElement() == editor) {
@@ -519,7 +521,7 @@ public class Table extends Panel {
      */
     public void setDefaultRenderer(Class columnClass, ListCellRenderer renderer) {
         renderers.put(columnClass, renderer);
-        //#mdebug
+        //#mdebug debug
         Enumeration elements = editors.elements();
         while (elements.hasMoreElements()) {
             if (elements.nextElement() == renderer) {
