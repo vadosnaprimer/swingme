@@ -12,7 +12,6 @@ import javax.wireless.messaging.MessageListener;
 import javax.wireless.messaging.TextMessage;
 
 import net.yura.android.AndroidMeApp;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -152,7 +151,7 @@ public class MessageConnectionImpl extends BroadcastReceiver implements MessageC
 
     @Override
     public void onReceive(Context ctx, Intent intent) {
-        // #debug
+        // #debug debug
         System.out.println("SMS:onReceive.");
         Bundle bundle = intent.getExtras();
         Object messages[] = (Object[]) bundle.get("pdus");

@@ -64,7 +64,7 @@ public class SqlDao {
 
         @Override
         public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
-            //#debug
+            //#debug debug
             System.out.println("ERROR:Call to RecordStoreSqliteOpenHelper.onUpgrade not implemented. arg1:"+arg1+". arg2:"+arg2);
         }
     }
