@@ -23,9 +23,11 @@ import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.Random;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
+
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Properties;
@@ -233,13 +235,13 @@ public class Font {
 	public static int getShortUnsigned(DataInputStream dis) throws IOException {
             byte b0 = dis.readByte();
             byte b1 = dis.readByte();
-            return (((((int) b1) << 8) & 0xff00) | (((int) b0) & 0xff)) & 0xffff;
+            return (((b1 << 8) & 0xff00) | (b0 & 0xff)) & 0xffff;
 	}
 
 	public static int getShortSigned(DataInputStream dis) throws IOException {
             byte b0 = dis.readByte();
             byte b1 = dis.readByte();
-            return (((((int) b1) << 8)) | (((int) b0)));
+            return (((b1 << 8)) | (b0));
 	}
 
 	public static int getLong(DataInputStream dis) throws IOException {
@@ -803,7 +805,7 @@ public class Font {
 			}
 		}
 	}
-	//#debug
+	//#debug debug
 	Random r = new Random();
 	private static int POSITION_DOT = 10;
 	private static int POSITION_CURRENCY = 11;
