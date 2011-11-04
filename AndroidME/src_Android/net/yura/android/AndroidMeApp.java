@@ -320,7 +320,7 @@ public class AndroidMeApp extends Application {
 		            Class clazz = android.os.Build.class;
 		             uniqueId = (String) clazz.getField("SERIAL").get(clazz);
 		        } catch (Throwable e) {
-		        	//#debug
+		        	//#debug debug
 		        	System.out.println(e.getStackTrace());
 		        }
 
@@ -340,10 +340,10 @@ public class AndroidMeApp extends Application {
 			}
 
         } catch (Throwable e) {
-        	//#debug
+        	//#debug debug
         	System.out.println(e.getStackTrace());
         }
-        //#debug
+        //#debug debug
         System.out.println("Unique hardwar id rerieved and is: " + uniqueId);
     	return uniqueId;
     }
