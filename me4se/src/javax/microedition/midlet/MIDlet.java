@@ -194,7 +194,7 @@ public abstract class MIDlet {
             try {
                 String params = url.substring(url.indexOf('?')+1);
                 String[] s1 = params.split("\\&");
-                String appName="Unknown me4se app",appVersion="Unknown version",locale="Unknown locale";
+                String appName="Unknown me4se app",appVersion="Unknown version",locale="";
                 for (int c=0;c<s1.length;c++) {
                     String[] s2 = s1[c].split("\\=");
                     if ("name".equals(s2[0])) {
