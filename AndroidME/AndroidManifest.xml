@@ -3,7 +3,7 @@
       package="net.yura.android"
       android:versionCode="1"
       android:versionName="1.0">
-    <application android:name="net.yura.android.AndroidMeApp" android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:theme="@style/android:Theme.NoTitleBar">
+    <application android:name="net.yura.android.AndroidMeApp" android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true" android:theme="@style/android:Theme.NoTitleBar" android:hardwareAccelerated="true">
         <activity android:name="net.yura.android.AndroidMeActivity"
                   android:launchMode="singleTask"
                   android:label="@string/app_name"
@@ -19,7 +19,7 @@
         />
 
         <activity android:name="net.yura.android.OptionPaneActivity" android:configChanges="orientation|keyboard|keyboardHidden" android:windowSoftInputMode="stateAlwaysHidden" android:theme="@style/android:Theme.Translucent"/>
-	<activity android:name="net.yura.android.datepicker.CalendarPickerActivity" android:configChanges="orientation|keyboard|keyboardHidden" android:windowSoftInputMode="stateHidden" android:theme="@style/android:Theme.Translucent.NoTitleBar"/>
+	<activity android:name="net.yura.android.datepicker.CalendarPickerActivity" android:configChanges="orientation|keyboard|keyboardHidden" android:windowSoftInputMode="stateHidden" android:theme="@style/DatePickerDialogTheme"/>
 
     </application>
     <uses-sdk android:minSdkVersion="4" android:targetSdkVersion="4" />

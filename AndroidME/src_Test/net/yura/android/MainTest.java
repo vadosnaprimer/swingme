@@ -40,6 +40,7 @@ public class MainTest extends Section {
         addTest("Send SMS", "sms");
         addTest("Show Notification", "notification");
         addTest("Show Native Popup", "nativePopup");
+        addTest("Date Picker", "datepicker");
 
         Label preferenceSeparator = new Label("here are some android only components");
         preferenceSeparator.setName("PreferenceSeparator");
@@ -111,10 +112,23 @@ public class MainTest extends Section {
             String url = "native://net.yura.android.TestTimePickerActivity";
             try {
                 Midlet.getMidlet().platformRequest(url);
-            } catch (Throwable e) {
-                // TODO Auto-generated catch block
+            }
+            catch (Throwable e) {
                 e.printStackTrace();
             }
+        }
+        else if ("datepicker".equals(actionCommand)) {
+
+            try {
+                Midlet.getMidlet().platformRequest("native://net.yura.android.datepicker.CalendarPickerActivity/1984-04-12");
+            }
+            catch (Throwable e) {
+                e.printStackTrace();
+            }
+
+        }
+        else {
+            throw new RuntimeException("unknown command: "+actionCommand);
         }
     }
 

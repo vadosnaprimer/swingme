@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources><!-- parent="android:Theme.Light" -->
+ <style name="DatePickerDialogTheme" parent="android:Theme.Translucent.NoTitleBar" />
+</resources>
