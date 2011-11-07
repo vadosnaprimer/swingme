@@ -782,7 +782,7 @@ public abstract class Canvas extends FullScreen {
 
 	    
 	    protected boolean navigationMovement(int dx, int dy, int status, int time) {
-	        boolean processed = false;
+	        //boolean processed = false;
 	        /*Screen screen = getPolishScreen();
 	        boolean superImplementationCalled = false;
 	        if ( screen != null ) {
@@ -818,12 +818,21 @@ public abstract class Canvas extends FullScreen {
 	        }
 	        */
 	        
-	        processed = super.navigationMovement(dx, dy, status, time);
+	        int caret = -1;
+	        
+	        Field nativeFocusedField = super.getLeafFieldWithFocus();
+	        if (nativeFocusedField instanceof TextField) {
+	            caret = ((TextField)nativeFocusedField).getCursorPosition();
+	        }
+	        
+	        super.navigationMovement(dx, dy, status, time); // the return value from this is bullshit
 	        
 	        // when we have a natie text box open then processed is true
-	        if (processed) {
-	        	return true;
-	        }
+	        if (nativeFocusedField instanceof TextField) {
+                    if ( ((TextField)nativeFocusedField).getCursorPosition() != caret) {
+                        return true; // caret has moved so we will not pass the event to SwingME
+                    }
+                }
 	        
 	        int absDx = dx < 0 ? -dx : dx;
 	        int absDy = dy < 0 ? -dy : dy;
@@ -872,7 +881,7 @@ public abstract class Canvas extends FullScreen {
 	        //if (!superImplementationCalled) {
 	        //        processed = super.navigationMovement(dx, dy, status, time);
 	        //}
-	                return processed;
+	                return true;
 	    }
 	
 	
