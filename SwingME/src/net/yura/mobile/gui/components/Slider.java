@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.game.Sprite;
+
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
@@ -77,11 +78,11 @@ public class Slider extends Component {
         //#mdebug warn
         if (chl!=null) {
             Logger.warn("trying to add a ChangeListener when there is already one registered");
-            Logger.dumpStack();
+            Logger.dumpStack("Overloading ChangeListener");
         }
         if (l==null) {
             Logger.warn("trying to add a null ChangeListener");
-            Logger.dumpStack();
+            Logger.dumpStack("null ChangeListener");
         }
         //#enddebug
         chl = l;
@@ -95,11 +96,11 @@ public class Slider extends Component {
         //#mdebug warn
         else {
             Logger.warn("trying to remove a ChangeListener that is not registered");
-            Logger.dumpStack();
+            Logger.dumpStack("removing unngistered ChangeListener");
         }
         if (l==null) {
             Logger.warn("trying to remove a null ChangeListener");
-            Logger.dumpStack();
+            Logger.dumpStack("Removing null ChangeListener");
         }
         //#enddebug
     }
@@ -651,7 +652,7 @@ public class Slider extends Component {
     }
 
     private int getNewValueSlider(int[] offsets,int w,int h,int extent, int max,int p) {
-        float barWidth = w - offsets[0] * 2 - offsets[2];	// the maximum pixels between lowest and highest position slider can take 
+        float barWidth = w - offsets[0] * 2 - offsets[2];	// the maximum pixels between lowest and highest position slider can take
         float pixels = p - offsets[0] - offsets[2] / 2;		// requested slider position in pixels - in range [0..barWidth]
         float numberOfDivisions = max - extent;				// number of free ticks e.g. With 10 ticks and slider over two ticks => we get 8 divisions
         float newValue = pixels / barWidth * numberOfDivisions + 0.5f;	// bump half increment up so that value snaps to nearest tick

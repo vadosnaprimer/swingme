@@ -23,12 +23,13 @@ import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.lcdui.TextBox;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ChangeListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.io.ClipboardManager;
@@ -498,11 +499,11 @@ public abstract class TextComponent extends Component implements ActionListener,
             //#mdebug warn
             if (caretListener!=null) {
                 Logger.warn("trying to add a ChangeListener when there is already one registered "+this);
-                Logger.dumpStack();
+                Logger.dumpStack("Overridding ChangeListener");
             }
             if (listener==null) {
                 Logger.warn("trying to add a null ChangeListener "+this);
-                Logger.dumpStack();
+                Logger.dumpStack("Adding null ChangeListener");
             }
             //#enddebug
             caretListener = listener;
@@ -620,7 +621,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 if (staticFocusListener!=null) {
                     staticFocusListener.changeEvent(this, FOCUS_LOST);
                 }
-                
+
 		showCaret = false;
 
                 autoAccept();
@@ -677,7 +678,7 @@ public abstract class TextComponent extends Component implements ActionListener,
                 }
 
 	}
-        
+
         public static ChangeListener staticFocusListener;
 
 //        protected void paintBorder(Graphics2D g) {

@@ -18,6 +18,7 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.KeyEvent;
@@ -52,14 +53,14 @@ public class TextField extends TextComponent {
         }
 
         /**
-         * @see TextArea#paintComponent(Graphics2D) 
+         * @see TextArea#paintComponent(Graphics2D)
          */
     	public void paintComponent(Graphics2D g) {
 
                 int f = getForeground();
-                
+
                 if (!Graphics2D.isTransparent(f)) { // we need to support transparent foreground as Swing does and we need it for android
-            
+
                     String textString = getDisplayString();
 
                     int[] oldClip = g.getClip();
@@ -151,11 +152,11 @@ public class TextField extends TextComponent {
             //#mdebug warn
             if (this.al!=null) {
                 Logger.warn("trying to add a ActionListener when there is already one registered "+this);
-                Logger.dumpStack();
+                Logger.dumpStack("Overwritting ActionListener");
             }
             if (al==null) {
                 Logger.warn("trying to add a null ActionListener "+this);
-                Logger.dumpStack();
+                Logger.dumpStack("Adding null ActionListener");
             }
             //#enddebug
             this.al = al;

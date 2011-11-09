@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Graphics;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.DesktopPane;
@@ -199,11 +200,11 @@ public class Button extends Label implements ActionListener {
                 //#mdebug warn
                 if (al!=null) {
                     Logger.warn("trying to add a ActionListener when there is already one registered "+this);
-                    Logger.dumpStack();
+                    Logger.dumpStack("Add Overriding Listener");
                 }
                 if (l==null) {
                     Logger.warn("trying to add a null ActionListener "+this);
-                    Logger.dumpStack();
+                    Logger.dumpStack("Adding null Listener");
                 }
                 //#enddebug
 		al = l;
@@ -217,11 +218,11 @@ public class Button extends Label implements ActionListener {
                 //#mdebug warn
                 else {
                     Logger.warn("trying to remove a ActionListener that is not registered "+this);
-                    Logger.dumpStack();
+                    Logger.dumpStack("Remove unrigistered Listener");
                 }
                 if (l==null) {
                     Logger.warn("trying to remove a null ActionListener "+this);
-                    Logger.dumpStack();
+                    Logger.dumpStack("Removing null Listener");
                 }
                 //#enddebug
 	}

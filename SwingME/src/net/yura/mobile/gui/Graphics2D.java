@@ -18,6 +18,7 @@
 package net.yura.mobile.gui;
 
 import java.util.Random;
+
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 import javax.microedition.lcdui.game.Sprite;
@@ -62,7 +63,7 @@ public class Graphics2D {
                 //#mdebug debug
                 if (isTransparent(c)) {
                     Logger.warn("trying to set a transparent color: "+Integer.toHexString(c));
-                    Logger.dumpStack();
+                    Logger.dumpStack("trying to set a transparent color: "+Integer.toHexString(c));
                 }
                 //#enddebug
                 g.setColor(c);
@@ -132,7 +133,7 @@ public class Graphics2D {
                 //#mdebug warn
                 if (w <= 0 || h <= 0) {
                     Logger.warn("trying to draw Region with width="+w+" height="+h);
-                    Logger.dumpStack();
+                    Logger.dumpStack("Invalid draw Region");
                 }
                 //#enddebug
 

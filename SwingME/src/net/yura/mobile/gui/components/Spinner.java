@@ -86,11 +86,11 @@ public class Spinner extends Label {
                 //#mdebug warn
                 if (chl!=null) {
                     Logger.warn("trying to add a ChangeListener when there is already one registered");
-                    Logger.dumpStack();
+                    Logger.dumpStack("Overridding ChangeListener");
                 }
                 if (l==null) {
                     Logger.warn("trying to add a null ChangeListener");
-                    Logger.dumpStack();
+                    Logger.dumpStack("Adding null ChangeListener");
                 }
                 //#enddebug
 		chl = l;
@@ -104,11 +104,11 @@ public class Spinner extends Label {
                 //#mdebug warn
                 else {
                     Logger.warn("trying to remove a ChangeListener that is not registered");
-                    Logger.dumpStack();
+                    Logger.dumpStack("Removing unregistered ChangeListener");
                 }
                 if (l==null) {
                     Logger.warn("trying to remove a null ChangeListener");
-                    Logger.dumpStack();
+                    Logger.dumpStack("Removing null ChangeListener");
                 }
                 //#enddebug
 	}

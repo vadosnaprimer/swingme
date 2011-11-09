@@ -18,11 +18,12 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Canvas;
+
 import net.yura.mobile.gui.ChangeListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
-import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.logging.Logger;
@@ -108,11 +109,11 @@ public abstract class Component {
         //#mdebug warn
         if (focusListener!=null) {
             Logger.warn("trying to add a FocusListener when there is already one registered");
-            Logger.dumpStack();
+            Logger.dumpStack("FocusListener already registered");
         }
         if (lis==null) {
             Logger.warn("trying to add a null FocusListener");
-            Logger.dumpStack();
+            Logger.dumpStack("adding null FocusListener");
         }
         //#enddebug
         focusListener = lis;
@@ -128,11 +129,11 @@ public abstract class Component {
         //#mdebug warn
         else {
             Logger.warn("trying to remove a FocusListener that is not registered");
-            Logger.dumpStack();
+            Logger.dumpStack("Removing unregistered FocusListener");
         }
         if (lis==null) {
             Logger.warn("trying to remove a null FocusListener");
-            Logger.dumpStack();
+            Logger.dumpStack("Removing null FocusListener");
         }
         //#enddebug
     }
@@ -280,7 +281,7 @@ public abstract class Component {
         }
         if (component.parent != null) {
             System.out.println("this component already has a parent "+component+" PARENT="+component.parent);
-            Logger.dumpStack();
+            Logger.dumpStack("Component already has parent");
         }
         //#enddebug
 
