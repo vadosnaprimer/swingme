@@ -495,6 +495,10 @@ public class Window extends Panel {
 
             softKeyRepaint(softkey);
         }
+        
+        public Vector getCommands() {
+            return softkeys==null?new Vector(0):softkeys;
+        }
 
         public void updateUI() {
             super.updateUI();
