@@ -1,6 +1,7 @@
 package net.yura.mobile.util;
 
 import java.util.Vector;
+
 import net.yura.mobile.logging.Logger;
 
 /**
@@ -18,7 +19,7 @@ public abstract class QueueProcessorThread extends Thread {
      */
     public QueueProcessorThread() {
         //#debug debug
-        Logger.dumpStack();
+        Logger.dumpStack("QueueProcessorThread: Deprecated Contructor");
     }
 
     public QueueProcessorThread(String name) {
