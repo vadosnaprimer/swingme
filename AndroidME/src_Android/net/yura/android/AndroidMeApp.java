@@ -27,6 +27,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
+import android.webkit.WebView;
 
 public class AndroidMeApp extends Application {
 
@@ -219,11 +220,25 @@ public class AndroidMeApp extends Application {
         return handler.getLooper();
     }
 
+    private String getUserAgent() {
+        try {
+            WebView webView = new WebView(this);
+            return webView.getSettings().getUserAgentString();
+        } catch (Throwable e) {
+            //#debug info
+            e.printStackTrace();
+        }
+
+        return System.getProperty("microedition.platform") + ";" + System.getProperty("microedition.profiles") + ";" + System.getProperty("microedition.configuration") + ";" + System.getProperty("microedition.encoding");
+    }
+
     private void setSystemProperties() {
         System.setProperty("microedition.platform", "androidMe(" + Build.MODEL + " " + Build.VERSION.RELEASE + ")");
         System.setProperty("microedition.locale", Locale.getDefault().toString());
         System.setProperty("microedition.configuration", "CLDC-1.1");
         System.setProperty("microedition.profiles", "MIDP-2.0");
+        System.setProperty("userAgent", getUserAgent());
+
 
         // Screen Resolution Properties (Ad hoc, not on J2ME)
         DisplayMetrics dm = getResources().getDisplayMetrics();
