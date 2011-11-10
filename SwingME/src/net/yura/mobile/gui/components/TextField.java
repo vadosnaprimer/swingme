@@ -152,11 +152,11 @@ public class TextField extends TextComponent {
             //#mdebug warn
             if (this.al!=null) {
                 Logger.warn("trying to add a ActionListener when there is already one registered "+this);
-                Logger.dumpStack("Overwritting ActionListener");
+                Logger.dumpStack();
             }
             if (al==null) {
                 Logger.warn("trying to add a null ActionListener "+this);
-                Logger.dumpStack("Adding null ActionListener");
+                Logger.dumpStack();
             }
             //#enddebug
             this.al = al;

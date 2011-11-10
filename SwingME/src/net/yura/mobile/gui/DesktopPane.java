@@ -917,8 +917,8 @@ public class DesktopPane extends Canvas implements Runnable {
 
             //#mdebug info
             if (validating!=0) {
-                System.out.println("##### calling revalidate from inside the ui thread during a revalidate, this is odd!!! and may break things");
-                Logger.dumpStack("calling revalidate during a revalidate");
+                Logger.warn("##### calling revalidate from inside the ui thread during a revalidate, this is odd!!! and may break things");
+                Logger.dumpStack();
             }
             //#enddebug
 
@@ -963,7 +963,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     // if this happens it means that when i add a scrollbar it says it
                     // does not need one, and as soon as i remove it, it says it does
                     Logger.info("asking for revalidate 4th time: "+p);
-                    Logger.dumpStack("asking for revalidate 4th time");
+                    Logger.dumpStack();
                     break;
                 //#enddebug
             }
@@ -1072,7 +1072,7 @@ public class DesktopPane extends Canvas implements Runnable {
             //#mdebug warn
             else {
                 Logger.warn("trying to set a window visible when it already is visible or null: "+w);
-                Logger.dumpStack("window already visible");
+                Logger.dumpStack();
             }
             //#enddebug
         }
@@ -1102,7 +1102,7 @@ public class DesktopPane extends Canvas implements Runnable {
             //#mdebug warn
             else {
                 Logger.warn("cant remove, this window is not visible or null: " + w);
-                Logger.dumpStack("removing window not visible or null");
+                Logger.dumpStack();
             }
             //#enddebug
         }
@@ -1138,7 +1138,7 @@ public class DesktopPane extends Canvas implements Runnable {
             //#mdebug warn
             else {
                 Logger.warn("cant setSelected, this window is not visible or null: " + w);
-                Logger.dumpStack("cant setSelected window");
+                Logger.dumpStack();
             }
             //#enddebug
         }

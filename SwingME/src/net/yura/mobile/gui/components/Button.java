@@ -200,11 +200,11 @@ public class Button extends Label implements ActionListener {
                 //#mdebug warn
                 if (al!=null) {
                     Logger.warn("trying to add a ActionListener when there is already one registered "+this);
-                    Logger.dumpStack("Add Overriding Listener");
+                    Logger.dumpStack();
                 }
                 if (l==null) {
                     Logger.warn("trying to add a null ActionListener "+this);
-                    Logger.dumpStack("Adding null Listener");
+                    Logger.dumpStack();
                 }
                 //#enddebug
 		al = l;
@@ -218,11 +218,11 @@ public class Button extends Label implements ActionListener {
                 //#mdebug warn
                 else {
                     Logger.warn("trying to remove a ActionListener that is not registered "+this);
-                    Logger.dumpStack("Remove unrigistered Listener");
+                    Logger.dumpStack();
                 }
                 if (l==null) {
                     Logger.warn("trying to remove a null ActionListener "+this);
-                    Logger.dumpStack("Removing null Listener");
+                    Logger.dumpStack();
                 }
                 //#enddebug
 	}

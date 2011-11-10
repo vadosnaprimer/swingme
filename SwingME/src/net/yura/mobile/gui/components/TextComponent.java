@@ -499,11 +499,11 @@ public abstract class TextComponent extends Component implements ActionListener,
             //#mdebug warn
             if (caretListener!=null) {
                 Logger.warn("trying to add a ChangeListener when there is already one registered "+this);
-                Logger.dumpStack("Overridding ChangeListener");
+                Logger.dumpStack();
             }
             if (listener==null) {
                 Logger.warn("trying to add a null ChangeListener "+this);
-                Logger.dumpStack("Adding null ChangeListener");
+                Logger.dumpStack();
             }
             //#enddebug
             caretListener = listener;

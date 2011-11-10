@@ -109,11 +109,11 @@ public abstract class Component {
         //#mdebug warn
         if (focusListener!=null) {
             Logger.warn("trying to add a FocusListener when there is already one registered");
-            Logger.dumpStack("FocusListener already registered");
+            Logger.dumpStack();
         }
         if (lis==null) {
             Logger.warn("trying to add a null FocusListener");
-            Logger.dumpStack("adding null FocusListener");
+            Logger.dumpStack();
         }
         //#enddebug
         focusListener = lis;
@@ -129,11 +129,11 @@ public abstract class Component {
         //#mdebug warn
         else {
             Logger.warn("trying to remove a FocusListener that is not registered");
-            Logger.dumpStack("Removing unregistered FocusListener");
+            Logger.dumpStack();
         }
         if (lis==null) {
             Logger.warn("trying to remove a null FocusListener");
-            Logger.dumpStack("Removing null FocusListener");
+            Logger.dumpStack();
         }
         //#enddebug
     }
@@ -280,8 +280,8 @@ public abstract class Component {
             throw new RuntimeException("trying to add a window to a Component: "+component+" to "+this);
         }
         if (component.parent != null) {
-            System.out.println("this component already has a parent "+component+" PARENT="+component.parent);
-            Logger.dumpStack("Component already has parent");
+            Logger.warn("this component already has a parent "+component+" PARENT="+component.parent);
+            Logger.dumpStack();
         }
         //#enddebug
 

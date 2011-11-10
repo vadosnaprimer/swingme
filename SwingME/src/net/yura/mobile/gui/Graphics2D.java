@@ -63,7 +63,7 @@ public class Graphics2D {
                 //#mdebug debug
                 if (isTransparent(c)) {
                     Logger.warn("trying to set a transparent color: "+Integer.toHexString(c));
-                    Logger.dumpStack("trying to set a transparent color: "+Integer.toHexString(c));
+                    Logger.dumpStack();
                 }
                 //#enddebug
                 g.setColor(c);
@@ -133,7 +133,7 @@ public class Graphics2D {
                 //#mdebug warn
                 if (w <= 0 || h <= 0) {
                     Logger.warn("trying to draw Region with width="+w+" height="+h);
-                    Logger.dumpStack("Invalid draw Region");
+                    Logger.dumpStack();
                 }
                 //#enddebug
 
