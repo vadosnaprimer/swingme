@@ -63,11 +63,9 @@ public class RemoteTest extends Thread {
                 ex.printStackTrace();
             }
 
-            if (ssc != null) {
-                try {
-                    ssc.close();
-                } catch (Throwable e) {}
-            }
+            try {
+                ssc.close();
+            } catch (Throwable e) {}
         }
     }
 
@@ -81,27 +79,20 @@ public class RemoteTest extends Thread {
 
             System.out.println("CLICK on >"+text+"<");
 
-            boolean result = click(text,window.getCommands()); // chack softkeys first
+            boolean result = click(text,window.getCommands()); // check soft-keys first
             if (!result) {
                 result = click(text,window.getComponents()); // now check all other components
             }
 
             System.out.println("result: "+result);
-
-            if (result) {
-                writer.write("OK\n");
-            }
-            else {
-                writer.write("FAIL\n");
-            }
-
+            writer.write(result ? "OK\n" : "FAIL\n");
         }
         else {
             System.out.println("Unknown command: "+command);
-
             writer.write("UNKNOWN\n");
         }
 
+        writer.flush();
     }
 
     static boolean click(String text,Vector components) {
@@ -123,7 +114,6 @@ public class RemoteTest extends Thread {
                     return true;
                 }
             }
-
         }
 
         return false;
@@ -134,18 +124,21 @@ public class RemoteTest extends Thread {
         StringBuffer sb = new StringBuffer();
 
         while ((ch = in.read()) != -1){
-            if (ch == '\r') {
-                continue;
-            }
-            if(ch == '\n') {
+            if (ch == '\n' && sb.length() > 0) {
                //Carriage return was received or ENTER was pressed
                break; //Exit loop and print input
             }
-            sb.append((char)ch);
+
+            if (ch != '\r') {
+                sb.append((char)ch);
+            }
+        }
+
+        if (ch == -1 && sb.length() == 0) {
+            // Notify that the connection is now closed.
+            throw new IOException();
         }
 
         return sb.toString();
     }
-
-
 }
