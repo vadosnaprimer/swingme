@@ -139,16 +139,14 @@ public class Logger {
       if(level<=ERROR) logger.log(throwable, ERROR);
      }
 
-    public static void dumpStack(String msg)
+    public static void dumpStack()
     {
-      //#mdebug warn
-      if(level<=WARN) try
-      {
-        throw new Exception(msg);
+      //#mdebug debug
+      try {
+        throw new Exception("DumpStack:");
       }
-      catch(Exception e)
-      {
-        logger.log(e, WARN);
+      catch(Exception e) {
+        e.printStackTrace();
       }
       //#enddebug
     }

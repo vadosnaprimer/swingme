@@ -19,7 +19,7 @@ public abstract class QueueProcessorThread extends Thread {
      */
     public QueueProcessorThread() {
         //#debug debug
-        Logger.dumpStack("QueueProcessorThread: Deprecated Contructor");
+        Logger.dumpStack();
     }
 
     public QueueProcessorThread(String name) {
