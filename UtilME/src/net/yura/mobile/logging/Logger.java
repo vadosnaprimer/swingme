@@ -139,11 +139,14 @@ public class Logger {
       if(level<=ERROR) logger.log(throwable, ERROR);
      }
 
-    public static void dumpStack()
-    {
+    /**
+     * same as the Java SE method with the same name
+     * @see java.lang.Thread#dumpStack() Thread.dumpStack()
+     */
+    public static void dumpStack() {
       //#mdebug debug
       try {
-        throw new Exception("DumpStack:");
+        throw new Exception("Stack trace");
       }
       catch(Exception e) {
         e.printStackTrace();
@@ -164,8 +167,8 @@ public class Logger {
 
     protected synchronized void log(Throwable throwable, int level)
     {
-        System.err.print(toString(level));
-        throwable.printStackTrace();
+      System.err.print(toString(level) +" "+ throwable);
+      throwable.printStackTrace();
     }
 }
 
