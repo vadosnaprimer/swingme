@@ -7,9 +7,11 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.Vector;
+
 import javax.microedition.io.Connector;
 import javax.microedition.io.ServerSocketConnection;
 import javax.microedition.io.StreamConnection;
+
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
@@ -31,34 +33,41 @@ public class RemoteTest extends Thread {
 
     public void run() {
 
-        System.out.println("Remote Test starting....");
+        // TODO: Need a quit flag
+        while (true) {
+            ServerSocketConnection ssc = null;
+            try {
+                 Thread.sleep(5000);
+                 System.out.println("Remote Test starting...");
 
-        try {
-            ServerSocketConnection ssc = (ServerSocketConnection)Connector.open("socket://:1234");
+                ssc = (ServerSocketConnection)Connector.open("socket://:1234");
 
-            System.out.println("Remote Test " +ssc.getLocalAddress() +" " +ssc.getLocalPort() );
+                System.out.println("Remote Test " +ssc.getLocalAddress() +" " +ssc.getLocalPort() );
 
-            StreamConnection sc = ssc.acceptAndOpen();
-            InputStream is = sc.openInputStream();
-            OutputStream out = sc.openOutputStream();
+                StreamConnection sc = ssc.acceptAndOpen();
+                InputStream is = sc.openInputStream();
+                OutputStream out = sc.openOutputStream();
 
-            UTF8InputStreamReader reader = new UTF8InputStreamReader(is);
-            OutputStreamWriter writer = new OutputStreamWriter(out);
+                UTF8InputStreamReader reader = new UTF8InputStreamReader(is);
+                OutputStreamWriter writer = new OutputStreamWriter(out);
 
-            while (true) {
+                while (true) {
+                    String command = readLine(reader);
 
-                String command = readLine(reader);
-
-System.out.println("COMMAND: "+command);
-                process(command,writer);
-
-
-
+    System.out.println("COMMAND: "+command);
+                    process(command,writer);
+                }
+            }
+            catch (Throwable ex) {
+                //#debug info
+                ex.printStackTrace();
             }
 
-        }
-        catch (Exception ex) {
-            ex.printStackTrace();
+            if (ssc != null) {
+                try {
+                    ssc.close();
+                } catch (Throwable e) {}
+            }
         }
     }
 
@@ -85,11 +94,11 @@ System.out.println("COMMAND: "+command);
             else {
                 writer.write("FAIL\n");
             }
-            
+
         }
         else {
             System.out.println("Unknown command: "+command);
-            
+
             writer.write("UNKNOWN\n");
         }
 
