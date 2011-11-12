@@ -13,6 +13,7 @@ import javax.microedition.io.ServerSocketConnection;
 import javax.microedition.io.StreamConnection;
 
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.MenuBar;
@@ -26,9 +27,18 @@ import net.yura.mobile.io.UTF8InputStreamReader;
 public class RemoteTest extends Thread {
 
     public static void open() {
-
-        new RemoteTest().start();
-
+        try {
+            if (Midlet.getPlatform() == Midlet.PLATFORM_ANDROID) {
+                RemoteTest remoteTest = (RemoteTest)Class.forName("net.yura.android.AndroidRemoteTest").newInstance();
+                remoteTest.start();
+            }
+            else {
+                new RemoteTest().start();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void run() {
@@ -69,20 +79,12 @@ public class RemoteTest extends Thread {
         }
     }
 
-    static void process(String command,Writer writer) throws IOException {
+    void process(String command,Writer writer) throws IOException {
 
         if (command.startsWith("click ")) {
             String text = command.substring("click ".length());
 
-            DesktopPane dp = DesktopPane.getDesktopPane();
-            Window window = dp.getSelectedFrame();
-
-            System.out.println("CLICK on >"+text+"<");
-
-            boolean result = click(text,window.getCommands()); // check soft-keys first
-            if (!result) {
-                result = click(text,window.getComponents()); // now check all other components
-            }
+            boolean result = click(text);
 
             System.out.println("result: "+result);
             writer.write(result ? "OK\n" : "FAIL\n");
@@ -93,6 +95,21 @@ public class RemoteTest extends Thread {
         }
 
         writer.flush();
+    }
+
+    protected boolean click(String text) {
+
+            DesktopPane dp = DesktopPane.getDesktopPane();
+            Window window = dp.getSelectedFrame();
+
+            System.out.println("CLICK on >"+text+"<");
+
+            boolean result = click(text,window.getCommands()); // check soft-keys first
+            if (!result) {
+                result = click(text,window.getComponents()); // now check all other components
+            }
+            return result;
+
     }
 
     static boolean click(String text,Vector components) {
