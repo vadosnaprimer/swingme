@@ -44,7 +44,7 @@ public class AndroidRemoteTest extends RemoteTest {
                 View childView = viewGroup.getChildAt(i);
                 //String printText = debugStr + "> " + childView;
 
-                if (childView instanceof TextView) {
+                if (childView instanceof TextView && childView.isClickable()) {
                     final TextView b = (TextView) childView;
                     //printText += "(text = " + b.getText() + ")";
 
@@ -70,11 +70,7 @@ public class AndroidRemoteTest extends RemoteTest {
     public static void click(View view) {
         int[] xy = new int[2];
         view.getLocationOnScreen(xy);
-        final int viewWidth = view.getWidth();
-        final int viewHeight = view.getHeight();
-        final float x = xy[0] + (viewWidth / 2.0f);
-        float y = xy[1] + (viewHeight / 2.0f);
-        click(x,y);
+        click(xy[0] + view.getWidth() / 2 , xy[1] + view.getHeight() / 2);
     }
 
     public static void click(float x, float y) {
