@@ -21,6 +21,7 @@ import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Table;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Yura Mamyrin
@@ -52,6 +53,9 @@ public class DefaultCellEditor implements TableCellEditor,ListCellRenderer {
         component.setValue(value);
         // part of the value of the button is its selected state, and we do want to lose that
         component.setupState(list, component instanceof Button?((Button)component).isSelected():isSelected, cellHasFocus);
+        if (component.getForeground()==Style.NO_COLOR && list!=null) {// if our theme does not give us a foreground, then fall back to parent
+            component.setForeground( list.getForeground() );
+        }
         return component;
     }
 
