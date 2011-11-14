@@ -6,7 +6,10 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import net.yura.mobile.util.RemoteTest;
+import android.app.Instrumentation;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,6 +25,9 @@ public class AndroidRemoteTest extends RemoteTest {
     @Override
     protected boolean click(String text) {
         View window = getSelectedFrame(); // TODO can this be null???
+
+        System.out.println("Window="+toString(window));
+
         boolean nativeClick = clickView(window, text); // try native first as menu may be open
         if (!nativeClick && AndroidMeActivity.DEFAULT_ACTIVITY.hasWindowFocus() ) { // TODO check menu is NOT open
             return super.click(text); // Do SwingME click
@@ -45,12 +51,7 @@ public class AndroidRemoteTest extends RemoteTest {
                     if (clickText.equalsIgnoreCase(b.getText().toString())) {
                         //printText += " <== FOUND!";
 
-                        b.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                b.performClick();
-                            }
-                        });
+                        click(b);
                         return true;
                     }
                 }
@@ -66,6 +67,25 @@ public class AndroidRemoteTest extends RemoteTest {
         return false;
     }
 
+    public static void click(View view) {
+        int[] xy = new int[2];
+        view.getLocationOnScreen(xy);
+        final int viewWidth = view.getWidth();
+        final int viewHeight = view.getHeight();
+        final float x = xy[0] + (viewWidth / 2.0f);
+        float y = xy[1] + (viewHeight / 2.0f);
+        click(x,y);
+    }
+
+    public static void click(float x, float y) {
+        Instrumentation inst = new Instrumentation();
+        long downTime = SystemClock.uptimeMillis();
+        long eventTime = SystemClock.uptimeMillis();
+        MotionEvent event = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_DOWN, x, y, 0);
+        MotionEvent event2 = MotionEvent.obtain(downTime, eventTime, MotionEvent.ACTION_UP, x, y, 0);
+        inst.sendPointerSync(event);
+        inst.sendPointerSync(event2);
+    }
 
     public static String toString(View view) {
         StringBuilder builder = new StringBuilder();
