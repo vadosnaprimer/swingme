@@ -26,7 +26,7 @@ public class AndroidRemoteTest extends RemoteTest {
     protected boolean click(String text) {
         View window = getSelectedFrame(); // TODO can this be null???
 
-        System.out.println("Window="+toString(window));
+        //System.out.println("Window="+toString(window));
 
         boolean nativeClick = clickView(window, text); // try native first as menu may be open
         if (!nativeClick && AndroidMeActivity.DEFAULT_ACTIVITY.hasWindowFocus() ) { // TODO check menu is NOT open
@@ -127,7 +127,7 @@ public class AndroidRemoteTest extends RemoteTest {
      * @see net.yura.mobile.gui.DesktopPane#getSelectedFrame()
      */
     public static View getSelectedFrame() {
-        View[] views = getAllWindowViews();
+        View[] views = getAllFrames();
         for (View view : views) {
             if (view.hasWindowFocus()) {
                 return view;
@@ -136,7 +136,11 @@ public class AndroidRemoteTest extends RemoteTest {
         return null;
     }
 
-    static View[] getAllWindowViews() {
+    /**
+     * This return all the window, but not in any particular order!
+     * @see net.yura.mobile.gui.DesktopPane#getAllFrames()
+     */
+    public static View[] getAllFrames() {
         try {
             Class windowManager = Class.forName("android.view.WindowManagerImpl");
 
