@@ -5,12 +5,10 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
-
 import net.yura.mobile.util.RemoteTest;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class AndroidRemoteTest extends RemoteTest {
@@ -23,14 +21,12 @@ public class AndroidRemoteTest extends RemoteTest {
 
     @Override
     protected boolean click(String text) {
-
-        if (AndroidMeActivity.DEFAULT_ACTIVITY.hasWindowFocus()) { // SwingME has focus
-            return super.click(text);
+        View window = getSelectedFrame(); // TODO can this be null???
+        boolean nativeClick = clickView(window, text); // try native first as menu may be open
+        if (!nativeClick && AndroidMeActivity.DEFAULT_ACTIVITY.hasWindowFocus() ) { // TODO check menu is NOT open
+            return super.click(text); // Do SwingME click
         }
-        else {
-            View window = getSelectedFrame(); // TODO can this be null???
-            return clickView(window, text);
-        }
+        return nativeClick;
     }
 
     private static boolean clickView(View view, String clickText) {
@@ -42,8 +38,8 @@ public class AndroidRemoteTest extends RemoteTest {
                 View childView = viewGroup.getChildAt(i);
                 //String printText = debugStr + "> " + childView;
 
-                if (childView instanceof Button) {
-                    final Button b = (Button) childView;
+                if (childView instanceof TextView) {
+                    final TextView b = (TextView) childView;
                     //printText += "(text = " + b.getText() + ")";
 
                     if (clickText.equalsIgnoreCase(b.getText().toString())) {
