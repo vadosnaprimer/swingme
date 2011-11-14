@@ -4,15 +4,14 @@ import java.lang.reflect.Field;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.util.Arrays;
 import java.util.Enumeration;
 
+import net.yura.mobile.util.RemoteTest;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-import net.yura.mobile.util.RemoteTest;
 
 public class AndroidRemoteTest extends RemoteTest {
 
