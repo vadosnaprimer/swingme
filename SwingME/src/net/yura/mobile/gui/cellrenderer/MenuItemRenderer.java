@@ -29,7 +29,7 @@ import net.yura.mobile.gui.components.Button;
 public class MenuItemRenderer extends Component implements ListCellRenderer {
 
     private Component component;
-    
+
     public MenuItemRenderer() {
     }
 
@@ -57,7 +57,7 @@ public class MenuItemRenderer extends Component implements ListCellRenderer {
         height = component.getHeight();
     }
 
-    public String getDefaultName() {
+    protected String getDefaultName() {
         return "MenuRenderer";
     }
 

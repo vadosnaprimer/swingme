@@ -399,7 +399,7 @@ public class Button extends Label implements ActionListener {
             return "Button";
         }
 
-        public int getState() {
+        protected int getState() {
             int result = super.getState();
             if (selected) {
                 result |= Style.SELECTED;

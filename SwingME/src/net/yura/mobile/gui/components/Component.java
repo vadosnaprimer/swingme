@@ -609,6 +609,7 @@ public abstract class Component {
 
     //#mdebug debug
     /**
+     * @see java.awt.Component#paramString() Component.paramString
      * @see java.awt.Component#toString() Component.toString
      */
     public String toString() {

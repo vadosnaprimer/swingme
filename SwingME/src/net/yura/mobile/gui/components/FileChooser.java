@@ -902,6 +902,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
 
         public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected_IGNORE, boolean cellHasFocus) {
             setupState(list, ((SelectableFile)value).isSelected(), cellHasFocus);
+            if (getForeground()==Style.NO_COLOR && list!=null) {// if our theme does not give us a foreground, then fall back to parent
+                setForeground( list.getForeground() );
+            }
             return getTableCellEditorComponent(null, value, isSelected_IGNORE, 0, 0);
         }
 
