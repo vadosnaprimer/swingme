@@ -33,8 +33,8 @@ public class RemoteTest extends Thread {
                 remoteTest.start();
             }
             else {
-                new RemoteTest().start();
-            }
+           new RemoteTest().start();
+        }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -83,6 +83,7 @@ public class RemoteTest extends Thread {
 
         if (command.startsWith("click ")) {
             String text = command.substring("click ".length());
+            text = replaceEscapeSequences(text);
 
             boolean result = click(text);
 
@@ -157,5 +158,12 @@ public class RemoteTest extends Thread {
         }
 
         return sb.toString();
+    }
+
+    private String replaceEscapeSequences(String txt) {
+        // TODO: for now we only replace "\n"
+        txt = StringUtil.replaceAll(txt, "\\n", "\n");
+
+        return txt;
     }
 }
