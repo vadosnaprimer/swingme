@@ -33,8 +33,8 @@ public class RemoteTest extends Thread {
                 remoteTest.start();
             }
             else {
-           new RemoteTest().start();
-        }
+                new RemoteTest().start();
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -47,8 +47,8 @@ public class RemoteTest extends Thread {
         while (true) {
             ServerSocketConnection ssc = null;
             try {
-                 Thread.sleep(5000);
-                 System.out.println("Remote Test starting...");
+                Thread.sleep(5000);
+                System.out.println("Remote Test starting...");
 
                 ssc = (ServerSocketConnection)Connector.open("socket://:1234");
 
@@ -64,7 +64,7 @@ public class RemoteTest extends Thread {
                 while (true) {
                     String command = readLine(reader);
 
-    System.out.println("COMMAND: "+command);
+                    System.out.println("COMMAND: "+command);
                     process(command,writer);
                 }
             }
@@ -85,10 +85,14 @@ public class RemoteTest extends Thread {
             String text = command.substring("click ".length());
             text = replaceEscapeSequences(text);
 
-            boolean result = click(text);
+            boolean result = onClickText(text);
 
             System.out.println("result: "+result);
             writer.write(result ? "OK\n" : "FAIL\n");
+        }
+        else if (command.equalsIgnoreCase("setCursorInvisible")) {
+            onSetCursorInvisible();
+            writer.write("OK\n");
         }
         else {
             System.out.println("Unknown command: "+command);
@@ -98,22 +102,26 @@ public class RemoteTest extends Thread {
         writer.flush();
     }
 
-    protected boolean click(String text) {
+    protected boolean onClickText(String text) {
 
-            DesktopPane dp = DesktopPane.getDesktopPane();
-            Window window = dp.getSelectedFrame();
+        DesktopPane dp = DesktopPane.getDesktopPane();
+        Window window = dp.getSelectedFrame();
 
-            System.out.println("CLICK on >"+text+"<");
+        System.out.println("CLICK on >"+text+"<");
 
-            boolean result = click(text,window.getCommands()); // check soft-keys first
-            if (!result) {
-                result = click(text,window.getComponents()); // now check all other components
-            }
-            return result;
+        boolean result = clickText(text,window.getCommands()); // check soft-keys first
+        if (!result) {
+            result = clickText(text,window.getComponents()); // now check all other components
+        }
+        return result;
 
     }
 
-    static boolean click(String text,Vector components) {
+    protected void onSetCursorInvisible() {
+
+    }
+
+    static boolean clickText(String text,Vector components) {
 
         for (int c=0;c<components.size();c++) {
             Component comp = (Component)components.elementAt(c);
@@ -123,12 +131,12 @@ public class RemoteTest extends Thread {
                 return true;
             }
             if (comp instanceof Panel) {
-                if (click (text,((Panel)comp).getComponents())) {
+                if (clickText (text,((Panel)comp).getComponents())) {
                     return true;
                 }
             }
             if (comp instanceof MenuBar) {
-                if (click (text,((MenuBar)comp).getItems())) {
+                if (clickText (text,((MenuBar)comp).getItems())) {
                     return true;
                 }
             }
@@ -143,8 +151,8 @@ public class RemoteTest extends Thread {
 
         while ((ch = in.read()) != -1){
             if (ch == '\n' && sb.length() > 0) {
-               //Carriage return was received or ENTER was pressed
-               break; //Exit loop and print input
+                //Carriage return was received or ENTER was pressed
+                break; //Exit loop and print input
             }
 
             if (ch != '\r') {
