@@ -5,6 +5,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+
 import net.yura.mobile.util.RemoteTest;
 import android.app.Instrumentation;
 import android.os.SystemClock;
@@ -23,43 +24,49 @@ public class AndroidRemoteTest extends RemoteTest {
     }
 
     @Override
-    protected boolean click(String text) {
+    protected boolean onClickText(String text) {
         View window = getSelectedFrame(); // TODO can this be null???
 
         //System.out.println("Window="+toString(window));
 
-        boolean nativeClick = clickView(window, text); // try native first as menu may be open
+        boolean nativeClick = clickText(window, text); // try native first as menu may be open
         if (!nativeClick && AndroidMeActivity.DEFAULT_ACTIVITY.hasWindowFocus() ) { // TODO check menu is NOT open
-            return super.click(text); // Do SwingME click
+            return super.onClickText(text); // Do SwingME click
         }
         return nativeClick;
     }
 
-    private static boolean clickView(View view, String clickText) {
+    @Override
+    protected void onSetCursorInvisible() {
+        final View focusView = AndroidMeActivity.DEFAULT_ACTIVITY.getWindow().getCurrentFocus();
+        if (focusView instanceof TextView) {
+            AndroidMeActivity.DEFAULT_ACTIVITY.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((TextView) focusView).setCursorVisible(false);
+                }
+            });
+        }
+    }
+
+    private static boolean clickText(View view, String clickText) {
         if (view instanceof ViewGroup) {
             ViewGroup viewGroup = (ViewGroup) view;
 
             int childcount = viewGroup.getChildCount();
             for (int i=0; i < childcount; i++){
                 View childView = viewGroup.getChildAt(i);
-                //String printText = debugStr + "> " + childView;
 
                 if (childView instanceof TextView && childView.isClickable()) {
-                    final TextView b = (TextView) childView;
-                    //printText += "(text = " + b.getText() + ")";
-
+                    TextView b = (TextView) childView;
                     if (clickText.equalsIgnoreCase(b.getText().toString())) {
-                        //printText += " <== FOUND!";
-
                         click(b);
                         return true;
                     }
                 }
 
-                //System.out.println(printText);
-
                 // Recursive call
-                if (clickView(childView, clickText)) {
+                if (clickText(childView, clickText)) {
                     return true;
                 }
             }
@@ -154,5 +161,4 @@ public class AndroidRemoteTest extends RemoteTest {
             throw new RuntimeException(ex);
         }
     }
-
 }
