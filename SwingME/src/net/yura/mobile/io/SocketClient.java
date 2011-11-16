@@ -113,9 +113,9 @@ public abstract class SocketClient implements Runnable {
                             if(!isRunning()) return;
 
                             try {
+                                String serv = getNextServer();
                                 retryCount++;
 
-                                String serv = getNextServer();
                                 //#debug info
                                 Logger.info("[SocketClient] Trying to connect to: "+serv+" to send: "+object);
 
