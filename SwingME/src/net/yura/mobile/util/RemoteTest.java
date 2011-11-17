@@ -41,6 +41,10 @@ public class RemoteTest extends Thread {
         }
     }
 
+    public RemoteTest() {
+        super("RemoteTest");
+    }
+
     public void run() {
 
         // TODO: Need a quit flag
