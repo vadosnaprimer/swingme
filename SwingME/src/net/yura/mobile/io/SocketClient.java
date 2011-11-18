@@ -248,6 +248,13 @@ public abstract class SocketClient implements Runnable {
                     }
                 }
             };
+
+            // We are going to create a thread/start it, etc and this will
+            // take time... We need to signal that we are "connecting" strait
+            // away, otherwise if someone ask isItDisconnected() we would reply
+            // true, and further connections would be tried.
+            updateState(CONNECTING);
+
             writeThread.start();
         }
 
@@ -300,7 +307,7 @@ public abstract class SocketClient implements Runnable {
     public void disconnect() {
         QueueProcessorThread old = writeThread;
         writeThread = null;
-        shutdownConnection();
+            shutdownConnection();
         if(old != null) {
             old.kill();
         }
