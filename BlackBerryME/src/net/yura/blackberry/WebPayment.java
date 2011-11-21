@@ -15,12 +15,13 @@ public final class WebPayment extends MainScreen {
 
     private BrowserField browserField;
     private int cancelConstant;
+    private boolean tryUseCarrierConnection;
 
     public WebPayment(String startURL, final String successURL, final String errorURL, final int successConstant, final int errorConstant, final int carrierConstant, final int cancelConstant, String title, final boolean tryUseCarrierConnection) {
         setTitle(title);
         BrowserFieldConfig myBrowserFieldConfig = new BrowserFieldConfig();
         this.cancelConstant = cancelConstant;
-        
+        this.tryUseCarrierConnection = tryUseCarrierConnection;
         if (tryUseCarrierConnection) {
             ConnectionFactory connectionFactory = new ConnectionFactory();
             int[] transportTypes = { TransportInfo.TRANSPORT_WAP2, TransportInfo.TRANSPORT_WAP, TransportInfo.TRANSPORT_TCP_CELLULAR, TransportInfo.TRANSPORT_BIS_B, TransportInfo.TRANSPORT_TCP_WIFI };
@@ -75,7 +76,7 @@ public final class WebPayment extends MainScreen {
     protected boolean keyDown(int keyCode, int time) {
         if (Keypad.key(keyCode) == Keypad.KEY_ESCAPE) {
             if (!browserField.back()) {
-                close(cancelConstant, null);
+                close(tryUseCarrierConnection ? cancelConstant : -1, null);
             }
             return true;
         }
