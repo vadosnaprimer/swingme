@@ -17,6 +17,10 @@
 
 package net.yura.mobile.util;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -210,6 +214,31 @@ public class SystemUtil {
             name = StringUtil.replaceAll(name,String.valueOf(invalid.charAt(c)),"");
         }
         return name;
+    }
+
+    
+    public static byte[] getData(InputStream iStrm,int length) throws IOException {
+
+        // ContentConnection includes a length method
+        byte[] imageData;
+
+        if (length != -1) {
+            imageData = new byte[length];
+            // Read the png into an array
+            //        iStrm.read(imageData);
+            DataInputStream din = new DataInputStream(iStrm);
+            din.readFully(imageData);
+        }
+        else { // Length not available...
+            ByteArrayOutputStream bStrm = new ByteArrayOutputStream();
+            int len;
+            for (byte[] buffer = new byte[Math.max(32, iStrm.available())]; (len = iStrm.read(buffer)) != -1; )
+                bStrm.write(buffer, 0, len);
+            imageData = bStrm.toByteArray();
+            bStrm.close();
+        }
+
+        return imageData;
     }
 
 }
