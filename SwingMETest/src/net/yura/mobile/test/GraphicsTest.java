@@ -1,6 +1,8 @@
 package net.yura.mobile.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 import javax.microedition.lcdui.Graphics;
@@ -23,6 +25,7 @@ import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.io.FileUtil;
 import net.yura.mobile.io.HTTPClient;
+import net.yura.mobile.io.SocketClient;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.ImageUtil;
 
@@ -93,6 +96,23 @@ public class GraphicsTest extends Section {
             g.setColor(0xFFFF0000);
             g.drawLine(0, 0, 50, 50);
 
+
+            // test saving file to disk
+            try {
+                //OutputStream out=FileUtil.getWriteFileConnection("file:///root1/img.jpg").openOutputStream();
+
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+                ImageUtil.saveImage(img,out);
+                out.close();
+
+                img = Image.createImage(out.toByteArray(), 0, out.size());
+            }
+            catch(Exception ex) {
+                ex.printStackTrace();
+            }
+
+
             // testing Nokia DirectGraphics
             //com.nokia.mid.ui.DirectGraphics g2 = com.nokia.mid.ui.DirectUtils.getDirectGraphics(g);
             //g2.fillPolygon(new int[] { 25,35,45,25,5},0,new int[] { 25,5,25,45,35},0,5,0xAA115599);
@@ -120,16 +140,17 @@ public class GraphicsTest extends Section {
 
             final Panel scaleImagePanel = new ScrollPane(new Label("loading..."));
 
-            
+
 
             new Thread() {
             	public void run() {
 
                     try {
                         final Label l1 = new Label();
-                        Image img = loadImage("http://swingme.sourceforge.net/swingme_logo.png"+
-                                (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY?";deviceside=true":"")
-                                );
+
+                        String url = "http://swingme.sourceforge.net/swingme_logo.png";
+
+                        Image img = loadImage(url);
                         l1.setIcon( new Icon(img) ) ;
 
                         scaleImagePanel.add(l1);
@@ -150,7 +171,7 @@ public class GraphicsTest extends Section {
             	};
             }.start();
 
-            
+
 
             addToScrollPane(scaleImagePanel, null);
         }
@@ -163,12 +184,17 @@ public class GraphicsTest extends Section {
         HttpConnection hpc = null;
         InputStream dis = null;
         try {
+
+            if (SocketClient.connectAppend!=null) {
+                url = url + SocketClient.connectAppend;
+            }
+
           hpc = (HttpConnection) Connector.open(url);
           int code = hpc.getResponseCode();
           if (code == HttpConnection.HTTP_OK) {
               int length = (int) hpc.getLength();
               dis = hpc.openInputStream();
-              byte[] data = FileUtil.getData(dis, length);
+              byte[] data = net.yura.mobile.util.SystemUtil.getData(dis, length);
               return Image.createImage(data, 0, data.length);
           }
           else {
@@ -239,10 +265,13 @@ public class GraphicsTest extends Section {
 
         private void drawImage(Graphics2D g, int x, int y, Image img, int transform, int anchor) {
 
+            int x_off=4;
+            int y_off=9;
+
             if (isDrawRegion) {
-                g.getGraphics().drawRegion(img, 4, 4, img.getWidth() - 8, img.getHeight() - 8, transform, x, y, anchor);
+                g.getGraphics().drawRegion(img, x_off, y_off, img.getWidth() - 2*x_off, img.getHeight() - 2*y_off, transform, x, y, anchor);
             } else {
-                Image img1 = Image.createImage(img, 4, 4, img.getWidth() - 8, img.getHeight() - 8, transform);
+                Image img1 = Image.createImage(img, x_off, y_off, img.getWidth() - 2*x_off, img.getHeight() - 2*y_off, transform);
                 g.getGraphics().drawImage(img1, x, y, anchor);
             }
 
