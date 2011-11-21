@@ -74,6 +74,8 @@ public class CameraInvoker extends MainScreen implements FileSystemJournalListen
 		_lastUSN = nextUSN;
 	}
 
+	
+	
 	private void closeCamera() {
 		try {
 			EventInjector.KeyEvent inject = new EventInjector.KeyEvent(EventInjector.KeyEvent.KEY_DOWN, Characters.ESCAPE,  50);

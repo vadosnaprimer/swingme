@@ -29,10 +29,18 @@ public class BlackBerryFilePicker extends MainScreen {
    class FilePickListener implements FilePicker.Listener 
     {   
         public void selectionDone(String str)
-        {
-        	Midlet.getMidlet().onResult(0, -1, str);
-        	close();
+        {        	
+        	close(-1, str);
         }
     }
+   
+   public void close() {
+       close(-1, null);
+   }
+   
+   private void close(int responseCode, Object res) {
+       Midlet.getMidlet().onResult(-1, responseCode, res);
+       super.close();
+   }
 
 }
