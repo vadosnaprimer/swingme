@@ -56,32 +56,6 @@ public class FileUtil {
         }
     }
 
-
-    public static byte[] getData(InputStream iStrm,int length) throws IOException {
-
-        // ContentConnection includes a length method
-        byte[] imageData;
-
-        if (length != -1) {
-            imageData = new byte[length];
-            // Read the png into an array
-            //        iStrm.read(imageData);
-            DataInputStream din = new DataInputStream(iStrm);
-            din.readFully(imageData);
-        }
-        else { // Length not available...
-            ByteArrayOutputStream bStrm = new ByteArrayOutputStream();
-            int len;
-            for (byte[] buffer = new byte[Math.max(32, iStrm.available())]; (len = iStrm.read(buffer)) != -1; )
-                bStrm.write(buffer, 0, len);
-            imageData = bStrm.toByteArray();
-            bStrm.close();
-        }
-
-        return imageData;
-    }
-
-
     public static Vector listFiles(String dir,int filter,boolean recent) {
 
         Vector files = new Vector();
