@@ -2,25 +2,25 @@ package net.yura.blackberry;
 
 import net.rim.device.api.browser.field2.BrowserField;
 import net.rim.device.api.browser.field2.BrowserFieldConfig;
-import net.rim.device.api.browser.field2.BrowserFieldListener;
+import net.rim.device.api.browser.field2.BrowserFieldRequest;
+import net.rim.device.api.browser.field2.ProtocolController;
 import net.rim.device.api.io.transport.ConnectionFactory;
 import net.rim.device.api.io.transport.TransportInfo;
-import net.rim.device.api.script.ScriptEngine;
 import net.rim.device.api.ui.Keypad;
 import net.rim.device.api.ui.UiApplication;
 import net.rim.device.api.ui.container.MainScreen;
 import net.yura.mobile.gui.Midlet;
 
-import org.w3c.dom.Document;
-
 public final class WebPayment extends MainScreen {
 
     private BrowserField browserField;
+    private int cancelConstant;
 
-    public WebPayment(String startURL, final String successURL, final String errorURL, final int successConstant, final int errorConstant, String title, boolean tryUseCarrierConnection) {
+    public WebPayment(String startURL, final String successURL, final String errorURL, final int successConstant, final int errorConstant, final int carrierConstant, final int cancelConstant, String title, final boolean tryUseCarrierConnection) {
         setTitle(title);
         BrowserFieldConfig myBrowserFieldConfig = new BrowserFieldConfig();
-
+        this.cancelConstant = cancelConstant;
+        
         if (tryUseCarrierConnection) {
             ConnectionFactory connectionFactory = new ConnectionFactory();
             int[] transportTypes = { TransportInfo.TRANSPORT_WAP2, TransportInfo.TRANSPORT_WAP, TransportInfo.TRANSPORT_TCP_CELLULAR, TransportInfo.TRANSPORT_BIS_B, TransportInfo.TRANSPORT_TCP_WIFI };
@@ -30,27 +30,54 @@ public final class WebPayment extends MainScreen {
 
         myBrowserFieldConfig.setProperty(BrowserFieldConfig.NAVIGATION_MODE, BrowserFieldConfig.NAVIGATION_MODE_POINTER);
         browserField = new BrowserField(myBrowserFieldConfig);
+        myBrowserFieldConfig.setProperty(BrowserFieldConfig.CONTROLLER, new ProtocolController(browserField) {
+
+            public void handleNavigationRequest(BrowserFieldRequest request) throws Exception {
+                String url = request.getURL().toLowerCase();
+                System.out.println("handleNavigationRequest: " + url);
+                boolean success = url.indexOf(successURL.toLowerCase()) > -1;
+                boolean fail = url.indexOf(errorURL.toLowerCase()) > -1;
+                if (success || fail) {
+                    if (tryUseCarrierConnection) {
+                        close(carrierConstant, request.getURL());
+                    }
+                    else {
+                        close(success ? successConstant : errorConstant, null);
+                    }
+                }
+                else {
+                    super.handleNavigationRequest(request);
+                }
+            }
+
+        });
+
         add(browserField);
         browserField.requestContent(startURL);
-        browserField.addListener(new BrowserFieldListener() {
-            public void documentCreated(BrowserField browserField, ScriptEngine scriptEngine, Document document) {
-                if (document.getBaseURI().toLowerCase().startsWith(successURL.toLowerCase())) {
-                    Midlet.getMidlet().onResult(-1, successConstant, null);
-                    close();
-                }
-                else if (document.getBaseURI().toLowerCase().startsWith(errorURL.toLowerCase())) {
-                    Midlet.getMidlet().onResult(-1, errorConstant, null);
-                    close();
-                }
-                System.out.println("Document created. URI: " + document.getBaseURI());
+        UiApplication.getUiApplication().pushScreen(this);
+    }
+
+    public void close() {
+        close(-1, null);
+    }
+
+    private void close(int responseCode, Object res) {
+        Midlet.getMidlet().onResult(-1, responseCode, res);
+        // Close cannot be called from the UI thread, and we are calling it from
+        // inside the Protocol Controller
+        UiApplication.getUiApplication().invokeLater(new Runnable() {
+            public void run() {
+                WebPayment.super.close();
             }
         });
-        UiApplication.getUiApplication().pushScreen(this);
     }
 
     protected boolean keyDown(int keyCode, int time) {
         if (Keypad.key(keyCode) == Keypad.KEY_ESCAPE) {
-            return browserField.back();
+            if (!browserField.back()) {
+                close(cancelConstant, null);
+            }
+            return true;
         }
         return super.keyDown(keyCode, time);
     }
