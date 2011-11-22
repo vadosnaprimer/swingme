@@ -1,5 +1,7 @@
 package net.yura.blackberry;
 
+import javax.microedition.io.InputConnection;
+
 import net.rim.device.api.browser.field2.BrowserField;
 import net.rim.device.api.browser.field2.BrowserFieldConfig;
 import net.rim.device.api.browser.field2.BrowserFieldRequest;
@@ -33,7 +35,20 @@ public final class WebPayment extends MainScreen {
         browserField = new BrowserField(myBrowserFieldConfig);
         myBrowserFieldConfig.setProperty(BrowserFieldConfig.CONTROLLER, new ProtocolController(browserField) {
 
-            public void handleNavigationRequest(BrowserFieldRequest request) throws Exception {
+            public InputConnection handleResourceRequest(BrowserFieldRequest request) throws Exception {                
+                if (checkUrl(request)) {
+                    return super.handleResourceRequest(request);
+                }
+                return null;
+            }
+            
+            public void handleNavigationRequest(BrowserFieldRequest request) throws Exception {                
+                if (checkUrl(request)) {
+                    super.handleNavigationRequest(request);
+                }
+            }
+            
+            private boolean checkUrl(BrowserFieldRequest request) {                
                 String url = request.getURL().toLowerCase();
                 System.out.println("handleNavigationRequest: " + url);
                 boolean success = url.indexOf(successURL.toLowerCase()) > -1;
@@ -45,12 +60,11 @@ public final class WebPayment extends MainScreen {
                     else {
                         close(success ? successConstant : errorConstant, null);
                     }
+                    return false;
                 }
-                else {
-                    super.handleNavigationRequest(request);
-                }
+                return true;          
             }
-
+            
         });
 
         add(browserField);
