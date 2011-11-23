@@ -51,48 +51,39 @@ public class ProtoLoader {
 	        String line      = null;
 	        StringBuffer sb  = null;
 	        Vector<String> raw         = new Vector<String>();
-	        while( ( line = r.readLine() ) != null )
-	        {
+	        while( ( line = r.readLine() ) != null ) {
 
 	            line = line.replaceAll( "\\s+"        , " " );
 	            line = line.replaceAll( "[\\/]{2}.*$" , ""  );
 	            line = line.trim();
 
-	            if ( line.length() == 0 )
-	                line = "";
-
-	            if ( line.startsWith( "package" ) )
-	            {
+	            if ( line.startsWith( "package" ) ) {
 	                // Ignored
 	            }
-	            else if ( line.startsWith( "option " ) ) // be careful not to dump "optional"
-	            {
+	            else if ( line.startsWith( "option " ) ) { // be careful not to dump "optional"
 	                // Ignored
 	            }
-	            else if ( line.startsWith( "enum" ) )
-	            {
-                    if ( sb != null )
-                        raw.addElement(sb.toString());
+	            else if ( line.startsWith( "enum" ) ) {
+                        if ( sb != null )
+                            raw.addElement(sb.toString());
 
-                    sb = new StringBuffer();
-                    sb.append( line );
-	            }
-                else if ( line.startsWith( "message" ) )
-                {
-                    if ( sb != null )
-                        raw.addElement(sb.toString());
-
-                    sb = new StringBuffer();
-                    sb.append( line );
-                }
-                else if ( line.length() != 0 )
-                {
-                    if ( sb == null )
                         sb = new StringBuffer();
+                        sb.append( line );
+	            }
+                    else if ( line.startsWith( "message" ) ) {
+                        if ( sb != null )
+                            raw.addElement(sb.toString());
 
-                    sb.append( line );
-                    sb.append( " " );
-                }
+                        sb = new StringBuffer();
+                        sb.append( line );
+                    }
+                    else if ( line.length() != 0 ) {
+                        if ( sb == null )
+                            sb = new StringBuffer();
+
+                        sb.append( line );
+                        sb.append( " " );
+                    }
 	        }
 	        r.close();
 
