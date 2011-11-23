@@ -19,6 +19,7 @@ package net.yura.mobile.gui.components;
 import java.util.Vector;
 
 import javax.microedition.lcdui.Canvas;
+
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
@@ -178,6 +179,9 @@ public class TextPane extends Component {
     }
 
     public void append(String text1) {
+        // TODO: When we call setText() we do a lot more stuff than just setting the width
+        widthUsed = -1;
+
         if (text1.startsWith("<html>")) {
             XHTMLLoader loader = new XHTMLLoader();
             loader.gotResult( this, text1 );
