@@ -28,7 +28,7 @@ public class ProtoLoader {
 
             this.objectPackage = objectPackage;
 
-	    Vector<String> raw = parseProto(name);
+	    Vector<Struct> raw = parseProto(name);
             parseRaw(raw);
 	}
 
@@ -45,74 +45,108 @@ public class ProtoLoader {
             return false;
         }
 
-	private Vector<String> parseProto(String protoSource) throws IOException {
+        static class Struct {
+            public String comment;
+            public String value;
+
+            @Override
+            public String toString() {
+                return value+" - COMMENT: "+comment;
+            }
+            
+        }
+        
+	private Vector<Struct> parseProto(String protoSource) throws IOException {
 
 	        BufferedReader r = new BufferedReader( new FileReader( protoSource ) );
-	        String line      = null;
-	        StringBuffer sb  = null;
-	        Vector<String> raw         = new Vector<String>();
+	        String line      = null,myComment=null;
+	        StringBuffer sb  = null,comment=null;
+	        Vector<Struct> raw = new Vector<Struct>();
+                
 	        while( ( line = r.readLine() ) != null ) {
 
 	            line = line.replaceAll( "\\s+"        , " " );
-	            line = line.replaceAll( "[\\/]{2}.*$" , ""  );
 	            line = line.trim();
 
-	            if ( line.startsWith( "package" ) ) {
-	                // Ignored
-	            }
-	            else if ( line.startsWith( "option " ) ) { // be careful not to dump "optional"
-	                // Ignored
-	            }
-	            else if ( line.startsWith( "enum" ) ) {
-                        if ( sb != null )
-                            raw.addElement(sb.toString());
-
-                        sb = new StringBuffer();
-                        sb.append( line );
-	            }
-                    else if ( line.startsWith( "message" ) ) {
-                        if ( sb != null )
-                            raw.addElement(sb.toString());
-
-                        sb = new StringBuffer();
-                        sb.append( line );
+                    if ( line.startsWith( "//" ) ) {
+                        if (comment==null) {
+                            comment = new StringBuffer(line);
+                        }
+                        else {
+                            comment.append(" ");
+                            comment.append(line);
+                        }
                     }
-                    else if ( line.length() != 0 ) {
-                        if ( sb == null )
-                            sb = new StringBuffer();
+                    else {
+                        line = line.replaceAll( "[\\/]{2}.*$" , ""  );
 
-                        sb.append( line );
-                        sb.append( " " );
+                        if ( line.startsWith( "package" ) || line.startsWith( "option " )) { // be careful not to dump "optional"
+                            // Ignored
+                            System.out.println("IGNORE LINE "+line);
+                        }
+                        else if ( line.startsWith( "enum" ) || line.startsWith( "message" )) {
+                            if ( sb != null )
+                                newStruct(raw, sb.toString(), myComment);
+
+                            // start new Object
+                            myComment = comment!=null?comment.toString():null;
+                            sb = new StringBuffer(line);
+
+                            // clear the next Objects comment
+                            comment = null;
+                        }
+                        else if ( line.length() != 0 ) {
+                            if ( sb != null ) {
+                                sb.append( line );
+                                sb.append( " " );
+                                if (line.contains("}")) {
+                                    comment = null; // if we have some comment from inside the message, del it as it does not belong to anything
+                                }
+                            }
+                            else {
+                                throw new RuntimeException("unexpected line "+line);
+                            }
+                        }
                     }
 	        }
 	        r.close();
 
-            if ( sb != null )
-                raw.addElement(sb.toString());
+                if ( sb != null )
+                    newStruct(raw, sb.toString(), myComment);
 
                 return raw;
 	}
+        
+    static void newStruct(Vector<Struct> v,String value,String comment) {
+        
+        Struct struct = new Struct();
+        
+        value = value.replace( "\\{" , " {" ); // no idea why this is here?!
+        
+        struct.value = value;
+        struct.comment = comment;
 
-    private void parseRaw(Vector<String> raw) throws IOException {
+        v.add(struct);
+    }
 
-        for( Enumeration e = raw.elements() ; e.hasMoreElements() ; )
+    private void parseRaw(Vector<Struct> raw) throws IOException {
+
+        for( Enumeration<Struct> e = raw.elements() ; e.hasMoreElements() ; )
         {
-            String s = (String)e.nextElement();
-            s = s.replace( "\\{" , " {" );
-                if ( s.startsWith( "enum" ) )
-                    parseEnum(s);
+            Struct s = e.nextElement();
+                if ( s.value.startsWith( "enum" ) )
+                    parseEnum(s.value,s.comment);
         }
-        for( Enumeration e = raw.elements() ; e.hasMoreElements() ; )
+        for( Enumeration<Struct> e = raw.elements() ; e.hasMoreElements() ; )
         {
-            String s = (String)e.nextElement();
-            s = s.replace( "\\{" , " {" );
-                if ( s.startsWith( "message" ) )
-                    parseMessage(s);
+            Struct s = e.nextElement();
+                if ( s.value.startsWith( "message" ) )
+                    parseMessage(s.value,s.comment);
         }
     }
 
 
-    private void parseMessage( String msg ) throws IOException
+    private void parseMessage( String msg, String comment ) throws IOException
     {
         // Find message name and fields using regex
         StringBuffer regex = new StringBuffer();
@@ -148,6 +182,7 @@ public class ProtoLoader {
         //if ( !name.toLowerCase().equals("prefix") && !name.toLowerCase().equals("suffix") )
         //{
             MessageDefinition md = new MessageDefinition( name );
+            md.comment = comment;
 
             // Attempt to get a class definition
             boolean found=false;
@@ -310,7 +345,7 @@ public class ProtoLoader {
     }
 
 
-    private void parseEnum( String enm ) throws IOException
+    private void parseEnum( String enm, String comment ) throws IOException
     {
         StringBuffer regex = new StringBuffer();
 
@@ -334,6 +369,7 @@ public class ProtoLoader {
         fields = ( fields == null ? "" : fields.trim() );
 
         EnumDefinition ed = new EnumDefinition( name );
+        ed.comment = comment;
 
         String [] enumArray = fields.split( "\\;" );
 
@@ -391,6 +427,7 @@ public class ProtoLoader {
 
     class MessageDefinition {
 
+        public String comment;
         private String name;
         protected Vector<FieldDefinition> fields;
         protected Class messageClass;
@@ -434,9 +471,15 @@ public class ProtoLoader {
             return name;
         }
 
+        public boolean isDeprecated() {
+            return comment != null && comment.indexOf("deprecated")>=0;
+        }
+
     }
 
     class EnumDefinition {
+        
+        public String comment;
         protected Hashtable<String,Integer> hashtable;
 
         public EnumDefinition( String name )
@@ -458,9 +501,15 @@ public class ProtoLoader {
             this.hashtable.put( name , value );
         }
 
+        public boolean isDeprecated() {
+            return comment != null && comment.indexOf("deprecated")>=0;
+        }
     }
 
     class FieldDefinition {
+        
+        public String comment;
+        
         protected String type;
         protected EnumDefinition enumeratedType;
         protected Class fieldClass;
@@ -564,6 +613,9 @@ public class ProtoLoader {
             return name;
         }
 
+        public boolean isDeprecated() {
+            return comment != null && comment.indexOf("deprecated")>=0;
+        }
     }
 
 

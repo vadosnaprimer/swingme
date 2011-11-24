@@ -25,6 +25,7 @@ public class MobileProtoGen extends BaseGen {
     public boolean obfuscate = false;
     public boolean split = false;
     public boolean publicEnums = false;
+    public boolean skipDeprecated = false;
     
     public static String compute="compute";
     public static String encode="encode";
@@ -64,11 +65,29 @@ public class MobileProtoGen extends BaseGen {
     public void setSplit(boolean o) {
         split = o;
     }
+    public void setSkipDeprecated(boolean o) {
+        skipDeprecated = o;
+    }
     
     public void setPublicEnums(boolean o) {
         publicEnums = o;
     }
 
+    private boolean use(Object obj) {
+        if (obj instanceof MessageDefinition) {
+            return skipDeprecated || !((MessageDefinition)obj).isDeprecated();
+        }
+        else if (obj instanceof EnumDefinition) {
+            return skipDeprecated || !((EnumDefinition)obj).isDeprecated();
+        }
+        else if (obj instanceof FieldDefinition) {
+            return skipDeprecated || !((FieldDefinition)obj).isDeprecated();
+        }
+        else {
+            throw new RuntimeException();
+        }
+    }
+    
     @Override
     public void doGen() throws Exception {
 
@@ -95,7 +114,12 @@ messageDefs = loader.getMessageDefs();
         printIDs(ps);
         printEncDecComp(ps);
         
-        List<MessageDefinition> messages = new ArrayList<MessageDefinition>( messageDefs.values() );
+        List<MessageDefinition> messages = new ArrayList<MessageDefinition>();
+        for ( MessageDefinition md:messageDefs.values() ) {
+            if (use(md)) {
+                messages.add(md);
+            }
+        }
         Collections.sort(messages, new ClassComparator());
         System.out.println( messages );
         
@@ -184,8 +208,9 @@ Hashtable<String,MessageDefinition> messageDefs;
             
             for (String name:keys) {
                 EnumDefinition edef = enumDefs.get(name);
-                Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
-                if (!"ObjectType".equals(name) ) {
+
+                if ( use(edef) && !"ObjectType".equals(name) ) {
+                    Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
                     for (Map.Entry<String,Integer> enu:set) {
                         enums.add( enu.getKey() );
                     }
@@ -203,10 +228,10 @@ Hashtable<String,MessageDefinition> messageDefs;
         
         for (String name:keys) {
             EnumDefinition edef = enumDefs.get(name);
-            Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+            
+            if ( use(edef) && !"ObjectType".equals(name) ) {
 
-            if (!"ObjectType".equals(name) ) {
-
+                Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
 
 ps.println("    public static int get"+name+"Enum(String enu) {");
 
@@ -238,13 +263,16 @@ ps.println("    }");
 
     private void printIDs(PrintStream ps) {
         
-        EnumDefinition edef = enumDefs.get("ObjectType");
-        Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+        Set<Map.Entry<String,Integer>> set = enumDefs.get("ObjectType").getValues().entrySet();
                 
         for (Map.Entry<String,Integer> enu:set) {
             int num = enu.getValue();
             if (num >= 20) {
-                ps.println("public static final int "+enu.getKey()+"="+num+";");
+                MessageDefinition md = getMessageFromEnum(enu.getKey());
+
+                if (use(md)) {
+                    ps.println("public static final int "+enu.getKey()+"="+num+";");
+                }
             }
         }
                 
@@ -258,29 +286,33 @@ ps.println("            Hashtable table = (Hashtable)obj;");
 
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
-    if (num >= 20 && getMessageFromEnum(enu.getKey()).getImplementation() == Hashtable.class) {
+    if (num >= 20) {
+        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        
+        if ( use(md) && md.getImplementation() == Hashtable.class ) {
 
-        String line1 ="";
-        String line2 ="";
-        Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
-        for (ProtoLoader.FieldDefinition field:fields) {
-            if (field.required) { //  || field.repeated (we dont need a null vector)
-                line1 = line1 +"\""+field.getName()+"\",";
+            String line1 ="";
+            String line2 ="";
+            Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
+            for (ProtoLoader.FieldDefinition field:fields) {
+                if (field.required) { //  || field.repeated (we dont need a null vector)
+                    line1 = line1 +"\""+field.getName()+"\",";
+                }
+                else {
+                    line2 = line2 +"\""+field.getName()+"\",";
+                }
             }
-            else {
-                line2 = line2 +"\""+field.getName()+"\",";
-            }
+            if (line1.endsWith(",")) line1 = line1.substring(0, line1.length() - 1);
+            if (line2.endsWith(",")) line2 = line2.substring(0, line2.length() - 1);
+
+            String req = "".equals(line1)?"EMPTY":"new String[] {"+line1+"}";
+            String opt = "".equals(line2)?"EMPTY":"new String[] {"+line2+"}";
+
+            ps.println("    if (hashtableIsMessage(table,"+req+","+opt+")) {");
+
+            ps.println("        return "+enu.getKey()+";");
+            ps.println("    }");
         }
-        if (line1.endsWith(",")) line1 = line1.substring(0, line1.length() - 1);
-        if (line2.endsWith(",")) line2 = line2.substring(0, line2.length() - 1);
-        
-        String req = "".equals(line1)?"EMPTY":"new String[] {"+line1+"}";
-        String opt = "".equals(line2)?"EMPTY":"new String[] {"+line2+"}";
-        
-        ps.println("    if (hashtableIsMessage(table,"+req+","+opt+")) {");
-
-        ps.println("        return "+enu.getKey()+";");
-        ps.println("    }");
     }
 }
 
@@ -293,7 +325,7 @@ for (Map.Entry<String,Integer> enu:set) {
     if (num >= 20) {
         String messageName = enu.getKey();
         MessageDefinition message = getMessageFromEnum(messageName);
-        if(message.getImplementation() != Hashtable.class) {
+        if( use(message) && message.getImplementation() != Hashtable.class) {
             messages.add(message);
             messageNames.put(message, messageName);
         }
@@ -340,7 +372,10 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-ps.println("            case "+enu.getKey()+": return "+decode+getMessageID(getMessageFromEnum(enu.getKey()))+"(in2);");
+        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        if (use(md)) {
+ps.println("            case "+enu.getKey()+": return "+decode+getMessageID(md)+"(in2);");
+        }
     }
 }
 
@@ -357,7 +392,10 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-ps.println("            case "+enu.getKey()+": return "+compute+getMessageID(getMessageFromEnum(enu.getKey()))+size+"( ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj );");
+        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        if (use(md)) {
+ps.println("            case "+enu.getKey()+": return "+compute+getMessageID(md)+size+"( ("+md.getImplementation().getSimpleName()+")obj );");
+        }
     }
 }
 
@@ -372,7 +410,10 @@ ps.println("        switch (type) {");
 for (Map.Entry<String,Integer> enu:set) {
     int num = enu.getValue();
     if (num >= 20) {
-        ps.println("    case "+enu.getKey()+": "+encode+getMessageID(getMessageFromEnum(enu.getKey()))+"( out, ("+getMessageFromEnum(enu.getKey()).getImplementation().getSimpleName()+")obj ); break;");
+        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        if (use(md)) {
+ps.println("            case "+enu.getKey()+": "+encode+getMessageID(md)+"( out, ("+md.getImplementation().getSimpleName()+")obj ); break;");
+        }
     }
 }
 
