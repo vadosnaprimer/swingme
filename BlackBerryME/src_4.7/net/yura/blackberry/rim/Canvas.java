@@ -166,6 +166,13 @@ public abstract class Canvas extends FullScreen {
      }
 
      /**
+      * @see javax.microedition.lcdui.Canvas#hasPointerEvents()
+      */
+     public boolean hasPointerEvents() {
+         return net.rim.device.api.ui.Touchscreen.isSupported();
+     }
+     
+     /**
       * @see javax.microedition.lcdui.Canvas#pointerPressed(int, int)
       */
      protected void pointerPressed(int x, int y) {
