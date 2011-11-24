@@ -1,11 +1,9 @@
 package javax.microedition.lcdui;
 
 import java.util.Vector;
-
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.android.AndroidMeActivity;
-
+import net.yura.android.AndroidMeApp;
 import android.view.View;
 
 public abstract class Displayable {
@@ -72,4 +70,25 @@ public abstract class Displayable {
 	public abstract void initDisplayable(MIDlet midlet);
 
 	public abstract View getView();
+
+
+	public boolean isShown() {
+	    return AndroidMeActivity.DEFAULT_ACTIVITY != null && Display.getDisplay(AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
+	}
+        private String title;
+	public void setTitle(String object) {
+	    title = object;
+	    if (isShown()) {
+	        AndroidMeApp.getIntance().invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        AndroidMeActivity.DEFAULT_ACTIVITY.setTitle(title);
+                        //AndroidMeActivity.DEFAULT_ACTIVITY.invalidateOptionsMenu(); // API-11                    }
+                    }
+                });
+	    }
+	}
+	public String getTitle() {
+	    return title;
+	}
 }

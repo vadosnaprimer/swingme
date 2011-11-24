@@ -18,8 +18,7 @@ public class NativeAndroidMenu implements MenuSystem {
     public boolean onPrepareOptionsMenu(Menu androidMenu) {
 
         try {
-            androidMenu.close();
-            androidMenu.clear();
+            androidMenu.close(); // TODO maybe this could be done in in the CanvasView.onKeyDown(KEYCODE_MENU)
 
             net.yura.mobile.gui.components.Window currentWindow = net.yura.mobile.gui.DesktopPane.getDesktopPane().getSelectedFrame();
 
@@ -41,6 +40,8 @@ public class NativeAndroidMenu implements MenuSystem {
     }
 
     private void addItemsToMenu(Menu androidMenu,net.yura.mobile.gui.components.Menu menu) {
+
+        androidMenu.clear(); // before we add items, lets clear the menu
 
     	Vector menuItems = menu.getMenuComponents();
         for (int i = 0; i < menuItems.size(); i++) {
@@ -134,7 +135,8 @@ public class NativeAndroidMenu implements MenuSystem {
     // this is not used
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		throw new RuntimeException();
+		Logger.warn("odd "+item);
+		return false;
 	}
 
 	private void fireActionPerformed(net.yura.mobile.gui.components.Button button,android.view.Menu menu) {
@@ -142,12 +144,12 @@ public class NativeAndroidMenu implements MenuSystem {
 		// we do NOT want to call fireActionPerformed on menus, as that will cause the SwingME menu to open
 		// and we want to use native menus instead
 		if (button instanceof net.yura.mobile.gui.components.Menu) {
-	        net.yura.mobile.gui.ActionListener[] als = button.getActionListeners();
-	        String ac = button.getActionCommand();
-	        for (int c=0;c<als.length;c++) {
-	        	als[c].actionPerformed(ac);
-	        }
-    		addItemsToMenu( menu, (net.yura.mobile.gui.components.Menu)button);
+        	    net.yura.mobile.gui.ActionListener[] als = button.getActionListeners();
+        	    String ac = button.getActionCommand();
+        	    for (int c=0;c<als.length;c++) {
+        	        als[c].actionPerformed(ac);
+        	    }
+            	    addItemsToMenu( menu, (net.yura.mobile.gui.components.Menu)button);
 		}
 		else {
 			button.fireActionPerformed();

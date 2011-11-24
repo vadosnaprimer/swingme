@@ -607,13 +607,13 @@ public abstract class Canvas extends Displayable {
                     }
                     graphics.setCanvas( new android.graphics.Canvas(graphicsBitmap) );
                 }
-                
+
             }
 
             if (graphicsBitmap==null) {
                 graphics.setCanvas(androidCanvas);
             }
-            
+
             // in case there was a error in the last paint, we HAVE to call reset here to reset the tx and ty
             graphics.reset(); // reset to the last save, i.e. when the setCanvas was called
 
@@ -700,6 +700,8 @@ public abstract class Canvas extends Displayable {
                 // HACK: Work around for issue:
                 // http://code.google.com/p/android/issues/detail?id=11833
                 AndroidMeActivity.DEFAULT_ACTIVITY.onPrepareOptionsMenu();
+                // YURA:TODO this should be all that is needed maybe we should use this:
+                //AndroidMeActivity.DEFAULT_ACTIVITY.menu.close();
             }
 
             return super.onKeyDown(keyCode, event);
@@ -1102,13 +1104,7 @@ public abstract class Canvas extends Displayable {
         return null;
     }
 
-    public boolean isShown() {
-        return AndroidMeActivity.DEFAULT_ACTIVITY != null && Display.getDisplay(AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
-    }
 
-    public void setTitle(Object object) {
-        // TODO Auto-generated method stub
-    }
 
     public void addOverlayView(View v) {
         linearLayout.addView(v);
