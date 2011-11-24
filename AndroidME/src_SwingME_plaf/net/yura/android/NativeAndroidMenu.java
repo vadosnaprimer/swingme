@@ -135,8 +135,9 @@ public class NativeAndroidMenu implements MenuSystem {
     // this is not used
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Logger.warn("odd "+item);
-		return false;
+	    //debug warn
+	    Logger.warn("odd "+item);
+	    return false;
 	}
 
 	private void fireActionPerformed(net.yura.mobile.gui.components.Button button,android.view.Menu menu) {
