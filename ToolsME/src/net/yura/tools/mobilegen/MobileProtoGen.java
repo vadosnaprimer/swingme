@@ -75,13 +75,13 @@ public class MobileProtoGen extends BaseGen {
 
     private boolean use(Object obj) {
         if (obj instanceof MessageDefinition) {
-            return skipDeprecated || !((MessageDefinition)obj).isDeprecated();
+            return !skipDeprecated || !((MessageDefinition)obj).isDeprecated();
         }
         else if (obj instanceof EnumDefinition) {
-            return skipDeprecated || !((EnumDefinition)obj).isDeprecated();
+            return !skipDeprecated || !((EnumDefinition)obj).isDeprecated();
         }
         else if (obj instanceof FieldDefinition) {
-            return skipDeprecated || !((FieldDefinition)obj).isDeprecated();
+            return !skipDeprecated || !((FieldDefinition)obj).isDeprecated();
         }
         else {
             throw new RuntimeException();
