@@ -530,6 +530,9 @@ public class List extends Component implements ActionListener {
             if (i>=0) { // if (ri<0||ri>=size) { this check is not needed any more
                 selectNewPointer(i,keys);
             }
+            else {
+                setSelectedIndex(-1);
+            }
         }
         else if (type == DesktopPane.RELEASED) {
 
@@ -805,19 +808,17 @@ public class List extends Component implements ActionListener {
 
         current = a;
 
-        if (current!=-1) {
-
-            if (moveScroll) {
-                ensureIndexIsVisible(current);
-            }
-
-            if (chl!=null && old!=current) {
-                chl.changeEvent(this,current);
-            }
+        if (current!=-1 && moveScroll) {
+            ensureIndexIsVisible(current);
+        }
+        if (current!=old) {
             // TODO as scroll to always does a repaint
             // we dont need it here
             // BUT what if we are not in a scrollPane??
             repaint();
+            if (chl!=null) {
+                chl.changeEvent(this,current);
+            }
         }
     }
 
