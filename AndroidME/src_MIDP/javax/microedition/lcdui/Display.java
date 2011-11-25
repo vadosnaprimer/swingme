@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import javax.microedition.midlet.MIDlet;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
+import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Vibrator;
@@ -118,8 +119,13 @@ public class Display
         hiddenDisplay = null;
 
         if (newCurrent != current) {
+        	//#debug debug
+        	Logger.debug("[Display] setCurrent newCurrent != current");
             AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
                 public void run() {
+
+                	//#debug debug
+                	Logger.debug("[Display] setCurrent run()");
 
                     // TextBox is special... we don't really have any UI
                     if (newCurrent instanceof TextBox) {
@@ -131,6 +137,8 @@ public class Display
                     current = newCurrent;
 
                     if (old != null) {
+                    	//#debug debug
+                    	Logger.debug("[Display] setCurrent run() old != null");
                         old.setCurrentDisplay(null);
                     }
 
@@ -139,19 +147,34 @@ public class Display
 
                     View view = newCurrent.getView();
                     if (view != null) {
+                    	//#debug debug
+                    	Logger.debug("[Display] setCurrent run() view != null");
                         activity.setContentView(view);
+                    	//#debug debug
+                    	Logger.debug("[Display] setCurrent run() ContentView set");
                         view.requestFocus();
-                        
+                    	//#debug debug
+                    	Logger.debug("[Display] setCurrent run() requestFocus() completed");
+
                         // YURA tiny optimization, so we do not need to draw any background bitmaps!
                         view.getRootView().setBackgroundDrawable(null);
+                    	//#debug debug
+                    	Logger.debug("[Display] setCurrent run() exit");
 
                     }
                 }
             });
+        	//#debug debug
+        	Logger.debug("[Display] setCurrent exit");
 
             // Wait for the view to be set...
-            AndroidMeApp.getIntance().invokeAndWait(new Thread());
+            //YURA: remove this AndroidMeApp.getIntance().invokeAndWait(new Thread());
         }
+        //#mdebug debug
+        else {
+        	Logger.debug("[Display] setCurrent newCurrent == current");
+        }
+    	//#enddebug
     }
 
     /**

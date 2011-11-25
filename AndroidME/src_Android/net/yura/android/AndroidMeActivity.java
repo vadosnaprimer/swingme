@@ -117,7 +117,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     }
 
     private void showContentView(final View view) {
-        runOnUiThread(new Runnable() {
+    	AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
             public void run() {
                 if (defaultView != view) {
                     setContentView(view);
@@ -125,6 +125,15 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             }
         });
         this.defaultView = view;
+    }
+    
+    @Override
+    public void setContentView(View view) {
+
+    	//#debug debug
+    	Logger.debug("[AndroidMeActivity] setContentView "+view);
+    	
+    	super.setContentView(view);
     }
 
     private void showWaitingView() {
