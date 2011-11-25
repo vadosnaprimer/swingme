@@ -135,7 +135,7 @@ public class NativeAndroidMenu implements MenuSystem {
     // this is not used
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-	    //debug warn
+	    //#debug warn
 	    Logger.warn("odd "+item);
 	    return false;
 	}
