@@ -21,7 +21,7 @@ public class TextBox extends Screen {
 
     public static Class<? extends InputHelper> inputHelperClass = TextBoxView.class;
 
-    //debug debug
+    //#debug debug
     private final static boolean debug = false;
 
     private String text;
