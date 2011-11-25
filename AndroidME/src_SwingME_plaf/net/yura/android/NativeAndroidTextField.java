@@ -40,11 +40,10 @@ import android.widget.TextView;
 
 /**
  * TODO:
- *      addFocusListener does not work if there is already one set
- *      first click does not set the carret position to the correct place
- *      first long press opens the swingme popup menu and not the native one
+ *      if the native textobx is open, and setText is called on the SwingME component, it does not update the text
  *
  * DONEish:
+ *      first click does not set the carret position to the correct place (this is normal behaviour on native Android)
  *      expand on multi-line text does not work
  *      addCaretListener does not work
  *      {@link TextComponent#changedUpdate(int, int) } is not called when text is entered
