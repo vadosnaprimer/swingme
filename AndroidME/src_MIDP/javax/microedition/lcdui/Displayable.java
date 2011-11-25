@@ -83,7 +83,7 @@ public abstract class Displayable {
                     @Override
                     public void run() {
                         AndroidMeActivity.DEFAULT_ACTIVITY.setTitle(title);
-                        //AndroidMeActivity.DEFAULT_ACTIVITY.invalidateOptionsMenu(); // API-11                    }
+                        //AndroidMeActivity.DEFAULT_ACTIVITY.invalidateOptionsMenu(); // API-11
                     }
                 });
 	    }

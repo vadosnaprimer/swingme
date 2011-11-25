@@ -699,9 +699,7 @@ public abstract class Canvas extends Displayable {
             else if (keyCode == KeyEvent.KEYCODE_MENU && keyCount == 0) {
                 // HACK: Work around for issue:
                 // http://code.google.com/p/android/issues/detail?id=11833
-                AndroidMeActivity.DEFAULT_ACTIVITY.onPrepareOptionsMenu();
-                // YURA:TODO this should be all that is needed maybe we should use this:
-                //AndroidMeActivity.DEFAULT_ACTIVITY.menu.close();
+                AndroidMeActivity.DEFAULT_ACTIVITY.onMenuKeyDown();
             }
 
             return super.onKeyDown(keyCode, event);

@@ -16,6 +16,7 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -132,7 +133,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             textView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
             textView.setDrawingCacheBackgroundColor(0xFF000000);
             textView.setBackgroundColor(0xFF000000);
-            textView.setText("Please Wait...");
+            textView.setText("SwingME loading...");
 
             waitingView = textView;
         }
@@ -205,26 +206,34 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
     private Menu menu;
 
+    public void onMenuKeyDown() {
+
+        //#debug debug
+        Log.d("YURA", "[AndroidMeActivity] onMenuKeyDown");
+
+        if (menu!=null) {
+            menu.close();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         this.menu = menu;
-        onPrepareOptionsMenu();
+
+        //#debug debug
+        Log.d("YURA", "[AndroidMeActivity] onCreateOptionsMenu");
+
+        if (menuSystem!=null) {
+            return menuSystem.onCreateOptionsMenu(menu);
+        }
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        return true;
-    }
 
-    // HACK: Work around for issue:
-    // http://code.google.com/p/android/issues/detail?id=11833
-    // We now call this method ourself, instead of relying on the call of
-    // onPrepareOptionsMenu(Menu menu)
-    public boolean onPrepareOptionsMenu() {
-        if (menu == null) {
-            return false;
-        }
+        //#debug debug
+        Log.d("YURA", "[AndroidMeActivity] onPrepareOptionsMenu");
 
         if (menuSystem==null) {
 
@@ -259,6 +268,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
+        //#debug debug
+        Log.d("YURA", "[AndroidMeActivity] onOptionsItemSelected");
 
     	if (menuSystem==null) {
 

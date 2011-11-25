@@ -14,34 +14,54 @@ import android.view.MenuItem.OnMenuItemClickListener;
 
 public class NativeAndroidMenu implements MenuSystem {
 
+    private net.yura.mobile.gui.components.Button getMenuButton() {
+        net.yura.mobile.gui.components.Window currentWindow = net.yura.mobile.gui.DesktopPane.getDesktopPane().getSelectedFrame();
+
+        net.yura.mobile.gui.components.Button mneonicButton = currentWindow.findMnemonicButton(net.yura.mobile.gui.KeyEvent.KEY_MENU);
+        if ( mneonicButton==null ) {
+            mneonicButton = currentWindow.findMnemonicButton(net.yura.mobile.gui.KeyEvent.KEY_SOFTKEY1);
+        }
+        return mneonicButton;
+    }
+
+    /**
+     * check if we need a menu
+     * this is called to check if we should have a menu button on this screen
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu androidMenu) {
+        try {
+            net.yura.mobile.gui.components.Button mneonicButton = getMenuButton();
+            return (mneonicButton instanceof net.yura.mobile.gui.components.Menu);
+        }
+        catch (Throwable e) {
+          //#debug warn
+            Logger.warn(e);
+        }
+        return true; // default to true for old devices
+    }
+
+    /**
+     * click on the menu
+     * this is called just before the menu is displayed by Android
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu androidMenu) {
-
         try {
-            androidMenu.close(); // TODO maybe this could be done in in the CanvasView.onKeyDown(KEYCODE_MENU)
-
-            net.yura.mobile.gui.components.Window currentWindow = net.yura.mobile.gui.DesktopPane.getDesktopPane().getSelectedFrame();
-
-            net.yura.mobile.gui.components.Button mneonicButton = currentWindow.findMnemonicButton(net.yura.mobile.gui.KeyEvent.KEY_MENU);
-            if ( mneonicButton==null ) {
-                mneonicButton = currentWindow.findMnemonicButton(net.yura.mobile.gui.KeyEvent.KEY_SOFTKEY1);
-            }
+            net.yura.mobile.gui.components.Button mneonicButton = getMenuButton();
             if (mneonicButton==null) {
             	return false; // there is no menu!
             }
-
             fireActionPerformed(mneonicButton,androidMenu);
-
         }
-	    catch (Throwable e) {
-	        Logger.warn(e);
-	    }
-	    return true;
+	catch (Throwable e) {
+	  //#debug warn
+	    Logger.warn(e);
+	}
+	return true;
     }
 
     private void addItemsToMenu(Menu androidMenu,net.yura.mobile.gui.components.Menu menu) {
-
-        androidMenu.clear(); // before we add items, lets clear the menu
 
     	Vector menuItems = menu.getMenuComponents();
         for (int i = 0; i < menuItems.size(); i++) {
@@ -142,6 +162,10 @@ public class NativeAndroidMenu implements MenuSystem {
 
 	private void fireActionPerformed(net.yura.mobile.gui.components.Button button,android.view.Menu menu) {
 
+    	        if (menu!=null) {
+    	            menu.clear(); // before we do anything, lets clear the menu
+    	        }
+
 		// we do NOT want to call fireActionPerformed on menus, as that will cause the SwingME menu to open
 		// and we want to use native menus instead
 		if (button instanceof net.yura.mobile.gui.components.Menu) {
@@ -153,7 +177,7 @@ public class NativeAndroidMenu implements MenuSystem {
             	    addItemsToMenu( menu, (net.yura.mobile.gui.components.Menu)button);
 		}
 		else {
-			button.fireActionPerformed();
+		    button.fireActionPerformed();
 		}
 	}
 
