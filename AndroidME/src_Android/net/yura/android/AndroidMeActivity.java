@@ -126,14 +126,17 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         });
         this.defaultView = view;
     }
-    
+
     @Override
     public void setContentView(View view) {
 
     	//#debug debug
-    	Logger.debug("[AndroidMeActivity] setContentView "+view);
-    	
+    	Logger.debug("[AndroidMeActivity] setContentView view: "+view);
+
     	super.setContentView(view);
+
+        //#debug debug
+    	Logger.debug("[AndroidMeActivity] setContentView Decor: "+AndroidRemoteTest.toString( getWindow().getDecorView() ) );
     }
 
     private void showWaitingView() {

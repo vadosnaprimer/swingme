@@ -10,8 +10,8 @@ import android.content.Context;
 import android.os.Vibrator;
 import android.view.View;
 
-public class Display
-{
+public class Display {
+
     public static final int COLOR_BACKGROUND = 0;
     public static final int COLOR_FOREGROUND = 1;
     public static final int COLOR_BORDER     = 2;
@@ -119,13 +119,15 @@ public class Display
         hiddenDisplay = null;
 
         if (newCurrent != current) {
-        	//#debug debug
-        	Logger.debug("[Display] setCurrent newCurrent != current");
+
+//#debug debug
+Logger.debug("[Display] setCurrent newCurrent != current");
+
             AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
                 public void run() {
 
-                	//#debug debug
-                	Logger.debug("[Display] setCurrent run()");
+//#debug debug
+Logger.debug("[Display] setCurrent run()");
 
                     // TextBox is special... we don't really have any UI
                     if (newCurrent instanceof TextBox) {
@@ -137,8 +139,9 @@ public class Display
                     current = newCurrent;
 
                     if (old != null) {
-                    	//#debug debug
-                    	Logger.debug("[Display] setCurrent run() old != null");
+//#debug debug
+Logger.debug("[Display] setCurrent run() old != null");
+
                         old.setCurrentDisplay(null);
                     }
 
@@ -147,34 +150,46 @@ public class Display
 
                     View view = newCurrent.getView();
                     if (view != null) {
-                    	//#debug debug
-                    	Logger.debug("[Display] setCurrent run() view != null");
+//#debug debug
+Logger.debug("[Display] setCurrent run() view != null");
+
                         activity.setContentView(view);
-                    	//#debug debug
-                    	Logger.debug("[Display] setCurrent run() ContentView set");
+
+//#debug debug
+Logger.debug("[Display] setCurrent run() ContentView set to");
+
                         view.requestFocus();
-                    	//#debug debug
-                    	Logger.debug("[Display] setCurrent run() requestFocus() completed");
+
+//#debug debug
+Logger.debug("[Display] setCurrent run() requestFocus() completed");
 
                         // YURA tiny optimization, so we do not need to draw any background bitmaps!
                         view.getRootView().setBackgroundDrawable(null);
-                    	//#debug debug
-                    	Logger.debug("[Display] setCurrent run() exit");
 
+//#debug debug
+Logger.debug("[Display] setCurrent run() exit");
+
+                    }
+                    else {
+                        throw new RuntimeException("view is null");
                     }
                 }
             });
-        	//#debug debug
-        	Logger.debug("[Display] setCurrent exit");
+//#debug debug
+Logger.debug("[Display] setCurrent exit");
 
             // Wait for the view to be set...
             //YURA: remove this AndroidMeApp.getIntance().invokeAndWait(new Thread());
         }
-        //#mdebug debug
-        else {
-        	Logger.debug("[Display] setCurrent newCurrent == current");
-        }
-    	//#enddebug
+
+
+//#mdebug debug
+else {
+    Logger.debug("[Display] setCurrent newCurrent == current");
+}
+//#enddebug
+
+
     }
 
     /**
