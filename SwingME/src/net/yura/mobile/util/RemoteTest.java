@@ -73,8 +73,8 @@ public class RemoteTest extends Thread {
                 }
             }
             catch (Throwable ex) {
-                //#debug info
-                ex.printStackTrace();
+//                //#debug info
+//                ex.printStackTrace();
             }
 
             try {
