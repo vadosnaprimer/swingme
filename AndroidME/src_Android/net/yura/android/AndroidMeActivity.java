@@ -212,6 +212,11 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         if (DEFAULT_ACTIVITY == this) {
 //            closeMIDlet();
 
+            MIDlet midlet = AndroidMeApp.getMIDlet();
+            if (midlet!=null) {
+                Display.getDisplay( midlet ).killUI();
+            }
+
             DEFAULT_ACTIVITY = null;
         }
     }
