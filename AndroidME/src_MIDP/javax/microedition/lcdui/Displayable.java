@@ -1,9 +1,11 @@
 package javax.microedition.lcdui;
 
+import java.lang.reflect.Method;
 import java.util.Vector;
 import javax.microedition.midlet.MIDlet;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
+import android.app.Activity;
 import android.view.View;
 
 public abstract class Displayable {
@@ -82,13 +84,29 @@ public abstract class Displayable {
 	        AndroidMeApp.getIntance().invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        AndroidMeActivity.DEFAULT_ACTIVITY.setTitle(title);
-                        //AndroidMeActivity.DEFAULT_ACTIVITY.invalidateOptionsMenu(); // API-11
+                        try {
+                            AndroidMeActivity.DEFAULT_ACTIVITY.setTitle(title);
+                            if (invalidateOptionsMenu!=null) {
+                                invalidateOptionsMenu.invoke( AndroidMeActivity.DEFAULT_ACTIVITY, (Object[])null);
+                            }
+                        }
+                        catch (Throwable ex) {
+                            //#debug debug
+                            ex.printStackTrace();
+                        }
                     }
                 });
 	    }
 	}
 	public String getTitle() {
 	    return title;
+	}
+
+	static Method invalidateOptionsMenu;
+	static {
+	    try {
+	        invalidateOptionsMenu = Activity.class.getMethod("invalidateOptionsMenu"); // API-11
+	    }
+	    catch (Throwable th) { }
 	}
 }
