@@ -254,14 +254,22 @@ public class TabbedPane extends Panel implements ChangeListener {
 
     public void changeEvent(Component source, int num) {
 
-        Component thetabtoAdd = (Component)tabs.elementAt(num);
+        int old = tabContent.getComponentCount()==1?tabs.indexOf(tabContent.getComponents().elementAt(0)):-1;
 
-        tabContent.removeAll();
-        tabContent.add(thetabtoAdd);
+        // protect against num being -1, when a user clicks outside the tabs, but on the list
+        if (num<0 && old>=0) {
+            tabList.setSelectedIndex(old);
+        }
+        else if (num!=old) {
+            Component thetabtoAdd = (Component)tabs.elementAt(num);
 
-        if (getWindow()!=null) {
-            tabContent.revalidate();
-            tabContent.repaint();
+            tabContent.removeAll();
+            tabContent.add(thetabtoAdd);
+
+            if (getWindow()!=null) {
+                tabContent.revalidate();
+                tabContent.repaint();
+            }
         }
     }
 
@@ -313,7 +321,7 @@ public class TabbedPane extends Panel implements ChangeListener {
     public Component getSelectedComponent() {
     	return getComponentAt(getSelectedIndex());
     }
-    
+
     public void setSelectable(boolean a) {
         tabList.setFocusable(a);
     }
