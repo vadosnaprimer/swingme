@@ -102,8 +102,13 @@ public class MatteBorder extends EmptyBorder {
 
 //System.out.println("Insets= "+top+" "+left+" "+bottom+" "+right+" sourceInsets= "+imageTop+" "+imageLeft+" "+imageBottom+" "+imageRight );
 
-            return new MatteBorder(new Icon(img).getSubimage(1, 1, img.getWidth()-2, img.getHeight()-2),top,left,bottom,right,
+            MatteBorder border = new MatteBorder(new Icon(img).getSubimage(1, 1, img.getWidth()-2, img.getHeight()-2),top,left,bottom,right,
                     imageTop,imageLeft,imageBottom,imageRight,true,Style.NO_COLOR);
+            
+            img.getRGB(insets, 0, 1, img.getWidth()/2, img.getHeight()/2, 1, 1);
+            border.opaque = Graphics2D.isOpaque( insets[0] );
+
+            return border;
         }
 
         private static void topBotton(int[] insets,int[] result,int length) {
