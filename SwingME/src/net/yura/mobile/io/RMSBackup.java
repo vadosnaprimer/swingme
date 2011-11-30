@@ -20,7 +20,7 @@ public class RMSBackup extends QueueProcessorThread {
         Object getObjectId(Object objToSave);
         Object loadObject(InputStream is) throws Exception;
         void saveObject(OutputStream out, Object obj) throws Exception;
-        void rmsSaveFailed();
+        void rmsSaveFailed(String error);
     }
 
 
@@ -156,7 +156,7 @@ public class RMSBackup extends QueueProcessorThread {
                 recordStore.closeRecordStore();
 
                 // if this fails, god knows what will happen
-                helper.rmsSaveFailed();
+                helper.rmsSaveFailed("no space: availableSize="+size+" recordSize="+b.length);
 
                 // just in case we save the current record to RSM again
                 // should not need this if the save worked
