@@ -2,7 +2,9 @@ package javax.microedition.lcdui;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+
 import javax.microedition.midlet.MIDlet;
+
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
 import net.yura.mobile.logging.Logger;
@@ -536,7 +538,7 @@ public abstract class Canvas extends Displayable {
             // If Possible, try to not use more than 50% on CPU time on painting...
             long elapsed = System.currentTimeMillis() - time;
 
-            if (elapsed < 10) {
+            if (elapsed < 10 && elapsed >= 0) {
 //              System.out.println("paint: elapsed " + elapsed);
                 Thread.sleep(10 - elapsed);
             }
