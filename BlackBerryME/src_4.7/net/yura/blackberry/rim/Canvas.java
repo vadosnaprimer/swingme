@@ -90,9 +90,19 @@ public abstract class Canvas extends FullScreen {
         
      }
      
+     /**
+      * @see javax.microedition.lcdui.Displayable#setTitle(java.lang.String)
+      */
+     public void setTitle(String title) {
+         
+     }
+     
+     /**
+      * @see javax.microedition.lcdui.Displayable#isShown()
+      */
      protected boolean isShown(){
     	 return this.isVisible();
-	 }
+     }
      
      /**
       * @see javax.microedition.lcdui.Canvas#getKeyCode(int)
