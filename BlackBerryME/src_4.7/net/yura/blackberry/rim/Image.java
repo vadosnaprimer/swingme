@@ -447,7 +447,7 @@ public class Image {
 	        }
 
 	        // oh shit, our bitmap has alpha, and BB does not know how to handle that!!!
-	        if (type==Bitmap.ROWWISE_16BIT_COLOR && image.bitmap.hasAlpha()) {
+	        if (image.bitmap.hasAlpha()) {
 	            res.createAlpha(Bitmap.ALPHA_BITDEPTH_8BPP);
 	            // TODO
 	            // TODO we should NOT need to create a huge empty array here
