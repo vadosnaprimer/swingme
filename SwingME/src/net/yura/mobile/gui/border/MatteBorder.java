@@ -70,10 +70,8 @@ public class MatteBorder extends EmptyBorder {
         }
 
 
-        public static MatteBorder load9png(String name) throws Exception {
-
-            Image img = Image.createImage( Midlet.getResourceAsStream(name) );
-
+        public static MatteBorder load9png(Image img) {
+            
             int width = img.getWidth();
             int height = img.getHeight();
 

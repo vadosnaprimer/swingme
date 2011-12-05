@@ -55,16 +55,12 @@ public class SynthLookAndFeel extends LookAndFeel {
         }
     }
     protected InputStream getResourceAsStream(String path) {
-        try {
-            return Midlet.getResourceAsStream(path);
-        }
-        catch (Exception ex) {
-            //#mdebug warn
+        InputStream in = Midlet.getResourceAsStream(path);
+        if (in==null) {
+            //#debug warn
             Logger.warn("can not load resource: "+path);
-            Logger.warn(ex);
-            //#enddebug
-            return null;
         }
+        return in;
     }
 
     /**
@@ -190,21 +186,26 @@ public class SynthLookAndFeel extends LookAndFeel {
                                         }
                                     }
                                     else {
-                                    	try {
-	                                        if (path.indexOf(".9.")>0) {
-	                                            border = MatteBorder.load9png(path); // load 9 pacth
-	                                        }
-	                                        else {
-	                                            border = MatteBorder.load(path);
-	                                        }
-	                                        newStyle.addBorder(border, st);
-                                    	}
-                                    	catch(Exception ex) {
-                                    		//#mdebug debug
-                                    		System.err.println("failed to load: "+path);
-                                    		ex.printStackTrace();
-                                    		//#enddebug
-                                    	}
+                                        if (path.indexOf(".9.")>0) {
+                                            InputStream in = getResourceAsStream(path);
+                                            if (in != null) { // failed to find image
+                                                Image img = Image.createImage( in );
+                                                border = MatteBorder.load9png(img); // load 9 pacth
+                                                newStyle.addBorder(border, st);
+                                            }
+                                        }
+                                        else {
+                                            try {
+                                                border = MatteBorder.load(path);
+                                                newStyle.addBorder(border, st);
+                                            }
+                                            catch(Exception ex) {
+                                                    //#mdebug debug
+                                                    System.err.println("failed to load: "+path);
+                                                    ex.printStackTrace();
+                                                    //#enddebug
+                                            }
+                                        }
                                      }
                                 }
                                 else if ("property".equals(name2)) {
