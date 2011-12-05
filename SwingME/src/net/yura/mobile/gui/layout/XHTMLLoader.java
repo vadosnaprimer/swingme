@@ -676,7 +676,10 @@ Logger.debug("START: "+name);
             String string = parser.getText();
             string = StringUtil.replaceAll(string, "\n", " ");
             string = StringUtil.replaceAll(string, "\t", " ");
-            string = StringUtil.replaceAll(string, "  ", " ");
+            // as this is HTML we want to reduce all space to a single space
+            while (string.indexOf("  ")>=0) {
+                string = StringUtil.replaceAll(string, "  ", " ");
+            }
 
             //#debug debug
             Logger.debug("    text: \""+string+"\"");
@@ -689,11 +692,6 @@ Logger.debug("START: "+name);
                         inlineText.append("\n");
                     }
                     newBlock=false; // we are now adding some text, and we should already know if we needed or didnt need to start it with a \n
-
-                    // as this is HTML we want to reduce all space to a single space
-                    while (string.indexOf("  ")>=0) {
-                        string = StringUtil.replaceAll(string, "  ", " ");
-                    }
                     
                     // if we are the start of a new block of text, get rid of any spaces at the start of the line
                     if (inlineText.getText().length()==0 || inlineText.getText().endsWith(" ") || inlineText.getText().endsWith("\n")) {
