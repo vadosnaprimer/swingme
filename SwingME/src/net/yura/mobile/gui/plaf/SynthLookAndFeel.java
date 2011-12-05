@@ -39,21 +39,25 @@ import net.yura.mobile.io.kxml2.KXmlParser;
 public class SynthLookAndFeel extends LookAndFeel {
 
     protected Icon getIcon( String path ,int x,int y,int w,int h) {
-        try {
-            Image img = Image.createImage( getResourceAsStream(path) );
-            if (w!=0 && h !=0) {
-                img = Image.createImage(img, x, y, w, h, Sprite.TRANS_NONE);
+        InputStream in = getResourceAsStream(path);
+        if (in!=null) {
+            try {
+                Image img = Image.createImage( in );
+                if (w!=0 && h !=0) {
+                    img = Image.createImage(img, x, y, w, h, Sprite.TRANS_NONE);
+                }
+                return new Icon(img);
             }
-            return new Icon(img);
+            catch (Exception ex) {
+                //#mdebug warn
+                Logger.warn("can not load image: "+path);
+                Logger.warn(ex);
+                //#enddebug
+            }
         }
-        catch (Exception ex) {
-            //#mdebug warn
-            Logger.warn("can not load image: "+path);
-            Logger.warn(ex);
-            //#enddebug
-            return null;
-        }
+        return null;
     }
+
     protected InputStream getResourceAsStream(String path) {
         InputStream in = Midlet.getResourceAsStream(path);
         if (in==null) {
