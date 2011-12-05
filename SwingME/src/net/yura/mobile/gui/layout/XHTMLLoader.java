@@ -690,9 +690,14 @@ Logger.debug("START: "+name);
                     }
                     newBlock=false; // we are now adding some text, and we should already know if we needed or didnt need to start it with a \n
 
+                    // as this is HTML we want to reduce all space to a single space
+                    while (string.indexOf("  ")>=0) {
+                        string = StringUtil.replaceAll(string, "  ", " ");
+                    }
+                    
                     // if we are the start of a new block of text, get rid of any spaces at the start of the line
                     if (inlineText.getText().length()==0 || inlineText.getText().endsWith(" ") || inlineText.getText().endsWith("\n")) {
-                        while (string.length()!=0 && string.charAt(0)==' ') {
+                        if (string.length()!=0 && string.charAt(0)==' ') {
                             string = string.substring(1);
                         }
                     }
