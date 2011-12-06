@@ -45,25 +45,29 @@ import android.net.NetworkInfo.State;
 
 public class SocketConnection implements javax.microedition.io.SocketConnection {
 
-
     private static ConnectivityBroadcastReceiver socketBroadcastReceiver;
 
     protected Socket socket;
 
-	public SocketConnection() throws IOException {
-	    //#debug debug
-	    System.out.println(">>> SocketConnection: Constructor()");
-
-	    ConnectivityBroadcastReceiver.addSocketConnection(this);
-	}
-
 	public SocketConnection(String host, int port) throws IOException {
-	    this();
+	    //#debug debug
+        System.out.println(">>> SocketConnection: Constructor1()");
+
+        ConnectivityBroadcastReceiver.addSocketConnection(this);
+
 		this.socket = new Socket(host, port);
 	}
 
 	public SocketConnection(Socket socket) throws IOException {
-	    this();
+	    //#debug debug
+        System.out.println(">>> SocketConnection: Constructor2()");
+
+	    // Don't register local (bound) sockets, as they are OK even if
+	    // there is no network connection
+	    if (!socket.isBound()) {
+	        ConnectivityBroadcastReceiver.addSocketConnection(this);
+	    }
+
 		this.socket = socket;
 	}
 
