@@ -248,7 +248,9 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 		} 
 		else {
                     try {
-                        rmsDir.mkdirs();
+                        if (!rmsDir.isDirectory() && !rmsDir.mkdirs()) {
+                            throw new RuntimeException("mkdirs returned false for: "+rmsDir);
+                        }
                     }
                     catch(Throwable th) {
                         // same as for applet
@@ -256,7 +258,9 @@ public class RecordStoreImpl extends AbstractRecordStore  {
                                         // open will then come back here, and we will set it back to null
                         if (!create) {
 				refCount = 0;
-				throw new RecordStoreNotFoundException();
+                                RecordStoreNotFoundException ex = new RecordStoreNotFoundException();
+                                ex.initCause(th);
+				throw ex;
 			}
 			records = new Vector();
                         return;
