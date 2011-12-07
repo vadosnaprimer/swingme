@@ -310,7 +310,9 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
 				if (!create) {
 					refCount = 0;
-					throw new RecordStoreNotFoundException();
+                                        RecordStoreNotFoundException ex = new RecordStoreNotFoundException();
+                                        ex.initCause(ioe);
+					throw ex;
 				}
 			
 				writeToFile();
