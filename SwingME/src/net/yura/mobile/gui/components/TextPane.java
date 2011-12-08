@@ -338,31 +338,52 @@ public class TextPane extends Component {
     public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
         super.processMouseEvent(type, x, y, keys);
 
-        if (type == DesktopPane.PRESSED && isFocusOwner()) {
-
+        if (type == DesktopPane.PRESSED && actionListener != null && isFocusOwner()) {
             for (int i = 0; i < lineFragments.size(); i++) {
                 LineFragment frag = (LineFragment) lineFragments.elementAt(i);
-                String action = frag.style.getAction();
-                if (action != null) {
-                    if (x >= frag.x && x <= frag.x + frag.w &&
-                        y >= frag.y && y <= frag.y + frag.h) {
+                if (x >= frag.x && x <= frag.x + frag.w &&
+                    y >= frag.y && y <= frag.y + frag.h) {
+                    pressLink(frag);
+                    break;
+                }
+            }
+        }
+    }
 
-                        int focusIdx = focusableElems.indexOf(frag.style);
-                        makeVisible(focusIdx, false);
-
-                        if (focusIdx != focusComponentIdx) {
-                            focusComponentIdx = focusIdx;
-                            repaint();
-                        }
-
-                        if (actionListener != null) {
-                            actionListener.actionPerformed(action);
-                        }
-                        break;
+    /**
+     * not swing
+     */
+    public boolean pressLink(String linkText) {
+        if (actionListener != null) {
+            for (int i = 0; i < lineFragments.size(); i++) {
+                LineFragment frag = (LineFragment) lineFragments.elementAt(i);
+                String txt = text.substring(frag.startOffset, frag.endOffset);
+                if (linkText.equalsIgnoreCase(txt)) {
+                    if (pressLink(frag)) {
+                        return true;
                     }
                 }
             }
         }
+        return false;
+    }
+
+    private boolean pressLink(LineFragment frag) {
+        TextStyle style = frag.style;
+        if (style.getAction() != null) {
+            int focusIdx = focusableElems.indexOf(style);
+            makeVisible(focusIdx, false);
+
+            if (focusIdx != focusComponentIdx) {
+                focusComponentIdx = focusIdx;
+                repaint();
+            }
+
+            actionListener.actionPerformed(style.getAction());
+            return true;
+        }
+
+        return false;
     }
 
     private TextStyle getFocusElementStyle() {

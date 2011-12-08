@@ -16,8 +16,10 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
+import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.io.UTF8InputStreamReader;
 
@@ -134,13 +136,30 @@ public class RemoteTest extends Thread {
                 ((Button)comp).fireActionPerformed();
                 return true;
             }
-            if (comp instanceof Panel) {
+            else if (comp instanceof Panel) {
                 if (clickText (text,((Panel)comp).getComponents())) {
                     return true;
                 }
             }
-            if (comp instanceof MenuBar) {
+            else if (comp instanceof MenuBar) {
                 if (clickText (text,((MenuBar)comp).getItems())) {
+                    return true;
+                }
+            }
+            else if (comp instanceof List) {
+                List list = (List) comp;
+                int size = list.getSize();
+                for (int i = 0; i < size; i++) {
+                    Object o = list.getElementAt(i);
+                    if (text.equalsIgnoreCase(String.valueOf(o))) {
+                        list.setSelectedIndex(i);
+                        list.fireActionPerformed();
+                        return true;
+                    }
+                }
+            }
+            else if (comp instanceof TextPane) {
+                if (((TextPane) comp).pressLink(text)) {
                     return true;
                 }
             }
