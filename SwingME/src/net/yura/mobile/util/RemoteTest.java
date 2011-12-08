@@ -83,7 +83,7 @@ public class RemoteTest extends Thread {
         }
     }
 
-    void process(String command,Writer writer) throws IOException {
+    protected void process(String command,Writer writer) throws IOException {
 
         if (command.startsWith("click ")) {
             String text = command.substring("click ".length());
