@@ -158,20 +158,19 @@ public class NativeAndroidMenu implements MenuSystem {
     // this is not used
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-
 	    if (item.getItemId() == 16908332) { // android.R.id.home API-11 // THIS IS THE ACTION BAR ICON BUTTOM
-
 	        DesktopPane dp = DesktopPane.getDesktopPane();
-	        dp.keyPressed(KEY_HOME);
-	        dp.keyReleased(KEY_HOME);
-
-	        return true;
+	        if (dp!=null) {
+	            dp.keyPressed(KEY_HOME);
+        	    dp.keyReleased(KEY_HOME);
+        	    return true;
+	        }
 	    }
 	    else {
 	        //#debug warn
     	        Logger.warn("odd "+item);
-    	        return false;
 	    }
+	    return false;
 	}
 
 	private void fireActionPerformed(net.yura.mobile.gui.components.Button button,android.view.Menu menu) {
