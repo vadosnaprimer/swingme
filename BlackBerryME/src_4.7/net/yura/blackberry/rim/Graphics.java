@@ -17,6 +17,7 @@ public class Graphics {
     public static final int TOP      = javax.microedition.lcdui.Graphics.TOP;
     public static final int VCENTER  = javax.microedition.lcdui.Graphics.VCENTER;
 	
+        public net.rim.device.api.system.Bitmap bitmap;
 	/** the original BlackBerry graphics */
 	public net.rim.device.api.ui.Graphics g;
 

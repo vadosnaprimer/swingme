@@ -501,7 +501,8 @@ public class Image {
 	{
 		if (this.graphics == null) {
 			this.graphics = new Graphics();
-			this.graphics.g = new net.rim.device.api.ui.Graphics( this.bitmap );
+			this.graphics.bitmap = this.bitmap;
+			//this.graphics.g = new net.rim.device.api.ui.Graphics( this.bitmap );
 		}
 		return this.graphics;
 	}

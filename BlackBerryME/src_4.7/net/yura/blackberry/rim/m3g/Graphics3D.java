@@ -58,26 +58,33 @@ public final class Graphics3D {
             int width = img.getWidth();
             int height = img.getHeight();
             
-            // destination box
-            int[] x = new int[] {0, vpW, vpW, 0};
-            int[] y = new int[] {0, 0, vpH, vpH};
+            if (targetGraphics.bitmap!=null) {
             
-            int zero = Fixed32.toFP(0);
-            
-            // make a scale matrix
-            int dux = Fixed32.div(Fixed32.toFP(width), Fixed32.toFP(vpW));
-            int dvx = zero;
-            int duy = zero;
-            int dvy = Fixed32.div(Fixed32.toFP(height), Fixed32.toFP(vpH));
-            
-            targetGraphics.translate(vpX, vpY);
-            
-            targetGraphics.g.translate(targetGraphics.getTranslateX(),targetGraphics.getTranslateY());
-            targetGraphics.g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, img);
-            targetGraphics.g.translate(-targetGraphics.getTranslateX(),-targetGraphics.getTranslateY());
-            
-            targetGraphics.translate(-vpX, -vpY);
-            
+                // THIS IS API-5.0
+                img.scaleInto(0, 0, width, height, targetGraphics.bitmap, vpX, vpY, vpW, vpH, Bitmap.FILTER_BILINEAR );
+            }
+            else {
+
+                // destination box
+                int[] x = new int[] {0, vpW, vpW, 0};
+                int[] y = new int[] {0, 0, vpH, vpH};
+                
+                int zero = Fixed32.toFP(0);
+                
+                // make a scale matrix
+                int dux = Fixed32.div(Fixed32.toFP(width), Fixed32.toFP(vpW));
+                int dvx = zero;
+                int duy = zero;
+                int dvy = Fixed32.div(Fixed32.toFP(height), Fixed32.toFP(vpH));
+                
+                targetGraphics.translate(vpX, vpY);
+    
+                targetGraphics.g.translate(targetGraphics.getTranslateX(),targetGraphics.getTranslateY());
+                targetGraphics.g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, img);
+                targetGraphics.g.translate(-targetGraphics.getTranslateX(),-targetGraphics.getTranslateY());
+                
+                targetGraphics.translate(-vpX, -vpY);
+            }
         }
     }
 
