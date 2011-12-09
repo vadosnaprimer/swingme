@@ -17,9 +17,19 @@ public class Graphics {
     public static final int TOP      = javax.microedition.lcdui.Graphics.TOP;
     public static final int VCENTER  = javax.microedition.lcdui.Graphics.VCENTER;
 	
+    // when dealing with very large images, creating a native Graphics object can throw a error
+    // but we can still draw/resize by using scaleInto, to draw a Bitmap to a offscreen Bitmap
         public net.rim.device.api.system.Bitmap bitmap;
+
 	/** the original BlackBerry graphics */
-	public net.rim.device.api.ui.Graphics g;
+	private net.rim.device.api.ui.Graphics g;
+	
+	public net.rim.device.api.ui.Graphics getGraphics() {
+	    if (g==null) {
+	        g = net.rim.device.api.ui.Graphics.create(bitmap); // 4.7
+	    }
+	    return g;
+	}
 
 	//following variables are implicitely defined by getter- or setter-methods:
 	private int translateX;
@@ -66,13 +76,12 @@ public class Graphics {
 	 * @see #getTranslateY()
          * @see javax.microedition.lcdui.Graphics#translate(int, int)
 	 */
-	public void translate(int x, int y)
-	{
-     this.clipX -= x;
-     this.clipY -= y;
-     this.translateX += x;
-     this.translateY += y;
-		//this.g.translate(x, y);
+	public void translate(int x, int y) {
+	    this.clipX -= x;
+	    this.clipY -= y;
+	    this.translateX += x;
+	    this.translateY += y;
+	    //g1.translate(x, y);
 	}
 
 	/**
@@ -81,9 +90,8 @@ public class Graphics {
 	 * @return X of current origin
 	 * @see javax.microedition.lcdui.Graphics#getTranslateX()
 	 */
-	public int getTranslateX()
-	{
-		return this.translateX; //this.g.getTranslateX();
+	public int getTranslateX() {
+		return this.translateX; //g1.getTranslateX();
 	}
 
 	/**
@@ -92,9 +100,8 @@ public class Graphics {
 	 * @return Y of current origin
          * @see javax.microedition.lcdui.Graphics#getTranslateY()
 	 */
-	public int getTranslateY()
-	{
-		return this.translateY; //this.g.getTranslateY();
+	public int getTranslateY() {
+		return this.translateY; //g1.getTranslateY();
 	}
 
 	/**
@@ -104,9 +111,8 @@ public class Graphics {
 	 * @see #setColor(int, int, int)
          * @see javax.microedition.lcdui.Graphics#getColor()
 	 */
-	public int getColor()
-	{
-		return this.g.getColor();
+	public int getColor() {
+		return getGraphics().getColor();
 	}
 
 	/**
@@ -115,9 +121,8 @@ public class Graphics {
 	 * @return integer value in range 0-255
 	 * @see #setColor(int, int, int)
 	 */
-	public int getRedComponent()
-	{
-		return (this.g.getColor() >> 16) & 0x00FF;
+	public int getRedComponent() {
+		return (getColor() >> 16) & 0x00FF;
 	}
 
 	/**
@@ -126,9 +131,8 @@ public class Graphics {
 	 * @return integer value in range 0-255
 	 * @see #setColor(int, int, int)
 	 */
-	public int getGreenComponent()
-	{
-		return (this.g.getColor() >> 8) & 0x0000FF;
+	public int getGreenComponent() {
+		return (getColor() >> 8) & 0x0000FF;
 	}
 
 	/**
@@ -137,9 +141,8 @@ public class Graphics {
 	 * @return integer value in range 0-255
 	 * @see #setColor(int, int, int)
 	 */
-	public int getBlueComponent()
-	{
-		return this.g.getColor() & 0x000000FF;
+	public int getBlueComponent() {
+		return getColor() & 0x000000FF;
 	}
 
 	/**
@@ -156,9 +159,7 @@ public class Graphics {
 	 * @return integer value in range 0-255
 	 * @see #setGrayScale(int)
 	 */
-	public int getGrayScale()
-	{
-		
+	public int getGrayScale() {
 		return (getRedComponent() + getGreenComponent() + getBlueComponent()) / 3;
 	}
 
@@ -172,9 +173,8 @@ public class Graphics {
 	 * @throws IllegalArgumentException - if any of the color components are outside of range 0-255
 	 * @see #getColor()
 	 */
-	public void setColor(int red, int green, int blue)
-	{
-		this.g.setColor( (red << 16) | (green << 8) | blue  );
+	public void setColor(int red, int green, int blue) {
+		getGraphics().setColor( (red << 16) | (green << 8) | blue  );
 	}
 
 	/**
@@ -195,12 +195,10 @@ public class Graphics {
          * @see javax.microedition.lcdui.Graphics#setColor(int)
 	 */
 	public void setColor(int RGB) {
-		this.g.setColor( RGB );
-		
+	        net.rim.device.api.ui.Graphics g1 = getGraphics();
+		g1.setColor( RGB );
 		int alpha = (RGB >> 24) & 0xFF;
-		
-		this.g.setGlobalAlpha( alpha );
-		
+		g1.setGlobalAlpha( alpha );
 	}
 
 	/**
@@ -215,8 +213,7 @@ public class Graphics {
 	 * @throws IllegalArgumentException - if the gray value is out of range
 	 * @see #getGrayScale()
 	 */
-	public void setGrayScale(int value)
-	{
+	public void setGrayScale(int value) {
 		setColor( value, value, value );
 	}
 
@@ -228,8 +225,7 @@ public class Graphics {
 	 * @see #setFont(Font)
          * @see javax.microedition.lcdui.Graphics#getFont()
 	 */
-	public Font getFont()
-	{
+	public Font getFont() {
 		return this.font;
 	}
 
@@ -242,8 +238,7 @@ public class Graphics {
 	 * @throws IllegalArgumentException - if the style is illegal
 	 * @see #getStrokeStyle()
 	 */
-	public void setStrokeStyle(int style)
-	{
+	public void setStrokeStyle(int style) {
 		//TODO implement stroke style
 		this.strokeStyle = style;
 	}
@@ -254,8 +249,7 @@ public class Graphics {
 	 * @return stroke style, SOLID or DOTTED
 	 * @see #setStrokeStyle(int)
 	 */
-	public int getStrokeStyle()
-	{
+	public int getStrokeStyle() {
 		return this.strokeStyle;
 	}
 
@@ -271,10 +265,9 @@ public class Graphics {
 	 * @see #drawChars(char[], int, int, int, int, int)
          * @see javax.microedition.lcdui.Graphics#setFont(Font)
 	 */
-	public void setFont(Font font)
-	{
+	public void setFont(Font font) {
 		this.font = font;
-		this.g.setFont( font.font );
+		getGraphics().setFont( font.font );
 	}
 
 	/**
@@ -289,8 +282,7 @@ public class Graphics {
 	 * @see #setClip(int, int, int, int)
          * @see javax.microedition.lcdui.Graphics#getClipX()
 	 */
-	public int getClipX()
-	{
+	public int getClipX() {
 		return this.clipX;
 	}
 
@@ -303,11 +295,10 @@ public class Graphics {
 	 * 
 	 * @return Y offset of the current clipping area
 	 * @see #clipRect(int, int, int, int)
-* @see #setClip(int, int, int, int)
+	 * @see #setClip(int, int, int, int)
          * @see javax.microedition.lcdui.Graphics#getClipY()
 	 */
-	public int getClipY()
-	{
+	public int getClipY() {
 		return this.clipY;
 	}
 
@@ -316,10 +307,9 @@ public class Graphics {
 	 * 
 	 * @return width of the current clipping area.
 	 * @see #clipRect(int, int, int, int)
-* @see #setClip(int, int, int, int)
+	 * @see #setClip(int, int, int, int)
 	 */
-	public int getClipWidth()
-	{
+	public int getClipWidth() {
 		return this.clipWidth;
 	}
 
@@ -328,10 +318,9 @@ public class Graphics {
 	 * 
 	 * @return height of the current clipping area.
 	 * @see #clipRect(int, int, int, int)
-* @see #setClip(int, int, int, int)
+	 * @see #setClip(int, int, int, int)
 	 */
-	public int getClipHeight()
-	{
+	public int getClipHeight() {
 		return this.clipHeight;
 	}
 
@@ -349,8 +338,7 @@ public class Graphics {
 	 * @param height - the height of the rectangle to intersect the clip with
 	 * @see #setClip(int, int, int, int)
 	 */
-	public void clipRect(int x, int y, int width, int height)
-	{
+	public void clipRect(int x, int y, int width, int height) {
 		if (x < this.clipX) {
 			width -= (this.clipX - x);
 			x = this.clipX;
@@ -366,7 +354,7 @@ public class Graphics {
 			height = this.clipY + this.clipHeight - y;
 		}
 		setClip( x, y, width, height );
-		//this.g.pushRegion( x, y, width, height, 0, 0 );
+		//g1.pushRegion( x, y, width, height, 0, 0 );
 	}
 
 	/**
@@ -379,16 +367,17 @@ public class Graphics {
 	 * @param height - the height of the new clip rectangle
 	 * @see #clipRect(int, int, int, int)
 	 */
-	public void setClip(int x, int y, int width, int height)
-	{
+	public void setClip(int x, int y, int width, int height) {
+	        net.rim.device.api.ui.Graphics g1 = getGraphics();
+	    
 		this.clipX = x;
 		this.clipY = y;
 		this.clipWidth = width;
 		this.clipHeight = height;
-		int color = this.g.getColor();
+		int color = g1.getColor();
 		if (this.isContextPushed) {
 			try {
-				this.g.popContext();
+				g1.popContext();
 			} catch (Exception e) {
 				//#debug error
 				System.out.println("Unable to pop clipping context" + e);
@@ -396,8 +385,8 @@ public class Graphics {
 		}
 		x += this.translateX;
 		y += this.translateY;
-		this.g.pushContext(x, y, width, height, 0, 0 );
-		this.g.setColor( color );
+		g1.pushContext(x, y, width, height, 0, 0 );
+		g1.setColor( color );
 		this.isContextPushed = true;
 	}
 
@@ -411,9 +400,8 @@ public class Graphics {
 	 * @param x2 - the x coordinate of the end of the line
 	 * @param y2 - the y coordinate of the end of the line
 	 */
-	public void drawLine(int x1, int y1, int x2, int y2)
-	{
-		this.g.drawLine(x1 + this.translateX, y1 + this.translateY, x2 + this.translateX, y2 + this.translateY);
+	public void drawLine(int x1, int y1, int x2, int y2) {
+		getGraphics().drawLine(x1 + this.translateX, y1 + this.translateY, x2 + this.translateX, y2 + this.translateY);
 	}
 
 	/**
@@ -427,9 +415,8 @@ public class Graphics {
 	 * @param height - the height of the rectangle to be filled
 	 * @see #drawRect(int, int, int, int)
 	 */
-	public void fillRect(int x, int y, int width, int height)
-	{
-		this.g.fillRect(x + this.translateX, y + this.translateY, width, height);
+	public void fillRect(int x, int y, int width, int height) {
+		getGraphics().fillRect(x + this.translateX, y + this.translateY, width, height);
 	}
 
 	/**
@@ -446,9 +433,8 @@ public class Graphics {
 	 * @param height - the height of the rectangle to be drawn
 	 * @see #fillRect(int, int, int, int)
 	 */
-	public void drawRect(int x, int y, int width, int height)
-	{
-		this.g.drawRect(x + this.translateX, y + this.translateY, width + 1, height + 1);
+	public void drawRect(int x, int y, int width, int height) {
+		getGraphics().drawRect(x + this.translateX, y + this.translateY, width + 1, height + 1);
 	}
 
 	/**
@@ -468,9 +454,8 @@ public class Graphics {
 	 * @param arcHeight - the vertical diameter of the arc at the four corners
 	 * @see #fillRoundRect(int, int, int, int, int, int)
 	 */
-	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
-	{
-		this.g.drawRoundRect(x + this.translateX, y + this.translateY, width + 1, height + 1, arcWidth, arcHeight);
+	public void drawRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+		getGraphics().drawRoundRect(x + this.translateX, y + this.translateY, width + 1, height + 1, arcWidth, arcHeight);
 	}
 
 	/**
@@ -486,9 +471,8 @@ public class Graphics {
 	 * @param arcHeight - the vertical diameter of the arc at the four corners
 	 * @see #drawRoundRect(int, int, int, int, int, int)
 	 */
-	public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight)
-	{
-		this.g.fillRoundRect(x + this.translateX, y + this.translateY, width, height, arcWidth, arcHeight);
+	public void fillRoundRect(int x, int y, int width, int height, int arcWidth, int arcHeight) {
+		getGraphics().fillRoundRect(x + this.translateX, y + this.translateY, width, height, arcWidth, arcHeight);
 	}
 
 	/**
@@ -534,9 +518,8 @@ public class Graphics {
 	 * @param arcAngle - the angular extent of the arc, relative to the start angle.
 	 * @see #drawArc(int, int, int, int, int, int)
 	 */
-	public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle)
-	{
-		this.g.fillArc(x + this.translateX, y + this.translateY, width, height, startAngle, arcAngle);
+	public void fillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+		getGraphics().fillArc(x + this.translateX, y + this.translateY, width, height, startAngle, arcAngle);
 	}
 
 	/**
@@ -578,9 +561,8 @@ public class Graphics {
 	 * @param arcAngle - the angular extent of the arc, relative to the start angle
 	 * @see #fillArc(int, int, int, int, int, int)
 	 */
-	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle)
-	{
-		this.g.drawArc(x + this.translateX, y + this.translateY, width, height, startAngle, arcAngle);
+	public void drawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+		getGraphics().drawArc(x + this.translateX, y + this.translateY, width, height, startAngle, arcAngle);
 	}
 
 	/**
@@ -596,14 +578,14 @@ public class Graphics {
 	 * @throws IllegalArgumentException - if anchor is not a legal value
 	 * @see #drawChars(char[], int, int, int, int, int)
 	 */
-	public void drawString( String str, int x, int y, int anchor)
-	{
+	public void drawString( String str, int x, int y, int anchor) {
 		if (( anchor & RIGHT ) == RIGHT ) {
 			x -= this.font.font.getAdvance( str );
-		} else if (( anchor & HCENTER ) == HCENTER ) {
+		}
+		else if (( anchor & HCENTER ) == HCENTER ) {
 			x -= this.font.font.getAdvance( str ) / 2;
 		} 
-		this.g.drawText(str, x + this.translateX - 1, y + this.translateY, DrawStyle.LEFT | DrawStyle.TOP );
+		getGraphics().drawText(str, x + this.translateX - 1, y + this.translateY, DrawStyle.LEFT | DrawStyle.TOP );
 	}
 
 	/**
@@ -616,18 +598,23 @@ public class Graphics {
 		int bbAnchor = 0;
 		if ( (anchor & TOP) == TOP ) {
 			bbAnchor = DrawStyle.TOP;
-		} else if (( anchor & BOTTOM ) == BOTTOM ) {
+		}
+		else if (( anchor & BOTTOM ) == BOTTOM ) {
 			bbAnchor = DrawStyle.BOTTOM;
-		} else if (( anchor & VCENTER ) == VCENTER ) {
+		}
+		else if (( anchor & VCENTER ) == VCENTER ) {
 			bbAnchor = DrawStyle.VCENTER;
-		} else if (( anchor & BASELINE ) == BASELINE ) {
+		}
+		else if (( anchor & BASELINE ) == BASELINE ) {
 			bbAnchor = DrawStyle.BASELINE;
 		} 
 		if ( (anchor & LEFT) == LEFT ) {
 			bbAnchor |= DrawStyle.LEFT;
-		} else if (( anchor & RIGHT ) == RIGHT ) {
+		}
+		else if (( anchor & RIGHT ) == RIGHT ) {
 			bbAnchor |= DrawStyle.RIGHT;
-		} else if (( anchor & HCENTER ) == HCENTER ) {
+		}
+		else if (( anchor & HCENTER ) == HCENTER ) {
 			bbAnchor |= DrawStyle.HCENTER;
 		} 
 		return bbAnchor;
@@ -658,8 +645,7 @@ public class Graphics {
 	 * @throws NullPointerException - if str is null
 	 * @see #drawString(String, int, int, int)
 	 */
-	public void drawSubstring( String str, int offset, int len, int x, int y, int anchor)
-	{
+	public void drawSubstring( String str, int offset, int len, int x, int y, int anchor) {
 		drawString( str.substring(offset, offset + len), x, y, anchor );
 	}
 
@@ -672,12 +658,11 @@ public class Graphics {
 	 * @param anchor - the anchor point for positioning the text; see anchor points
 	 * @throws IllegalArgumentException - if anchor is not a legal value
 	 * @see #drawString(java.lang.String, int, int, int)
-* @see #drawChars(char[], int, int, int, int, int)
+	 * @see #drawChars(char[], int, int, int, int, int)
 	 */
-	public void drawChar(char character, int x, int y, int anchor)
-	{
+	public void drawChar(char character, int x, int y, int anchor) {
 		int width = this.font.font.getAdvance(character);
-		this.g.drawText(character, x + this.translateX, y + this.translateY, translateAnchor(anchor), width);
+		getGraphics().drawText(character, x + this.translateX, y + this.translateY, translateAnchor(anchor), width);
 	}
 
 	/**
@@ -703,10 +688,9 @@ public class Graphics {
 	 * @throws NullPointerException - if data is null
 	 * @see #drawString(java.lang.String, int, int, int)
 	 */
-	public void drawChars(char[] data, int offset, int length, int x, int y, int anchor)
-	{
+	public void drawChars(char[] data, int offset, int length, int x, int y, int anchor) {
 		int width  = this.font.font.getAdvance( data, offset, length );
-		this.g.drawText(data, offset, length, x, y, translateAnchor(anchor), width );
+		getGraphics().drawText(data, offset, length, x, y, translateAnchor(anchor), width );
 	}
 
 	/**
@@ -734,28 +718,31 @@ public class Graphics {
 	 * @throws NullPointerException - if img is null
 	 * @see Image
 	 */
-	public void drawImage( Image img, int x, int y, int anchor)
-	{
+	public void drawImage( Image img, int x, int y, int anchor) {
 		Bitmap bitmap = img.bitmap;
 		int width = bitmap.getWidth();
 		if ( (anchor & RIGHT) == RIGHT ) {
 			x -= width;
-		} else if ( (anchor & HCENTER) == HCENTER ) {
+		}
+		else if ( (anchor & HCENTER) == HCENTER ) {
 			x -= width / 2;
 		}
 		int height = bitmap.getHeight();
 		if ( (anchor & BOTTOM) == BOTTOM ) {
 			y -= height;
-		} else if ( (anchor & VCENTER) == VCENTER ) {
+		}
+		else if ( (anchor & VCENTER) == VCENTER ) {
 			y -= height / 2;
 		}
 		
-	        int a = this.g.getGlobalAlpha();
-	        this.g.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
+		net.rim.device.api.ui.Graphics g1 = getGraphics();
 		
-		this.g.drawBitmap( x + this.translateX, y + this.translateY, width, height, bitmap, 0, 0 );
+	        int a = g1.getGlobalAlpha();
+	        g1.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
 		
-		this.g.setGlobalAlpha(a);
+		g1.drawBitmap( x + this.translateX, y + this.translateY, width, height, bitmap, 0, 0 );
+		
+		g1.setGlobalAlpha(a);
 	}
 
 	/**
@@ -847,11 +834,10 @@ public class Graphics {
 	 */
 	public void drawRegion( Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest, int anchor) {
 	    
-	        int a=0;
-                if (g!=null) {
-                    a = this.g.getGlobalAlpha();
-                    this.g.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
-        	}
+	        net.rim.device.api.ui.Graphics g1 = getGraphics();
+	    
+	        int a = g1.getGlobalAlpha();
+                g1.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
 
                 if (swapWidthHeight(transform)) {
                     int w = width;
@@ -880,12 +866,13 @@ public class Graphics {
 		
 		if (transform == Sprite.TRANS_NONE) {
 		
-		    if (this.bitmap!=null) {
-		        src.bitmap.scaleInto(x_src, y_src, width, height, bitmap, x_dest + this.translateX, y_dest + this.translateY, width, height, Bitmap.FILTER_BILINEAR );
-		    }
-		    else {
-		        this.g.drawBitmap( x_dest + this.translateX, y_dest + this.translateY, width, height, src.bitmap, x_src, y_src );
-		    }
+		    // this should work, but transparent parts of the bitmap turn into strange colors
+		    //if (this.bitmap!=null) {
+		    //    src.bitmap.scaleInto(x_src, y_src, width, height, bitmap, x_dest + this.translateX, y_dest + this.translateY, width, height, Bitmap.FILTER_BILINEAR );
+		    //}
+		    //else {
+		        g1.drawBitmap( x_dest + this.translateX, y_dest + this.translateY, width, height, src.bitmap, x_src, y_src );
+		    //}
 		}
 		else {
 		    
@@ -959,15 +946,13 @@ public class Graphics {
 		        duy = Fixed32.mul(duy, minus1);
 		    }
 		    
-		    g.translate(translateX+x_dest, translateY+y_dest);
-		    g.drawTexturedPath(x, y, null, null, -x_src, -y_src, dux, dvx, duy, dvy, src.bitmap);
-		    g.translate(-translateX-x_dest, -translateY-y_dest);
+		    g1.translate(translateX+x_dest, translateY+y_dest);
+		    g1.drawTexturedPath(x, y, null, null, -x_src, -y_src, dux, dvx, duy, dvy, src.bitmap);
+		    g1.translate(-translateX-x_dest, -translateY-y_dest);
 		    
 		}
 
-		if (g!=null) {
-		    this.g.setGlobalAlpha(a);
-		}
+		g1.setGlobalAlpha(a);
 		
 	}
 
@@ -1054,19 +1039,21 @@ public class Graphics {
 	 * @throws IllegalArgumentException - if the region to be copied exceeds the bounds of the source image
 	 * @since  MIDP 2.0
 	 */
-	public void copyArea(int x_src, int y_src, int width, int height, int x_dest, int y_dest, int anchor)
-	{
+	public void copyArea(int x_src, int y_src, int width, int height, int x_dest, int y_dest, int anchor) {
 		if ( (anchor & RIGHT) == RIGHT ) {
 			x_dest -= width;
-		} else if ( (anchor & HCENTER) == HCENTER ) {
+		}
+		else if ( (anchor & HCENTER) == HCENTER ) {
 			x_dest -= width / 2;
 		}
+
 		if ( (anchor & BOTTOM) == BOTTOM ) {
 			y_dest -= height;
-		} else if ( (anchor & VCENTER) == VCENTER ) {
+		}
+		else if ( (anchor & VCENTER) == VCENTER ) {
 			y_dest -= height / 2;
 		}
-		this.g.copyArea( x_src + this.translateX, y_src + this.translateY, width, height, x_src - x_dest + this.translateX, y_src - y_dest + this.translateY);
+		getGraphics().copyArea( x_src + this.translateX, y_src + this.translateY, width, height, x_src - x_dest + this.translateX, y_src - y_dest + this.translateY);
 	}
 
 	/**
@@ -1082,14 +1069,13 @@ public class Graphics {
 	 * @param y3 - the y coordinate of the third vertex of the triangle
 	 * @since  MIDP 2.0
 	 */
-	public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3)
-	{
+	public void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
 		int[] xPositions = new int[] { x1 + this.translateX, x2 + this.translateX, x3 + this.translateX };
 		int[] yPositions = new int[] { y1 + this.translateY, y2 + this.translateY, y3 + this.translateY };
-		this.g.drawFilledPath(xPositions, yPositions, null, null );
-//		this.g.drawLine(x1, y1, x2, y2);
-//		this.g.drawLine(x2, y2, x3, y3);
-//		this.g.drawLine(x1, y1, x3, y3);
+		getGraphics().drawFilledPath(xPositions, yPositions, null, null );
+//		g1.drawLine(x1, y1, x2, y2);
+//		g1.drawLine(x2, y2, x3, y3);
+//		g1.drawLine(x1, y1, x3, y3);
 	}
 
 	/**
@@ -1177,18 +1163,21 @@ public class Graphics {
 	 * @throws NullPointerException - if rgbData is null
 	 * @since  MIDP 2.0
 	 */
-	public void drawRGB(int[] rgbData, int offset, int scanlength, int x, int y, int width, int height, boolean processAlpha)
-	{
-		 if ( processAlpha ) {
-			 /*
+	public void drawRGB(int[] rgbData, int offset, int scanlength, int x, int y, int width, int height, boolean processAlpha) {
+	    
+	    net.rim.device.api.ui.Graphics g1 = getGraphics();
+	    
+	    if ( processAlpha ) {
+	  /*
           Bitmap bitmap = new Bitmap( Bitmap.ROWWISE_16BIT_COLOR, width, height ); 
           bitmap.setARGB(rgbData, offset, scanlength, 0, 0, width, height);
-          this.g.drawBitmap(x + this.translateX, y + this.translateY, width, height, bitmap, 0, 0 );
+          g1.drawBitmap(x + this.translateX, y + this.translateY, width, height, bitmap, 0, 0 );
           */
-			 this.g.drawARGB(rgbData, offset, scanlength, x + this.translateX, y + this.translateY, width, height);
-	     } else {
-	    	 this.g.drawRGB(rgbData, offset, scanlength, x + this.translateX, y + this.translateY, width, height);
-	     }
+		g1.drawARGB(rgbData, offset, scanlength, x + this.translateX, y + this.translateY, width, height);
+	    }
+	    else {
+	        g1.drawRGB(rgbData, offset, scanlength, x + this.translateX, y + this.translateY, width, height);
+	    }
 	}
 
 	/**
@@ -1204,8 +1193,7 @@ public class Graphics {
 	 * @return the corresponding color that will be displayed on the device's screen (in 0x00RRGGBB format)
 	 * @since  MIDP 2.0
 	 */
-	public int getDisplayColor(int color)
-	{
+	public int getDisplayColor(int color) {
 		return color;
 		//TODO implement getDisplayColor
 	}
@@ -1221,7 +1209,8 @@ public class Graphics {
 			this.clipY = clip.y;
 			this.clipWidth = clip.width;
 			this.clipHeight = clip.height;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			this.clipX = 0;
 			this.clipY = 0;
 			this.clipWidth = net.rim.device.api.ui.Graphics.getScreenWidth();
