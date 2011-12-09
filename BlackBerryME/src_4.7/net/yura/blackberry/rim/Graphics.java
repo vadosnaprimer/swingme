@@ -847,35 +847,45 @@ public class Graphics {
 	 */
 	public void drawRegion( Image src, int x_src, int y_src, int width, int height, int transform, int x_dest, int y_dest, int anchor) {
 	    
-            int a = this.g.getGlobalAlpha();
-            this.g.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
-	    
-            if (swapWidthHeight(transform)) {
-                int w = width;
-                width = height;
-                height = w;
-                
-                int x = x_src;
-                x_src = y_src;
-                y_src = x;
-            }
+	        int a=0;
+                if (g!=null) {
+                    a = this.g.getGlobalAlpha();
+                    this.g.setGlobalAlpha(0xFF); // we do not support alpha when drawing images
+        	}
+
+                if (swapWidthHeight(transform)) {
+                    int w = width;
+                    width = height;
+                    height = w;
+                    
+                    int x = x_src;
+                    x_src = y_src;
+                    y_src = x;
+                }
 	    
 	    
 		if ( (anchor & RIGHT) == RIGHT ) {
 			x_dest -= width;
-		} else if ( (anchor & HCENTER) == HCENTER ) {
+		}
+		else if ( (anchor & HCENTER) == HCENTER ) {
 			x_dest -= width / 2;
 		}
+
 		if ( (anchor & BOTTOM) == BOTTOM ) {
 			y_dest -= height;
-		} else if ( (anchor & VCENTER) == VCENTER ) {
+		}
+		else if ( (anchor & VCENTER) == VCENTER ) {
 			y_dest -= height / 2;
 		}
 		
 		if (transform == Sprite.TRANS_NONE) {
 		
-		    this.g.drawBitmap( x_dest + this.translateX, y_dest + this.translateY, width, height, src.bitmap, x_src, y_src );
-		    
+		    if (this.bitmap!=null) {
+		        src.bitmap.scaleInto(x_src, y_src, width, height, bitmap, x_dest + this.translateX, y_dest + this.translateY, width, height, Bitmap.FILTER_BILINEAR );
+		    }
+		    else {
+		        this.g.drawBitmap( x_dest + this.translateX, y_dest + this.translateY, width, height, src.bitmap, x_src, y_src );
+		    }
 		}
 		else {
 		    
@@ -955,7 +965,9 @@ public class Graphics {
 		    
 		}
 
-		this.g.setGlobalAlpha(a);
+		if (g!=null) {
+		    this.g.setGlobalAlpha(a);
+		}
 		
 	}
 
