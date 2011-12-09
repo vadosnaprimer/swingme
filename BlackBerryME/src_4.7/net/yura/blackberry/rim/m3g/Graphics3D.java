@@ -79,9 +79,11 @@ public final class Graphics3D {
                 
                 targetGraphics.translate(vpX, vpY);
     
-                targetGraphics.g.translate(targetGraphics.getTranslateX(),targetGraphics.getTranslateY());
-                targetGraphics.g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, img);
-                targetGraphics.g.translate(-targetGraphics.getTranslateX(),-targetGraphics.getTranslateY());
+                net.rim.device.api.ui.Graphics g = targetGraphics.getGraphics();
+                
+                g.translate(targetGraphics.getTranslateX(),targetGraphics.getTranslateY());
+                g.drawTexturedPath(x, y, null, null, 0, 0, dux, dvx, duy, dvy, img);
+                g.translate(-targetGraphics.getTranslateX(),-targetGraphics.getTranslateY());
                 
                 targetGraphics.translate(-vpX, -vpY);
             }
