@@ -19,18 +19,19 @@ package net.yura.mobile.gui.components;
 import java.lang.ref.WeakReference;
 import java.util.Enumeration;
 import java.util.Vector;
+
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
 
 import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.DesktopPane;
-import net.yura.mobile.gui.celleditor.TableCellEditor;
-import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.ButtonGroup;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.gui.celleditor.TableCellEditor;
+import net.yura.mobile.gui.cellrenderer.ListCellRenderer;
 import net.yura.mobile.gui.layout.BorderLayout;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.io.FileUtil;
@@ -706,6 +707,15 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             int s = getSize();
             return i>=s?s-1:i;
         }
+
+public void fireActionPerformed() {
+    if (editingRow>=0 && editingColumn>=0) {
+        editCellAt(editingRow, editingColumn);
+        if (editorComp instanceof Button) {
+            ((Button)editorComp).fireActionPerformed();
+        }
+    }
+}
 
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
