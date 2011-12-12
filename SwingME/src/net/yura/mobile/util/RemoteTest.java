@@ -174,7 +174,7 @@ public class RemoteTest extends Thread {
 
         if (comp.isVisible()) {
             if (comp.isFocusable()) {
-                focusList.add(comp);
+                focusList.addElement(comp);
             }
             else if (comp instanceof Panel) {
                 Vector comps = ((Panel)comp).getComponents();
