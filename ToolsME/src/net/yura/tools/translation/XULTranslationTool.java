@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.StringWriter;
 import javax.microedition.lcdui.Graphics;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -51,7 +52,7 @@ public class XULTranslationTool extends MessageTool {
 
     public static void main(String[] args) {
 
-        final String name = "XUL Translation Tool";
+        final String name = "XUL";
         final String ver  = "1.0";
 
         try {
@@ -68,7 +69,7 @@ public class XULTranslationTool extends MessageTool {
 
         XULTranslationTool tt = new XULTranslationTool();
 
-        final JFrame frame = new JFrame( tt.getName()+" "+name+" "+ver );
+        final JFrame frame = new JFrame( tt.getName()+" "+name+" "+ver+" "+WEBSITE );
 
 
         frame.getContentPane().add( tt.getToolBar() , BorderLayout.NORTH);
@@ -170,10 +171,10 @@ public class XULTranslationTool extends MessageTool {
         // and if a error happens then the error dialog will not show
         frame.setVisible(true);
 
-/*
+
         try {
 
-            String badooHome = "E:/My_World/6_Yura/Work/java/badoo/repo/BadooMobile/";
+            String badooHome = "I:/6_Yura/Work/java/badoo/repo/BadooMobile/";
 
             tt.control.setBaseXULDir( new File(badooHome+"resources/res_medium_defaults") );
 
@@ -182,14 +183,19 @@ public class XULTranslationTool extends MessageTool {
             tt.control.setLookAndFeel(plaf);
 
             PropertiesComm conn = new PropertiesComm();
-            conn.load( new File(badooHome+"resources/lang/en/messages.txt") );
+            conn.load( new File(badooHome+"resources_generated/translation/lang/en/messages.txt") );
             tt.load(conn);
 
         }
         catch (Exception ex) {
             ex.printStackTrace();
         }
-*/
+
+
+
+
+
+
 
     }
 

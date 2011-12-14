@@ -1,6 +1,8 @@
-
-option java_package = "net.yura.server.gen";
-option java_outer_classname = "TestProtos";
+// comment 1
+option java_package = "net.yura.server.gen"; // comment 2
+// comment 3
+option java_outer_classname = "TestProtos"; // comment 4
+// comment 5
 
 enum ObjectType {
 
@@ -26,13 +28,14 @@ enum ObjectType {
     TYPE_TEST                               = 10001;
 
     TYPE_TEST_OBJECT                        = 10003;
-    TYPE_CLIENT_LOGIN_SUCCESS = 23;
+  //  TYPE_CLIENT_LOGIN_SUCCESS = 23;
 }
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Test Objects
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+// deprecated
 message Test {
 	required int32 id                = 1201;
 }
@@ -47,11 +50,13 @@ message Test {
 // repeated required bytes object is how we represent java.lang.Object i.e. a placeholder for any object.
 // repeated required string legs is a String[]
 
+// deprecated
 enum OtherThingsType {
     stuff = 0;
     thing = 1;
 }
 
+// deprecated
 message TestObject {
 	required int32 id                = 1204; 
 	optional string  name            = 1205;
@@ -67,8 +72,10 @@ message TestObject {
         required int64 last_updated = 6;
         required OtherThingsType things = 7;
         optional Test and_one_inside = 8;
+        repeated int32 numbers = 9;
 }
 
+// deprecated
 message Login {
     required string username = 1;
     required string password = 2;
@@ -80,6 +87,7 @@ message Login {
     required bool intz = 8;
 }
 
+// deprecated
 enum Type {
     BOBA = 1;
     FRED = 2;
@@ -109,6 +117,8 @@ message Object {
     optional bytes value = 2;
 }
 
+// deprecated
+// this is bob
 message Bob {
     repeated Vector vec1 = 1;
     repeated Vector vec2 = 2;
@@ -119,14 +129,17 @@ message String {
     optional string value = 1;
 }
 
+// deprecated
 message Message {
     required Object body = 1;
 }
 
+// deprecated
 message Album {
     required string someString = 1;
 }
 
+// deprecated
 message ClientLoginSuccess {
     required string sessionId = 1;
     repeated Album albums = 3;
