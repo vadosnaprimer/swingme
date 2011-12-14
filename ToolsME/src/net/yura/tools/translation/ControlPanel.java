@@ -8,6 +8,7 @@ import javax.microedition.lcdui.Image;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.SwingUtilities;
+import net.yura.me4se.ME4SEPanel;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Icon;

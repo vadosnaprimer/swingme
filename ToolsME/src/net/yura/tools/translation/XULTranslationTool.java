@@ -23,6 +23,7 @@ import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.TreeSelectionEvent;
+import net.yura.me4se.ME4SEPanel;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Label;
@@ -190,11 +191,6 @@ public class XULTranslationTool extends MessageTool {
         catch (Exception ex) {
             ex.printStackTrace();
         }
-
-
-
-
-
 
 
     }
