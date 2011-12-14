@@ -89,7 +89,7 @@
 			</patternset>
 		</unzip>
 
-		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt" source="1.5" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar;lib/Grasshopper.jar" destdir="tmpclasses" debug="on" target="1.5">
+		<javac srcdir="src;opt/pim/src;opt/m3g/src;opt/contactless/src;opt/location/src;opt/bluetooth/src;opt/bluetooth/src_gcfimpl_avetanabt;opt/swingme/src" source="1.4" classpath="lib/emptycommapi.jar;opt/m3g/lib/jogl.jar;opt/contactless/lib/Phidget21.jar;opt/bluetooth/lib/avetanaBluetooth.jar;lib/Grasshopper.jar;opt/swingme/lib/SwingME.jar" destdir="tmpclasses" debug="on" target="1.4">
 
 		</javac>
 
@@ -159,7 +159,7 @@
 
         <!-- this is used in SwingME to scale images -->
         <mkdir dir="build" />
-        <javac srcdir="opt/m3g_basic" source="1.5" classpath="dist/midletrunner.jar" destdir="build" debug="on" target="1.5"/>
+        <javac srcdir="opt/m3g_basic/src" source="1.4" classpath="dist/midletrunner.jar" destdir="build" debug="on" target="1.4"/>
 	<jar jarfile="dist/m3gbasic.jar">
 	  <fileset dir="build">
 	    <include name="javax/microedition/m3g/**"/>
