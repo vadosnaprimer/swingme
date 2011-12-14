@@ -31,7 +31,8 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
 	public static String decode(String query){
 		
-		StringBuilder sb = new StringBuilder();
+		//StringBuilder sb = new StringBuilder();
+                StringBuffer sb = new StringBuffer();
 		
 		for(int i = 0; i < query.length(); i++){
 			if(query.charAt(i) == '('){
@@ -57,7 +58,8 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 	}
 
 	public static String encode(String query) {
-		StringBuilder sb = new StringBuilder();
+		//StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
 		
 		boolean pending = false;
 		
