@@ -63,23 +63,7 @@ public class Test1 {
         }
     }
 
-    {
-        String hello = "HELLO1";
-    }
-    {
-        String hello = "HELLO2";
-    }
-
     public static void main(String... args) throws Exception {
-
-        
-        System.out.println("1 "+ MobileProtoGen.firstUp("HelloWorld") );
-        System.out.println("2 "+ MobileProtoGen.firstUp("HELLO_WORLD") );
-        System.out.println("3 "+ MobileProtoGen.firstUp("helloWorld") );
-        System.out.println("4 "+ MobileProtoGen.firstUp("hello_world") );
-
-        
-        if (true) return;
 
         ReadWrite kxml = new ReadWrite() {
             XMLAccess xml = new XMLAccess();
