@@ -2,11 +2,13 @@ package javax.microedition.media.player;
 
 import java.io.IOException;
 
+import javax.microedition.lcdui.Display;
 import javax.microedition.media.Control;
 import javax.microedition.media.MediaException;
 import javax.microedition.media.control.VideoControl;
 
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 import net.yura.mobile.logging.Logger;
 import android.content.Context;
 import android.hardware.Camera;
@@ -153,14 +155,15 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
     public int getSourceHeight() {
         // If we can't record video, this method is meaningless...
         // Return screen height for now.
-
-        return AndroidMeActivity.DEFAULT_ACTIVITY.getScreenHeight();
+        //return AndroidMeActivity.DEFAULT_ACTIVITY.getScreenHeight();
+        return Display.getDisplay( AndroidMeApp.getMIDlet() ).getCurrent().getHeight();
     }
 
     public int getSourceWidth() {
         // If we can't record video, this method is meaningless...
         // Return screen width for now.
-        return AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth();
+        //return AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth();
+        return Display.getDisplay( AndroidMeApp.getMIDlet() ).getCurrent().getWidth();
     }
 
     public Object initDisplayMode(int mode, Object obj) {

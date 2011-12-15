@@ -2,11 +2,12 @@ package javax.microedition.lcdui;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Vector;
 
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
+import net.yura.android.MenuSystem;
 import net.yura.mobile.logging.Logger;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -15,7 +16,10 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -456,7 +460,177 @@ public abstract class Canvas extends Displayable {
     	canvasView.getInputManager().restartInput(canvasView);
     }
 
-    boolean hardwareAccelerated;
+
+
+    protected void hideNotify() {}
+
+    protected void showNotify() {}
+
+
+    public void serviceRepaints() {
+        AndroidMeApp.getIntance().invokeAndWait(new Thread());
+    }
+
+    public String getKeyName(int keyCode) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+
+
+    public void addOverlayView(View v) {
+        linearLayout.addView(v);
+    }
+
+    public void removeOverlayView(View v) {
+        linearLayout.removeView(v);
+    }
+
+
+
+
+        public static int getKeyCode(KeyEvent keyEvent) {
+            // TODO implement as lookup table
+            int deviceKeyCode = keyEvent.getKeyCode();
+
+            int resultKeyCode;
+            switch (deviceKeyCode) {
+                case KeyEvent.KEYCODE_DPAD_UP :
+                    resultKeyCode = -1;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_DOWN :
+                    resultKeyCode = -2;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_LEFT :
+                    resultKeyCode = -3;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_RIGHT :
+                    resultKeyCode = -4;
+                    break;
+                case KeyEvent.KEYCODE_DPAD_CENTER :
+                    resultKeyCode = -5;
+                    break;
+                case KeyEvent.KEYCODE_MENU :
+                    resultKeyCode = -12;
+                    break;
+                case KeyEvent.KEYCODE_BACK :
+                    resultKeyCode = -11;
+                    break;
+                case KeyEvent.KEYCODE_DEL :
+                    resultKeyCode = -8; // Backspace ascii
+                    break;
+                case KeyEvent.KEYCODE_CALL :
+                    resultKeyCode = -10;
+                    break;
+                case KeyEvent.KEYCODE_ENDCALL :
+                    resultKeyCode = -11; // Never called on Android...
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_UP :
+                    resultKeyCode = -36;
+                    break;
+                case KeyEvent.KEYCODE_VOLUME_DOWN :
+                    resultKeyCode = -37;
+                    break;
+                default:
+                    resultKeyCode = keyEvent.getUnicodeChar();
+                    if (resultKeyCode == 0) {
+                        resultKeyCode = -deviceKeyCode;
+                    }
+            }
+
+            return resultKeyCode;
+        }
+
+
+        private Menu menu;
+        public MenuSystem menuSystem;
+
+
+
+
+
+
+        public boolean onCreateOptionsMenu(Menu menu) {
+            this.menu = menu;
+
+            //#debug debug
+            Log.d("YURA", "[AndroidMeActivity] onCreateOptionsMenu");
+
+            if (menuSystem!=null) {
+                return menuSystem.onCreateOptionsMenu(menu);
+            }
+            return true;
+        }
+
+        public boolean onPrepareOptionsMenu(Menu menu) {
+
+            //#debug debug
+            Log.d("YURA", "[AndroidMeActivity] onPrepareOptionsMenu");
+
+            if (menuSystem==null) {
+
+                    //MIDlet midlet = AndroidMeApp.getMIDlet();
+
+                    boolean result = false;
+                    //Display display = Display.getDisplay( midlet );
+                    //Displayable current = display.getCurrent();
+                    //if (current != null) {
+                        // load the menu items
+                        menu.close();
+                        menu.clear();
+                        Vector<Command> commands = getCommands();
+                        for (int i = 0; i < commands.size(); i++) {
+                            result = true;
+                            Command cmd = commands.get(i);
+                            if (cmd.getCommandType() != Command.BACK && cmd.getCommandType() != Command.EXIT) {
+                                    // TODO YURA: why is this addSubMenu????
+                                menu.addSubMenu(Menu.NONE, i + Menu.FIRST, Menu.NONE, cmd.getLabel());
+                            }
+                        }
+                    //}
+                    return result;
+
+            }
+
+            return menuSystem.onPrepareOptionsMenu(menu);
+        }
+
+        public boolean onOptionsItemSelected(MenuItem item) {
+
+            //#debug debug
+            Log.d("YURA", "[AndroidMeActivity] onOptionsItemSelected");
+
+            if (menuSystem==null) {
+
+                    //MIDlet midlet = AndroidMeApp.getMIDlet();
+                    //Display display = Display.getDisplay( midlet );
+                    //Displayable current = display.getCurrent();
+
+                    //if (current != null) {
+                        Vector<Command> commands = getCommands();
+
+                        int commandIndex = item.getItemId() - Menu.FIRST;
+                        Command c = commands.get(commandIndex);
+                        CommandListener l = getCommandListener();
+
+                        if (c != null && l != null) {
+                            l.commandAction(c, this);
+                            return true;
+                        }
+                    //}
+
+                    return false;
+
+            }
+
+            return menuSystem.onOptionsItemSelected(item);
+
+        }
+
+
+
+
+
 
     public interface InputHelper {
         // used by old style connector
@@ -486,6 +660,8 @@ public abstract class Canvas extends Displayable {
         Method methodGetPointerCount;
         Method methodGetX;
         Method methodGetY;
+
+        boolean hardwareAccelerated;
 
         public CanvasView(Context context) {
             super(context);
@@ -685,7 +861,7 @@ public abstract class Canvas extends Displayable {
                     if (keyCount == 1) {
                         // kill the application on a "long back key" press
                         // TODO: Should show some native Android UI for confirmation
-                        AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet().notifyDestroyed();
+                        AndroidMeApp.getMIDlet().notifyDestroyed();
                     }
                 }
                 else {
@@ -701,7 +877,11 @@ public abstract class Canvas extends Displayable {
             else if (keyCode == KeyEvent.KEYCODE_MENU && keyCount == 0) {
                 // HACK: Work around for issue:
                 // http://code.google.com/p/android/issues/detail?id=11833
-                AndroidMeActivity.DEFAULT_ACTIVITY.onMenuKeyDown();
+                //#debug debug
+                Log.d("YURA", "[AndroidMeActivity] onMenuKeyDown");
+                if (menu!=null) {
+                    menu.close();
+                }
             }
 
             return super.onKeyDown(keyCode, event);
@@ -751,7 +931,7 @@ public abstract class Canvas extends Displayable {
             		keyCode == KeyEvent.KEYCODE_VOLUME_UP ||
                     keyCode == KeyEvent.KEYCODE_VOLUME_DOWN ||
                     keyCode == KeyEvent.KEYCODE_CAMERA ||
-                    (AndroidMeActivity.menuSystem!=null && keyCode == KeyEvent.KEYCODE_MENU)
+                    (menuSystem!=null && keyCode == KeyEvent.KEYCODE_MENU)
                     //keyCode == 97 // this is the SYM key of HTC Desire Z, putting it here does not help anything
             );
         }
@@ -1088,121 +1268,44 @@ public abstract class Canvas extends Displayable {
                 Logger.warn(e);
             }
         }
-    }
-
-    protected void hideNotify() {}
-
-    protected void showNotify() {}
 
 
-    public void serviceRepaints() {
-        AndroidMeApp.getIntance().invokeAndWait(new Thread());
-    }
+        // -- debug code ---
+        private long lastDrawTime;
+        private String fpsStr = "0.0fps";
+        private int nFrames;
+        private int fontH;
+        Paint debugPaint;
 
-    public String getKeyName(int keyCode) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        private void showFramesPerSec(android.graphics.Canvas androidCanvas) {
+            nFrames++;
+            long timeNow = System.currentTimeMillis();
+            long timeDiff = timeNow - lastDrawTime;
+            if (timeDiff > 1000) {
+                long fps = nFrames * 10000 / timeDiff;
+                fpsStr = (fps / 10) + "." + (fps % 10) + "fps";
 
+                fpsStr = (hardwareAccelerated?"HW ":"SW ") + fpsStr;
 
-
-    public void addOverlayView(View v) {
-        linearLayout.addView(v);
-    }
-
-    public void removeOverlayView(View v) {
-        linearLayout.removeView(v);
-    }
-
-
-
-
-        public static int getKeyCode(KeyEvent keyEvent) {
-            // TODO implement as lookup table
-            int deviceKeyCode = keyEvent.getKeyCode();
-
-            int resultKeyCode;
-            switch (deviceKeyCode) {
-                case KeyEvent.KEYCODE_DPAD_UP :
-                    resultKeyCode = -1;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_DOWN :
-                    resultKeyCode = -2;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_LEFT :
-                    resultKeyCode = -3;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_RIGHT :
-                    resultKeyCode = -4;
-                    break;
-                case KeyEvent.KEYCODE_DPAD_CENTER :
-                    resultKeyCode = -5;
-                    break;
-                case KeyEvent.KEYCODE_MENU :
-                    resultKeyCode = -12;
-                    break;
-                case KeyEvent.KEYCODE_BACK :
-                    resultKeyCode = -11;
-                    break;
-                case KeyEvent.KEYCODE_DEL :
-                    resultKeyCode = -8; // Backspace ascii
-                    break;
-                case KeyEvent.KEYCODE_CALL :
-                    resultKeyCode = -10;
-                    break;
-                case KeyEvent.KEYCODE_ENDCALL :
-                    resultKeyCode = -11; // Never called on Android...
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_UP :
-                    resultKeyCode = -36;
-                    break;
-                case KeyEvent.KEYCODE_VOLUME_DOWN :
-                    resultKeyCode = -37;
-                    break;
-                default:
-                    resultKeyCode = keyEvent.getUnicodeChar();
-                    if (resultKeyCode == 0) {
-                        resultKeyCode = -deviceKeyCode;
-                    }
+                lastDrawTime = timeNow;
+                nFrames = 0;
             }
 
-            return resultKeyCode;
+            if (debugPaint == null) {
+                debugPaint = new Paint();
+                debugPaint.setStyle(Paint.Style.FILL);
+            }
+            int w = (int)(debugPaint.measureText(fpsStr) + 2.0f);
+            if (fontH <= 0) {
+                fontH = debugPaint.getFontMetricsInt(debugPaint.getFontMetricsInt()) + 2;
+            }
+
+            debugPaint.setColor(0xFF000000);
+            androidCanvas.drawRect(2, 5, 2 + w, 5 + fontH, debugPaint);
+            debugPaint.setColor(0xFFFFFFFF);
+            androidCanvas.drawText(fpsStr, 3, 1 + fontH, debugPaint);
         }
 
-
-    // -- debug code ---
-    private long lastDrawTime;
-    private String fpsStr = "0.0fps";
-    private int nFrames;
-    private int fontH;
-    Paint debugPaint;
-
-    private void showFramesPerSec(android.graphics.Canvas androidCanvas) {
-        nFrames++;
-        long timeNow = System.currentTimeMillis();
-        long timeDiff = timeNow - lastDrawTime;
-        if (timeDiff > 1000) {
-            long fps = nFrames * 10000 / timeDiff;
-            fpsStr = (fps / 10) + "." + (fps % 10) + "fps";
-
-            fpsStr = (hardwareAccelerated?"HW ":"SW ") + fpsStr;
-
-            lastDrawTime = timeNow;
-            nFrames = 0;
-        }
-
-        if (debugPaint == null) {
-            debugPaint = new Paint();
-            debugPaint.setStyle(Paint.Style.FILL);
-        }
-        int w = (int)(debugPaint.measureText(fpsStr) + 2.0f);
-        if (fontH <= 0) {
-            fontH = debugPaint.getFontMetricsInt(debugPaint.getFontMetricsInt()) + 2;
-        }
-
-        debugPaint.setColor(0xFF000000);
-        androidCanvas.drawRect(2, 5, 2 + w, 5 + fontH, debugPaint);
-        debugPaint.setColor(0xFFFFFFFF);
-        androidCanvas.drawText(fpsStr, 3, 1 + fontH, debugPaint);
     }
+
 }

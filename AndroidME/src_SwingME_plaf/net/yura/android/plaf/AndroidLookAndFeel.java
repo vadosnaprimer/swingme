@@ -401,7 +401,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
 
         OptionPane.optionPaneClass = AndroidOptionPane.class;
-        AndroidMeActivity.menuSystem = new NativeAndroidMenu();
+        DesktopPane.getDesktopPane().menuSystem = new NativeAndroidMenu();
         NativeAndroidTextField.init();
     }
 

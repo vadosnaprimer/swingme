@@ -51,14 +51,14 @@ public abstract class Displayable {
 		View view = this.getView();
 		int w = (view == null) ? 0 : view.getWidth();
 
-		return (w <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth() : w;
+		return w;//(w <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenWidth() : w;
 	}
 
 	public int getHeight() {
 		View view = this.getView();
 		int h = (view == null) ? 0 : view.getHeight();
 
-        return (h <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenHeight() : h;
+                return h;//(h <= 0) ? AndroidMeActivity.DEFAULT_ACTIVITY.getScreenHeight() : h;
 	}
 
 	public Display getCurrentDisplay() {
@@ -75,7 +75,7 @@ public abstract class Displayable {
 
 
 	public boolean isShown() {
-	    return AndroidMeActivity.DEFAULT_ACTIVITY != null && Display.getDisplay(AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet()).getCurrent() == this;
+	    return AndroidMeActivity.DEFAULT_ACTIVITY != null && Display.getDisplay(AndroidMeApp.getMIDlet()).getCurrent() == this;
 	}
         private String title;
 	public void setTitle(String object) {
@@ -86,6 +86,7 @@ public abstract class Displayable {
                     public void run() {
                         try {
                             AndroidMeActivity.DEFAULT_ACTIVITY.setTitle(title);
+
                             if (invalidateOptionsMenu!=null) {
                                 invalidateOptionsMenu.invoke( AndroidMeActivity.DEFAULT_ACTIVITY, (Object[])null);
                             }

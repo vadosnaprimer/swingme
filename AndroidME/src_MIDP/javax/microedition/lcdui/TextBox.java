@@ -6,6 +6,7 @@ import javax.microedition.lcdui.Canvas.InputHelper;
 import javax.microedition.midlet.MIDlet;
 
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -36,7 +37,7 @@ public class TextBox extends Screen {
         this.constraints = constraints;
 
         // Hack: Current view could change...
-        MIDlet midlet = AndroidMeActivity.DEFAULT_ACTIVITY.getMIDlet();
+        MIDlet midlet = AndroidMeApp.getMIDlet();
 
         View oldView = Display.getDisplay(midlet).getCurrent().getView();
         this.currentCanvasView = getCanvasView(oldView);

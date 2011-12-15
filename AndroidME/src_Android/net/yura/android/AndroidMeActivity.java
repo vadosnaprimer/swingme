@@ -1,14 +1,10 @@
 package net.yura.android;
 
 import java.util.Vector;
-
 import javax.microedition.lcdui.Canvas;
-import javax.microedition.lcdui.Command;
-import javax.microedition.lcdui.CommandListener;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,7 +12,6 @@ import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,12 +29,9 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     private View waitingView;
     private long backgroundTime;
 
-    public static AndroidMeActivity DEFAULT_ACTIVITY;
-    public static MenuSystem menuSystem;
+    public static Activity DEFAULT_ACTIVITY;
 
-    public MIDlet getMIDlet() {
-        return AndroidMeApp.getMIDlet();
-    }
+
 
     @Override
     protected void onCreate(Bundle icicle) {
@@ -48,7 +40,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         if (DEFAULT_ACTIVITY != null) {
             // This can only run as single instance!!
             // Forward the intent that started us, and then die.
-            DEFAULT_ACTIVITY.onNewIntent(getIntent());
+            ((AndroidMeActivity)DEFAULT_ACTIVITY).onNewIntent(getIntent());
             super.finish();
             return;
         }
@@ -117,7 +109,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     }
 
     private void showContentView(final View view) {
-    	AndroidMeApp.getIntance().invokeAndWait(new Runnable() {
+    	runOnUiThread(new Runnable() {
             public void run() {
                 if (defaultView != view) {
                     setContentView(view);
@@ -127,11 +119,12 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         this.defaultView = view;
     }
 
+    private long start = System.currentTimeMillis();
     @Override
     public void setContentView(View view) {
 
     	//#debug debug
-    	Logger.debug("[AndroidMeActivity] setContentView view: "+view);
+    	Logger.debug("[AndroidMeActivity] setContentView view: "+AndroidRemoteTest.toString(view) +" "+ (System.currentTimeMillis() - start) );
 
     	super.setContentView(view);
 
@@ -221,99 +214,41 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         }
     }
 
-    private Menu menu;
-
-    public void onMenuKeyDown() {
-
-        //#debug debug
-        Log.d("YURA", "[AndroidMeActivity] onMenuKeyDown");
-
-        if (menu!=null) {
-            menu.close();
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
-
-        //#debug debug
-        Log.d("YURA", "[AndroidMeActivity] onCreateOptionsMenu");
-
-        if (menuSystem!=null) {
-            return menuSystem.onCreateOptionsMenu(menu);
+        MIDlet midlet = AndroidMeApp.getMIDlet();
+        if (midlet!=null) {
+            Displayable current = Display.getDisplay( midlet ).getCurrent();
+            if (current != null) {
+                return ((Canvas)current).onCreateOptionsMenu(menu);
+            }
         }
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
-        //#debug debug
-        Log.d("YURA", "[AndroidMeActivity] onPrepareOptionsMenu");
-
-        if (menuSystem==null) {
-
-            MIDlet midlet = AndroidMeApp.getMIDlet();
-            if (midlet == null) {
-                return super.onPrepareOptionsMenu(menu);
+        MIDlet midlet = AndroidMeApp.getMIDlet();
+        if (midlet!=null) {
+            Displayable current = Display.getDisplay( midlet ).getCurrent();
+            if (current != null) {
+                return ((Canvas)current).onPrepareOptionsMenu(menu);
             }
-
-	        boolean result = false;
-	    	Display display = Display.getDisplay( midlet );
-	        Displayable current = display.getCurrent();
-	        if (current != null) {
-	            // load the menu items
-	            menu.close();
-	            menu.clear();
-	            Vector<Command> commands = current.getCommands();
-	            for (int i = 0; i < commands.size(); i++) {
-	                result = true;
-	                Command cmd = commands.get(i);
-	                if (cmd.getCommandType() != Command.BACK && cmd.getCommandType() != Command.EXIT) {
-	                	// TODO YURA: why is this addSubMenu????
-	                    menu.addSubMenu(Menu.NONE, i + Menu.FIRST, Menu.NONE, cmd.getLabel());
-	                }
-	            }
-	        }
-	        return result;
-
         }
-
-        return menuSystem.onPrepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        //#debug debug
-        Log.d("YURA", "[AndroidMeActivity] onOptionsItemSelected");
-
-    	if (menuSystem==null) {
-
-    		MIDlet midlet = AndroidMeApp.getMIDlet();
-	        Display display = Display.getDisplay( midlet );
-	        Displayable current = display.getCurrent();
-
-	        if (current != null) {
-	            Vector<Command> commands = current.getCommands();
-
-	            int commandIndex = item.getItemId() - Menu.FIRST;
-	            Command c = commands.get(commandIndex);
-	            CommandListener l = current.getCommandListener();
-
-	            if (c != null && l != null) {
-	                l.commandAction(c, current);
-	                return true;
-	            }
-	        }
-
-	        return false;
-
-    	}
-
-    	return menuSystem.onOptionsItemSelected(item);
-
+        MIDlet midlet = AndroidMeApp.getMIDlet();
+        if (midlet!=null) {
+            Displayable current = Display.getDisplay( midlet ).getCurrent();
+            if (current != null) {
+                return ((Canvas)current).onOptionsItemSelected(item);
+            }
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public int getScreenHeight() {
@@ -343,7 +278,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
                 result = data.getExtras().get("data");
             }
 
-            MIDlet midlet = getMIDlet();
+            MIDlet midlet = AndroidMeApp.getMIDlet();
             midlet.onResult(requestCode, resultCode, result);
         } catch (Throwable e) {
             //#debug info
