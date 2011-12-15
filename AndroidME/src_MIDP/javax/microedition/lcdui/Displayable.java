@@ -106,7 +106,7 @@ public abstract class Displayable {
 	static Method invalidateOptionsMenu;
 	static {
 	    try {
-	        invalidateOptionsMenu = Activity.class.getMethod("invalidateOptionsMenu"); // API-11
+	        invalidateOptionsMenu = AndroidMeActivity.DEFAULT_ACTIVITY.getClass().getMethod("invalidateOptionsMenu"); // API-11
 	    }
 	    catch (Throwable th) { }
 	}
