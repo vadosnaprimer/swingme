@@ -415,17 +415,15 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         Vector rs = new Vector();
         Vector dataVector;
         if (gridView.isSelected()) {
-            dataVector = fileTable.getItems();
+            dataVector = fileTable.getSelectedValues();
         }
         else {
-            dataVector = fileList.getItems();
+            dataVector = fileList.getSelectedValues();
         }
 
         for (Enumeration en = dataVector.elements(); en.hasMoreElements();) {
             SelectableFile tbOpt = (SelectableFile) en.nextElement();
-            if (tbOpt.isSelected()) {
-                rs.addElement(tbOpt.getAbsolutePath());
-            }
+            rs.addElement(tbOpt.getAbsolutePath());
         }
         return rs;
     }
@@ -472,11 +470,19 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             if (FileUtil.isFileType(to.getAbsolutePath(), FileUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
                 gotoDir(to);
-            } else {
+            }
+            else {
                 if (multiSelect) {
-                    to.setSelected(!to.isSelected());
+                    Vector selectedItems = fileList.getSelectedValues();
+                    if ( selectedItems.contains(to) ) {
+                        selectedItems.removeElement(to);
+                    }
+                    else {
+                        selectedItems.addElement(to);
+                    }
                     fileList.repaint();
-                } else {
+                }
+                else {
                     actionPerformed("done");
                 }
             }
@@ -486,10 +492,12 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             if (FileUtil.isFileType(to.getAbsolutePath(), FileUtil.TYPE_FOLDER)) {
                 // drill down into another dir!
                 gotoDir(to);
-            } else {
+            }
+            else {
                 if (multiSelect) {
                     // the editor does this
-                } else {
+                }
+                else {
                     actionPerformed("done");
                 }
             }
@@ -751,13 +759,59 @@ public void fireActionPerformed() {
             dataVector.setElementAt(object, index);
         }
 
+
+        //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
+        //==== ListSelectionModel ==================================================
+        //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
+
+        
+        /**
+         * @see javax.swing.JList#getSelectedValues() JList.getSelectedValues
+         */
+        public Vector getSelectedValues() {
+            if (selected==null) {
+                Vector v = new Vector(1);
+                int current = getSelectedIndex();
+                if (current>=0) {
+                    v.addElement(getElementAt(current));
+                }
+                return v;
+            }
+            return selected;
+        }
+
+        /**
+         * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
+         */
+        public void setSelectedValues(Vector v) {
+            selected = v;
+        }
+        
+        private Vector selected;
+
+        /**
+         * @see javax.swing.ListSelectionModel#isSelectedIndex(int) ListSelectionModel.isSelectedIndex
+         */
+        public boolean isSelectedIndex(int index) {
+            return selected==null? getSelectedIndex() == index:selected.contains(getElementAt(index));
+        }
+
+        /**
+         * @see javax.swing.JList#clearSelection() JList.clearSelection
+         * @see javax.swing.ListSelectionModel#clearSelection() ListSelectionModel.clearSelection
+         */
+        public void clearSelection() {
+            selected = null;
+        }
+        
+        
     }
 
     class SelectableFile {
 
         private WeakReference thumb;
         private int currentThumbSize;
-        private boolean toggleSelected = false;
+        //private boolean toggleSelected = false;
         private String filename;
         private boolean loadFailed;
 
@@ -771,14 +825,6 @@ public void fireActionPerformed() {
         public SelectableFile(String name) {
             //super(name, null, img);
             filename = name;
-        }
-
-        public boolean isSelected() {
-            return toggleSelected;
-        }
-
-        public void setSelected(boolean toggleSelected) {
-            this.toggleSelected = toggleSelected;
         }
 
         public String getAbsolutePath() {
@@ -910,23 +956,23 @@ public void fireActionPerformed() {
             }
         }
 
-        public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected_IGNORE, boolean cellHasFocus) {
-            setupState(list, ((SelectableFile)value).isSelected(), cellHasFocus);
+        public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            setupState(list, isSelected, cellHasFocus);
             if (getForeground()==Style.NO_COLOR && list!=null) {// if our theme does not give us a foreground, then fall back to parent
                 setForeground( list.getForeground() );
             }
-            return getTableCellEditorComponent(null, value, isSelected_IGNORE, 0, 0);
+            return getTableCellEditorComponent(null, value, isSelected, 0, 0);
         }
 
         public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected_IGNORE, int row, int column) {
             tbOption = (SelectableFile) value;
-            // used when in editor mode, but not by the renderer
-            setSelected(tbOption.isSelected());
+            // used when in editor mode, but not by the renderer            
+            GridList grid = (GridList)table;
+            setSelected( grid.isSelectedIndex( grid.convertLin(row, column) ) );
             return this;
         }
 
         public Object getCellEditorValue() {
-            tbOption.setSelected(isSelected());
             return tbOption;
         }
 
