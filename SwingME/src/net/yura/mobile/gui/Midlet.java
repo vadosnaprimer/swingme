@@ -50,10 +50,14 @@ public abstract class Midlet extends MIDlet {
 
     private static int platform = detectPlatform();
 
+    //#mdebug info
     static {
-        //#debug warn
-        Logger.setLogger( new DesktopLogger(Logger.WARN) );
+        // on me4se we do not care about the popup as we have the console anyway
+        if (getPlatform()!=PLATFORM_ME4SE) {
+            Logger.setLogger( new DesktopLogger(Logger.WARN) );
+        }
     }
+    //#enddebug
 
     private DesktopPane rootpane;
     private Hashtable platformReqParams;
