@@ -59,18 +59,13 @@ public class MetalIcon extends Icon {
                 g.setColor( fcolor );
                 g.drawRect(x, y, w-1, h-1);
 
-                if (c instanceof Button) {
-                    Button b = (Button)c;
-                    if (b.isSelected()) {
+                if ( ( c.getCurrentState() & Style.SELECTED)!=0 ) {
 
-                        for (int pad=3;pad<6;pad++) {
-                            g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
-                            g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
-                        }
+                    for (int pad=3;pad<6;pad++) {
+                        g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
+                        g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
                     }
                 }
-
-
 
         }
         else if (type == LookAndFeel.ICON_RADIO) {
@@ -83,16 +78,11 @@ public class MetalIcon extends Icon {
                 g.setColor( fcolor );
                 g.drawArc(x, y, w-1, h-1, 0, 360);
 
-                if (c instanceof Button) {
-                    Button b = (Button)c;
-                    if (b.isSelected()) {
-                        if (b.isSelected()){
+                if ( ( c.getCurrentState() & Style.SELECTED)!=0 ) {
 
-                            int w2 = w/4;
-                            int h2 = h/4;
-                            g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
-                        }
-                    }
+                    int w2 = w/4;
+                    int h2 = h/4;
+                    g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
                 }
         }
         else if (type == LookAndFeel.ICON_COMBO) {

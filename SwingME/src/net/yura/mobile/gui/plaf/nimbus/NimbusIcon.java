@@ -1,12 +1,11 @@
 package net.yura.mobile.gui.plaf.nimbus;
 
 import java.util.Vector;
-import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
-import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.plaf.LookAndFeel;
+import net.yura.mobile.gui.plaf.Style;
 
 /**
  * @author Nathan
@@ -50,32 +49,23 @@ public class NimbusIcon extends Icon {
 
         // Draw the checkbox tick
         if (type == LookAndFeel.ICON_CHECKBOX) {
-
-            if (c instanceof Button) {
-                Button b = (Button)c;
-                if (b.isSelected()) {
-                    int w = getIconWidth();
-                    int h = getIconHeight();                    
-                    for (int pad=3;pad<6;pad++) {
-                        g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
-                        g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
-                    }
+            if ( ( c.getCurrentState() & Style.SELECTED)!=0 ) {
+                int w = getIconWidth();
+                int h = getIconHeight();                    
+                for (int pad=3;pad<6;pad++) {
+                    g.drawLine(x+pad, y+h/2, x+w/3, y+h-pad);
+                    g.drawLine(x+w/3, y+h-pad,x+w-pad,y+pad);
                 }
             }
-
         }
         // Draw a radio icon
         else if (type == LookAndFeel.ICON_RADIO) {
-            int w = getIconWidth();
-            int h = getIconHeight();
-
-            if (c instanceof Button) {
-                Button b = (Button)c;
-                if (b.isSelected()){
-                    int w2 = borders.size()+1;
-                    int h2 = borders.size()+1;
-                    g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
-                }
+            if ( ( c.getCurrentState() & Style.SELECTED)!=0 ) {
+                int w = getIconWidth();
+                int h = getIconHeight();
+                int w2 = borders.size()+1;
+                int h2 = borders.size()+1;
+                g.fillArc(x+w2, y+h2, w-(w2*2), h-(h2*2), 0, 360);
             }
         }
         else if (type == LookAndFeel.ICON_ARROW_UP) {

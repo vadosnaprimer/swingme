@@ -262,6 +262,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                 fileTable.setDefaultEditor(SelectableFile.class, editor);
                 fileTable.setDefaultRenderer(SelectableFile.class, thumbOptionRenderer);
             }
+
+            fileTable.setSelectedValues( multiSelect?new Vector():null );
+
             fileTable.setListData(files);
             scroll.add(fileTable);
         }
@@ -275,6 +278,9 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
                     fileList.setDoubleClick(true);
                 }
             }
+
+            fileList.setSelectedValues( multiSelect?new Vector():null );
+
             fileList.setListData(files);
             scroll.add(fileList);
         }
@@ -495,7 +501,14 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             }
             else {
                 if (multiSelect) {
-                    // the editor does this
+                    Vector selectedItems = fileTable.getSelectedValues();
+                    if ( selectedItems.contains(to) ) {
+                        selectedItems.removeElement(to);
+                    }
+                    else {
+                        selectedItems.addElement(to);
+                    }
+                    fileTable.repaint();
                 }
                 else {
                     actionPerformed("done");
@@ -957,17 +970,26 @@ public void fireActionPerformed() {
         }
 
         public Component getListCellRendererComponent(Component list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            tbOption = (SelectableFile) value;
+            
+            if (list instanceof GridList) {
+                isSelected = ((GridList)list).isSelectedIndex( index );
+            }
+
             setupState(list, isSelected, cellHasFocus);
+
             if (getForeground()==Style.NO_COLOR && list!=null) {// if our theme does not give us a foreground, then fall back to parent
                 setForeground( list.getForeground() );
             }
-            return getTableCellEditorComponent(null, value, isSelected, 0, 0);
+
+            return this;
         }
 
         public Component getTableCellEditorComponent(Table table, Object value, boolean isSelected_IGNORE, int row, int column) {
             tbOption = (SelectableFile) value;
-            // used when in editor mode, but not by the renderer            
+            
             GridList grid = (GridList)table;
+            
             setSelected( grid.isSelectedIndex( grid.convertLin(row, column) ) );
             return this;
         }
