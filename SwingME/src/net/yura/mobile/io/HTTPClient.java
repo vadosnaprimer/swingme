@@ -171,7 +171,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
         }
         catch(Exception ex) {
-            Logger.info(ex);
+            //Logger.info(ex); // we pass this exception onto other parts of the app, and they can print if if they need to
             onError(request, respCode, headers, ex);
         }
         finally {
