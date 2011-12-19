@@ -577,7 +577,7 @@ public class List extends Component implements ActionListener {
             toggleHelper(current,selected==null,false);
             toggleHelper(i,true,true);
         }
-        else if (selected!=null && (clearSelectionOnClick || selected.isEmpty())) {
+        else if (selected!=null && (clearSelectionOnClick || selected.isEmpty()) && selectedCreated) {
             clearSelection();
         }
         setSelectedIndex(i);
@@ -587,7 +587,7 @@ public class List extends Component implements ActionListener {
             toggleHelper(current, i==current || addMode , i==current || !addMode  );
             toggleHelper(i, i!=current && addMode , i!=current && !addMode);
         }
-        else if (selected!=null && selected.isEmpty()) {
+        else if (selected!=null && selected.isEmpty() && selectedCreated) {
             clearSelection();
         }
         setSelectedIndex(i);
@@ -596,10 +596,11 @@ public class List extends Component implements ActionListener {
         return keys.isDownKey(KeyEvent.KEY_EDIT) || keys.isDownKey('#');
     }
 
-    private boolean addMode;
+    private boolean addMode,selectedCreated;
     private void toggleHelper(int i,boolean addTest,boolean removeTest) {
         if (i<0 || (!addTest && !removeTest)) return;
         if (selected==null) {
+            selectedCreated = true;
             selected = new Vector();
         }
         Object obj = getElementAt(i);

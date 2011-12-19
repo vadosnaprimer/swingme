@@ -77,6 +77,7 @@ public class RemoteTest extends Thread {
             }
             catch (Throwable ex) {
 //                //#debug info
+                System.out.println("failed to start RemoteTest "+ex);
 //                ex.printStackTrace();
             }
 
