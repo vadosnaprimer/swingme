@@ -763,6 +763,10 @@ public class XULLoader {
                 int pos = position(hTextPos, true);
                 label.setHorizontalTextPosition(pos);
             }
+            String margin = (String)properties.get("margin");
+            if (margin!=null) {
+                label.setMargin( adjustSizeToDensity(margin) );
+            }
 
             if (labelText != null) {
                 label.setText( getPropertyText(labelText,i18n) );
