@@ -470,12 +470,7 @@ public class ImageUtil {
     return outImage;
   }
 
-
-
-    public static void saveImage(Image image, OutputStream outputStream) {
-        
-        try {
-            
+    public static void saveImage(Image image, OutputStream outputStream, String format) throws Exception {
             //Create MediaProcessor for raw Image
             javax.microedition.amms.MediaProcessor mediaProc = javax.microedition.amms.GlobalManager.createMediaProcessor("image/raw");
             
@@ -483,7 +478,7 @@ public class ImageUtil {
             javax.microedition.amms.control.ImageFormatControl formatControl =
                     (javax.microedition.amms.control.ImageFormatControl)mediaProc.getControl("javax.microedition.amms.control.ImageFormatControl");
             //Set necessary format
-            formatControl.setFormat("image/jpeg");
+            formatControl.setFormat("image/"+format);
             
             //formatControl.setParameter("quality", 80);
             
@@ -493,10 +488,21 @@ public class ImageUtil {
             // Do the actual processing. If you do not want to use a blocking call, 
             // use start() and MediaProcessorListener.
             mediaProc.complete();
-            
+    }
+
+    public static void saveImage(Image image, OutputStream outputStream) {
+        
+        try {
+            saveImage(image, outputStream, "jpeg");
         }
         catch(Exception ex) {
-            Logger.warn(ex);
+            try {
+                saveImage(image, outputStream, "png");
+            }
+            catch(Exception ex2) {
+                Logger.warn(ex);
+                Logger.warn(ex2);
+            }
         }
         
     }
