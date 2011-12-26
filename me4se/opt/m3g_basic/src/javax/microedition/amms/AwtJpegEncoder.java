@@ -26,7 +26,7 @@ public class AwtJpegEncoder implements MediaProcessor, ImageFormatControl {
             
             if ("jpeg".equals(imageIOformat) || "jpg".equals(imageIOformat)) {
                 try {
-                    System.out.print("failed to save with ImageIO, falling back to com.sun.image.codec.jpeg");
+                    System.out.println("failed to save with ImageIO, falling back to com.sun.image.codec.jpeg");
                     BufferedImage img = image._image;
                     com.sun.image.codec.jpeg.JPEGImageEncoder encoder = com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(outputStream);
                     com.sun.image.codec.jpeg.JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(img);
