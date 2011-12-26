@@ -3,6 +3,8 @@ package net.yura.me4se;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.lang.reflect.Field;
+import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.ApplicationManager;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Frame;
@@ -45,10 +47,28 @@ public class ME4SEPanel extends Container {
         return manager;
     }
 
-    //public void destroy() {
+    public void destroy() {
     //    can not use this as causes System.exit in all events
     //    manager.destroy(true, false); // true will cause System.exit
-    //}
+        
+        try {
+
+            Field man = ApplicationManager.class.getDeclaredField("manager");
+            man.setAccessible(true);
+            if (man.get(null) == manager) {
+                System.out.println("[ME4SEPanel] setting manager to null");
+                man.set(null, null);
+            }
+
+            ((EmptyMidlet)manager.active).destroyApp(true); // this will set desktop to null
+            
+            Display.kill(desktop); // clear this app from the static midlet->display mapping
+        }
+        catch(Exception ex) {
+            throw new RuntimeException(ex);
+        }
+            
+    }
 
     public java.awt.Component getComponent() {
         return getComponents()[0];

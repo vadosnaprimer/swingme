@@ -101,7 +101,7 @@ public abstract class MIDlet {
      * run another MIDlet of the suite.
      */
 
-    if (!inDestruction && this == ApplicationManager.getInstance().active)
+    if (!inDestruction && ApplicationManager.isInitialized() && this == ApplicationManager.getInstance().active)
       ApplicationManager.getInstance().destroy(false, false);
 
   }

@@ -149,7 +149,7 @@ public class RecordStoreImpl extends AbstractRecordStore  {
 
         private final static Vector todo= new Vector();
         static {
-            new Thread() {
+            new Thread("RecordStoreImpl") {
                 public void run() {
 
                     while(true) {

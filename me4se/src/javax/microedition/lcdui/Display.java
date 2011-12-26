@@ -24,6 +24,8 @@ package javax.microedition.lcdui;
 
 import java.awt.Frame;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Vector;
 
 import javax.microedition.midlet.ApplicationManager;
@@ -113,7 +115,7 @@ public class Display {
 
   private MIDlet midlet;
   protected Displayable current;
-  private static ScmDisplayable currentContainer;
+  //private static ScmDisplayable currentContainer;
   protected Vector callSerially = new Vector();
   protected TickerThread tickerThread = new TickerThread(this);
   Vibrator vibrator;
@@ -201,8 +203,11 @@ public class Display {
     if (manager.currentlyShown == d || manager.active != midlet)
       return;
 
-    if (currentContainer != null)
-      manager.displayContainer.remove(currentContainer);
+    //if (currentContainer != null)
+    //  manager.displayContainer.remove(currentContainer);
+    while (manager.displayContainer.getComponentCount() > 0) {
+        manager.displayContainer.remove( manager.displayContainer.getComponentCount()-1 );
+    }
 
     if (manager.currentlyShown instanceof Canvas)
       ((Canvas) manager.currentlyShown).hideNotify();
@@ -219,10 +224,10 @@ public class Display {
     manager.displayContainer.add(d.container);
     d.display = this;
     manager.currentlyShown = d;
-    currentContainer = d.container;
+    //currentContainer = d.container;
     current._showNotify();
     //manager.wrapper.requestFocus(); // yura, removed
-    currentContainer.repaint();
+    d.container.repaint();
 
     // yura for SwingME to get focus from the start this needs to be in another thread
     new Thread() {
@@ -236,6 +241,19 @@ public class Display {
         }
     }.start();
 
+  }
+  
+  public static void kill(Displayable dis) {
+      
+      Iterator it = midlets.entrySet().iterator();
+      while (it.hasNext()) {
+          Map.Entry entry = (Map.Entry)it.next();
+          Display display = (Display)entry.getValue();
+          if (display.current == dis) {
+              midlets.remove( entry.getKey() );
+              return;
+          }
+      }
   }
 
   /**
