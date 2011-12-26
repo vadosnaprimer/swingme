@@ -367,6 +367,10 @@ public class DesktopPane extends Canvas implements Runnable {
         killflag = true;
 
         animateComponent(null);
+        
+        if (desktop==this) {
+            desktop = null;
+        }
     }
 
     /**
