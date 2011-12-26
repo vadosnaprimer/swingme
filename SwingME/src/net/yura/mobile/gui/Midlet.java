@@ -89,7 +89,8 @@ public abstract class Midlet extends MIDlet {
 
             rootpane.kill();
 
-            Display.getDisplay(this).setCurrent((Displayable)null);
+            // YURA: this means send app to background, we do not want to do this here
+            //Display.getDisplay(this).setCurrent((Displayable)null);
 
             notifyDestroyed();
 
