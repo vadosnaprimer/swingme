@@ -9,39 +9,40 @@ import java.awt.image.BufferedImage;
 
 public class AwtJpegEncoder implements MediaProcessor, ImageFormatControl {
 
+    String format;
     Image image;
     OutputStream outputStream;
 
     public void complete() throws javax.microedition.media.MediaException {
 
+        String imageIOformat = format.substring( "image/".length() );
+        
         try {
-             if (javax.imageio.ImageIO.write(image._image, "jpg", outputStream) ) {
-                 return;
+             if (!javax.imageio.ImageIO.write(image._image, imageIOformat, outputStream) ) {
+                 throw new Exception("ImageIO.write return false");
              }
         }
         catch(Throwable th) {
-            th.printStackTrace();
-        }
+            
+            if ("jpeg".equals(imageIOformat) || "jpg".equals(imageIOformat)) {
+                try {
+                    System.out.print("failed to save with ImageIO, falling back to com.sun.image.codec.jpeg");
+                    BufferedImage img = image._image;
+                    com.sun.image.codec.jpeg.JPEGImageEncoder encoder = com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(outputStream);
+                    com.sun.image.codec.jpeg.JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(img);
+                    param.setQuality( 0.5f, false);
+                    encoder.setJPEGEncodeParam(param);
+                    encoder.encode(img);
+                    outputStream.close();
+                    return; // yay, everything worked!
+                }
+                catch (Throwable ex) { } // anything really can go wrong here, but we do not really care
+            }
 
-        System.out.print("failed to save with ImageIO, falling back to com.sun.image.codec.jpeg");
-
-        try {
-        
-            BufferedImage img = image._image;
-            com.sun.image.codec.jpeg.JPEGImageEncoder encoder = com.sun.image.codec.jpeg.JPEGCodec.createJPEGEncoder(outputStream);
-            com.sun.image.codec.jpeg.JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(img);
-            param.setQuality( 0.5f, false);
-            encoder.setJPEGEncodeParam(param);
-            encoder.encode(img);
-            outputStream.close();
-        }
-        catch (Exception ex) {
             javax.microedition.media.MediaException mex = new javax.microedition.media.MediaException();
-            mex.initCause(ex);
+            mex.initCause(th);
             throw mex;
         }
-
-
     }
 
     public void setInput(Object inputStream) {
@@ -61,7 +62,7 @@ public class AwtJpegEncoder implements MediaProcessor, ImageFormatControl {
     }
 
     public void setFormat(String string) {
-        // only jpeg is supported here
+        format = string;
     }
 
 }
