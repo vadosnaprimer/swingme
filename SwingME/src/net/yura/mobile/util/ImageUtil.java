@@ -496,6 +496,7 @@ public class ImageUtil {
             saveImage(image, outputStream, "jpeg");
         }
         catch(Exception ex) {
+            System.out.println("failed to save jpg, falling back to png");
             try {
                 saveImage(image, outputStream, "png");
             }
