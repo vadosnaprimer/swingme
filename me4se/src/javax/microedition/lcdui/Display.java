@@ -23,11 +23,13 @@
 package javax.microedition.lcdui;
 
 import java.awt.Frame;
+import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
+import java.util.WeakHashMap;
 import javax.microedition.midlet.ApplicationManager;
 import javax.microedition.midlet.MIDlet;
 
@@ -111,21 +113,23 @@ public class Display {
    */
   public static final int COLOR_HIGHLIGHTED_BORDER = 5;
 
-  private static Hashtable midlets = new Hashtable();
+  private static Map midlets = new WeakHashMap();
 
-  private MIDlet midlet;
-  protected Displayable current;
+  private WeakReference midlet;
+  private WeakReference current;
   //private static ScmDisplayable currentContainer;
   protected Vector callSerially = new Vector();
-  protected TickerThread tickerThread = new TickerThread(this);
   Vibrator vibrator;
 
   /**
    * @ME4SE INTERNAL
    */
   protected Display(MIDlet midlet) {
-    this.midlet = midlet;
-    tickerThread.start();
+    this.midlet = new WeakReference(midlet);
+    
+    // YURA: not needed any more
+    //TickerThread tickerThread = new TickerThread(this);
+    //tickerThread.start();
   }
 
   /**
@@ -198,9 +202,9 @@ public class Display {
         return;
     }
 
-    current = d;
+    current = new WeakReference(d);
 
-    if (manager.currentlyShown == d || manager.active != midlet)
+    if (manager.currentlyShown == d || manager.active != midlet.get() )
       return;
 
     //if (currentContainer != null)
@@ -218,14 +222,14 @@ public class Display {
     if (d instanceof Alert) {
       Alert alert = (Alert) d;
       if (alert.next == null)
-        alert.next = current;
+        alert.next = d;
     }
 
     manager.displayContainer.add(d.container);
     d.display = this;
     manager.currentlyShown = d;
     //currentContainer = d.container;
-    current._showNotify();
+    d._showNotify();
     //manager.wrapper.requestFocus(); // yura, removed
     d.container.repaint();
 
@@ -241,19 +245,6 @@ public class Display {
         }
     }.start();
 
-  }
-  
-  public static void kill(Displayable dis) {
-      
-      Iterator it = midlets.entrySet().iterator();
-      while (it.hasNext()) {
-          Map.Entry entry = (Map.Entry)it.next();
-          Display display = (Display)entry.getValue();
-          if (display.current == dis) {
-              midlets.remove( entry.getKey() );
-              return;
-          }
-      }
   }
 
   /**
@@ -298,7 +289,7 @@ public class Display {
    * @API MIDP-1.0
    */
   public Displayable getCurrent() {
-    return current;
+    return current==null?null:(Displayable)current.get();
   }
 
   /**

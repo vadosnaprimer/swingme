@@ -61,8 +61,7 @@ public class ME4SEPanel extends Container {
             }
 
             ((EmptyMidlet)manager.active).destroyApp(true); // this will set desktop to null
-            
-            Display.kill(desktop); // clear this app from the static midlet->display mapping
+
         }
         catch(Exception ex) {
             throw new RuntimeException(ex);

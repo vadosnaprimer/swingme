@@ -179,7 +179,7 @@ public abstract class Displayable {
    * @API MIDP-1.0
    */
   public boolean isShown() {
-    return display != null && display.current == this;
+    return display != null && display.getCurrent() == this;
   }
 
   /**

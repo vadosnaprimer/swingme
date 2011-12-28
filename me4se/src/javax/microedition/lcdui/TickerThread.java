@@ -26,7 +26,7 @@ class TickerThread extends Thread {
 			catch(InterruptedException e){
 			}
 			
-			Displayable curr = display.current;
+			Displayable curr = display.getCurrent();
 
 			if(curr instanceof Screen) {
 				Screen scr = (Screen) curr;
