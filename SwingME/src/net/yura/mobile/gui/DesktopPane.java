@@ -367,12 +367,12 @@ public class DesktopPane extends Canvas implements Runnable {
         killflag = true;
 
         animateComponent(null);
-        
-        // can not do this here, as too many places expect this to NEVER be null,
-        // and slow events can arive late, and it will be null
-        //if (desktop==this) {
-        //    desktop = null;
-        //}
+
+        // Animation class checks if desktop is null to know if it should close down
+        if (desktop==this) {
+            desktop = null;
+        }
+
     }
 
     /**

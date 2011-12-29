@@ -10,8 +10,8 @@ public class Animation extends Thread{
 
     static Animation animation;
     public static int FPS = 10;
-    static final Vector components = new Vector();
-    static final Hashtable lastcall = new Hashtable();
+    final Vector components = new Vector();
+    final Hashtable lastcall = new Hashtable();
 
     public Animation() {
         super("SwingMe-Animation-Two");
@@ -22,7 +22,7 @@ public class Animation extends Thread{
             long lastWait = System.currentTimeMillis();
             int sleep = 1000/FPS;
 
-            while (true) {
+            mainloop: while (true) {
 
 
                 synchronized (components) {
@@ -44,6 +44,10 @@ public class Animation extends Thread{
                         continue;
                     }
 
+                    if (DesktopPane.getDesktopPane()==null) { // DesktopPane is set to null when killflag==true
+                        break mainloop;
+                    }
+                    
                     cmp.animate();
                 }
 
@@ -70,18 +74,19 @@ public class Animation extends Thread{
             animation = new Animation();
             animation.start();
         }
+        Animation ani = animation;
 
         // put it firt in the table, so if its in the vector, its def in the table
-        lastcall.put(cmp, new Long(System.currentTimeMillis()));
+        ani.lastcall.put(cmp, new Long(System.currentTimeMillis()));
 
-        synchronized (components) {
-            if (!components.contains(cmp)) {
+        synchronized (ani.components) {
+            if (!ani.components.contains(cmp)) {
 
                 //#debug debug
                 Logger.info("[Animation] registerAnimated "+cmp+"@"+System.identityHashCode(cmp));
 
-                components.addElement(cmp);
-                components.notify();
+                ani.components.addElement(cmp);
+                ani.components.notify();
             }
         }
     }
@@ -91,7 +96,11 @@ public class Animation extends Thread{
         //#debug debug
         Logger.info("[Animation] deregisterAnimated "+cmp+"@"+System.identityHashCode(cmp));
 
-        components.removeElement(cmp);
-        lastcall.remove(cmp);
+        Animation ani = animation;
+        
+        if (ani!=null) {
+            ani.components.removeElement(cmp);
+            ani.lastcall.remove(cmp);
+        }
     }
 }
