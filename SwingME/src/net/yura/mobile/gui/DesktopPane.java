@@ -368,9 +368,11 @@ public class DesktopPane extends Canvas implements Runnable {
 
         animateComponent(null);
         
-        if (desktop==this) {
-            desktop = null;
-        }
+        // can not do this here, as too many places expect this to NEVER be null,
+        // and slow events can arive late, and it will be null
+        //if (desktop==this) {
+        //    desktop = null;
+        //}
     }
 
     /**
