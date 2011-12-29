@@ -167,7 +167,7 @@ public class Logger {
 
     protected synchronized void log(Throwable throwable, int level)
     {
-      System.err.print(toString(level) +" "+ throwable);
+      System.err.println(toString(level) +" "+ throwable);
       throwable.printStackTrace();
     }
 }
