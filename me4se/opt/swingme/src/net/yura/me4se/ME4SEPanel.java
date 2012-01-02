@@ -77,7 +77,7 @@ public class ME4SEPanel extends Container {
 
         frame1 = new Frame();
         frame1.setUndecorated(true);
-        frame1.add(panel);
+        frame1.getContentPane().add(panel);
         frame1.setMaximum(true);
 
         desktop.add(frame1);
