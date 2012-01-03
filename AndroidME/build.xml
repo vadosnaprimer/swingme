@@ -1,189 +1,143 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="AndroidMe" default="help">
+<project name="AndroidME" default="help">
 
-    <property name="sdk.dir" value="C:/Dev/android-sdk-windows" />
-    <import file="nbproject/build-impl.xml"/>
-
-	<copy file="../AndroidME/AndroidManifest.xml" todir="."/>
-	
-	<path id="project.classpath">
-	    <pathelement location="../AndroidME/src_Android"/>   
-	    <pathelement location="../AndroidME/src_JSR82_Bluetooth"/>
-	    <pathelement location="../AndroidME/src_JSR120_SMS"/>
-	    <pathelement location="../AndroidME/src_JSR135_Multimedia"/>
-	    <pathelement location="../AndroidME/src_JSR179_Location"/>
-	    <pathelement location="../AndroidME/src_JSR184_3D"/>
-	    <pathelement location="../AndroidME/src_MIDP"/>
-	    <pathelement location="../AndroidME/src_Test"/>
-	           
-	    <pathelement location="../Abba/src"/>
-	    <pathelement location="../BadooMobile/src"/>
-	    <!--
-	    <pathelement location="../LWUIT/trunk/MIDP/LWUIT/src"/>
-	    <pathelement location="../LWUIT/trunk/MIDP/Applications/LWUITSpeed/src"/>
-	    -->
-	    <pathelement location="../SwingME/src"/>
-	    <pathelement location="../SwingMETest/src"/>
-	    <pathelement location="../UtilME/src"/>
-	    
-	</path>
-	
-	<property name="source.dir" refid="project.classpath"/>
-	<property name="source.absolute.dir" refid="project.classpath" />
-	<property name="external.libs.dir" value="../UtilME/lib" />
-	
-	
-	<property name="resource.dir" value="../AndroidME/res" />
-	<property name="asset.dir" value="../workspace_Android/AndroidMe2/assets" />
-
-
-    <!-- The local.properties file is created and updated by the 'android' tool.
-         It contains the path to the SDK. It should *NOT* be checked in in Version
-         Control Systems. -->
-    <property file="local.properties" />    
-
-    <!-- The build.properties file can be created by you and is never touched
-         by the 'android' tool. This is the place to change some of the default property values
-         used by the Ant rules.
-         Here are some properties you may want to change/update:
-
-         application.package
-             the name of your application package as defined in the manifest. Used by the
-             'uninstall' rule.
-         source.dir
-             the name of the source directory. Default is 'src'.
-         out.dir
-             the name of the output directory. Default is 'bin'.
-
-         Properties related to the SDK location or the project target should be updated
-          using the 'android' tool with the 'update' action.
-
-         This file is an integral part of the build system for your application and
-         should be checked in in Version Control Systems.
-
-         -->
-    <property file="build.properties" />
-
-    <!-- The default.properties file is created and updated by the 'android' tool, as well
-         as ADT.
-         This file is an integral part of the build system for your application and
-         should be checked in in Version Control Systems. -->
-    <property file="default.properties" />
-
-    <!-- Custom Android task to deal with the project target, and import the proper rules.
-         This requires ant 1.6.0 or above. -->
-    <path id="android.antlibs">
-        <pathelement path="${sdk.dir}/tools/lib/anttasks.jar" />
-        <pathelement path="${sdk.dir}/tools/lib/sdklib.jar" />
-        <pathelement path="${sdk.dir}/tools/lib/androidprefs.jar" />
-        <pathelement path="${sdk.dir}/tools/lib/apkbuilder.jar" />
-        <pathelement path="${sdk.dir}/tools/lib/jarutils.jar" />
+    <path id="src">
+      <pathelement location="../UtilME/src"/>
+      <pathelement location="../SwingME/src"/>
+      <pathelement location="src_Android"/>
+      <pathelement location="src_MIDP"/>
+      <pathelement location="src_SwingME_plaf"/>
+      <pathelement location="src_JSR184_3D"/>
+      <pathelement location="src_JSR179_Location"/>
+      <pathelement location="src_JSR82_Bluetooth"/>
+      <pathelement location="src_JSR135_Multimedia"/>
+      <pathelement location="src_JSR120_SMS"/>
+      <pathelement location="src_JSR234_Advanced_Multimedia"/>
     </path>
     
     
-    <property name="verbose" value="false" />
+    <pathconvert property="source.absolute.dir" refid="src"/>
     
-    <target name="-aidl" depends="-dirs">
-        <echo>Compiling aidl ignored...</echo>        
-    </target>
     
-    <!-- Eclipse uses "bin" for its own output, so we do the same. -->
-    <property name="outdir" location="bin" />
-	<property name="AndroidFixResourceAsStream.jar" value="../AndroidME/lib/AndroidFixResourceAsStream.jar" />
+    <!-- 
+    
+    <property name="source.dir" value="src" />
+    <property name="source.absolute.dir" location="../UtilME/src:../SwingME/src:src_Android:src_MIDP:src_SwingME_plaf:src_JSR184_3D:src_JSR179_Location:src_JSR82_Bluetooth:src_JSR135_Multimedia:src_JSR120_SMS:src_JSR234_Advanced_Multimedia"/>
 
-	<target name="fix-build">
+ 
+        The local.properties file is created and updated by the 'android' tool.
+         It contains the path to the SDK. It should *NOT* be checked into
+         Version Control Systems. -->
+    <loadproperties srcFile="local.properties" />
+
+    <!-- The ant.properties file can be created by you. It is only edited by the
+         'android' tool to add properties to it.
+         This is the place to change some Ant specific build properties.
+         Here are some properties you may want to change/update:
+
+         source.dir
+             The name of the source directory. Default is 'src'.
+         out.dir
+             The name of the output directory. Default is 'bin'.
+
+         For other overridable properties, look at the beginning of the rules
+         files in the SDK, at tools/ant/build.xml
+
+         Properties related to the SDK location or the project target should
+         be updated using the 'android' tool with the 'update' action.
+
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems.
+
+         -->
+    <property file="ant.properties" />
+
+    <!-- The project.properties file is created and updated by the 'android'
+         tool, as well as ADT.
+
+         This contains project specific properties such as project target, and library
+         dependencies. Lower level build properties are stored in ant.properties
+         (or in .classpath for Eclipse projects).
+
+         This file is an integral part of the build system for your
+         application and should be checked into Version Control Systems. -->
+    <loadproperties srcFile="project.properties" />
+
+    <!-- quick check on sdk.dir -->
+    <fail
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project'"
+            unless="sdk.dir"
+    />
+
+
+<!-- extension targets. Uncomment the ones where you want to do custom work
+     in between standard targets -->
+<!--
+    <target name="-pre-build">
+    </target>
+    <target name="-pre-compile">
+    </target>
+
+    /* This is typically used for code obfuscation.
+       Compiled code location: ${out.classes.absolute.dir}
+       If this is not done in place, override ${out.dex.input.absolute.dir} */
+    <target name="-post-compile">
+    </target>
+-->
+
+    <!-- Import the actual build file.
+
+         To customize existing targets, there are two options:
+         - Customize only one target:
+             - copy/paste the target into this file, *before* the
+               <import> task.
+             - customize it to your needs.
+         - Customize the whole content of build.xml
+             - copy/paste the content of the rules files (minus the top node)
+               into this file, replacing the <import> task.
+             - customize to your needs.
+
+         ***********************
+         ****** IMPORTANT ******
+         ***********************
+         In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
+         in order to avoid having your file be overridden by tools such as "android update project"
+    -->
+    <!-- version-tag: 1 -->
+    <import file="${sdk.dir}/tools/ant/build.xml" />
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <!--
+    ############################################################################
+    ############################ some old crap #################################
+    ############################################################################
+    -->
+
+    
+    <!-- Eclipse uses "bin" for its own output, so we do the same.
+    <property name="outdir" location="bin" />
+    <property name="AndroidFixResourceAsStream.jar" value="../AndroidME/lib/AndroidFixResourceAsStream.jar" />
+
+    <target name="fix-build">
 		<echo>Fixing build....</echo>
 		<echo message="ClassPath: ${AndroidFixResourceAsStream.jar}"/>
 				    	
         <java classname="net.yura.mobile.asm.AndroidFixer" classpath="${AndroidFixResourceAsStream.jar}">     
-        	<arg value="net.yura.android.AndroidMeActivity"/>
+            <arg value="net.yura.android.AndroidMeActivity"/>
             <arg value="${outdir}"/>            
         </java>
         
-<!--
-        <move file="${outdir}" tofile="${outdir}.tmp"/>
-        
-        <jar destfile="${outdir}.tmp/app.jar" basedir="${outdir}.tmp/classes/"/>
-	   
-        <property name="proguard.home" value="c:\Apps\proguard4.4\lib" />
-	     
-	   <java fork="true" jar="${proguard.home}/proguard.jar">
-            <arg value="@proguard.cfg"/>
-            <arg value="-injars       ${outdir}.tmp/app.jar"/>
-            <arg value="-outjars      ${outdir}.tmp/app2.jar"/>
-            <arg value="-libraryjars  ${android.jar};${external.libs.dir}"/>       
-       </java>
-        
-       <unzip src="${outdir}.tmp/app2.jar" dest="${outdir}/classes/"/>
--->
     </target>
-        
-    <target name="-dex" depends="compile, fix-build	">
-        <dex-helper />
-    </target>
-    
-    
-
-    <taskdef name="setup"
-        classname="com.android.ant.SetupTask"
-        classpathref="android.antlibs" />
-
-    <!-- Execute the Android Setup task that will setup some properties specific to the target,
-         and import the build rules files.
-
-         The rules file is imported from
-            <SDK>/platforms/<target_platform>/templates/android_rules.xml
-
-         To customize some build steps for your project:
-         - copy the content of the main node <project> from android_rules.xml
-         - paste it in this build.xml below the <setup /> task.
-         - disable the import by changing the setup task below to <setup import="false" />
-
-         This will ensure that the properties are setup correctly but that your customized
-         build steps are used.
     -->
-    <setup />
-    
-    <property name="source.absolute.dir" refid="project.classpath" />
-    
-     <macrodef name="package-helper">
-        <attribute name="sign.package" />
-        <element name="extra-jars" optional="yes" />
-        <sequential>
-            <apkbuilder
-                    outfolder="${out.absolute.dir}"
-                    basename="${ant.project.name}"
-                    signed="@{sign.package}"
-                    verbose="${verbose}">
-                <file path="${intermediate.dex.file}" />
-                <!-- 
-                <sourcefolder path="${source.absolute.dir}" />           	
-                <nativefolder path="${native.libs.absolute.dir}" />
-                <jarfolder path="${external.libs.absolute.dir}" />
-                 --> 
-                <extra-jars/>
-            </apkbuilder>
-        </sequential>
-    </macrodef>
-    
-    
-    <macrodef name="dex-helper">
-       <element name="external-libs" optional="yes" />
-       <element name="extra-parameters" optional="yes" />
-       <sequential>
-         <echo>-----Converting compiled files and external libraries into ${intermediate.dex.file}...
-         </echo>
-         <apply executable="${dx}" failonerror="true" parallel="true">
-             <arg value="--dex" />
-             <arg value="--no-locals" />
-             <arg value="--output=${intermediate.dex.file}" />
-             <extra-parameters />
-             <arg line="${verbose.option}" />
-             <arg path="${out.classes.absolute.dir}" />
-             <fileset dir="${external.libs.absolute.dir}" includes="*.jar" />
-             <external-libs />
-         </apply>
-       </sequential>
-    </macrodef>
-
+        
 </project>
