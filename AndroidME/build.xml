@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="AndroidME" default="help">
 
+    <target name="jar" depends="debug" description="override default build action of netbeans"/>
+
+    <property name="jar.libs.dir" value="../UtilME/lib" />
+
     <path id="src">
       <pathelement location="../UtilME/src"/>
       <pathelement location="../SwingME/src"/>
@@ -14,8 +18,6 @@
       <pathelement location="src_JSR120_SMS"/>
       <pathelement location="src_JSR234_Advanced_Multimedia"/>
     </path>
-    
-    
     <pathconvert property="source.absolute.dir" refid="src"/>
     
     
