@@ -32,19 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>resources</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/SwingMETest/resources</locationURI>
-		</link>
-		<link>
 			<name>src_SwingME</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/SwingME/src</locationURI>
-		</link>
-		<link>
-			<name>src_SwingMETest</name>
-			<type>2</type>
-			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/SwingMETest/src</locationURI>
 		</link>
 		<link>
 			<name>src_UtilME</name>
