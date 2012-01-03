@@ -97,4 +97,33 @@
             </target>
 
             -->
+            
+            
+            
+    <target name="android">
+        
+        <loadproperties srcFile="local.properties" />
+        <property file="ant.properties" />
+        <loadproperties srcFile="project.properties" />
+        
+        <path id="src">
+          <pathelement location="src"/>
+          <pathelement location="../AndroidME/src_Test"/>
+        </path>
+        <pathconvert property="source.absolute.dir" refid="src"/>
+        
+        <fail
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project'"
+            unless="sdk.dir"
+        />
+
+        <ant antfile="${sdk.dir}/tools/ant/build.xml">
+            <target name="clean"/>
+            <target name="debug"/>
+            <target name="install"/>
+        </ant>
+
+    </target>
+            
+            
 </project>
