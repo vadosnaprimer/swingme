@@ -16,10 +16,10 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.gui.components.FileChooser.GridList;
 import net.yura.mobile.gui.components.List;
 import net.yura.mobile.gui.components.MenuBar;
 import net.yura.mobile.gui.components.Panel;
+import net.yura.mobile.gui.components.Table;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.Window;
 import net.yura.mobile.io.UTF8InputStreamReader;
@@ -150,6 +150,7 @@ public class RemoteTest extends Thread {
         boolean isValidComponent = (n1 >= 0 && n1 < focusComps.size());
         if (isValidComponent) {
             Component comp = (Component) focusComps.elementAt(n1);
+            comp.makeVisible();
             comp.requestFocusInWindow();
             if (comp instanceof Button) {
                 ((Button)comp).fireActionPerformed();
@@ -160,10 +161,22 @@ public class RemoteTest extends Thread {
                     list.setSelectedIndex(n2);
                     list.fireActionPerformed();
                 }
-                else if (comp instanceof GridList) {
-                    GridList gridList = (GridList) comp;
-                    gridList.setSelectedIndex(n2);
-                    gridList.fireActionPerformed();
+                else if (comp instanceof Table) {
+                    Table table = (Table) comp;
+                    int numCols = table.getColumnCount();
+                    int row = n2 / numCols;
+                    int col = n2 % numCols;
+
+                    if (row >= 0 && col >= 0) {
+                        table.editCellAt(row, col);
+
+                        // Table is a panel, and its first component is the editor
+                        Component editorComp = (Component) table.getComponents().elementAt(0);
+                        editorComp.makeVisible();
+                        if (editorComp instanceof Button) {
+                            ((Button) editorComp).fireActionPerformed();
+                        }
+                    }
                 }
             }
         }
