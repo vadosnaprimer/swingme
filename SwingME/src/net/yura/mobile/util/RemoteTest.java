@@ -210,6 +210,7 @@ public class RemoteTest extends Thread {
             Component comp = (Component)components.elementAt(c);
 
             if (comp instanceof Button && ((Button)comp).getText().equalsIgnoreCase(text)) {
+                comp.requestFocusInWindow();
                 ((Button)comp).fireActionPerformed();
                 return true;
             }
