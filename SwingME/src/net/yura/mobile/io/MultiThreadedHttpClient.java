@@ -43,7 +43,7 @@ public abstract class MultiThreadedHttpClient {
             HTTPClient client = (HTTPClient)clients.elementAt(c);
             int s = client.getInbox().size();
             if (s < size) {
-                s = size;
+                size = s;
                 choosen = client;
             }
         }
