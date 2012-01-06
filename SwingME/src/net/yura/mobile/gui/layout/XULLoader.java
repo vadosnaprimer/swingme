@@ -1090,6 +1090,10 @@ public class XULLoader {
         XULLoader.dpi = dpi;
     }
     
+    public static String getDPI(){
+    	return dpi;
+    }
+    
     public static int adjustSizeToDensity(int value) {
 
         if ( dpi!=null) {
@@ -1113,5 +1117,4 @@ public class XULLoader {
 
         return value;
     }
-
 }
