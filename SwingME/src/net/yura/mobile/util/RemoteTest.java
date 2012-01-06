@@ -113,6 +113,11 @@ public class RemoteTest extends Thread {
                 onSetCursorInvisible();
                 writer.write("OK\n");
             }
+            else if (command.startsWith("command ")) {
+                String cmd = command.substring("command ".length());
+                boolean result = onCommand(cmd);
+                writer.write(result ? "OK\n" : "FAIL\n");
+            }
             else {
                 System.out.println("Unknown command: "+command);
                 writer.write("UNKNOWN\n");
@@ -182,6 +187,11 @@ public class RemoteTest extends Thread {
         }
 
         return isValidComponent;
+    }
+
+    protected boolean onCommand(String cmd) {
+        // To be overload by sub classes
+        return false;
     }
 
     private void getFocusableItems(Component comp, Vector focusList) {
