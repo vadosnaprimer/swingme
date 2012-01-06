@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import net.yura.mobile.util.RemoteTest;
 import android.app.Instrumentation;
+import android.content.pm.ActivityInfo;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -89,6 +90,21 @@ public class AndroidRemoteTest extends RemoteTest {
                 }
             });
         }
+    }
+
+    @Override
+    protected boolean onCommand(String cmd) {
+        if ("landscape".equalsIgnoreCase(cmd)) {
+            AndroidMeActivity.DEFAULT_ACTIVITY.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            return true;
+        }
+
+        if ("portrait".equalsIgnoreCase(cmd)) {
+            AndroidMeActivity.DEFAULT_ACTIVITY.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            return true;
+        }
+
+        return super.onCommand(cmd);
     }
 
     private static boolean clickText(View view, String clickText) {
