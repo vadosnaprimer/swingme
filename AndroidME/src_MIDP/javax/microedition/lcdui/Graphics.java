@@ -460,7 +460,7 @@ public class Graphics {
     }
 
     public void scale(double sx, double sy) {
-        canvas.scale((float)sx, (float)sy);
+        canvas.scale((float)sx, (float)sy,tx,ty);
         dirtyClip = true;
     }
 
