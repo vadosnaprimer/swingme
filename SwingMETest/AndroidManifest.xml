@@ -38,10 +38,12 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     
     <!--
     can use this when you dont want to make difference assets for different resolutions
     <supports-screens android:anyDensity="false"/>
+    THIS DOES NOT WORK IF hardwareAccelerated=true!!!!
     -->
     
 </manifest>
