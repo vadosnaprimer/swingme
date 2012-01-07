@@ -22,6 +22,7 @@ import java.io.DataOutputStream;
 import java.io.DataInputStream;
 import java.io.RandomAccessFile;
 
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Enumeration;
 
@@ -61,6 +62,10 @@ public class FileConnectionImpl extends ConnectionImpl implements FileConnection
 		public Object nextElement() {
 			return elements[index++];
 		}
+
+                public String toString() {
+                    return "ListEnumeration"+Arrays.asList(elements);
+                }
 	}
 
 	File file = null;
