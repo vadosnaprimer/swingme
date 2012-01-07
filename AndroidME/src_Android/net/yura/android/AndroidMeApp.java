@@ -284,9 +284,10 @@ public class AndroidMeApp extends Application {
         System.setProperty("microedition.pim.version", "1.0");
         System.setProperty("microedition.io.file.FileConnection.version", "1.0");
 
-        
-        System.setProperty("java.io.tmpdir", getCacheDir().toString() );
-        
+
+        System.setProperty("java.io.tmpdir", getCacheDir().toString() ); // OLD: java.io.tmpdir=/sdcard
+        System.setProperty("user.home", getFilesDir().toString() ); // OLD: user.home=
+
         
         // Hardware properties.
         // Returns the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
