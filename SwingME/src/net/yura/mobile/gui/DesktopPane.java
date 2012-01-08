@@ -403,6 +403,7 @@ public class DesktopPane extends Canvas implements Runnable {
         clear2.addBackground(Style.NO_COLOR, Style.ALL);
         theme.setStyleFor("TabScroll", clear2);
 
+        // TODO this should be combined with the XULLoader#adjustSizeToDensity method
         if (defaultSpace == 0) {
             int maxSize = Math.max(getWidth(), getHeight());
             defaultSpace = (maxSize <= 128) ? 3 : (maxSize <= 208) ? 5 : 7;
@@ -555,8 +556,6 @@ public class DesktopPane extends Canvas implements Runnable {
                 Vector repaintComponent2 = new Vector(repaintComponent.size());
                 SystemUtil.addAll(repaintComponent2, repaintComponent);
                 repaintComponent.removeAllElements();
-
-
 
 
 
@@ -1176,6 +1175,8 @@ public class DesktopPane extends Canvas implements Runnable {
     /**
      * @return an Vector of InternalFrame objects
      * @see javax.swing.JDesktopPane#getAllFrames() JDesktopPane.getAllFrames
+     * @see java.awt.Window#getWindows() Window.getWindows
+     * @see java.awt.Frame#getFrames() Frame.getFrames
      */
     public Vector getAllFrames() {
         return windows;
