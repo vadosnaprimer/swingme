@@ -1,6 +1,7 @@
 package net.yura.blackberry.rim;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Calendar;
 import javax.microedition.io.ConnectionNotFoundException;
 
@@ -78,15 +79,17 @@ public abstract class MIDlet extends UiApplication {
     public String getAppProperty(String s) {
         if (properties == null) {
             properties = new Properties();
-            try {
-                properties.load(this.getClass().getResourceAsStream("/app.properties"));
-            }
-            catch (IOException e) {
-                //#debug warn
-                Logger.warn(e);
-
-                //#debug warn
-                Logger.warn("Could not load app.properties file");
+            InputStream in = this.getClass().getResourceAsStream("/app.properties");
+            if (in!=null) {
+                try {
+                    properties.load(in);
+                }
+                catch (IOException e) {
+                    //#debug warn
+                    Logger.warn(e);
+                    //#debug warn
+                    Logger.warn("Could not load app.properties file");
+                }
             }
         }
         String result = (String) properties.get(s);
