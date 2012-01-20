@@ -130,6 +130,14 @@ public class TextBox extends Screen {
     }
 
 
+    String initialInputMode;
+    public void setInitialInputMode(String characterSubset) {
+        initialInputMode = characterSubset;
+    }
+    public String getInitialInputMode() {
+        return initialInputMode;
+    }
+
 
     public void fireCommand(int type) {
         java.util.List<Command> commands = getCommands();
@@ -147,7 +155,7 @@ public class TextBox extends Screen {
         System.out.println("[TextBox] NO BUTTON FOUND! "+type);
     }
 
-    public static int getInputType(int constraints) {
+    public static int getInputType(int constraints,String initialInputMode) {
 
             int inputType;
 
@@ -178,6 +186,10 @@ public class TextBox extends Screen {
             }
             if ((constraints & TextField.INITIAL_CAPS_WORD) > 0) {
                 inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_CAP_WORDS;
+            }
+
+            if ("X_ANDROID_SHORT_MESSAGE".equals( initialInputMode )) {
+                inputType = inputType | EditorInfo.TYPE_TEXT_VARIATION_SHORT_MESSAGE;
             }
 
             return inputType;
@@ -230,7 +242,7 @@ public class TextBox extends Screen {
 
             outAttrs.imeOptions |= EditorInfo.IME_FLAG_NO_EXTRACT_UI;
 
-            int inputType= getInputType(textBox.constraints);
+            int inputType= getInputType(textBox.constraints,textBox.initialInputMode);
 
             outAttrs.inputType = inputType;
 

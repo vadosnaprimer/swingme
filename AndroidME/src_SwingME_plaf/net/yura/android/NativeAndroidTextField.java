@@ -130,7 +130,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
         boolean singleLine = (textField instanceof TextField);
         editText.setSingleLine( singleLine );
-        int inputType = TextBox.getInputType( textBox.getConstraints() );
+        int inputType = TextBox.getInputType( textBox.getConstraints(), textBox.getInitialInputMode() );
         if (!singleLine) {
             inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE;
         }
