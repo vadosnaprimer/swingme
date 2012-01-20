@@ -1,10 +1,12 @@
 package net.yura.android;
 
 import java.util.Vector;
+
 import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
+
 import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.content.Intent;
@@ -85,7 +87,8 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
         { // Eliminates colour banding
             Window window = getWindow();
-            window.setFormat(PixelFormat.RGBA_8888);
+            window.setFormat(PixelFormat.RGBX_8888);
+//            window.setFormat(PixelFormat.RGBA_8888);
         }
     }
 
