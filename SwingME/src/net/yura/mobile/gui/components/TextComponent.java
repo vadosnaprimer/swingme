@@ -112,6 +112,8 @@ public abstract class TextComponent extends Component implements ActionListener,
 
         private ChangeListener caretListener;
 
+        public String initialInputMode;
+
         /**
          * @see javax.swing.text.JTextComponent#JTextComponent() JTextComponent.JTextComponent
          */
@@ -424,6 +426,10 @@ public abstract class TextComponent extends Component implements ActionListener,
             }
 	}
 
+	public void setInitialInputMode(String characterSubset) {
+	    initialInputMode = characterSubset;
+	}
+
         public void openNativeEditor() {
                 // can not reuse this because of problems on S60
 
@@ -441,6 +447,9 @@ public abstract class TextComponent extends Component implements ActionListener,
                     textbox.addCommand(ok);
                     textbox.addCommand(cancel);
 
+                    if (initialInputMode!=null) {
+                        textbox.setInitialInputMode(initialInputMode);
+                    }
         	}
 
                 textbox.setCommandListener(this); // replaces old one
