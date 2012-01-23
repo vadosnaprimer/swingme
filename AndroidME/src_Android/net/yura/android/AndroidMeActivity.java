@@ -36,7 +36,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
 
     @Override
-    protected void onCreate(Bundle icicle) {
+    final protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 
         if (DEFAULT_ACTIVITY != null) {
@@ -49,6 +49,10 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
         DEFAULT_ACTIVITY = this;
 
+        onSingleCreate();
+    }
+
+    protected void onSingleCreate() {
         showWaitingView();
 
         Vector<String[]> jadMidlets = AndroidMeApp.getJadMidlets();
