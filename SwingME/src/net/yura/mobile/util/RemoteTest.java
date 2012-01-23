@@ -126,7 +126,7 @@ public class RemoteTest extends Thread {
         catch (Throwable e) {
             //#debug debug
             e.printStackTrace();
-            writer.write("EXCEPTION\n");
+            writer.write("EXCEPTION: " + e + "\n");
         }
 
         writer.flush();
