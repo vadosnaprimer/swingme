@@ -131,7 +131,7 @@ public abstract class MIDlet extends UiApplication {
                 // TODO System.clearProperty("clipboard.text");
             }
             else {
-                    // TODO System.setProperty("clipboard.text", obj.toString()); // so far we only support Strings
+                // TODO System.setProperty("clipboard.text", obj.toString()); // so far we only support Strings
             }
 
         }
@@ -188,18 +188,19 @@ public abstract class MIDlet extends UiApplication {
 		    // TODO THIS WILL NOT WORK AS WE ARE NOT THE EVENT THREAD!!
 			Dialog.alert("no args given, pls give args");
 		}
-		else {
-			try {
-				MIDlet theApp = (MIDlet) Class.forName(args[0]).newInstance();
-				theApp.enterEventDispatcher();
-			}
-			catch (Exception ex) {
+                else {
+                    try {
+                        Object instance = Class.forName(args[0]).newInstance();
+                        if (instance instanceof MIDlet) {
+                            ((MIDlet) instance).enterEventDispatcher();
+                        }
+                    }
+                    catch (Exception ex) {
+                        System.out.println("error starting: " + ex.toString());
 
-			    System.out.println("error starting: " + ex.toString());
-
-	                    // TODO THIS WILL NOT WORK AS WE ARE NOT THE EVENT THREAD!!
+	            // TODO THIS WILL NOT WORK AS WE ARE NOT THE EVENT THREAD!!
 				Dialog.alert("error starting: " + ex.toString());
-			}
+                    }
 		}
 	}
 
