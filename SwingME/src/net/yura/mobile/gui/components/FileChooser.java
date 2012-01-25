@@ -797,6 +797,7 @@ public void fireActionPerformed() {
          * @see javax.swing.JList#setSelectedValue(java.lang.Object, boolean) JList.setSelectedValue
          */
         public void setSelectedValues(Vector v) {
+        	removeEditor();
             selected = v;
         }
         
