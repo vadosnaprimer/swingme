@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.util.Hashtable;
 
 import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -302,12 +301,25 @@ public abstract class Midlet extends MIDlet {
     public static InputStream getResourceAsStream(String name) {
 
         try {
+            InputStream is = getMidlet().getResourceAsStreamImpl(name);
+            if (is != null) {
+                return is;
+            }
+        }
+        catch (Throwable th) {
+            //#debug warn
+            th.printStackTrace();
+        }
 
+        try {
+            // TODO: Jane - It seems that System.getProperty is being called over and over.
+            // Why can't this code be inside a static block that runs once? Or test
+            // resdir for null first?
             try {
                 // when running as a me4se applet, this can throw a SecurityException
-            	if (System.getProperty("resdir") != null) {
-            		resdir = System.getProperty("resdir");
-            	}
+                if (System.getProperty("resdir") != null) {
+                    resdir = System.getProperty("resdir");
+                }
             }
             catch (Throwable th) {
                 resdir = null;
@@ -324,6 +336,11 @@ public abstract class Midlet extends MIDlet {
         }
 
         return Midlet.class.getResourceAsStream(name);
+    }
+
+    // To be overwritten by sub-classes for specific implementation
+    protected InputStream getResourceAsStreamImpl(String name) {
+        return null;
     }
 
     public void onResult(int requestCode, int resultCode, Object obj) {
