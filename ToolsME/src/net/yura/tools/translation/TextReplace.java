@@ -18,7 +18,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -26,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.UIManager;
-import net.yura.util.StringsProperties;
 
 /**
  *
@@ -50,7 +48,7 @@ public class TextReplace extends javax.swing.JFrame {
     }
 
     
-    void go(File file) {
+    void go(File file,boolean test) {
         
         if (file.isDirectory() && ".svn".equalsIgnoreCase( file.getName() )) {
         
@@ -75,7 +73,7 @@ public class TextReplace extends javax.swing.JFrame {
         else if (file.isDirectory()) {
             File[] files = file.listFiles();
             for (File f:files) {
-                go(f);
+                go(f,test);
             }
         }
         else {
@@ -92,12 +90,15 @@ public class TextReplace extends javax.swing.JFrame {
                 String value = en.getValue();
                 
                 if (text.indexOf(preOld.getText()+key+postOld.getText()) >= 0 ) {
+
+                    System.out.println("Found "+key+" in "+file);
+
                     changed = true;
                     text = text.replace(preOld.getText()+key+postOld.getText(), preOld.getText()+value+postOld.getText()); 
                 }
             }
             
-            if (changed) {
+            if (changed && !test) {
                 arrayToFile(text.getBytes(), file);
             }
             
@@ -203,6 +204,7 @@ public static byte[] fileToArray(File f) {
         preOld = new javax.swing.JTextField();
         postOld = new javax.swing.JTextField();
         runButton = new javax.swing.JButton();
+        testButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Yura's Mass Replace");
@@ -210,11 +212,6 @@ public static byte[] fileToArray(File f) {
         jLabel1.setText("Scan");
 
         scanDir.setText("I:\\6_Yura\\Work\\java\\badoo\\repo\\migw");
-        scanDir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scanDirActionPerformed(evt);
-            }
-        });
 
         pickScan.setText("Select");
         pickScan.addActionListener(new java.awt.event.ActionListener() {
@@ -237,23 +234,20 @@ public static byte[] fileToArray(File f) {
         jLabel3.setText("text");
 
         preOld.setText("\"");
-        preOld.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                preOldActionPerformed(evt);
-            }
-        });
 
         postOld.setText("\"");
-        postOld.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                postOldActionPerformed(evt);
-            }
-        });
 
         runButton.setText("Run");
         runButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 runButtonActionPerformed(evt);
+            }
+        });
+
+        testButton.setText("Test");
+        testButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                testButtonActionPerformed(evt);
             }
         });
 
@@ -283,7 +277,9 @@ public static byte[] fileToArray(File f) {
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(postOld, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addComponent(testButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(runButton)))
                 .addContainerGap())
         );
@@ -307,20 +303,14 @@ public static byte[] fileToArray(File f) {
                         .addComponent(preOld, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
                         .addComponent(postOld, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(runButton))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(runButton)
+                        .addComponent(testButton)))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void postOldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postOldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_postOldActionPerformed
-
-    private void preOldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preOldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_preOldActionPerformed
 
     private void pickOldToNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pickOldToNewActionPerformed
 
@@ -359,7 +349,7 @@ public static byte[] fileToArray(File f) {
         try {
             replace.load( new FileReader(oldToNewFileFile) );
                        
-            go(scanDirFile);
+            go(scanDirFile,false);
 
         }
         catch (Exception ex) {
@@ -369,9 +359,22 @@ public static byte[] fileToArray(File f) {
 
     }//GEN-LAST:event_runButtonActionPerformed
 
-    private void scanDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanDirActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_scanDirActionPerformed
+    private void testButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_testButtonActionPerformed
+        File scanDirFile = new File( scanDir.getText() );
+        
+        File oldToNewFileFile = new File( oldToNewFile.getText() );
+        
+        replace = new Properties();
+        try {
+            replace.load( new FileReader(oldToNewFileFile) );
+                       
+            go(scanDirFile,true);
+
+        }
+        catch (Exception ex) {
+            Logger.getLogger(TextReplace.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_testButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -395,5 +398,6 @@ public static byte[] fileToArray(File f) {
     private javax.swing.JTextField preOld;
     private javax.swing.JButton runButton;
     private javax.swing.JTextField scanDir;
+    private javax.swing.JButton testButton;
     // End of variables declaration//GEN-END:variables
 }
