@@ -98,7 +98,7 @@ public class Font {
 
   Font(int face, int style, int size) {
 
-    Display.check();
+    //Display.check();
 
     this.face = face;
     this.style = style;

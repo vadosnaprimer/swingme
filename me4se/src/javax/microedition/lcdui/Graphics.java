@@ -115,6 +115,9 @@ public class Graphics {
 	BufferedImage image;
 	BufferedImage tmpImg;
 
+        public Graphics(java.awt.Graphics g) {
+            this(null,null,g);
+        }
 
 	/**
 	 * @ME4SE INTERNAL

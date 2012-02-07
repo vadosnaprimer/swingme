@@ -84,7 +84,7 @@ public class Image {
 	 * @ME4SE INTERNAL 
 	 */
 	protected Image(BufferedImage image, boolean mutable, boolean toGray, String name) {
-		Display.check();
+		//Display.check();
         
         // Give VM some time to cleanup every n images... 
 //        if(((++imageCreationCount) & 7) == 0){
@@ -116,7 +116,7 @@ public class Image {
 	 * @API MIDP-1.0 
 	 */
 	public static Image createImage(int w, int h) {
-		Display.check();
+		//Display.check();
 
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 			ApplicationManager.getInstance().awtContainer.createImage(w, h);
@@ -254,7 +254,7 @@ public class Image {
 	 * @API MIDP-1.0 
 	 */
 	public static Image createImage(Image source) {
-		Display.check();
+		//Display.check();
 
 		if (source == null){
 			throw new NullPointerException();
@@ -450,7 +450,7 @@ public class Image {
 	 * @API MIDP-2.0
 	 */
 	public static Image createImage(InputStream stream) throws IOException {
-		Display.check();
+		//Display.check();
 
 		Image img =
 			new Image(
