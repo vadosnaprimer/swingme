@@ -33,7 +33,7 @@ public class MobileProtoGen extends BaseGen {
     public static String size="Size";
     
     String protoSource    = null;
-    String[] objectPackage  = null;
+    String[] objectPackage = new String[0];
     String extendClass = "ProtoUtil";
 
     public void setProtoSource( String argument ) {

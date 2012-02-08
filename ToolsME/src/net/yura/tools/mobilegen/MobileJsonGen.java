@@ -22,6 +22,8 @@ import java.util.Vector;
  */
 public class MobileJsonGen extends BaseGen {
 
+    static ArrayList<Class> classes;
+    
     @Override
     public void doGen() throws Exception {
 
@@ -45,7 +47,7 @@ String className = theclass.getSimpleName();
 //classes.add(Test.class);
 //classes.add(TestObject.class);
 
-ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile(),true);
+classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile(),true);
 File f = getGeneratedFile();
 System.out.println("saving to file: "+f);
 PrintStream ps = new PrintStream( f); //new File("src/net/yura/mobile/gen/BinAccess.java"));
@@ -146,12 +148,17 @@ String className = theclass.getSimpleName();
 
 ps.println("    protected void save"+className+"(JSONWriter serializer,"+className+" object) throws IOException {");
 
-if (theclass.getSuperclass() != Object.class) {
-ps.println("        save"+theclass.getSuperclass().getSimpleName()+"(serializer,object);");
+Class superClass = theclass.getSuperclass();
+ArrayList<Method> simpleMethods;
+if (classes.contains(superClass)) {
+    if (superClass != Object.class) {
+    ps.println("        save"+superClass.getSimpleName()+"(serializer,object);");
+    }
+    simpleMethods = getMethods(theclass,false,false);
 }
-
-ArrayList<Method> simpleMethods = getMethods(theclass,false,false);
-
+else {
+    simpleMethods = getMethods(theclass,false,true);
+}
 
 for (Method m: simpleMethods) {
 
@@ -242,9 +249,9 @@ else if (param == Object.class) {
 ps.println("        {");
 ps.println("            Object obj = object."+m.getName()+"();");
 ps.println("            if (obj!=null) {");
-ps.println("                serializer.object();");
+//ps.println("                serializer.object();");
 ps.println("                saveObject(serializer, obj );");
-ps.println("                serializer.endObject();");
+//ps.println("                serializer.endObject();");
 ps.println("            }");
 ps.println("            else {");
 ps.println("                serializer.nullValue();");
