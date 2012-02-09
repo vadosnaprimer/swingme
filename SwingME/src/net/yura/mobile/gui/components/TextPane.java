@@ -148,7 +148,7 @@ public class TextPane extends Component {
     /**
      * like Swing this method IS thread safe
      * @param text1 the text to set, if the text starts with &lt;html&gt; then it will be passed as html
-     * @see javax.bluetooth.JEditorPane#setText(java.lang.String) JEditorPane.setText
+     * @see javax.swing.JEditorPane#setText(java.lang.String) JEditorPane.setText
      */
     public void setText(String text1) {
 
