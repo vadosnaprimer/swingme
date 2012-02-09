@@ -732,15 +732,7 @@ public abstract class Component {
      * @see javax.swing.JComponent#updateUI() JComponent.updateUI
      */
     public void updateUI() {
-
         theme = DesktopPane.getDefaultTheme(this);
-        //background = theme.getBackground(Style.ALL);
-        //foreground = theme.getForeground(Style.ALL);
-        //border = theme.getBorder(Style.ALL);
-
-        if (popup!=null) {
-            DesktopPane.updateComponentTreeUI(popup);
-        }
     }
 
     /**

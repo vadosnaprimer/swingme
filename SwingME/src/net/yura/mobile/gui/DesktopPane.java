@@ -98,17 +98,21 @@ public class DesktopPane extends Canvas implements Runnable {
         if (com instanceof MenuBar) {
             Vector v = ((MenuBar) com).getItems();
             for (int c = 0; c < v.size(); c++) {
-                ((Component)v.elementAt(c)).updateUI();
+                updateComponentTreeUI( (Component)v.elementAt(c) );
             }
         }
         if (com instanceof Panel) {
             Vector v = ((Panel) com).getComponents();
             for (int c = 0; c < v.size(); c++) {
-                updateComponentTreeUI((Component) v.elementAt(c));
+                updateComponentTreeUI( (Component) v.elementAt(c) );
             }
         }
         com.updateUI();
 
+        Window popup = com.getPopupMenu();
+        if ( popup!=null ) {
+            updateComponentTreeUI(popup);
+        }
     }
 
     private Hashtable UIManager;
@@ -1519,6 +1523,16 @@ public class DesktopPane extends Canvas implements Runnable {
 
     }
 
+    public void toast(String text) {
+        ToolTip toast = indicator;
+        toast.setText(text);
+        toast.workoutPreferredSize();
+        toast.setLocation((getWidth()-toast.getWidth())/2 , getHeight()-toast.getHeight()*3 );
+        toast.setShowing(true);
+        toast.repaint();
+        animateComponent(toast);
+    }
+    
     private void showHideToolTip(boolean show,Component comp) {
 
         // if a tooltip should be setup
