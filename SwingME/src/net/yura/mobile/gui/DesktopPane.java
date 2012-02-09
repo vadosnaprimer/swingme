@@ -540,7 +540,7 @@ public class DesktopPane extends Canvas implements Runnable {
 
             paintdone = true;
 
-            graphics = new Graphics2D();
+            graphics = new Graphics2D(gtmp);
 
             return;
         }

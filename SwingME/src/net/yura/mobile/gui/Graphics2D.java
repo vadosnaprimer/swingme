@@ -38,9 +38,6 @@ public class Graphics2D {
         /**
          * @see java.awt.Graphics#Graphics() Graphics.Graphics
          */
-        Graphics2D() {
-        }
-
         public Graphics2D(Graphics g) {
             setGraphics(g);
             font = Font.getDefaultSystemFont();
