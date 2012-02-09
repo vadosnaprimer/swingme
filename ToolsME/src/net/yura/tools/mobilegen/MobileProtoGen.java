@@ -469,7 +469,7 @@ ps.println("    }");
     
         for (MessageDefinition message:messages) {
 
-            ps.println("private "+message.getImplementation().getSimpleName()+" "+decode+getMessageID(message)+"(CodedInputStream in2) throws IOException {");
+            ps.println("protected "+message.getImplementation().getSimpleName()+" "+decode+getMessageID(message)+"(CodedInputStream in2) throws IOException {");
             ps.println("    "+message.getImplementation().getSimpleName()+" object = new "+message.getImplementation().getSimpleName()+"();");
 
             printLoadMethod(ps,message);
