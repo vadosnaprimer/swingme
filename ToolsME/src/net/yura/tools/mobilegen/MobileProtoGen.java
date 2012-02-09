@@ -105,9 +105,14 @@ messageDefs = loader.getMessageDefs();
 
         File outFile = getGeneratedFile();
 
-        PrintStream ps = printClass( outFile , getOutputClass(), split? getOutputClass()+"Enum" :extendClass);
+        PrintStream ps = printClass( outFile , getOutputClass(), split? getOutputClass()+"Decode" :extendClass);
 
-        if (!split) {
+        if (split) {
+            PrintStream ps1 = printClass( new File(outFile.getParentFile(),outFile.getName().substring(0, outFile.getName().lastIndexOf('.'))+"Enum.java") , getOutputClass()+"Enum", extendClass );
+            printEnummethod(ps1);
+            ps1.println("}");
+        }
+        else {
             printEnummethod(ps);
         }
         
@@ -125,20 +130,18 @@ messageDefs = loader.getMessageDefs();
         
         printComp(ps,messages);
         printEnc(ps,messages);
-        printDec(ps,messages);
-
-        ps.println("}");
-        
         
         if (split) {
-        
-            ps = printClass( new File(outFile.getParentFile(),outFile.getName().substring(0, outFile.getName().lastIndexOf('.'))+"Enum.java") , getOutputClass()+"Enum", extendClass );
-        
-            printEnummethod(ps);
-            
-            ps.println("}");
-            
+            PrintStream ps1 = printClass( new File(outFile.getParentFile(),outFile.getName().substring(0, outFile.getName().lastIndexOf('.'))+"Decode.java") , getOutputClass()+"Decode",    getOutputClass()+"Enum"    );
+            printDec(ps1,messages);
+            ps1.println("}");
         }
+        else {
+            printDec(ps,messages);
+        }
+
+        ps.println("}");
+
     }
 
     private PrintStream printClass(File output,String outClass, String extClass) throws Exception {
