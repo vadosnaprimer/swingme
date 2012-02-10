@@ -252,7 +252,9 @@ public class Image {
             try {
                 return ((BitmapDrawable) res.getDrawable(resId)).getBitmap();
             } catch (Throwable e) {
-                throw new IOException(e.toString());
+                IOException ex = new IOException();
+                ex.initCause(e);
+                throw ex;
             }
         }
     }
