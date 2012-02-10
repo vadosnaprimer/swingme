@@ -7,11 +7,13 @@ import java.io.OutputStream;
 
 import javax.microedition.lcdui.game.Sprite;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
-import android.graphics.Bitmap.Config;
+import android.graphics.drawable.BitmapDrawable;
 
 /**
  * for saving of image please use
@@ -67,10 +69,6 @@ public class Image {
     }
 
     public static Image createImage(InputStream stream) throws IOException {
-
-        int size = Math.max(stream.available(), 8 * 1024);
-        BufferedInputStream buffInput = new BufferedInputStream(stream, size);
-
         BitmapFactory.Options opts = new BitmapFactory.Options();
         try {
             BitmapFactory.Options.class.getField("inPurgeable").set(opts, true);
@@ -80,15 +78,24 @@ public class Image {
         }
 
         Bitmap bitmap;
-        try {
-            bitmap = BitmapFactory.decodeStream(buffInput);
-        } catch (OutOfMemoryError e) {
-            cleanMem();
-            buffInput.reset();
-            buffInput.mark(1024);
-            bitmap = BitmapFactory.decodeStream(buffInput);
+        if (stream instanceof ResourceInputStream) {
+            bitmap = ((ResourceInputStream) stream).getBitmap();
         }
-        if (bitmap==null) {
+        else {
+            int size = Math.max(stream.available(), 8 * 1024);
+            BufferedInputStream buffInput = new BufferedInputStream(stream, size);
+
+            try {
+                bitmap = BitmapFactory.decodeStream(buffInput);
+            } catch (OutOfMemoryError e) {
+                cleanMem();
+                buffInput.reset();
+                buffInput.mark(1024);
+                bitmap = BitmapFactory.decodeStream(buffInput);
+            }
+        }
+
+        if (bitmap == null) {
             throw new IOException();
         }
 
@@ -224,6 +231,29 @@ public class Image {
         try {
             Thread.sleep(200);
         } catch (InterruptedException e) {
+        }
+    }
+
+    public static class ResourceInputStream extends InputStream {
+        private Resources res;
+        private int resId;
+
+        public ResourceInputStream(Resources res, int resId) {
+            this.res = res;
+            this.resId = resId;
+        }
+
+        @Override
+        public int read() throws IOException {
+            throw new RuntimeException("Not implemented");
+        }
+
+        Bitmap getBitmap() throws IOException {
+            try {
+                return ((BitmapDrawable) res.getDrawable(resId)).getBitmap();
+            } catch (Throwable e) {
+                throw new IOException(e);
+            }
         }
     }
 }
