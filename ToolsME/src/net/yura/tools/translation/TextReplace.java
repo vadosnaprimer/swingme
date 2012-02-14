@@ -55,12 +55,23 @@ public class TextReplace extends javax.swing.JFrame {
             System.out.println("skipping svn dir "+file);
             
         }
+        else if (file.isDirectory() && "CVS".equalsIgnoreCase( file.getName() )) {
+        
+            System.out.println("skipping CVS dir "+file);
+            
+        }
+        else if (file.isDirectory() && ".git".equalsIgnoreCase( file.getName() )) {
+        
+            System.out.println("skipping git dir "+file);
+            
+        }
         else if (!file.isDirectory() && (
                 
                 file.getName().toLowerCase().endsWith(".jpg") ||
                 file.getName().toLowerCase().endsWith(".jpeg") ||
                 file.getName().toLowerCase().endsWith(".png") ||
                 file.getName().toLowerCase().endsWith(".gif") ||
+                file.getName().toLowerCase().endsWith(".bmp") ||
                 file.getName().toLowerCase().endsWith(".jar") ||
                 file.getName().toLowerCase().endsWith(".zip") ||
                 file.getName().toLowerCase().endsWith(".exe")
