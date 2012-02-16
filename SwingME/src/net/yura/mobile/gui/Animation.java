@@ -6,7 +6,10 @@ import java.util.Vector;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.logging.Logger;
 
-public class Animation extends Thread{
+/**
+ * used by all infinitely animating components, such as the indeterminate progress bar
+ */
+public class Animation extends Thread {
 
     static Animation animation;
     public static int FPS = 10;
@@ -51,13 +54,7 @@ public class Animation extends Thread{
                     cmp.animate();
                 }
 
-                long time = System.currentTimeMillis();
-
-                long wait = Math.min(sleep, Math.max(0, sleep - (time-lastWait) ));
-                //System.out.println("wait "+wait);
-                Thread.sleep( wait );
-
-                lastWait = time + wait;
+                lastWait = workoutSleep(sleep,lastWait);
             }
         }
         catch (Throwable th) {
@@ -68,6 +65,16 @@ public class Animation extends Thread{
         animation = null;
     }
 
+    public static long workoutSleep(int sleep,long lastWait) throws InterruptedException {
+                long time = System.currentTimeMillis();
+
+                long wait = Math.min(sleep, Math.max(0, sleep - (time-lastWait) ));
+                //System.out.println("wait "+wait);
+                Thread.sleep( wait );
+                
+                return time + wait;
+    }
+    
     public static void registerAnimated(Component cmp) {
 
         if (animation==null) {

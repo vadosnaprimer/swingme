@@ -836,7 +836,28 @@ public class List extends Component implements ActionListener {
      */
     public void ensureIndexIsVisible(int i) {
 
-            Component c = getRendererComponentFor(i);
+            int pos,size;
+            if (layoutOrientation==HORIZONTAL && fixedCellWidth!=-1) {
+                pos = i*fixedCellWidth;
+                size = fixedCellWidth;
+            }
+            else if (layoutOrientation==VERTICAL && fixedCellHeight!=-1) {
+                pos = i*fixedCellHeight;
+                size = fixedCellHeight;
+            }
+            else {
+                // only get the RendererComponent if we really need to
+                Component c = getRendererComponentFor(i);
+                if (layoutOrientation==HORIZONTAL) {
+                    pos = c.getXWithBorder();
+                    size = c.getWidthWithBorder();
+                }
+                else {
+                    pos = c.getYWithBorder();
+                    size = c.getHeightWithBorder();
+                }
+            }
+
             // good, but too simple
             // what if we are scrolled right already?
             //scrollTo(c);
@@ -845,7 +866,7 @@ public class List extends Component implements ActionListener {
             // as posX and posY will be wrong!
             // ALSO WILLNOT WORK IN BOXLAYOUT HCENTRE IF NOT THE FIRST COMPONENT
             if (layoutOrientation==HORIZONTAL) {
-                scrollRectToVisible( c.getXWithBorder(), -posY, c.getWidthWithBorder(), 1,false);
+                scrollRectToVisible( pos, -posY, size, 1,false);
             }
             else {
                 //calc x in relation to the viewport
@@ -859,7 +880,7 @@ public class List extends Component implements ActionListener {
                     p = p.parent;
                 } // TODO take into accountthe viewPortX
 
-                scrollRectToVisible( -x, c.getYWithBorder(), 1, c.getHeightWithBorder(),false);
+                scrollRectToVisible( -x, pos, 1, size,false);
             }
             ensureIndexIsVisible = i;
     }
