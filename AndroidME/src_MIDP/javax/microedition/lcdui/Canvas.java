@@ -1306,6 +1306,12 @@ public abstract class Canvas extends Displayable {
             androidCanvas.drawText(fpsStr, 3, 1 + fontH, debugPaint);
         }
 
+        //#mdebug debug
+        @Override
+        public String toString() {
+            return "CanvasView["+Canvas.this+"]";
+        }
+        //#enddebug
     }
 
 }
