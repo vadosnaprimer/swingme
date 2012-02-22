@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="gen"/>
-	<classpathentry kind="src" path="src_JSR234_Advanced_Multimedia"/>
-	<classpathentry kind="src" path="src_SwingME_plaf"/>
-	<classpathentry kind="src" path="src_UtilME"/>
-	<classpathentry kind="src" path="src_SwingME"/>
-	<classpathentry kind="src" path="src_MIDP"/>
-	<classpathentry kind="src" path="src_JSR120_SMS"/>
-	<classpathentry kind="src" path="src_JSR184_3D"/>
-	<classpathentry kind="src" path="src_JSR82_Bluetooth"/>
-	<classpathentry kind="src" path="src_Android"/>
-	<classpathentry kind="src" path="src_JSR135_Multimedia"/>
-	<classpathentry kind="src" path="src_JSR179_Location"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR234_Advanced_Multimedia"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_SwingME_plaf"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_UtilME"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_SwingME"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_MIDP"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR120_SMS"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR184_3D"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR82_Bluetooth"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_Android"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR135_Multimedia"/>
+	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR179_Location"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="lib" path="/Users/Shared/dev/UtilME/lib/xmlpull_1_1_3_1.jar"/>
+	<classpathentry exported="true" kind="lib" path="I:/6_Yura/linuxhome/UtilME/lib/xmlpull_1_1_3_1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
