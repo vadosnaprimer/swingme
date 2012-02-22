@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
 
@@ -38,6 +39,8 @@ public abstract class HTTPClient extends QueueProcessorThread {
         public Object id;
         public int redirects = 5;
         public byte[] postData;
+        public boolean aborted = false;
+        private Connection activeConnection = null;
         
         //#mdebug debug
         public String toString() {
@@ -45,6 +48,12 @@ public abstract class HTTPClient extends QueueProcessorThread {
         }
         //#enddebug
         
+        public void abort() {
+        	aborted = true;
+        	//#debug debug
+			Logger.debug("Aborting request " + url);
+        	FileUtil.close(activeConnection);
+        }
     }
 
     protected abstract void onError(Request request, int responseCode, Hashtable headers, Exception ex);
@@ -54,6 +63,10 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
     public void process(Object arg0) throws Exception {
         Request request = (Request)arg0;
+        
+        if (request.aborted) {
+        	return;
+        }
 
         String url = request.url;
         boolean getpost = false;
@@ -87,6 +100,11 @@ public abstract class HTTPClient extends QueueProcessorThread {
             }
 
             httpConn = (HttpConnection)Connector.open(url);
+            request.activeConnection = httpConn;
+            if (request.aborted) {
+            	FileUtil.close(httpConn);
+            	return;
+            }
             
             boolean post = request.post || request.postData!=null;
             
@@ -172,9 +190,12 @@ public abstract class HTTPClient extends QueueProcessorThread {
         }
         catch(Exception ex) {
             //Logger.info(ex); // we pass this exception onto other parts of the app, and they can print if if they need to
-            onError(request, respCode, headers, ex);
+        	if (!request.aborted) {
+        		onError(request, respCode, headers, ex);
+        	}
         }
         finally {
+        	request.activeConnection = null;
             FileUtil.close(httpConn);
             FileUtil.close(is);
         }
