@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
 import java.util.Vector;
-
 import net.yura.mobile.util.RemoteTest;
 import android.app.Instrumentation;
 import android.content.pm.ActivityInfo;
@@ -17,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Checkable;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class AndroidRemoteTest extends RemoteTest {
@@ -173,13 +174,29 @@ public class AndroidRemoteTest extends RemoteTest {
         StringBuilder builder = new StringBuilder();
         builder.append( view.getClass().getSimpleName() );
         if (view instanceof TextView) {
-            builder.append(" [").append(((TextView)view).getText()).append("]");
+            builder.append("[").append(((TextView)view).getText()).append("]");
         }
         if (view instanceof ViewGroup) {
-            builder.append(" [");
+            builder.append("[");
             ViewGroup $vg = (ViewGroup)view;
-            for (int i = 0; i < $vg.getChildCount(); i++) {
+            int count = $vg.getChildCount();
+            for (int i = 0; i < count; i++) {
                 builder.append( toString( $vg.getChildAt(i) ) );
+                if (i!=(count-1)) {
+                    builder.append(",");
+                }
+            }
+            builder.append("]");
+        }
+        if (view instanceof ListView) {
+            builder.append("[");
+            ListAdapter lv = ((ListView)view).getAdapter();
+            int count = lv.getCount();
+            for (int i = 0; i < count; i++) {
+                builder.append( lv.getItem(i) );
+                if (i!=(count-1)) {
+                    builder.append(",");
+                }
             }
             builder.append("]");
         }
