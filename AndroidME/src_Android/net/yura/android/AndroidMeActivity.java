@@ -89,11 +89,17 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
     protected void onResume() {
         super.onResume();
 
-        { // Eliminates colour banding
-            Window window = getWindow();
+        // Eliminates colour banding
+        Window window = getWindow();
+
+        if (Build.VERSION.SDK_INT > 4) {
             window.setFormat(PixelFormat.RGBX_8888);
-//            window.setFormat(PixelFormat.RGBA_8888);
         }
+        else {
+            // on the 1.6 emulator if you use RGBX_8888 it gives a white blank screen when starting the app
+            window.setFormat(PixelFormat.RGBA_8888);
+        }
+
     }
 
     //Override
