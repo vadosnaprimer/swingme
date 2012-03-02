@@ -19,7 +19,7 @@ import net.yura.mobile.util.Timer;
  *
  * @author AP
  */
-public abstract class LocationMonitor implements ServiceLink.TaskHandler {
+public abstract class LocationMonitor implements ServiceLink.TaskHandler,Runnable {
 
     public static final String COUNTRY_CODE_TYPE = "-1";
     public static final String NETWORK_CODE_TYPE = "-2";
@@ -31,10 +31,9 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
     boolean bJ2MECellMonitorLoop = true;
     boolean bCellRequestMade = false;
     boolean bCellNotifyMade = false;
-    String j2mePreviousCell = "UNSET";
     Timer timer;
 
-    public class J2MECellMonitor implements Runnable {
+    public static class J2MECellMonitor {
         protected int cellPropertyIndex = -1;
         protected int homeCountryPropertyIndex = -1;
         protected int mncPropertyIndex = -1;
@@ -42,7 +41,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
         protected int locationAreaPropertyIndex = -1;
         protected int currentCountryPropertyIndex = -1;
         protected int imsiPropertyIndex = -1;
-        String[] sysPropertyNames = {
+        static final String[] sysPropertyNames = {
             "CellID", "Cell-ID", "CELLID", "Cell ID", "ID", "Cellid", "CellID",
             "phone.cid",
             "com.nokia.mid.cellid",
@@ -51,7 +50,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "com.samsung.cellid",
             "com.siemens.cellid",
             "cid"};
-        String[] currentCountryPropertyNames = {
+        static final String[] currentCountryPropertyNames = {
             "com.nokia.mid.countrycode",
             "com.sonyericsson.net.cmcc",
             "com.sonyericsson.net.mcc",
@@ -60,31 +59,31 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             "mcc",
             "MCC"
         };
-        String[] homeCountryPropertyNames = {
+        static final String[] homeCountryPropertyNames = {
             "com.nokia.mid.countrycode",
             "com.sonyericsson.net.mcc",
             "mcc",
             "MCC"
         };
-        String[] mncPropertyNames = {
+        static final String[] mncPropertyNames = {
             "com.sonyericsson.net.cmnc",
             "com.nokia.mid.networkid",
             "phone.mnc",
             "mnc",
             "MNC"
         };
-        String[] signalPropertyNames = {
+        static final String[] signalPropertyNames = {
             "com.nokia.mid.networksignal",
             "NETWORKSIGNAL"
         };
-        String[] locationAreaPropertyNames = {
+        static final String[] locationAreaPropertyNames = {
             "com.nokia.mid.lac",
             "com.sonyericsson.net.lac",
             "LAC",
             "LocAreaCode",
             "phone.lac"
         };
-        String[] imsiPropertyNames = {
+        static final String[] imsiPropertyNames = {
             "com.sonyericsson.sim.subscribernumber",
             "IMSI"
         };
@@ -97,66 +96,8 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             locationAreaPropertyIndex = getPropertyIndex(locationAreaPropertyNames);
             imsiPropertyIndex = getPropertyIndex(imsiPropertyNames);
         }
-        public boolean isSupported() {
-            return (cellPropertyIndex >= 0);
-        }
-        public String getCellIdPropertyName() {
-            if (isSupported()) {
-                return sysPropertyNames[cellPropertyIndex];
-            }
-            return null;
-        }
 
-        private void addPropertyToHash(Hashtable values, String property, Object key) {
-            Object value = System.getProperty(property);
-            if (value != null) {
-                values.put(value, key);
-            }
-        }
-
-        protected void getCellId() {
-            try {
-                if (cellPropertyIndex >= 0) {
-                    String cell = System.getProperty(sysPropertyNames[cellPropertyIndex]);
-                    if (!cell.equals(j2mePreviousCell)) {
-                        String signal = null;
-                        if (signalPropertyIndex >= 0) {
-                            signal = System.getProperty(signalPropertyNames[signalPropertyIndex]);
-                        }
-                        if (signal == null) {
-                            signal = "0";
-                        }
-                        Hashtable hash = new Hashtable(6);
-
-                        hash.put(cell, signal);
-                        if (currentCountryPropertyIndex >= 0) {
-                            addPropertyToHash(hash,currentCountryPropertyNames[currentCountryPropertyIndex],COUNTRY_CODE_TYPE);
-                        }
-                        if (mncPropertyIndex >= 0) {
-                            addPropertyToHash(hash,mncPropertyNames[mncPropertyIndex],NETWORK_CODE_TYPE);
-                        }
-                        if (locationAreaPropertyIndex >= 0) {
-                            addPropertyToHash(hash,locationAreaPropertyNames[locationAreaPropertyIndex],LOCATION_AREA_CODE_TYPE);
-                        }
-                        if (imsiPropertyIndex >= 0) {
-                            addPropertyToHash(hash,imsiPropertyNames[imsiPropertyIndex],SUBSCRIBER_IMSI_TYPE);
-                        }
-                        if (homeCountryPropertyIndex >= 0) {
-                            addPropertyToHash(hash,homeCountryPropertyNames[homeCountryPropertyIndex],SUBSCRIBER_HOME_COUNTRY_TYPE);
-                        }
-
-                        ServiceLink.Task task = new ServiceLink.Task("PutCellId", hash);
-                        handleTask(task);
-                        j2mePreviousCell = cell;
-                    }
-                }
-            }
-            catch (Exception t) {
-                Logger.warn(t);
-            }
-        }
-
-        protected int getPropertyIndex(String[] properties) {
+        private int getPropertyIndex(String[] properties) {
             for (int index=0;index < properties.length;index++) {
                 try {
                     String property = System.getProperty(properties[index]);
@@ -169,8 +110,82 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
             }
             return -1;
         }
+        
+        private String getProperty(int index,String[] array) {
+            if (index >= 0) {
+                return System.getProperty( array[index] );
+            }
+            return null;
+        }
+        
+        public String getCellIdProperty() {
+            return getProperty(cellPropertyIndex, sysPropertyNames);
+        }
+        public String getSignalProperty() {
+            String signal = getProperty(signalPropertyIndex,signalPropertyNames);
+            if (signal == null) {
+                signal = "0";
+            }
+            return signal;
+        }
+        public String getLocationAreaProperty() {
+            return getProperty(locationAreaPropertyIndex, locationAreaPropertyNames);
+        }
+        public String getImsiProperty() {
+            return getProperty(imsiPropertyIndex, imsiPropertyNames);
+        }
+        public String getMncProperty() {
+            return getProperty(mncPropertyIndex, mncPropertyNames);
+        }
+        public String getHomeCountryProperty() {
+            return getProperty(homeCountryPropertyIndex, homeCountryPropertyNames);
+        }
+        public String getCurrentCountryProperty() {
+            return getProperty(currentCountryPropertyIndex, currentCountryPropertyNames);
+        }
 
-        public synchronized void run() {
+        String j2mePreviousCell = "UNSET";
+        protected Hashtable getJ2MECellId() {
+            try {
+                String cell = getCellIdProperty();
+                if (cell!=null && !cell.equals(j2mePreviousCell)) {
+                    Hashtable hash = new Hashtable(6);
+
+                    String signal = getSignalProperty();
+                    hash.put(cell, signal);
+
+                    addPropertyToHash(hash,getCurrentCountryProperty(),COUNTRY_CODE_TYPE);
+                    addPropertyToHash(hash,getMncProperty(),NETWORK_CODE_TYPE);
+                    addPropertyToHash(hash,getLocationAreaProperty(),LOCATION_AREA_CODE_TYPE);
+                    addPropertyToHash(hash,getImsiProperty(),SUBSCRIBER_IMSI_TYPE);
+                    addPropertyToHash(hash,getHomeCountryProperty(),SUBSCRIBER_HOME_COUNTRY_TYPE);
+
+                    j2mePreviousCell = cell;
+                    return hash;
+                }
+            }
+            catch (Exception t) {
+                Logger.warn(t);
+            }
+            return null;
+        }
+
+        private void addPropertyToHash(Hashtable values, String value, Object key) {
+            if (value != null) {
+                values.put(value, key);
+            }
+        }
+    }
+    
+    static J2MECellMonitor j2MECellMonitor;
+    public static J2MECellMonitor getJ2MECellMonitor() {
+        if (j2MECellMonitor==null) {
+            j2MECellMonitor = new J2MECellMonitor();
+        }
+        return j2MECellMonitor;
+    }
+    
+    public synchronized void run() {
           try {
             ServiceLink link = ServiceLink.getInstance();
             if (link.isConnected()) {
@@ -180,7 +195,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                 bJ2MECellMonitorLoop = false;
             }
             else {
-                getCellId();
+                putCellId( getJ2MECellMonitor().getJ2MECellId() );
                 if (bJ2MECellMonitorLoop) {
 
                     if (timer != null){
@@ -195,9 +210,15 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
           catch(Throwable t) {
             Logger.error(t);
           }
-        }
-
     }
+
+    void putCellId(Hashtable hash) {
+        if (hash!=null) {
+            ServiceLink.Task task = new ServiceLink.Task("PutCellId", hash);
+            handleTask(task);
+        }
+    }
+
     /** Creates a new instance of LocationMonitor */
     public LocationMonitor() {
         ServiceLink link = ServiceLink.getInstance();
@@ -216,8 +237,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
         if (!link.isConnected()) {
             // If underline service is not running yet, we create a dummy
             // CellMonitor Object, and force it to populate the Cell Id...
-            J2MECellMonitor CellMonitor = new J2MECellMonitor();
-            CellMonitor.getCellId();
+            putCellId( getJ2MECellMonitor().getJ2MECellId() );
         }
     }
 
@@ -240,7 +260,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler {
                 }
                 timer = new Timer();
                 // WTF: Jose - This time is is the initial delay for the first update... We should have an update as soon as we can (before was 300secs)
-                timer.schedule("J2MECellMonitor2", new J2MECellMonitor(), 0);
+                timer.schedule("J2MECellMonitor2", this, 0);
             }
         }
     }
