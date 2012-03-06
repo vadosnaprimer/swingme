@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Hashtable;
-
-import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.SystemUtil;
 
@@ -57,9 +55,9 @@ public class ServiceLink extends SocketClient {
     }
     
     public void sendTask(Task task) {
-    	if (Midlet.getPlatform()==Midlet.PLATFORM_NOKIA_S60) {
+    	//if (Midlet.getPlatform()==Midlet.PLATFORM_NOKIA_S60) {
     		addToOutbox(task);
-    	}
+    	//}
     }
 
     public void registerForTask(String method, Object handler) {
