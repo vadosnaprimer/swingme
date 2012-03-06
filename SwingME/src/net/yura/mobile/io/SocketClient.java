@@ -8,7 +8,6 @@ import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 
-import net.yura.mobile.gui.Midlet;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 
@@ -87,7 +86,7 @@ public abstract class SocketClient implements Runnable {
     protected StreamConnection openConnection(String serv) throws IOException {
 
         // TODO NOT DONE this needs to be turned ON for HTTP and turned OFF when used for BT
-        if (Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY &&
+        if (connectAppend!=null &&
                 serv.indexOf(";") < 0) {
             // TODO: Hack for black berry direct tcp/ip connection
             // TODO: http://www.localytics.com/blog/post/how-to-reliably-establish-a-network-connection-on-any-blackberry-device/
