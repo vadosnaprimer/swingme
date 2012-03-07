@@ -214,7 +214,11 @@ public class ApplicationManager {
 
   public BufferedImage createImage(InputStream is) throws IOException {
 
-    ImageIO.setUseCache(false);
+    String version = System.getProperty("java.version");
+    if (!version.startsWith("1.4")) { // YURA on java 1.4 settings setUseCache to false causes some images to be currupted during load
+        ImageIO.setUseCache(false);
+    }
+
     BufferedInputStream bis = new BufferedInputStream(is);
     bis.mark(PNG_SIGNATURE.length);
 
