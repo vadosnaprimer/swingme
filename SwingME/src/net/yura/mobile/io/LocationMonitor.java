@@ -84,6 +84,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler,Runnabl
             "phone.lac"
         };
         static final String[] imsiPropertyNames = {
+            "com.nokia.mid.imsi",
             "com.sonyericsson.sim.subscribernumber",
             "IMSI"
         };
