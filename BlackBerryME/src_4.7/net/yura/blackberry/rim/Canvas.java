@@ -316,18 +316,21 @@ public abstract class Canvas extends FullScreen {
          super.onUndisplay();
          hideNotify();
      }
-    
-    
+    /**
+     * we need to keep track of the old values, as every time we add/remove a native textbox we relayout the screen
+     * but we dont want sizeChanged called as the size has not actually changed, something new has just been added
+     */
+    private int lastWidth,lastHeight;
      protected void sublayout(int width, int height) {
              super.sublayout(width, height);
              int w = net.rim.device.api.ui.Graphics.getScreenWidth();
              int h = net.rim.device.api.ui.Graphics.getScreenHeight();
-             //if (w != this.lastWidth || h != this.lastHeight) {
-             	//this.lastWidth = w;
-             	//this.lastHeight = h;
+             if (w != this.lastWidth || h != this.lastHeight) {
+             	this.lastWidth = w;
+             	this.lastHeight = h;
              	setExtent( w,  h );
              	sizeChanged( w, h );
-             //}
+             }
      }
 
 	private int getMidpKeyCode(int keyCode) {
