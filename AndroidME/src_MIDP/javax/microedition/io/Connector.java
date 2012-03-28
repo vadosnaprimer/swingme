@@ -44,6 +44,9 @@ public class Connector {
         else if (name.startsWith(PROTOCOL_SOCKET)) {
             connection = getSocketConnection(name);
         }
+        else if (name.startsWith("sockets:")) {
+            connection = getSSLSocketConnection(name);
+        }
         else if (name.startsWith(PROTOCOL_SMS)) {
             connection =  new MessageConnectionImpl(name);
         }
@@ -92,5 +95,14 @@ public class Connector {
         } else {
             return new ServerSocketConnection(port);
         }
+    }
+
+    private static Connection getSSLSocketConnection(String name) throws IOException {
+        int portSepIndex = name.lastIndexOf(':');
+        int port = Integer.parseInt(name.substring(portSepIndex + 1));
+        String host = name.substring("sockets://".length(), portSepIndex);
+
+        java.net.Socket socket = javax.net.ssl.SSLSocketFactory.getDefault().createSocket(host,port);
+        return new SocketConnection(socket);
     }
 }
