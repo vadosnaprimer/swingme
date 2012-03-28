@@ -86,6 +86,21 @@ public abstract class BaseGen extends Task {
 
     abstract  public void doGen() throws Exception;
 
+    public static class MyClass {
+    
+        public Class theClass;
+        public int id;
+    }
+    
+    public static Collection<Class> sort(Collection<MyClass> list) {
+        ArrayList<Class> list2 = new ArrayList<Class>();
+        for (MyClass c:list) {
+            list2.add(c.theClass);
+        }
+        Collections.sort(list2, new ClassComparator());
+        return list2;
+    }
+    
     /**
      * Load classes from a white space delimited file
      *
@@ -93,23 +108,24 @@ public abstract class BaseGen extends Task {
      * @return
      * @throws Exception
      */
-    public static Collection<Class> loadClassesFromFile(String fileName, boolean sort) throws Exception {
+    public static Collection<MyClass> loadClassesFromFileRaw(String fileName) throws Exception {
         LineNumberReader reader = new LineNumberReader(new FileReader(fileName));
-        ArrayList<Class> classes = new ArrayList<Class>();
+        ArrayList<MyClass> classes = new ArrayList<MyClass>();
         String line = null;
-
         while ((line = reader.readLine()) != null) {
             line = line.trim();
             if (!"".equals(line)) {
-                String className = line;
-                classes.add( Class.forName(className) );
+                MyClass className = new MyClass();
+                int equals = line.indexOf('=');
+                if (equals > 0) {
+                    String number = line.substring(equals+1).trim();
+                    className.id = Integer.parseInt(number);
+                    line = line.substring(0, equals).trim();
+                }
+                className.theClass = Class.forName(line);
+                classes.add( className );
             }
         }
-
-        if (sort) {
-            Collections.sort(classes, new ClassComparator());
-        }
-
         return classes;
     }
     public static boolean hasBeanProperty(Class theclass,Method[] mymethods, String name) {

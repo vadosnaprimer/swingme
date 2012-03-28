@@ -15,6 +15,16 @@ import java.util.Comparator;
  */
 public class MobileBinGen extends BaseGen {
 
+    private boolean idClashs(int id,ArrayList<MyClass> classes) {
+        for (MyClass c:classes) {
+            if (c.id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
     @Override
     public void doGen() throws Exception {
 
@@ -38,19 +48,19 @@ String className = theclass.getSimpleName();
 //classes.add(Test.class);
 //classes.add(TestObject.class);
 
-ArrayList<Class> classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile(),false);
+ArrayList<MyClass> myclasses = (ArrayList<MyClass>) loadClassesFromFileRaw(getClassNamesFile());
 File f = getGeneratedFile();
 System.out.println("saving to file: "+f);
 PrintStream ps = new PrintStream( f); //new File("src/net/yura/mobile/gen/BinAccess.java"));
 
-int n = 0;
+
 
 
 
 ps.println("package "+getOutputPackage()+";");
 
-for (Class c:classes) {
-ps.println("import "+c.getName().replaceAll("\\$", "\\.")+";");
+for (MyClass c:myclasses) {
+ps.println("import "+c.theClass.getName().replaceAll("\\$", "\\.")+";");
 }
 
 ps.println("import java.util.Hashtable;");
@@ -65,22 +75,31 @@ ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
 ps.println(" */");
 ps.println("public class "+getOutputClass()+" extends BinUtil {");
 
-n = 0;
-for (Class c:classes) {
-ps.println("    public static final int TYPE_"+c.getSimpleName().toUpperCase()+"="+(20+n)+";");
-n++;
+int genId = 20;
+for (MyClass c:myclasses) {
+    
+    int id = c.id;
+    if (id < 20) {
+        do {
+            id = genId;
+            genId++;
+        } while ( idClashs(id,myclasses) );
+    }
+    
+ps.println("    public static final int TYPE_"+c.theClass.getSimpleName().toUpperCase()+"="+id+";");
+
 }
 
 // we do the sort here instead of when we load the files so that the IDs are in the order that the Classes are in the file
 // but the instanceof checking is done in the order defined by the ClassComparator
-Collections.sort(classes, new ClassComparator());
+ArrayList<Class> classes = (ArrayList<Class>)sort(myclasses);
 
 ps.println("    public "+getOutputClass()+"() {");
 ps.println("    }");
 
 ps.println("    protected void writeObject(DataOutputStream out, Object object) throws IOException {");
 
-n=0;
+int n=0;
 for (Class c:classes) {
 
 String className = c.getSimpleName();

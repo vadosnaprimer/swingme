@@ -47,7 +47,7 @@ String className = theclass.getSimpleName();
 //classes.add(Test.class);
 //classes.add(TestObject.class);
 
-classes = (ArrayList<Class>) loadClassesFromFile(getClassNamesFile(),true);
+classes = (ArrayList<Class>) sort(loadClassesFromFileRaw(getClassNamesFile()));
 File f = getGeneratedFile();
 System.out.println("saving to file: "+f);
 PrintStream ps = new PrintStream( f); //new File("src/net/yura/mobile/gen/BinAccess.java"));
