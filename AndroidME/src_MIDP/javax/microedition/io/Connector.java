@@ -24,6 +24,7 @@ public class Connector {
     private static final String PROTOCOL_ASSET = "file:///android_asset/";
     private static final String PROTOCOL_FILE = "file:";
     private static final String PROTOCOL_SOCKET = "socket:";
+    private static final String PROTOCOL_SSL = "ssl:";
     private static final String PROTOCOL_HTTP = "http:";
     private static final String PROTOCOL_HTTPS = "https:";
     private static final String PROTOCOL_SMS = "sms:";
@@ -44,7 +45,7 @@ public class Connector {
         else if (name.startsWith(PROTOCOL_SOCKET)) {
             connection = getSocketConnection(name);
         }
-        else if (name.startsWith("sockets:")) {
+        else if (name.startsWith(PROTOCOL_SSL)) {
             connection = getSSLSocketConnection(name);
         }
         else if (name.startsWith(PROTOCOL_SMS)) {
@@ -88,7 +89,7 @@ public class Connector {
     private static Connection getSocketConnection(String name) throws IOException {
         int portSepIndex = name.lastIndexOf(':');
         int port = Integer.parseInt(name.substring(portSepIndex + 1));
-        String host = name.substring("socket://".length(), portSepIndex);
+        String host = name.substring( (PROTOCOL_SSL+"//").length(), portSepIndex);
 
         if (host.length() > 0) {
             return new SocketConnection(host, port);
