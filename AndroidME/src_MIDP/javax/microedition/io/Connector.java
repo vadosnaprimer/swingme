@@ -89,7 +89,7 @@ public class Connector {
     private static Connection getSocketConnection(String name) throws IOException {
         int portSepIndex = name.lastIndexOf(':');
         int port = Integer.parseInt(name.substring(portSepIndex + 1));
-        String host = name.substring( (PROTOCOL_SSL+"//").length(), portSepIndex);
+        String host = name.substring( (PROTOCOL_SOCKET+"//").length(), portSepIndex);
 
         if (host.length() > 0) {
             return new SocketConnection(host, port);
@@ -101,7 +101,7 @@ public class Connector {
     private static Connection getSSLSocketConnection(String name) throws IOException {
         int portSepIndex = name.lastIndexOf(':');
         int port = Integer.parseInt(name.substring(portSepIndex + 1));
-        String host = name.substring("sockets://".length(), portSepIndex);
+        String host = name.substring( (PROTOCOL_SSL+"//").length(), portSepIndex);
 
         java.net.Socket socket = javax.net.ssl.SSLSocketFactory.getDefault().createSocket(host,port);
         return new SocketConnection(socket);
