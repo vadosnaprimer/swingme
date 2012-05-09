@@ -184,7 +184,7 @@ public class MenuBar extends List implements ActionListener {
                 Button button = (Button)component;
                 if (button.getMnemonic() == mnu) {
                     if (button.isVisible()) {
-                        Component comp = getRendererComponentFor(i);
+                        Component comp = getRendererComponentFor( indexOf(button) ); // we need pass the visible index, not the index in the Vector
                         button.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
                     }
                     return button;

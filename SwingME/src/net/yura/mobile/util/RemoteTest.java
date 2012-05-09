@@ -26,6 +26,7 @@ import net.yura.mobile.io.UTF8InputStreamReader;
 
 /**
  * @author Yura Mamyrin
+ * @see java.awt.Robot
  */
 public class RemoteTest extends Thread {
 
