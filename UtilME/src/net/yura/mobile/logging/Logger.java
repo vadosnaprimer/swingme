@@ -3,16 +3,36 @@ package net.yura.mobile.logging;
 import java.io.PrintStream;
 
 /**
- *
  * @author Orens
- *
  */
 public class Logger {
-    public final static int DEBUG = 0; //debug
-    public final static int INFO = 1; //info
-    public final static int WARN = 2; //warn
-    public final static int ERROR = 3; //error
-    public final static int FATAL = 4; //fatal
+
+    /**
+     * @see java.util.logging.Level#FINE Level.FINE
+     */
+    public final static int DEBUG = 0;
+
+    /**
+     * @see java.util.logging.Level#INFO Level.INFO
+     */
+    public final static int INFO = 1;
+
+    /**
+     * @see java.util.logging.Level#WARNING Level.WARNING
+     */
+    public final static int WARN = 2;
+
+    /**
+     * @see java.util.logging.Level#SEVERE Level.SEVERE
+     */
+    public final static int ERROR = 3;
+
+    /**
+     * can not log at this level, is used to turn off logging
+     * @see java.util.logging.Level#OFF  Level.OFF 
+     */
+    public final static int FATAL = 4;
+
     private final static String LEVEL_NAMES[] = new String[]{"DEBUG", "INFO", "WARN", "ERROR", "FATAL"};
     private static Logger logger = new Logger();
     private static int level;
