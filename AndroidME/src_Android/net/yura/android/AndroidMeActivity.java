@@ -57,7 +57,16 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
         Vector<String[]> jadMidlets = AndroidMeApp.getJadMidlets();
 
-        if (jadMidlets.size() > 1) {
+        if (jadMidlets.size() == 1) {
+            // Start MIDlet
+            new Thread() {
+                public void run() {
+//                    waitForDefaultView(); TODO:!!!!
+                    AndroidMeApp.startMIDlet();
+                }
+            }.start();
+        }
+        else if (jadMidlets.size() > 1) {
             ListView listView = new ListView(AndroidMeActivity.this);
             listView.setOnItemClickListener(AndroidMeActivity.this);
 
@@ -71,13 +80,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             showContentView(listView);
         }
         else {
-            // Start MIDlet
-            new Thread() {
-                public void run() {
-//                    waitForDefaultView(); TODO:!!!!
-                    AndroidMeApp.startMIDlet();
-                }
-            }.start();
+            throw new RuntimeException("No jad file found! please provide a jad file with a Midlet in the android assets folder");
         }
 
 //        PrintStream log = new PrintStream(new LogOutputStream("AndroidMe"));

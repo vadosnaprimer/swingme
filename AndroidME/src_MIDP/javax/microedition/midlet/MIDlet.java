@@ -133,6 +133,45 @@ public abstract class MIDlet {
             else if (url.startsWith(PROTOCOL_NOTIFY)) {
                 showNotification(content);
             }
+            
+            
+            else if (url.startsWith("grasshopper")) {
+                try {
+                    String params = url.substring(url.indexOf('?')+1);
+                    String[] s1 = params.split("\\&");
+                    String appName="Unknown android app",appVersion="Unknown version",locale="";
+                    for (int c=0;c<s1.length;c++) {
+                        String[] s2 = s1[c].split("\\=");
+                        if ("name".equals(s2[0])) {
+                            appName = s2[1];
+                        }
+                        else if ("version".equals(s2[0])) {
+                            appVersion = s2[1];
+                        }
+                        else if ("locale".equals(s2[0])) {
+                            locale = s2[1];
+                        }
+                        else {
+                            System.out.println("unknown grasshopper param: "+s1[c]);
+                        }
+                    }
+                    try {
+                        Class<?> simpleBug = Class.forName("net.yura.grasshopper.SimpleBug");
+                        java.lang.reflect.Method initLogFile = simpleBug.getMethod("initLogFile", new Class[] {String.class,String.class,String.class});
+                        initLogFile.invoke( null, new Object[] {appName, appVersion, locale} );
+                        System.out.println("Grasshopper loaded");
+                    }
+                    catch(Throwable th) {
+                        System.out.println("Grasshopper not loaded");
+                    }
+                }
+                catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+            
+            
             else if (url.equals("clipboard://get")) {
 
             	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -256,7 +295,11 @@ public abstract class MIDlet {
 
                     // Register our Telephony Listener, so we can have Cell ID's updates
                     TelephonyManager tm = instance.getTelephonyManager();
-                    tm.listen(instance, PhoneListener.LISTEN_CELL_LOCATION);
+                    try {
+                        tm.listen(instance, PhoneListener.LISTEN_CELL_LOCATION);
+                    }
+                    catch (SecurityException sex) { }
+
                     tm.listen(instance, PhoneListener.LISTEN_SIGNAL_STRENGTH);
 
                     // Request Cell Location

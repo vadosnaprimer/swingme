@@ -412,7 +412,13 @@ public class AndroidMeApp extends Application {
 
         WifiManager wifiMan = (WifiManager) getSystemService(Context.WIFI_SERVICE);
         if (wifiMan != null) {
-            WifiInfo myWifi = wifiMan.getConnectionInfo();
+            WifiInfo myWifi = null;
+
+            try {
+                myWifi = wifiMan.getConnectionInfo();
+            }
+            catch (SecurityException sex) { }
+
             String myMAC = "";
             if (myWifi != null) {
                 myMAC = myWifi.getBSSID();
@@ -420,7 +426,13 @@ public class AndroidMeApp extends Application {
             }
 
 
-            List<ScanResult> scanRes = wifiMan.getScanResults();
+            List<ScanResult> scanRes = null;
+            
+            try {
+                scanRes = wifiMan.getScanResults();
+            }
+            catch (SecurityException sex) { }
+            
             if (scanRes != null) {
                 for (ScanResult scanResult : scanRes) {
                     if (myMAC != null && !myMAC.equals(scanResult.BSSID)) {
