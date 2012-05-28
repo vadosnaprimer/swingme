@@ -175,18 +175,18 @@ public class Graphics2D {
 
             //#mdebug info
             if (Midlet.getPlatform() != Midlet.PLATFORM_ME4SE) {
-                int tile = ((dest_w/src_w)*(dest_h/src_h));
+                int tile = (( (end_x-start_x) /src_w)*( (end_y-start_y) /src_h));
                 if ( tile>15 ) {
                     Logger.info("going to tile a very small image "+tile+" times: src_w=" +src_w+" src_h="+src_h+" dest_w="+ dest_w +" dest_h="+dest_h );
 
                     if ( tile>30 ) {
                       Logger.info("###########################################################");
                         g.setColor( new Random().nextInt() );
-                        for (int pos_x=dest_x;pos_x<(dest_x+dest_w);pos_x=pos_x+src_w) {
-                            g.drawLine(pos_x, dest_y, pos_x, (dest_y+dest_h));
+                        for (int pos_x=start_x;pos_x<end_x;pos_x=pos_x+src_w) {
+                            g.drawLine(pos_x, start_y, pos_x, end_y);
                         }
-                        for (int pos_y=dest_y;pos_y<(dest_y+dest_h);pos_y=pos_y+src_h) {
-                            g.drawLine(dest_x, pos_y, (dest_x+dest_w), pos_y);
+                        for (int pos_y=start_y;pos_y<end_y;pos_y=pos_y+src_h) {
+                            g.drawLine(start_x, pos_y, end_x, pos_y);
                         }
                     }
                 }
