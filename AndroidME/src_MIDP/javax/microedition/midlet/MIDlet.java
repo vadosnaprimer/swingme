@@ -1,13 +1,11 @@
 package javax.microedition.midlet;
 
-
 import java.util.Properties;
-
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
-
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
+import net.yura.android.WebViewActivity;
 import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.app.Notification;
@@ -215,6 +213,14 @@ public abstract class MIDlet {
                		AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(browserIntent);
             	}
             	
+            }
+            else if (url.startsWith("file:///android_asset/")) {
+                
+                Intent i = new Intent(activity, WebViewActivity.class);
+                //i.setClassName("com.android.browser", "com.android.browser.BrowserActivity"); // does not work
+                i.setData(content);
+                activity.startActivity(i);
+                
             }
             else {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
