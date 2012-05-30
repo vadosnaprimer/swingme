@@ -685,7 +685,7 @@ public class DesktopPane extends Canvas implements Runnable {
                     int startC = 0;
                     for (int c = windows.size()-1; c >= 0; c--) {
                         Object w = windows.elementAt(c);
-                        if ( w instanceof Frame && ((Frame)w).isMaximum() ) {
+                        if ( w instanceof Frame && ((Frame)w).isMaximum() && ((Window)w).isOpaque() ) {
                             startC = c;
                             break;
                         }
