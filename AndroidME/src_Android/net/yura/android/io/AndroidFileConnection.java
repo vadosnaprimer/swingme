@@ -166,11 +166,14 @@ public class AndroidFileConnection implements FileConnection {
         return list(null, false);
     }
 
+    /**
+     * An asterisk ("*") can be used as a wildcard to represent 0 or more occurrences of any character.
+     */
     // Override
     public Enumeration list(String filter, boolean includeHidden)
             throws IOException {
         Pattern pattern;
-        if (filter == null) {
+        if (filter == null || "*".equals(filter)) {
             pattern = Pattern.compile(".*");
         } else {
             String[] literalParts = filter.split("\\*");
