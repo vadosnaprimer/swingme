@@ -16,11 +16,14 @@ public class DirectGraphics {
 
     public void fillPolygon(int[] xPoints, int xOffset, int[] yPoints, int yOffset, int nPoints, int argbColor) {
 
+        int tx = g.getTranslateX();
+        int ty = g.getTranslateY();
+        
         Path path = new Path();
 
-        path.moveTo(xPoints[xOffset++], yPoints[yOffset++]);
+        path.moveTo( tx + xPoints[xOffset++], ty + yPoints[yOffset++]);
         for (int c=1;c<nPoints;c++) {
-            path.lineTo(xPoints[xOffset++], yPoints[yOffset++]);
+            path.lineTo( tx + xPoints[xOffset++], ty + yPoints[yOffset++]);
         }
         path.close();
 
