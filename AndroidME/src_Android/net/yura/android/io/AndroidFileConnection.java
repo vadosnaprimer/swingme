@@ -277,12 +277,12 @@ public class AndroidFileConnection implements FileConnection {
 
     // Override
     public void setReadable(boolean readable) throws IOException {
-        throw new IOException("unsupported");
+        file.setReadable(readable);
     }
 
     // Override
     public void setWritable(boolean writable) throws IOException {
-        throw new IOException("unsupported");
+        file.setWritable(writable);
     }
 
     // Override
