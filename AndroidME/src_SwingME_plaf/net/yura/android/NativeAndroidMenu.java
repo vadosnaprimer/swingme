@@ -2,6 +2,8 @@ package net.yura.android;
 
 import java.util.Vector;
 
+import net.yura.android.plaf.AndroidBorder;
+import net.yura.android.plaf.AndroidIcon;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.logging.Logger;
 import android.graphics.Canvas;
@@ -114,6 +116,13 @@ public class NativeAndroidMenu implements MenuSystem {
 							}
 							@Override
 							public void draw(Canvas canvas) {
+							    if (icon instanceof AndroidIcon) {
+							        Drawable d = ((AndroidIcon)icon).getDrawable();
+							        AndroidBorder.setDrawableState( menuItem, d);
+							        d.setBounds( getBounds() );
+							        d.draw(canvas);
+							    }
+							    else {
 								javax.microedition.lcdui.Image img = icon.getImage();
 								if (img!=null) {
 									tries = 0;
@@ -129,6 +138,7 @@ public class NativeAndroidMenu implements MenuSystem {
 									//#debug debug
 									System.out.println("[NativeAndroidMenu] Failed to draw icon in menu: "+icon+" "+menuItem);
 								}
+							    }
 							}
 						    @Override
 						    public int getIntrinsicWidth() {

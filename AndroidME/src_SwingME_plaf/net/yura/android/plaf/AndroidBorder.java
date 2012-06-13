@@ -144,7 +144,7 @@ public class AndroidBorder implements Border {
     	}
     }
 
-    static void setDrawableState(Component comp, Drawable drawable) {
+    public static void setDrawableState(Component comp, Drawable drawable) {
         Window w = comp.getWindow();
         drawable.setState(getDrawableState(comp.getCurrentState(),comp.getClass(), w==null || w.isFocused() ));
 

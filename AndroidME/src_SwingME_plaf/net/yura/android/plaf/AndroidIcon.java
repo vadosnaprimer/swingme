@@ -50,4 +50,8 @@ public class AndroidIcon extends Icon {
         drawable.setBounds(tx+x, ty+y, tx+x+width, ty+y+height);
         drawable.draw(canvas);
     }
+    
+    public Drawable getDrawable() {
+        return drawable;
+    }
 }
