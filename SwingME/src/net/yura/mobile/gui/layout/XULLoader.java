@@ -592,6 +592,7 @@ public class XULLoader {
 
             String border = null;
             String text = null;
+            boolean i18n = false;
             boolean scrollable = false;
             final int count = parser.getAttributeCount();
             for (int c=0;c<count;c++) {
@@ -602,6 +603,9 @@ public class XULLoader {
                 }
                 else if ("text".equals(key)) {
                     text = value;
+                }
+                else if ("i18n".equals(key)) {
+                    i18n = ("true".equals(value));
                 }
                 else if ("scrollable".equals(key)) {
                     scrollable = "true".equalsIgnoreCase(value);
@@ -619,7 +623,7 @@ public class XULLoader {
                 border2 = new LineBorder();
             }
             if (text!=null) {
-                border2 = new TitledBorder(border2, text, new Label().getFont());
+                border2 = new TitledBorder(border2, getPropertyText(text,i18n), new Label().getFont());
             }
             if (border2!=null) {
                 panel.setBorder(border2);
