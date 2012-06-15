@@ -5,6 +5,8 @@ import javax.microedition.lcdui.game.Sprite;
 
 import net.yura.android.lcdui.FontManager;
 
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -408,6 +410,10 @@ public class Graphics {
         paint.setAlpha(a);
 
         canvas.restore();
+    }
+    
+    public void setColorMarix(ColorMatrix cm) {
+        paint.setColorFilter( cm==null?null:new ColorMatrixColorFilter(cm) );
     }
 
     public void setStrokeStyle(int stroke) {
