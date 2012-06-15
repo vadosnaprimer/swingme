@@ -23,6 +23,7 @@ package javax.microedition.lcdui;
 import java.awt.Color;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
 
 import javax.microedition.lcdui.game.Sprite;
 import javax.microedition.midlet.ApplicationManager;
@@ -219,7 +220,14 @@ public class Graphics {
 //						new DrawImageFilter(data, x, y, w, h)));
 //		}
 //		else {
+                    if (colorMatrix!=null) {
+                        FilteredImageSource filteredSrc = new FilteredImageSource(img._image.getSource(), colorMatrix);
+                        java.awt.Image i = java.awt.Toolkit.getDefaultToolkit().createImage(filteredSrc);
+                        _getAwtGraphics().drawImage(i, x, y, null);
+                    }
+                    else {
 			_getAwtGraphics().drawImage(img._image, x, y, null);
+                    }
 //		}
 
 		//g.drawRect (x, y, img.getWidth (), img.getHeight ());
@@ -696,4 +704,9 @@ public class Graphics {
             translateY = (int)(translateY/scaleY);
         }
 
+        android.graphics.ColorMatrix colorMatrix;
+        public void setColorMarix(android.graphics.ColorMatrix cm) {
+            colorMatrix = cm;
+        }
+        
 }
