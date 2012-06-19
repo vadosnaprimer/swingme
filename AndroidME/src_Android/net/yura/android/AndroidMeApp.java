@@ -317,6 +317,14 @@ public class AndroidMeApp extends Application {
 
         // BlueTooth
         System.setProperty("bluetooth.api.version", "1.1");
+        
+        try {
+            String versionName = getPackageManager().getPackageInfo(getPackageName(), 0 ).versionName;
+            System.setProperty("versionName", versionName);
+        }
+        catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private String getUniqueHardwareId(){
