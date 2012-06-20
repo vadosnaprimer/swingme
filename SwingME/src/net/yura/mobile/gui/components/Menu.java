@@ -38,7 +38,7 @@ public class Menu extends Button {
         // http://wiki.softartisans.com/display/BLOGS/2010/07/12/Static+initialization+in+the+BlackBerry+JVM
         // public static boolean LOOP_MENU = true; // this is now in DesktopPane#UIManager
     
-        private boolean useAnimation=true;
+        //private boolean useAnimation=true;
         private boolean open;
         private int slide = Graphics.BOTTOM;
         private int destX;
@@ -351,7 +351,8 @@ public class Menu extends Button {
 
             DesktopPane dp = getDesktopPane();
 
-            if (useAnimation) {
+            // if this menu button is hidden then animate in, otherwise just show
+            if ( !isVisible() ) {
 
                 int x = popup.getXWithBorder();
                 int y = popup.getYWithBorder();

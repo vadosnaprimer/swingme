@@ -282,7 +282,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
         NimbusBorder tmp4 = new NimbusBorder(listItemFocusedSelectedSettings);
 
         String componentName;
-        String[] components = {"ListRenderer", "PopupListRenderer", "CheckBoxRenderer"};
+        String[] components = {"ListRenderer", "PopupListRenderer", "CheckBoxRenderer", "ListRendererCollapsed"};
         for (int c=0;c<components.length;c++) {
             componentName = components[c];
 
