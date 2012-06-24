@@ -241,6 +241,10 @@ public class Slider extends Component {
     }
 
     public void paintComponent(Graphics2D g) {
+        
+        int v = value - min;
+        int m = max - min;
+        
         if (horizontal) {
 
             drawScrollBar(g,
@@ -248,9 +252,9 @@ public class Slider extends Component {
                     0,
                     width,
                     height,
-                    value,
+                    v,
                     extent,
-                    max
+                    m
             );
         }
         else {
@@ -262,9 +266,9 @@ public class Slider extends Component {
                     0,
                     height,
                     width,
-                    value,
+                    v,
                     extent,
-                    max
+                    m
             );
 
             g.setTransform( t );
@@ -282,15 +286,19 @@ public class Slider extends Component {
             click = 0;
         }
         else if (type == DesktopPane.PRESSED) {
+
+            int v = value - min;
+            int m = max - min;
+            
             if (horizontal) {
                 click = doClickInScrollbar(
                         0,
                         0,
                         width,
                         height,
-                        value,
+                        v,
                         extent,
-                        max,
+                        m,
                         pointX,
                         pointY
                 );
@@ -301,9 +309,9 @@ public class Slider extends Component {
                         0,
                         height,
                         width,
-                        value,
+                        v,
                         extent,
-                        max,
+                        m,
                         pointY,
                         pointX
                 );
@@ -322,7 +330,7 @@ public class Slider extends Component {
                 int h = horizontal?height:width;
                 int p = horizontal?pointX:pointY;
 
-                int newValue = getNewValueSlider(0, 0, w, h, extent, max, p);
+                int newValue = getNewValueSlider(0, 0, w, h, extent, min, max, p);
 
                 setValue(newValue);
             }
@@ -342,6 +350,7 @@ public class Slider extends Component {
                         h,
                         startValue,
                         extent,
+                        min,
                         max,
                         p-startPos
                   );
@@ -641,22 +650,22 @@ public class Slider extends Component {
         return new int[] {box,x+startX,extentW};
     }
 
-    public int getNewValueSlider(int x,int y,int w,int h,int extent, int max,int pixels) {
-        int[] offsets = getOffsets(x, y, w, h, 0, extent, max);
-        return getNewValueSlider(offsets, w, h, extent, max, pixels);
+    public int getNewValueSlider(int x,int y,int w,int h,int extent, int min, int max,int pixels) {
+        int[] offsets = getOffsets(x, y, w, h, 0, extent, max - min);
+        return getNewValueSlider(offsets, w, h, extent, min, max, pixels);
     }
 
-    public int getNewValueSlider(int x,int y,int w,int h,int startValue,int extent, int max,int pixels) {
-        int[] offsets = getOffsets(x,y, w, h, startValue, extent, max);
-        return getNewValueSlider(offsets, w, h, extent, max, offsets[1]+offsets[2]/2+pixels  );
+    public int getNewValueSlider(int x,int y,int w,int h,int startValue,int extent,int min, int max,int pixels) {
+        int[] offsets = getOffsets(x,y, w, h, startValue - min, extent, max - min);
+        return getNewValueSlider(offsets, w, h, extent, min, max, offsets[1]+offsets[2]/2+pixels  );
     }
 
-    private int getNewValueSlider(int[] offsets,int w,int h,int extent, int max,int p) {
+    private int getNewValueSlider(int[] offsets,int w,int h,int extent, int min, int max,int p) {
         float barWidth = w - offsets[0] * 2 - offsets[2];	// the maximum pixels between lowest and highest position slider can take
         float pixels = p - offsets[0] - offsets[2] / 2;		// requested slider position in pixels - in range [0..barWidth]
-        float numberOfDivisions = max - extent;				// number of free ticks e.g. With 10 ticks and slider over two ticks => we get 8 divisions
+        float numberOfDivisions = (max-min) - extent;				// number of free ticks e.g. With 10 ticks and slider over two ticks => we get 8 divisions
         float newValue = pixels / barWidth * numberOfDivisions + 0.5f;	// bump half increment up so that value snaps to nearest tick
-        return (int) newValue;
+        return (int) newValue + min;
     }
 
     /**
