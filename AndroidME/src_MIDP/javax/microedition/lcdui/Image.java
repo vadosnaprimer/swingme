@@ -136,9 +136,12 @@ public class Image {
     }
 
     public static Image createImage(String resource) throws IOException {
-        InputStream in = Image.class.getResourceAsStream(resource);
-        if (in == null) {
-            throw new IOException();
+        InputStream in = getResourceAsStream(resource);// try and load from android res
+        if (in==null) {
+            in = Image.class.getResourceAsStream(resource);
+            if (in == null) {
+                throw new IOException("can not find: "+resource);
+            }
         }
         return createImage(in);
     }
