@@ -895,6 +895,13 @@ public class Properties extends Hashtable {
     }
 
     /**
+     * @see java.util.ResourceBundle#getString(java.lang.String) ResourceBundle.getString
+     */
+    public String getString(String key) {
+        return getProperty(key);
+    }
+    
+    /**
      * Searches for the property with the specified key in this property list.
      * If the key is not found in this property list, the default property list,
      * and its defaults, recursively, are then checked. The method returns the

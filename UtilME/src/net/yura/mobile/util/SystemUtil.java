@@ -77,18 +77,26 @@ public class SystemUtil {
         if (obj1 instanceof Hashtable && obj2 instanceof Hashtable) {
             Hashtable hash1 = (Hashtable) obj1;
             Hashtable hash2 = (Hashtable) obj2;
-            if (hash1.size() != hash2.size())
+            if (hash1.size() != hash2.size()) {
                 return false;
+            }
             Enumeration enum1 = hash1.keys();
-            while (enum1.hasMoreElements())
-            {
-                   Object objKey1 = enum1.nextElement();
-                   Object objValue1 = hash1.get(objKey1);
-                   if (!hash2.containsKey(objKey1))
-                       return false;
-                   Object objValue2 = hash2.get(objKey1);
-                   if (!equals(objValue1,objValue2))
-                       return false;
+            while (enum1.hasMoreElements()) {
+                Object objKey1 = enum1.nextElement();
+                Object objValue1 = hash1.get(objKey1);
+                boolean found = false;
+                Enumeration enum2 = hash2.keys();
+                while (enum2.hasMoreElements()) {
+                    Object objKey2 = enum2.nextElement();
+                    Object objValue2 = hash2.get(objKey2);
+                    if (equals(objKey1, objKey2)) {
+                        if (equals(objValue1, objValue2)) {
+                            found=true;
+                        }
+                        break;
+                    }
+                }
+                if (!found) return false;
             }
             return true;
         }
