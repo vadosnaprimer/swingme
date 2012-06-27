@@ -85,13 +85,16 @@ public class Sprite extends Layer {
         // with a bound rectangle the same as the frame
         super(0, 0, frameWidth, frameHeight, true);
 
+        int w = img.getWidth();
+        int h = img.getHeight();
+        
         // implicit check for null img
-        if (img.getWidth() % frameWidth != 0 ||
-                img.getHeight() % frameHeight != 0)
-            throw new IllegalArgumentException();
+        if ( w % frameWidth != 0 || h % frameHeight != 0) {
+            throw new IllegalArgumentException("w="+w+" h="+h+" fw="+frameWidth+" fh="+frameHeight);
+        }
         this.img = img;
-        cols = img.getWidth() / frameWidth;
-        rows = img.getHeight() / frameHeight;
+        cols = w / frameWidth;
+        rows = h / frameHeight;
         collX = collY = 0;
         collWidth = frameWidth;
         collHeight = frameHeight;
