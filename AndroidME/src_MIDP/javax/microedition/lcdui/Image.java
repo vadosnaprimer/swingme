@@ -7,6 +7,8 @@ import java.io.OutputStream;
 
 import javax.microedition.lcdui.game.Sprite;
 
+import net.yura.android.AndroidMeApp;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -14,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrix;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 /**
  * for saving of image please use
@@ -79,7 +82,14 @@ public class Image {
 
         Bitmap bitmap;
         if (stream instanceof ResourceInputStream) {
-            bitmap = ((ResourceInputStream) stream).getBitmap();
+            try {
+                bitmap = ((ResourceInputStream) stream).getBitmap();
+            }
+            catch (Throwable e) {
+                IOException ex = new IOException();
+                ex.initCause(e);
+                throw ex;
+            }
         }
         else {
             int size = Math.max(stream.available(), 8 * 1024);
@@ -234,6 +244,22 @@ public class Image {
         }
     }
 
+    public static ResourceInputStream getResourceAsStream(String name) {
+        if (name.startsWith("/")) {
+            name = name.substring(1);
+        }
+        name = name.replace(".9.png", "").replace(".png", "").replace(".jpg", "");
+    
+        Resources res = AndroidMeApp.getContext().getResources();
+        
+        int id = res.getIdentifier(name, "drawable", AndroidMeApp.getContext().getPackageName() );
+    
+        if (id > 0) {
+            return new ResourceInputStream(res, id);
+        }
+        return null;
+    }
+
     public static class ResourceInputStream extends InputStream {
         private Resources res;
         private int resId;
@@ -248,14 +274,12 @@ public class Image {
             throw new RuntimeException("Not implemented");
         }
 
-        Bitmap getBitmap() throws IOException {
-            try {
-                return ((BitmapDrawable) res.getDrawable(resId)).getBitmap();
-            } catch (Throwable e) {
-                IOException ex = new IOException();
-                ex.initCause(e);
-                throw ex;
-            }
+        public Drawable getDrawable() {
+            return res.getDrawable(resId);
+        }
+
+        public Bitmap getBitmap() {
+            return ((BitmapDrawable)getDrawable()).getBitmap();
         }
     }
 }

@@ -1,11 +1,14 @@
 package net.yura.android.plaf;
 
+import javax.microedition.lcdui.Image;
 import net.yura.android.AndroidMeActivity;
+import net.yura.android.AndroidMeApp;
 import net.yura.android.AndroidOptionPane;
 import net.yura.android.NativeAndroidMenu;
 import net.yura.android.NativeAndroidTextField;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Font;
+import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.CompoundBorder;
 import net.yura.mobile.gui.border.EmptyBorder;
@@ -16,7 +19,6 @@ import net.yura.mobile.gui.components.ComboBox;
 import net.yura.mobile.gui.components.OptionPane;
 import net.yura.mobile.gui.components.RadioButton;
 import net.yura.mobile.gui.components.TextArea;
-import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
@@ -30,6 +32,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
@@ -37,6 +40,33 @@ import android.util.DisplayMetrics;
 public class AndroidLookAndFeel extends SynthLookAndFeel {
 
     private final static EmptyBorder EMPTY_BORDER = new EmptyBorder(0,0,0,0);
+
+    @Override
+    protected Icon getIcon(String path, int x, int y, int w, int h) {
+        Image.ResourceInputStream resimg = Image.getResourceAsStream(path);
+        if (resimg!=null) {
+            Drawable bmpd = resimg.getDrawable();
+            if (w!=0 && h !=0) {
+                // TODO maybe can be done better to not need a new bitmap
+                Bitmap bmp = ((BitmapDrawable)bmpd).getBitmap();
+                double scale = (double)bmp.getDensity() / DisplayMetrics.DENSITY_DEFAULT;
+                bmp = Bitmap.createBitmap(bmp, (int)(x*scale), (int)(y*scale), (int)(w*scale), (int)(h*scale) );
+                bmpd = new BitmapDrawable( AndroidMeApp.getContext().getResources() ,bmp);
+            }
+            return new AndroidIcon( bmpd );
+        }
+        return super.getIcon(path, x, y, w, h);
+    }
+
+    @Override
+    protected Border getBorder(String path) {
+        Image.ResourceInputStream resimg = Image.getResourceAsStream(path);
+        if (resimg!=null) {
+            Drawable d = resimg.getDrawable();
+            return new AndroidBorder(d);
+        }
+        return super.getBorder(path);
+    }
 
     public AndroidLookAndFeel() {
 
