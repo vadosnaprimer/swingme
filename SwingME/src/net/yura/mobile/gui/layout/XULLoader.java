@@ -1103,7 +1103,7 @@ public class XULLoader {
         if ( dpi!=null) {
                 
             if ("xhdpi".equals(dpi)) {
-                    value = ( value + (value + 1) / 2 ) * 2;
+                    value = ( value + (value + 2) / 3 ) * 2;
             }
             else if ("hdpi".equals(dpi)) {
                     value = value * 2;
@@ -1113,7 +1113,7 @@ public class XULLoader {
                     // There is no Math.round in J2ME so we do the calculation ourselves.
                     // To correctly round a fraction we need to add half of the denominator to the numerator.
                     // Hence the rounded value of "value * 1.5" is equivalent to "value + (int)( (value+1) / 2 )";
-                    value += (value + 1) / 2;
+                    value += (value + 2) / 3;
             }
             // else ldpi
             // we dont need to do anything
