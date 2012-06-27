@@ -298,7 +298,16 @@ public abstract class Midlet extends MIDlet {
      */
 
     public static String resdir;
-
+    static {
+        try {
+            // when running as a me4se applet, this can throw a SecurityException
+            String rd = System.getProperty("resdir");
+            if (rd != null) {
+                resdir = rd;
+            }
+        }
+        catch (Throwable th) { }
+    }
     
     public static Image createImage(String name) {
         try {
@@ -338,19 +347,7 @@ public abstract class Midlet extends MIDlet {
     protected InputStream getResourceAsStreamImpl(String name) {
 
         try {
-            // TODO: Jane - It seems that System.getProperty is being called over and over.
-            // Why can't this code be inside a static block that runs once? Or test
-            // resdir for null first?
-            try {
-                // when running as a me4se applet, this can throw a SecurityException
-                if (System.getProperty("resdir") != null) {
-                    resdir = System.getProperty("resdir");
-                }
-            }
-            catch (Throwable th) {
-                resdir = null;
-            }
-            if (resdir!=null) { // (getPlatform()==PLATFORM_ANDROID) {
+            if (resdir!=null) {
                 InputStream is = Midlet.class.getResourceAsStream(resdir+name);
                 if (is!=null) {
                     return is;
