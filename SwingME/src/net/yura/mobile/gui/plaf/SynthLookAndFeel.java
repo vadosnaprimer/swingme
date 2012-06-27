@@ -26,6 +26,7 @@ import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.gui.border.Border;
 import net.yura.mobile.gui.border.EmptyBorder;
 import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.logging.Logger;
@@ -58,6 +59,22 @@ public class SynthLookAndFeel extends LookAndFeel {
         return null;
     }
 
+    protected Border getBorder(String path) {
+        try {
+            InputStream in = getResourceAsStream(path);
+            if (in != null) { // failed to find image
+                return MatteBorder.load9png( Image.createImage(in) ); // load 9 pacth
+            }
+        }
+        catch (Exception ex) {
+            //#mdebug debug
+            System.err.println("failed to load 9patch: "+path);
+            ex.printStackTrace();
+            //#enddebug
+        }
+        return null;
+    }
+    
     protected InputStream getResourceAsStream(String path) {
         InputStream in = Midlet.getResourceAsStream(path);
         if (in==null) {
@@ -191,11 +208,9 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     }
                                     else {
                                         if (path.indexOf(".9.")>0) {
-                                            InputStream in = getResourceAsStream(path);
-                                            if (in != null) { // failed to find image
-                                                Image img = Image.createImage( in );
-                                                border = MatteBorder.load9png(img); // load 9 pacth
-                                                newStyle.addBorder(border, st);
+                                            Border border2 = getBorder(path);
+                                            if (border2!=null) {
+                                                newStyle.addBorder(border2, st);
                                             }
                                         }
                                         else {
