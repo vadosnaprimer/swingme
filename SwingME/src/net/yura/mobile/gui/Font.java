@@ -114,7 +114,7 @@ public class Font {
                     Image[] characterImage = new Image[imagePaths.length];
                     for (int c=0;c<imagePaths.length;c++) {
 
-                        Image image = Image.createImage( Midlet.getResourceAsStream(imagePaths[c]));
+                        Image image = Midlet.createImage( imagePaths[c] );
 
                         // Set loaded character set images as default
                         characterImage[c] = image;
@@ -322,7 +322,7 @@ public class Font {
 					imageName = "/"+imageName;
 				}
 
-				Image fontimage = Image.createImage(imageName);
+				Image fontimage = Midlet.createImage(imageName);
 
 				f.colors[c] = Integer.parseInt(colorsText[c],16) | 0xFF000000;
 

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.Hashtable;
 
 import javax.microedition.lcdui.Display;
+import javax.microedition.lcdui.Image;
 import javax.microedition.midlet.MIDlet;
 import javax.microedition.midlet.MIDletStateChangeException;
 
@@ -298,18 +299,43 @@ public abstract class Midlet extends MIDlet {
 
     public static String resdir;
 
-    public static InputStream getResourceAsStream(String name) {
-
+    
+    public static Image createImage(String name) {
         try {
             InputStream is = getMidlet().getResourceAsStreamImpl(name);
             if (is != null) {
-                return is;
+                return Image.createImage(is);
             }
         }
         catch (Throwable th) {
             //#debug warn
             th.printStackTrace();
         }
+
+        try {
+            return Image.createImage(name);
+        }
+        catch (Exception ex) {
+            // TODO maybe return null???
+            throw new RuntimeException( ex.toString() );
+        }
+    }
+    
+    
+    public static InputStream getResourceAsStream(String name) {
+        InputStream is = getMidlet().getResourceAsStreamImpl(name);
+        if (is != null) {
+            return is;
+        }
+        return Midlet.class.getResourceAsStream(name);
+    }
+
+    /**
+     * To be overwritten by sub-classes for specific implementation.
+     * This default implementation looks for a system property "resdir"
+     * and if it finds it, tries to load the resource from that folder
+     */
+    protected InputStream getResourceAsStreamImpl(String name) {
 
         try {
             // TODO: Jane - It seems that System.getProperty is being called over and over.
@@ -332,15 +358,12 @@ public abstract class Midlet extends MIDlet {
             }
         }
         catch(Throwable th) {
+            //#debug warn
             Logger.warn(th);
         }
-
-        return Midlet.class.getResourceAsStream(name);
-    }
-
-    // To be overwritten by sub-classes for specific implementation
-    protected InputStream getResourceAsStreamImpl(String name) {
+        
         return null;
+
     }
 
     public void onResult(int requestCode, int resultCode, Object obj) {

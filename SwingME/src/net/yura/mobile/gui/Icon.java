@@ -17,13 +17,8 @@
 
 package net.yura.mobile.gui;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.microedition.lcdui.Image;
-
 import net.yura.mobile.gui.components.Component;
-import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
@@ -54,15 +49,7 @@ public class Icon {
      * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
      */
     public Icon(String imageName) {
-        InputStream in = Midlet.getResourceAsStream(imageName);
-        if (in!=null) {
-            try {
-                initImage( Image.createImage( in ) );
-            }
-            catch(IOException ex) {
-                Logger.warn(ex);
-            }
-        }
+        initImage( Midlet.createImage( imageName ) );
     }
 
     private void initImage(Image img) {
