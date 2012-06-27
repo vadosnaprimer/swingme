@@ -296,6 +296,38 @@ public abstract class Midlet extends MIDlet {
      * name MUST start with a "/"
      * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
      */
+    public static Image createImage(String name) {
+        try {
+            InputStream is = getMidlet().getResourceAsStreamImpl(name);
+            if (is != null) {
+                return Image.createImage(is);
+            }
+        }
+        catch (Throwable th) {
+            //#debug warn
+            Logger.warn(th);
+        }
+
+        try {
+            return Image.createImage(name);
+        }
+        catch (Exception ex) {
+            // TODO maybe return null???
+            throw new RuntimeException( ex.toString() );
+        }
+    }
+
+    /**
+     * name MUST start with a "/"
+     * @see java.lang.Class#getResourceAsStream(java.lang.String) Class.getResourceAsStream
+     */
+    public static InputStream getResourceAsStream(String name) {
+        InputStream is = getMidlet().getResourceAsStreamImpl(name);
+        if (is != null) {
+            return is;
+        }
+        return Midlet.class.getResourceAsStream(name);
+    }
 
     public static String resdir;
     static {
@@ -308,36 +340,6 @@ public abstract class Midlet extends MIDlet {
         }
         catch (Throwable th) { }
     }
-    
-    public static Image createImage(String name) {
-        try {
-            InputStream is = getMidlet().getResourceAsStreamImpl(name);
-            if (is != null) {
-                return Image.createImage(is);
-            }
-        }
-        catch (Throwable th) {
-            //#debug warn
-            th.printStackTrace();
-        }
-
-        try {
-            return Image.createImage(name);
-        }
-        catch (Exception ex) {
-            // TODO maybe return null???
-            throw new RuntimeException( ex.toString() );
-        }
-    }
-    
-    
-    public static InputStream getResourceAsStream(String name) {
-        InputStream is = getMidlet().getResourceAsStreamImpl(name);
-        if (is != null) {
-            return is;
-        }
-        return Midlet.class.getResourceAsStream(name);
-    }
 
     /**
      * To be overwritten by sub-classes for specific implementation.
@@ -345,26 +347,15 @@ public abstract class Midlet extends MIDlet {
      * and if it finds it, tries to load the resource from that folder
      */
     protected InputStream getResourceAsStreamImpl(String name) {
-
-        try {
-            if (resdir!=null) {
-                InputStream is = Midlet.class.getResourceAsStream(resdir+name);
-                if (is!=null) {
-                    return is;
-                }
+        if (resdir!=null) {
+            InputStream is = Midlet.class.getResourceAsStream(resdir+name);
+            if (is!=null) {
+                return is;
             }
         }
-        catch(Throwable th) {
-            //#debug warn
-            Logger.warn(th);
-        }
-        
         return null;
-
     }
 
-    public void onResult(int requestCode, int resultCode, Object obj) {
-
-    }
+    public void onResult(int requestCode, int resultCode, Object obj) { }
 
 }
