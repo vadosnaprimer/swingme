@@ -1115,6 +1115,9 @@ public class XULLoader {
                     // Hence the rounded value of "value * 1.5" is equivalent to "value + (int)( (value+1) / 2 )";
                     value += (value + 2) / 3;
             }
+            else if ("tvdpi".equals(dpi)) {
+                value = (int)(value * 1.77 + 0.5);
+            }
             // else ldpi
             // we dont need to do anything
         }
