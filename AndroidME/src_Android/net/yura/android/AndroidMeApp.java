@@ -247,6 +247,7 @@ public class AndroidMeApp extends Application {
             (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "ldpi" :
             (dm.densityDpi == DisplayMetrics.DENSITY_MEDIUM) ? "mdpi" :
             (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "hdpi" :
+            (dm.densityDpi == DisplayMetrics.DENSITY_TV) ? "tvdpi" :
                 "xhdpi"; // API-11 DisplayMetrics.DENSITY_XHIGH
 
         Configuration config = getResources().getConfiguration();
