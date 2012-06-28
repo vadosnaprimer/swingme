@@ -429,6 +429,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         //addBorder(progressBar, android.R.drawable.progress_horizontal); ????
         setStyleFor("ProgressBar",progressBar);
 
+        
+        // HACK gives at least some space so can be themed in synth
+        Style spinner = new Style(defaultStyle);
+        Rect spinnerBorder = getAdjustedDensityRect(ctx,25,5,25,5);
+        spinner.addBorder( new EmptyBorder(spinnerBorder.top, spinnerBorder.left, spinnerBorder.bottom, spinnerBorder.right) , Style.ALL );
+        setStyleFor("Spinner",spinner);
+        
 
         OptionPane.optionPaneClass = AndroidOptionPane.class;
         DesktopPane.getDesktopPane().menuSystem = new NativeAndroidMenu();
