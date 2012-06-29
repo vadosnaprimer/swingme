@@ -199,6 +199,8 @@ public class AndroidFileConnection implements FileConnection {
 
         });
 
+        if (a==null) a = new File[0]; // avoid nullpointer
+        
         Vector<String> v = new Vector<String>();
         for (File file : a) {
             String fileName = file.getName();

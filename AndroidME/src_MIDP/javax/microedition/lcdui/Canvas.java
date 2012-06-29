@@ -824,8 +824,11 @@ public abstract class Canvas extends Displayable {
 //            }
 
 
-            //#debug debug
-            showFramesPerSec(androidCanvas);
+            //#mdebug debug
+            if (net.yura.mobile.BuildConfig.DEBUG) {
+                showFramesPerSec(androidCanvas);
+            }
+            //#enddebug
 
             if (inputConnectionView!=null) {
                 inputConnectionView.onDraw();
