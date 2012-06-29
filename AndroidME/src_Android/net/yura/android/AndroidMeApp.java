@@ -17,6 +17,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageInfo;
 import android.content.res.Configuration;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
@@ -320,8 +321,9 @@ public class AndroidMeApp extends Application {
         System.setProperty("bluetooth.api.version", "1.1");
         
         try {
-            String versionName = getPackageManager().getPackageInfo(getPackageName(), 0 ).versionName;
-            System.setProperty("versionName", versionName);
+            PackageInfo pinfo = getPackageManager().getPackageInfo(getPackageName(), 0 );
+            System.setProperty("versionName", pinfo.versionName );
+            System.setProperty("versionCode", String.valueOf(pinfo.versionCode) );
         }
         catch (Exception ex) {
             ex.printStackTrace();
