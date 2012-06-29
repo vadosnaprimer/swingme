@@ -326,6 +326,8 @@ public class AndroidMeApp extends Application {
         catch (Exception ex) {
             ex.printStackTrace();
         }
+        
+        System.setProperty("debug", String.valueOf(net.yura.mobile.BuildConfig.DEBUG) );
     }
 
     private String getUniqueHardwareId(){
