@@ -70,7 +70,9 @@ public class AndroidBorder implements Border {
             int max = (c instanceof Slider)?((Slider)c).getMaximum():((ProgressBar)c).getMaximum();
             drawable.setLevel( 10000/(max-min) * (value-min) );
         }
-        setDrawableState(c, drawable);
+        if (c!=null) {
+            setDrawableState(c, drawable);
+        }
         Graphics g2 = g.getGraphics();
         android.graphics.Canvas canvas = g2.getCanvas();
         canvas.save();
