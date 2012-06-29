@@ -12,6 +12,7 @@ import net.yura.mobile.io.RMSUtil;
 import net.yura.mobile.util.SystemUtil;
 
 /**
+ * ALL test methods need to start with the word "test" and be public to work with android
  * @author Yura Mamyrin
  */
 public class JMUnitTest extends TestCase {
@@ -31,7 +32,7 @@ public class JMUnitTest extends TestCase {
         
     }
 
-    private void testXULLoaderAdjustSizeToDensity() {
+    public void testXULLoaderAdjustSizeToDensity() {
 
         //    36x36 for low-density
         //    48x48 for medium-density
@@ -54,6 +55,9 @@ public class JMUnitTest extends TestCase {
         
         XULLoader.setDPI("tvdpi");
         assertEquals(64, XULLoader.adjustSizeToDensity(source) );
+        
+        XULLoader.setDPI(null); // should default to mdpi size
+        assertEquals(48, XULLoader.adjustSizeToDensity(source) );
     }
     
     public void testRMSUtil() throws Exception {
@@ -73,7 +77,7 @@ public class JMUnitTest extends TestCase {
     }
     
     
-    void testSocketGet() throws Exception {
+    public void testSocketGet() throws Exception {
         
 /*
         StreamConnection socket = (StreamConnection)Connector.open("socket://google.com:80");
