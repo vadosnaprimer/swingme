@@ -473,23 +473,25 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         }
         else if ("listSelect".equals(myaction)) {
             SelectableFile to = (SelectableFile) fileList.getSelectedValue();
-            if (FileUtil.isFileType(to.getAbsolutePath(), FileUtil.TYPE_FOLDER)) {
-                // drill down into another dir!
-                gotoDir(to);
-            }
-            else {
-                if (multiSelect) {
-                    Vector selectedItems = fileList.getSelectedValues();
-                    if ( selectedItems.contains(to) ) {
-                        selectedItems.removeElement(to);
-                    }
-                    else {
-                        selectedItems.addElement(to);
-                    }
-                    fileList.repaint();
+            if (to!=null) { // this is needed as even empty list can be clicked
+                if (FileUtil.isFileType(to.getAbsolutePath(), FileUtil.TYPE_FOLDER)) {
+                    // drill down into another dir!
+                    gotoDir(to);
                 }
                 else {
-                    actionPerformed("done");
+                    if (multiSelect) {
+                        Vector selectedItems = fileList.getSelectedValues();
+                        if ( selectedItems.contains(to) ) {
+                            selectedItems.removeElement(to);
+                        }
+                        else {
+                            selectedItems.addElement(to);
+                        }
+                        fileList.repaint();
+                    }
+                    else {
+                        actionPerformed("done");
+                    }
                 }
             }
         }

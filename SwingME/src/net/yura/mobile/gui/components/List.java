@@ -241,6 +241,9 @@ public class List extends Component implements ActionListener {
         return layoutOrientation;
     }
 
+    /**
+     * NOT JAVA SE! added for convenience
+     */
     public void addActionListener(ActionListener l) {
         //#mdebug warn
         if (al!=null) {
@@ -252,6 +255,10 @@ public class List extends Component implements ActionListener {
         //#enddebug
         al = l;
     }
+    
+    /**
+     * NOT JAVA SE! added for convenience
+     */
     public void removeActionListener(ActionListener l) {
 
         if (al == l) { al = null; }
@@ -265,21 +272,38 @@ public class List extends Component implements ActionListener {
         //#enddebug
     }
 
+    /**
+     * NOT JAVA SE! added for convenience
+     */
     public ActionListener getActionListener() {
         return al;
     }
 
+    /**
+     * NOT JAVA SE! added for convenience
+     */
     public void setActionCommand(String ac) {
 
         actionCommand=ac;
     }
+
+    /**
+     * NOT JAVA SE! added for convenience
+     */
     public String getActionCommand() {
         return actionCommand;
     }
 
+    /**
+     * NOT JAVA SE! makes clicking down at the bottom of the list go back to the top and vise versa
+     */
     public void setLoop(boolean l) {
         loop = l;
     }
+
+    /**
+     * NOT JAVA SE! if set to true, the list must be double clicked to fire the action
+     */
     public void setDoubleClick(boolean b){
         doubleClick = b;
     }
@@ -423,7 +447,10 @@ public class List extends Component implements ActionListener {
 
     }
 
-    public void addChangeListener(ChangeListener aThis) {
+    /**
+     * @see javax.swing.JList#addListSelectionListener(javax.swing.event.ListSelectionListener)
+     */
+    public void addListSelectionListener(ChangeListener aThis) {
         chl = aThis;
     }
 
@@ -759,6 +786,9 @@ public class List extends Component implements ActionListener {
 
     }
 
+    /**
+     * NOT JAVA SE! added for convenience
+     */
     public boolean fireActionPerformed() {
 
         if (al!=null) {
