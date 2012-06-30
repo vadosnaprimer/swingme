@@ -1,13 +1,10 @@
 package net.yura.mobile.gui.components;
 
 import javax.microedition.lcdui.Image;
-
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Midlet;
-import net.yura.mobile.util.ImageUtil;
 
 public class ImageView extends Component {
 
@@ -142,13 +139,13 @@ public class ImageView extends Component {
                 width = (int) (imgW * ratio);
                 height = (int) (imgH * ratio);
 
-                System.out.println("PRESSED " + startPinchSize);
+                //System.out.println("PRESSED " + startPinchSize);
             }
             else {
                 int pinchSize = getDistance(x, y);
                 int pinchDiff = (pinchSize - startPinchSize);
 
-                System.out.println("DRAGGED/RELEASED " + pinchSize);
+                //System.out.println("DRAGGED/RELEASED " + pinchSize);
 
                 int newW = (int)(imgW*ratio) + pinchDiff;
                 int newH = (imgH * newW) / imgW;
