@@ -60,7 +60,7 @@ public class TabbedPane extends Panel implements ChangeListener {
             tabList = new List( new DefaultCellEditor(tabLabel) );
             tabs = new Vector();
 
-            tabList.addChangeListener(this);
+            tabList.addListSelectionListener(this);
             ScrollPane scroll = new ScrollPane(tabList,ScrollPane.MODE_SCROLLARROWS);
 
             tabContent = new Panel(l);
