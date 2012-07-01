@@ -101,7 +101,7 @@ public class Logger {
      * output should use the debug level. Unexpected exceptions without
      * implications can be reported on the info level.
      */
-    public static void info(Exception exception) {
+    public static void info(Throwable exception) {
       //#debug info
       if(level<=INFO) logger.log(exception, INFO);
     }
