@@ -820,7 +820,8 @@ Logger.debug("size1 "+ viewWidth+" "+ ch);
 
         }
         catch(Throwable e) {
-            Logger.error(e);
+            //#debug info
+            Logger.info(e);
 
             // we use this instead of using brackets as blackberry build script does not like brackets in catch blocks
             ScrollPane.dragScrollPane = ScrollPane.dragScrollPane == this?null:ScrollPane.dragScrollPane;
