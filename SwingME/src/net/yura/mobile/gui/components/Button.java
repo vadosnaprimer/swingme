@@ -515,6 +515,7 @@ public class Button extends Label implements ActionListener {
 
             int cState = getCurrentState();
 
+            Icon icon = getIcon();
             Icon focusedImage = getRolloverIcon();
             Icon disabledImage = getDisabledIcon();
             
