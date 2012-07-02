@@ -214,8 +214,9 @@ public class ComboBox extends Button implements ActionListener{
         public void updateUI() {
                 super.updateUI();
 
-                nonSelectedImage = (Icon)theme.getProperty("icon", Style.ALL);
-                selectedImage = (Icon)theme.getProperty("icon", Style.SELECTED);
+                nonSelectedImage = (Icon)theme.getProperty("arrow", Style.ALL);
+                selectedImage = (Icon)theme.getProperty("arrow", Style.SELECTED);
+                // TODO disabled Icon
 
                 if (dropDown!=null) {
                     dropDown.updateUI();

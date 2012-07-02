@@ -324,13 +324,13 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
 
         setUIDefault("ComboBox.border",new NimbusBorder(comboBorderSettings));
         setUIDefault("ComboBox.background",noColor);
-        setUIDefault("ComboBox.property[icon]",comboBoxIcon);
+        setUIDefault("ComboBox.property[arrow]",comboBoxIcon);
         setUIDefault("ComboBox[focused].border",new NimbusBorder(comboSelectedSettings));
         setUIDefault("ComboBox[selected].border",new NimbusBorder(comboSelectedSettings));
-        setUIDefault("ComboBox[selected].property[icon]",comboBoxSelectedIcon);
+        setUIDefault("ComboBox[selected].property[arrow]",comboBoxSelectedIcon);
         setUIDefault("ComboBox[disabled].border",new NimbusBorder(comboDisabledSettings));
         setUIDefault("ComboBox[disabled].foreground",uiSettings.get("nimbusDisabledText"));
-        setUIDefault("ComboBox[disabled].property[icon]",comboBoxDisabledIcon);
+        setUIDefault("ComboBox[disabled].property[arrow]",comboBoxDisabledIcon);
 
         // CHECKBOX
 
