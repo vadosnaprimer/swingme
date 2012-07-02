@@ -28,7 +28,6 @@ import net.yura.mobile.gui.plaf.Style;
 public class RadioButton extends Button {
 
 	protected Icon selectedImage;
-	protected Icon disabledImage;
 	protected Icon disabledSelectedImage;
 	protected Icon focusedSelectedImage;
 
@@ -66,7 +65,10 @@ public class RadioButton extends Button {
 	 * @see javax.swing.AbstractButton#getRolloverSelectedIcon() AbstractButton.getRolloverSelectedIcon
 	 */
 	public Icon getRolloverSelectedIcon() {
+            if (focusedSelectedImage!=null) {
 		return focusedSelectedImage;
+            }
+            return (Icon) theme.getProperty("icon",  Style.SELECTED | Style.FOCUSED);
 	}
 
 	/**
@@ -80,7 +82,10 @@ public class RadioButton extends Button {
 	 * @see javax.swing.AbstractButton#getSelectedIcon() AbstractButton.getSelectedIcon
 	 */
 	public Icon getSelectedIcon() {
+            if (selectedImage!=null) {
 		return selectedImage;
+            }
+            return (Icon) theme.getProperty("icon", Style.SELECTED);
 	}
 
 	/**
@@ -88,20 +93,6 @@ public class RadioButton extends Button {
 	 */
 	public void setSelectedIcon(Icon selectedImage) {
 		this.selectedImage = selectedImage;
-	}
-
-	/**
-	 * @see javax.swing.AbstractButton#setDisabledIcon(javax.swing.Icon) AbstractButton.setDisabledIcon
-	 */
-	public void setDisabledIcon(Icon disabledIcon) {
-		disabledImage = disabledIcon;
-	}
-
-	/**
-	 * @see javax.swing.AbstractButton#getDisabledIcon() AbstractButton.getDisabledIcon
-	 */
-	public Icon getDisabledIcon() {
-		return disabledImage;
 	}
 
 	/**
@@ -115,25 +106,14 @@ public class RadioButton extends Button {
 	 * @see javax.swing.AbstractButton#getDisabledSelectedIcon() AbstractButton.getDisabledSelectedIcon
 	 */
 	public Icon getDisabledSelectedIcon() {
-		return disabledSelectedImage;
+            if (disabledSelectedImage!=null) {
+                return disabledSelectedImage;
+            }
+            return (Icon) theme.getProperty("icon", Style.DISABLED | Style.SELECTED);
 	}
 
 	public String getDefaultName() {
 		return "RadioButton";
-	}
-
-	public void updateUI() {
-		super.updateUI();
-
-		//Style st = DesktopPane.getDefaultTheme(this);
-
-		icon = (Icon) theme.getProperty("icon", Style.ALL);
-		focusedSelectedImage = (Icon) theme.getProperty("icon",  Style.SELECTED | Style.FOCUSED);
-		selectedImage = (Icon) theme.getProperty("icon", Style.SELECTED);
-		disabledImage = (Icon) theme.getProperty("icon", Style.DISABLED);
-		focusedImage = (Icon) theme.getProperty("icon", Style.FOCUSED);
-		disabledSelectedImage = (Icon) theme.getProperty("icon", Style.DISABLED | Style.SELECTED);
-
 	}
 
 	protected void paintIcon(Graphics2D g, int x, int y) {
@@ -151,6 +131,10 @@ public class RadioButton extends Button {
 
                 boolean selected = (cState&Style.SELECTED)!=0; // isSelected();
 
+                Icon disabledSelectedImage = getDisabledSelectedIcon();
+                Icon focusedSelectedImage = getRolloverSelectedIcon();
+                Icon selectedImage = getSelectedIcon();
+                
 		if (selected && (cState&Style.DISABLED)!=0 && disabledSelectedImage != null) {
 			disabledSelectedImage.paintIcon(this, g, x, y);
 		}
@@ -159,9 +143,6 @@ public class RadioButton extends Button {
 		}
                 else if (selected && selectedImage!=null) {
 			selectedImage.paintIcon(this, g, x, y);
-		}
-                else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {
-			disabledImage.paintIcon(this, g, x, y);
 		}
                 else {
 			super.paintIcon(g, x, y);

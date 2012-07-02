@@ -229,7 +229,7 @@ public class Label extends Component {
 	}
 
         protected void paintIcon(Graphics2D g, int x, int y) {
-            icon.paintIcon(this, g, x, y);
+            getIcon().paintIcon(this, g, x, y);
         }
 
 	protected int getCombinedWidth() {
@@ -321,7 +321,10 @@ public class Label extends Component {
          * @see javax.swing.JLabel#getIcon() JLabel.getIcon
          */
 	public Icon getIcon() {
+            if (icon!=null) {
 		return icon;
+            }
+            return (Icon) theme.getProperty("icon", Style.ALL);
 	}
 
         /**
@@ -461,10 +464,12 @@ public class Label extends Component {
         }
 
         private int getIconWidth() {
+            Icon icon = getIcon();
             return icon!=null?icon.getIconWidth():0;
         }
 
         private int getIconHeight() {
+            Icon icon = getIcon();
             return icon!=null?icon.getIconHeight():0;
         }
 

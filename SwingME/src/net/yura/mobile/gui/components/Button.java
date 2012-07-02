@@ -67,6 +67,7 @@ public class Button extends Label implements ActionListener {
         private int mneonic;
 
         protected Icon focusedImage;
+        protected Icon disabledImage;
 
         /**
          * @see javax.swing.JButton#JButton() JButton.JButton
@@ -480,7 +481,10 @@ public class Button extends Label implements ActionListener {
 	 * @see javax.swing.AbstractButton#getRolloverIcon() AbstractButton.getRolloverIcon
 	 */
 	public Icon getRolloverIcon() {
+            if (focusedImage!=null) {
 		return focusedImage;
+            }
+            return (Icon) theme.getProperty("icon", Style.FOCUSED);
 	}
 
 	/**
@@ -490,13 +494,36 @@ public class Button extends Label implements ActionListener {
 		this.focusedImage = rolloverIcon;
 	}
 
+	/**
+	 * @see javax.swing.AbstractButton#setDisabledIcon(javax.swing.Icon) AbstractButton.setDisabledIcon
+	 */
+	public void setDisabledIcon(Icon disabledIcon) {
+		disabledImage = disabledIcon;
+	}
+
+	/**
+	 * @see javax.swing.AbstractButton#getDisabledIcon() AbstractButton.getDisabledIcon
+	 */
+	public Icon getDisabledIcon() {
+            if (disabledImage!=null) {
+		return disabledImage;
+            }
+            return (Icon) theme.getProperty("icon", Style.DISABLED);
+	}
+
         protected void paintIcon(Graphics2D g, int x, int y) {
 
             int cState = getCurrentState();
 
+            Icon focusedImage = getRolloverIcon();
+            Icon disabledImage = getDisabledIcon();
+            
             if ((cState&Style.FOCUSED)!=0 && focusedImage!=null) {
                 // this is a bit of a hack to center the focusedImage over the location of the icon, in the event that the focusedImage is bigger or smaller then the icon
                     focusedImage.paintIcon(this, g, x + (icon.getIconWidth()-focusedImage.getIconWidth())/2, y + (icon.getIconHeight()-focusedImage.getIconHeight())/2);
+            }
+            else if ((cState&Style.DISABLED)!=0 && disabledImage != null) {
+                    disabledImage.paintIcon(this, g, x, y);
             }
             else {
                 super.paintIcon(g, x, y);
