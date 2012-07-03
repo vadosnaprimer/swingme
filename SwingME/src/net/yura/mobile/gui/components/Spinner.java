@@ -141,6 +141,21 @@ public class Spinner extends Label {
                     repaint();
                 }
             }
+            else if (type == DesktopPane.CANCEL) {
+                Object newVal=null;
+                if (leftPress) {
+                    leftPress = false;
+                    newVal = getNextValue();
+                }
+                else if (rightPress) {
+                    rightPress = false;
+                    newVal = getPreviousValue();
+                }
+                if (newVal!=null) {
+                    setValue(newVal);
+                }
+                repaint();
+            }
         }
 
 //        public void setFocusable(boolean s) {
