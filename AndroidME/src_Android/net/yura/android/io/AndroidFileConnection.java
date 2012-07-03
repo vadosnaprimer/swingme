@@ -282,12 +282,18 @@ public class AndroidFileConnection implements FileConnection {
 
     // Override
     public void setReadable(boolean readable) throws IOException {
-        file.setReadable(readable);
+        try {
+            file.setReadable(readable); // ONLY API-9 (2.3+) GINGERBREAD
+        }
+        catch (NoSuchMethodError ex) { }
     }
 
     // Override
     public void setWritable(boolean writable) throws IOException {
-        file.setWritable(writable);
+        try {
+            file.setWritable(writable); // ONLY API-9 (2.3+) GINGERBREAD
+        }
+        catch (NoSuchMethodError ex) { }
     }
 
     // Override
