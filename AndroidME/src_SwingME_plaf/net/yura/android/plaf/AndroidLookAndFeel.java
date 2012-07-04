@@ -236,12 +236,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setForegroundColor(ctx, buttonStyle, android.R.style.Widget_Button,Button.class);
         setStyleFor("Button", buttonStyle);
 
+        Drawable btn_circle = getDrawable(ctx, "btn_circle"); // CAN BE NULL!!
+        
         Style helpButtonStyle = new Style(defaultStyle);
-        Drawable btn_circle = getDrawable(ctx, "btn_circle");
         Drawable helpDrawable = getDrawable(ctx, 0, android.R.drawable.ic_menu_help);
         Rect padding2 = getAdjustedDensityRect(ctx, 7, 17, 7, 17);
         // the height on circle on
-        int w = btn_circle.getIntrinsicWidth();
+        int w = btn_circle==null?helpDrawable.getIntrinsicWidth():btn_circle.getIntrinsicWidth();
         AndroidIcon helpIcon = new AndroidIcon(helpDrawable, w, w);
         helpButtonStyle.addBorder( new IconBorder(padding2.top,padding2.left,padding2.bottom,padding2.right,helpIcon,null) ,Style.ALL);
         setForegroundColor(ctx, helpButtonStyle, android.R.style.Widget_Button,Button.class);
@@ -311,14 +312,14 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         // --- ComboBox2 ---
 
         // this is a total crazy hack, but sometimes we need these graphics, and this is the only way we have found to get them
-        Style comboStyle2 = new Style(defaultStyle);
         Drawable d2 = getDrawable(ctx, "ic_btn_round_more");
-
-        Rect comboBox2Padding = getAdjustedDensityRect(ctx, 9, 17, 9, 17);
-
-        comboStyle2.addBorder( new IconBorder(comboBox2Padding.top,comboBox2Padding.left,comboBox2Padding.bottom,comboBox2Padding.right,new AndroidIcon(btn_circle),new AndroidIcon(d2)) ,Style.ALL);
-        setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
-        setStyleFor("ComboBox2",comboStyle2);
+        if (btn_circle!=null && d2!=null) {
+            Style comboStyle2 = new Style(defaultStyle);
+            Rect comboBox2Padding = getAdjustedDensityRect(ctx, 9, 17, 9, 17);
+            comboStyle2.addBorder( new IconBorder(comboBox2Padding.top,comboBox2Padding.left,comboBox2Padding.bottom,comboBox2Padding.right,new AndroidIcon(btn_circle),new AndroidIcon(d2)) ,Style.ALL);
+            setForegroundColor(ctx, comboStyle2, android.R.style.Widget_CompoundButton_RadioButton,RadioButton.class); // TODO this is a guess
+            setStyleFor("ComboBox2",comboStyle2);
+        }
 
         // --- Popup ---
         Style popupStyle = new Style(defaultStyle);
@@ -417,7 +418,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         //setForegroundColor(ctx, comboStyle2, android.R.style.Widget_SeekBar,Slider.class); // does nothing
         sliderStyle.addForeground(c3, Style.DISABLED);
         setStyleFor("Slider",sliderStyle);
-
 
 
 
