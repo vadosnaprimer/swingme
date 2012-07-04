@@ -312,8 +312,7 @@ public abstract class Midlet extends MIDlet {
             return Image.createImage(name);
         }
         catch (Exception ex) {
-            // TODO maybe return null???
-            throw new RuntimeException( ex.toString() );
+            return null;
         }
     }
 

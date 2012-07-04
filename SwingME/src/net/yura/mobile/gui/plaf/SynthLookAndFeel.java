@@ -40,41 +40,33 @@ import net.yura.mobile.io.kxml2.KXmlParser;
 public class SynthLookAndFeel extends LookAndFeel {
 
     protected Icon getIcon( String path ,int x,int y,int w,int h) {
-        InputStream in = getResourceAsStream(path);
+        Image in = createImage(path);
         if (in!=null) {
-            try {
-                Image img = Image.createImage( in );
-                if (w!=0 && h !=0) {
-                    img = Image.createImage(img, x, y, w, h, Sprite.TRANS_NONE);
-                }
-                return new Icon(img);
+            if (w!=0 && h !=0) {
+                in = Image.createImage(in, x, y, w, h, Sprite.TRANS_NONE);
             }
-            catch (Exception ex) {
-                //#mdebug warn
-                Logger.warn("can not load image: "+path);
-                Logger.warn(ex);
-                //#enddebug
-            }
+            return new Icon(in);
         }
         return null;
     }
 
     protected Border getBorder(String path) {
-        try {
-            InputStream in = getResourceAsStream(path);
-            if (in != null) { // failed to find image
-                return MatteBorder.load9png( Image.createImage(in) ); // load 9 pacth
-            }
-        }
-        catch (Exception ex) {
-            //#mdebug debug
-            System.err.println("failed to load 9patch: "+path);
-            ex.printStackTrace();
-            //#enddebug
+        Image in = createImage(path);
+        if (in != null) { // failed to find image
+            return MatteBorder.load9png( in ); // load 9 pacth
         }
         return null;
     }
     
+    protected Image createImage(String path) {
+        Image in = Midlet.createImage(path);
+        if (in==null) {
+            //#debug warn
+            Logger.warn("can not load image: "+path);
+        }
+        return in;
+    }
+
     protected InputStream getResourceAsStream(String path) {
         InputStream in = Midlet.getResourceAsStream(path);
         if (in==null) {
@@ -83,7 +75,7 @@ public class SynthLookAndFeel extends LookAndFeel {
         }
         return in;
     }
-
+    
     /**
      * @param input
      * @throws java.lang.Exception
@@ -327,9 +319,8 @@ public class SynthLookAndFeel extends LookAndFeel {
 
                                 Object newImage=null;
                                 if (frameWidth!=null || frameHeight!=null) {
-                                    InputStream in = getResourceAsStream(path);
-                                    if (in!=null) {
-                                        Image img = Image.createImage(in);
+                                    Image img = createImage(path);
+                                    if (img!=null) {
                                         newImage = new Sprite(img, frameWidth==null?img.getWidth():Integer.parseInt(frameWidth), frameHeight==null?img.getHeight():Integer.parseInt(frameHeight));
                                     }
                                 }
@@ -470,9 +461,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                         String imagePath = parser.getAttributeValue(null, "path");
                         String imageColor = parser.getAttributeValue(null, "color");
 
-                        InputStream in = getResourceAsStream(imagePath);
-                        if (in != null) {
-                            Image img = Image.createImage( in );
+                        Image img = createImage(imagePath);
+                        if (img != null) {
                             int color = 0; // default to black
                             if (imageColor!=null) {
                                 color = Graphics2D.parseColor(imageColor, 16);
