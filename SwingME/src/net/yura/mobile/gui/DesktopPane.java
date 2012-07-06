@@ -1191,7 +1191,9 @@ public class DesktopPane extends Canvas implements Runnable {
      * @see javax.swing.JDesktopPane#getSelectedFrame() JDesktopPane.getSelectedFrame
      */
     public Window getSelectedFrame() {
-        return windows.isEmpty()?null:(Window)windows.lastElement();
+        synchronized (windows) {
+            return windows.isEmpty()?null:(Window)windows.lastElement();
+        }
     }
 
     //,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,
