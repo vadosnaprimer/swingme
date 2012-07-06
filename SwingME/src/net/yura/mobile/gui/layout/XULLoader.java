@@ -505,19 +505,8 @@ public class XULLoader {
             return readUIObject(parser, textfield,listener,properties);
         }
         else if (name.equals("textarea")) {
-
-            Class theclass = TextArea.class;
-
-            // TODO is this really needed?
-            String tp = (String)properties.get("TextPane");
-            if ("true".equals(tp)) {
-                theclass = TextPane.class;
-            }
-
-            Component textarea = newComponent(theclass,properties);
-
+            Component textarea = newComponent( properties.get("halign")!=null?TextPane.class:TextArea.class ,properties);
             readTextComponent(parser,textarea,listener,properties);
-
             return readUIObject(parser, textarea,listener,properties);
         }
         else if (name.equals("label")) {
@@ -966,7 +955,7 @@ public class XULLoader {
                     switch(pos) {
                         case Graphics.HCENTER: align = TextPane.TextStyle.ALIGN_CENTER; break;
                         case Graphics.RIGHT: align = TextPane.TextStyle.ALIGN_RIGHT; break;
-                        //case Graphics.LEFT: // fall throw to default
+                        //case Graphics.LEFT: // fall-through to default
                         default: align = TextPane.TextStyle.ALIGN_LEFT; break;
                     }
                     TextPane.TextStyle style = new TextPane.TextStyle();
