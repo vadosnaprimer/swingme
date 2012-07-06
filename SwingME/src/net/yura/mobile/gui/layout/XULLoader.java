@@ -902,17 +902,21 @@ public class XULLoader {
                             else if ("italic".equalsIgnoreCase(token)) { italic = true; }
                             else {
                                     try {
-                                            size = Integer.parseInt(token);
+                                            size = -Integer.parseInt(token);
                                     } catch (NumberFormatException nfe) {
-                                            name = (name == null) ? token :
-                                                    (name + ' ' + token);
+                                        if ("SMALL".equals(token) || "MEDIUM".equals(token) || "LARGE".equals(token)) {
+                                            size = SynthLookAndFeel.getFontSize(token);
+                                        }
+                                        else {
+                                            name = (name == null) ? token : (name + ' ' + token);
+                                        }
                                     }
                             }
                     }
 
                     font=new Font(SynthLookAndFeel.getFontName(name),
                             (bold ? javax.microedition.lcdui.Font.STYLE_BOLD : 0) | (italic ? javax.microedition.lcdui.Font.STYLE_ITALIC : 0),
-                            size==0?javax.microedition.lcdui.Font.SIZE_MEDIUM:-size);
+                            size==0?javax.microedition.lcdui.Font.SIZE_MEDIUM:size);
                 }
             }
 

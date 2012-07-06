@@ -407,7 +407,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                 Logger.info("Loading font: name: "+fontName+", size: "+fontSize+", style: "+fontStyle+", id: "+fontId);
 
                 int fname=getFontName(fontName);
-
+                int fsize=getFontSize(fontSize);
+                
                 int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
                 if (fontStyle!=null) {
                     if (fontStyle.indexOf("BOLD")!=-1) {
@@ -419,27 +420,6 @@ public class SynthLookAndFeel extends LookAndFeel {
                     if (fontStyle.indexOf("UNDERLINED")!=-1) {
                        fstyle |= javax.microedition.lcdui.Font.STYLE_UNDERLINED;
                     }
-                }
-
-                int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
-                if (fontSize!=null) {
-	                if ("SMALL".equals(fontSize)) {
-	                    fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
-	                }
-	                else if ("MEDIUM".equals(fontSize)) {
-	                    fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
-	                }
-	                else if ("LARGE".equals(fontSize)) {
-	                    fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
-	                }
-	                else {
-	                	try {
-	                		fsize = -Integer.parseInt(fontSize);
-	                	}
-	                	catch(Exception ex) {
-	                		Logger.warn(ex);
-	                	}
-	                }
                 }
 
                 Vector colors = new Vector();
@@ -507,7 +487,6 @@ public class SynthLookAndFeel extends LookAndFeel {
 
         public static int getFontName(String fontName) {
             int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL; // default
-
             if ("PROPORTIONAL".equals(fontName)) {
                 fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
             }
@@ -518,5 +497,29 @@ public class SynthLookAndFeel extends LookAndFeel {
                 fname=javax.microedition.lcdui.Font.FACE_SYSTEM;
             }
             return fname;
+        }
+
+        public static int getFontSize(String fontSize) {
+            int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
+            if (fontSize!=null) {
+                    if ("SMALL".equals(fontSize)) {
+                        fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
+                    }
+                    else if ("MEDIUM".equals(fontSize)) {
+                        fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
+                    }
+                    else if ("LARGE".equals(fontSize)) {
+                        fsize=javax.microedition.lcdui.Font.SIZE_LARGE;
+                    }
+                    else {
+                            try {
+                                    fsize = -Integer.parseInt(fontSize);
+                            }
+                            catch(Exception ex) {
+                                    Logger.warn(ex);
+                            }
+                    }
+            }
+            return fsize;
         }
 }
