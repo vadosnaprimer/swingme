@@ -22,11 +22,10 @@ import java.io.Reader;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-
 import javax.microedition.lcdui.Graphics;
-
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
+import net.yura.mobile.gui.Font;
 import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
@@ -55,6 +54,8 @@ import net.yura.mobile.gui.components.TextComponent;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.components.TextPane;
 import net.yura.mobile.gui.components.Window;
+import net.yura.mobile.gui.plaf.Style;
+import net.yura.mobile.gui.plaf.SynthLookAndFeel;
 import net.yura.mobile.io.UTF8InputStreamReader;
 import net.yura.mobile.io.kxml2.KXmlParser;
 import net.yura.mobile.logging.Logger;
@@ -850,6 +851,7 @@ public class XULLoader {
 
     protected void readTextComponent(KXmlParser parser, Component text,ActionListener listener,Hashtable properties) {
             String textLabel = null;
+            Font font = null;
             boolean i18n = false;
 
             int count = parser.getAttributeCount();
@@ -888,6 +890,30 @@ public class XULLoader {
                         }
                     }
                 }
+                else if ("font".equals(key)) {
+
+                    String name = null;
+                    boolean bold = false; boolean italic = false;
+                    int size = 0;
+                    String[] st = StringUtil.split(value,' ');
+                    for (int i=0;i<st.length;i++) {
+                            String token = st[i];
+                            if ("bold".equalsIgnoreCase(token)) { bold = true; }
+                            else if ("italic".equalsIgnoreCase(token)) { italic = true; }
+                            else {
+                                    try {
+                                            size = Integer.parseInt(token);
+                                    } catch (NumberFormatException nfe) {
+                                            name = (name == null) ? token :
+                                                    (name + ' ' + token);
+                                    }
+                            }
+                    }
+
+                    font=new Font(SynthLookAndFeel.getFontName(name),
+                            (bold ? javax.microedition.lcdui.Font.STYLE_BOLD : 0) | (italic ? javax.microedition.lcdui.Font.STYLE_ITALIC : 0),
+                            size==0?javax.microedition.lcdui.Font.SIZE_MEDIUM:-size);
+                }
             }
 
             String constraint = (String)properties.get("constraint");
@@ -903,16 +929,45 @@ public class XULLoader {
                 }
             }
 
-            if (text instanceof TextPane) {
-                ((TextPane)text).setActionListener(listener);
-            }
-
             if (textLabel != null) {
+                String thetext = getPropertyText(textLabel,i18n);
                 if (text instanceof TextComponent) {
-                    ((TextComponent)text).setText( getPropertyText(textLabel,i18n) );
+                    ((TextComponent)text).setText( thetext );
                 }
                 else if (text instanceof TextPane) { // TODO temp for now
-                    ((TextPane)text).setText( getPropertyText(textLabel,i18n) );
+                    ((TextPane)text).setText( thetext );
+                }
+            }
+            
+            if (font!=null) {
+                if (text instanceof TextComponent) {
+                    ((TextComponent)text).setFont(font);
+                }
+                else if (text instanceof TextPane) { // TODO temp for now
+                    TextPane pane = (TextPane)text;
+                    TextPane.TextStyle style = new TextPane.TextStyle();
+                    style.addFont(font, Style.ALL);
+                    pane.setParagraphAttributes(0, pane.getText().length(), style);
+                }
+            }
+            
+            if (text instanceof TextPane) {
+                TextPane pane = ((TextPane)text);
+                pane.setActionListener(listener);
+                
+                String hAlignment = (String)properties.get("halign");
+                if (hAlignment!=null) {
+                    int pos = position(hAlignment, true);
+                    int align;
+                    switch(pos) {
+                        case Graphics.HCENTER: align = TextPane.TextStyle.ALIGN_CENTER; break;
+                        case Graphics.RIGHT: align = TextPane.TextStyle.ALIGN_RIGHT; break;
+                        //case Graphics.LEFT: // fall throw to default
+                        default: align = TextPane.TextStyle.ALIGN_LEFT; break;
+                    }
+                    TextPane.TextStyle style = new TextPane.TextStyle();
+                    style.setAlignment( align );
+                    pane.setParagraphAttributes(0, pane.getText().length(), style);
                 }
             }
     }

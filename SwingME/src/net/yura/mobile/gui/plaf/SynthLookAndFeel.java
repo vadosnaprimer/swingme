@@ -406,19 +406,9 @@ public class SynthLookAndFeel extends LookAndFeel {
                 //#debug info
                 Logger.info("Loading font: name: "+fontName+", size: "+fontSize+", style: "+fontStyle+", id: "+fontId);
 
-                int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
-                int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
-                int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
+                int fname=getFontName(fontName);
 
-                if ("PROPORTIONAL".equals(fontName)) {
-                    fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
-                }
-                else if ("MONOSPACE".equals(fontName)) {
-                    fname=javax.microedition.lcdui.Font.FACE_MONOSPACE;
-                }
-                else if ("SYSTEM".equals(fontName)) {
-                    fname=javax.microedition.lcdui.Font.FACE_SYSTEM;
-                }
+                int fstyle=javax.microedition.lcdui.Font.STYLE_PLAIN;
                 if (fontStyle!=null) {
                     if (fontStyle.indexOf("BOLD")!=-1) {
                         fstyle |= javax.microedition.lcdui.Font.STYLE_BOLD;
@@ -431,6 +421,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                     }
                 }
 
+                int fsize=javax.microedition.lcdui.Font.SIZE_MEDIUM;
                 if (fontSize!=null) {
 	                if ("SMALL".equals(fontSize)) {
 	                    fsize=javax.microedition.lcdui.Font.SIZE_SMALL;
@@ -514,5 +505,18 @@ public class SynthLookAndFeel extends LookAndFeel {
 
         }
 
+        public static int getFontName(String fontName) {
+            int fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL; // default
 
+            if ("PROPORTIONAL".equals(fontName)) {
+                fname=javax.microedition.lcdui.Font.FACE_PROPORTIONAL;
+            }
+            else if ("MONOSPACE".equals(fontName)) {
+                fname=javax.microedition.lcdui.Font.FACE_MONOSPACE;
+            }
+            else if ("SYSTEM".equals(fontName)) {
+                fname=javax.microedition.lcdui.Font.FACE_SYSTEM;
+            }
+            return fname;
+        }
 }
