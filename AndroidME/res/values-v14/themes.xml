@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources><!-- parent="android:Theme.Holo.Light" -->
  <style name="DialogTheme" parent="android:Theme.DeviceDefault.Dialog.NoActionBar" />
+ <style name="Theme" parent="android:Theme.DeviceDefault" />
 </resources>
