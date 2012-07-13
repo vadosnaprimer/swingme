@@ -119,7 +119,7 @@ public class Image {
 		//Display.check();
 
 		BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-			ApplicationManager.getInstance().awtContainer.createImage(w, h);
+//			ApplicationManager.getInstance().awtContainer.createImage(w, h);
 		java.awt.Graphics g = img.getGraphics();
 		g.setColor(ApplicationManager.getInstance().bgColor);
 		g.fillRect(0, 0, w, h);
