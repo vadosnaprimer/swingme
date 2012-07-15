@@ -481,4 +481,12 @@ public class Graphics {
         }
         return clipBounds;
     }
+
+    public int getStrokeWidth() {
+        return (int) paint.getStrokeWidth();
+    }
+
+    public void setStrokeWidth(int i) {
+        paint.setStrokeWidth(i);
+    }
 }

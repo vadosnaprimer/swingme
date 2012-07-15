@@ -251,7 +251,7 @@ public class Image {
         if (name.startsWith("/")) {
             name = name.substring(1);
         }
-        name = name.replace(".9.png", "").replace(".png", "").replace(".jpg", "");
+        name = name.replace(".9.png", "").replace(".png", "").replace(".jpg", "").replace(".gif", "");
     
         Resources res = AndroidMeApp.getContext().getResources();
         
