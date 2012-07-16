@@ -20,8 +20,11 @@
 
 package javax.microedition.lcdui;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Shape;
+import java.awt.Stroke;
 import java.awt.image.BufferedImage;
 import java.awt.image.FilteredImageSource;
 
@@ -220,14 +223,7 @@ public class Graphics {
 //						new DrawImageFilter(data, x, y, w, h)));
 //		}
 //		else {
-                    if (colorMatrix!=null) {
-                        FilteredImageSource filteredSrc = new FilteredImageSource(img._image.getSource(), colorMatrix);
-                        java.awt.Image i = java.awt.Toolkit.getDefaultToolkit().createImage(filteredSrc);
-                        _getAwtGraphics().drawImage(i, x, y, null);
-                    }
-                    else {
-			_getAwtGraphics().drawImage(img._image, x, y, null);
-                    }
+                        _getAwtGraphics().drawImage( getImageToDraw(img), x, y, null);
 //		}
 
 		//g.drawRect (x, y, img.getWidth (), img.getHeight ());
@@ -236,6 +232,17 @@ public class Graphics {
 		//checkStale();
 	}
 
+        public java.awt.Image getImageToDraw(Image img) {
+            if (colorMatrix!=null) {
+                FilteredImageSource filteredSrc = new FilteredImageSource(img._image.getSource(), colorMatrix);
+                java.awt.Image i = java.awt.Toolkit.getDefaultToolkit().createImage(filteredSrc);
+                return i;
+            }
+            else {
+                return img._image;
+            }
+        }
+        
 	/**
 	 * @API MIDP-1.0
 	 */
@@ -708,5 +715,24 @@ public class Graphics {
         public void setColorMarix(android.graphics.ColorMatrix cm) {
             colorMatrix = cm;
         }
-        
+
+        public int getStrokeWidth() {
+            if (awtGraphics instanceof Graphics2D) {
+                Graphics2D g2 = (Graphics2D)awtGraphics;
+                Stroke stroke = g2.getStroke();
+                if (stroke instanceof BasicStroke) {
+                    BasicStroke bs = (BasicStroke)stroke;
+                    return (int)bs.getLineWidth();
+                }
+            }
+            return 1; // otherwise we just dont know
+        }
+
+        public void setStrokeWidth(int i) {
+            if (awtGraphics instanceof Graphics2D) {
+                Graphics2D g2 = (Graphics2D)awtGraphics;
+                g2.setStroke( new BasicStroke(i) );
+            }
+        }
+
 }

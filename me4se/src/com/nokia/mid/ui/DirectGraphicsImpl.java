@@ -369,7 +369,7 @@ class DirectGraphicsImpl implements DirectGraphics {
         }
         else{
             if(getAlphaComponent() != 255){
-                System.out.println("FillPoly issue with alpha:"+getAlphaComponent());
+                //System.out.println("FillPoly issue with alpha:"+getAlphaComponent());
             }
             g._getAwtGraphics().fillPolygon(x, y, nPoints);
             setARGBColor(save);
