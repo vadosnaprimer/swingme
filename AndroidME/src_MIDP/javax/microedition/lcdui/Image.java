@@ -95,13 +95,16 @@ public class Image {
             int size = Math.max(stream.available(), 8 * 1024);
             BufferedInputStream buffInput = new BufferedInputStream(stream, size);
 
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            
             try {
-                bitmap = BitmapFactory.decodeStream(buffInput);
+                bitmap = BitmapFactory.decodeStream(buffInput,null,options);
             } catch (OutOfMemoryError e) {
                 cleanMem();
                 buffInput.reset();
                 buffInput.mark(1024);
-                bitmap = BitmapFactory.decodeStream(buffInput);
+                bitmap = BitmapFactory.decodeStream(buffInput,null,options);
             }
         }
 
