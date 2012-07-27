@@ -7,8 +7,6 @@ public final class Graphics3D {
 
     public static final int TRUE_COLOR = 8;
 
-    private static Graphics3D instance;
-
     private Graphics targetGraphics;
     private int vpX = 0;
     private int vpY = 0;
@@ -19,11 +17,8 @@ public final class Graphics3D {
     }
 
     public static Graphics3D getInstance() {
-
-        if (instance == null) {
-            instance = new Graphics3D();
-        }
-        return instance;
+        // do not keep a instance, as this may cause memory leaks and also is not thead safe
+        return new Graphics3D();
     }
 
     public void bindTarget(Object target, boolean depthBuffer, int hints) {
