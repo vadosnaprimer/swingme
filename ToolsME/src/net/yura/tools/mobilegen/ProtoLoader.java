@@ -32,7 +32,7 @@ public class ProtoLoader {
             parseRaw(raw);
 	}
 
-        private String[] ignoreNames = new String[] {"Object","Vector","Array","Hashtable","KeyValue","String","Integer","Double","Float","Boolean","Short","Long","Character","Byte","ByteArray"};
+        private String[] ignoreNames = new String[] {"Vector","Hashtable","KeyValue"};
 
         private boolean ignoreMessage(String name) {
 
@@ -184,24 +184,26 @@ public class ProtoLoader {
             MessageDefinition md = new MessageDefinition( name );
             md.comment = comment;
 
-            // Attempt to get a class definition
-            boolean found=false;
-            for (String op:this.objectPackage) {
-                System.out.println( "Looking for class " + op + "." + name);
-                try {
-                    Class c = Class.forName( op + "." + name );
-                    md.setImplementation(c);
-                    System.out.println( " - Found class " + op + "." + name);
-                    found = true;
-                    break;
+            if (!"Object".equals(name)) {
+                // Attempt to get a class definition
+                boolean found=false;
+                for (String op:this.objectPackage) {
+                    System.out.println( "Looking for class " + op + "." + name);
+                    try {
+                        Class c = Class.forName( op + "." + name );
+                        md.setImplementation(c);
+                        System.out.println( " - Found class " + op + "." + name);
+                        found = true;
+                        break;
+                    }
+                    catch( ClassNotFoundException cnfe ) {
+                        //cnfe.printStackTrace();
+                    }
                 }
-                catch( ClassNotFoundException cnfe ) {
-                    //cnfe.printStackTrace();
+                if (!found) {
+                        System.out.println( " - Unable to find class for " + name);
+                        md.setImplementation(Hashtable.class);
                 }
-            }
-            if (!found) {
-                    System.out.println( " - Unable to find class for " + name);
-                    md.setImplementation(Hashtable.class);
             }
 
             // Split fields
@@ -214,7 +216,7 @@ public class ProtoLoader {
             }
 
             //this.messages.addElement( md );
-            this.messageDefs.put( MobileProtoGen.unCamel(name) , md );
+            this.messageDefs.put( name , md );
         //}
     }
 
@@ -289,7 +291,7 @@ public class ProtoLoader {
 
         Class messageClass = md.getImplementation();
         Class returnType   = null;
-        if ( messageClass != Hashtable.class ) {
+        if ( messageClass!=null && messageClass != Hashtable.class ) {
             try {
 
                 String methodName = "get" + MobileProtoGen.firstUp(name);

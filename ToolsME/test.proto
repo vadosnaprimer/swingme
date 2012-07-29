@@ -4,100 +4,31 @@ option java_package = "net.yura.server.gen"; // comment 2
 option java_outer_classname = "TestProtos"; // comment 4
 // comment 5
 
-enum ObjectType {
+message Object {
 
-    TYPE_BYTE_ARRAY = 13;
-    TYPE_HASHTABLE = 12;
-    TYPE_VECTOR = 10;
-    TYPE_ARRAY = 11;
-    TYPE_STRING = 5;
-    TYPE_INTEGER = 1;
-    TYPE_DOUBLE = 2;
-    TYPE_FLOAT = 3;
-    TYPE_BOOLEAN = 4;
-    TYPE_SHORT = 6;
-    TYPE_LONG = 7;
-    TYPE_CHARACTER = 8;
-    TYPE_BYTE = 9;
-    TYPE_NULL = 0;
+    optional int32 int = 1;
+    optional double double = 2;
+    optional float float = 3;
+    optional bool boolean = 4;
+    optional string string = 5;
+    optional int32 short = 6;
+    optional int64 long = 7;
+    optional int32 char = 8;
+    optional int32 byte = 9;
+    optional Vector vector = 10;
+    optional Vector array = 11;
+    optional Hashtable hashtable = 12;
+    optional bytes bytes = 13;
 
+    optional Message message = 20;
+    optional Login login = 22;
+    optional Bob bob                                 = 10000;
+    optional Test test                               = 10001;
 
-    TYPE_MESSAGE = 20;
-    TYPE_LOGIN = 22;
-    TYPE_BOB                                = 10000;
-    TYPE_TEST                               = 10001;
+    optional TestObject test_object                  = 10003;
+//  optional ClientLoginSuccess client_login_success = 23;
 
-    TYPE_TEST_OBJECT                        = 10003;
-  //  TYPE_CLIENT_LOGIN_SUCCESS = 23;
 }
-
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-// Test Objects
-// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-// deprecated
-message Test {
-	required int32 id                = 1201;
-}
-
-// Number was originally defined as a public static class inside TestObject.
-
-
-
-// TestObject extends Test. In order to simplify Java OO extension, we just copy the fields from
-// the Test object to TestObject. 
-// repeated required Number numbers becomes a Vector.
-// repeated required bytes object is how we represent java.lang.Object i.e. a placeholder for any object.
-// repeated required string legs is a String[]
-
-// deprecated
-enum OtherThingsType {
-    stuff = 0;
-    thing = 1;
-}
-
-// deprecated
-message TestObject {
-	required int32 id                = 1204; 
-	optional string  name            = 1205;
-	required int32   age             = 1206;
-        optional Type myType      = 1207;
-	optional Object body     = 1208;
-	repeated string legs    = 1209;
-        optional bytes image = 1;
-        repeated ClientLoginSuccess arms = 2;
-        optional Hashtable organs = 3;
-        optional bool isAlive = 4;
-        required int32 heads = 5;
-        required int64 last_updated = 6;
-        required OtherThingsType things = 7;
-        optional Test and_one_inside = 8;
-        repeated int32 numbers = 9;
-}
-
-// deprecated
-message Login {
-    required string username = 1;
-    required string password = 2;
-    repeated Type type = 3;
-    repeated TestObject tests = 4;
-    optional bytes image = 5;
-    repeated int32 inty = 6;
-    required int32 intx = 7;
-    required bool intz = 8;
-}
-
-// deprecated
-enum Type {
-    BOBA = 1;
-    FRED = 2;
-    LALA = 3;
-}
-
-// the problem with this is that we need to keep
-// track how many bytes we have ready as we read from the stream
-
-
 
 message Vector {
     repeated Object elements = 1;
@@ -112,10 +43,81 @@ message KeyValue {
     optional Object value = 2;
 }
 
-message Object {
-    required ObjectType objectType = 1;
-    optional bytes value = 2;
+
+
+
+
+
+
+
+
+
+
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// Test Objects
+// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+message Test {
+	required int32 id                = 1201;
 }
+
+// Number was originally defined as a public static class inside TestObject.
+
+
+
+// TestObject extends Test. In order to simplify Java OO extension, we just copy the fields from
+// the Test object to TestObject. 
+// repeated required Number numbers becomes a Vector.
+// repeated required bytes object is how we represent java.lang.Object i.e. a placeholder for any object.
+// repeated required string legs is a String[]
+
+
+enum OtherThingsType {
+    stuff = 0;
+    thing = 1;
+}
+
+
+message TestObject {
+	required int32 id                = 1204; 
+	optional string  name            = 1205;
+	required int32   age             = 1206;
+        optional Type myType      = 1207;
+	optional Object body     = 1208;
+	repeated string legs    = 1209;
+        optional bytes image = 1;
+//        repeated ClientLoginSuccess arms = 2;
+        optional Hashtable organs = 3;
+        optional bool isAlive = 4;
+        required int32 heads = 5;
+        required int64 last_updated = 6;
+        required OtherThingsType things = 7;
+        optional Test and_one_inside = 8;
+        repeated int32 numbers = 9;
+}
+
+
+message Login {
+    required string username = 1;
+    required string password = 2;
+    repeated Type type = 3;
+    repeated TestObject tests = 4;
+    optional bytes image = 5;
+    repeated int32 inty = 6;
+    required int32 intx = 7;
+    required bool intz = 8;
+}
+
+
+enum Type {
+    BOBA = 1;
+    FRED = 2;
+    LALA = 3;
+}
+
+// the problem with this is that we need to keep
+// track how many bytes we have ready as we read from the stream
 
 // deprecated
 // this is bob
@@ -125,9 +127,7 @@ message Bob {
     repeated Vector vec3 = 3;
 }
 
-message String {
-    optional string value = 1;
-}
+
 
 // deprecated
 message Message {

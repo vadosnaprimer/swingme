@@ -6,9 +6,9 @@
 
 
     <!-- REAL PROTO -->
-    <property name="outdir" value="./src"/>
+    <property name="outdir" value="${basedir}/test"/>
     <property name="srcdir" value="${basedir}"/>
-    <property name="proto" value="${basedir}\test.proto"/>
+    <property name="proto" value="${basedir}/test.proto"/>
 
     <target name="protoc" description="generate proto files">
         <exec executable="${basedir}/proto/protoc.exe">
@@ -22,8 +22,6 @@
 
 
 
-    <property name="lib.dir" value="./lib"/>
-    <property name="src.dir" value="./src"/>
 
 <!--
     ./dist/${ant.project.name}.jar
@@ -41,7 +39,7 @@
 
     <target name="build-generate" description="build first then generate the persistance manager class">
 
-        <delete dir="${basedir}/src/net/yura/mobile/gen/" includes="**"/>
+        <delete dir="${outdir}/net/yura/mobile/gen/" includes="**"/>
 
         <antcall target="jar"/>
         <antcall target="generate"/>
@@ -49,7 +47,6 @@
 
 
     <target name="generate" description="generate the persistance manager class">
-        <echo message="libs =${lib.dir}"/>
         <property name="cp" refid="class.path"/>
         <echo message="class path = ${cp}"/>
 <!--
@@ -58,21 +55,21 @@
             classNamesFile="${basedir}/generate.properties"
             outputPackage="net.yura.mobile.gen"
             outputClass="XMLAccess"
-            sourceRoot="${basedir}/src"/>
+            sourceRoot="${outdir}"/>
 
         <taskdef classname="net.yura.tools.mobilegen.MobileJsonGen" classpathref="class.path" name="gen-json"/>
         <gen-json
             classNamesFile="${basedir}/generate.properties"
             outputPackage="net.yura.mobile.gen"
             outputClass="JSONAccess"
-            sourceRoot="${basedir}/src"/>
+            sourceRoot="${outdir}"/>
 -->
         <taskdef classname="net.yura.tools.mobilegen.MobileBinGen" classpathref="class.path" name="gen-bin"/>
         <gen-bin
             classNamesFile="${basedir}/generate.properties"
             outputPackage="net.yura.mobile.gen"
             outputClass="BinAccess"
-            sourceRoot="${basedir}/src"/>
+            sourceRoot="${outdir}"/>
 
         <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpathref="class.path" name="gen-proto"/>
         <gen-proto
@@ -81,8 +78,9 @@
             extendClass="ProtoFileUtil"
             outputPackage="net.yura.mobile.gen"
             outputClass="ProtoAccess"
-            sourceRoot="${basedir}/src"
+            sourceRoot="${outdir}"
             skipDeprecated="true"
+            split="true"
             /><!-- obfuscate="true" -->
     </target>
 

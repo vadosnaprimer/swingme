@@ -121,7 +121,7 @@ messageDefs = loader.getMessageDefs();
         
         List<MessageDefinition> messages = new ArrayList<MessageDefinition>();
         for ( MessageDefinition md:messageDefs.values() ) {
-            if (use(md)) {
+            if (!"Object".equals(md.getName()) && use(md) ) {
                 messages.add(md);
             }
         }
@@ -212,7 +212,7 @@ Hashtable<String,MessageDefinition> messageDefs;
             for (String name:keys) {
                 EnumDefinition edef = enumDefs.get(name);
 
-                if ( use(edef) && !"ObjectType".equals(name) ) {
+                if ( use(edef) ) {
                     Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
                     for (Map.Entry<String,Integer> enu:set) {
                         enums.add( enu.getKey() );
@@ -232,7 +232,7 @@ Hashtable<String,MessageDefinition> messageDefs;
         for (String name:keys) {
             EnumDefinition edef = enumDefs.get(name);
             
-            if ( use(edef) && !"ObjectType".equals(name) ) {
+            if ( use(edef) ) {
 
                 Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
 
@@ -265,16 +265,16 @@ ps.println("    }");
 
 
     private void printIDs(PrintStream ps) {
-        
-        Set<Map.Entry<String,Integer>> set = enumDefs.get("ObjectType").getValues().entrySet();
+
+        List<FieldDefinition> set = messageDefs.get("Object").getFields();
                 
-        for (Map.Entry<String,Integer> enu:set) {
-            int num = enu.getValue();
+        for (FieldDefinition enu:set) {
+            int num = enu.getID();
             if (num >= 20) {
-                MessageDefinition md = getMessageFromEnum(enu.getKey());
+                MessageDefinition md = getMessageFromEnum( enu.getType() );
 
                 if (use(md)) {
-                    ps.println("public static final int "+enu.getKey()+"="+num+";");
+                    ps.println("public static final int "+unCamel(enu.getType())+"="+num+";");
                 }
             }
         }
@@ -287,16 +287,16 @@ ps.println("        if (obj instanceof Hashtable) {");
 ps.println("            Hashtable table = (Hashtable)obj;");
 
 
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
+for (FieldDefinition enu:set) {
+    int num = enu.getID();
     if (num >= 20) {
-        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        MessageDefinition md = getMessageFromEnum( enu.getType() );
         
         if ( use(md) && md.getImplementation() == Hashtable.class ) {
 
             String line1 ="";
             String line2 ="";
-            Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum(enu.getKey()).fields;
+            Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum( enu.getType() ).fields;
             for (ProtoLoader.FieldDefinition field:fields) {
                 if (field.required) { //  || field.repeated (we dont need a null vector)
                     line1 = line1 +"\""+field.getName()+"\",";
@@ -313,7 +313,7 @@ for (Map.Entry<String,Integer> enu:set) {
 
             ps.println("    if (hashtableIsMessage(table,"+req+","+opt+")) {");
 
-            ps.println("        return "+enu.getKey()+";");
+            ps.println("        return "+ unCamel(enu.getType()) +";");
             ps.println("    }");
         }
     }
@@ -323,10 +323,10 @@ ps.println("        }");
 
 List<MessageDefinition> messages = new ArrayList<MessageDefinition>();
 Hashtable<MessageDefinition,String> messageNames = new Hashtable<MessageDefinition,String>();
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
+for (FieldDefinition enu:set) {
+    int num = enu.getID();
     if (num >= 20) {
-        String messageName = enu.getKey();
+        String messageName = enu.getType();
         MessageDefinition message = getMessageFromEnum(messageName);
         if( use(message) && message.getImplementation() != Hashtable.class) {
             messages.add(message);
@@ -339,7 +339,7 @@ Collections.sort(messages,new ClassComparator());
 
 for (MessageDefinition message:messages) {
     ps.println("    if (obj instanceof "+message.getImplementation().getSimpleName()+") {");
-    ps.println("        return "+messageNames.get(message)+";");
+    ps.println("        return "+unCamel(messageNames.get(message))+";");
     ps.println("    }");
 }
 
@@ -360,8 +360,7 @@ ps.println("    }");
 
     private void printEncDecComp(PrintStream ps) {
 
-        EnumDefinition edef = enumDefs.get("ObjectType");
-        Set<Map.Entry<String,Integer>> set = edef.getValues().entrySet();
+        List<FieldDefinition> set = messageDefs.get("Object").getFields();
 
         
         
@@ -372,12 +371,12 @@ ps.println("        switch (type) {");
 
 
 
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
+for (FieldDefinition enu:set) {
+    int num = enu.getID();
     if (num >= 20) {
-        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        MessageDefinition md = getMessageFromEnum(enu.getType());
         if (use(md)) {
-ps.println("            case "+enu.getKey()+": return "+decode+getMessageID(md)+"(in2);");
+ps.println("            case "+unCamel(enu.getType())+": return "+decode+getMessageID(md)+"(in2);");
         }
     }
 }
@@ -392,12 +391,12 @@ ps.println("        switch (type) {");
 
 
 
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
+for (FieldDefinition enu:set) {
+    int num = enu.getID();
     if (num >= 20) {
-        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        MessageDefinition md = getMessageFromEnum(enu.getType());
         if (use(md)) {
-ps.println("            case "+enu.getKey()+": return "+compute+getMessageID(md)+size+"( ("+md.getImplementation().getSimpleName()+")obj );");
+ps.println("            case "+unCamel(enu.getType())+": return "+compute+getMessageID(md)+size+"( ("+md.getImplementation().getSimpleName()+")obj );");
         }
     }
 }
@@ -410,12 +409,12 @@ ps.println("    protected void encodeObject(CodedOutputStream out, Object obj,in
 ps.println("        switch (type) {");
 
 
-for (Map.Entry<String,Integer> enu:set) {
-    int num = enu.getValue();
+for (FieldDefinition enu:set) {
+    int num = enu.getID();
     if (num >= 20) {
-        MessageDefinition md = getMessageFromEnum(enu.getKey());
+        MessageDefinition md = getMessageFromEnum(enu.getType());
         if (use(md)) {
-ps.println("            case "+enu.getKey()+": "+encode+getMessageID(md)+"( out, ("+md.getImplementation().getSimpleName()+")obj ); break;");
+ps.println("            case "+unCamel(enu.getType())+": "+encode+getMessageID(md)+"( out, ("+md.getImplementation().getSimpleName()+")obj ); break;");
         }
     }
 }
@@ -500,7 +499,7 @@ ps.println("    }");
                         type = primitiveToJavaType(field.getType(),false);
                     }
                     else {
-                        MessageDefinition mesDef = messageDefs.get(unCamel(field.getType()));
+                        MessageDefinition mesDef = messageDefs.get( field.getType() );
                         if (mesDef!=null) {
                             type = mesDef.getImplementation().getSimpleName();
                         }
@@ -524,7 +523,7 @@ ps.println("    }");
                             type = primitiveToJavaType(field.getType(),false);
                         }
                         else {
-                            MessageDefinition mesDef = messageDefs.get(unCamel(field.getType()));
+                            MessageDefinition mesDef = messageDefs.get( field.getType() );
                             if (mesDef!=null) {
                                 type = mesDef.getImplementation().getSimpleName();
                             }
@@ -611,7 +610,7 @@ ps.println("    }");
                 }
                 else {
 
-                    MessageDefinition mesDef = messageDefs.get(unCamel(type));
+                    MessageDefinition mesDef = messageDefs.get(type);
                     if (mesDef!=null) {
                         id = getMessageID(mesDef);
                         c = compute;
@@ -742,7 +741,7 @@ for (ProtoLoader.FieldDefinition field:fields) {
                 final String implType;
                 final String id;
                 final String d;
-                MessageDefinition mesDef = messageDefs.get(unCamel(type));
+                MessageDefinition mesDef = messageDefs.get(type);
                 if (mesDef!=null) {
                     implType = mesDef.getImplementation().getSimpleName();
                     id = getMessageID(mesDef);
@@ -839,19 +838,24 @@ ps.println("        }");
 
     private MessageDefinition getMessageFromEnum(String key) {
         //key = key.substring(5).replaceAll("\\_", ""); // remove the "TYPE_"
-        MessageDefinition md = messageDefs.get(key);
-        if (md==null) throw new RuntimeException("no message found for type "+key);
+        MessageDefinition md = messageDefs.get( key );
+        if (md==null) throw new RuntimeException("no message found for type "+key );
         return md;
     }
     private String getMessageID(MessageDefinition md) {
-        EnumDefinition edef = enumDefs.get("ObjectType");
-        String type = unCamel(md.getName());
-        Integer id = edef.getValues().get(type);
-        if (id==null) {
-            System.out.println("NO TYPE ENUM FOR "+md);
-            return md.getName();
-        }
+        List<FieldDefinition> edef = messageDefs.get("Object").getFields();
         if (obfuscate) {
+            Integer id = null;
+            for (FieldDefinition fd:edef) {
+                if (fd.getType().equals( md.getName() )) {
+                    id = fd.getID();
+                    break;
+                }
+            }
+            if (id==null) {
+                System.out.println("NO TYPE ENUM FOR "+md);
+                return md.getName();
+            }
             return id.toString();
         }
         return md.getName();
