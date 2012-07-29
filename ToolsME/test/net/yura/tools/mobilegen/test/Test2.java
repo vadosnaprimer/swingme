@@ -1,24 +1,18 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package net.yura.tools.mobilegen.test;
 
-import com.google.protobuf.ByteString;
+import com.google.protobuf.GeneratedMessage;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import net.yura.server.gen.TestProtos;
 import net.yura.server.gen.TestProtos.Bob;
-import net.yura.server.gen.TestProtos.ObjectType;
 import net.yura.server.gen.TestProtos.Test;
 import net.yura.server.gen.TestProtos.TestObject;
 import net.yura.server.gen.TestProtos.Vector;
 
 /**
- *
- * @author Administrator
+ * @author Yura Mamyrin
  */
 public class Test2 {
 
@@ -26,16 +20,17 @@ public class Test2 {
 
 
         Test test1 = Test.newBuilder().setId(55).build();
-        TestObject test2 = TestObject.newBuilder().setId(5335).setAge(-5).setName("Gina").build();
+        TestObject.Builder test2 = TestObject.newBuilder().setId(5335).setAge(-5).setName("Gina");
+        test2.setHeads(5).setLastUpdated(0).setThings(TestProtos.OtherThingsType.stuff);
         Test test3 = Test.newBuilder().setId(53344335).build();
 
         Vector.Builder addressBook = Vector.newBuilder();
 
         addressBook.addElements( getObject(test1) );
-        addressBook.addElements( getObject(test2) );
+        addressBook.addElements( getObject(test2.build() ) );
         addressBook.addElements( getObject(test3) );
 
-        addressBook.addElements( getTest1() );
+        addressBook.addElements( wrapString("bob the builder") );
 
 
         Vector v = addressBook.build();
@@ -62,75 +57,26 @@ System.out.println("b1="+b);
 System.out.println("b2="+obj);
         Bob outbob = (Bob)obj;
         Vector vout = outbob.getVec1(0); // 3 of them, also 3 vec2 and 3 vec3
-        net.yura.server.gen.TestProtos.String sout = (net.yura.server.gen.TestProtos.String)getObject(vout.getElements(3));
 
-System.out.println("equals="+b.equals(obj)+" getting string: "+sout.getValue() );
+System.out.println("equals="+b.equals(obj)+" getting string: "+ vout.getElements(3).getString() );
     }
 
-    public static net.yura.server.gen.TestProtos.Object getTest1() throws Exception {
-        net.yura.server.gen.TestProtos.String.Builder sb = net.yura.server.gen.TestProtos.String.newBuilder();
-        sb.setValue("bob the builder");
-        return getObject(sb.build());
+    public static net.yura.server.gen.TestProtos.Object wrapString(String s) throws Exception {
+        net.yura.server.gen.TestProtos.Object.Builder sb = net.yura.server.gen.TestProtos.Object.newBuilder();
+        sb.setString(s);
+        return sb.build();
     }
 
     public static net.yura.server.gen.TestProtos.Object getObject(com.google.protobuf.GeneratedMessage message) throws Exception {
-
-        //ByteArrayOutputStream out = new ByteArrayOutputStream();
-
-        net.yura.server.gen.TestProtos.Object.Builder prefix = net.yura.server.gen.TestProtos.Object.newBuilder();
-
-        if (message instanceof Vector) {
-            prefix.setObjectType(ObjectType.TYPE_VECTOR);
-        }
-        else if (message instanceof Bob) {
-            prefix.setObjectType(ObjectType.TYPE_BOB);
-        }
-        else if (message instanceof Test) {
-            prefix.setObjectType(ObjectType.TYPE_TEST);
-        }
-        else if (message instanceof TestObject) {
-            prefix.setObjectType(ObjectType.TYPE_TEST_OBJECT);
-        }
-        else if (message instanceof net.yura.server.gen.TestProtos.String) {
-            prefix.setObjectType(ObjectType.TYPE_STRING);
-        }
-        else {
-            throw new RuntimeException();
-        }
-
-        prefix.setValue( message.toByteString() );
-
-        return prefix.build();
+        net.yura.server.gen.TestProtos.Object.Builder mbb = net.yura.server.gen.TestProtos.Object.newBuilder();
+        mbb.getClass().getMethod("set"+message.getClass().getSimpleName(),message.getClass()).invoke(mbb, message) ;
+        return mbb.build();
     }
 
-    public static com.google.protobuf.GeneratedMessage getObject(net.yura.server.gen.TestProtos.Object object) throws Exception {
-
-        ObjectType type = object.getObjectType();
-        ByteString bytes = object.getValue();
-
-        com.google.protobuf.GeneratedMessage message = null;
-
-        if (type == ObjectType.TYPE_VECTOR) {
-            message = Vector.parseFrom(bytes);
-        }
-        else if (type == ObjectType.TYPE_BOB) {
-            message = Bob.parseFrom(bytes);
-        }
-        else if (type == ObjectType.TYPE_TEST) {
-            message = Test.parseFrom(bytes);
-        }
-        else if (type == ObjectType.TYPE_TEST_OBJECT) {
-            message = TestObject.parseFrom(bytes);
-        }
-        else if (type == ObjectType.TYPE_STRING) {
-            message = net.yura.server.gen.TestProtos.String.parseFrom(bytes);
-        }
-        else {
-            throw new RuntimeException();
-        }
-
-        return message;
-
+    public static GeneratedMessage getObject(net.yura.server.gen.TestProtos.Object object) throws Exception {
+        Collection list = object.getAllFields().values();
+        if (list.isEmpty()) return null;
+        return (GeneratedMessage)list.iterator().next();
     }
 
 }
