@@ -17,17 +17,13 @@ public class ProtoUtil {
 
     protected static final String[] EMPTY = new String[0];
     protected static final String unknown = "unknown ";
-    
-    private static final int OBJECT_TYPE = 1; // from proto file
-    private static final int OBJECT_VALUE = 2; // from proto file
-    
-    private static final int DEFAULT_FIELD = 1;
 
-    private static final int VECTOR_ELEMENT = 1;
+    private static final int VECTOR_ELEMENT = 1; // from proto file
 
-    private static final int KEY_VALUE = 1;
-    private static final int HASHTABLE_KEY = 1;
-    private static final int HASHTABLE_VALUE = 2;
+    private static final int KEY_VALUE = 1; // from proto file
+
+    private static final int HASHTABLE_KEY = 1; // from proto file
+    private static final int HASHTABLE_VALUE = 2; // from proto file
 
     public int save(OutputStream out, Object obj) throws IOException {
 
@@ -55,10 +51,7 @@ public class ProtoUtil {
     }
 
     protected Object decodeAnonymousObject(CodedInputStream in2) throws IOException {
-
-        int type=-1;
         Object obj=null;
-
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
@@ -66,29 +59,15 @@ public class ProtoUtil {
     //Logger.debug("read field "+fieldNo );
     //Logger.debug("wire type "+wireType );
 
-            switch (fieldNo) {
-                case OBJECT_TYPE: {
-                    type = in2.readInt32();
-                    //Logger.debug("object type "+type);
-                    break;
-                }
-                case OBJECT_VALUE: {
-                    if (type==-1) {
-                        throw new IOException("fuck, fields in wrong order to be able to decode");
-                    }
-                    int size = in2.readBytesSize();
-                    int lim = in2.pushLimit(size);
-                    //Logger.debug("object size "+size);
-                    obj = decodeObject(in2,type);
-                    //Logger.debug("object "+obj);
-                    in2.popLimit(lim);
-                    break;
-                }
-                default: {
-                    in2.skipField(tag);
-                    break;
-                }
+            if (obj != null) {
+                throw new IOException("more then one field inside Anonymous Object, newFieldNo="+fieldNo+" currentObject="+obj );
             }
+            int size = in2.readBytesSize();
+            int lim = in2.pushLimit(size);
+            //Logger.debug("object size "+size);
+            obj = decodeObject(in2, fieldNo );
+            //Logger.debug("object "+obj);
+            in2.popLimit(lim);
         }
         return obj;
     }
@@ -96,52 +75,28 @@ public class ProtoUtil {
     protected Object decodeObject(CodedInputStream in2,int type) throws IOException {
 
         switch (type) {
+            //case BinUtil.TYPE_NULL: return null;
+            case BinUtil.TYPE_INTEGER: return new Integer( in2.readInt32() );
+            case BinUtil.TYPE_DOUBLE: return new Double(in2.readDouble());
+            case BinUtil.TYPE_STRING: return in2.readString();
+            case BinUtil.TYPE_BOOLEAN: return in2.readBool()?Boolean.TRUE:Boolean.FALSE;
+            case BinUtil.TYPE_BYTE: return new Byte((byte)in2.readInt32());
+            case BinUtil.TYPE_CHARACTER: return new Character( (char)in2.readInt32());
+            case BinUtil.TYPE_SHORT: return new Short( (short)in2.readInt32());
+            case BinUtil.TYPE_LONG: return new Long(in2.readInt64());
+            case BinUtil.TYPE_FLOAT: return new Float(in2.readFloat());
+            case BinUtil.TYPE_BYTE_ARRAY: return in2.readBytes();
             case BinUtil.TYPE_VECTOR: return decodeVector(in2);
+            case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
             case BinUtil.TYPE_ARRAY: {
                 Vector v = decodeVector(in2);
                 Object[] array = new Object[v.size()];
                 v.copyInto(array);
                 return array;
             }
-            case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
+            default: throw new IOException();
         }
 
-        Object simple=null;
-
-        while (!in2.isAtEnd()) {
-            int tag = in2.readTag();
-            int fieldNo = WireFormat.getTagFieldNumber(tag);
-//            int wireType = WireFormat.getTagWireType(tag);
-    //Logger.debug("read field "+fieldNo );
-    //Logger.debug("wire type "+wireType );
-
-            if (fieldNo == DEFAULT_FIELD) {
-                simple = readSimple(in2,type);
-            }
-            else {
-                in2.skipField(tag);
-            }
-        }
-        return simple;
-
-    }
-
-    private Object readSimple(CodedInputStream in2,int type) throws IOException {
-
-        switch (type) {
-                case BinUtil.TYPE_INTEGER: return new Integer( in2.readInt32() );
-                case BinUtil.TYPE_DOUBLE: return new Double(in2.readDouble());
-                case BinUtil.TYPE_STRING: return in2.readString();
-                case BinUtil.TYPE_BOOLEAN: return in2.readBool()?Boolean.TRUE:Boolean.FALSE;
-                case BinUtil.TYPE_BYTE: return new Byte((byte)in2.readInt32());
-                case BinUtil.TYPE_CHARACTER: return new Character( (char)in2.readInt32());
-                case BinUtil.TYPE_SHORT: return new Short( (short)in2.readInt32());
-                case BinUtil.TYPE_LONG: return new Long(in2.readInt64());
-                case BinUtil.TYPE_FLOAT: return new Float(in2.readFloat());
-                case BinUtil.TYPE_BYTE_ARRAY: return in2.readBytes();
-                case BinUtil.TYPE_NULL: return null; // TODO ???
-                default: throw new IOException();
-        }
     }
 
     protected Vector decodeVector(CodedInputStream in2) throws IOException {
@@ -237,55 +192,32 @@ public class ProtoUtil {
     /////////////////////////////////////////////////////////////////////////////
 
     protected int computeObjectSize(Object obj,int type) {
-
         switch(type) {
-            case BinUtil.TYPE_INTEGER: return CodedOutputStream.computeInt32Size(DEFAULT_FIELD,((Integer)obj).intValue());
-            case BinUtil.TYPE_DOUBLE: return CodedOutputStream.computeDoubleSize(DEFAULT_FIELD, ((Double)obj).doubleValue() );
             case BinUtil.TYPE_VECTOR: return computeVectorSize( (Vector)obj );
-            case BinUtil.TYPE_STRING: return CodedOutputStream.computeStringSize(DEFAULT_FIELD, (String)obj );
-            case BinUtil.TYPE_BOOLEAN: return CodedOutputStream.computeBoolSize(DEFAULT_FIELD, ((Boolean)obj).booleanValue() );
-            case BinUtil.TYPE_BYTE: return CodedOutputStream.computeInt32Size(DEFAULT_FIELD,((Byte)obj).byteValue());
-            case BinUtil.TYPE_CHARACTER: return CodedOutputStream.computeInt32Size(DEFAULT_FIELD,((Character)obj).charValue());
-            case BinUtil.TYPE_SHORT: return CodedOutputStream.computeInt32Size(DEFAULT_FIELD,((Short)obj).shortValue());
-            case BinUtil.TYPE_LONG: return CodedOutputStream.computeInt64Size(DEFAULT_FIELD,((Long)obj).longValue());
             case BinUtil.TYPE_ARRAY: return computeArraySize( (Object[])obj );
             case BinUtil.TYPE_HASHTABLE: return computeHashtableSize( (Hashtable)obj );
-            case BinUtil.TYPE_FLOAT: return CodedOutputStream.computeFloatSize(DEFAULT_FIELD, ((Float)obj).floatValue());
-            case BinUtil.TYPE_BYTE_ARRAY: return CodedOutputStream.computeBytesSize(DEFAULT_FIELD, computeByteArraySize(obj));
-            case BinUtil.TYPE_NULL: return 0; // nothing
             default: throw new RuntimeException();
         }
-
     }
 
     protected void encodeObject(CodedOutputStream out, Object obj,int type) throws IOException {
-
         switch(type) {
-            case BinUtil.TYPE_INTEGER: out.writeInt32(DEFAULT_FIELD,((Integer)obj).intValue()); break;
-            case BinUtil.TYPE_DOUBLE: out.writeDouble(DEFAULT_FIELD,((Double)obj).doubleValue()); break;
             case BinUtil.TYPE_VECTOR: encodeVector( out, (Vector)obj ); break;
-            case BinUtil.TYPE_STRING: out.writeString(DEFAULT_FIELD, (String)obj ); break;
-            case BinUtil.TYPE_BOOLEAN: out.writeBool(DEFAULT_FIELD, ((Boolean)obj).booleanValue() ); break;
-            case BinUtil.TYPE_BYTE: out.writeInt32(DEFAULT_FIELD, ((Byte)obj).byteValue()); break;
-            case BinUtil.TYPE_CHARACTER: out.writeInt32(DEFAULT_FIELD,((Character)obj).charValue()); break;
-            case BinUtil.TYPE_SHORT: out.writeInt32(DEFAULT_FIELD,((Short)obj).shortValue()); break;
-            case BinUtil.TYPE_LONG: out.writeInt64(DEFAULT_FIELD,((Long)obj).longValue()); break;
             case BinUtil.TYPE_ARRAY: encodeArray( out, (Object[])obj ); break;
             case BinUtil.TYPE_HASHTABLE: encodeHashtable( out, (Hashtable)obj ); break;
-            case BinUtil.TYPE_FLOAT: out.writeFloat(DEFAULT_FIELD, ((Float)obj).floatValue() ); break;
-            case BinUtil.TYPE_BYTE_ARRAY: {
-                out.writeBytes(DEFAULT_FIELD, computeByteArraySize(obj) );
-                encodeByteArray(out,obj); break;
-            }
-            case BinUtil.TYPE_NULL: break; // nothing
             default: throw new IOException();
         }
-
     }
 
+    /**
+     * Needed for ProtoFileUtil
+     */
     protected int computeByteArraySize(Object obj) {
         return ((byte[])obj).length;
     }
+    /**
+     * Needed for ProtoFileUtil
+     */
     protected void encodeByteArray(CodedOutputStream out,Object obj) throws IOException {
         out.writeRawBytes((byte[])obj);
     }
@@ -297,15 +229,43 @@ public class ProtoUtil {
             System.out.println("[ProtoUtil] Sending object as Hashtable "+obj);
         }
         //#enddebug
-        int size1 = CodedOutputStream.computeInt32Size(OBJECT_TYPE, type );
-        int size2 = CodedOutputStream.computeBytesSize(OBJECT_VALUE, computeObjectSize(obj,type) );
-        return size1+size2;
+        switch(type) {
+            case BinUtil.TYPE_NULL: return 0; // nothing
+            case BinUtil.TYPE_INTEGER: return CodedOutputStream.computeInt32Size(type,((Integer)obj).intValue());
+            case BinUtil.TYPE_DOUBLE: return CodedOutputStream.computeDoubleSize(type, ((Double)obj).doubleValue() );
+            case BinUtil.TYPE_FLOAT: return CodedOutputStream.computeFloatSize(type, ((Float)obj).floatValue());
+            case BinUtil.TYPE_STRING: return CodedOutputStream.computeStringSize(type, (String)obj );
+            case BinUtil.TYPE_BOOLEAN: return CodedOutputStream.computeBoolSize(type, ((Boolean)obj).booleanValue() );
+            case BinUtil.TYPE_BYTE: return CodedOutputStream.computeInt32Size(type,((Byte)obj).byteValue());
+            case BinUtil.TYPE_CHARACTER: return CodedOutputStream.computeInt32Size(type,((Character)obj).charValue());
+            case BinUtil.TYPE_SHORT: return CodedOutputStream.computeInt32Size(type,((Short)obj).shortValue());
+            case BinUtil.TYPE_LONG: return CodedOutputStream.computeInt64Size(type,((Long)obj).longValue());
+            case BinUtil.TYPE_BYTE_ARRAY: return CodedOutputStream.computeBytesSize(type, computeByteArraySize(obj) );
+            default: return CodedOutputStream.computeBytesSize( type, computeObjectSize(obj,type) );
+        }
     }
-    protected void encodeAnonymousObject(CodedOutputStream out, Object object) throws IOException {
-        int type = getObjectTypeEnum(object);
-        out.writeInt32(OBJECT_TYPE, type );
-        out.writeBytes(OBJECT_VALUE, computeObjectSize(object,type) );
-        encodeObject(out,object,type);
+    protected void encodeAnonymousObject(CodedOutputStream out, Object obj) throws IOException {
+        int type = getObjectTypeEnum(obj);
+        switch(type) {
+            case BinUtil.TYPE_NULL: break; // nothing
+            case BinUtil.TYPE_INTEGER: out.writeInt32(type,((Integer)obj).intValue()); break;
+            case BinUtil.TYPE_DOUBLE: out.writeDouble(type,((Double)obj).doubleValue()); break;
+            case BinUtil.TYPE_FLOAT: out.writeFloat(type, ((Float)obj).floatValue() ); break;
+            case BinUtil.TYPE_STRING: out.writeString(type, (String)obj ); break;
+            case BinUtil.TYPE_BOOLEAN: out.writeBool(type, ((Boolean)obj).booleanValue() ); break;
+            case BinUtil.TYPE_BYTE: out.writeInt32(type, ((Byte)obj).byteValue()); break;
+            case BinUtil.TYPE_CHARACTER: out.writeInt32(type,((Character)obj).charValue()); break;
+            case BinUtil.TYPE_SHORT: out.writeInt32(type,((Short)obj).shortValue()); break;
+            case BinUtil.TYPE_LONG: out.writeInt64(type,((Long)obj).longValue()); break;
+            case BinUtil.TYPE_BYTE_ARRAY:
+                out.writeBytes(type, computeByteArraySize(obj) );
+                encodeByteArray(out, obj);
+                break;
+            default:
+                out.writeBytes(type, computeObjectSize(obj, type) );
+                encodeObject(out,obj,type);
+                break;
+        }
     }
 
     protected int computeVectorSize(Vector vector) {
