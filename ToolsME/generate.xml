@@ -49,7 +49,7 @@
     <target name="generate" description="generate the persistance manager class">
         <property name="cp" refid="class.path"/>
         <echo message="class path = ${cp}"/>
-<!--
+
         <taskdef classname="net.yura.tools.mobilegen.MobileXmlGen" classpathref="class.path" name="gen-xml"/>
         <gen-xml
             classNamesFile="${basedir}/generate.properties"
@@ -63,7 +63,7 @@
             outputPackage="net.yura.mobile.gen"
             outputClass="JSONAccess"
             sourceRoot="${outdir}"/>
--->
+
         <taskdef classname="net.yura.tools.mobilegen.MobileBinGen" classpathref="class.path" name="gen-bin"/>
         <gen-bin
             classNamesFile="${basedir}/generate.properties"

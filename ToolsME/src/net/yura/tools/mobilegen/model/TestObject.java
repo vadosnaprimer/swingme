@@ -12,11 +12,11 @@ public class TestObject extends Test {
 
     private String name;
     private byte age;
-    private Vector numbers;
+    private Vector numbers = new Vector(); // for proto comparing
     private Object body;
-    private String[] legs;
+    private String[] legs = new String[0]; // for proto comparing
     private byte[] image;
-    private Object[] objects;
+    private Object[] objects = new Object[0]; // for proto comparing
     private String myType;
     private transient Vector arms;
     private transient Hashtable organs;

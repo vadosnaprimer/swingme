@@ -78,6 +78,7 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
         TestObject object = new TestObject();
         Vector legsVector = new Vector();
         Vector numbersVector = new Vector();
+        Vector objectsVector = new Vector();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
             int fieldNo = WireFormat.getTagFieldNumber(tag);
@@ -161,6 +162,14 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
                     numbersVector.addElement( value );
                     break;
                 }
+                case 20: {
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    Object value = decodeAnonymousObject(in2);
+                    in2.popLimit(lim);
+                    objectsVector.addElement( value );
+                    break;
+                }
                 default: {
                     in2.skipField(tag);
                     break;
@@ -171,6 +180,9 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
         legsVector.copyInto(legsArray);
         object.setLegs(legsArray);
         object.setNumbers(numbersVector);
+        Object[] objectsArray = new Object[objectsVector.size()];
+        objectsVector.copyInto(objectsArray);
+        object.setObjects(objectsArray);
         return object;
     }
     protected Test decodeTest(CodedInputStream in2) throws IOException {

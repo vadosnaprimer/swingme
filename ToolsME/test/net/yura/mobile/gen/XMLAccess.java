@@ -95,19 +95,13 @@ public class XMLAccess extends XMLUtil {
         }
         while (parser.nextTag() != KXmlParser.END_TAG) {
             String name = parser.getName();
-            if ("legs".equals(name)) {
+            if ("body".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     if (obj!=null) { throw new IOException(); }
                     obj = readObject(parser);
                 }
-                String[] array = null;
-                if (obj!=null) {
-                    Object[] objects = (Object[])obj;
-                    array = new String[objects.length];
-                    System.arraycopy(objects,0,array,0,objects.length);
-                }
-                object.setLegs(array);
+                object.setBody( (Object)obj );
             }
             else if ("objects".equals(name)) {
                 Object obj = null;
@@ -123,13 +117,19 @@ public class XMLAccess extends XMLUtil {
                 }
                 object.setObjects(array);
             }
-            else if ("body".equals(name)) {
+            else if ("legs".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     if (obj!=null) { throw new IOException(); }
                     obj = readObject(parser);
                 }
-                object.setBody( (Object)obj );
+                String[] array = null;
+                if (obj!=null) {
+                    Object[] objects = (Object[])obj;
+                    array = new String[objects.length];
+                    System.arraycopy(objects,0,array,0,objects.length);
+                }
+                object.setLegs(array);
             }
             else if ("numbers".equals(name)) {
                 Object obj = null;

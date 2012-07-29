@@ -95,6 +95,7 @@ message TestObject {
         required OtherThingsType things = 7;
         optional Test and_one_inside = 8;
         repeated int32 numbers = 9;
+        repeated Object objects = 20;
 }
 
 

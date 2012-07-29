@@ -276,12 +276,13 @@ public class Test1 {
         //JSONAccess kxml = new JSONAccess();
 
         for (Object obj:objects) {
+System.out.println("DOING TEST "+util+" "+obj);
             o1 = util.read();
             boolean equals = obj.equals(o1);
             if (equals) {
                 System.out.println("equals="+equals+" "+o1);
-                kxml.save(System.out, o1);
-                System.out.println();
+                //kxml.save(System.out, o1);
+                //System.out.println();
             }
             if (!equals) {
                 System.err.println("ERROR IN "+util);

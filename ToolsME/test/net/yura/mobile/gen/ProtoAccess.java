@@ -142,6 +142,13 @@ public class ProtoAccess extends ProtoAccessDecode {
                 size = size + CodedOutputStream.computeInt32Size(9, numbersValue );
             }
         }
+        Object[] objectsArray = object.getObjects();
+        if (objectsArray!=null) {
+            for (int c=0;c<objectsArray.length;c++) {
+                Object objectsValue = objectsArray[c];
+                size = size + CodedOutputStream.computeBytesSize(20, computeAnonymousObjectSize( objectsValue ));
+            }
+        }
         return size;
     }
     private int computeTestSize(Test object) {
@@ -240,6 +247,14 @@ public class ProtoAccess extends ProtoAccessDecode {
             for (int c=0;c<numbersVector.size();c++) {
                 Integer numbersValue = (Integer)numbersVector.elementAt(c);
                 out.writeInt32(9, numbersValue );
+            }
+        }
+        Object[] objectsArray = object.getObjects();
+        if (objectsArray!=null) {
+            for (int c=0;c<objectsArray.length;c++) {
+                Object objectsValue = objectsArray[c];
+                out.writeBytes(20,computeAnonymousObjectSize( objectsValue ));
+                encodeAnonymousObject( out, objectsValue );
             }
         }
     }
