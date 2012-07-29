@@ -54,49 +54,49 @@ public class ProtoUtil {
         Object obj=null;
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();
-            int fieldNo = WireFormat.getTagFieldNumber(tag);
+            int type = WireFormat.getTagFieldNumber(tag);
 //            int wireType = WireFormat.getTagWireType(tag);
     //Logger.debug("read field "+fieldNo );
     //Logger.debug("wire type "+wireType );
-
             if (obj != null) {
-                throw new IOException("more then one field inside Anonymous Object, newFieldNo="+fieldNo+" currentObject="+obj );
+                throw new IOException("more then one field inside Anonymous Object, newFieldNo="+type+" currentObject="+obj );
             }
-            int size = in2.readBytesSize();
-            int lim = in2.pushLimit(size);
-            //Logger.debug("object size "+size);
-            obj = decodeObject(in2, fieldNo );
-            //Logger.debug("object "+obj);
-            in2.popLimit(lim);
+            switch (type) {
+                //case BinUtil.TYPE_NULL: obj = null; break;
+                case BinUtil.TYPE_INTEGER: obj = new Integer( in2.readInt32() ); break;
+                case BinUtil.TYPE_DOUBLE: obj = new Double(in2.readDouble()); break;
+                case BinUtil.TYPE_STRING: obj = in2.readString(); break;
+                case BinUtil.TYPE_BOOLEAN: obj = in2.readBool()?Boolean.TRUE:Boolean.FALSE; break;
+                case BinUtil.TYPE_BYTE: obj = new Byte((byte)in2.readInt32()); break;
+                case BinUtil.TYPE_CHARACTER: obj = new Character( (char)in2.readInt32()); break;
+                case BinUtil.TYPE_SHORT: obj = new Short( (short)in2.readInt32()); break;
+                case BinUtil.TYPE_LONG: obj = new Long(in2.readInt64()); break;
+                case BinUtil.TYPE_FLOAT: obj = new Float(in2.readFloat()); break;
+                case BinUtil.TYPE_BYTE_ARRAY: obj = in2.readBytes(); break;
+                default:
+                    int size = in2.readBytesSize();
+                    int lim = in2.pushLimit(size);
+                    //Logger.debug("object size "+size);
+                    obj = decodeObject(in2, type );
+                    //Logger.debug("object "+obj);
+                    in2.popLimit(lim);
+                    break;
+            }
         }
         return obj;
     }
 
     protected Object decodeObject(CodedInputStream in2,int type) throws IOException {
-
         switch (type) {
-            //case BinUtil.TYPE_NULL: return null;
-            case BinUtil.TYPE_INTEGER: return new Integer( in2.readInt32() );
-            case BinUtil.TYPE_DOUBLE: return new Double(in2.readDouble());
-            case BinUtil.TYPE_STRING: return in2.readString();
-            case BinUtil.TYPE_BOOLEAN: return in2.readBool()?Boolean.TRUE:Boolean.FALSE;
-            case BinUtil.TYPE_BYTE: return new Byte((byte)in2.readInt32());
-            case BinUtil.TYPE_CHARACTER: return new Character( (char)in2.readInt32());
-            case BinUtil.TYPE_SHORT: return new Short( (short)in2.readInt32());
-            case BinUtil.TYPE_LONG: return new Long(in2.readInt64());
-            case BinUtil.TYPE_FLOAT: return new Float(in2.readFloat());
-            case BinUtil.TYPE_BYTE_ARRAY: return in2.readBytes();
             case BinUtil.TYPE_VECTOR: return decodeVector(in2);
-            case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
-            case BinUtil.TYPE_ARRAY: {
+            case BinUtil.TYPE_ARRAY:
                 Vector v = decodeVector(in2);
                 Object[] array = new Object[v.size()];
                 v.copyInto(array);
                 return array;
-            }
+            case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
             default: throw new IOException();
         }
-
     }
 
     protected Vector decodeVector(CodedInputStream in2) throws IOException {
