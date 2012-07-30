@@ -500,7 +500,7 @@ ps.println("    }");
                     }
                     else {
                         MessageDefinition mesDef = messageDefs.get( field.getType() );
-                        if (mesDef!=null) {
+                        if (mesDef!=null && mesDef.getImplementation() != null) {
                             type = mesDef.getImplementation().getSimpleName();
                         }
                         else {

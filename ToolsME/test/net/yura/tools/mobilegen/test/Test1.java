@@ -20,6 +20,7 @@ import net.yura.mobile.gen.BinAccess;
 
 import net.yura.mobile.gen.JSONAccess;
 import net.yura.mobile.gen.ProtoAccess;
+import net.yura.mobile.gen.ProtoAccess2;
 import net.yura.mobile.gen.XMLAccess;
 import net.yura.mobile.io.JSONUtil;
 import net.yura.mobile.io.ProtoUtil;
@@ -148,6 +149,33 @@ public class Test1 {
 
         doTest(proto);
 
+        
+        
+       ReadWrite proto2 = new ReadWrite() {
+            ProtoAccess2 proto = new ProtoAccess2();
+            @Override
+            void save(Object o) throws Exception {
+                int size = proto.computeAnonymousObjectSize(o);
+                DataOutputStream dout = new DataOutputStream(os);
+                dout.writeInt(size);
+                dout.flush();
+                proto.save(os,  o);
+            }
+            @Override
+            Object read() throws Exception {
+                DataInputStream din = new DataInputStream(is);
+                int size = din.readInt();
+                return proto.load(is,size);
+            }
+            @Override
+            public String toString() {
+                return proto.toString();
+            }
+        };
+
+        doTest(proto2);
+        
+        
 /*
         ReadWrite kxml2 = new ReadWrite() {
             XMLAccess xml = new XMLAccess() {

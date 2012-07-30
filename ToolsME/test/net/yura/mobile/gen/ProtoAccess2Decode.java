@@ -10,8 +10,8 @@ import net.yura.mobile.io.proto.WireFormat;
 /**
 * THIS FILE IS GENERATED, DO NOT EDIT
 */
-public class ProtoAccessDecode extends ProtoAccessEnum {
-    protected Hashtable decodeLogin(CodedInputStream in2) throws IOException {
+public class ProtoAccess2Decode extends ProtoAccess2Enum {
+    protected Hashtable d22(CodedInputStream in2) throws IOException {
         Hashtable object = new Hashtable();
         Vector typeVector = new Vector();
         Vector testsVector = new Vector();
@@ -38,7 +38,7 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
                 case 4: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    TestObject value = decodeTestObject(in2);
+                    TestObject value = d10003(in2);
                     in2.popLimit(lim);
                     testsVector.addElement( value );
                     break;
@@ -74,7 +74,7 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
         object.put("inty",intyVector);
         return object;
     }
-    protected TestObject decodeTestObject(CodedInputStream in2) throws IOException {
+    protected TestObject d10003(CodedInputStream in2) throws IOException {
         TestObject object = new TestObject();
         Vector legsVector = new Vector();
         Vector numbersVector = new Vector();
@@ -152,7 +152,7 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
                 case 8: {
                     int size = in2.readBytesSize();
                     int lim = in2.pushLimit(size);
-                    Test value = decodeTest(in2);
+                    Test value = d10001(in2);
                     in2.popLimit(lim);
                     object.setAndOneInside(value);
                     break;
@@ -185,7 +185,7 @@ public class ProtoAccessDecode extends ProtoAccessEnum {
         object.setObjects(objectsArray);
         return object;
     }
-    protected Test decodeTest(CodedInputStream in2) throws IOException {
+    protected Test d10001(CodedInputStream in2) throws IOException {
         Test object = new Test();
         while (!in2.isAtEnd()) {
             int tag = in2.readTag();

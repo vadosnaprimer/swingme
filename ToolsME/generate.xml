@@ -79,9 +79,20 @@
             outputPackage="net.yura.mobile.gen"
             outputClass="ProtoAccess"
             sourceRoot="${outdir}"
+            />
+
+        <taskdef classname="net.yura.tools.mobilegen.MobileProtoGen" classpathref="class.path" name="gen-proto"/>
+        <gen-proto
+            protoSource="${basedir}/test.proto"
+            objectPackage="net.yura.tools.mobilegen.model"
+            extendClass="ProtoFileUtil"
+            outputPackage="net.yura.mobile.gen"
+            outputClass="ProtoAccess2"
+            sourceRoot="${outdir}"
             skipDeprecated="true"
             split="true"
-            /><!-- obfuscate="true" -->
+            obfuscate="true"
+            />
     </target>
 
 </project>

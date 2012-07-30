@@ -10,7 +10,7 @@ import net.yura.mobile.io.proto.WireFormat;
 /**
 * THIS FILE IS GENERATED, DO NOT EDIT
 */
-public class ProtoAccessEnum extends ProtoFileUtil {
+public class ProtoAccess2Enum extends ProtoFileUtil {
     public static int getTypeEnum(String enu) {
         if ("BOBA".equals(enu)) return 1;
         if ("FRED".equals(enu)) return 2;

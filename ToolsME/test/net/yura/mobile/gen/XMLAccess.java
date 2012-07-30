@@ -40,9 +40,6 @@ public class XMLAccess extends XMLUtil {
             serializer.attribute(null,"myType", object.getMyType() );
         }
         saveTest(serializer, object);
-        serializer.startTag(null,"legs");
-        saveObject(serializer, object.getLegs() );
-        serializer.endTag(null,"legs");
         serializer.startTag(null,"objects");
         saveObject(serializer, object.getObjects() );
         serializer.endTag(null,"objects");
@@ -52,6 +49,9 @@ public class XMLAccess extends XMLUtil {
         serializer.startTag(null,"numbers");
         saveObject(serializer, object.getNumbers() );
         serializer.endTag(null,"numbers");
+        serializer.startTag(null,"legs");
+        saveObject(serializer, object.getLegs() );
+        serializer.endTag(null,"legs");
     }
     protected void saveTest(XmlSerializer serializer,Test object) throws IOException {
         serializer.attribute(null,"id", String.valueOf( object.getId() ) );
@@ -95,27 +95,13 @@ public class XMLAccess extends XMLUtil {
         }
         while (parser.nextTag() != KXmlParser.END_TAG) {
             String name = parser.getName();
-            if ("body".equals(name)) {
+            if ("numbers".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     if (obj!=null) { throw new IOException(); }
                     obj = readObject(parser);
                 }
-                object.setBody( (Object)obj );
-            }
-            else if ("objects".equals(name)) {
-                Object obj = null;
-                while (parser.nextTag() != KXmlParser.END_TAG) {
-                    if (obj!=null) { throw new IOException(); }
-                    obj = readObject(parser);
-                }
-                Object[] array = null;
-                if (obj!=null) {
-                    Object[] objects = (Object[])obj;
-                    array = new Object[objects.length];
-                    System.arraycopy(objects,0,array,0,objects.length);
-                }
-                object.setObjects(array);
+                object.setNumbers( (Vector)obj );
             }
             else if ("legs".equals(name)) {
                 Object obj = null;
@@ -131,13 +117,27 @@ public class XMLAccess extends XMLUtil {
                 }
                 object.setLegs(array);
             }
-            else if ("numbers".equals(name)) {
+            else if ("objects".equals(name)) {
                 Object obj = null;
                 while (parser.nextTag() != KXmlParser.END_TAG) {
                     if (obj!=null) { throw new IOException(); }
                     obj = readObject(parser);
                 }
-                object.setNumbers( (Vector)obj );
+                Object[] array = null;
+                if (obj!=null) {
+                    Object[] objects = (Object[])obj;
+                    array = new Object[objects.length];
+                    System.arraycopy(objects,0,array,0,objects.length);
+                }
+                object.setObjects(array);
+            }
+            else if ("body".equals(name)) {
+                Object obj = null;
+                while (parser.nextTag() != KXmlParser.END_TAG) {
+                    if (obj!=null) { throw new IOException(); }
+                    obj = readObject(parser);
+                }
+                object.setBody( (Object)obj );
             }
             else {
                 System.out.println("unknown section: "+name);
