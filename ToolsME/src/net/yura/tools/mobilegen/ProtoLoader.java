@@ -192,7 +192,7 @@ public class ProtoLoader {
                     try {
                         Class c = Class.forName( op + "." + name );
                         md.setImplementation(c);
-                        System.out.println( " - Found class " + op + "." + name);
+                        System.out.println( " - Found class " + op + "." + name+" in "+c.getClassLoader());
                         found = true;
                         break;
                     }

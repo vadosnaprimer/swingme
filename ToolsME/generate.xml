@@ -89,6 +89,8 @@
             outputPackage="net.yura.mobile.gen"
             outputClass="ProtoAccess2"
             sourceRoot="${outdir}"
+
+            publicEnums="true"
             skipDeprecated="true"
             split="true"
             obfuscate="true"
