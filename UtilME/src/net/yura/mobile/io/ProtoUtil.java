@@ -423,4 +423,10 @@ public class ProtoUtil {
         return false;
     }
 
+    protected Object getObjetById(Object id,Class clas) {
+        throw new RuntimeException();
+    }
+    protected Object getObjectId(Object object) {
+        throw new RuntimeException();
+    }
 }
