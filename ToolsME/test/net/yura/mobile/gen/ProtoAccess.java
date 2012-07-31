@@ -247,6 +247,21 @@ public class ProtoAccess extends ProtoFileUtil {
                 size = size + CodedOutputStream.computeBytesSize(20, computeAnonymousObjectSize( objectsValue ));
             }
         }
+        Test test_by_idValue = object.getTestById();
+        if (test_by_idValue!=null) {
+            int test_by_idValueId = ((Integer)getObjectId(test_by_idValue)).intValue();
+            size = size + CodedOutputStream.computeInt32Size(30, test_by_idValueId );
+        }
+        Hashtable login_by_idValue = object.getLoginById();
+        if (login_by_idValue!=null) {
+            int login_by_idValueId = ((Integer)getObjectId(login_by_idValue)).intValue();
+            size = size + CodedOutputStream.computeInt32Size(31, login_by_idValueId );
+        }
+        Object object_by_idValue = object.getObjectById();
+        if (object_by_idValue!=null) {
+            String object_by_idValueId = (String)getObjectId(object_by_idValue);
+            size = size + CodedOutputStream.computeStringSize(32, object_by_idValueId );
+        }
         return size;
     }
     private int computeTestSize(Test object) {
@@ -411,6 +426,21 @@ public class ProtoAccess extends ProtoFileUtil {
                 out.writeBytes(20,computeAnonymousObjectSize( objectsValue ));
                 encodeAnonymousObject( out, objectsValue );
             }
+        }
+        Test test_by_idValue = object.getTestById();
+        if (test_by_idValue!=null) {
+            int test_by_idValueId = ((Integer)getObjectId(test_by_idValue)).intValue();
+            out.writeInt32(30, test_by_idValueId );
+        }
+        Hashtable login_by_idValue = object.getLoginById();
+        if (login_by_idValue!=null) {
+            int login_by_idValueId = ((Integer)getObjectId(login_by_idValue)).intValue();
+            out.writeInt32(31, login_by_idValueId );
+        }
+        Object object_by_idValue = object.getObjectById();
+        if (object_by_idValue!=null) {
+            String object_by_idValueId = (String)getObjectId(object_by_idValue);
+            out.writeString(32, object_by_idValueId );
         }
     }
     private void encodeTest(CodedOutputStream out, Test object) throws IOException {
@@ -714,6 +744,21 @@ public class ProtoAccess extends ProtoFileUtil {
                     Object value = decodeAnonymousObject(in2);
                     in2.popLimit(lim);
                     objectsVector.addElement( value );
+                    break;
+                }
+                case 30: {
+                    Test value = (Test)getObjetById( new Integer(in2.readInt32()) ,Test.class);
+                    object.setTestById(value);
+                    break;
+                }
+                case 31: {
+                    Hashtable value = (Hashtable)getObjetById( new Integer(in2.readInt32()) ,Hashtable.class);
+                    object.setLoginById(value);
+                    break;
+                }
+                case 32: {
+                    Object value = (Object)getObjetById( in2.readString() ,Object.class);
+                    object.setObjectById(value);
                     break;
                 }
                 default: {

@@ -149,6 +149,21 @@ public class ProtoAccess2 extends ProtoAccess2Decode {
                 size = size + CodedOutputStream.computeBytesSize(20, computeAnonymousObjectSize( objectsValue ));
             }
         }
+        Test test_by_idValue = object.getTestById();
+        if (test_by_idValue!=null) {
+            int test_by_idValueId = ((Integer)getObjectId(test_by_idValue)).intValue();
+            size = size + CodedOutputStream.computeInt32Size(30, test_by_idValueId );
+        }
+        Hashtable login_by_idValue = object.getLoginById();
+        if (login_by_idValue!=null) {
+            int login_by_idValueId = ((Integer)getObjectId(login_by_idValue)).intValue();
+            size = size + CodedOutputStream.computeInt32Size(31, login_by_idValueId );
+        }
+        Object object_by_idValue = object.getObjectById();
+        if (object_by_idValue!=null) {
+            String object_by_idValueId = (String)getObjectId(object_by_idValue);
+            size = size + CodedOutputStream.computeStringSize(32, object_by_idValueId );
+        }
         return size;
     }
     private int c10001(Test object) {
@@ -256,6 +271,21 @@ public class ProtoAccess2 extends ProtoAccess2Decode {
                 out.writeBytes(20,computeAnonymousObjectSize( objectsValue ));
                 encodeAnonymousObject( out, objectsValue );
             }
+        }
+        Test test_by_idValue = object.getTestById();
+        if (test_by_idValue!=null) {
+            int test_by_idValueId = ((Integer)getObjectId(test_by_idValue)).intValue();
+            out.writeInt32(30, test_by_idValueId );
+        }
+        Hashtable login_by_idValue = object.getLoginById();
+        if (login_by_idValue!=null) {
+            int login_by_idValueId = ((Integer)getObjectId(login_by_idValue)).intValue();
+            out.writeInt32(31, login_by_idValueId );
+        }
+        Object object_by_idValue = object.getObjectById();
+        if (object_by_idValue!=null) {
+            String object_by_idValueId = (String)getObjectId(object_by_idValue);
+            out.writeString(32, object_by_idValueId );
         }
     }
     private void e10001(CodedOutputStream out, Test object) throws IOException {

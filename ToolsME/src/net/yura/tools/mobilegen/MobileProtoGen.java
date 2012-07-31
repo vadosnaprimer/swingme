@@ -631,6 +631,9 @@ ps.println("    }");
         String t1=("bytes".equals(type))?"computeByteArraySize("+thing+")":thing;
         if (calc) {
             if ( isPrimitive(type) ) {
+                
+                t1 = convert(ps,field.getImplementation(),type,t1);
+
                 ps.println("        size = size + CodedOutputStream.compute"+firstUp(type)+"Size("+field.getID()+", "+t1+" );");
             }
             else {
@@ -639,6 +642,9 @@ ps.println("    }");
         }
         else {
             if ( isPrimitive(type) ) {
+
+                t1 = convert(ps,field.getImplementation(),type,t1);
+                
                 ps.println("        out.write"+firstUp(type)+"("+field.getID()+", "+t1+" );");
                 if ("bytes".equals(type)) { ps.println("encodeByteArray(out,"+thing+");"); }
             }
@@ -658,8 +664,24 @@ ps.println("    }");
         }
     }
 
+    public String convert(PrintStream ps, Class clas,String type,String t1){
+        if (!isPrimitive(clas)) {
+            String javaType = primitiveToJavaType(type, false);
+            if ("String".equals(javaType)) {
+                ps.println(javaType+" "+t1+"Id = (String)getObjectId("+t1+");");
+            }
+            else {
+                String javaPrimitive = getPrimativeFromJavaType(javaType);
+                ps.println(javaPrimitive+" "+t1+"Id = (("+javaType+")getObjectId("+t1+"))."+javaPrimitive+"Value();");
+            }
+            t1 = t1+"Id";
+        }
+        return t1;
+    }
 
-
+    boolean isPrimitive(Class clas) {
+        return clas==null || clas.isPrimitive() || clas.isArray() || clas==String.class || Iterable.class.isAssignableFrom(clas);
+    }
 
 
 
@@ -709,7 +731,18 @@ for (ProtoLoader.FieldDefinition field:fields) {
         ps.println("String value = get"+type+"String( in2.readInt32() );");
     }
     else if (isPrimitive(type)) {
-        if ("string".equals(type) || "bytes".equals(type)) {
+        
+        
+        if (!isPrimitive(field.getImplementation())) {
+            String javaType = primitiveToJavaType(type, true);
+            if ("String".equals(javaType)) {
+                ps.println(field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")getObjetById( in2.read"+firstUp(type)+"() ,"+field.getImplementation().getSimpleName()+".class);");
+            }
+            else {
+                ps.println(field.getImplementation().getSimpleName()+" value = ("+field.getImplementation().getSimpleName()+")getObjetById( new "+javaType+"(in2.read"+firstUp(type)+"()) ,"+field.getImplementation().getSimpleName()+".class);");
+            }
+        }
+        else if ("string".equals(type) || "bytes".equals(type)) {
             ps.println("        "+primitiveToJavaType(type,true)+" value = in2.read"+firstUp(type)+"();");
         }
         else {
@@ -926,7 +959,7 @@ ps.println("        }");
             )
             return "Boolean";
 
-        throw new RuntimeException();
+        throw new RuntimeException("bad input "+type);
 
     }
 
@@ -957,6 +990,6 @@ ps.println("        }");
             )
             return "boolean";
 
-        throw new RuntimeException();
+        throw new RuntimeException("bad input "+javaType);
     }
 }

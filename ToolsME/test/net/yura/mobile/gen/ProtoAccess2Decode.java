@@ -170,6 +170,21 @@ public class ProtoAccess2Decode extends ProtoAccess2Enum {
                     objectsVector.addElement( value );
                     break;
                 }
+                case 30: {
+                    Test value = (Test)getObjetById( new Integer(in2.readInt32()) ,Test.class);
+                    object.setTestById(value);
+                    break;
+                }
+                case 31: {
+                    Hashtable value = (Hashtable)getObjetById( new Integer(in2.readInt32()) ,Hashtable.class);
+                    object.setLoginById(value);
+                    break;
+                }
+                case 32: {
+                    Object value = (Object)getObjetById( in2.readString() ,Object.class);
+                    object.setObjectById(value);
+                    break;
+                }
                 default: {
                     in2.skipField(tag);
                     break;

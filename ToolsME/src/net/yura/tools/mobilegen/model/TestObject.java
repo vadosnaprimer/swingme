@@ -127,6 +127,78 @@ public class TestObject extends Test {
         this.numbers = numbers;
     }
 
+    public Vector getArms() {
+        return arms;
+    }
+
+    public void setArms(Vector arms) {
+        this.arms = arms;
+    }
+
+    public int getHeads() {
+        return heads;
+    }
+
+    public void setHeads(int heads) {
+        this.heads = heads;
+    }
+
+    public boolean getIsAlive() {
+        return isAlive;
+    }
+
+    public void setIsAlive(boolean isAlive) {
+        this.isAlive = isAlive;
+    }
+
+    public Hashtable getOrgans() {
+        return organs;
+    }
+
+    public void setOrgans(Hashtable organs) {
+        this.organs = organs;
+    }
+
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    // MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW
+    
+    private Test testById;
+    private Hashtable loginById;
+    private Object objectById;
+
+    public Hashtable getLoginById() {
+        return loginById;
+    }
+
+    public void setLoginById(Hashtable loginById) {
+        this.loginById = loginById;
+    }
+
+    public Object getObjectById() {
+        return objectById;
+    }
+
+    public void setObjectById(Object objectById) {
+        this.objectById = objectById;
+    }
+
+    public Test getTestById() {
+        return testById;
+    }
+
+    public void setTestById(Test testById) {
+        this.testById = testById;
+    }
+    
+    // MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW
+
     @Override
     public String toString() {
         return "TestObject:"+name+","+age+","+numbers;
@@ -168,46 +240,7 @@ public class TestObject extends Test {
         return true;
     }
 
-    public Vector getArms() {
-        return arms;
-    }
-
-    public void setArms(Vector arms) {
-        this.arms = arms;
-    }
-
-    public int getHeads() {
-        return heads;
-    }
-
-    public void setHeads(int heads) {
-        this.heads = heads;
-    }
-
-    public boolean getIsAlive() {
-        return isAlive;
-    }
-
-    public void setIsAlive(boolean isAlive) {
-        this.isAlive = isAlive;
-    }
-
-    public Hashtable getOrgans() {
-        return organs;
-    }
-
-    public void setOrgans(Hashtable organs) {
-        this.organs = organs;
-    }
-
-    public long getLastUpdated() {
-        return lastUpdated;
-    }
-
-    public void setLastUpdated(long lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
+    
     @Override
     public int hashCode() {
         int hash = 5;

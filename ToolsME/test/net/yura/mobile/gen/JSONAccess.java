@@ -70,6 +70,16 @@ public class JSONAccess extends JSONUtil {
                 serializer.nullValue();
             }
         }
+        serializer.key("loginById");
+        {
+            Hashtable hashtable = object.getLoginById();
+            if (hashtable!=null) {
+                saveHashtable( serializer, hashtable );
+            }
+            else {
+                serializer.nullValue();
+            }
+        }
         serializer.key("myType");
         {
             String string = object.getMyType();
@@ -100,6 +110,16 @@ public class JSONAccess extends JSONUtil {
                 serializer.nullValue();
             }
         }
+        serializer.key("objectById");
+        {
+            Object obj = object.getObjectById();
+            if (obj!=null) {
+                saveObject(serializer, obj );
+            }
+            else {
+                serializer.nullValue();
+            }
+        }
         serializer.key("objects");
         {
             Object[] array = object.getObjects();
@@ -110,6 +130,19 @@ public class JSONAccess extends JSONUtil {
                 serializer.nullValue();
             }
         }
+        serializer.key("testById");
+        {
+            Test obj = object.getTestById();
+            if (obj!=null) {
+                serializer.object();
+                saveTest( serializer, obj );
+                serializer.endObject();
+            }
+            else {
+                serializer.nullValue();
+            }
+        }
+        
     }
     protected void saveTest(JSONWriter serializer,Test object) throws IOException {
         serializer.key("id");
@@ -156,6 +189,11 @@ public class JSONAccess extends JSONUtil {
                     object.setLegs(array);
                 }
             }
+            else if ("loginById".equals(key)) {
+                if (!tokener.nextNull()) {
+                    object.setLoginById( readHashtable(tokener) );
+                }
+            }
             else if ("myType".equals(key)) {
                 if (!tokener.nextNull()) {
                     object.setMyType( tokener.nextString() );
@@ -171,6 +209,11 @@ public class JSONAccess extends JSONUtil {
                     object.setNumbers( readVector(tokener) );
                 }
             }
+            else if ("objectById".equals(key)) {
+                if (!tokener.nextNull()) {
+                    object.setObjectById( readObject(tokener) );
+                }
+            }
             else if ("objects".equals(key)) {
                 if (!tokener.nextNull()) {
                     Vector objects = readVector(tokener);
@@ -178,6 +221,11 @@ public class JSONAccess extends JSONUtil {
                     array = new Object[objects.size()];
                     objects.copyInto(array);
                     object.setObjects(array);
+                }
+            }
+            else if ("testById".equals(key)) {
+                if (!tokener.nextNull()) {
+                    object.setTestById( readTest(tokener) );
                 }
             }
             else {
