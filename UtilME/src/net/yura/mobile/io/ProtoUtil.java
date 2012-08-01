@@ -18,12 +18,12 @@ public class ProtoUtil {
     protected static final String[] EMPTY = new String[0];
     protected static final String unknown = "unknown ";
 
-    private static final int VECTOR_ELEMENT = 1; // from proto file
+    protected static final int VECTOR_ELEMENT = 1; // from proto file
 
-    private static final int KEY_VALUE = 1; // from proto file
+    protected static final int KEY_VALUE = 1; // from proto file
 
-    private static final int HASHTABLE_KEY = 1; // from proto file
-    private static final int HASHTABLE_VALUE = 2; // from proto file
+    protected static final int HASHTABLE_KEY = 1; // from proto file
+    protected static final int HASHTABLE_VALUE = 2; // from proto file
 
     public int save(OutputStream out, Object obj) throws IOException {
 
@@ -193,18 +193,18 @@ public class ProtoUtil {
 
     protected int computeObjectSize(Object obj,int type) {
         switch(type) {
-            case BinUtil.TYPE_VECTOR: return computeVectorSize( (Vector)obj );
+            case BinUtil.TYPE_VECTOR: return computeVectorSize( obj );
             case BinUtil.TYPE_ARRAY: return computeArraySize( (Object[])obj );
-            case BinUtil.TYPE_HASHTABLE: return computeHashtableSize( (Hashtable)obj );
+            case BinUtil.TYPE_HASHTABLE: return computeHashtableSize( obj );
             default: throw new RuntimeException();
         }
     }
 
     protected void encodeObject(CodedOutputStream out, Object obj,int type) throws IOException {
         switch(type) {
-            case BinUtil.TYPE_VECTOR: encodeVector( out, (Vector)obj ); break;
+            case BinUtil.TYPE_VECTOR: encodeVector( out, obj ); break;
             case BinUtil.TYPE_ARRAY: encodeArray( out, (Object[])obj ); break;
-            case BinUtil.TYPE_HASHTABLE: encodeHashtable( out, (Hashtable)obj ); break;
+            case BinUtil.TYPE_HASHTABLE: encodeHashtable( out, obj ); break;
             default: throw new IOException();
         }
     }
@@ -268,7 +268,8 @@ public class ProtoUtil {
         }
     }
 
-    protected int computeVectorSize(Vector vector) {
+    protected int computeVectorSize(Object list) {
+        Vector vector = (Vector)list;
         int size=0;
         for (int c=0;c<vector.size();c++) {
             int s = computeAnonymousObjectSize( vector.elementAt(c) );
@@ -287,7 +288,8 @@ public class ProtoUtil {
     }
 
 
-    protected int computeHashtableSize(Hashtable hashtable) {
+    protected int computeHashtableSize(Object map) {
+        Hashtable hashtable = (Hashtable)map;
 
         int totalSize = 0;
 
@@ -310,7 +312,8 @@ public class ProtoUtil {
 
     }
 
-    protected void encodeVector(CodedOutputStream out, Vector vector) throws IOException {
+    protected void encodeVector(CodedOutputStream out, Object list) throws IOException {
+        Vector vector = (Vector)list;
         for (int c=0;c<vector.size();c++) {
             Object obj = vector.elementAt(c);
             out.writeBytes(VECTOR_ELEMENT, computeAnonymousObjectSize(obj));
@@ -325,11 +328,13 @@ public class ProtoUtil {
         }
     }
 
-    protected void encodeHashtable(CodedOutputStream out, Hashtable vector) throws IOException {
-        Enumeration enu = vector.keys();
+    protected void encodeHashtable(CodedOutputStream out, Object map) throws IOException {
+        Hashtable hashtable = (Hashtable)map;
+        
+        Enumeration enu = hashtable.keys();
         while (enu.hasMoreElements()) {
             Object key = enu.nextElement();
-            Object value = vector.get(key);
+            Object value = hashtable.get(key);
 
             int keySize = computeAnonymousObjectSize(key);
             int valueSize = computeAnonymousObjectSize(value);
