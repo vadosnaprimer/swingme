@@ -444,7 +444,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
         } else {
             tbOpt = (SelectableFile) fileList.getSelectedValue();
         }
-        return tbOpt.getAbsolutePath();
+        return tbOpt==null?null:tbOpt.getAbsolutePath();
     }
 
     public void actionPerformed(String myaction) {
