@@ -442,6 +442,10 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         NativeAndroidTextField.init();
     }
 
+    /**
+     * does not work on ICS or newer
+     * @deprecated 
+     */
     private Drawable getDrawable(Context ctx, String name) {
         try {
             Class clazz = Class.forName("com.android.internal.R$drawable");
@@ -449,7 +453,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
             return ctx.getResources().getDrawable(attrIdx);
         }
         catch (Throwable e) {
-            Logger.warn(e);
+            //Logger.warn(e);
         }
         return null;
     }
