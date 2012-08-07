@@ -82,6 +82,7 @@ public class NativeAndroidMenu implements MenuSystem {
 		                submenu = null;
 		                androidMenuItem = androidMenu.add(menuItem.getText());
                 	}
+                	androidMenuItem.setEnabled( menuItem.isFocusable() );
 	                androidMenuItem.setOnMenuItemClickListener(new OnMenuItemClickListener() {
 						@Override
 						public boolean onMenuItemClick(MenuItem item) {
