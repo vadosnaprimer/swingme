@@ -273,15 +273,17 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
 	public void actionPerformed(String actionCommand) {
-            dropDown.setVisible(false);
             if ("listSelect".equals(actionCommand)) {
                 int index = list.getSelectedIndex();
                 if (index >= 0) {
+                    dropDown.setVisible(false);
                     setSelectedIndex( index );
+                    super.fireActionPerformed();
                 }
-		super.fireActionPerformed();
+                // else the user is still thinking/changed his mind, do not do anything
             }
             else if (Frame.CMD_CLOSE.equals(actionCommand)) {
+                dropDown.setVisible(false);
                 setSelected(false);
             }
             //#mdebug debug
