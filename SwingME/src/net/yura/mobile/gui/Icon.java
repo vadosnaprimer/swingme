@@ -54,8 +54,14 @@ public class Icon {
 
     private void initImage(Image img) {
         image = img;
-        height = img.getHeight();
-        width = img.getWidth();
+        if (img!=null) {
+            height = img.getHeight();
+            width = img.getWidth();
+        }
+        else { // in Swing if the image fails to load then height and width are -1
+            width = -1;
+            height = -1;
+        }
     }
 
     /**

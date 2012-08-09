@@ -47,8 +47,10 @@ public class ComboBox extends Button implements ActionListener{
 	private ScrollPane scroll;
 
         // the window for the dropdown
-        private Window dropDown;
+        private Window dropDown; // ThinG allows a ComboBox to have both a dropdown and a popupmenu
 
+        int oldIndex=-1; // keeps the original index when the popup is open
+        
         /**
          * @see javax.swing.JComboBox#JComboBox() JComboBox.JComboBox
          */
@@ -131,6 +133,9 @@ public class ComboBox extends Button implements ActionListener{
                 scroll.removeAll();
                 scroll.add(list);
 
+                oldIndex = list.getSelectedIndex();
+                setSelected(true);
+                
                 // helper to make sure it opens on the correct DesktopPane, is not needed in the case where there is just 1
                 dropDown.setDesktopPane(getDesktopPane());
 
@@ -146,8 +151,6 @@ public class ComboBox extends Button implements ActionListener{
                         Graphics.TOP
                         );
                 dropDown.setVisible(true);
-
-                setSelected(true);
         }
 
 	private void createList() {
@@ -278,9 +281,12 @@ public class ComboBox extends Button implements ActionListener{
                 if (index >= 0) {
                     dropDown.setVisible(false);
                     setSelectedIndex( index );
-                    super.fireActionPerformed();
+                    super.fireActionPerformed(); // this will setSelected(false) us
                 }
-                // else the user is still thinking/changed his mind, do not do anything
+                else {
+                    // restore the old value
+                    list.setSelectedIndex(oldIndex);
+                }
             }
             else if (Frame.CMD_CLOSE.equals(actionCommand)) {
                 dropDown.setVisible(false);

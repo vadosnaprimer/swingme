@@ -121,7 +121,7 @@ public class Menu extends Button {
 
         public void updateUI() {
             super.updateUI();
-            arrowDirection = (Icon)theme.getProperty("icon", Style.ALL);
+            arrowDirection = (Icon)theme.getProperty("arrow", Style.ALL);
         }
 
         /**

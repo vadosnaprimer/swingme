@@ -107,7 +107,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("Button",buttonStyle);
 
             Style menuItemStyle = new Style(defaultStyle);
-            menuItemStyle.addProperty(spinnerRightIcon, "icon", Style.ALL);
+            menuItemStyle.addProperty(spinnerRightIcon, "arrow", Style.ALL);
             menuItemStyle.addBackground( getPrimary2() , Style.SELECTED );
             //menuItemStyle.addForeground( getWhite() , Style.SELECTED );
             menuItemStyle.addForeground( getSecondary2() , Style.DISABLED);
@@ -122,7 +122,7 @@ public class MetalLookAndFeel extends LookAndFeel {
             setStyleFor("TextArea",inputStyle);
 
             Style comboStyle = new Style(buttonStyle);
-            comboStyle.addProperty(comboIcon, "icon", Style.ALL);
+            comboStyle.addProperty(comboIcon, "arrow", Style.ALL);
             setStyleFor("ComboBox",comboStyle);
 
             Style textStyle = new Style(inputStyle);
@@ -133,7 +133,7 @@ public class MetalLookAndFeel extends LookAndFeel {
 
 
             EmptyBorder padding = new EmptyBorder(0, font.getHeight(), 0, font.getHeight());
-            Style spinnerStyle = new Style(radioStyle);
+            Style spinnerStyle = new Style(abstractButtonStyle);
             spinnerStyle.addBorder(new CompoundBorder(padding, inputBorder ),Style.ALL);
             spinnerStyle.addBorder(new CompoundBorder(padding, disabledButtonBorder), Style.DISABLED);
             spinnerStyle.addProperty(spinnerLeftIcon, "iconLeft", Style.ALL);
