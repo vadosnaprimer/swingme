@@ -5,10 +5,8 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-
 import net.yura.mobile.io.kxml2.KXmlParser;
 import net.yura.mobile.io.kxml2.KXmlSerializer;
-
 import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import net.yura.mobile.logging.Logger;
@@ -34,22 +32,15 @@ public class XMLUtil {
 
     private KXmlParser parser;
 
-    public Object load(Reader reader) throws IOException {
-        try {
+    public Object load(Reader reader) throws Exception {
+
             if (parser==null) {
                 parser = new KXmlParser();
             }
             parser.setInput(reader);
             parser.nextTag();
             return readObject(parser);
-        }
-        catch(IOException ex) {
-            throw ex;
-        }
-        catch(Exception ex) { // other exceptions here are just IOException really
-            Logger.warn(ex);
-            throw new IOException(ex.toString());
-        }
+
     }
 
     public void save(OutputStream output,Object object) throws IOException {
