@@ -58,7 +58,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
     protected abstract void onError(Request request, int responseCode, Hashtable headers, Exception ex);
 
-    protected abstract void onResult(Request request, int responseCode, Hashtable headers, InputStream is, long length) throws IOException;
+    protected abstract void onResult(Request request, int responseCode, Hashtable headers, InputStream is, long length) throws Exception;
 
 
     public void process(Object arg0) throws Exception {
