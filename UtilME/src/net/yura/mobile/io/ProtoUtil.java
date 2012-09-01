@@ -225,9 +225,9 @@ public class ProtoUtil {
     public int computeAnonymousObjectSize(Object obj) {
         int type = getObjectTypeEnum(obj);
         //#mdebug debug
-        if (type==BinUtil.TYPE_HASHTABLE) {
-            System.out.println("[ProtoUtil] Sending object as Hashtable "+obj);
-        }
+        //if (type==BinUtil.TYPE_HASHTABLE) {
+        //    System.out.println("[ProtoUtil] Sending object as Hashtable "+obj);
+        //}
         //#enddebug
         switch(type) {
             case BinUtil.TYPE_NULL: return 0; // nothing
