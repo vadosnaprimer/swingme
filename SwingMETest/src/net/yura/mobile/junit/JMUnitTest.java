@@ -7,7 +7,14 @@ import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import jmunit.framework.cldc11.*;
+import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.Frame;
+import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.layout.XULLoader;
+import net.yura.mobile.gui.plaf.MetalLookAndFeel;
+import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import net.yura.mobile.io.RMSUtil;
 import net.yura.mobile.util.SystemUtil;
 
@@ -19,7 +26,7 @@ public class JMUnitTest extends TestCase {
     
     public JMUnitTest() {
         //The first parameter of inherited constructor is the number of test cases
-        super(3, "JMUnitTest");
+        super(4, "JMUnitTest");
     }    
     
     public void test(int testNumber) throws Throwable {
@@ -28,6 +35,7 @@ public class JMUnitTest extends TestCase {
             case 0: testXULLoaderAdjustSizeToDensity(); break;
             case 1: testRMSUtil(); break;
             case 2: testSocketGet(); break;
+            case 3: testShowing(); break;
         }
         
     }
@@ -43,19 +51,19 @@ public class JMUnitTest extends TestCase {
 
         XULLoader.setDPI("ldpi");
         assertEquals(36, XULLoader.adjustSizeToDensity(source) );
-        
+
         XULLoader.setDPI("mdpi");
         assertEquals(48, XULLoader.adjustSizeToDensity(source) );
-        
+
         XULLoader.setDPI("hdpi");
         assertEquals(72, XULLoader.adjustSizeToDensity(source) );
-        
+
         XULLoader.setDPI("xhdpi");
         assertEquals(96, XULLoader.adjustSizeToDensity(source) );
-        
+
         XULLoader.setDPI("tvdpi");
         assertEquals(64, XULLoader.adjustSizeToDensity(source) );
-        
+
         XULLoader.setDPI(null); // should default to mdpi size
         assertEquals(48, XULLoader.adjustSizeToDensity(source) );
     }
@@ -107,4 +115,58 @@ public class JMUnitTest extends TestCase {
 */
         
     }
+    
+    public void testShowing() {
+        System.out.println("testShowing start");
+
+        DesktopPane dp = new DesktopPane(null, -1, null);
+
+        dp.setLookAndFeel( new NimbusLookAndFeel() );
+
+        Button button = new Button();
+
+        assertFalse( button.isShowing() );
+
+        Panel panel = new Panel();
+        panel.add(button);
+
+        assertFalse( button.isShowing() );
+        assertFalse( panel.isShowing() );
+
+        Frame frame = new Frame();
+        frame.getContentPane().add(panel);
+
+        assertFalse( button.isShowing() );
+        assertFalse( panel.isShowing() );
+        assertFalse( frame.isShowing() );
+
+        frame.setVisible(true);
+
+        assertTrue( button.isShowing() );
+        assertTrue( panel.isShowing() );
+        assertTrue( frame.isShowing() );
+
+        panel.setVisible(false);
+
+        assertFalse( button.isShowing() );
+        assertFalse( panel.isShowing() );
+        assertTrue( frame.isShowing() );
+
+        panel.setVisible(true);
+        button.setVisible(false);
+
+        assertFalse( button.isShowing() );
+        assertTrue( panel.isShowing() );
+        assertTrue( frame.isShowing() );
+
+        button.setVisible(true);
+        frame.setVisible(false);
+
+        assertFalse( button.isShowing() );
+        assertFalse( panel.isShowing() );
+        assertFalse( frame.isShowing() );
+
+        System.out.println("testShowing done");
+    }
+    
 }
