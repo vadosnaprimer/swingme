@@ -300,15 +300,6 @@ public class ComboBox extends Button implements ActionListener{
 	}
 
         /**
-         * @return the current selected item
-         * @see javax.swing.JComboBox#getSelectedItem() JComboBox.getSelectedItem
-         */
-	public Object getSelectedItem() {
-		createList();
-		return list.getSelectedValue();
-	}
-
-        /**
          * @param selected
          * @see javax.swing.JComboBox#setSelectedItem(java.lang.Object) JComboBox.setSelectedItem
          */
@@ -350,9 +341,21 @@ public class ComboBox extends Button implements ActionListener{
          */
 	public int getSelectedIndex() {
             createList();
+            if ( list.isShowing() ) {
+                return oldIndex;
+            }
             return list.getSelectedIndex();
 	}
 
+        /**
+         * @return the current selected item
+         * @see javax.swing.JComboBox#getSelectedItem() JComboBox.getSelectedItem
+         */
+	public Object getSelectedItem() {
+            int index = getSelectedIndex();
+            return index==-1?null:list.getElementAt(index);
+	}
+        
 	/**
 	 * This throws an IllegalArgumentException and you should use the
 	 * setIndex method instead

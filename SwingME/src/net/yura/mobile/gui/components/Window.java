@@ -233,6 +233,9 @@ public class Window extends Panel {
             return desktop!=null && desktop.getAllFrames().contains(this);
         }
 
+        public boolean isShowing() {
+            return isVisible();
+        }
 
         public void processMouseEvent(int type, int x, int y, KeyEvent keys) {
 

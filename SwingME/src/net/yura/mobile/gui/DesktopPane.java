@@ -241,30 +241,6 @@ public class DesktopPane extends Canvas implements Runnable {
         UIManager.put("deleteText", "Delete");
         UIManager.put("selectAllText", "Select All");
 
-
-        //      // check if we want to be in debug mode
-        //      String s;
-        //      if ((s = midlet.getAppProperty("Debug-Mode")) != null && ( s.toUpperCase().equals("OFF") || s.toUpperCase().equals("NO") || s.toUpperCase().equals("FALSE") || s.toUpperCase().equals("F") ) ) {
-        //          DesktopPane.debugMode = false;
-        //      }
-
-        // ceate a new window to use as the main window
-        //add( new Window() );
-
-        // now we set this as the main display
-        // the serviceRepaints will mean the repaint will be called
-        // this will then kick of the run method of this class
-        // and that will in tern call initialise of the midlet
-        Display.getDisplay(m).setCurrent(this);
-        repaint();
-
-        // TODO me4se needs to be here, or keyboard events dont come in
-        // WHY WHY WHY??!!! this is very strange
-        // hacked in my me4se so this is not needed any more
-        //if ( Midlet.getPlatform() == Midlet.PLATFORM_ME4SE ) {
-        //    serviceRepaints();
-        //}
-
     }
 
     public final void run() {

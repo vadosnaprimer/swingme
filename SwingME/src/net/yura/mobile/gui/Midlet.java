@@ -69,6 +69,14 @@ public abstract class Midlet extends MIDlet {
             QueueProcessorThread.CHANGE_PRIORITY = !((Midlet.getPlatform() == Midlet.PLATFORM_ANDROID || Midlet.getPlatform() == Midlet.PLATFORM_BLACKBERRY));
 
             rootpane = makeNewRootPane();
+            
+            // now we set this as the main display
+            Display.getDisplay(this).setCurrent(rootpane);
+
+            // this repaint will mean the paint will be called
+            // this will then kick of the run method of this class
+            // and that will in tern call initialise of the midlet
+            rootpane.repaint();
 
     }
     /**

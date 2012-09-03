@@ -591,13 +591,8 @@ public abstract class Component {
      * @see java.awt.Component#isShowing() Component.isShowing
      */
     public boolean isShowing() {
-        boolean vis = isVisible();
-        Component p1 = getParent();
-        while (vis && p1!=null) {
-            vis = p1.isVisible();
-            p1 = p1.getParent();
-        }
-        return vis;
+        // i need to be visable and my parent needs to be showing
+        return isVisible() && (parent==null?false:parent.isShowing()); // is real Swing this method is recursive
     }
 
     /**
