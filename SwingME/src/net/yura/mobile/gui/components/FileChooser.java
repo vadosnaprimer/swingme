@@ -550,15 +550,18 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
          * @see List#getSelectedValue()
          */
         public Object getSelectedValue() {
-            return getValueAt(getSelectedRow(), getSelectedColumn());
+            int row = getSelectedRow();
+            int col = getSelectedColumn();
+            if (row == -1 && col == -1) return null;
+            return getValueAt(row, col);
         }
         /**
          * @see List#getSelectedIndex()
          */
         public int getSelectedIndex() {
-        	int row = getSelectedRow();
-        	int col = getSelectedColumn();
-            if ( row == -1 && col == -1) return -1;
+            int row = getSelectedRow();
+            int col = getSelectedColumn();
+            if (row == -1 && col == -1) return -1;
             return convertLin(row, col);
         }
         /**
