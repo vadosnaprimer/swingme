@@ -117,12 +117,17 @@ public class Image {
 
     private static Image createImage(int width, int height, Config config) {
         Bitmap bitmap;
+        OutOfMemoryError error=null;
         try {
             bitmap = Bitmap.createBitmap(width, height, config);
 
         } catch (OutOfMemoryError e) {
             cleanMem();
+            error = e;
             bitmap = Bitmap.createBitmap(width, height, config);
+        }
+        if (bitmap==null) {
+            throw new RuntimeException("Bitmap.createBitmap returned null for w="+width+" h="+height+" config="+config+" error="+error );
         }
         return new Image(bitmap);
     }
