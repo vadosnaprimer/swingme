@@ -57,7 +57,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
                 return new AndroidIcon( bmpd );
             }
             else {
-                System.err.println("getDrawable returned null for "+resimg);
+                System.err.println("getDrawable returned null for "+path+" "+resimg);
             }
         }
         return super.getIcon(path, x, y, w, h);
