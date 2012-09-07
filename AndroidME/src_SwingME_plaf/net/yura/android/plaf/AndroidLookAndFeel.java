@@ -46,14 +46,19 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Image.ResourceInputStream resimg = Image.getResourceAsStream(path);
         if (resimg!=null) {
             Drawable bmpd = resimg.getDrawable();
-            if (w!=0 && h !=0) {
-                // TODO maybe can be done better to not need a new bitmap
-                Bitmap bmp = ((BitmapDrawable)bmpd).getBitmap();
-                double scale = (double)bmp.getDensity() / DisplayMetrics.DENSITY_DEFAULT;
-                bmp = Bitmap.createBitmap(bmp, (int)(x*scale), (int)(y*scale), (int)(w*scale), (int)(h*scale) );
-                bmpd = new BitmapDrawable( AndroidMeApp.getContext().getResources() ,bmp);
+            if (bmpd!=null) { // this should NEVER be null, but sometimes it is
+                if (w!=0 && h !=0) {
+                    // TODO maybe can be done better to not need a new bitmap
+                    Bitmap bmp = ((BitmapDrawable)bmpd).getBitmap();
+                    double scale = (double)bmp.getDensity() / DisplayMetrics.DENSITY_DEFAULT;
+                    bmp = Bitmap.createBitmap(bmp, (int)(x*scale), (int)(y*scale), (int)(w*scale), (int)(h*scale) );
+                    bmpd = new BitmapDrawable( AndroidMeApp.getContext().getResources() ,bmp);
+                }
+                return new AndroidIcon( bmpd );
             }
-            return new AndroidIcon( bmpd );
+            else {
+                System.err.println("getDrawable returned null for "+resimg);
+            }
         }
         return super.getIcon(path, x, y, w, h);
     }

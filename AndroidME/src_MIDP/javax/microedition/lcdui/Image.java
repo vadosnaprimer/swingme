@@ -292,5 +292,10 @@ public class Image {
         public Bitmap getBitmap() {
             return ((BitmapDrawable)getDrawable()).getBitmap();
         }
+
+        @Override
+        public String toString() {
+            return "RIS{res="+res+",id="+resId+"}";
+        }
     }
 }
