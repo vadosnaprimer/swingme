@@ -321,12 +321,13 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
             Handler handler = editText.getHandler();
             if (handler!=null) {
+                final EditText et = editText;
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
                         try {
                             // this NEEDS to run on the handler thread or it will throw nullpointer
-                            editText.bringPointIntoView( editText.getSelectionEnd() );
+                            et.bringPointIntoView( et.getSelectionEnd() );
                         }
                         catch(Throwable th) {
                             //#debug debug
