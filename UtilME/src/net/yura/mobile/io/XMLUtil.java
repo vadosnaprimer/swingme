@@ -175,11 +175,8 @@ public class XMLUtil {
                 tagName = TAG_LONG;
             }
             else {
-                // TODO do something else??
-                //#debug warn
-                Logger.warn("unknown object: "+object.getClass());
-                tagName = object.getClass().getName();
-                throw new IOException();
+                // TODO somehow encode it or do something else??
+                throw new IOException( "unknown class: "+object.getClass()+" for object: "+object );
             }
 
             return tagName;
@@ -290,11 +287,8 @@ public class XMLUtil {
                 return null;
             }
             else {
-                // TODO load class or something???
-                //#debug warn
-                Logger.warn("unknown object: "+name);
-                //return value;
-                throw new IOException();
+                // TODO load class or skip it?
+                throw new IOException( "unknown tag: "+name );
             }
 
         }
