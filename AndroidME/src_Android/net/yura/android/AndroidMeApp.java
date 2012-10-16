@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
@@ -308,12 +309,16 @@ public class AndroidMeApp extends Application {
         fileFilter.addAction(Intent.ACTION_MEDIA_EJECT);
         fileFilter.addDataScheme("file");
 
-        IntentFilter wifiFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        wifiFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-
         BroadcastReceiver receiver = new SystemChangedBroadcastReceiver();
         registerReceiver(receiver, fileFilter);
-        registerReceiver(receiver, wifiFilter);
+        
+        if ( hasPermission("ACCESS_WIFI_STATE") ) {
+            
+            IntentFilter wifiFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+            wifiFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+            
+            registerReceiver(receiver, wifiFilter);
+        }
 
         setFileSystemProperties();
 
@@ -330,6 +335,11 @@ public class AndroidMeApp extends Application {
         }
         
         System.setProperty("debug", String.valueOf(net.yura.mobile.BuildConfig.DEBUG) );
+    }
+    
+    private boolean hasPermission(String permission) {
+        int res = getContext().checkCallingOrSelfPermission( "android.permission."+ permission );
+        return res == PackageManager.PERMISSION_GRANTED;       
     }
 
     private String getUniqueHardwareId(){
