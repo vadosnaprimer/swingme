@@ -120,8 +120,12 @@ public class Image {
         OutOfMemoryError error=null;
         try {
             bitmap = Bitmap.createBitmap(width, height, config);
-
-        } catch (OutOfMemoryError e) {
+            // for some reason this sometimes just returns null instead of throwing a error
+            if (bitmap==null) {
+                throw new OutOfMemoryError("Bitmap.createBitmap returned null");
+            }
+        }
+        catch (OutOfMemoryError e) {
             cleanMem();
             error = e;
             bitmap = Bitmap.createBitmap(width, height, config);

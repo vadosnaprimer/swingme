@@ -960,7 +960,7 @@ public abstract class Canvas extends Displayable {
 
             //System.out.println("[AndroidME] onTouchEvent "+event);
 
-            int actionCode = event.getAction() & 0xFF;
+            int actionCode = event.getAction() & 0xFF; // 0xFF == MotionEvent.ACTION_MASK
 
             int pointerCount = getPointerCount(event);
             int ySlide = getHeight() - canvasH;
