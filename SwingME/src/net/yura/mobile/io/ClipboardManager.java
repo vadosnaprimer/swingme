@@ -15,9 +15,11 @@ import net.yura.mobile.logging.Logger;
 public class ClipboardManager implements ServiceLink.TaskHandler {
     /** Creates a new instance of LocationMonitor */
     private ClipboardManager() {
-        ServiceLink link = ServiceLink.getInstance();
-        link.registerForTask("GetClipboardTextError", this);
-        link.registerForTask("PutClipboardText", this);
+        if (Midlet.getPlatform()==Midlet.PLATFORM_NOKIA_S60) {
+            ServiceLink link = ServiceLink.getInstance();
+            link.registerForTask("GetClipboardTextError", this);
+            link.registerForTask("PutClipboardText", this);
+        }
     }
 
     public void handleTask(Task task) {
