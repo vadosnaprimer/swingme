@@ -31,10 +31,10 @@ public class UTF8InputStreamReader extends Reader {
                 buffer = new byte[len];
             }
 
-            int available = inputStream.available();
+            int available = inputStream.available(); // on android can give -1 sometimes
 
             // dont block trying to over-read, this is the line that the S60 InputStreamReader misses
-            int l = inputStream.read(buffer,0,available>len?len: (available==0?1:available) );
+            int l = inputStream.read(buffer,0,available>len?len: (available<=0?1:available) );
 
             if (l<0) {
                 return l;
