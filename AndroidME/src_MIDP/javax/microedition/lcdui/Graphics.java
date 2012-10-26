@@ -197,7 +197,17 @@ public class Graphics {
         }
 
         paintFont.setColor(paint.getColor());
-        canvas.drawText(str, tx+newx, ty+newy, paintFont);
+        if (str.indexOf('\n')<0) {
+            canvas.drawText(str, tx+newx, ty+newy, paintFont);
+        }
+        else {
+            String[] lines = str.split("\n");
+            int yp = ty+newy;
+            for (int c=0;c<lines.length;c++) {
+        	canvas.drawText(lines[c], tx+newx, yp, paintFont);
+        	yp = yp + font.getHeight();
+            }
+        }
     }
 
     public void clipRect(int x, int y, int w, int h) {
