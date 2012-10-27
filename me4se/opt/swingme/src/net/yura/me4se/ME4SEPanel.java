@@ -4,12 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Window;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import javax.microedition.midlet.ApplicationManager;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import net.yura.mobile.gui.DesktopPane;
+import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
@@ -103,7 +105,14 @@ public class ME4SEPanel extends Container {
     public void showDialog(java.awt.Frame parent, String title) {
 
         JDialog dialog = new JDialog(parent, title , true);
-        dialog.setDefaultCloseOperation( JDialog.HIDE_ON_CLOSE );
+        dialog.setDefaultCloseOperation( JDialog.DO_NOTHING_ON_CLOSE );
+
+        dialog.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent evt) {
+                desktop.keyPressed(KeyEvent.KEY_END);
+                desktop.keyReleased(KeyEvent.KEY_END);
+            }
+        });
 
         dialog.getContentPane().add(this);
         //dialog.pack();
