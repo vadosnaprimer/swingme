@@ -7,6 +7,7 @@ import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
 import javax.microedition.midlet.ApplicationManager;
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.components.Frame;
@@ -87,7 +88,7 @@ public class ME4SEPanel extends Container {
                     super.setVisible(b);
                 }
                 else {
-                    actionPerformed(CMD_CLOSE);
+                    SwingUtilities.getWindowAncestor(ME4SEPanel.this).setVisible(b);
                 }
             }
         };
@@ -99,14 +100,29 @@ public class ME4SEPanel extends Container {
         desktop.add(frame1);
     }
 
-    // in case someone tries to close the window
-    public void actionPerformed(String string) {
-        Window window = SwingUtilities.getWindowAncestor(this);
-        WindowEvent wev = new WindowEvent(window, WindowEvent.WINDOW_CLOSING);
-        //Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(wev);
-        window.dispatchEvent(wev);
-    }
+    public void showDialog(java.awt.Frame parent, String title) {
 
+        JDialog dialog = new JDialog(parent, title , true);
+        dialog.setDefaultCloseOperation( JDialog.HIDE_ON_CLOSE );
+
+        dialog.getContentPane().add(this);
+        //dialog.pack();
+        dialog.setSize(320,480); // same as Jesus Piece
+        dialog.setLocationRelativeTo(parent);
+        dialog.setVisible(true);
+
+        // WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT
+        // WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT WAIT
+        
+        // can be setVisible(false) from many different places
+        // we want to make sure that in all cases we do a dispose
+        dialog.dispose();
+        
+        // TODO can only show once per instance of a ME4SEPanel ?!
+        destroy();
+
+    }
+    
     public Dimension getMinimumSize() {
         Dimension d = super.getPreferredSize();
 
