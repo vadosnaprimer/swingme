@@ -9,6 +9,11 @@ import net.yura.mobile.gui.Midlet;
  */
 public class EmptyMidlet extends Midlet {
 
+//    ME4SEPanel parent;
+//    public ME4SEPanel getParent() {
+//        return parent;
+//    }
+
     protected void initialize(DesktopPane dp) { }
 
     public void destroyApp(boolean arg0) throws MIDletStateChangeException {
