@@ -1055,7 +1055,7 @@ public class ApplicationManager {
       return name;
     }
 
-    if (vk >= KeyEvent.VK_F1 && vk <= KeyEvent.VK_F8) {
+    if (vk >= KeyEvent.VK_F1 && vk <= KeyEvent.VK_F8 && e.getModifiers()==0) {
       return "SOFT" + (vk - KeyEvent.VK_F1 + 1);
     }
 
