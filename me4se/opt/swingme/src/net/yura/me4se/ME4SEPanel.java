@@ -12,6 +12,7 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
 import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
@@ -80,8 +81,12 @@ public class ME4SEPanel extends Container {
         return getComponents()[0];
     }
 
-    public void add(Panel panel) {
+    public void add(Component panel) {
 
+        if (frame1!=null) {
+            desktop.remove(frame1);
+        }
+        
         frame1 = new Frame() {
             // do not allow anyone to close this window
             // if anyone tries, close the Swing Window instead
