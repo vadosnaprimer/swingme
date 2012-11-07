@@ -72,14 +72,6 @@ public class Image {
     }
 
     public static Image createImage(InputStream stream) throws IOException {
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        try {
-            BitmapFactory.Options.class.getField("inPurgeable").set(opts, true);
-        } catch (Exception e) {
-            // inPurgeable not supported
-            // http://www.droidnova.com/2d-sprite-animation-in-android-addendum,505.html
-        }
-
         Bitmap bitmap;
         if (stream instanceof ResourceInputStream) {
             try {
@@ -97,6 +89,8 @@ public class Image {
 
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+            options.inDither = false;
+            options.inPurgeable = true; // http://www.droidnova.com/2d-sprite-animation-in-android-addendum,505.html
             
             try {
                 bitmap = BitmapFactory.decodeStream(buffInput,null,options);
@@ -170,10 +164,10 @@ public class Image {
 
         Bitmap bitmap;
         try {
-            bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
+            bitmap = BitmapFactory.decodeByteArray(imgData, offset, length, opts);
         } catch (OutOfMemoryError e) {
             cleanMem();
-            bitmap = BitmapFactory.decodeByteArray(imgData, offset, length);
+            bitmap = BitmapFactory.decodeByteArray(imgData, offset, length, opts);
         }
         if (bitmap==null) {
             return null;
