@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 /**
  * @author Yura
@@ -17,7 +18,10 @@ public class WebViewActivity extends Activity {
         super.onCreate(savedInstanceState);
         
         webview = new WebView( this );
-        //webview.setWebViewClient( new WebViewClient() );
+
+        // this line is NEEDED as without it links do not work on 'HTC One S'
+        webview.setWebViewClient( new WebViewClient() );
+
         //webview.getSettings().setJavaScriptEnabled(true);
         //webview.getSettings().setDomStorageEnabled(true);
 
