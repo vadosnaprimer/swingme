@@ -62,13 +62,14 @@ public class SystemUtil {
      * @see java.util.Vector#addAll(java.util.Collection) Vector.addAll
      */
     public static void addAll(Vector des,Vector src) {
-
         for (int c=0;c<src.size();c++) {
             des.addElement(src.elementAt(c));
         }
-
     }
 
+    /**
+     * @see java.util.Objects#deepEquals(java.lang.Object, java.lang.Object)
+     */
     public static boolean equals(Object obj1, Object obj2) {
         if (obj1 == null && obj2 == null) return true;
         if (obj1 == null || obj2 == null) return false;
