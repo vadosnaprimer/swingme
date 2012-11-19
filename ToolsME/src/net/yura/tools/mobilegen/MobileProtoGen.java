@@ -3,9 +3,7 @@ package net.yura.tools.mobilegen;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -172,6 +170,14 @@ for (String c:this.objectPackage) {
 
 ps.println("import java.util.Hashtable;");
 ps.println("import java.util.Vector;");
+all: for ( MessageDefinition md:messageDefs.values() ) {
+    for (FieldDefinition field: md.getFields()) {
+        if (field.getImplementation() == List.class) {
+            ps.println("import java.util.List;");
+            break all;
+        }
+    }
+}
 ps.println("import java.io.IOException;");
 ps.println("import net.yura.mobile.io."+extendClass+";");
 ps.println("import net.yura.mobile.io.proto.CodedOutputStream;");
@@ -296,7 +302,7 @@ for (FieldDefinition enu:set) {
 
             String line1 ="";
             String line2 ="";
-            Vector<ProtoLoader.FieldDefinition> fields = getMessageFromEnum( enu.getType() ).fields;
+            List<ProtoLoader.FieldDefinition> fields = getMessageFromEnum( enu.getType() ).fields;
             for (ProtoLoader.FieldDefinition field:fields) {
                 if (field.required) { //  || field.repeated (we dont need a null vector)
                     line1 = line1 +"\""+field.getName()+"\",";
@@ -484,7 +490,7 @@ ps.println("    }");
 
     private void printSaveComputeMethod(PrintStream ps,MessageDefinition message,boolean calc) {
 
-        Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
+        List<ProtoLoader.FieldDefinition> fields = message.getFields();
         for (ProtoLoader.FieldDefinition field:fields) {
 
             try {
@@ -539,16 +545,23 @@ ps.println("    }");
 
 
                 if (field.repeated) {
-                    if (field.getImplementation() == null || field.getImplementation() == Vector.class) {
+                    if (field.getImplementation() == null || field.getImplementation() == Vector.class || field.getImplementation() == List.class) {
+                        String getMethod;
                         if (field.getImplementation() == null) {
         ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+field.getName()+"\");");
+                            getMethod="elementAt";
+                        }
+                        else if (field.getImplementation() == Vector.class) {
+        ps.println("        Vector "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
+                            getMethod="elementAt";
                         }
                         else {
-        ps.println("        Vector "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
+        ps.println("        List "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
+                            getMethod="get";
                         }
         ps.println("        if ("+field.getName()+"Vector!=null) {");
         ps.println("            for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
-        ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector.elementAt(c);");
+        ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector."+getMethod+"(c);");
                     }
                     else { // must be a array
         ps.println("        "+type+"[] "+field.getName()+"Array = object.get"+firstUp(field.getName())+"();");
@@ -696,7 +709,7 @@ ps.println("    }");
 
     private void printLoadMethod(PrintStream ps,MessageDefinition message) {
 
-        Vector<ProtoLoader.FieldDefinition> fields = message.getFields();
+        List<ProtoLoader.FieldDefinition> fields = message.getFields();
 
         for (ProtoLoader.FieldDefinition field:fields) {
             if (field.getRepeated()) {
