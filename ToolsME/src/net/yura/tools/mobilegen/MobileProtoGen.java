@@ -170,13 +170,13 @@ for (String c:this.objectPackage) {
 
 ps.println("import java.util.Hashtable;");
 ps.println("import java.util.Vector;");
-all: for ( MessageDefinition md:messageDefs.values() ) {
-    for (FieldDefinition field: md.getFields()) {
-        if (field.getImplementation() == List.class) {
-            ps.println("import java.util.List;");
-            break all;
-        }
-    }
+if (uses(Set.class)) {
+    ps.println("import java.util.Iterator;");
+    ps.println("import java.util.Set;");
+    ps.println("import java.util.HashSet;");
+}
+else if (uses(List.class)) {
+    ps.println("import java.util.Iterator;");
 }
 ps.println("import java.io.IOException;");
 ps.println("import net.yura.mobile.io."+extendClass+";");
@@ -193,6 +193,17 @@ ps.println("public class "+outClass+" extends "+extClass+" {");
 
     return ps;
 
+    }
+    
+    public boolean uses(Class c) {
+        for ( MessageDefinition md:messageDefs.values() ) {
+            for (FieldDefinition field: md.getFields()) {
+                if (field.getImplementation() == c) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 Hashtable<String,EnumDefinition> enumDefs;
@@ -545,23 +556,23 @@ ps.println("    }");
 
 
                 if (field.repeated) {
-                    if (field.getImplementation() == null || field.getImplementation() == Vector.class || field.getImplementation() == List.class) {
-                        String getMethod;
+                    if (field.getImplementation() == null || field.getImplementation() == Vector.class || Iterable.class.isAssignableFrom(field.getImplementation()) ) {
+                        String forLoop="int c=0;c<"+field.getName()+"Vector.size();c++";
+                        String getMethod=field.getName()+"Vector.elementAt(c)";
                         if (field.getImplementation() == null) {
         ps.println("        Vector "+field.getName()+"Vector = (Vector)object.get(\""+field.getName()+"\");");
-                            getMethod="elementAt";
                         }
                         else if (field.getImplementation() == Vector.class) {
         ps.println("        Vector "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
-                            getMethod="elementAt";
                         }
                         else {
-        ps.println("        List "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
-                            getMethod="get";
+        ps.println("        Iterable "+field.getName()+"Vector = object.get"+firstUp(field.getName())+"();");
+                            forLoop="Iterator it="+field.getName()+"Vector.iterator();it.hasNext();";
+                            getMethod="it.next()";
                         }
         ps.println("        if ("+field.getName()+"Vector!=null) {");
-        ps.println("            for (int c=0;c<"+field.getName()+"Vector.size();c++) {");
-        ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+field.getName()+"Vector."+getMethod+"(c);");
+        ps.println("            for ("+forLoop+") {");
+        ps.println("            "+type+" "+field.getName()+"Value = ("+type+")"+getMethod+";");
                     }
                     else { // must be a array
         ps.println("        "+type+"[] "+field.getName()+"Array = object.get"+firstUp(field.getName())+"();");
@@ -713,7 +724,12 @@ ps.println("    }");
 
         for (ProtoLoader.FieldDefinition field:fields) {
             if (field.getRepeated()) {
-                ps.println("Vector "+field.getName()+"Vector = new Vector();");
+                if (field.getImplementation() == Set.class) {
+                    ps.println("Set "+field.getName()+"Vector = new HashSet();");
+                }
+                else {
+                    ps.println("Vector "+field.getName()+"Vector = new Vector();");
+                }
             }
         }
 
@@ -806,7 +822,12 @@ for (ProtoLoader.FieldDefinition field:fields) {
     }
 
     if (field.getRepeated()) {
-        ps.println("            "+field.getName()+"Vector.addElement( value );");
+        if (field.getImplementation() == Set.class) {
+            ps.println("            "+field.getName()+"Vector.add( value );");
+        }
+        else {
+            ps.println("            "+field.getName()+"Vector.addElement( value );");
+        }
     }
     else if (message.getImplementation() == Hashtable.class) {
         ps.println("            object.put(\""+field.getName()+"\",value);");
