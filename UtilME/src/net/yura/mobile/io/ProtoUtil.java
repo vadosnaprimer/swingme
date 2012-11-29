@@ -95,7 +95,7 @@ public class ProtoUtil {
                 v.copyInto(array);
                 return array;
             case BinUtil.TYPE_HASHTABLE: return decodeHashtable(in2);
-            default: throw new IOException();
+            default: throw new IOException("unknown type "+type);
         }
     }
 
