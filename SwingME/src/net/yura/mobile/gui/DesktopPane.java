@@ -1037,6 +1037,9 @@ public class DesktopPane extends Canvas implements Runnable {
     //==== normal desktop calls == (can be called from any thread) =============
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
+    // TODO add,remove,setSelectedFrame are all supposed to be thread safe
+    // TODO but they set pointerComponent to null when it could be in use by the main thread
+    
     /**
      * @param w The window to add
      * @see java.awt.Container#add(java.awt.Component) Container.add
@@ -1451,10 +1454,11 @@ public class DesktopPane extends Canvas implements Runnable {
                 }
 
                 // Handle events for pointer component
-                if (pointerComponent != null) {
-                        int pcX = x - pointerComponent.getXOnScreen();
-                        int pcY = y - pointerComponent.getYOnScreen();
-                        pointerComponent.processMouseEvent(type, pcX, pcY, keypad);
+                Component pc = pointerComponent;
+                if (pc != null) {
+                        int pcX = x - pc.getXOnScreen();
+                        int pcY = y - pc.getYOnScreen();
+                        pc.processMouseEvent(type, pcX, pcY, keypad);
                 }
 
                 // Handle events for pointer ScrollPane
