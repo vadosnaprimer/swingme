@@ -335,6 +335,14 @@ public class AndroidMeApp extends Application {
         }
         
         System.setProperty("debug", String.valueOf(net.yura.mobile.BuildConfig.DEBUG) );
+        
+
+        // HTTP connection reuse which was buggy pre-froyo
+        // http://android-developers.blogspot.dk/2011/09/androids-http-clients.html
+        if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
+            System.setProperty("http.keepAlive", "false");
+        }
+
     }
     
     private boolean hasPermission(String permission) {
