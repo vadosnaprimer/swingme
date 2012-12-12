@@ -1,11 +1,5 @@
 package net.yura.android;
 
-import net.yura.mobile.gui.ActionListener;
-import net.yura.mobile.gui.KeyEvent;
-import net.yura.mobile.gui.Midlet;
-import net.yura.mobile.gui.components.Button;
-import net.yura.mobile.gui.components.OptionPane;
-import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,6 +7,13 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
+import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.KeyEvent;
+import net.yura.mobile.gui.Midlet;
+import net.yura.mobile.gui.components.Button;
+import net.yura.mobile.gui.components.OptionPane;
+import net.yura.mobile.logging.Logger;
 
 public class OptionPaneActivity extends Activity implements OnCancelListener, OnClickListener {
 
@@ -27,9 +28,11 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String url = null;
         try {
+            url = getIntent().getData().toString();
+
             Midlet midlet = Midlet.getMidlet();
-            String url = getIntent().getData().toString();
             optionPaneWrapper = (OptionPane) midlet.retrievePlatformRequestParam(url);
 
             if (alertDialog == null) {
@@ -83,6 +86,8 @@ public class OptionPaneActivity extends Activity implements OnCancelListener, On
             alertDialog.show();
 
         } catch (Throwable ex) {
+            //#debug warn
+            Logger.warn("error opening url "+url);
             //#debug warn
             Logger.warn(ex);
 
