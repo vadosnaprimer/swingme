@@ -373,6 +373,9 @@ public class Button extends Label implements ActionListener {
 //            }
 //        }
 
+        /**
+         * @see javax.swing.ButtonModel#setGroup(javax.swing.ButtonGroup) ButtonModel.setGroup
+         */
 	public void setButtonGroup(ButtonGroup buttonGroup) {
 		this.buttonGroup = buttonGroup;
 	}
