@@ -127,6 +127,13 @@ public class MenuBar extends List implements ActionListener {
         c.removeParent(this);
     }
 
+    /**
+     * @see java.awt.Container#getComponentCount() Container.getComponentCount
+     */
+    public int getComponentCount() {
+        return super.getSize();
+    }
+
     //#mdebug debug
     public boolean removeElement(Object obj) {
         throw new RuntimeException("do not use this as it will fail on removing non-visible components, use remove() instead");

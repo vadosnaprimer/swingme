@@ -150,6 +150,27 @@ public class Menu extends Button {
         }
 
         /**
+         * @see javax.swing.JMenu#getItemCount() JMenu.getItemCount
+         */
+        public int getItemCount() {
+            return getPopupMenu(popup).getComponentCount();
+        }
+
+        /**
+         * @see java.awt.Container#getComponents() Container.getComponents
+         */
+        public Vector getComponents() {
+            return getPopupMenu(popup).getItems();
+        }
+
+        /**
+         * @see javax.swing.JMenu#remove(java.awt.Component) JMenu.remove
+         */
+        public void remove(Component c) {
+            getPopupMenu(popup).remove(c);
+        }
+
+        /**
          * @see javax.swing.JPopupMenu
          */
         public static Window makePopup() {
