@@ -18,7 +18,9 @@ public class ToastActivity extends Activity {
             Intent intent = getIntent();
             Uri uri = intent.getData();
             Url url = new Url( uri.toString() );
-            Toast t = Toast.makeText(this, url.getQueryParameter("message"), Toast.LENGTH_LONG);
+
+            Toast t = Toast.makeText(this, url.getQueryParameter("message"), 
+                "SHORT".equals(url.getQueryParameter("duration"))?Toast.LENGTH_SHORT:Toast.LENGTH_LONG);
             t.show();
         }
         catch (Throwable ex) {
