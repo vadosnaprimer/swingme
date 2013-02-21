@@ -3,7 +3,6 @@ package net.yura.me4se;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.lang.reflect.Field;
@@ -14,7 +13,6 @@ import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Component;
 import net.yura.mobile.gui.components.Frame;
-import net.yura.mobile.gui.components.Panel;
 import net.yura.mobile.gui.plaf.nimbus.NimbusLookAndFeel;
 import org.me4se.JadFile;
 
@@ -24,7 +22,7 @@ import org.me4se.JadFile;
 public class ME4SEPanel extends Container {
 
     private ApplicationManager manager;
-    private DesktopPane desktop;
+    private DesktopPane desktop,old;
     private Frame frame1;
 
     public DesktopPane getDesktopPane() {
@@ -35,6 +33,8 @@ public class ME4SEPanel extends Container {
         setLayout( new BorderLayout() );
 
         // this can only be happening in 1 thread at a time
+
+        old = DesktopPane.getDesktopPane();
 
         manager = ApplicationManager.createInstance(this, null );
 
@@ -70,6 +70,10 @@ public class ME4SEPanel extends Container {
 
             ((EmptyMidlet)manager.active).destroyApp(true); // this will set desktop to null
 
+            if (old!=null) {
+                old.showNotify();
+                old=null;
+            }
         }
         catch(Exception ex) {
             throw new RuntimeException(ex);
