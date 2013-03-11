@@ -376,10 +376,17 @@ public class Button extends Label implements ActionListener {
         /**
          * @see javax.swing.ButtonModel#setGroup(javax.swing.ButtonGroup) ButtonModel.setGroup
          */
-	public void setButtonGroup(ButtonGroup buttonGroup) {
+	public void setGroup(ButtonGroup buttonGroup) {
 		this.buttonGroup = buttonGroup;
 	}
-
+        
+        /**
+         * @see javax.swing.DefaultButtonModel#getGroup() DefaultButtonModel.getGroup
+         */
+        public ButtonGroup getGroup() {
+            return buttonGroup;
+        }
+        
 	public void actionPerformed(String actionCommand) {
 		if(selectButton.getActionCommand().equals(actionCommand)) {
 			fireActionPerformed();

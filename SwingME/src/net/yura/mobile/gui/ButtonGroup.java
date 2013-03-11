@@ -37,7 +37,7 @@ public class ButtonGroup {
           */
 	 public void add(Button b) {
 		 buttons.addElement(b);
-		 b.setButtonGroup(this);
+		 b.setGroup(this);
 		 
 	 }
 
