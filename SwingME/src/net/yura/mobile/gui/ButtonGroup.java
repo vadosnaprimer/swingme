@@ -19,7 +19,6 @@ package net.yura.mobile.gui;
 
 import java.util.Enumeration;
 import java.util.Vector;
-
 import net.yura.mobile.gui.components.Button;
 
 /**
@@ -38,14 +37,15 @@ public class ButtonGroup {
 	 public void add(Button b) {
 		 buttons.addElement(b);
 		 b.setGroup(this);
-		 
+		 if (b.isSelected()) {
+                     setSelected(b);
+                 }
 	 }
 
          /**
           * @see javax.swing.ButtonGroup#getButtonCount() ButtonGroup.getButtonCount
           */
 	 public int getButtonCount() {
-		 
 		 return buttons.size();
 	 }
 	 
@@ -53,7 +53,6 @@ public class ButtonGroup {
           * @see javax.swing.ButtonGroup#getSelection() ButtonGroup.getSelection
           */
 	 public Button getSelection() {
-		 
 		 return selected;
 	 }
 
@@ -61,7 +60,6 @@ public class ButtonGroup {
           * @see javax.swing.ButtonGroup#setSelected(javax.swing.ButtonModel, boolean) ButtonGroup.setSelected
           */
 	public void setSelected(Button button) {
-		
 		selected = button;
 		
 		for (int c=0;c<buttons.size();c++) {
