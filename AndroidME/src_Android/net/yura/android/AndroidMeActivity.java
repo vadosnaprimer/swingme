@@ -9,11 +9,13 @@ import javax.microedition.midlet.MIDlet;
 
 import net.yura.mobile.logging.Logger;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +35,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
     public static Activity DEFAULT_ACTIVITY;
 
-
+    private PowerManager.WakeLock wl;
 
     @Override
     final protected void onCreate(Bundle icicle) {
@@ -88,6 +90,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 //        System.setOut(log);
     }
 
+    private boolean foreground;
     @Override
     protected void onResume() {
         super.onResume();
@@ -103,6 +106,42 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             window.setFormat(PixelFormat.RGBA_8888);
         }
 
+        Logger.debug("[AndroidMeActivity] onResume");
+        foreground = true;
+
+        if (wl!=null) {
+            wl.acquire();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Logger.debug("[AndroidMeActivity] onPause");
+        foreground = false;
+
+        if (wl!=null) {
+            wl.release();
+        }
+    }
+
+    public void setWakeLock(final boolean wakelock) {
+    	// we want to run this on the main thread to make it safe to call from any thread
+    	AndroidMeApp.getIntance().invokeLater(new Runnable() {
+    	    @Override
+    	    public void run() {
+                if (wl != null) {
+                    if (foreground) wl.release();
+                    wl = null;
+                }
+                if (wakelock) {
+                    PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+                    wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "DoNotDimScreen");
+                    if (foreground) wl.acquire();
+                }
+    	    }
+	});
     }
 
     //Override

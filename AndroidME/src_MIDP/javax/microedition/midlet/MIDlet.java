@@ -198,6 +198,12 @@ public abstract class MIDlet {
             	}
 
             }
+            else if (url.equals("wakelock://true")) {
+            	((AndroidMeActivity)AndroidMeActivity.DEFAULT_ACTIVITY).setWakeLock(true);
+            }
+            else if (url.equals("wakelock://false")) {
+            	((AndroidMeActivity)AndroidMeActivity.DEFAULT_ACTIVITY).setWakeLock(false);
+            }
             else if (url.startsWith("geo:")) {
             	// eg (with the brackets and everything else past the = URL encoded): geo://lat,long?q=lat,long(description)
             	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
