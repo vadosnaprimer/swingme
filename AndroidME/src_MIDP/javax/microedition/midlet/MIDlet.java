@@ -287,8 +287,8 @@ public abstract class MIDlet {
         notif.defaults = Notification.DEFAULT_ALL;
         notif.ledOnMS = 100;
         notif.ledOffMS = 100;
-        //notif.flags = Notification.DEFAULT_LIGHTS | Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
-
+        notif.flags |= Notification.FLAG_AUTO_CANCEL;
+        
         try {
             notif.number = Integer.parseInt(num);
         } catch (Throwable e) {
