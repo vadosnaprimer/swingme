@@ -7,6 +7,7 @@ import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
 import net.yura.android.WebViewActivity;
 import net.yura.mobile.logging.Logger;
+import net.yura.mobile.util.Url;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -257,10 +258,14 @@ public abstract class MIDlet {
     }
 
     private void showNotification(Uri uri) {
-        String title = uri.getQueryParameter("title");
-        String num = uri.getQueryParameter("num");
-        String message = uri.getQueryParameter("message");
-        String icon = uri.getQueryParameter("icon");
+        
+        // there is a bug on android older versions so we use our Url to decode.
+        Url url = new Url( uri.toString() );
+        
+        String title = url.getQueryParameter("title");
+        String num = url.getQueryParameter("num");
+        String message = url.getQueryParameter("message");
+        String icon = url.getQueryParameter("icon");
 
         Context ctx = AndroidMeApp.getContext();
         int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
