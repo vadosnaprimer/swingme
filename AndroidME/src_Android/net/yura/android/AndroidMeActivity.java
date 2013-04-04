@@ -6,7 +6,6 @@ import javax.microedition.lcdui.Canvas;
 import javax.microedition.lcdui.Display;
 import javax.microedition.lcdui.Displayable;
 import javax.microedition.midlet.MIDlet;
-
 import net.yura.mobile.logging.Logger;
 import android.app.Activity;
 import android.content.Context;
@@ -35,7 +34,8 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 
     public static Activity DEFAULT_ACTIVITY;
 
-    private PowerManager.WakeLock wl;
+    // this needs to be static as AndroidMeActivity can close and a new instance can start and we still want to have a WakeLock
+    private static PowerManager.WakeLock wl;
 
     @Override
     final protected void onCreate(Bundle icicle) {
