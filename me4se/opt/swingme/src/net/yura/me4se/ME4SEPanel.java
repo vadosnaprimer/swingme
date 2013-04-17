@@ -49,6 +49,7 @@ public class ME4SEPanel extends Container {
         // todo find this from a better place
         desktop.setLookAndFeel( new NimbusLookAndFeel() );
 
+        setPreferredSize(new Dimension(320,480)); // default same as Jesus Piece
     }
 
     public ApplicationManager getApplicationManager() {
@@ -124,8 +125,7 @@ public class ME4SEPanel extends Container {
         });
 
         dialog.getContentPane().add(this);
-        //dialog.pack();
-        dialog.setSize(320,480); // same as Jesus Piece
+        dialog.pack();
         dialog.setLocationRelativeTo(parent);
         dialog.setVisible(true);
 
