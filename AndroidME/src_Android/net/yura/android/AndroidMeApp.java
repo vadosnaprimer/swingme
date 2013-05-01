@@ -1,17 +1,5 @@
 package net.yura.android;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Vector;
-
-import javax.microedition.lcdui.Display;
-import javax.microedition.midlet.MIDlet;
-
-import net.yura.mobile.logging.Logger;
 import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -30,6 +18,16 @@ import android.os.Looper;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.webkit.WebView;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.Vector;
+import javax.microedition.lcdui.Display;
+import javax.microedition.midlet.MIDlet;
+import net.yura.mobile.logging.Logger;
 
 public class AndroidMeApp extends Application {
 
@@ -339,7 +337,7 @@ public class AndroidMeApp extends Application {
 
         // HTTP connection reuse which was buggy pre-froyo
         // http://android-developers.blogspot.dk/2011/09/androids-http-clients.html
-        if (Integer.parseInt(Build.VERSION.SDK) < Build.VERSION_CODES.FROYO) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB ) {
             System.setProperty("http.keepAlive", "false");
         }
 
