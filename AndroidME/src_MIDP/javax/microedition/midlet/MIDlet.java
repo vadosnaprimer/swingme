@@ -23,6 +23,7 @@ import android.telephony.gsm.GsmCellLocation;
 import android.text.ClipboardManager;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 public abstract class MIDlet {
     public static final String PROTOCOL_HTTP = "http://";
@@ -84,8 +85,7 @@ public abstract class MIDlet {
         this.pauseApp();
     }
 
-    public boolean platformRequest(String url)
-            throws ConnectionNotFoundException {
+    public boolean platformRequest(String url) throws ConnectionNotFoundException {
 
         try {
             Uri content = Uri.parse(url);
@@ -130,10 +130,17 @@ public abstract class MIDlet {
                 }
             }
             else if (url.startsWith(PROTOCOL_NOTIFY)) {
-                showNotification(content);
+                // there is a bug on android older versions so we use our Url to decode.
+                Url myurl = new Url( url );
+                showNotification(myurl.getQueryParameter("title"),myurl.getQueryParameter("num"),myurl.getQueryParameter("message"),myurl.getQueryParameter("icon"));
             }
-            
-            
+            else if (url.startsWith("toast://show")) {
+                // there is a bug on android older versions so we use our Url to decode. 
+                Url myurl = new Url( url );
+                showToast(myurl.getQueryParameter("message"),"SHORT".equals(myurl.getQueryParameter("duration"))?Toast.LENGTH_SHORT:Toast.LENGTH_LONG);
+            }
+
+
             else if (url.startsWith("grasshopper")) {
                 try {
                     String params = url.substring(url.indexOf('?')+1);
@@ -253,20 +260,10 @@ public abstract class MIDlet {
     }
 
     public int checkPermission(String string) {
-        // TODO Auto-generated method stub
         return 0;
     }
 
-    private void showNotification(Uri uri) {
-        
-        // there is a bug on android older versions so we use our Url to decode.
-        Url url = new Url( uri.toString() );
-        
-        String title = url.getQueryParameter("title");
-        String num = url.getQueryParameter("num");
-        String message = url.getQueryParameter("message");
-        String icon = url.getQueryParameter("icon");
-
+    private void showNotification(String title,String num,String message,String icon) {
         Context ctx = AndroidMeApp.getContext();
         int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
 
@@ -288,17 +285,26 @@ public abstract class MIDlet {
         notif.ledOnMS = 100;
         notif.ledOffMS = 100;
         notif.flags |= Notification.FLAG_AUTO_CANCEL;
-        
+
         try {
             notif.number = Integer.parseInt(num);
-        } catch (Throwable e) {
-            // Ignore wrong or missing message number
         }
+        catch (Throwable e) { } // Ignore wrong or missing message number
 
         notif.setLatestEventInfo(ctx, title, message, intent);
 
         NotificationManager notifManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
         notifManager.notify(0, notif);
+    }
+
+    public void showToast(final String message,final int duration) {
+        final Activity activity = AndroidMeActivity.DEFAULT_ACTIVITY;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, message, duration).show();
+            }
+        });
     }
 
 
@@ -321,7 +327,8 @@ public abstract class MIDlet {
 
                     // Request Cell Location
                     CellLocation.requestLocationUpdate();
-                } catch (Throwable e) {
+                }
+                catch (Throwable e) {
                     Logger.warn(e);
                 }
             }
@@ -367,7 +374,8 @@ public abstract class MIDlet {
                     setProperty("MMC", op.substring(0, 3));
                     setProperty("MNC", op.substring(3));
                 }
-            } catch (Throwable e) {
+            }
+            catch (Throwable e) {
                 Logger.warn(e);
             }
         }
@@ -391,7 +399,8 @@ public abstract class MIDlet {
             Context ctx = view.getContext();
             InputMethodManager im = (InputMethodManager) ctx.getSystemService(Context.INPUT_METHOD_SERVICE);
             im.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        } catch (Throwable e) {
+        }
+        catch (Throwable e) {
             //#debug info
             Logger.warn(e);
         }
