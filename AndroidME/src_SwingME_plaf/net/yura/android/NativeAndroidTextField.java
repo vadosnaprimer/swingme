@@ -65,7 +65,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     private EditText editText; // this is the Android Component
     private TextBox textBox; // this is the J2ME component
-    private Component textField; // this is the SwingME component
+    private TextComponent textField; // this is the SwingME component
 
     public NativeAndroidTextField() {
 
@@ -111,7 +111,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         //textField = (Component)textBox.getCommandListener();
 
         Window window = DesktopPane.getDesktopPane().getSelectedFrame();
-        textField = window.getFocusOwner();
+        textField = (TextComponent)window.getFocusOwner();
 
         this.textBox = textBox;
 
@@ -128,33 +128,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
         midp2android();
 
-        boolean singleLine = (textField instanceof TextField);
-        editText.setSingleLine( singleLine );
-        int inputType = TextBox.getInputType( textBox.getConstraints(), textBox.getInitialInputMode() );
-        if (!singleLine) {
-            inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE;
-        }
-        editText.setInputType( inputType ); // this has to be done AFTER setSingleLine or passwords will break
-
-        ((NativeEditText)editText).setMaxLength( ((TextComponent)textField).getMaxSize() );
-
-        if (singleLine) { // actions only supported on single friend
-            final TextField tf = (TextField)textField;
-            if (tf.getActionListeners().length>0) {
-
-                editText.setImeOptions( EditorInfo.IME_ACTION_DONE ); // DONE is returned by default (IME_ACTION_UNSPECIFIED), but we STILL have to set it, or getImeOptions will return 0
-
-                editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                        if (actionId == editText.getImeOptions() ) { // actionId is 6(IME_ACTION_DONE) is none is set. getImeOptions returns 0(IME_NULL) if none is set
-                            fireActionPerformed(tf);
-                        }
-                        return true;
-                    }
-                });
-            }
-        }
+        setNativeSettings(editText, textField, textBox.getConstraints(), textBox.getInitialInputMode());
 
         editText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -190,14 +164,14 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
             // does not get it 100% correct, so we only use it when we remove the native border
             Border insets = textField.getInsets();
-            int margin = ((TextComponent)textField).getMargin();
+            int margin = textField.getMargin();
             editText.setPadding(insets.getLeft()+margin, insets.getTop()+margin, insets.getRight()+margin, insets.getBottom()+margin);
 
         }
 
 
         // if we are using a system font in this text field, lets use it in the edittext
-        javax.microedition.lcdui.Font font = ((TextComponent)textField).getFont().getFont();
+        javax.microedition.lcdui.Font font = textField.getFont().getFont();
         if (font!=null) {
             editText.setTextSize( TypedValue.COMPLEX_UNIT_PX, FontManager.getFont(font).getPaint().getTextSize() );
         }
@@ -422,7 +396,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     void midp2android() {
 
-        int caret = ((TextComponent)textField).getCaretPosition();
+        int caret = textField.getCaretPosition();
 
         editText.setText(textBox.getString()); // this resets caret to 0 in the EditText
 
@@ -451,18 +425,16 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         // we do NOT want to do this as this closes the keyboard, and we do not want to do that
         //textBox.fireCommand(javax.microedition.lcdui.Command.OK);
 
-        TextComponent tc = (TextComponent)textField;
-
         // just set the text back on the text component
         String mText = textBox.getString();
-        if (!mText.equals( tc.getText() )) { // ALWAYS USE getText and NOT getValue, as getValue can give a Integer Object back for a number mode textbox
-            tc.setText( mText );
+        if (!mText.equals( textField.getText() )) { // ALWAYS USE getText and NOT getValue, as getValue can give a Integer Object back for a number mode textbox
+            textField.setText( mText );
         }
 
         int caret = editText.getSelectionEnd();
 
-        if (tc.getCaretPosition() != caret) {
-            tc.setCaretPosition( caret ); // in android no direct way to get the caret
+        if (textField.getCaretPosition() != caret) {
+            textField.setCaretPosition( caret ); // in android no direct way to get the caret
         }
     }
 
@@ -496,13 +468,6 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
                 return in;
         }
         */
-
-        /**
-         * for some crazy reason, this method does not exist in normal android API
-         */
-        public void setMaxLength(int maxlength) {
-            setFilters(new InputFilter[] { new InputFilter.LengthFilter(maxlength) });
-        }
 
         /**
          * this normally returns the min height of the background Drawable
@@ -586,12 +551,10 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
         	try {
 	            if (view!=null) { // we check the view is not null to make sure this is not the call from the constructor
 
-	                TextComponent tc = (TextComponent)textField;
-
-	                int caretPosition = tc.getCaretPosition();
+	                int caretPosition = textField.getCaretPosition();
 
 	                if (caretPosition!= selEnd) {
-	                    tc.setCaretPosition(selEnd);
+	                    textField.setCaretPosition(selEnd);
 	                }
 	            }
         	}
@@ -618,7 +581,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
                 // ========== SWING 2 MIDP ==========
                 // get the text from swingME to J2ME
-                String val = ((TextComponent)textField).getText();
+                String val = textField.getText();
                 textBox.setString( val );
 
                 midp2android(); // set the text back into the android editText
@@ -669,7 +632,35 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 
     }
 
+    public static void setNativeSettings(final EditText editText, TextComponent textField, int constraints,String initialInputMode) {
 
+        boolean singleLine = (textField instanceof TextField);
+        editText.setSingleLine( singleLine );
+        int inputType = TextBox.getInputType(constraints, initialInputMode);
+        if (!singleLine) {
+            inputType = inputType | EditorInfo.TYPE_TEXT_FLAG_MULTI_LINE;
+        }
+        editText.setInputType( inputType ); // this has to be done AFTER setSingleLine or passwords will break
 
+        editText.setFilters(new InputFilter[] { new InputFilter.LengthFilter( textField.getMaxSize() ) });
+
+        if (singleLine) { // actions only supported on single friend
+            final TextField tf = (TextField)textField;
+            if (tf.getActionListeners().length>0) {
+
+                editText.setImeOptions( EditorInfo.IME_ACTION_DONE ); // DONE is returned by default (IME_ACTION_UNSPECIFIED), but we STILL have to set it, or getImeOptions will return 0
+
+                editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == editText.getImeOptions() ) { // actionId is 6(IME_ACTION_DONE) is none is set. getImeOptions returns 0(IME_NULL) if none is set
+                            fireActionPerformed(tf);
+                        }
+                        return true;
+                    }
+                });
+            }
+        }
+    }
 
 }
