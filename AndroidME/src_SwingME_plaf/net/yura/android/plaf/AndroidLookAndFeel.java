@@ -3,7 +3,6 @@ package net.yura.android.plaf;
 import javax.microedition.lcdui.Image;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
-import net.yura.android.AndroidOptionPane;
 import net.yura.android.NativeAndroidMenu;
 import net.yura.android.NativeAndroidTextField;
 import net.yura.mobile.gui.DesktopPane;
@@ -22,7 +21,6 @@ import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
-import net.yura.mobile.logging.Logger;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -36,6 +34,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import net.yura.android.AlertOptionPane;
 
 public class AndroidLookAndFeel extends SynthLookAndFeel {
 
@@ -442,7 +441,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         setStyleFor("Spinner",spinner);
         
 
-        OptionPane.optionPaneClass = AndroidOptionPane.class;
+        OptionPane.optionPaneClass = AlertOptionPane.class;
         DesktopPane.getDesktopPane().menuSystem = new NativeAndroidMenu();
         NativeAndroidTextField.init();
     }

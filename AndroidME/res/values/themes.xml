@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources><!-- parent="android:Theme.Light" -->
- <style name="OptionPane" parent="android:Theme.Translucent.NoTitleBar" />
  <style name="Theme" parent="android:Theme" />
  <style name="DialogTheme" parent="android:Theme.Dialog" />
 </resources>
