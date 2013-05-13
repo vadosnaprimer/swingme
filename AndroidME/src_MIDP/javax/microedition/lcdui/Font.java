@@ -69,7 +69,7 @@ public final class Font {
 			throw new IllegalArgumentException();
 		}
 		if (size >= 0 && size != SIZE_SMALL && size != SIZE_MEDIUM && size != SIZE_LARGE) {
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("size: "+size);
 		}
 
 		this.face = face;
