@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources><!-- parent="android:Theme.Light" -->
+<resources>
  <style name="Theme" parent="android:Theme" />
+ <style name="Theme.Light" parent="android:Theme.Light" />
  <style name="DialogTheme" parent="android:Theme.Dialog" />
+ <style name="NoActionBar" parent="android:Theme.NoTitleBar" />
+ <style name="NoActionBar.Light" parent="android:Theme.Light.NoTitleBar" />
 </resources>
