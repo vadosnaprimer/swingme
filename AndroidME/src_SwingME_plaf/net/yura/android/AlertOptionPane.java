@@ -105,7 +105,7 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
             }
             else if (messages[c] instanceof TextField) {
                 TextField tf = (TextField)messages[c];
-                input = new EditText( AndroidMeActivity.DEFAULT_ACTIVITY );
+                input = new EditText( alertDialog.getContext() );
                 input.setText( tf.getText() );
                 NativeAndroidTextField.setNativeSettings(input, tf, tf.getConstraints(), tf.initialInputMode );
                 alertDialog.setView(input);
