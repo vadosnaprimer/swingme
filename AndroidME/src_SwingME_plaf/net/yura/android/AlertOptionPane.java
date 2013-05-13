@@ -1,14 +1,17 @@
 package net.yura.android;
 
+import java.util.Vector;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.text.Html;
+import android.widget.EditText;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.OptionPane;
+import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.logging.Logger;
 
 public class AlertOptionPane extends OptionPane implements OnCancelListener, OnClickListener {
@@ -16,15 +19,13 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
     private static final int[] BUTTON_TYPE = {DialogInterface.BUTTON_POSITIVE, DialogInterface.BUTTON_NEUTRAL, DialogInterface.BUTTON_NEGATIVE};
 
     private AlertDialog alertDialog;
+    private EditText input;
 
     @Override
     public void setVisible(boolean b) {
 
-        Object obj = getMessage();
-
-        if (obj==null || obj instanceof String) {
+        if (isNativeSupported()) {
             if (b) {
-
                 try {
                     openNativeAlert();
                 }
@@ -48,6 +49,44 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
         }
     }
 
+    private Object[] getMessageAsArray() {
+        Object newMessage = getMessage();
+        Object[] messages;
+        if (newMessage instanceof Object[]) {
+            messages = (Object[])newMessage;
+        }
+        else if (newMessage instanceof Vector) {
+            messages = ((Vector)newMessage).toArray();
+        }
+        else if (newMessage==null) {
+            messages = new Object[0];
+        }
+        else {
+            messages = new Object[] {newMessage};
+        }
+        return messages;
+    }
+
+    private boolean isNativeSupported() {
+        Object[] messages = getMessageAsArray();
+        boolean string=false;
+        boolean textField=false;
+        for (int c=0;c<messages.length;c++) {
+            if (messages[c] instanceof String) {
+                if (string) return false;
+                string=true;
+            }
+            else if (messages[c] instanceof TextField) {
+                if (textField) return false;
+                textField=true;
+            }
+            else {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private void openNativeAlert() {
 
         if (alertDialog == null) {
@@ -55,14 +94,21 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
         }
 
         alertDialog.setTitle(getTitle());
-
         alertDialog.setCancelable(isCancelable());
 
-        String msg = (String)getMessage();
-
-        if (msg!=null) {
-            CharSequence alertText = (msg.startsWith("<html>")) ? Html.fromHtml(msg) : msg;
-            alertDialog.setMessage(alertText);
+        Object[] messages = getMessageAsArray();
+        for (int c=0;c<messages.length;c++) {
+            if (messages[c] instanceof String) {
+                String msg = (String)messages[c];
+                CharSequence alertText = (msg.startsWith("<html>")) ? Html.fromHtml(msg) : msg;
+                alertDialog.setMessage(alertText);
+            }
+            else if (messages[c] instanceof TextField) {
+                TextField tf = (TextField)messages[c];
+                input = new EditText( AndroidMeActivity.DEFAULT_ACTIVITY );
+                input.setText( tf.getText() );
+                alertDialog.setView(input);
+            }
         }
 
         int msgType = getMessageType();
@@ -86,6 +132,9 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
         if (iconId > 0) {
             alertDialog.setIcon(iconId);
         }
+        
+        // this makes the icon the correct color, BUT only works on honeycomb+ and ONLY for alert ("!") icon
+        //alertDialog.setIconAttribute(android.R.attr.alertDialogIcon);
 
         String[] buttonsText = getButtonsText();
 
@@ -106,6 +155,7 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
         if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
+            input = null;
         }
     }
 
@@ -142,6 +192,17 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
     }
 
     private void fireActionPerformed(Button b) {
+
+        if (input != null) {
+            Object[] messages = getMessageAsArray();
+            for (int c=0;c<messages.length;c++) {
+                if (messages[c] instanceof TextField) {
+                    TextField tf = (TextField)messages[c];
+                    tf.setText( input.getText().toString() );
+                }
+            }
+        }
+
         try {
             ActionListener al = getActionListener();
             if (al!=null) {
