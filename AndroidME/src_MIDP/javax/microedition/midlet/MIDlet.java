@@ -132,7 +132,12 @@ public abstract class MIDlet {
             else if (url.startsWith(PROTOCOL_NOTIFY)) {
                 // there is a bug on android older versions so we use our Url to decode.
                 Url myurl = new Url( url );
-                showNotification(myurl.getQueryParameter("title"),myurl.getQueryParameter("num"),myurl.getQueryParameter("message"),myurl.getQueryParameter("icon"));
+                showNotification(
+                        myurl.getQueryParameter("title"),
+                        myurl.getQueryParameter("num"),
+                        myurl.getQueryParameter("message"),
+                        myurl.getQueryParameter("icon"),
+                        myurl.getQueryParameter("onlyBackground"));
             }
             else if (url.startsWith("toast://show")) {
                 // there is a bug on android older versions so we use our Url to decode. 
@@ -263,38 +268,45 @@ public abstract class MIDlet {
         return 0;
     }
 
-    private void showNotification(String title,String num,String message,String icon) {
-        Context ctx = AndroidMeApp.getContext();
-        int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
+    private void showNotification(String title,String num,String message,String icon,String onlyBackground) {
 
-        System.out.println(">>>> showNotification:" +
-                " title = " + title +
-                " num = " + num +
-                " message = " + message +
-                " icon = " + icon +
-                " iconId = " + iconId);
+        if (    onlyBackground==null || 
+                !onlyBackground.equals("true") || 
+                AndroidMeActivity.DEFAULT_ACTIVITY==null || 
+                !((AndroidMeActivity)AndroidMeActivity.DEFAULT_ACTIVITY).isForeground() ) {
 
-        Intent notifyIntent = new Intent(ctx, AndroidMeActivity.class);
-        PendingIntent intent = PendingIntent.getActivity(ctx, 0, notifyIntent, 0);
+            Context ctx = AndroidMeApp.getContext();
+            int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
 
-        Notification notif = new Notification(iconId, title, System.currentTimeMillis());
+            System.out.println(">>>> showNotification:" +
+                    " title = " + title +
+                    " num = " + num +
+                    " message = " + message +
+                    " icon = " + icon +
+                    " iconId = " + iconId);
 
-        notif.iconLevel = 3;
-        notif.vibrate = new long[] {100,100,200,300};
-        notif.defaults = Notification.DEFAULT_ALL;
-        notif.ledOnMS = 100;
-        notif.ledOffMS = 100;
-        notif.flags |= Notification.FLAG_AUTO_CANCEL;
+            Intent notifyIntent = new Intent(ctx, AndroidMeApp.getMainActivityClass() );
+            PendingIntent intent = PendingIntent.getActivity(ctx, 0, notifyIntent, 0);
 
-        try {
-            notif.number = Integer.parseInt(num);
+            Notification notif = new Notification(iconId, title, System.currentTimeMillis());
+
+            notif.iconLevel = 3;
+            notif.vibrate = new long[] {100,100,200,300};
+            notif.defaults = Notification.DEFAULT_ALL;
+            notif.ledOnMS = 100;
+            notif.ledOffMS = 100;
+            notif.flags |= Notification.FLAG_AUTO_CANCEL;
+
+            try {
+                notif.number = Integer.parseInt(num);
+            }
+            catch (Throwable e) { } // Ignore wrong or missing message number
+
+            notif.setLatestEventInfo(ctx, title, message, intent);
+
+            NotificationManager notifManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+            notifManager.notify(0, notif);
         }
-        catch (Throwable e) { } // Ignore wrong or missing message number
-
-        notif.setLatestEventInfo(ctx, title, message, intent);
-
-        NotificationManager notifManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-        notifManager.notify(0, notif);
     }
 
     public void showToast(final String message,final int duration) {

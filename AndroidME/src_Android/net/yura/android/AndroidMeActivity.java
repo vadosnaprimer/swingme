@@ -125,6 +125,10 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             wl.release();
         }
     }
+    
+    public boolean isForeground() {
+        return foreground;
+    }
 
     public void setWakeLock(final boolean wakelock) {
     	// we want to run this on the main thread to make it safe to call from any thread

@@ -548,4 +548,13 @@ public class AndroidMeApp extends Application {
             }
         }
     }
+
+    public static Class<?> getMainActivityClass() {
+        try {
+            return Class.forName( instance.getPackageManager().getLaunchIntentForPackage(instance.getPackageName()).getComponent().getClassName() );
+        }
+        catch (Exception ex) {
+            throw new RuntimeException("can not find main activity class",ex);
+        }
+    }
 }
