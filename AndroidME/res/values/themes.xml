@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+ <style name="Dialog" parent="android:Theme.Dialog" />
+ <style name="Dialog.Light" parent="android:Theme.Dialog" />
+
  <style name="Theme" parent="android:Theme" />
  <style name="Theme.Light" parent="android:Theme.Light" />
- <style name="DialogTheme" parent="android:Theme.Dialog" />
+ <style name="Theme.Light.DarkDialog" parent="Theme.Light" />
+
  <style name="NoActionBar" parent="android:Theme.NoTitleBar" />
  <style name="NoActionBar.Light" parent="android:Theme.Light.NoTitleBar" />
+ <style name="NoActionBar.Light.DarkDialog" parent="NoActionBar.Light" />
 
- <style name="NoActionBar.Light.DarkDialog" parent="android:Theme.Light.NoTitleBar" />
+ <style name="AndroidME" parent="android:Theme.NoTitleBar" />
+ <style name="AndroidME.Light" parent="android:Theme.Light.NoTitleBar" />
+ <style name="AndroidME.Light.DarkDialog" parent="AndroidME.Light" />
 </resources>
