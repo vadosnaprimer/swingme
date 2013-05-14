@@ -175,7 +175,9 @@ public abstract class Canvas extends Displayable {
             this.canvasView.postInvalidate(x, y, x+w, y+h);
 
             //#mdebug debug
-            this.canvasView.postInvalidate(0, 0, 10, 10);
+            if (net.yura.mobile.BuildConfig.DEBUG) {
+                this.canvasView.postInvalidate(0, 0, 10, 10);
+            }
             //#enddebug
         }
     }
@@ -706,6 +708,10 @@ public abstract class Canvas extends Displayable {
 
             if (usedWidth==0&&usedHeight==0) { // this is the first time paint is called
                 try {
+                    // sometimes even though the app starts in HW mode, it can suddenly switch back to SW
+                    // "Mountain View, we've had a problem here. Switching back to software rendering."
+                    // when using Holo theme and playing with a native text field and its ActionBar
+                    // but this method still returns true after this event, even though we are in SW mode
                     hardwareAccelerated = ((Boolean)getClass().getMethod("isHardwareAccelerated", (Class<?>[])null).invoke(this, (Object[])null));
                 }
                 catch (Throwable th) { }
