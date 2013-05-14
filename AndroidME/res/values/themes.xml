@@ -5,4 +5,6 @@
  <style name="DialogTheme" parent="android:Theme.Dialog" />
  <style name="NoActionBar" parent="android:Theme.NoTitleBar" />
  <style name="NoActionBar.Light" parent="android:Theme.Light.NoTitleBar" />
+
+ <style name="NoActionBar.Light.DarkDialog" parent="android:Theme.Light.NoTitleBar" />
 </resources>

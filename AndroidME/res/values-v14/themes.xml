@@ -5,4 +5,12 @@
  <style name="DialogTheme" parent="android:Theme.DeviceDefault.Dialog" />
  <style name="NoActionBar" parent="android:Theme.DeviceDefault.NoActionBar" />
  <style name="NoActionBar.Light" parent="android:Theme.DeviceDefault.Light.NoActionBar" />
+
+ <!-- really have no idea why this is needed, but i get 2 sets of dialog borders otherwise -->
+ <style name="Theme.DeviceDefault.Dialog.Alert" parent="@android:style/Theme.DeviceDefault.Dialog">
+    <item name="android:windowBackground">@android:color/transparent</item>
+ </style>
+ <style name="NoActionBar.Light.DarkDialog" parent="android:Theme.DeviceDefault.Light.NoActionBar" >
+     <item name="android:alertDialogTheme">@style/Theme.DeviceDefault.Dialog.Alert</item>
+ </style>
 </resources>
