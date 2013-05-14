@@ -8,6 +8,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.text.Html;
 import android.widget.EditText;
 import net.yura.mobile.gui.ActionListener;
+import net.yura.mobile.gui.DesktopPane;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.components.Button;
 import net.yura.mobile.gui.components.OptionPane;
@@ -156,7 +157,10 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
         if (alertDialog != null) {
             alertDialog.dismiss();
             alertDialog = null;
-            input = null;
+            if (input!=null) {
+                DesktopPane.getDesktopPane().hideSoftKeyboard();
+                input = null;
+            }
         }
     }
 
