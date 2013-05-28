@@ -613,7 +613,7 @@ ps.println("    }");
 
         String thing = field.getName()+"Value";
         String type = field.getType();
-        if (message.getImplementation() == Hashtable.class && !"string".equals(type) && !"bytes".equals(type) && isPrimitive(type) ) {
+        if ((message.getImplementation() == Hashtable.class || isWrapperClass( field.getImplementation() )) && !"string".equals(type) && !"bytes".equals(type) && isPrimitive(type) ) {
             thing = thing+"."+getPrimativeFromJavaType( primitiveToJavaType(type,false) ) +"Value()";
         }
 
@@ -704,16 +704,24 @@ ps.println("    }");
     }
 
     boolean isPrimitive(Class clas) {
-        return clas==null || clas.isPrimitive() || clas.isArray() || clas==String.class || Iterable.class.isAssignableFrom(clas);
+        return clas==null ||
+                clas.isPrimitive() ||
+                clas.isArray() ||
+                clas==String.class ||
+                isWrapperClass(clas) ||
+                Iterable.class.isAssignableFrom(clas);
     }
 
-
-
-
-
-
-
-
+    public static boolean isWrapperClass(Class<?> clazz) {
+        try {
+            Object object = clazz.getDeclaredField("TYPE").get(null);
+            if (object instanceof Class) {
+                return ((Class)object).isPrimitive();
+            }
+        }
+        catch (Throwable ex) { }
+        return false;
+    }
 
 
 
@@ -775,7 +783,7 @@ for (ProtoLoader.FieldDefinition field:fields) {
             ps.println("        "+primitiveToJavaType(type,true)+" value = in2.read"+firstUp(type)+"();");
         }
         else {
-            if (field.getRepeated() || message.getImplementation() == Hashtable.class) {
+            if (field.getRepeated() || message.getImplementation() == Hashtable.class || isWrapperClass( field.getImplementation() )) {
                 if ("bool".equals(type)) {
                     ps.println("    "+primitiveToJavaType(type,true)+" value = in2.read"+firstUp(type)+"()?Boolean.TRUE:Boolean.FALSE;");
                 }
