@@ -1139,13 +1139,14 @@ public class XULLoader {
     public static void setDPI(String newDpi){
         dpi = newDpi;
     }
-    
+
     public static String getDPI(){
     	return dpi;
     }
 
     /**
      * default is mdpi if dpi is unknown
+     * @deprecated this is not good enough as Samsung Galaxy S4 have a density of 3, and yet still report a dpi of xhdpi as there is nothing higher
      */
     public static int adjustSizeToDensity(int ldpiSize) {
         if ("ldpi".equals(dpi)) {
