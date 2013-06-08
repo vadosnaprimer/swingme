@@ -1127,46 +1127,19 @@ public class XULLoader {
     	return adjustSizeToDensity(r);
     }
 
-    private static String dpi;
+    private static float density=1;
     static {
         try {
             // when running as a me4se applet, this can throw a SecurityException
-            dpi = System.getProperty("display.dpi");
+            String d = System.getProperty("display.density");
+            if (d!=null) {
+                density = Float.parseFloat(d);
+            }
         }
         catch (Throwable th) { }
     }
 
-    public static void setDPI(String newDpi){
-        dpi = newDpi;
-    }
-
-    public static String getDPI(){
-    	return dpi;
-    }
-
-    /**
-     * default is mdpi if dpi is unknown
-     * @deprecated this is not good enough as Samsung Galaxy S4 have a density of 3, and yet still report a dpi of xhdpi as there is nothing higher
-     */
-    public static int adjustSizeToDensity(int ldpiSize) {
-        if ("ldpi".equals(dpi)) {
-                return ldpiSize; // we dont need to do anything
-        }
-        else if ("hdpi".equals(dpi)) {
-                return ldpiSize * 2;
-        }
-        else if ("xhdpi".equals(dpi)) {
-                return ( ldpiSize + (ldpiSize + 2) / 3 ) * 2;
-        }
-        else if ("tvdpi".equals(dpi)) {
-                return (int)(ldpiSize * 1.77 + 0.5);
-        }
-        else {
-                // value = (int) Math.round( value * 1.333333333 );
-                // There is no Math.round in J2ME so we do the calculation ourselves.
-                // To correctly round a fraction we need to add half of the denominator to the numerator.
-                // Hence the rounded value of "value * 1.5" is equivalent to "value + (int)( (value+1) / 2 )";
-                return ldpiSize + (ldpiSize + 2) / 3;
-        }
+    public static int adjustSizeToDensity(int mdpiSize) {
+        return (int)(density * mdpiSize + 0.5F);
     }
 }
