@@ -3,7 +3,6 @@ package javax.microedition.lcdui;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Vector;
-
 import javax.microedition.midlet.MIDlet;
 import net.yura.android.AndroidMeActivity;
 import net.yura.android.AndroidMeApp;
@@ -30,19 +29,6 @@ import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 
 public abstract class Canvas extends Displayable {
-
-
-    static {
-        net.yura.mobile.gui.components.TextComponent.staticFocusListener = new net.yura.mobile.gui.ChangeListener() {
-            @Override
-            public void changeEvent(net.yura.mobile.gui.components.Component source, int num) {
-                if (num == net.yura.mobile.gui.components.Component.FOCUS_GAINED) {
-                    ((net.yura.mobile.gui.components.TextComponent)source).openNativeEditor();
-                }
-            }
-        };
-    }
-
 
     public static final int UP = 1;
     public static final int DOWN = 6;

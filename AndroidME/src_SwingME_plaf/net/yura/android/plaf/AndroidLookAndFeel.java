@@ -685,7 +685,9 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
     
     static void sortoutMenu() {
         try {
-            DesktopPane.getDesktopPane().HIDDEN_MENU = ViewConfiguration.get( AndroidMeActivity.DEFAULT_ACTIVITY ).hasPermanentMenuKey();
+            DesktopPane dp = DesktopPane.getDesktopPane();
+            dp.HIDDEN_MENU = ViewConfiguration.get( AndroidMeActivity.DEFAULT_ACTIVITY ).hasPermanentMenuKey();
+            dp.GRID_MENU = dp.HIDDEN_MENU;
         }
         catch (Throwable th) { }
     }
