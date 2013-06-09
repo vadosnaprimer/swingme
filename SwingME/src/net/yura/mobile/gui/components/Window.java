@@ -517,7 +517,7 @@ public class Window extends Panel {
                     b.setBoundsWithBorder(comp.getXWithBorder(), comp.getYWithBorder(), comp.getWidthWithBorder(), comp.getHeightWithBorder());
             }
 
-            if (b!=null && !b.isVisible() && getDesktopPane().HIDDEN_MENU_AND_BACK) {
+            if (b!=null && !b.isVisible() && getDesktopPane().HIDDEN_MENU) {
                 b.setBoundsWithBorder(0, getDesktopPane().getHeight(), getDesktopPane().getWidth(), b.getHeightWithBorder());
             }
 
