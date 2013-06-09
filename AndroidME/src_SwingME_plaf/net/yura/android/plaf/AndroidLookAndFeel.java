@@ -34,6 +34,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.DisplayMetrics;
+import android.view.ViewConfiguration;
 import net.yura.android.AlertOptionPane;
 
 public class AndroidLookAndFeel extends SynthLookAndFeel {
@@ -444,6 +445,8 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         OptionPane.optionPaneClass = AlertOptionPane.class;
         DesktopPane.getDesktopPane().menuSystem = new NativeAndroidMenu();
         NativeAndroidTextField.init();
+        
+        sortoutMenu();
     }
 
     /**
@@ -678,6 +681,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
                     return Color.WHITE;
             }
 
+    }
+    
+    static void sortoutMenu() {
+        try {
+            DesktopPane.getDesktopPane().HIDDEN_MENU = ViewConfiguration.get( AndroidMeActivity.DEFAULT_ACTIVITY ).hasPermanentMenuKey();
+        }
+        catch (Throwable th) { }
     }
 
 }
