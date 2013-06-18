@@ -32,14 +32,14 @@ public class JMUnitTest extends TestCase {
     public void test(int testNumber) throws Throwable {
         
         switch(testNumber) {
-            case 0: testXULLoaderAdjustSizeToDensity(); break;
+            //case 0: testXULLoaderAdjustSizeToDensity(); break;
             case 1: testRMSUtil(); break;
             case 2: testSocketGet(); break;
             case 3: testShowing(); break;
         }
         
     }
-
+/*
     public void testXULLoaderAdjustSizeToDensity() {
 
         //    36x36 for low-density
@@ -67,7 +67,7 @@ public class JMUnitTest extends TestCase {
         XULLoader.setDPI(null); // should default to mdpi size
         assertEquals(48, XULLoader.adjustSizeToDensity(source) );
     }
-    
+*/
     public void testRMSUtil() throws Exception {
         
             Hashtable obj = new Hashtable();
