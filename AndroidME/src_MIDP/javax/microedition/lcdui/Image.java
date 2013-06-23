@@ -91,7 +91,7 @@ public class Image {
             options.inPreferredConfig = Bitmap.Config.ARGB_8888;
             options.inDither = false;
             options.inPurgeable = true; // http://www.droidnova.com/2d-sprite-animation-in-android-addendum,505.html
-            
+
             try {
                 bitmap = BitmapFactory.decodeStream(buffInput,null,options);
             } catch (OutOfMemoryError e) {
@@ -125,7 +125,7 @@ public class Image {
             bitmap = Bitmap.createBitmap(width, height, config);
         }
         if (bitmap==null) {
-            throw new RuntimeException("Bitmap.createBitmap returned null for w="+width+" h="+height+" config="+config+" error="+error );
+            throw new OutOfMemoryError("Bitmap.createBitmap returned null for w="+width+" h="+height+" config="+config+" error="+error );
         }
         return new Image(bitmap);
     }
@@ -258,11 +258,11 @@ public class Image {
             name = name.substring(1);
         }
         name = name.replace(".9.png", "").replace(".png", "").replace(".jpg", "").replace(".gif", "");
-    
+
         Resources res = AndroidMeApp.getContext().getResources();
-        
+
         int id = res.getIdentifier(name, "drawable", AndroidMeApp.getContext().getPackageName() );
-    
+
         if (id > 0) {
             return new ResourceInputStream(res, id);
         }
