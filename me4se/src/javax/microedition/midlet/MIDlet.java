@@ -20,7 +20,9 @@
 
 package javax.microedition.midlet;
 
+import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
@@ -37,6 +39,8 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -192,24 +196,16 @@ public abstract class MIDlet {
 	}
         else if (url.startsWith("grasshopper")) {
             try {
-                String params = url.substring(url.indexOf('?')+1);
-                String[] s1 = params.split("\\&");
-                String appName="Unknown me4se app",appVersion="Unknown version",locale="";
-                for (int c=0;c<s1.length;c++) {
-                    String[] s2 = s1[c].split("\\=");
-                    if ("name".equals(s2[0])) {
-                        appName = s2[1];
-                    }
-                    else if ("version".equals(s2[0])) {
-                        appVersion = s2[1];
-                    }
-                    else if ("locale".equals(s2[0])) {
-                        locale = s2[1];
-                    }
-                    else {
-                        System.out.println("unknown grasshopper param: "+s1[c]);
-                    }
-                }
+                Map query = getQuery(url);
+
+                String appName=(String)query.get("name");
+                String appVersion=(String)query.get("version");
+                String locale=(String)query.get("locale");
+
+                if (appName==null) { appName = "Unknown me4se app"; }
+                if (appVersion==null) { appVersion="Unknown version"; }
+                if (locale==null) { locale=""; }
+
                 try {
                     net.yura.grasshopper.SimpleBug.initSimple(appName, appVersion, locale);
                     System.out.println("Grasshopper loaded");
@@ -302,8 +298,16 @@ public abstract class MIDlet {
             }
         }
         else if (url.startsWith("notify://")) {
-            // TODO: this is the best we can do for now
-            Toolkit.getDefaultToolkit().beep();
+
+            Map query = getQuery(url);
+            String onlyBackground = (String)query.get("onlyBackground");
+            if (onlyBackground==null || !"true".equals(onlyBackground) || !isActive()) {
+                Toolkit.getDefaultToolkit().beep();
+                Frame frame = getFrame();
+                if (frame!=null) {
+                    frame.toFront();
+                }
+            }
         }
 	else {
 	    if (ApplicationManager.getInstance().applet != null) {
@@ -355,6 +359,39 @@ public abstract class MIDlet {
     }
 */
   }
+
+    private Map getQuery(String url) {
+        Map map = new HashMap();
+        String params = url.substring(url.indexOf('?')+1);
+        String[] s1 = params.split("\\&");
+        for (int c=0;c<s1.length;c++) {
+            String[] s2 = s1[c].split("\\=");
+            map.put(s2[0], s2[1]);
+        }
+        return map;
+    }
+
+    private Frame getFrame() {
+        Frame[] frames = Frame.getFrames();
+        for (int c=0;c<frames.length;c++) {
+            if (frames[c].isVisible()) {
+                return frames[c];
+            }
+        }
+        return null;
+    }
+
+    private boolean isActive() {
+        Frame[] frames = Frame.getFrames();
+        for (int c=0;c<frames.length;c++) {
+            if (frames[c].isActive()) return true;
+            Window[] windows = frames[c].getOwnedWindows();
+            for (int i=0;i<windows.length;i++) {
+                if (windows[i].isActive()) return true;
+            }
+        }
+        return false;
+    }
 
   /**
    * @API MIDP-2.0
