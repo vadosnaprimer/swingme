@@ -76,7 +76,7 @@ public abstract class MIDlet {
    * in the JAD File, the property is read as system property. Example:
    * -DMIDlet-Version=1.0. Unfortunately, manifest entries cannot be read with
    * Applet safe code.
-   * 
+   *
    * @API MIDP-1.0
    */
   public String getAppProperty(String key) {
@@ -243,7 +243,7 @@ public abstract class MIDlet {
                 out.flush();
                 out.close();
                 in.close();
-                
+
                 if (fileName.toUpperCase().endsWith(".ZIP")) {
                     unzip(fileName);
                 }
@@ -300,6 +300,10 @@ public abstract class MIDlet {
                     } );
             	}
             }
+        }
+        else if (url.startsWith("notify://")) {
+            // TODO: this is the best we can do for now
+            Toolkit.getDefaultToolkit().beep();
         }
 	else {
 	    if (ApplicationManager.getInstance().applet != null) {
@@ -361,7 +365,7 @@ public abstract class MIDlet {
     return -4711;
   }
 
-  /** 
+  /**
    * Internal message to open a webbrowser if platformRequest with an http url is called.
    * @param url The url to be opened in the browser.
    */
