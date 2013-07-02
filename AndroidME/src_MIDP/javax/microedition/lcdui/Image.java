@@ -232,6 +232,11 @@ public class Image {
         bitmap.setPixel(x, y, color);
     }
 
+    @Override
+    public String toString() {
+        return "Image"+bitmap.toString();
+    }
+
     public static void filter(Image source, Image bm, ColorMatrix cm) {
 
         // Image bm = createImage(source.getWidth(), source.getHeight());
