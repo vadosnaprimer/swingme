@@ -1,44 +1,51 @@
 package net.yura.mobile.util;
 
 import java.util.Vector;
-
 import net.yura.mobile.logging.Logger;
 
 /**
  * @author Yura Mamyrin
  */
-public abstract class QueueProcessorThread extends Thread {
+public abstract class QueueProcessorThread implements Runnable {
 
     public static boolean CHANGE_PRIORITY=true;
 
     private Vector inbox = new Vector();
     private boolean runnning;
-
-    /**
-     * @deprecated should provide a name for the thread with the {@link #QueueProcessorThread(String)} constructor
-     */
-    public QueueProcessorThread() {
-        //#debug debug
-        Logger.dumpStack();
-    }
+    private Vector threads = new Vector(1);
 
     public QueueProcessorThread(String name) {
-        super(name);
+        this(name,1);
+    }
+
+    public QueueProcessorThread(String name,int num) {
+        //#mdebug debug
+        if (num<1) {
+            throw new IllegalArgumentException("min 1 thread: "+num);
+        }
+        //#enddebug
+        for (int c=0;c<num;c++) {
+            threads.addElement(new Thread(this,name+"-"+c));
+        }
+    }
+
+    public void start() {
+        for (int c=0;c<threads.size();c++) {
+            ((Thread)threads.elementAt(c)).start();
+        }
     }
 
     public void kill() {
         synchronized(this) {
             runnning = false;
-            notify();
+            notifyAll();
         }
     }
 
     public void run() {
-
         try {
-
             //#debug info
-            Logger.info("[QueueProcessorThread-"+getName()+"] START DROP_PRIORITY=="+CHANGE_PRIORITY);
+            Logger.info("[QueueProcessorThread-"+Thread.currentThread().getName()+"] START DROP_PRIORITY=="+CHANGE_PRIORITY);
 
             if (CHANGE_PRIORITY) {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
@@ -75,6 +82,7 @@ public abstract class QueueProcessorThread extends Thread {
                         Thread.sleep(0);
                     }
 
+                    //Logger.info("[QueueProcessorThread-"+Thread.currentThread().getName()+"] process: "+object);
                     process(object);
 
                     if (CHANGE_PRIORITY) {
@@ -84,7 +92,7 @@ public abstract class QueueProcessorThread extends Thread {
                 }
                 catch (Exception ex) {
                     //#mdebug warn
-                    Logger.warn("[QueueProcessorThread-"+getName()+"] error processing "+object);
+                    Logger.warn("[QueueProcessorThread-"+Thread.currentThread().getName()+"] error processing "+object);
                     Logger.warn(ex);
                     //#enddebug
                 }
@@ -92,21 +100,17 @@ public abstract class QueueProcessorThread extends Thread {
         }
         catch(Throwable t) {
             //#mdebug error
-            Logger.error("[QueueProcessorThread-"+getName()+"] fatal error: "+t.toString());
+            Logger.error("[QueueProcessorThread-"+Thread.currentThread().getName()+"] fatal error: "+t.toString());
             Logger.error(t);
             //#enddebug
         }
     }
 
     public void addToInbox(Object obj) {
-
         synchronized(this) {
-
             inbox.addElement(obj);
             notify();
-
         }
-
     }
     public boolean isRunning() {
         return runnning;
