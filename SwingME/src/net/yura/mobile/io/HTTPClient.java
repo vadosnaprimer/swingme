@@ -1,19 +1,14 @@
 package net.yura.mobile.io;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Hashtable;
-
 import javax.microedition.io.Connection;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.QueueProcessorThread;
 import net.yura.mobile.util.Url;
@@ -24,7 +19,11 @@ import net.yura.mobile.util.Url;
 public abstract class HTTPClient extends QueueProcessorThread {
 
     public HTTPClient() {
-        super("HTTPClient");
+        this(2);
+    }
+
+    public HTTPClient(int num) {
+        super("HTTPClient",num);
     }
 
     public void makeRequest(Request request) {
@@ -41,13 +40,13 @@ public abstract class HTTPClient extends QueueProcessorThread {
         public byte[] postData;
         public boolean aborted = false;
         private Connection activeConnection = null;
-        
+
         //#mdebug debug
         public String toString() {
             return url+" "+headers+" "+params+" "+post+" "+id+" "+redirects+" "+postData;
         }
         //#enddebug
-        
+
         public void abort() {
         	aborted = true;
         	//#debug debug
@@ -63,7 +62,7 @@ public abstract class HTTPClient extends QueueProcessorThread {
 
     public void process(Object arg0) throws Exception {
         Request request = (Request)arg0;
-        
+
         if (request.aborted) {
         	return;
         }
@@ -105,9 +104,9 @@ public abstract class HTTPClient extends QueueProcessorThread {
             	FileUtil.close(httpConn);
             	return;
             }
-            
+
             boolean post = request.post || request.postData!=null;
-            
+
             // Setup HTTP Request
             httpConn.setRequestMethod(post ? HttpConnection.POST : HttpConnection.GET);
 
