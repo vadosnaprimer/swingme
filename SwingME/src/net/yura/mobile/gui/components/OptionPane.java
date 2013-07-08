@@ -37,6 +37,9 @@ import net.yura.mobile.logging.Logger;
  * @see javax.swing.JOptionPane
  */
 public class OptionPane extends Frame implements Runnable, ActionListener {
+    // unlike the Swing JOptionPane that extends JPanel the SwingME OptionPane extends Frame
+    // this is only because Window.processKeyEvent() has to trigger the defaultCommand
+    // in SwingME the only way to have global key listoners in a window is to extend it
 
     private static Vector allWindows = new Vector();
     public static Vector getAllWindows() {
