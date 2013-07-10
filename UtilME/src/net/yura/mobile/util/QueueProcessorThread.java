@@ -35,10 +35,22 @@ public abstract class QueueProcessorThread implements Runnable {
         }
     }
 
+    /**
+     * @see java.util.concurrent.ExecutorService#shutdown()
+     */
     public void kill() {
         synchronized(this) {
             runnning = false;
             notifyAll();
+        }
+    }
+
+    /**
+     * @see java.util.concurrent.ExecutorService#awaitTermination(long, java.util.concurrent.TimeUnit)
+     */
+    public void awaitTermination() throws InterruptedException {
+        for (int c=0;c<threads.size();c++) {
+            ((Thread)threads.elementAt(c)).join();
         }
     }
 
@@ -106,12 +118,16 @@ public abstract class QueueProcessorThread implements Runnable {
         }
     }
 
+    /**
+     * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
+     */
     public void addToInbox(Object obj) {
         synchronized(this) {
             inbox.addElement(obj);
             notify();
         }
     }
+
     public boolean isRunning() {
         return runnning;
     }
