@@ -4,42 +4,63 @@
 <!-- (If you delete it and reopen the project it will be recreated.) -->
 <project name="UtilME" default="jar" basedir=".">
     <description>Builds, tests, and runs the project .</description>
-	
-
     <import file="nbproject/build-impl.xml"/>
-	
+
+
+    <target name="demo-setup">
+        <property name="deployment.jar" value="dist/UtilME.jar"/>
+    </target>
+
+    <target name="demo" description="demo compile" depends="demo-setup">
+            <delete dir="build" includeemptydirs="true"/>
+            <delete dir="dist" includeemptydirs="true"/>
+
+            <mkdir dir="build"/>
+            <mkdir dir="dist"/>
+
+            <javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="lib/xmlpull_1_1_3_1.jar"/>
+
+            <unzip src="lib/xmlpull_1_1_3_1.jar" dest="build"/>
+
+            <jar destfile="${deployment.jar}" basedir="build"/>
+    </target>
+
     <available file="../SwingME" type="dir" property="SwingME"/>
-    <available file="../AgentLib" type="dir" property="AgentLib"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
     <available file="../Lobby" type="dir" property="Lobby"/>
-
+    <available file="../AgentLib" type="dir" property="AgentLib"/>
 
     <target name="d1" if="SwingME">
         <copy file="${deployment.jar}" todir="../SwingME/lib"/>
     </target>
-    <target name="d2" if="AgentLib">
-        <copy file="${deployment.jar}" todir="../AgentLib/lib"/>
-    </target>
-    <target name="d3" if="ToolsME">
+    <target name="d2" if="ToolsME">
         <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
     </target>
-    <target name="d4" if="Lobby">
+    <target name="d3" if="Lobby">
         <copy file="${deployment.jar}" todir="../Lobby/lib"/>
     </target>
-    
-	<target name="do-preprocess" unless="no.preprocess">
+    <target name="d4" if="AgentLib">
+        <copy file="${deployment.jar}" todir="../AgentLib/lib"/>
+    </target>
+
+    <target name="do-deploy" depends="d1,d2,d3,d4"/>
+
+    <target name="deploy" description="copy lib to some other places" depends="demo-setup,do-deploy"/>
+
+
+    <target name="do-preprocess" unless="no.preprocess">
         <fail unless="preprocessed.dir">Must set preprocessed.dir</fail>
         <property name="abilities" value=""/>
         <property name="debug.level" value="debug"/>
         <mkdir dir="${preprocessed.dir}"/>
         <echo message="ignore me" file="${build.dir}/.timestamp"/>
-		
+
 		<taskdef resource="net/sf/antcontrib/antlib.xml">
             <classpath>
                 <pathelement path="${libs.ant-contrib.classpath}"/>
             </classpath>
         </taskdef>
-		
+
 		<!-- if no environment debug level defined then take from the netbeans configuration -->
 		<if>
 			<contains string="${env.debug.level}" subString="env.debug.level"/>
@@ -50,7 +71,7 @@
 				<var name="mutable.debug.level" value="${env.debug.level}"/>
 			</else>
 		</if>
-		
+
         <nb-prep destdir="${preprocessed.dir}" preprocessfor="${config.active.name},${abilities},DebugLevel=${mutable.debug.level}" encoding="${javac.encoding}">
             <fileset dir="${buildsystem.baton}" defaultexcludes="${filter.use.standard}" excludes="${filter.excludes.evaluated}"/>
         </nb-prep>
@@ -59,8 +80,6 @@
         </copy>
         <nb-overrideproperty name="buildsystem.baton" value="${preprocessed.dir}"/>
     </target>
-	
-    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4"/>
 
     <!--
 
@@ -74,7 +93,7 @@
             post-preprocess:          called after text preprocessing of sources
             pre-compile:              called before source compilation
             post-compile:             called after source compilation
-            pre-obfuscate:            called before obfuscation 
+            pre-obfuscate:            called before obfuscation
             post-obfuscate:           called after obfuscation
             pre-preverify:            called before preverification
             post-preverify:           called after preverification
@@ -117,20 +136,20 @@
             <my-special-exec jadfile="${dist.dir}/${dist.jad}"/>
             </target>
 
-            Be careful about correct dependencies when overriding original target. 
-            Again, for list of available properties which you can use check the target 
+            Be careful about correct dependencies when overriding original target.
+            Again, for list of available properties which you can use check the target
             you are overriding in nbproject/build-impl.xml file.
 
             A special target for-all-configs can be used to run some specific targets for
-            all project configurations in a sequence. File nbproject/build-impl.xml 
+            all project configurations in a sequence. File nbproject/build-impl.xml
             already contains some "for-all" targets:
-    
+
             jar-all
             javadoc-all
             clean-all
-      
+
             Example of definition of target iterating over all project configurations:
-    
+
             <target name="jar-all">
             <property name="target.to.call" value="jar"/>
             <antcall target="for-all-configs"/>
