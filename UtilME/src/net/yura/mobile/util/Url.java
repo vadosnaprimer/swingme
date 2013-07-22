@@ -142,7 +142,7 @@ public class Url {
 
     // --- Internal helper methods ---
 
-    private String searchPart(String spec, int startIdx, String delim) {
+    private static String searchPart(String spec, int startIdx, String delim) {
 
         if (startIdx >= spec.length()) {
             return "";
@@ -172,7 +172,19 @@ public class Url {
     
     
     
-    
+    public static Hashtable toHashtable(String query) {
+        Hashtable map = new Hashtable();
+        int startIdx = 0;
+        while (startIdx < query.length()) {
+            String k = searchPart(query, startIdx, "=");
+            startIdx += k.length() + 1;
+            String v = searchPart(query, startIdx, "&");
+            startIdx += v.length() + 1;
+
+            map.put(decode(k), decode(v));
+        }
+        return map;
+    }
     
     public static String toQueryString(Hashtable map) {
     
