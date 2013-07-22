@@ -6,55 +6,47 @@
     <description>Builds, tests, and runs the project .</description>
     <import file="nbproject/build-impl.xml"/>
 
-	<target name="demo" description="demo compile">
-		<delete dir="build" includeemptydirs="true"/>
-		<delete dir="dist" includeemptydirs="true"/>
 
-		<mkdir dir="build"/>
-		<mkdir dir="dist"/>
+    <target name="demo-setup">
+        <property name="deployment.jar" value="dist/SwingME.jar"/>
+    </target>
 
-		<javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="../SwingMETest/lib/midletrunner.jar:../SwingMETest/lib/opt.jar:../SwingMETest/lib/m3gbasic.jar:lib/UtilME.jar"/>
+    <target name="demo" description="demo compile" depends="demo-setup">
+            <delete dir="build" includeemptydirs="true"/>
+            <delete dir="dist" includeemptydirs="true"/>
 
-                <unzip src="lib/UtilME.jar" dest="build"/>
+            <mkdir dir="build"/>
+            <mkdir dir="dist"/>
 
-		<jar destfile="dist/SwingME.jar" basedir="build"/>
-	</target>
+            <javac debug="on" srcdir="src" destdir="build" source="1.4" target="1.4" classpath="../SwingMETest/lib/midletrunner.jar:../SwingMETest/lib/opt.jar:../SwingMETest/lib/m3gbasic.jar:lib/UtilME.jar"/>
+
+            <unzip src="lib/UtilME.jar" dest="build"/>
+
+            <jar destfile="${deployment.jar}" basedir="build"/>
+    </target>
 
     <available file="../SwingMETest" type="dir" property="SwingMETest"/>
-    <available file="../VistoJ2ME" type="dir" property="VistoJ2ME"/>
-    <available file="../vauchacha" type="dir" property="vauchacha"/>
-    <available file="../AgentClient" type="dir" property="AgentClient"/>
-    <available file="I:/6_Yura/Work/java/badoo/repo/Abba" type="dir" property="Abba"/>
-    <available file="../iPhoneRace" type="dir" property="iPhoneRace"/>
     <available file="../ToolsME" type="dir" property="ToolsME"/>
     <available file="../Domination" type="dir" property="Domination"/>
+    <available file="../AgentClient" type="dir" property="AgentClient"/>
 
     <target name="d1" if="SwingMETest">
         <copy file="${deployment.jar}" todir="../SwingMETest/lib"/>
     </target>
-    <target name="d2" if="VistoJ2ME">
-        <copy file="${deployment.jar}" todir="../VistoJ2ME/lib"/>
+    <target name="d2" if="ToolsME">
+        <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
     </target>
-    <target name="d3" if="vauchacha">
-        <copy file="${deployment.jar}" todir="../vauchacha/lib"/>
+    <target name="d3" if="Domination">
+        <copy file="${deployment.jar}" todir="../Domination/lib"/>
     </target>
     <target name="d4" if="AgentClient">
         <copy file="${deployment.jar}" todir="../AgentClient/lib"/>
     </target>
-    <target name="d5" if="Abba">
-        <copy file="${deployment.jar}" todir="I:/6_Yura/Work/java/badoo/repo/Abba/lib"/>
-    </target>
-    <target name="d6" if="iPhoneRace">
-        <copy file="${deployment.jar}" todir="../iPhoneRace/lib"/>
-    </target>
-    <target name="d7" if="ToolsME">
-        <copy file="${deployment.jar}" todir="../ToolsME/lib"/>
-    </target>
-    <target name="d8" if="Domination">
-        <copy file="${deployment.jar}" todir="../Domination/lib"/>
-    </target>
 
-    <target name="do-deploy" description="copy lib to some other places" depends="d1,d2,d3,d4,d5,d6,d7,d8"/>
+    <target name="do-deploy" depends="d1,d2,d3,d4"/>
+
+    <target name="deploy" description="copy lib to some other places" depends="demo-setup,do-deploy"/>
+
 
     <target name="do-preprocess" unless="no.preprocess">
         <fail unless="preprocessed.dir">Must set preprocessed.dir</fail>
@@ -62,13 +54,13 @@
         <property name="debug.level" value="debug"/>
         <mkdir dir="${preprocessed.dir}"/>
         <echo message="ignore me" file="${build.dir}/.timestamp"/>
-		
+
 		<taskdef resource="net/sf/antcontrib/antlib.xml">
             <classpath>
                 <pathelement path="${libs.ant-contrib.classpath}"/>
             </classpath>
         </taskdef>
-		
+
 		<!-- if no environment debug level defined then take from the netbeans configuration -->
 		<if>
 			<contains string="${env.debug.level}" subString="env.debug.level"/>
@@ -79,7 +71,7 @@
 				<var name="mutable.debug.level" value="${env.debug.level}"/>
 			</else>
 		</if>
-		
+
         <nb-prep destdir="${preprocessed.dir}" preprocessfor="${config.active.name},${abilities},DebugLevel=${mutable.debug.level}" encoding="${javac.encoding}">
             <fileset dir="${buildsystem.baton}" defaultexcludes="${filter.use.standard}" excludes="${filter.excludes.evaluated}"/>
         </nb-prep>
@@ -102,7 +94,7 @@
             post-preprocess:          called after text preprocessing of sources
             pre-compile:              called before source compilation
             post-compile:             called after source compilation
-            pre-obfuscate:            called before obfuscation 
+            pre-obfuscate:            called before obfuscation
             post-obfuscate:           called after obfuscation
             pre-preverify:            called before preverification
             post-preverify:           called after preverification
@@ -145,20 +137,20 @@
             <my-special-exec jadfile="${dist.dir}/${dist.jad}"/>
             </target>
 
-            Be careful about correct dependencies when overriding original target. 
-            Again, for list of available properties which you can use check the target 
+            Be careful about correct dependencies when overriding original target.
+            Again, for list of available properties which you can use check the target
             you are overriding in nbproject/build-impl.xml file.
 
             A special target for-all-configs can be used to run some specific targets for
-            all project configurations in a sequence. File nbproject/build-impl.xml 
+            all project configurations in a sequence. File nbproject/build-impl.xml
             already contains some "for-all" targets:
-    
+
             jar-all
             javadoc-all
             clean-all
-      
+
             Example of definition of target iterating over all project configurations:
-    
+
             <target name="jar-all">
             <property name="target.to.call" value="jar"/>
             <antcall target="for-all-configs"/>
