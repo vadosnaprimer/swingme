@@ -164,6 +164,8 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
     }
 
     // System.out.println("Size: "+size);
+    size.width = (int)(size.width / scale);
+    size.height = (int)(size.height / scale);
 
     if (offScreenCache == null || offScreenCache.getWidth(this) != size.width
         || offScreenCache.getHeight(this) != size.height) {
@@ -192,10 +194,11 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
     BufferedImage offScreen = getOffScreen();
 
-    Graphics offScreenGraphics = offScreen.getGraphics();
+    Graphics2D offScreenGraphics = offScreen.createGraphics();
 
+    offScreenGraphics.scale(1/scale, 1/scale);
     offScreenGraphics.setClip(g.getClip());
-
+    offScreenGraphics.scale(scale, scale);
 
 
     offScreenGraphics.setColor(Color.black);

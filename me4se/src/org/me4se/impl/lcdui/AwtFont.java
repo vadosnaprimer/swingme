@@ -1,6 +1,7 @@
 package org.me4se.impl.lcdui;
 
 import java.awt.*;
+import javax.microedition.midlet.ApplicationManager;
 
 /**
  * @author Stefan Haustein
@@ -54,6 +55,8 @@ public class AwtFont extends PhysicalFont {
        int flags =
                 (bold ? java.awt.Font.BOLD : 0)
                     + (italic ? java.awt.Font.ITALIC : 0);
+
+       height = (int)(height * ApplicationManager.getDisplayDensity());
 
        int points = height * 3;
  

@@ -20,10 +20,13 @@ package javax.microedition.midlet;
 
 import java.applet.Applet;
 import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -37,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -617,7 +621,10 @@ public class ApplicationManager {
       }
     }
 
-    wrapper = new ScmWrapper(this, new Float(getProperty("scale", "1"))
+    double displayDensity = getDisplayDensity();
+    setSystemProperty("display.density",String.valueOf(displayDensity));
+
+    wrapper = new ScmWrapper(this, new Float(getProperty("scale", String.valueOf( 1/displayDensity )))
         .floatValue());
     // FontInfo.cache = new Hashtable ();
 
@@ -1308,6 +1315,28 @@ public class ApplicationManager {
     menuBar.add(fileMenu);
 
     return menuBar;
+  }
+
+  public static double getDisplayDensity() {
+
+      // Apple Java 1.6 check
+      try {
+        Object contentScaleFactor = Toolkit.getDefaultToolkit().getDesktopProperty("apple.awt.contentScaleFactor");
+        return Double.parseDouble(String.valueOf(contentScaleFactor));
+      }
+      catch (Throwable th) {}
+
+      // Oracle Java 1.7 check
+      try {
+        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        Field field = device.getClass().getDeclaredField("scale");
+        field.setAccessible(true);
+        return ((Integer)field.get(device)).intValue();
+      }
+      catch (Throwable th) {}
+
+      // default
+      return 1;
   }
 
 }

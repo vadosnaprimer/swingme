@@ -151,8 +151,37 @@ public class Image {
 	 * @API MIDP-1.0 
 	 */
 	public static Image createImage(String name) throws IOException {
-		return
-			new Image(ApplicationManager.getInstance().getImage(name), false, true, name);
+            double density = ApplicationManager.getDisplayDensity();
+            if (density == 2 && name.startsWith("/")) {
+                try {
+                    String name2 = "/drawable-xhdpi"+name;
+                    return new Image(ApplicationManager.getInstance().getImage(name2), false, true, name2);
+                }
+                catch (Throwable th) {}
+            }
+
+            BufferedImage img = ApplicationManager.getInstance().getImage(name);
+            if (density != 1) {
+                if (name.endsWith(".9.png")) {
+                    BufferedImage newImg = new BufferedImage((int)(density*(img.getWidth()-2))+2, (int)(density*(img.getHeight()-2))+2, img.getType());
+                    java.awt.Graphics g = newImg.getGraphics();
+                    g.drawImage(img, 1, 1, newImg.getWidth()-1, newImg.getHeight()-1, 1, 1, img.getWidth()-1, img.getHeight()-1, null); // center
+                    g.drawImage(img, 1, 0, newImg.getWidth()-1, 1, 1, 0, img.getWidth()-1, 1, null); // top
+                    g.drawImage(img, 1, newImg.getHeight()-1, newImg.getWidth()-1, newImg.getHeight(), 1, img.getHeight()-1, img.getWidth()-1, img.getHeight(), null); // bottom
+                    g.drawImage(img, 0, 1, 1, newImg.getHeight()-1, 0, 1, 1, img.getHeight()-1, null); // left
+                    g.drawImage(img, newImg.getWidth()-1, 1, newImg.getWidth(), newImg.getHeight()-1, img.getWidth()-1, 1, img.getWidth(), img.getHeight()-1, null); // right
+                    g.dispose();
+                    img=newImg;
+                }
+                else {
+                    BufferedImage newImg = new BufferedImage((int)(density*img.getWidth()), (int)(density*img.getHeight()), img.getType());
+                    java.awt.Graphics g = newImg.getGraphics();
+                    g.drawImage(img, 0, 0, newImg.getWidth(), newImg.getHeight(), 0, 0, img.getWidth(), img.getHeight(), null);
+                    g.dispose();
+                    img=newImg;
+                }
+            }
+            return new Image(img, false, true, name);
 	}
 
 	/*
