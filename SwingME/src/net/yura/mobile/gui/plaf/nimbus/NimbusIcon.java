@@ -69,36 +69,44 @@ public class NimbusIcon extends Icon {
             }
         }
         else if (type == LookAndFeel.ICON_ARROW_UP) {
-            int top = (height/2)-3;
+            int halfSize = height/5;
+
+            int top = (height/2)-halfSize;
             int middle = (width/2);
 
             g.fillTriangle(x+middle, y+top,
-                           x+middle-3, y+top+6,
-                           x+middle+3, y+top+6);
+                           x+middle-halfSize, y+top+halfSize*2,
+                           x+middle+halfSize, y+top+halfSize*2);
         }
         else if (type == LookAndFeel.ICON_ARROW_DOWN || type == LookAndFeel.ICON_COMBO) {
-            int top = (height/2)-3;
+            int halfSize = height/5;
+
+            int top = (height/2)-halfSize;
             int middle = (width/2);
 
-            g.fillTriangle(x+middle, y+top+6,
-                           x+middle-3, y+top,
-                           x+middle+3, y+top);
+            g.fillTriangle(x+middle, y+top+halfSize*2,
+                           x+middle-halfSize, y+top,
+                           x+middle+halfSize, y+top);
         }
         else if ((type == LookAndFeel.ICON_SPINNER_LEFT) || (type == LookAndFeel.ICON_ARROW_LEFT)) {
-            int top = (height/2)-3;
+            int halfSize = height/5;
+
+            int top = (height/2)-halfSize;
             int middle = (width/2);
 
-            g.fillTriangle(x+middle+3, y+top,
-                           x+middle-3, y+top+3,
-                           x+middle+3, y+top+6);
+            g.fillTriangle(x+middle+halfSize, y+top,
+                           x+middle-halfSize, y+top+halfSize,
+                           x+middle+halfSize, y+top+halfSize*2);
         }
         else if ((type == LookAndFeel.ICON_SPINNER_RIGHT) || (type == LookAndFeel.ICON_ARROW_RIGHT)) {
-            int top = (height/2)-3;
+            int halfSize = height/5;
+
+            int top = (height/2)-halfSize;
             int middle = (width/2);
 
-            g.fillTriangle(x+middle-3, y+top+6,
-                           x+middle-3, y+top,
-                           x+middle+3, y+top+3);
+            g.fillTriangle(x+middle-halfSize, y+top+halfSize*2,
+                           x+middle-halfSize, y+top,
+                           x+middle+halfSize, y+top+halfSize);
         }
     }
     
