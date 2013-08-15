@@ -46,8 +46,8 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
     public void repaint(int x, int y, int w, int h) {
       Log.log(Log.DRAW_EVENTS, "sending repaint request to AWT: " + x + "," + y
           + "," + w + "," + h);
-      ScmWrapper.this.repaint((int) (x * scale), (int) (y * scale),
-          (int) (w * scale), (int) (h * scale));
+      ScmWrapper.this.repaint((int) Math.ceil(x * scale), (int) Math.ceil(y * scale),
+          (int) Math.ceil(w * scale), (int) Math.ceil(h * scale));
       Log.log(Log.DRAW_EVENTS, "repaint request sent to AWT");
 
     }
