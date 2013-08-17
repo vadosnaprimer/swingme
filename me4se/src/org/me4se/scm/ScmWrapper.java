@@ -53,6 +53,12 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
       int y2 = (int) Math.ceil((y+h) * scale);
 
       // on MacBookPro Retina Java 1.6, images are streached if we call repaint outside bounds.
+      if (x1 < 0) {
+          x1 = 0;
+      }
+      if (y1 < 0) {
+          y1 = 0;
+      }
       if (x2 > ScmWrapper.this.getWidth()) {
           x2 = ScmWrapper.this.getWidth();
       }
