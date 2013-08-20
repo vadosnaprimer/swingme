@@ -186,15 +186,15 @@
 
     <target name="deploy" depends="build-jars" description="copy lib to some other places">
         <copy file="dist/midletrunner.jar" todir="../SwingMETest/lib"/>
-        <copy file="dist/midletrunner.jar" todir="../cha/lib"/>
         <copy file="dist/midletrunner.jar" todir="../AgentClient/lib"/>
         <copy file="dist/midletrunner.jar" todir="../ToolsME/lib"/>
-        <copy file="dist/midletrunner.jar" todir="I:/6_Yura/Work/java/badoo/repo/BadooMobile/lib"/>
         <copy file="dist/midletrunner.jar" todir="../Domination/lib"/>
     </target>
 
-        <target name="clean">
+        <target name="clean" description="del all build files">
 		<delete dir="tmpclasses" />
+                <delete dir="build" />
+                <delete dir="dist" />
         </target>
         <target name="jar" depends="build-jars">
         </target>
