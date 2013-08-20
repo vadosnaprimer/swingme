@@ -409,8 +409,8 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
   public java.awt.Dimension getMinimumSize() {
     Dimension d = component.getMinimumSize();
-    d.width = (int) (d.width * scale);
-    d.height = (int) (d.height * scale);
+    //d.width = (int) (d.width * scale);
+    //d.height = (int) (d.height * scale);
     return d;
   }
 
