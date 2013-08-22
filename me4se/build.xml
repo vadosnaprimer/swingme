@@ -159,7 +159,9 @@
 
         <!-- this is used in SwingME to scale images -->
         <mkdir dir="build" />
-        <javac srcdir="opt/m3g_basic/src" source="1.4" classpath="dist/midletrunner.jar" destdir="build" debug="on" target="1.4"/>
+        <javac srcdir="opt/m3g_basic/src" source="1.4" target="1.4" classpath="dist/midletrunner.jar" destdir="build" debug="on">
+            <compilerarg value="-XDignore.symbol.file"/>
+        </javac>
 	<jar jarfile="dist/m3gbasic.jar">
 	  <fileset dir="build">
 	    <include name="javax/microedition/m3g/**"/>
