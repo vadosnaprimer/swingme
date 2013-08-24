@@ -33,7 +33,7 @@ public class Image {
 
         if (x + width > image.getWidth() || y + height > image.getHeight() ||
             width <= 0 || height <= 0 || x < 0 || y < 0) {
-            throw new IllegalArgumentException("Area out of Image");
+            throw new IllegalArgumentException("Area out of Image: "+image.getWidth()+"x"+image.getHeight()+" area: "+x+","+y+" "+width+"x"+height);
         }
 
         // MIDP: the result image width/height depends on the transform

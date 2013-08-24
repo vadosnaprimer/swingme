@@ -342,7 +342,7 @@ public class Graphics {
         // may throw NullPointerException, this is ok
         if (xSrc + width > src.getWidth() || ySrc + height > src.getHeight() ||
             width < 0 || height < 0 || xSrc < 0 || ySrc < 0) {
-            throw new IllegalArgumentException("Area out of Image");
+            throw new IllegalArgumentException("Area out of Image: "+src.getWidth()+"x"+src.getHeight()+" area: "+xSrc+","+ySrc+" "+width+"x"+height);
         }
 
         if (anchor == 0) {
