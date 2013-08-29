@@ -133,10 +133,10 @@
                     source="${java.source}" target="${java.target}"
                     debug="true" extdirs="" includeantruntime="false"
                     destdir="${out.classes.absolute.dir}"
-                    bootclasspathref="android.target.classpath"
+                    bootclasspathref="project.target.class.path"
                     verbose="${verbose}"
                     classpath="${extensible.classpath}"
-                    classpathref="project.libraries.jars"
+                    classpathref="project.all.jars.path"
                     fork="${need.javac.fork}">
                 <src path="${source.absolute.dir}" />
                 <src path="${gen.absolute.dir}" />
