@@ -3,34 +3,11 @@
 
     <target name="jar" depends="debug" description="override default build action of netbeans"/>
 
-    <property name="jar.libs.dir" value="../UtilME/lib" />
 
-    <path id="src">
-      <pathelement location="../UtilME/src"/>
-      <pathelement location="../SwingME/src"/>
-      <pathelement location="src_Android"/>
-      <pathelement location="src_MIDP"/>
-      <pathelement location="src_SwingME_plaf"/>
-      <pathelement location="src_JSR184_3D"/>
-      <pathelement location="src_JSR179_Location"/>
-      <pathelement location="src_JSR82_Bluetooth"/>
-      <pathelement location="src_JSR135_Multimedia"/>
-      <pathelement location="src_JSR120_SMS"/>
-      <pathelement location="src_JSR234_Advanced_Multimedia"/>
-    </path>
-    <pathconvert property="source.absolute.dir" refid="src"/>
-    
-    
-    <!-- 
-    
-    <property name="source.dir" value="src" />
-    <property name="source.absolute.dir" location="../UtilME/src:../SwingME/src:src_Android:src_MIDP:src_SwingME_plaf:src_JSR184_3D:src_JSR179_Location:src_JSR82_Bluetooth:src_JSR135_Multimedia:src_JSR120_SMS:src_JSR234_Advanced_Multimedia"/>
-
- 
-        The local.properties file is created and updated by the 'android' tool.
+    <!-- The local.properties file is created and updated by the 'android' tool.
          It contains the path to the SDK. It should *NOT* be checked into
          Version Control Systems. -->
-    <loadproperties srcFile="local.properties" />
+    <property file="local.properties" />
 
     <!-- The ant.properties file can be created by you. It is only edited by the
          'android' tool to add properties to it.
@@ -54,6 +31,15 @@
          -->
     <property file="ant.properties" />
 
+    <!-- if sdk.dir was not set from one of the property file, then
+         get it from the ANDROID_HOME env var.
+         This must be done before we load project.properties since
+         the proguard config can use sdk.dir -->
+    <property environment="env" />
+    <condition property="sdk.dir" value="${env.ANDROID_HOME}">
+        <isset property="env.ANDROID_HOME" />
+    </condition>
+
     <!-- The project.properties file is created and updated by the 'android'
          tool, as well as ADT.
 
@@ -67,25 +53,23 @@
 
     <!-- quick check on sdk.dir -->
     <fail
-            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project'"
+            message="sdk.dir is missing. Make sure to generate local.properties using 'android update project' or to inject it through the ANDROID_HOME environment variable."
             unless="sdk.dir"
     />
 
-
-<!-- extension targets. Uncomment the ones where you want to do custom work
-     in between standard targets -->
-<!--
-    <target name="-pre-build">
-    </target>
-    <target name="-pre-compile">
-    </target>
-
-    /* This is typically used for code obfuscation.
-       Compiled code location: ${out.classes.absolute.dir}
-       If this is not done in place, override ${out.dex.input.absolute.dir} */
-    <target name="-post-compile">
-    </target>
--->
+    <!--
+        Import per project custom build rules if present at the root of the project.
+        This is the place to put custom intermediary targets such as:
+            -pre-build
+            -pre-compile
+            -post-compile (This is typically used for code obfuscation.
+                           Compiled code location: ${out.classes.absolute.dir}
+                           If this is not done in place, override ${out.dex.input.absolute.dir})
+            -post-package
+            -post-build
+            -pre-clean
+    -->
+    <import file="custom_rules.xml" optional="true" />
 
     <!-- Import the actual build file.
 
@@ -105,7 +89,7 @@
          In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
          in order to avoid having your file be overridden by tools such as "android update project"
     -->
-    <!-- version-tag: 1 -->
+    <!-- version-tag: custom -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
 
     
@@ -166,6 +150,7 @@
                                 includes="**/*.class"
                                 excludes="${manifest.package.path}/R.class ${manifest.package.path}/R$*.class ${manifest.package.path}/Manifest.class ${manifest.package.path}/Manifest$*.class ${manifest.package.path}/BuildConfig.class"/>
                         <!-- YURA YURA YURA <fileset dir="${source.absolute.dir}" excludes="**/*.java ${android.package.excludes}" /> -->
+                        <!-- YURA from: http://stackoverflow.com/questions/14605899#14786100 -->
                     </jar>
                 </then>
             </if>
@@ -188,31 +173,6 @@
             </if>
         </do-only-if-manifest-hasCode>
     </target>
-    
-    
-    
-    
-    <!--
-    ############################################################################
-    ############################ some old crap #################################
-    ############################################################################
-    -->
 
-    
-    <!-- Eclipse uses "bin" for its own output, so we do the same.
-    <property name="outdir" location="bin" />
-    <property name="AndroidFixResourceAsStream.jar" value="../AndroidME/lib/AndroidFixResourceAsStream.jar" />
 
-    <target name="fix-build">
-		<echo>Fixing build....</echo>
-		<echo message="ClassPath: ${AndroidFixResourceAsStream.jar}"/>
-				    	
-        <java classname="net.yura.mobile.asm.AndroidFixer" classpath="${AndroidFixResourceAsStream.jar}">     
-            <arg value="net.yura.android.AndroidMeActivity"/>
-            <arg value="${outdir}"/>            
-        </java>
-        
-    </target>
-    -->
-        
 </project>
