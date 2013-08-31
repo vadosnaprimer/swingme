@@ -13,6 +13,7 @@
 	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR135_Multimedia"/>
 	<classpathentry excluding="**/.svn/**" kind="src" path="src_JSR179_Location"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="lib" path="I:/6_Yura/linuxhome/UtilME/lib/xmlpull_1_1_3_1.jar"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
