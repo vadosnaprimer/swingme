@@ -5,7 +5,11 @@
 
 package net.yura.mobile.test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Random;
 import java.util.Vector;
 import javax.microedition.lcdui.Graphics;
 import javax.microedition.lcdui.Image;
@@ -14,10 +18,12 @@ import javax.microedition.lcdui.game.Sprite;
 import net.yura.mobile.gui.ActionListener;
 import net.yura.mobile.gui.ButtonGroup;
 import net.yura.mobile.gui.ChangeListener;
+import net.yura.mobile.gui.Graphics2D;
 import net.yura.mobile.gui.Icon;
 import net.yura.mobile.gui.KeyEvent;
 import net.yura.mobile.gui.border.BevelBorder;
 import net.yura.mobile.gui.border.LineBorder;
+import net.yura.mobile.gui.border.MatteBorder;
 import net.yura.mobile.gui.border.TitledBorder;
 import net.yura.mobile.gui.celleditor.DefaultCellEditor;
 import net.yura.mobile.gui.cellrenderer.DefaultListCellRenderer;
@@ -50,6 +56,7 @@ import net.yura.mobile.gui.layout.BoxLayout;
 import net.yura.mobile.gui.layout.FlowLayout;
 import net.yura.mobile.gui.layout.XULLoader;
 import net.yura.mobile.io.FileUtil;
+import net.yura.mobile.io.HTTPClient;
 import net.yura.mobile.test.MainPane.Section;
 import net.yura.mobile.util.ImageUtil;
 import net.yura.mobile.util.Option;
@@ -76,6 +83,7 @@ public class ComponentTest  extends Section{
         addTest("Table Test","tableTest");
         addTest("Scroll Test 1","scrollTest1");
         addTest("Scroll Test 2","scrollTest2");
+        addTest("Scroll Test 3","scrollTest3");
         addTest("File Chooser","fileChooser");
         addTest("Multi File Chooser","fileChooser2");
         addTest("Test Camera","testCamera");
@@ -141,6 +149,12 @@ public class ComponentTest  extends Section{
         components.addElement( new Spinner(getItems(), true));
 
         final TextField textField = new TextField(TextField.ANY);
+
+        textField.addActionListener( new ActionListener() {
+            public void actionPerformed(String actionCommand) {
+                OptionPane.showMessageDialog(null, "yay", "message", OptionPane.INFORMATION_MESSAGE);
+            }
+        });
 
         components.addElement(textField);
 
@@ -248,10 +262,18 @@ public class ComponentTest  extends Section{
                 // menu has NO action listoner, so it fires NO action and ONLY opens the menu!
                 menu.add(new Button("bob"));
 
-                Menu menu2 = new Menu("Sub");
-                //menu2.addActionListener(this);
-                menu2.add(new Button("fred"));
-                menu2.add(new Button("item 2"));
+                final Menu menu2 = new Menu("Sub");
+
+                menu2.addActionListener( new ActionListener() {
+                        // Override
+                        public void actionPerformed(String actionCommand) {
+                                System.out.println("adding items to submenu");
+                                menu2.removeAll();
+		                menu2.add(new Button("fred"));
+		                menu2.add(new Button("item 2"));
+                        }
+                });
+
                 menu.add(menu2);
 
                 menu.add(new Button("bob test 1"));
@@ -354,6 +376,32 @@ public class ComponentTest  extends Section{
 
             addToScrollPane(scrollTest,null);
         }
+        else if ("scrollTest3".equals(actionCommand)) {
+
+            Panel p = new Panel(new FlowLayout( Graphics.VCENTER ));
+
+            for (int c=0;c<10;c++) {
+                Panel p2 = new Panel(new FlowLayout( Graphics.VCENTER ));
+                for (int a=0;a<5;a++) {
+                    p2.add(new Button("button "+c+" "+a));
+                }
+                List l = new List();
+                for (int a=0;a<5;a++) {
+                    l.addElement("item "+c+" "+a);
+                }
+                p2.add(l);
+                ScrollPane scroll = new ScrollPane(p2);
+                if (c==3) {
+                    scroll.setMode(ScrollPane.MODE_SCROLLARROWS);
+                    scroll.setBackground(0xFFFFAAAA);
+                    p2.setBackground(0xFFAAFFAA);
+                }
+                scroll.setPreferredSize(-1, 100);
+                p.add(scroll);
+            }
+
+            addToScrollPane(p,null);
+        }
         else if ("tabTest".equals(actionCommand)) {
 
             if (tabPanel==null) {
@@ -415,30 +463,59 @@ public class ComponentTest  extends Section{
                 tab2.add( level2 );
 
                 Panel tab3 = new Panel( new FlowLayout(Graphics.VCENTER) );
-                List l3 = new List( new DefaultListCellRenderer() );
+                List l1 = new List( new DefaultListCellRenderer() ) {
+                    public void paintComponent(Graphics2D g) {
+                        System.out.println("paint "+getFirstVisibleIndex()+" "+getLastVisibleIndex());
+
+                        // a error in paint!!?!?!?1!
+                        //if (new Random().nextInt(3)==2) {
+                        //    throw new StringIndexOutOfBoundsException();
+                        //}
+
+                        super.paintComponent(g);
+                    }
+                };
+                //l1.setBorder( new MatteBorder(5, 5, 5, 5, 0xFFFF0000) );
+                l1.setBorder( new MatteBorder(100, 100, 100, 100, 0xFFFF0000) );
+
                 tab3.setBackground(0xFF0000FF);
 
                 Vector anotherlist = new Vector();
 
                 for (int c=0;c<20;c++) {
-                    anotherlist.addElement("A REALLY LONG LIST ITEM, that will need things like side scrolling "+c);
+                    anotherlist.addElement(c+" A REALLY LONG LIST ITEM, that will need things like side scrolling "+c);
                 }
-                l3.setListData(anotherlist);
-                l3.setFixedCellHeight(15);
+                l1.setListData(anotherlist);
+                //l1.setFixedCellHeight(15);
+                l1.setPreferredSize(-1, 550);
                 tab3.add(new Label("a lable for the list"));
                 tab3.add(new Button("button") );
-                tab3.add(l3);
+                tab3.add(l1);
                 tab3.add(new Button("b 2"));
 
                 Panel tab4 = new Panel( new BorderLayout() );
                 tab4.add(new Label("Tab 4 title"),Graphics.TOP);
 
-                List l2 = new List(anotherlist,new DefaultListCellRenderer(),List.VERTICAL);
-                l2.addChangeListener(new ChangeListener() {
+                List l2 = new List(anotherlist,new DefaultListCellRenderer(),List.VERTICAL) {
+                    public void paintComponent(Graphics2D g) {
+                        System.out.println("paint "+getFirstVisibleIndex()+" "+getLastVisibleIndex());
+                        super.paintComponent(g);
+                    }
+                };
+                l2.addListSelectionListener(new ChangeListener() {
                     public void changeEvent(Component arg0, int arg1) {
                         System.out.println("change "+arg1);
                     }
                 });
+
+                ActionListener listaction = new ActionListener() {
+                    public void actionPerformed(String string) {
+                        System.out.println("crazy funk "+string);
+                    }
+                };
+                l1.addActionListener(listaction);
+                l2.addActionListener(listaction);
+
                 tab4.add(new ScrollPane(l2));
 
                 tabbedPane.add(tab1);
@@ -451,7 +528,7 @@ public class ComponentTest  extends Section{
             }
 
             Menu mainMenu = new Menu("Menu");
-            for (int c=0;c<10;c++) {
+            for (int c=0;c<20;c++) {
                 mainMenu.add( new Button("Hello") );
             }
 
@@ -540,9 +617,16 @@ public class ComponentTest  extends Section{
         else if ("optionPaneTest1".equals(actionCommand)) {
 
             //OptionPane.showMessageDialog(null, "Hello There", "Greeting", OptionPane.PLAIN_MESSAGE);
-            
+
             Button[] b = new Button[] { new Button("Sure!")};
-            OptionPane.showOptionDialog(null, "message", "title", 0, OptionPane.INFORMATION_MESSAGE, null,b , null);
+            OptionPane.showOptionDialog(null, "message1", "title", 0, OptionPane.INFORMATION_MESSAGE, null,b , null);
+
+
+            Button[] b2 = new Button[] { new Button("No!")};
+            OptionPane.showOptionDialog(null, "message2", "title", 0, OptionPane.INFORMATION_MESSAGE, null,b2 , null);
+
+            Button[] b3 = new Button[] { new Button("Yes!")};
+            OptionPane.showOptionDialog(null, "message3", "title", 0, OptionPane.INFORMATION_MESSAGE, null,b3 , null);
 
         }
         else if ("optionPaneTest".equals(actionCommand)) {
