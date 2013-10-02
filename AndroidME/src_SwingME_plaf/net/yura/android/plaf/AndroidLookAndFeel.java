@@ -33,6 +33,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.ViewConfiguration;
 import net.yura.android.AlertOptionPane;
@@ -682,10 +683,11 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
             }
 
     }
-    
+
     static void sortoutMenu() {
         try {
             DesktopPane dp = DesktopPane.getDesktopPane();
+            dp.HIDDEN_BACK = !"BlackBerry".equals(Build.BRAND);
             dp.HIDDEN_MENU = ViewConfiguration.get( AndroidMeActivity.DEFAULT_ACTIVITY ).hasPermanentMenuKey();
             dp.GRID_MENU = dp.HIDDEN_MENU;
         }
