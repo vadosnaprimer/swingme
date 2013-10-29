@@ -355,6 +355,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
         setUIDefault("CheckBox.property[icon]",checkboxIcon);
         //setUIDefault("CheckBox[focused].property[icon]",checkboxFocusedIcon);
         setUIDefault("CheckBox[selected].property[icon]",checkboxSelectedIcon);
+        setUIDefault("CheckBox[disabled].foreground",uiSettings.get("nimbusDisabledText"));
 
         setUIDefault("CheckBoxRenderer.property[icon]",checkboxIcon);
         //setUIDefault("CheckBoxRenderer[focused].property[icon]",checkboxFocusedIcon);
@@ -379,6 +380,7 @@ public class NimbusLookAndFeel extends SynthLookAndFeel {
         setUIDefault("RadioButton[focused].border",new LineBorder(decodeColor("nimbusBorder"),Style.NO_COLOR,1,false,Graphics.DOTTED));
         setUIDefault("RadioButton.property[icon]",radioIcon);
         setUIDefault("RadioButton[selected].property[icon]",radioIcon);
+        setUIDefault("RadioButton[disabled].foreground",uiSettings.get("nimbusDisabledText"));
 
         // SPINNER
 

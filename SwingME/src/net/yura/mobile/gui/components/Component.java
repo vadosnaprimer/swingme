@@ -218,10 +218,14 @@ public abstract class Component {
      * @see java.awt.Component#setFocusable(boolean) Component.setFocusable
      */
     public void setFocusable(boolean selectable) {
+        boolean old = focusable;
         this.focusable = selectable;
         Window w = getWindow();
         if (w!=null) {
             w.setupFocusedComponent();
+        }
+        if (old != focusable) {
+            repaint();
         }
     }
 
