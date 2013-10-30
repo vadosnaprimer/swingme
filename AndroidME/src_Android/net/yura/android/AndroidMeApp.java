@@ -67,29 +67,6 @@ public class AndroidMeApp extends Application {
         instance.invokeAndWait(new Thread());
     }
 
-    // TODO: Async
-    public static void startMIDlet() {
-        // Needs to run on the UI thread, otherwise some of the API's will not start
-        instance.handler.post(new Runnable() {
-            public void run() {
-                try {
-
-                    Display display = Display.getDisplay(instance.midlet);
-
-                    if (display.hiddenDisplay!=null) {
-                        display.setCurrent(display.hiddenDisplay);
-                    }
-
-                    instance.midlet.doStartApp();
-
-
-                } catch (Exception ex) {
-                    throw new RuntimeException("unable to start MIDlet: ", ex);
-                }
-            }
-        });
-    }
-
     public static Vector<String[]> getJadMidlets() {
         return instance.jadMidlets;
     }

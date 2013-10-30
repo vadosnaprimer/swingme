@@ -64,7 +64,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             new Thread() {
                 public void run() {
 //                    waitForDefaultView(); TODO:!!!!
-                    AndroidMeApp.startMIDlet();
+                    startMIDlet();
                 }
             }.start();
         }
@@ -88,6 +88,30 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
 //        PrintStream log = new PrintStream(new LogOutputStream("AndroidMe"));
 //        System.setErr(log);
 //        System.setOut(log);
+    }
+
+    public void startMIDlet() {
+        // Needs to run on the UI thread, otherwise some of the API's will not start
+        AndroidMeApp.getIntance().invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    MIDlet midlet = AndroidMeApp.getMIDlet();
+                    Display display = Display.getDisplay(midlet);
+                    if (display.hiddenDisplay!=null) {
+                        display.setCurrent(display.hiddenDisplay);
+                    }
+                    midlet.doStartApp();
+                    onMidletStarted();
+                }
+                catch (Exception ex) {
+                    throw new RuntimeException("unable to start MIDlet: ", ex);
+                }
+            }
+        });
+    }
+
+    public void onMidletStarted() {
+        // hook for doing something after the midlet has been started
     }
 
     private boolean foreground;
@@ -225,7 +249,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
                     waitForDefaultView();
 
                     AndroidMeApp.createMIDlet(midletClassName);
-                    AndroidMeApp.startMIDlet();
+                    startMIDlet();
                 } catch (Throwable ex) {
                     Logger.warn(ex);
                 }
