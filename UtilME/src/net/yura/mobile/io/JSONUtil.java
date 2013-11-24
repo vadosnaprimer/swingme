@@ -17,21 +17,14 @@ import net.yura.mobile.logging.Logger;
 public class JSONUtil {
 
     public void save(OutputStream out, Object obj) throws IOException {
-
         OutputStreamWriter w = new OutputStreamWriter(out);
-
         JSONWriter writer = new JSONWriter(w);
-
         saveObject(writer,obj);
-
         w.flush();
-
     }
 
     public Object load(InputStream in) throws IOException {
-
         JSONTokener tokener = new JSONTokener(new UTF8InputStreamReader(in));
-
         return readObject(tokener);
     }
 
@@ -50,44 +43,39 @@ public class JSONUtil {
             saveVector(serializer, (Vector)object);
         }
         else if (object instanceof Hashtable) {
-            serializer.object();
-            serializer.key(XMLUtil.TAG_HASHTABLE);
             saveHashtable(serializer, (Hashtable)object);
-            serializer.endObject();
         }
         else if (object instanceof Object[]) {
-            serializer.object();
-            serializer.key(XMLUtil.TAG_ARRAY);
             saveArray(serializer, (Object[])object);
-            serializer.endObject();
+        }
+        else if (object instanceof Double) {
+            serializer.value( ((Double)object).doubleValue() );
+        }
+        else if (object instanceof Long) {
+            serializer.value( ((Long)object).longValue() );
+        }
+        else if (object instanceof Character) {
+            serializer.value( ((Character)object).charValue() );
         }
         else {
             serializer.object();
-            serializer.key( XMLUtil.getObjectType(object) );
-            
-            if (object instanceof Character) {
-                serializer.value( ((Character)object).charValue() );
-            }
-            else if (object instanceof Integer) {
+            serializer.key("class");
+            serializer.value( XMLUtil.getObjectType(object) );
+            serializer.key("value");
+            if (object instanceof Integer) {
                 serializer.value( ((Integer)object).longValue() );
-            }
-            else if (object instanceof Double) {
-                serializer.value( ((Double)object).doubleValue() );
             }
             else if (object instanceof Float) {
                 serializer.value( ((Float)object).doubleValue() );
             }
             else if (object instanceof Byte) {
-                serializer.value( ((Byte)object).byteValue() );
+                serializer.value( ((Byte)object).longValue() );
             }
             else if (object instanceof Short) {
-                serializer.value( ((Short)object).shortValue() );
-            }
-            else if (object instanceof Long) {
-                serializer.value( ((Long)object).longValue() );
+                serializer.value( ((Short)object).longValue() );
             }
             else {
-                throw new IOException();
+                throw new IOException("unknown object "+object);
             }
             serializer.endObject();
         }
@@ -104,18 +92,34 @@ public class JSONUtil {
 
         switch (c) {
             case '"':
-            case '\'':
                 result = x.nextString();
                 break;
-            case '{':
-                x.startObject();
-                String key = x.nextKey();
-                result = readObject(x, key);
-                if (!x.endObject()) {
-                    throw new IOException("anon object does not end after 1 value");
+            case '\'':
+                String string = x.nextString();
+                if (string.length() == 1) {
+                    result = new Character(string.charAt(0));
+                }
+                else {
+                    result = string;
                 }
                 break;
+            case '{':
+        	Hashtable map = readHashtable(x);
+        	Object objClass = map.get("class");
+        	if (objClass instanceof String) {
+        	    map.remove("class");
+        	    result = readObject(map, (String) objClass);
+        	}
+        	else {
+        	    result = map;
+        	}
+                break;
             case '[':
+        	Vector vector = readVector(x);
+        	Object[] array = new Object[vector.size()];
+        	vector.copyInto(array);
+                result = array;
+                break;
             case '(':
                 result = readVector(x);
                 break;
@@ -130,61 +134,62 @@ public class JSONUtil {
                 else if (s.equalsIgnoreCase("null")) {
                     result = null;
                 }
-                else {
-                    throw new IOException("numbers not wraped in a object not aupported "+s);
+                else if (s.indexOf('.') >= 0) {
+                    result = Double.valueOf(s);
                 }
+                else {
+                    result = new Long( Long.parseLong(s) );
+                }
+                break;
         }
-
         return result;
-
     }
 
-    protected Object readObject(JSONTokener tokener, String name) throws IOException {
+    protected Object readObject(Hashtable map, String name) throws IOException {
 
-        if (XMLUtil.TAG_ARRAY.equals(name)) {
-            Vector vector = readVector(tokener);
-            Object[] array = new Object[vector.size()];
-            vector.copyInto(array);
-            return array;
-        }
-        else if (XMLUtil.TAG_HASHTABLE.equals(name)) {
-             return readHashtable(tokener);
+        if (XMLUtil.TAG_HASHTABLE.equals(name)) {
+            // we can only end up here if we failed to encode the map because of non-string keys.
+            Object[] array = (Object[])map.get("value");
+            Hashtable object = new Hashtable();
+            for (int c = 0; c < array.length; c++) {
+        	Object key = array[c];
+        	c++;
+        	Object value = array[c];
+        	object.put(key, value);
+            }
+            return object;
         }
         else {
-
-            String value = tokener.nextSimple();
-
+            Object value = map.get("value");
             if (XMLUtil.TAG_INTEGER.equals(name)) {
-                return Integer.valueOf( value );
-            }
-            else if (XMLUtil.TAG_DOUBLE.equals(name)) {
-                return Double.valueOf( value );
+                return new Integer(((Long)value).intValue());
             }
             else if (XMLUtil.TAG_FLOAT.equals(name)) {
-                return Float.valueOf( value );
+                return new Float(((Double)value).floatValue());
             }
             else if (XMLUtil.TAG_SHORT.equals(name)) {
-                return new Short( Short.parseShort( value ) );
-            }
-            else if (XMLUtil.TAG_LONG.equals(name)) {
-                return new Long( Long.parseLong( value ) );
+                return new Short(((Long)value).shortValue());
             }
             else if (XMLUtil.TAG_CHARACTER.equals(name)) {
-                return new Character( value.charAt(0) );
+                return new Character( ((String)value).charAt(0) );
             }
             else if (XMLUtil.TAG_BYTE.equals(name)) {
-                return new Byte( Byte.parseByte( value ) );
+                return new Byte(((Long)value).byteValue());
             }
+            // No reason to double encode as these are supported by json.
+            //else if (XMLUtil.TAG_DOUBLE.equals(name)) {
+            //    return Double.valueOf( value );
+            //}
+            //else if (XMLUtil.TAG_LONG.equals(name)) {
+            //    return new Long( Long.parseLong( value ) );
+            //}
             else {
-                // TODO load class or something???
-                //#debug warn
-                Logger.warn("unknown object: " + name);
-                //return value;
-                throw new IOException();
+        	// Failed to find a class, so will return Map.
+        	System.err.println("dont know how to decode "+name+" "+map);
+        	map.put("class", name);
+        	return map;
             }
-
         }
-
     }
 
     protected void saveHashtable(JSONWriter serializer, Hashtable hashtable) throws IOException {
@@ -200,10 +205,12 @@ public class JSONUtil {
             }
         }
 
-        if (keyObject) { // TODO ???
-
+        if (keyObject) {
+            serializer.object();
+            serializer.key("class");
+            serializer.value(XMLUtil.TAG_HASHTABLE);
+            serializer.key("value");
             serializer.array();
-
             enu = hashtable.keys();
             while (enu.hasMoreElements()) {
                 Object key = enu.nextElement();
@@ -211,12 +218,11 @@ public class JSONUtil {
                 saveObject(serializer, key);
                 saveObject(serializer, obj);
             }
-
             serializer.endArray();
+            serializer.endObject();
         }
         else {
             serializer.object();
-
             enu = hashtable.keys();
             while (enu.hasMoreElements()) {
                 String key = (String)enu.nextElement();
@@ -225,10 +231,8 @@ public class JSONUtil {
                 saveObject(serializer, obj);
 
             }
-
             serializer.endObject();
         }
-
     }
 
     protected void saveVector(JSONWriter serializer,Vector object) throws IOException {
@@ -267,49 +271,22 @@ public class JSONUtil {
             if (x.endArray()) {
                 return vector;
             }
-
         }
-
     }
 
     protected Hashtable readHashtable(JSONTokener x) throws IOException {
         Hashtable hashtable = new Hashtable();
-        if (x.nextClean() == '[') {
-            // we will use array of key,value
-            Object key = null;
-            for (;;) {
-
-                if (key==null) {
-                    key = readObject(x);
-                }
-                else {
-                    hashtable.put(key, readObject(x));
-                    key = null;
-                }
-
-                if (x.endArray()) {
-                    return hashtable;
-                }
-            }
+        x.startObject();
+        // CHECK FOR EMPTY HASHTABLE
+        if (x.nextClean() == '}') {
+            return hashtable;
         }
-        else {
-            x.back(); // as we read the first char to check for type we need to go back
-            x.startObject();
-
-            // CHECK FOR EMPTY HASHTABLE
-            if (x.nextClean() == '}') {
-                return hashtable;
-            }
-            x.back();
-
-            for (boolean end=false;!end;end = x.endObject()) {
-                String key = x.nextKey();
-                Object obj = readObject(x);
-                hashtable.put(key, obj);
-            }
-
+        x.back(); // as we read the first char to check for empty we need to go back
+        for (boolean end=false;!end;end = x.endObject()) {
+            String key = x.nextKey();
+            Object obj = readObject(x);
+            hashtable.put(key, obj);
         }
         return hashtable;
     }
-
 }
