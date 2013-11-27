@@ -10,6 +10,7 @@ import java.util.Vector;
 import net.yura.mobile.io.json.JSONTokener;
 import net.yura.mobile.io.json.JSONWriter;
 import net.yura.mobile.logging.Logger;
+import net.yura.mobile.util.SystemUtil;
 
 /**
  * @author Yura Mamyrin
@@ -38,9 +39,6 @@ public class JSONUtil {
         }
         else if (object instanceof Boolean) {
             serializer.value( ((Boolean)object).booleanValue() );
-        }
-        else if (object instanceof Vector) {
-            saveVector(serializer, (Vector)object);
         }
         else if (object instanceof Hashtable) {
             saveHashtable(serializer, (Hashtable)object);
@@ -73,6 +71,9 @@ public class JSONUtil {
             }
             else if (object instanceof Short) {
                 serializer.value( ((Short)object).longValue() );
+            }
+            else if (object instanceof Vector) {
+                saveVector(serializer, (Vector)object);
             }
             else {
                 throw new IOException("unknown object "+object);
@@ -108,7 +109,7 @@ public class JSONUtil {
         	Object objClass = map.get("class");
         	if (objClass instanceof String) {
         	    map.remove("class");
-        	    result = readObject(map, (String) objClass);
+        	    result = readObject((String) objClass, map);
         	}
         	else {
         	    result = map;
@@ -121,6 +122,7 @@ public class JSONUtil {
                 result = array;
                 break;
             case '(':
+                // TODO not currently supported as does not recognise close ')'
                 result = readVector(x);
                 break;
             default:
@@ -145,7 +147,7 @@ public class JSONUtil {
         return result;
     }
 
-    protected Object readObject(Hashtable map, String name) throws IOException {
+    protected Object readObject(String name, Hashtable map) {
 
         if (XMLUtil.TAG_HASHTABLE.equals(name)) {
             // we can only end up here if we failed to encode the map because of non-string keys.
@@ -158,6 +160,9 @@ public class JSONUtil {
         	object.put(key, value);
             }
             return object;
+        }
+        else if (XMLUtil.TAG_VECTOR.equals(name)) {
+            return SystemUtil.asList((Object[])map.get("value"));
         }
         else {
             Object value = map.get("value");
@@ -285,7 +290,9 @@ public class JSONUtil {
         for (boolean end=false;!end;end = x.endObject()) {
             String key = x.nextKey();
             Object obj = readObject(x);
-            hashtable.put(key, obj);
+            if (obj != null) {
+                hashtable.put(key, obj);
+            }
         }
         return hashtable;
     }

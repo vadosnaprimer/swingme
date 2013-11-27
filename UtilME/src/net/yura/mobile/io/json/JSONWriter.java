@@ -286,15 +286,14 @@ public class JSONWriter {
      */
     public JSONWriter value(double d) throws IOException {
         testValidity(d);
-        return this.append(trimNumber( String.valueOf(d) ));
+        return this.append(Double.toString(d));
     }
 
     static void testValidity(double d) throws IOException {
 
-        Double o = new Double(d);
         //if (o != null) {
 //            if (o instanceof Double) {
-                if (o.isInfinite() || o.isNaN()) {
+                if (Double.isInfinite(d) || Double.isNaN(d)) {
                     throw new IOException(
                         "JSON does not allow non-finite numbers");
                 }

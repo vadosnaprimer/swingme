@@ -109,35 +109,21 @@ public class XMLUtil {
     }
 
     protected void saveObject(XmlSerializer serializer,Object object) throws IOException {
-
+        String tagName = getObjectType(object);
+        serializer.startTag(null,tagName);
         if (object instanceof Hashtable) {
-
-            serializer.startTag(null,TAG_HASHTABLE);
             saveHashtable(serializer, (Hashtable)object);
-            serializer.endTag(null,TAG_HASHTABLE);
         }
         else if (object instanceof Vector) {
-
-            serializer.startTag(null,TAG_VECTOR);
             saveVector(serializer, (Vector)object);
-            serializer.endTag(null,TAG_VECTOR);
         }
         else if (object instanceof Object[]) {
-
-            serializer.startTag(null,TAG_ARRAY);
             saveArray(serializer, (Object[])object);
-            serializer.endTag(null,TAG_ARRAY);
         }
         else {
-
-            String tagName = getObjectType(object);
-
-            serializer.startTag(null,tagName);
             serializer.attribute(null,"value", String.valueOf(object) );
-            serializer.endTag(null,tagName);
-
         }
-
+        serializer.endTag(null,tagName);
     }
 
     protected static String getObjectType(Object object) throws IOException {
@@ -173,6 +159,15 @@ public class XMLUtil {
             }
             else if (object instanceof Long) {
                 tagName = TAG_LONG;
+            }
+            else if (object instanceof Hashtable) {
+                tagName = TAG_HASHTABLE;
+            }
+            else if (object instanceof Vector) {
+                tagName = TAG_VECTOR;
+            }
+            else if (object instanceof Object[]) {
+                tagName = TAG_ARRAY;
             }
             else {
                 // TODO somehow encode it or do something else??
