@@ -6,7 +6,7 @@ import java.util.Vector;
 import java.io.IOException;
 import net.yura.mobile.io.JSONUtil;
 import net.yura.mobile.io.json.JSONWriter;
-import net.yura.mobile.io.json.JSONTokener;
+import net.yura.mobile.util.SystemUtil;
 /**
  * THIS FILE IS GENERATED, DO NOT EDIT
  */
@@ -18,18 +18,16 @@ public class JSONAccess extends JSONUtil {
     protected void saveObject(JSONWriter serializer, Object object) throws IOException {
         if (object instanceof TestObject) {
             serializer.object();
-            serializer.key(TYPE_TESTOBJECT);
-            serializer.object();
+            serializer.key("class");
+            serializer.value(TYPE_TESTOBJECT);
             saveTestObject(serializer,(TestObject)object);
-            serializer.endObject();
             serializer.endObject();
         }
         else if (object instanceof Test) {
             serializer.object();
-            serializer.key(TYPE_TEST);
-            serializer.object();
+            serializer.key("class");
+            serializer.value(TYPE_TEST);
             saveTest(serializer,(Test)object);
-            serializer.endObject();
             serializer.endObject();
         }
         else {
@@ -41,211 +39,129 @@ public class JSONAccess extends JSONUtil {
         serializer.key("age");
         serializer.value( object.getAge() );
         serializer.key("body");
-        {
-            Object obj = object.getBody();
-            if (obj!=null) {
-                saveObject(serializer, obj );
-            }
-            else {
-                serializer.nullValue();
-            }
+        Object bodyValue = object.getBody();
+        if (bodyValue!=null) {
+            saveObject(serializer, bodyValue );
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("image");
-        {
-            byte[] bytes = object.getImage();
-            if (bytes!=null) {
-                serializer.value( new String(org.bouncycastle.util.encoders.Base64.encode(bytes)) );
-            }
-            else {
-                serializer.nullValue();
-            }
+        byte[] imageValue = object.getImage();
+        if (imageValue!=null) {
+            serializer.value( new String(org.bouncycastle.util.encoders.Base64.encode(imageValue)) );
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("legs");
-        {
-            Object[] array = object.getLegs();
-            if (array!=null) {
-                saveArray( serializer, array );
-            }
-            else {
-                serializer.nullValue();
-            }
+        Object[] legsValue = object.getLegs();
+        if (legsValue!=null) {
+            saveArray(serializer, legsValue);
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("loginById");
-        {
-            Hashtable hashtable = object.getLoginById();
-            if (hashtable!=null) {
-                saveHashtable( serializer, hashtable );
-            }
-            else {
-                serializer.nullValue();
-            }
+        Hashtable loginByIdValue = object.getLoginById();
+        if (loginByIdValue!=null) {
+            saveHashtable(serializer, loginByIdValue);
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("myType");
-        {
-            String string = object.getMyType();
-            if (string!=null) {
-                serializer.value( string );
-            }
-            else {
-                serializer.nullValue();
-            }
+        String myTypeValue = object.getMyType();
+        if (myTypeValue!=null) {
+            serializer.value(myTypeValue);
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("name");
-        {
-            String string = object.getName();
-            if (string!=null) {
-                serializer.value( string );
-            }
-            else {
-                serializer.nullValue();
-            }
+        String nameValue = object.getName();
+        if (nameValue!=null) {
+            serializer.value(nameValue);
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("numbers");
-        {
-            Vector vector = object.getNumbers();
-            if (vector!=null) {
-                saveVector(serializer, vector );
-            }
-            else {
-                serializer.nullValue();
-            }
+        Vector numbersValue = object.getNumbers();
+        if (numbersValue!=null) {
+            saveVector(serializer, numbersValue);
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("objectById");
-        {
-            Object obj = object.getObjectById();
-            if (obj!=null) {
-                saveObject(serializer, obj );
-            }
-            else {
-                serializer.nullValue();
-            }
+        Object objectByIdValue = object.getObjectById();
+        if (objectByIdValue!=null) {
+            saveObject(serializer, objectByIdValue );
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("objects");
-        {
-            Object[] array = object.getObjects();
-            if (array!=null) {
-                saveArray( serializer, array );
-            }
-            else {
-                serializer.nullValue();
-            }
+        Object[] objectsValue = object.getObjects();
+        if (objectsValue!=null) {
+            saveArray(serializer, objectsValue);
+        }
+        else {
+            serializer.nullValue();
         }
         serializer.key("testById");
-        {
-            Test obj = object.getTestById();
-            if (obj!=null) {
-                serializer.object();
-                saveTest( serializer, obj );
-                serializer.endObject();
-            }
-            else {
-                serializer.nullValue();
-            }
+        Test testByIdValue = object.getTestById();
+        if (testByIdValue!=null) {
+            serializer.object();
+            saveTest(serializer, testByIdValue);
+            serializer.endObject();
         }
-        
+        else {
+            serializer.nullValue();
+        }
     }
     protected void saveTest(JSONWriter serializer,Test object) throws IOException {
         serializer.key("id");
         serializer.value( object.getId() );
     }
-    protected Object readObject(JSONTokener tokener, String name) throws IOException {
+    protected Object readObject(String name, Hashtable map) {
         if ("TestObject".equals(name)) {
-            return readTestObject(tokener);
+            return readTestObject(map, new TestObject());
         }
-        else if ("Test".equals(name)) {
-            return readTest(tokener);
+        if ("Test".equals(name)) {
+            return readTest(map, new Test());
         }
-        else {
-            return super.readObject(tokener,name);
-        }
+        return super.readObject(name, map);
     }
-    protected TestObject readTestObject(JSONTokener tokener) throws IOException {
-        TestObject object = new TestObject();
-        tokener.startObject();
-        for (boolean end=false;!end;end = tokener.endObject()) {
-            String key = tokener.nextKey();
-            if ("age".equals(key)) {
-                object.setAge( Byte.parseByte(tokener.nextSimple()) );
-            }
-            else if ("body".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setBody( readObject(tokener) );
-                }
-            }
-            else if ("id".equals(key)) {
-                object.setId( Integer.parseInt(tokener.nextSimple()) );
-            }
-            else if ("image".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setImage( org.bouncycastle.util.encoders.Base64.decode( tokener.nextString() ) );
-                }
-            }
-            else if ("legs".equals(key)) {
-                if (!tokener.nextNull()) {
-                    Vector objects = readVector(tokener);
-                    String[] array=null;
-                    array = new String[objects.size()];
-                    objects.copyInto(array);
-                    object.setLegs(array);
-                }
-            }
-            else if ("loginById".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setLoginById( readHashtable(tokener) );
-                }
-            }
-            else if ("myType".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setMyType( tokener.nextString() );
-                }
-            }
-            else if ("name".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setName( tokener.nextString() );
-                }
-            }
-            else if ("numbers".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setNumbers( readVector(tokener) );
-                }
-            }
-            else if ("objectById".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setObjectById( readObject(tokener) );
-                }
-            }
-            else if ("objects".equals(key)) {
-                if (!tokener.nextNull()) {
-                    Vector objects = readVector(tokener);
-                    Object[] array=null;
-                    array = new Object[objects.size()];
-                    objects.copyInto(array);
-                    object.setObjects(array);
-                }
-            }
-            else if ("testById".equals(key)) {
-                if (!tokener.nextNull()) {
-                    object.setTestById( readTest(tokener) );
-                }
-            }
-            else {
-                throw new IOException("unknown field: "+key); // TODO skip unknown fields
-            }
+    protected TestObject readTestObject(Hashtable map, TestObject object) {
+        readTest(map, object);
+        object.setAge( ((Long) map.get("age")).byteValue() );
+        object.setBody( map.get("body") );
+        String imageValue = (String) map.get("image");
+        if (imageValue != null) {
+            object.setImage( org.bouncycastle.util.encoders.Base64.decode( (String) map.get("image") ) );
         }
+        Object[] legsValue = (Object[]) map.get("legs");
+        if (legsValue != null) {
+            String[] legsArray = new String[legsValue.length];
+            System.arraycopy(legsValue, 0, legsArray, 0, legsValue.length);
+            object.setLegs(legsArray);
+        }
+        object.setLoginById( (Hashtable) map.get("loginById") );
+        object.setMyType( (String) map.get("myType") );
+        object.setName( (String) map.get("name") );
+        Object[] numbersValue = (Object[]) map.get("numbers");
+        if (numbersValue != null) {
+            object.setNumbers(SystemUtil.asList(numbersValue));
+        }
+        object.setObjectById( map.get("objectById") );
+        object.setObjects((Object[]) map.get("objects"));
+        object.setTestById( (Test) map.get("testById") );
         return object;
     }
-    protected Test readTest(JSONTokener tokener) throws IOException {
-        Test object = new Test();
-        tokener.startObject();
-        for (boolean end=false;!end;end = tokener.endObject()) {
-            String key = tokener.nextKey();
-            if ("id".equals(key)) {
-                object.setId( Integer.parseInt(tokener.nextSimple()) );
-            }
-            else {
-                throw new IOException("unknown field: "+key); // TODO skip unknown fields
-            }
-        }
+    protected Test readTest(Hashtable map, Test object) {
+        object.setId( ((Long) map.get("id")).intValue() );
         return object;
     }
 }

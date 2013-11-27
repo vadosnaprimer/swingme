@@ -67,7 +67,7 @@ ps.println("import java.util.Vector;");
 ps.println("import java.io.IOException;");
 ps.println("import net.yura.mobile.io.JSONUtil;");
 ps.println("import net.yura.mobile.io.json.JSONWriter;");
-ps.println("import net.yura.mobile.io.json.JSONTokener;");
+ps.println("import net.yura.mobile.util.SystemUtil;");
 
 ps.println("/**");
 ps.println(" * THIS FILE IS GENERATED, DO NOT EDIT");
@@ -92,10 +92,9 @@ String className = c.getSimpleName();
 
 ps.println("        "+ ((n==0)?"":"else ") +"if (object instanceof "+className+") {");
 ps.println("            serializer.object();");
-ps.println("            serializer.key(TYPE_"+className.toUpperCase()+");");
-ps.println("            serializer.object();");
+ps.println("            serializer.key(\"class\");");
+ps.println("            serializer.value(TYPE_"+className.toUpperCase()+");");
 ps.println("            save"+className+"(serializer,("+className+")object);");
-ps.println("            serializer.endObject();");
 ps.println("            serializer.endObject();");
 ps.println("        }");
 
@@ -113,22 +112,20 @@ for (Class c:classes) {
 printSaveMethod(ps,c);
 }
 
-ps.println("    protected Object readObject(JSONTokener tokener, String name) throws IOException {");
+ps.println("    protected Object readObject(String name, Hashtable map) {");
 
 n=0;
 for (Class c:classes) {
 
 String className = c.getSimpleName();
 
-ps.println("        "+ ((n==0)?"":"else ") +"if (\""+className+"\".equals(name)) {");
-ps.println("            return read"+className+"(tokener);");
+ps.println("        if (\""+className+"\".equals(name)) {");
+ps.println("            return read"+className+"(map, new "+className+"());");
 ps.println("        }");
 n++;
 }
 
-ps.println("        else {");
-ps.println("            return super.readObject(tokener,name);");
-ps.println("        }");
+ps.println("        return super.readObject(name, map);");
 
 ps.println("    }");
 
@@ -162,22 +159,13 @@ else {
 
 for (Method m: simpleMethods) {
 
-ps.println("        serializer.key(\""+MobileXmlGen.paramName(m)+"\");");
+String name = MobileXmlGen.paramName(m);
+
+ps.println("        serializer.key(\""+name+"\");");
 
 Class param = m.getReturnType();
 
-if (param == String.class) {
-ps.println("        {");
-ps.println("            String string = object."+m.getName()+"();");
-ps.println("            if (string!=null) {");
-ps.println("                serializer.value( string );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
-ps.println("        }");
-}
-else if (param == int.class) {
+if (param == int.class) {
 ps.println("        serializer.value( object."+m.getName()+"() );");
 }
 else if (param == double.class) {
@@ -201,76 +189,70 @@ ps.println("        serializer.value( object."+m.getName()+"() );");
 else if (param == byte.class) {
 ps.println("        serializer.value( object."+m.getName()+"() );");
 }
+else if (param == String.class) {
+ps.println("        String "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            serializer.value("+name+"Value);");
+ps.println("        }");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
+ps.println("        }");
+}
 else if (param == Vector.class) {
-ps.println("        {");
-ps.println("            Vector vector = object."+m.getName()+"();");
-ps.println("            if (vector!=null) {");
-ps.println("                saveVector(serializer, vector );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
+ps.println("        Vector "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            saveVector(serializer, "+name+"Value);");
+ps.println("        }");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
 ps.println("        }");
 }
 else if (param == Hashtable.class) {
-ps.println("        {");
-ps.println("            Hashtable hashtable = object."+m.getName()+"();");
-ps.println("            if (hashtable!=null) {");
-ps.println("                saveHashtable( serializer, hashtable );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
+ps.println("        Hashtable "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            saveHashtable(serializer, "+name+"Value);");
+ps.println("        }");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
 ps.println("        }");
 }
 else if (param == byte[].class) {
-ps.println("        {");
-ps.println("            byte[] bytes = object."+m.getName()+"();");
-ps.println("            if (bytes!=null) {");
-ps.println("                serializer.value( new String(org.bouncycastle.util.encoders.Base64.encode(bytes)) );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
+ps.println("        byte[] "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            serializer.value( new String(org.bouncycastle.util.encoders.Base64.encode("+name+"Value)) );");
+ps.println("        }");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
 ps.println("        }");
 }
 else if (param.isArray()) {
-ps.println("        {");
-ps.println("            Object[] array = object."+m.getName()+"();");
-ps.println("            if (array!=null) {");
-ps.println("                saveArray( serializer, array );");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
+ps.println("        Object[] "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            saveArray(serializer, "+name+"Value);");
+ps.println("        }");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
 ps.println("        }");
 }
 else if (param == Object.class) {
-ps.println("        {");
-ps.println("            Object obj = object."+m.getName()+"();");
-ps.println("            if (obj!=null) {");
-//ps.println("                serializer.object();");
-ps.println("                saveObject(serializer, obj );");
-//ps.println("                serializer.endObject();");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
+ps.println("        Object "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            saveObject(serializer, "+name+"Value );");
+ps.println("        }");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
 ps.println("        }");
 }
 else {
-ps.println("        {");
-ps.println("            "+param.getSimpleName()+" obj = object."+m.getName()+"();");
-ps.println("            if (obj!=null) {");
-ps.println("                serializer.object();");
-ps.println("                save"+param.getSimpleName()+"( serializer, obj );");
-ps.println("                serializer.endObject();");
-ps.println("            }");
-ps.println("            else {");
-ps.println("                serializer.nullValue();");
-ps.println("            }");
+ps.println("        "+param.getSimpleName()+" "+name+"Value = object."+m.getName()+"();");
+ps.println("        if ("+name+"Value!=null) {");
+ps.println("            serializer.object();");
+ps.println("            save"+param.getSimpleName()+"(serializer, "+name+"Value);");
+ps.println("            serializer.endObject();");
 ps.println("        }");
-ps.println("        ");
+ps.println("        else {");
+ps.println("            serializer.nullValue();");
+ps.println("        }");
 }
 
 }
@@ -283,93 +265,92 @@ ps.println("    }");
 
 String className = theclass.getSimpleName();
 
-ps.println("    protected "+className+" read"+className+"(JSONTokener tokener) throws IOException {");
+ps.println("    protected "+className+" read"+className+"(Hashtable map, "+className+" object) {");
 
-ps.println("        "+className+" object = new "+className+"();");
 
-ps.println("        tokener.startObject();");
+Class superClass = theclass.getSuperclass();
+ArrayList<Method> methods;
+if (classes.contains(superClass)) {
+    if (superClass != Object.class) {
+    ps.println("        read"+superClass.getSimpleName()+"(map, object);");
+    }
+    methods = getMethods(theclass,true,false);
+}
+else {
+    methods = getMethods(theclass,true,true);
+}
 
-ps.println("        for (boolean end=false;!end;end = tokener.endObject()) {");
-ps.println("            String key = tokener.nextKey();");
 
-ArrayList<Method> methods = getMethods(theclass,true,true);
+
 int n = 0;
 for (Method m: methods) {
 Class param = m.getParameterTypes()[0];
 
-ps.println("            "+(n==0?"":"else ")+"if (\""+MobileXmlGen.paramName(m)+"\".equals(key)) {");
+String name = MobileXmlGen.paramName(m);
 
 if (param == String.class) {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    object."+m.getName()+"( tokener.nextString() );");
-ps.println("                }");
+ps.println("        object."+m.getName()+"( (String) map.get(\""+name+"\") );");
 }
 else if (param == int.class) {
-ps.println("                object."+m.getName()+"( Integer.parseInt(tokener.nextSimple()) );");
+ps.println("        object."+m.getName()+"( ((Long) map.get(\""+name+"\")).intValue() );");
 }
 else if (param == double.class) {
-ps.println("                object."+m.getName()+"( Double.parseDouble(tokener.nextSimple()) );");
+ps.println("        object."+m.getName()+"( ((Double) map.get(\""+name+"\")).doubleValue() );");
 }
 else if (param == float.class) {
-ps.println("                object."+m.getName()+"( Float.parseFloat(tokener.nextSimple()) );");
-}
-else if (param == boolean.class) {
-ps.println("                object."+m.getName()+"( \"true\".equals(tokener.nextSimple()) );");
+ps.println("        object."+m.getName()+"( ((Double) map.get(\""+name+"\")).floatValue() );");
 }
 else if (param == short.class) {
-ps.println("                object."+m.getName()+"( Short.parseShort(tokener.nextSimple()) );");
+ps.println("        object."+m.getName()+"( ((Long) map.get(\""+name+"\")).shortValue() );");
 }
 else if (param == long.class) {
-ps.println("                object."+m.getName()+"( Long.parseLong(tokener.nextSimple()) );");
+ps.println("        object."+m.getName()+"( ((Long) map.get(\""+name+"\")).longValue() );");
 }
 else if (param == char.class) {
-ps.println("                object."+m.getName()+"( tokener.nextSimple().charAt(0) );");
+ps.println("        object."+m.getName()+"( ((Character) map.get(\""+name+"\")).charValue() );");
 }
 else if (param == byte.class) {
-ps.println("                object."+m.getName()+"( Byte.parseByte(tokener.nextSimple()) );");
+ps.println("        object."+m.getName()+"( ((Long) map.get(\""+name+"\")).byteValue() );");
 }
-else if (param == Vector.class) {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    object."+m.getName()+"( readVector(tokener) );");
-ps.println("                }");
+else if (param == boolean.class) {
+ps.println("        object."+m.getName()+"( ((Boolean) map.get(\""+name+"\")).booleanValue() );");
 }
 else if (param == Hashtable.class) {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    object."+m.getName()+"( readHashtable(tokener) );");
-ps.println("                }");
+ps.println("        object."+m.getName()+"( (Hashtable) map.get(\""+name+"\") );");
 }
 else if (param == byte[].class) {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    object."+m.getName()+"( org.bouncycastle.util.encoders.Base64.decode( tokener.nextString() ) );");
-ps.println("                }");
+ps.println("        String "+name+"Value = (String) map.get(\""+name+"\");");
+ps.println("        if ("+name+"Value != null) {");
+ps.println("            object."+m.getName()+"( org.bouncycastle.util.encoders.Base64.decode( (String) map.get(\""+name+"\") ) );");
+ps.println("        }");
 }
 else if (param.isArray()) {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    Vector objects = readVector(tokener);");
-ps.println("                    "+param.getComponentType().getSimpleName()+"[] array=null;");
-ps.println("                    array = new "+param.getComponentType().getSimpleName()+"[objects.size()];");
-ps.println("                    objects.copyInto(array);");
-ps.println("                    object."+m.getName()+"(array);");
-ps.println("                }");
+    if (param.getComponentType() == Object.class){
+ps.println("        object."+m.getName()+"((Object[]) map.get(\""+name+"\"));");
+    }
+    else {
+ps.println("        Object[] "+name+"Value = (Object[]) map.get(\""+name+"\");");
+ps.println("        if ("+name+"Value != null) {");
+ps.println("            "+param.getComponentType().getSimpleName()+"[] "+name+"Array = new "+param.getComponentType().getSimpleName()+"["+name+"Value.length];");
+ps.println("            System.arraycopy("+name+"Value, 0, "+name+"Array, 0, "+name+"Value.length);");
+ps.println("            object."+m.getName()+"("+name+"Array);");
+ps.println("        }");
+    }
+}
+else if (param == Vector.class) {
+ps.println("        Object[] "+name+"Value = (Object[]) map.get(\""+name+"\");");
+ps.println("        if ("+name+"Value != null) {");
+ps.println("            object."+m.getName()+"(SystemUtil.asList("+name+"Value));");
+ps.println("        }");
 }
 else if (param == Object.class) {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    object."+m.getName()+"( readObject(tokener) );");
-ps.println("                }");
+ps.println("        object."+m.getName()+"( map.get(\""+name+"\") );");
 }
 else {
-ps.println("                if (!tokener.nextNull()) {");
-ps.println("                    object."+m.getName()+"( read"+param.getSimpleName()+"(tokener) );");
-ps.println("                }");
+ps.println("        object."+m.getName()+"( ("+param.getSimpleName()+") map.get(\""+name+"\") );");
 }
-ps.println("            }");
 n++;
 }
-ps.println("            else {");
-ps.println("                throw new IOException(\"unknown field: \"+key); // TODO skip unknown fields");
-ps.println("            }");
-
-ps.println("        }");
 
 ps.println("        return object;");
 ps.println("    }");

@@ -51,7 +51,7 @@ public class Test1 {
 //                os = new BufferedOutputStream( new PipedOutputStream( pipe ) );
             }
             catch(Exception ex) {
-                throw new RuntimeException();
+                throw new RuntimeException(ex);
             }
         }
 
@@ -305,7 +305,15 @@ public class Test1 {
 
         for (Object obj:objects) {
 System.out.println("DOING TEST "+util+" "+obj);
-            o1 = util.read();
+            try {
+                o1 = util.read();
+            }
+            catch (Exception ex) {
+                System.err.print("FAILED TO READ OBJ = ");
+                kxml.save(System.err, obj);
+                System.err.println();
+                throw ex;
+            }
             boolean equals = obj.equals(o1);
             if (equals) {
                 System.out.println("equals="+equals+" "+o1);
@@ -314,10 +322,10 @@ System.out.println("DOING TEST "+util+" "+obj);
             }
             if (!equals) {
                 System.err.println("ERROR IN "+util);
-                System.err.print("OBJ1 = ");
+                System.err.print("OBJ1 sent = ");
                 kxml.save(System.err, obj);
                 System.err.println();
-                System.err.print("OBJ2 = ");
+                System.err.print("OBJ2 got  = ");
                 kxml.save(System.err, o1);
                 System.err.println();
             }
