@@ -148,52 +148,47 @@ public class JSONUtil {
     }
 
     protected Object readObject(String name, Hashtable map) {
-
+        Object value = map.get("value");
         if (XMLUtil.TAG_HASHTABLE.equals(name)) {
             // we can only end up here if we failed to encode the map because of non-string keys.
-            Object[] array = (Object[])map.get("value");
+            Object[] array = (Object[])value;
             Hashtable object = new Hashtable();
             for (int c = 0; c < array.length; c++) {
-        	Object key = array[c];
-        	c++;
-        	Object value = array[c];
-        	object.put(key, value);
+        	Object key = array[c++];
+        	object.put(key, array[c]);
             }
             return object;
         }
         else if (XMLUtil.TAG_VECTOR.equals(name)) {
-            return SystemUtil.asList((Object[])map.get("value"));
+            return SystemUtil.asList((Object[])value);
         }
+        else if (XMLUtil.TAG_INTEGER.equals(name)) {
+            return new Integer(((Long)value).intValue());
+        }
+        else if (XMLUtil.TAG_FLOAT.equals(name)) {
+            return new Float(((Double)value).floatValue());
+        }
+        else if (XMLUtil.TAG_SHORT.equals(name)) {
+            return new Short(((Long)value).shortValue());
+        }
+        else if (XMLUtil.TAG_CHARACTER.equals(name)) {
+            return new Character( ((String)value).charAt(0) );
+        }
+        else if (XMLUtil.TAG_BYTE.equals(name)) {
+            return new Byte(((Long)value).byteValue());
+        }
+        // No reason to double encode as these are supported by json.
+        //else if (XMLUtil.TAG_DOUBLE.equals(name)) {
+        //    return Double.valueOf( value );
+        //}
+        //else if (XMLUtil.TAG_LONG.equals(name)) {
+        //    return new Long( Long.parseLong( value ) );
+        //}
         else {
-            Object value = map.get("value");
-            if (XMLUtil.TAG_INTEGER.equals(name)) {
-                return new Integer(((Long)value).intValue());
-            }
-            else if (XMLUtil.TAG_FLOAT.equals(name)) {
-                return new Float(((Double)value).floatValue());
-            }
-            else if (XMLUtil.TAG_SHORT.equals(name)) {
-                return new Short(((Long)value).shortValue());
-            }
-            else if (XMLUtil.TAG_CHARACTER.equals(name)) {
-                return new Character( ((String)value).charAt(0) );
-            }
-            else if (XMLUtil.TAG_BYTE.equals(name)) {
-                return new Byte(((Long)value).byteValue());
-            }
-            // No reason to double encode as these are supported by json.
-            //else if (XMLUtil.TAG_DOUBLE.equals(name)) {
-            //    return Double.valueOf( value );
-            //}
-            //else if (XMLUtil.TAG_LONG.equals(name)) {
-            //    return new Long( Long.parseLong( value ) );
-            //}
-            else {
-        	// Failed to find a class, so will return Map.
-        	System.err.println("dont know how to decode "+name+" "+map);
-        	map.put("class", name);
-        	return map;
-            }
+            // Failed to find a class, so will return Map.
+            System.err.println("dont know how to decode "+name+" "+map);
+            map.put("class", name);
+            return map;
         }
     }
 
