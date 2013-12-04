@@ -67,10 +67,10 @@ public class JSONUtil {
                 serializer.value( ((Float)object).doubleValue() );
             }
             else if (object instanceof Byte) {
-                serializer.value( ((Byte)object).longValue() );
+                serializer.value( (long) ((Byte) object).byteValue() );
             }
             else if (object instanceof Short) {
-                serializer.value( ((Short)object).longValue() );
+                serializer.value( (long) ((Short) object).shortValue() );
             }
             else if (object instanceof Vector) {
                 saveVector(serializer, (Vector)object);
@@ -163,19 +163,19 @@ public class JSONUtil {
             return SystemUtil.asList((Object[])value);
         }
         else if (XMLUtil.TAG_INTEGER.equals(name)) {
-            return new Integer(((Long)value).intValue());
+            return new Integer((int) ((Long) value).longValue());
         }
         else if (XMLUtil.TAG_FLOAT.equals(name)) {
             return new Float(((Double)value).floatValue());
         }
         else if (XMLUtil.TAG_SHORT.equals(name)) {
-            return new Short(((Long)value).shortValue());
+            return new Short((short) ((Long) value).longValue());
         }
         else if (XMLUtil.TAG_CHARACTER.equals(name)) {
             return new Character( ((String)value).charAt(0) );
         }
         else if (XMLUtil.TAG_BYTE.equals(name)) {
-            return new Byte(((Long)value).byteValue());
+            return new Byte((byte) ((Long)value).longValue());
         }
         // No reason to double encode as these are supported by json.
         //else if (XMLUtil.TAG_DOUBLE.equals(name)) {
