@@ -82,6 +82,10 @@ public class Image {
                 ex.initCause(e);
                 throw ex;
             }
+
+            if (bitmap == null) {
+                throw new IOException("ResourceInputStream.getBitmap returned null "+stream);
+            }
         }
         else {
             int size = Math.max(stream.available(), 8 * 1024);
@@ -100,12 +104,11 @@ public class Image {
                 buffInput.mark(1024);
                 bitmap = BitmapFactory.decodeStream(buffInput,null,options);
             }
-        }
 
-        if (bitmap == null) {
-            throw new IOException();
+            if (bitmap == null) {
+                throw new IOException("BitmapFactory.decodeStream returned null "+buffInput+" "+options);
+            }
         }
-
         return new Image(bitmap);
     }
 
