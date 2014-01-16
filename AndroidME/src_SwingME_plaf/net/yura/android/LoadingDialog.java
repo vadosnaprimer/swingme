@@ -1,7 +1,5 @@
 package net.yura.android;
 
-import net.yura.android.AndroidMeActivity;
-import net.yura.android.AndroidMeApp;
 import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Url;
 import android.app.Activity;
@@ -14,19 +12,35 @@ import android.view.WindowManager;
  */
 public class LoadingDialog extends Activity implements Runnable {
 
+    public static final String PARAM_MESSAGE = "message";
+    public static final String PARAM_CANCELLABLE = "cancellable";
+    public static final String PARAM_COMMAND = "command";
+
     private static ProgressDialog dialog;
 
     private String action;
     private String loadingMessage;
+    private boolean cancellable;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Url url = new Url( getIntent().getData().toString() );
-        this.loadingMessage = url.getQueryParameter("message");
-        String command = url.getQueryParameter("command");
-        runAction(("".equals(command)||command==null)?"setup":command,0);
+        String command;
+        if (getIntent().getData() != null) {
+            Url url = new Url( getIntent().getData().toString() );
+            loadingMessage = url.getQueryParameter(PARAM_MESSAGE);
+            cancellable = Boolean.parseBoolean(url.getQueryParameter(PARAM_CANCELLABLE));
+            command = url.getQueryParameter(PARAM_COMMAND);
+        } else {
+            loadingMessage = getIntent().getStringExtra(PARAM_MESSAGE);
+            cancellable = getIntent().getBooleanExtra(PARAM_CANCELLABLE, false);
+            command = getIntent().getStringExtra(PARAM_COMMAND);
+        }
+        if (command == null || "".equals(command)) {
+            command = "setup";
+        }
+        runAction(command,0);
         
         finish();
     }
@@ -55,9 +69,9 @@ public class LoadingDialog extends Activity implements Runnable {
                 if (dialog == null) {
                     dialog = new ProgressDialog(AndroidMeActivity.DEFAULT_ACTIVITY);
                     dialog.setIndeterminate(true);
-                    dialog.setCancelable(false);
                 }
 
+                dialog.setCancelable(cancellable);
                 dialog.setMessage(loadingMessage);
                 
                 runAction("show", 250);
