@@ -239,7 +239,7 @@ public class Image {
 
     @Override
     public String toString() {
-        return "Image"+bitmap.toString();
+        return "Image{"+bitmap.toString()+"}";
     }
 
     public static void filter(Image source, Image bm, ColorMatrix cm) {
