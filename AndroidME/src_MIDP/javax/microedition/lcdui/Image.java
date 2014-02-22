@@ -96,17 +96,19 @@ public class Image {
             options.inDither = false;
             options.inPurgeable = true; // http://www.droidnova.com/2d-sprite-animation-in-android-addendum,505.html
 
+            OutOfMemoryError error = null;
             try {
                 bitmap = BitmapFactory.decodeStream(buffInput,null,options);
             } catch (OutOfMemoryError e) {
                 cleanMem();
+                error = e;
                 buffInput.reset();
                 buffInput.mark(1024);
                 bitmap = BitmapFactory.decodeStream(buffInput,null,options);
             }
 
             if (bitmap == null) {
-                throw new IOException("BitmapFactory.decodeStream returned null "+buffInput+" "+options);
+                throw new IOException("BitmapFactory.decodeStream returned null "+buffInput+" "+options+" "+error);
             }
         }
         return new Image(bitmap);
