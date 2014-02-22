@@ -261,7 +261,11 @@ public abstract class Midlet extends MIDlet {
 
     public static void openURL(String url) {
         try {
-            getMidlet().platformRequest(url);
+            Midlet midlet = getMidlet();
+            // midlet is null if the app is shutting down
+            if (midlet != null) {
+                midlet.platformRequest(url);
+            }
         }
         catch (Exception e) {
             //#mdebug warn
