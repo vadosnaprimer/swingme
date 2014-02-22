@@ -6,7 +6,7 @@ import net.yura.mobile.logging.Logger;
 /**
  * @author Yura Mamyrin
  */
-public abstract class QueueProcessorThread implements Runnable {
+public class QueueProcessorThread implements Runnable {
 
     public static boolean CHANGE_PRIORITY=true;
 
@@ -142,6 +142,11 @@ public abstract class QueueProcessorThread implements Runnable {
         return inbox;
     }
 
-    public abstract void process(Object object) throws Exception;
+    /**
+     * Override this method to be able to handle other types of object apart from Runnable.
+     */
+    public void process(Object object) throws Exception {
+        ((Runnable)object).run();
+    }
 
 }
