@@ -208,7 +208,9 @@ public abstract class Midlet extends MIDlet {
     //°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°º¤ø,¸¸,ø¤º°``°
 
     public static Midlet getMidlet() {
-        return DesktopPane.getDesktopPane().midlet;
+        DesktopPane dp = DesktopPane.getDesktopPane();
+        // dp can be null if the app is in the process of shutting down.
+        return dp == null ? null : dp.midlet;
     }
 
     // This will only be called on Android.
