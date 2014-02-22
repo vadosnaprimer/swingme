@@ -818,10 +818,17 @@ public class DesktopPane extends Canvas implements Runnable {
         // while we are going though the vector it can not be updated
             //synchronized (v) {
 
-                    for (int c = 0; c < v.size(); c++) {
-                        Component panel = (Component) v.elementAt(c);
+                for (int c = 0; c < v.size(); c++) {
+                    Component panel = (Component) v.elementAt(c);
+                    try {
                         panel.validate();
                     }
+                    catch (RuntimeException ex) {
+                        //#debug warn
+                        Logger.warn("Error in validate of: " + panel);
+                        throw ex;
+                    }
+                }
                     //v.removeAllElements();
 
             //}
