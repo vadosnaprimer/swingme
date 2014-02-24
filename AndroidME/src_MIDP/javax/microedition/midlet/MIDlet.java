@@ -1,5 +1,6 @@
 package javax.microedition.midlet;
 
+import java.util.Map;
 import java.util.Properties;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.lcdui.Display;
@@ -131,13 +132,13 @@ public abstract class MIDlet {
             }
             else if (url.startsWith(PROTOCOL_NOTIFY)) {
                 // there is a bug on android older versions so we use our Url to decode.
-                Url myurl = new Url( url );
-                showNotification(
-                        myurl.getQueryParameter("title"),
-                        myurl.getQueryParameter("num"),
-                        myurl.getQueryParameter("message"),
-                        myurl.getQueryParameter("icon"),
-                        myurl.getQueryParameter("onlyBackground"));
+                Map<String, String> options = Url.toHashtable(content.getQuery());
+                String title = options.remove("title");
+                String num = options.remove("num");
+                String message = options.remove("message");
+                String icon = options.remove("icon");
+                String onlyBackground = options.remove("onlyBackground");
+                showNotification(title, num, message, icon, onlyBackground, options);
             }
             else if (url.startsWith("toast://show")) {
                 // there is a bug on android older versions so we use our Url to decode. 
@@ -181,8 +182,7 @@ public abstract class MIDlet {
                 }
 
             }
-            
-            
+
             else if (url.equals("clipboard://get")) {
 
             	ClipboardManager clipboardManager = (ClipboardManager) AndroidMeApp.getIntance().getSystemService(Context.CLIPBOARD_SERVICE);
@@ -231,10 +231,10 @@ public abstract class MIDlet {
             		browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                		AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(browserIntent);
             	}
-            	
+
             }
             else if (url.startsWith("file:///android_asset/")) {
-                
+
                 Intent i = new Intent(activity, WebViewActivity.class);
                 //i.setClassName("com.android.browser", "com.android.browser.BrowserActivity"); // does not work
                 i.setData(content);
@@ -268,45 +268,77 @@ public abstract class MIDlet {
         return 0;
     }
 
-    private void showNotification(String title,String num,String message,String icon,String onlyBackground) {
-
-        if (    onlyBackground==null || 
-                !onlyBackground.equals("true") || 
-                AndroidMeActivity.DEFAULT_ACTIVITY==null || 
+    private void showNotification(String title,String num,String message,String icon,String onlyBackground, Map<String, ? extends Object> options) {
+        if (    onlyBackground==null ||
+                !onlyBackground.equals("true") ||
+                AndroidMeActivity.DEFAULT_ACTIVITY==null ||
                 !((AndroidMeActivity)AndroidMeActivity.DEFAULT_ACTIVITY).isForeground() ) {
 
             Context ctx = AndroidMeApp.getContext();
             int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
 
-            System.out.println(">>>> showNotification:" +
-                    " title = " + title +
-                    " num = " + num +
-                    " message = " + message +
-                    " icon = " + icon +
-                    " iconId = " + iconId);
-
-            Intent notifyIntent = new Intent(ctx, AndroidMeApp.getMainActivityClass() );
-            PendingIntent intent = PendingIntent.getActivity(ctx, 0, notifyIntent, 0);
-
-            Notification notif = new Notification(iconId, title, System.currentTimeMillis());
-
-            notif.iconLevel = 3;
-            notif.vibrate = new long[] {100,100,200,300};
-            notif.defaults = Notification.DEFAULT_ALL;
-            notif.ledOnMS = 100;
-            notif.ledOffMS = 100;
-            notif.flags |= Notification.FLAG_AUTO_CANCEL;
-
+            int number = -1;
             try {
-                notif.number = Integer.parseInt(num);
+                number = Integer.parseInt(num);
             }
             catch (Throwable e) { } // Ignore wrong or missing message number
 
-            notif.setLatestEventInfo(ctx, title, message, intent);
-
-            NotificationManager notifManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-            notifManager.notify(0, notif);
+            showNotification(title, message, iconId, number, options);
         }
+    }
+
+    public static void showNotification(String title, String message, int icon, int number, Map<String, ? extends Object> extras) {
+        System.out.println(">>>> showNotification:" +
+                " title = " + title +
+                " message = " + message +
+                " icon = " + icon +
+                " number = " + number +
+                " extras = " + extras);
+
+        Context context = AndroidMeApp.getContext();
+
+        Intent notifyIntent = new Intent(context, AndroidMeApp.getMainActivityClass());
+        // set intent so it does not start a new activity
+        notifyIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        for (Map.Entry<String, ? extends Object> entry : extras.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                notifyIntent.putExtra(key, (String)value);
+            }
+            else if (value instanceof Integer) {
+                notifyIntent.putExtra(key, (int) (Integer) value);
+            }
+            else if (value instanceof Double) {
+                notifyIntent.putExtra(key, (double) (Double) value);
+            }
+            else if (value instanceof Long) {
+                notifyIntent.putExtra(key, (long) (Long) value);
+            }
+            else if (value instanceof Float) {
+                notifyIntent.putExtra(key, (float) (Float) value);
+            }
+            else {
+                Logger.warn("unsupported type "+value.getClass()+" "+key+" "+value);
+            }
+        }
+
+        PendingIntent intent = PendingIntent.getActivity(context, 0, notifyIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notif = new Notification(icon, message, System.currentTimeMillis());
+        notif.iconLevel = 3;
+        //notif.vibrate = new long[] {100,100,200,300};
+        notif.defaults = Notification.DEFAULT_ALL;
+        notif.ledOnMS = 100;
+        notif.ledOffMS = 100;
+        notif.flags |= Notification.FLAG_AUTO_CANCEL;
+        if (number > 0) {
+            notif.number = number;
+        }
+        notif.setLatestEventInfo(context, title, message, intent);
+
+        NotificationManager notifManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notifManager.notify(0, notif);
     }
 
     public void showToast(final String message,final int duration) {
