@@ -4,6 +4,7 @@ import net.yura.mobile.logging.Logger;
 import net.yura.mobile.util.Url;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.WindowManager;
 
@@ -64,11 +65,17 @@ public class LoadingDialog extends Activity implements Runnable {
 
         try {
             if ("setup".equals(action)) {
-                setWindowNotTouchable(true);
+                setWindowTouchable(false);
                 
                 if (dialog == null) {
                     dialog = new ProgressDialog(AndroidMeActivity.DEFAULT_ACTIVITY);
                     dialog.setIndeterminate(true);
+                    dialog.setOnDismissListener(new ProgressDialog.OnDismissListener() {
+			@Override
+			public void onDismiss(DialogInterface di) {
+			    setWindowTouchable(true);
+			}
+                    });
                 }
 
                 dialog.setCancelable(cancellable);
@@ -77,14 +84,11 @@ public class LoadingDialog extends Activity implements Runnable {
                 runAction("show", 250);
             }
             else if ("show".equals(action)) {
-
                 if (dialog!=null) {
                     dialog.show();
                 }
-
             }
             else {
-                setWindowNotTouchable(false);
                 if (dialog != null) {
                     dialog.dismiss();
                     dialog = null;
@@ -102,10 +106,10 @@ public class LoadingDialog extends Activity implements Runnable {
         AndroidMeApp.getIntance().invokeLater(this, delay);
     }
 
-    private static void setWindowNotTouchable(boolean isNotTouchable) {
+    private static void setWindowTouchable(boolean touchable) {
         try {
             int mask = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE;
-            int flag = isNotTouchable ? mask : 0;
+            int flag = touchable ? 0 : mask;
             AndroidMeActivity.DEFAULT_ACTIVITY.getWindow().setFlags(flag, mask);
         } catch (Throwable e) {
            //#debug debug
