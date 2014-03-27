@@ -136,6 +136,11 @@ public abstract class Midlet extends MIDlet {
             currentPlatform = ""; // Avoid null pointer exceptions
         }
 
+        // detecting Android BEFORE Nokia platform as Nokia X is both android+nokia
+        if (hasClass("android.app.Activity")) {
+            return PLATFORM_ANDROID;
+        }
+
         // detecting NOKIA
         if (currentPlatform.indexOf("Nokia") >= 0) {
             // detecting S40 vs S60
@@ -181,11 +186,6 @@ public abstract class Midlet extends MIDlet {
         // detecting WTK
         if (currentPlatform.indexOf("wtk") >= 0) {
             return PLATFORM_WTK;
-        }
-
-        // detecting Android
-        if (hasClass("android.app.Activity")) {
-            return PLATFORM_ANDROID;
         }
 
         return PLATFORM_NOT_DEFINED;
