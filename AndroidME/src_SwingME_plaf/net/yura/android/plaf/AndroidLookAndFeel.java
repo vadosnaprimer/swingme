@@ -21,6 +21,7 @@ import net.yura.mobile.gui.components.TextArea;
 import net.yura.mobile.gui.components.TextField;
 import net.yura.mobile.gui.plaf.Style;
 import net.yura.mobile.gui.plaf.SynthLookAndFeel;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -684,10 +685,13 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
 
     }
 
+    @TargetApi(14)
     static void sortoutMenu() {
         try {
             DesktopPane dp = DesktopPane.getDesktopPane();
             dp.HIDDEN_BACK = !"BlackBerry".equals(Build.BRAND);
+            
+            // API-14
             dp.HIDDEN_MENU = ViewConfiguration.get( AndroidMeActivity.DEFAULT_ACTIVITY ).hasPermanentMenuKey();
             dp.GRID_MENU = dp.HIDDEN_MENU;
         }
