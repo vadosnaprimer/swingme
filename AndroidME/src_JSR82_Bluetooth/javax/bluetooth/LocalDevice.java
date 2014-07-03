@@ -14,6 +14,7 @@ import javax.microedition.io.Connection;
 import net.yura.android.AndroidMeApp;
 import net.yura.android.bluetooth.BluetoothManager;
 import net.yura.mobile.logging.Logger;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 
 /**
@@ -28,6 +29,7 @@ import android.bluetooth.BluetoothAdapter;
  * @version 1.0 February 11, 2002
  * @version 1.1 September 2, 2005
  */
+@TargetApi(5)
 public class LocalDevice {
 
     private static LocalDevice deviceInstance;

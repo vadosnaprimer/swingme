@@ -10,6 +10,7 @@
 package javax.bluetooth;
 
 import net.yura.android.bluetooth.BluetoothManager;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 
 /**
@@ -50,7 +51,7 @@ import android.bluetooth.BluetoothAdapter;
  * @version 1.0 February 11, 2002
  *
  */
-
+@TargetApi(5)
 public class DiscoveryAgent {
 
 	/**

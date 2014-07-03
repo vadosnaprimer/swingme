@@ -12,8 +12,8 @@ import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.util.regex.Pattern;
-
 import javax.microedition.io.file.FileConnection;
+import android.annotation.TargetApi;
 
 public class AndroidFileConnection implements FileConnection {
 
@@ -281,6 +281,7 @@ public class AndroidFileConnection implements FileConnection {
     }
 
     // Override
+    @TargetApi(9)
     public void setReadable(boolean readable) throws IOException {
         try {
             file.setReadable(readable); // ONLY API-9 (2.3+) GINGERBREAD
@@ -289,6 +290,7 @@ public class AndroidFileConnection implements FileConnection {
     }
 
     // Override
+    @TargetApi(9)
     public void setWritable(boolean writable) throws IOException {
         try {
             file.setWritable(writable); // ONLY API-9 (2.3+) GINGERBREAD

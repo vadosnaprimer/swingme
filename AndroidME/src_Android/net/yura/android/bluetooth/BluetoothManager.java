@@ -12,6 +12,7 @@ import javax.bluetooth.RemoteDevice;
 
 import net.yura.android.AndroidMeApp;
 import net.yura.mobile.logging.Logger;
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -19,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+@TargetApi(5)
 public class BluetoothManager {
 
     // Intent request codes
