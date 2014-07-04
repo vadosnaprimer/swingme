@@ -1,0 +1,23 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.12.+'
+    }
+}
+
+apply plugin: 'android-library'
+
+android {
+    compileSdkVersion 18
+    buildToolsVersion '19.1.0'
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src_Android','src_JSR120_SMS','src_JSR135_Multimedia','src_JSR179_Location','src_JSR184_3D','src_JSR234_Advanced_Multimedia','src_JSR82_Bluetooth','src_MIDP','src_SwingME_plaf','../UtilME/src','../SwingME/src']
+            res.srcDirs = ['res']
+        }
+    }
+}
