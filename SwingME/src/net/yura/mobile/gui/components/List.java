@@ -892,25 +892,22 @@ public class List extends Component implements ActionListener {
             // what if we are scrolled right already?
             //scrollTo(c);
 
-            // THIS WILL NOT WORK if list in inside a panel inside a scrollpane
-            // as posX and posY will be wrong!
-            // ALSO WILLNOT WORK IN BOXLAYOUT HCENTRE IF NOT THE FIRST COMPONENT
-            if (layoutOrientation==HORIZONTAL) {
-                scrollRectToVisible( pos, -posY, size, 1,false);
+            //calc offset in relation to the viewport
+            int offset = layoutOrientation == HORIZONTAL ? posY : posX;
+            Component p = parent;
+            while (p != null) {
+                if (p instanceof ScrollPane) {
+                    break;
+                }
+                offset += layoutOrientation == HORIZONTAL ? p.posY : p.posX;
+                p = p.parent;
+            } // TODO take into accountthe viewPortX and viewPortY
+
+            if (layoutOrientation == HORIZONTAL) {
+                scrollRectToVisible( pos, -offset, size, 1, false);
             }
             else {
-                //calc x in relation to the viewport
-                int x = posX;
-                Component p = parent;
-                while (p!=null) {
-                    if (p instanceof ScrollPane) {
-                        break;
-                    }
-                    x+=p.posX;
-                    p = p.parent;
-                } // TODO take into accountthe viewPortX
-
-                scrollRectToVisible( -x, pos, 1, size,false);
+                scrollRectToVisible( -offset, pos, 1, size, false);
             }
             ensureIndexIsVisible = i;
     }

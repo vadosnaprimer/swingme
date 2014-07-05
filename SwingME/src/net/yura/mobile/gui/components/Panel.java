@@ -199,10 +199,10 @@ public class Panel extends Component {
     protected void workoutMinimumSize() {
 
         for(int i = 0; i < components.size(); i++) {
-
             Component component = (Component)components.elementAt(i);
-            component.workoutPreferredSize();
-
+            if (component.isVisible()) {
+                component.workoutPreferredSize();
+            }
         }
 
         if (layout!=null) {
