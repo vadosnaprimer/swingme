@@ -91,7 +91,7 @@ public class AndroidMeApp extends Application {
         super.onCreate();
 
         //#debug debug
-        Logger.debug("£EP AndroidMeApp onCreate");
+        Logger.debug("AndroidMeApp onCreate");
         this.eventThread = Thread.currentThread();
 
         try {
@@ -112,7 +112,7 @@ public class AndroidMeApp extends Application {
     public void onTerminate() {
         super.onTerminate();
       //#debug debug
-        Logger.debug("£EP AndroidMeApp onTerminate");
+        Logger.debug("AndroidMeApp onTerminate");
 
         try {
             for (BroadcastReceiver receiver : broadcastReceiverList) {
@@ -266,6 +266,10 @@ public class AndroidMeApp extends Application {
         System.setProperty("java.io.tmpdir", getCacheDir().toString() ); // OLD: java.io.tmpdir=/sdcard
         System.setProperty("user.home", getFilesDir().toString() ); // OLD: user.home=
 
+        File externalStorageDirectory = Environment.getExternalStorageDirectory();
+        if (externalStorageDirectory != null && externalStorageDirectory.exists()) {
+            System.setProperty("ExternalStorageDirectory", externalStorageDirectory.toString() );
+        }
         
         // Hardware properties.
         // Returns the unique device ID, for example, the IMEI for GSM and the MEID or ESN for CDMA phones
@@ -353,7 +357,7 @@ public class AndroidMeApp extends Application {
 			}
 
 			//fall back to WIFI. Android documentation says:
-			//It may be possible to retrieve a Mac address from a device’s WiFi or Bluetooth hardware. We do not recommend using this as a unique identifier.
+			//It may be possible to retrieve a Mac address from a device's WiFi or Bluetooth hardware. We do not recommend using this as a unique identifier.
 			//To start with, not all devices have WiFi. Also, if the WiFi is not turned on, the hardware may not report the Mac address.
 			if(isValidId(uniqueId)) {
 				WifiManager wifiMan = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
