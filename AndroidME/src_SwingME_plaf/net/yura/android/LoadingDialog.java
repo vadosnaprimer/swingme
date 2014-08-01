@@ -90,7 +90,12 @@ public class LoadingDialog extends Activity implements Runnable {
             }
             else {
                 if (dialog != null) {
-                    dialog.dismiss();
+                    if (dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
+                    else {
+                        setWindowTouchable(true);
+                    }
                     dialog = null;
                 }
             }
