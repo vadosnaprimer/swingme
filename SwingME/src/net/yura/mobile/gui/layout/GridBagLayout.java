@@ -158,7 +158,8 @@ public class GridBagLayout implements Layout {
                             if (cache == null) {
                                     cache = new int[4][count];
                             }
-                            cache[0][i] = subComponent.getWidthWithBorder();
+                            // YURA: In thinlet is just uses the width here.
+                            cache[0][i] = subComponent.getWidthWithBorder() - (colspan - 1) * gap;
                             cache[2][i] = weightx;
                             if ((nextsize == 0) || (colspan < nextsize)) {
                                     nextsize = colspan;
@@ -171,7 +172,8 @@ public class GridBagLayout implements Layout {
                             if (cache == null) {
                                     cache = new int[4][count];
                             }
-                            cache[1][i] = subComponent.getHeightWithBorder();
+                            // YURA: In thinlet is just uses the height here.
+                            cache[1][i] = subComponent.getHeightWithBorder() - (rowspan - 1) * gap;
                             cache[3][i] = weighty;
                             if ((nextsize == 0) || (rowspan < nextsize)) {
                                     nextsize = rowspan;
