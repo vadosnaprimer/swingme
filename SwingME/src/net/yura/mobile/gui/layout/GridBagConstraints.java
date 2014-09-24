@@ -44,14 +44,20 @@ public class GridBagConstraints {
     public int rowSpan;
 
     /**
+     * can be: "fill", "center", "left", "right"
      * @see java.awt.GridBagConstraints#anchor GridBagConstraints.anchor
      * @see java.awt.GridBagConstraints#fill GridBagConstraints.fill
+     * @see java.awt.Component#getAlignmentX() Component.getAlignmentX
+     * @see javax.swing.JComponent#setAlignmentX(float) JComponent.setAlignmentX
      */
     public String halign;
 
     /**
+     * can be: "fill", "center", "top", "bottom"
      * @see java.awt.GridBagConstraints#anchor GridBagConstraints.anchor
      * @see java.awt.GridBagConstraints#fill GridBagConstraints.fill
+     * @see java.awt.Component#getAlignmentY() Component.getAlignmentY
+     * @see javax.swing.JComponent#setAlignmentY(float) JComponent.setAlignmentY
      */
     public String valign;
 
