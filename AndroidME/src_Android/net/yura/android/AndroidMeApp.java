@@ -220,13 +220,6 @@ public class AndroidMeApp extends Application {
         // Screen Resolution Properties (Ad hoc, not on J2ME)
         DisplayMetrics dm = getResources().getDisplayMetrics();
 
-        String dpi =
-            (dm.densityDpi == DisplayMetrics.DENSITY_LOW) ? "ldpi" :
-            (dm.densityDpi == DisplayMetrics.DENSITY_MEDIUM) ? "mdpi" :
-            (dm.densityDpi == DisplayMetrics.DENSITY_HIGH) ? "hdpi" :
-            (dm.densityDpi == DisplayMetrics.DENSITY_TV) ? "tvdpi" :
-                "xhdpi"; // API-11 DisplayMetrics.DENSITY_XHIGH
-
         Configuration config = getResources().getConfiguration();
 
         int screenLayout = Configuration.SCREENLAYOUT_SIZE_MASK & config.screenLayout;
@@ -237,12 +230,7 @@ public class AndroidMeApp extends Application {
             (screenLayout == Configuration.SCREENLAYOUT_SIZE_LARGE) ? "large" :
                 "xlarge"; // API-11 Configuration.SCREENLAYOUT_SIZE_XLARGE
 
-
-        // deprecated
-        System.setProperty("resdir", "/res_" + (( "mdpi".equals(dpi) && "xlarge".equals(size) )?size+"-":"") + ("xhdpi".equals(dpi)?"hdpi":dpi) );
-
-
-        System.setProperty("display.dpi", dpi);
+        System.setProperty("display.dpi", String.valueOf(dm.densityDpi));
         System.setProperty("display.size", size);
         System.setProperty("display.density", String.valueOf(dm.density));
         System.setProperty("display.scaledDensity", String.valueOf(dm.scaledDensity));
