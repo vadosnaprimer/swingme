@@ -195,19 +195,28 @@ public class Graphics2D {
 
         }
 
-        public void drawScaledImage(Image img, int x, int y, int w, int h) {
+        static int maxView = -1;
+        static {
             try {
                 // Ensure we have 3D API, otherwise throws exception
                 Class.forName("javax.microedition.m3g.Background");
 
-                int maxView = Integer.MAX_VALUE;
+                maxView = Integer.MAX_VALUE;
                 try {
                     Object o = javax.microedition.m3g.Graphics3D.getProperties().get("maxViewportDimension");
                     maxView = ((Integer) o).intValue();
                 } catch (Throwable e) {
                     // TODO: handle exception
                 }
+            }
+            catch (Throwable e) {
+                //#debug debug
+                Logger.warn(e);
+            }
+        }
 
+        public void drawScaledImage(Image img, int x, int y, int w, int h) {
+            if (maxView > 0) {
                 javax.microedition.m3g.Image2D image2D = new javax.microedition.m3g.Image2D(javax.microedition.m3g.Image2D.RGB, img);
                 javax.microedition.m3g.Background background = new javax.microedition.m3g.Background();
                 background.setColor(0xffffffcc); // set the background color
@@ -226,10 +235,8 @@ public class Graphics2D {
                     iG3D.releaseTarget();
                 }
             }
-            catch (Throwable e) {
-                //#debug debug
-                Logger.warn(e);
-                // failed to scale, will draw none-scalled but centered
+            else {
+                // if we cant scale we will draw none-scalled but centered
                 drawImage(img, x+w/2-img.getWidth()/2, y+h/2-img.getHeight()/2);
             }
         }
