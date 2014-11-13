@@ -422,7 +422,7 @@ public class Graphics {
         canvas.restore();
     }
     
-    public void setColorMarix(ColorMatrix cm) {
+    public void setColorMatrix(ColorMatrix cm) {
         paint.setColorFilter( cm==null?null:new ColorMatrixColorFilter(cm) );
     }
 
