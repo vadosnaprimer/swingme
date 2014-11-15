@@ -712,7 +712,7 @@ public class Graphics {
         }
 
         android.graphics.ColorMatrix colorMatrix;
-        public void setColorMarix(android.graphics.ColorMatrix cm) {
+        public void setColorMatrix(android.graphics.ColorMatrix cm) {
             colorMatrix = cm;
         }
 
