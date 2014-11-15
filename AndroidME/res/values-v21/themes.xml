@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ <style name="Dialog" parent="android:Theme.DeviceDefault.Dialog" />
+ <style name="Dialog.Light" parent="android:Theme.DeviceDefault.Light.Dialog" />
+
+ <style name="Theme" parent="android:Theme.DeviceDefault" />
+ <style name="Theme.Light" parent="android:Theme.DeviceDefault.Light" />
+ <style name="Theme.Light.DarkDialog" parent="Theme.Light" >
+     <item name="android:alertDialogTheme">@style/Dialog</item>
+ </style>
+
+ <style name="NoActionBar" parent="android:Theme.DeviceDefault.NoActionBar" />
+ <style name="NoActionBar.Light" parent="android:Theme.DeviceDefault.Light.NoActionBar" />
+ <style name="NoActionBar.Light.DarkDialog" parent="NoActionBar.Light" >
+     <item name="android:alertDialogTheme">@style/Dialog</item>
+ </style>
+
+ <style name="AndroidME" parent="android:Theme.NoTitleBar" >
+     <item name="android:alertDialogTheme">@style/Dialog</item>
+ </style>
+ <style name="AndroidME.Light" parent="android:Theme.Light.NoTitleBar" >
+     <item name="android:alertDialogTheme">@style/Dialog.Light</item>
+ </style>
+ <style name="AndroidME.Light.DarkDialog" parent="AndroidME.Light" >
+     <item name="android:alertDialogTheme">@style/Dialog</item>
+ </style>
+</resources>
