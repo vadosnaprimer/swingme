@@ -132,7 +132,7 @@ public abstract class MIDlet {
             }
             else if (url.startsWith(PROTOCOL_NOTIFY)) {
                 // there is a bug on android older versions so we use our Url to decode.
-                Map<String, String> options = Url.toHashtable(content.getQuery());
+                Map<String, String> options = Url.toHashtable(content.getEncodedQuery());
                 String title = options.remove("title");
                 String num = options.remove("num");
                 String message = options.remove("message");
