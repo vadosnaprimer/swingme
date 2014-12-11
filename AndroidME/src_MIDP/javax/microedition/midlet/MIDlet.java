@@ -274,6 +274,10 @@ public abstract class MIDlet {
                 AndroidMeActivity.DEFAULT_ACTIVITY==null ||
                 !((AndroidMeActivity)AndroidMeActivity.DEFAULT_ACTIVITY).isForeground() ) {
 
+            if (icon == null) {
+                throw new IllegalArgumentException("icon is null");
+            }
+
             Context ctx = AndroidMeApp.getContext();
             int iconId = ctx.getResources().getIdentifier(icon, "drawable", ctx.getPackageName());
 
