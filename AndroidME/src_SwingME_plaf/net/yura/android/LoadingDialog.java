@@ -65,6 +65,8 @@ public class LoadingDialog extends Activity implements Runnable {
 
         try {
             if ("setup".equals(action)) {
+                if (AndroidMeActivity.DEFAULT_ACTIVITY == null) return;
+
                 setWindowTouchable(false);
                 
                 if (dialog == null) {
