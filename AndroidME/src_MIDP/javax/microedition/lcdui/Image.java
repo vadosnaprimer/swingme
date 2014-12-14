@@ -88,6 +88,7 @@ public class Image {
             }
         }
         else {
+            int available = stream.available();
             int size = Math.max(stream.available(), 8 * 1024);
             BufferedInputStream buffInput = new BufferedInputStream(stream, size);
 
@@ -108,7 +109,7 @@ public class Image {
             }
 
             if (bitmap == null) {
-                throw new IOException("BitmapFactory.decodeStream returned null "+buffInput+" "+options+" "+error);
+                throw new IOException("BitmapFactory.decodeStream returned null " + stream + " available=" + available + " " + options.outMimeType + " " + options.outWidth + "x" + options.outHeight + " " + error);
             }
         }
         return new Image(bitmap);
