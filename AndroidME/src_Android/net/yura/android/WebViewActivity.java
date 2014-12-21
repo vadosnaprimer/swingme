@@ -26,9 +26,8 @@ public class WebViewActivity extends Activity {
         //webview.getSettings().setDomStorageEnabled(true);
 
         setContentView(webview);
-        
-        webview.loadUrl( getIntent().getData().toString() );
 
+        webview.loadUrl( String.valueOf(getIntent().getData()) );
     }
     
     @Override
