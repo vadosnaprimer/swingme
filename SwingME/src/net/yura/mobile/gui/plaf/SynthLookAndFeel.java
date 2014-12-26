@@ -211,10 +211,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                                                 newStyle.addBorder(border, st);
                                             }
                                             catch(Exception ex) {
-                                                    //#mdebug debug
-                                                    System.err.println("failed to load: "+path);
-                                                    ex.printStackTrace();
-                                                    //#enddebug
+                                                    //#debug debug
+                                                    Logger.warn("failed to load: "+path, ex);
                                             }
                                         }
                                      }
@@ -469,10 +467,8 @@ public class SynthLookAndFeel extends LookAndFeel {
                         font = new Font(fname, fstyle, fsize);
                     }
                     catch (Exception ex) {
-                        //#mdebug debug
-                        System.err.println("failed to load font: "+fname+" "+fstyle+" "+fsize);
-                        ex.printStackTrace();
-                        //#enddebug
+                        //#debug debug
+                        Logger.warn("failed to load font: "+fname+" "+fstyle+" "+fsize, ex);
                         font = Font.getDefaultSystemFont();
                     }
                 }
