@@ -294,7 +294,7 @@ public abstract class BasicPlayer implements Player {
             if (playerException instanceof MediaException) {
                 throw (MediaException) playerException;
             }
-            Logger.warn(playerException);
+            Logger.warn("error with " + evt + " " + evtData, playerException);
         }
     }
 

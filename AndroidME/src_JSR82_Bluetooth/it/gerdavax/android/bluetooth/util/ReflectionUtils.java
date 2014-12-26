@@ -38,7 +38,7 @@ public class ReflectionUtils {
 		try {
 			printMethods(Class.forName(myClassName));
 		} catch (Exception e) {
-			Logger.warn(e);
+			Logger.warn("error with " + myClassName, e);
 		}
 
 

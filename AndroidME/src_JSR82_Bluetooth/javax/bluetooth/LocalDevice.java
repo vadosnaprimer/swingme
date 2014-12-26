@@ -78,7 +78,7 @@ public class LocalDevice {
         	    }
         	    catch (Throwable e) {
         	        ex.initCause(e);
-        	        Logger.warn(e);
+        	        Logger.warn(null, e);
                 }
             }
 	    });

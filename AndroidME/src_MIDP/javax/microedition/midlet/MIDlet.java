@@ -67,7 +67,7 @@ public abstract class MIDlet {
                     sleep(2000);
                     System.exit(0);
                 } catch (Throwable e) {
-                    Logger.warn(e);
+                    Logger.warn(null, e);
                 }
             }
         }.start();
@@ -249,7 +249,7 @@ public abstract class MIDlet {
             }
         } catch (Throwable e) {
             //#debug debug
-            Logger.warn(e);
+            Logger.warn("error handling " + url, e);
 
             ConnectionNotFoundException connEx = new ConnectionNotFoundException(url);
             connEx.initCause(e);
@@ -377,7 +377,7 @@ public abstract class MIDlet {
                     CellLocation.requestLocationUpdate();
                 }
                 catch (Throwable e) {
-                    Logger.warn(e);
+                    Logger.warn(null, e);
                 }
             }
         }
@@ -424,7 +424,7 @@ public abstract class MIDlet {
                 }
             }
             catch (Throwable e) {
-                Logger.warn(e);
+                Logger.warn("error in cell changed " + location, e);
             }
         }
 
@@ -450,7 +450,7 @@ public abstract class MIDlet {
         }
         catch (Throwable e) {
             //#debug info
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
     }
 }

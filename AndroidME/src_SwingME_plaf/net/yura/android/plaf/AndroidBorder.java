@@ -157,7 +157,7 @@ public class AndroidBorder implements Border {
         		jumpToCurrentState.invoke(drawable);
         	}
         	catch(Throwable th) {
-        		Logger.warn(th);
+        		Logger.warn("error with " + drawable, th);
         	}
         }
     }

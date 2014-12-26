@@ -14,7 +14,7 @@ public class Scout {
 
 			ReflectionUtils.printMethods(rfcommSocketClass);
 		} catch (Exception e) {
-			Logger.warn(e);
+			Logger.warn("error with" + className, e);
 		}
 	}
 
@@ -29,7 +29,7 @@ public class Scout {
 
 			ReflectionUtils.printMethods(rfcommSocketClass);
 		} catch (Exception e) {
-			Logger.warn(e);
+			Logger.warn(null, e);
 		}
 	}
 
@@ -40,7 +40,7 @@ public class Scout {
 
 			ReflectionUtils.printMethods(databaseClass);
 		} catch (Exception e) {
-			Logger.warn(e);
+			Logger.warn(null, e);
 		}
 	}
 }

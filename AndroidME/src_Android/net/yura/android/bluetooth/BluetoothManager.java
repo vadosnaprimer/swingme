@@ -141,7 +141,7 @@ public class BluetoothManager {
 
                     listener.deviceDiscovered(btDevice, deviceClass);
                 } catch (Exception e) {
-                    Logger.warn(e);
+                    Logger.warn("error with " + deviceAddress, e);
                 }
             }
         }

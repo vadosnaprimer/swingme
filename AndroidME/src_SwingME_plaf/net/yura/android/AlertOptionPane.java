@@ -32,7 +32,7 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
                 }
                 catch(Exception ex) {
                     //#debug debug
-                    Logger.warn(ex);
+                    Logger.warn(null, ex);
 
                     //#debug warn
                     Logger.warn("failed to start OptionPaneActivity, falling back to SwingME OptionPane");
@@ -216,7 +216,7 @@ public class AlertOptionPane extends OptionPane implements OnCancelListener, OnC
         }
         catch (Throwable e) {
             //#debug debug
-            Logger.warn(e);
+            Logger.warn("error firing " + b, e);
         }
     }
 

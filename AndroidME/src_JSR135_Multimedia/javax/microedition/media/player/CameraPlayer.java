@@ -144,7 +144,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
                     snapshotLock.wait();
                 }
                 catch (InterruptedException e) {
-                    Logger.warn(e);
+                    Logger.warn(null, e);
                 }
             }
         }
@@ -335,7 +335,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
                 try {
                     camera.setParameters(params);
                 } catch (Throwable e) {
-                    Logger.warn(e);
+                    Logger.warn("error setting " + params, e);
                 }
             }
 
@@ -343,7 +343,7 @@ public class CameraPlayer extends BasicPlayer implements VideoControl {
                 camera.setPreviewDisplay(holder);
             }
             catch (IOException e) {
-                Logger.warn(e);
+                Logger.warn("error setting " + holder, e);
             }
         }
     }

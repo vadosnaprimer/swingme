@@ -35,7 +35,7 @@ public class BluetoothAdapter {
         try {
             return localBT.isEnabled();
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
 
         return false;
@@ -45,7 +45,7 @@ public class BluetoothAdapter {
         try {
             return localBT.isScanning();
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
 
         return false;
@@ -56,7 +56,7 @@ public class BluetoothAdapter {
             localBT.stopScanning();
             return true;
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
 
         return false;
@@ -66,7 +66,7 @@ public class BluetoothAdapter {
         try {
             return localBT.getName();
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
         return null;
     }
@@ -75,7 +75,7 @@ public class BluetoothAdapter {
         try {
             return localBT.getAddress();
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
         return null;
     }
@@ -84,7 +84,7 @@ public class BluetoothAdapter {
         try {
             localBT.scan();
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
 
         return true;

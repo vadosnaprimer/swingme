@@ -236,7 +236,7 @@ public class SocketConnection implements javax.microedition.io.SocketConnection 
                 updateConnectivity();
             } catch (Throwable e) {
                 //#debug info
-                Logger.warn(e);
+                Logger.warn("error receiving " + context + " " + intent, e);
             }
         }
 

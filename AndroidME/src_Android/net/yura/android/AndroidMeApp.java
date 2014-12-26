@@ -104,7 +104,7 @@ public class AndroidMeApp extends Application {
                 createMIDlet(midletClassName);
             }
         } catch (Throwable e) {
-            Logger.warn(e);
+            Logger.warn("error starting", e);
         }
     }
 
@@ -121,7 +121,7 @@ public class AndroidMeApp extends Application {
                 } catch (Throwable e) {
                     // Don't care
                     //#debug debug
-                    Logger.warn(e);
+                    Logger.warn(null, e);
                 }
             }
             broadcastReceiverList.removeAllElements();
@@ -131,7 +131,7 @@ public class AndroidMeApp extends Application {
             }
         }
         catch (Throwable ex) {
-            Logger.warn(ex);
+            Logger.warn(null, ex);
         }
 
         midlet = null;
@@ -168,7 +168,7 @@ public class AndroidMeApp extends Application {
                 try {
                     lock.wait();
                 } catch (InterruptedException ex) {
-                    Logger.warn(ex);
+                    Logger.warn(null, ex);
                 }
             }
         }
@@ -485,7 +485,7 @@ public class AndroidMeApp extends Application {
                 String[] midletEntry = {midletName, iconName, className};
                 jadMidlets.add(midletEntry);
             } catch (Throwable e) {
-                Logger.warn(e);
+                Logger.warn(null, e);
             }
         }
     }
@@ -513,7 +513,7 @@ public class AndroidMeApp extends Application {
                 }
             } catch (Throwable e) {
                 //#debug warn
-                Logger.warn(e);
+                Logger.warn("error receiving " + context + " " + intent, e);
             }
         }
     }

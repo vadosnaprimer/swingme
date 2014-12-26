@@ -681,7 +681,7 @@ public abstract class Canvas extends Displayable {
             }
             catch (Throwable e) {
                 //#debug info
-                Logger.warn(e);
+                Logger.warn(null, e);
             }
         }
 
@@ -742,7 +742,7 @@ public abstract class Canvas extends Displayable {
                     sizeChanged(Canvas.this.getWidth(), Canvas.this.getHeight());
                 }
                 catch (Throwable e) {
-                    Logger.warn(e);
+                    Logger.warn(null, e);
                 }
 
                 usedWidth = canvasW;
@@ -1011,7 +1011,7 @@ public abstract class Canvas extends Displayable {
                             break;
                     }
                 } catch (Throwable e) {
-                    Logger.warn(e);
+                    Logger.warn("error with " + action + " " + x + "," + y + " " + pointerCount, e);
                 }
             }
 
@@ -1260,7 +1260,7 @@ public abstract class Canvas extends Displayable {
                 }
             } catch (Throwable e) {
                 //#debug debug
-                Logger.warn(e);
+                Logger.warn("error with " + hasWindowFocus, e);
             }
         }
 

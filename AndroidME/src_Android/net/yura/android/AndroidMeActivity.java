@@ -235,7 +235,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
                 System.out.println("Waiting for view...");
                 Thread.sleep(100);
             } catch (Exception ex) {
-                Logger.warn(ex);
+                Logger.warn(null, ex);
             }
         }
     }
@@ -251,7 +251,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
                     AndroidMeApp.createMIDlet(midletClassName);
                     startMIDlet();
                 } catch (Throwable ex) {
-                    Logger.warn(ex);
+                    Logger.warn("error starting " + midletClassName, ex);
                 }
             }
         }.start();
@@ -365,7 +365,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
             midlet.onResult(requestCode, resultCode, result);
         } catch (Throwable e) {
             //#debug info
-            Logger.warn(e);
+            Logger.warn("error handling " + requestCode + " " + resultCode + " " + data, e);
         }
     }
 
@@ -398,7 +398,7 @@ public class AndroidMeActivity extends Activity implements OnItemClickListener {
         }
         catch(Throwable th) {
         	//#debug debug
-        	Logger.warn(th);
+        	Logger.warn("error with config change " + newConfig, th);
         }
     }
 }

@@ -24,7 +24,7 @@ public class FileSystemRegistry {
                 String path = root.getCanonicalPath();
                 rootsArray.add(path);
             } catch (Exception e) {
-                Logger.warn(e);
+                Logger.warn("error with " + root, e);
             }
         }
         return rootsArray.elements();

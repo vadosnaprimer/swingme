@@ -104,7 +104,7 @@ public class LoadingDialog extends Activity implements Runnable {
         }
         catch (Throwable e) {
             //#debug debug
-            Logger.warn(e);
+            Logger.warn("error with " + loadingMessage, e);
         }
     }
 
@@ -120,7 +120,7 @@ public class LoadingDialog extends Activity implements Runnable {
             AndroidMeActivity.DEFAULT_ACTIVITY.getWindow().setFlags(flag, mask);
         } catch (Throwable e) {
            //#debug debug
-            Logger.warn(e);
+            Logger.warn("cant set " + touchable, e);
         }
     }
 }

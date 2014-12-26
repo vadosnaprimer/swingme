@@ -142,10 +142,8 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
                     android2swing();
                 }
                 catch (Exception ex) {
-                    //#mdebug debug
-                    Logger.warn("[NativeAndroidTextField] error in onTextChanged "+editText+" PLEASE SHOW YURA!!!");
-                    Logger.warn(ex);
-                    //#enddebug
+                    //#debug debug
+                    Logger.warn("[NativeAndroidTextField] error in onTextChanged "+editText+" PLEASE SHOW YURA!!!", ex);
                 }
 
             }
@@ -305,7 +303,7 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
                         }
                         catch(Throwable th) {
                             //#debug debug
-                            Logger.warn(th);
+                            Logger.warn("error with " + et, th);
                         }
                     }
                 });
@@ -559,10 +557,8 @@ public class NativeAndroidTextField implements InputHelper,ChangeListener {
 	            }
         	}
         	catch (Throwable th) {
-        		//#mdebug debug
-        		Logger.warn("Error in onSelectionChanged selStart="+selStart+" selEnd="+selEnd+" textField: >"+textField+"< >"+this+"< >"+getText()+"< PLEASE SHOW YURA!!!");
-        		Logger.warn(th);
-        		//#enddebug
+        		//#debug debug
+        		Logger.warn("Error in onSelectionChanged selStart="+selStart+" selEnd="+selEnd+" textField: >"+textField+"< >"+this+"< >"+getText()+"< PLEASE SHOW YURA!!!", th);
         	}
         }
 

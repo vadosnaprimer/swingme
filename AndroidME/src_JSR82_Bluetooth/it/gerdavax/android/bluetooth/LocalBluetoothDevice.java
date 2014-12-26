@@ -269,7 +269,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 					createBond(address);
 				}
 			} catch (Exception e) {
-				Logger.warn(e);
+				Logger.warn("error with " + address, e);
 			}
 		}
 
@@ -303,7 +303,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 						return false;
 				}
 			} catch (Exception e) {
-				Logger.warn(e);
+				Logger.warn("error with " + address, e);
 			}
 			return false;
 		}
@@ -338,7 +338,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				try {
 					sockets.get(keys.nextElement()).closeSocket();
 				} catch (Exception e) {
-					Logger.warn(e);
+					Logger.warn(null, e);
 				}
 			}
 		}
@@ -418,7 +418,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				try {
 					closeInputStream();
 				} catch (Exception e) {
-					Logger.warn(e);
+					Logger.warn(null, e);
 				}
 
 				this.target.close();
@@ -851,7 +851,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 				Log.d(TAG_RECEIVER, "Unregistering");
 				context.unregisterReceiver(this);
 			} catch (Exception e) {
-				Logger.warn(e);
+				Logger.warn(null, e);
 			} finally {
 				registered = false;
 			}
@@ -876,7 +876,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 		// Log.d(TAG, "getLocalDevice");
 		if (_localDevice == null) {
 			Log.d(TAG, "_localDevice is null");
-			bluetoothService = context.getSystemService("bluetooth");
+			bluetoothService = context.getSystemService(Context.BLUETOOTH_SERVICE);
 			bluetoothServiceClass = bluetoothService.getClass();
 
 			collectPlatformConstants();
@@ -1209,7 +1209,7 @@ public final class LocalBluetoothDevice implements BluetoothDevice {
 			PLATFORM_SCAN_MODE_CONNECTABLE = ReflectionUtils.readStaticConstantValue(bluetoothServiceClass, "SCAN_MODE_CONNECTABLE");
 			PLATFORM_SCAN_MODE_CONNECTABLE_DISCOVERABLE = ReflectionUtils.readStaticConstantValue(bluetoothServiceClass, "SCAN_MODE_CONNECTABLE_DISCOVERABLE");
 		} catch (Exception e) {
-			Logger.warn(e);
+			Logger.warn(null, e);
 		}
 	}
 

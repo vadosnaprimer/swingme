@@ -71,7 +71,7 @@ public class ContactDao {
             try {
                 Contacts.People.addToMyContactsGroup(this.contentResolver, id);
             } catch (Throwable e) {
-                Logger.warn(e);
+                Logger.warn("error with " + id, e);
             }
         } else {
             long id = contact.getId();

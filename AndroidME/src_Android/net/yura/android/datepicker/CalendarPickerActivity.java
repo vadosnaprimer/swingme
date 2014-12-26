@@ -34,7 +34,7 @@ public class CalendarPickerActivity extends Activity {
     		showDialog(0);
     	} catch (Throwable ex) {
     	    //#debug warn
-            Logger.warn(ex);
+            Logger.warn(null, ex);
 
             finish();
         }

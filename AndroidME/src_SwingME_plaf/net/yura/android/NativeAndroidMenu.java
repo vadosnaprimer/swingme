@@ -41,7 +41,7 @@ public class NativeAndroidMenu implements MenuSystem {
         }
         catch (Throwable e) {
           //#debug warn
-            Logger.warn(e);
+            Logger.warn(null, e);
         }
         return true; // default to true for old devices
     }
@@ -61,7 +61,7 @@ public class NativeAndroidMenu implements MenuSystem {
         }
 	catch (Throwable e) {
 	  //#debug warn
-	    Logger.warn(e);
+	    Logger.warn(null, e);
 	}
 	return true;
     }
@@ -92,7 +92,7 @@ public class NativeAndroidMenu implements MenuSystem {
 								fireActionPerformed(menuItem,submenu);
 							}
 							catch (Throwable th) {
-								Logger.warn(th);
+								Logger.warn("error with " + menuItem + " " + submenu, th);
 							}
 							return true;
 						}
