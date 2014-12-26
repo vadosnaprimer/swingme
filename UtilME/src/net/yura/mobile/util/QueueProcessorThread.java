@@ -80,7 +80,7 @@ public class QueueProcessorThread implements Runnable {
                                 wait();
                             }
                             catch (InterruptedException ex) {
-                                Logger.info(ex);
+                                Logger.info(null, ex);
                                 // TODO do something!!!!
                             }
                         }
@@ -103,18 +103,14 @@ public class QueueProcessorThread implements Runnable {
                     }
                 }
                 catch (Exception ex) {
-                    //#mdebug warn
-                    Logger.warn("[QueueProcessorThread-"+Thread.currentThread().getName()+"] error processing "+object);
-                    Logger.warn(ex);
-                    //#enddebug
+                    //#debug warn
+                    Logger.warn("[QueueProcessorThread-" + Thread.currentThread().getName() + "] error processing "+object, ex);
                 }
             }
         }
         catch(Throwable t) {
-            //#mdebug error
-            Logger.error("[QueueProcessorThread-"+Thread.currentThread().getName()+"] fatal error: "+t.toString());
-            Logger.error(t);
-            //#enddebug
+            //#debug error
+            Logger.error("[QueueProcessorThread-" + Thread.currentThread().getName() + "] fatal error", t);
         }
     }
 

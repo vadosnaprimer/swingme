@@ -40,7 +40,7 @@ public class Timer extends Thread {
               }
               catch (InterruptedException e) {
                   //#debug info
-                  Logger.info(e);
+                  Logger.info(null, e);
               }
 
               if (cancelled) return;
@@ -52,8 +52,7 @@ public class Timer extends Thread {
         }
         catch (Throwable t) {
           //#debug warn
-          Logger.warn("error in ("+id+") timer: "+t.toString());
-          Logger.error(t);
+          Logger.warn("error in (" + id + ") timer", t);
         }
 
     }

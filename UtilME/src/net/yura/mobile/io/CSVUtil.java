@@ -94,10 +94,10 @@ public class CSVUtil {
 		finally {
 
 			try { if (inputStreamTxt!=null) inputStreamTxt.close(); }
-			catch(IOException ex) { Logger.info(ex); }
+			catch(IOException ex) { Logger.info(null, ex); }
 
 			try {if (inputStream!=null)  inputStream.close(); }
-			catch(IOException ex) { Logger.info(ex); }
+			catch(IOException ex) { Logger.info(null, ex); }
 		}
 
 	}
@@ -154,10 +154,10 @@ public class CSVUtil {
             finally {
 
                 try { if (writer!=null) writer.close(); }
-                catch(IOException ex) { Logger.info(ex); }
+                catch(IOException ex) { Logger.info(null, ex); }
 
                 try { if (out!=null) out.close(); }
-                catch(IOException ex) { Logger.info(ex); }
+                catch(IOException ex) { Logger.info(null, ex); }
 	    }
 	}
 

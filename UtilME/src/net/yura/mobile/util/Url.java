@@ -207,11 +207,10 @@ public class Url {
             getPostString(map,writer);
             return buff.toString();
 */
-            
         }
         catch (IOException ex) {
             //#debug debug
-            Logger.warn(ex);
+            Logger.warn("error with " + map, ex);
             throw new RuntimeException( ex.toString() );
         }
     }
@@ -257,7 +256,7 @@ public class Url {
         }
         catch(IOException ex) {
             //#debug debug
-            Logger.warn(ex);
+            Logger.warn("error encoding " + s, ex);
             throw new RuntimeException( ex.toString() );
         }
     }

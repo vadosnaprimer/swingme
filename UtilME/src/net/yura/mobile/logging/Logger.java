@@ -68,7 +68,7 @@ public class Logger {
      */
     //#mdebug debug
     public static void debug(String message) {
-      if(level<=DEBUG) logger.log(message, DEBUG);
+      if (level <= DEBUG) logger.log(message, DEBUG);
     }
     //#enddebug
 
@@ -78,9 +78,9 @@ public class Logger {
      * should work at the info level most of the time to avoid all the output.
      * Expected exceptions can be reported on the debug level
      */
-    public static void debug(Throwable exception) {
+    public static void debug(String error, Throwable exception) {
       //#debug debug
-      if(level<=DEBUG) logger.log(exception, DEBUG);
+      if (level <= DEBUG) logger.log(error, exception, DEBUG);
     }
 
     /**
@@ -91,7 +91,7 @@ public class Logger {
      */
     //#mdebug info
     public static void info(String message) {
-      if(level<=INFO) logger.log(message, INFO);
+      if (level <= INFO) logger.log(message, INFO);
     }
     //#enddebug
 
@@ -101,9 +101,9 @@ public class Logger {
      * output should use the debug level. Unexpected exceptions without
      * implications can be reported on the info level.
      */
-    public static void info(Throwable exception) {
+    public static void info(String error, Throwable exception) {
       //#debug info
-      if(level<=INFO) logger.log(exception, INFO);
+      if (level <= INFO) logger.log(error, exception, INFO);
     }
 
     /**
@@ -112,7 +112,7 @@ public class Logger {
      */
     //#mdebug warn
     public static void warn(String message) {
-      if(level<=WARN) logger.log(message, WARN);
+      if (level <= WARN) logger.log(message, WARN);
     }
     //#enddebug
 
@@ -121,9 +121,9 @@ public class Logger {
      * with implications and errors can be reported on the warn level. Warn
      * logging can also and should be used for assertions.
      */
-    public static void warn(Throwable exception) {
+    public static void warn(String error, Throwable exception) {
       //#debug warn
-      if(level<=WARN) logger.log(exception, WARN);
+      if (level <= WARN) logger.log(error, exception, WARN);
     }
 
     /**
@@ -133,7 +133,7 @@ public class Logger {
      */
     //#mdebug warn
     public static void warn(boolean assertion) {
-      if(level<=WARN && assertion) throw new IllegalArgumentException("Assertion failed");
+      if (level <= WARN && assertion) throw new IllegalArgumentException("Assertion failed");
     }
     //#enddebug
 
@@ -145,7 +145,7 @@ public class Logger {
     //#mdebug error
     public static void error(String message) {
       //#debug error
-      if(level<=ERROR) logger.log(message, ERROR);
+      if (level <= ERROR) logger.log(message, ERROR);
      }
     //#enddebug
 
@@ -154,9 +154,9 @@ public class Logger {
      * even on a release build. Throwable try catch blocks surrounding code entry
      * points should report on the error level.
      */
-    public static void error(Throwable throwable) {
+    public static void error(String error, Throwable throwable) {
       //#debug error
-      if(level<=ERROR) logger.log(throwable, ERROR);
+      if (level <= ERROR) logger.log(error, throwable, ERROR);
      }
 
     /**
@@ -185,9 +185,9 @@ public class Logger {
       out.println(toString(level) + message);
     }
 
-    protected synchronized void log(Throwable throwable, int level)
+    protected synchronized void log(String error, Throwable throwable, int level)
     {
-      System.err.println(toString(level) +" "+ throwable);
+      System.err.println(toString(level) + (error == null ? "" : " " + error) + " " + throwable);
       throwable.printStackTrace();
     }
 }
