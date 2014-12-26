@@ -71,10 +71,8 @@ public class BlackBerryThumbLoader implements ImageUtil.ThumbnailLoader {
 */
             }
             catch (Exception ex) {
-                //#mdebug debug
-                System.err.println("error "+ex+" "+img+" "+(img!=null?img.length:-1));
-                Logger.warn(ex);
-                //#enddebug
+                //#debug debug
+                Logger.warn("error " + img + " " + (img != null ? img.length : -1), ex);
             }
 
 

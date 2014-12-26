@@ -383,7 +383,7 @@ public abstract class TextComponent extends Component implements ActionListener,
 			return true;
 		}
                 else if (keyEvent.isDownKey(KeyEvent.KEY_EDIT)) { // Ctrl is pressed
-                    if (keyEvent.isDownKey(22)) {// TODO no idea why 22
+                    if (keyEvent.isDownKey(22) || keyEvent.isDownKey(118)) { // V is the 22nd char of the alphabet
                     	paste();
                     }
                     // TODO support other things like CUT and COPY and UNDO

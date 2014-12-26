@@ -795,7 +795,7 @@ public class XULLoader {
             return new Icon(value);
         }
         catch (Exception ex) {
-            Logger.warn(ex);
+            Logger.warn("cant load " + value, ex);
             return null;
         }
     }

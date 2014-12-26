@@ -211,7 +211,7 @@ public class Graphics2D {
             }
             catch (Throwable e) {
                 //#debug debug
-                Logger.warn(e);
+                Logger.warn("please use fake 3D api for scaled image drawing", e);
             }
         }
 

@@ -312,7 +312,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
             Thread.sleep(0);
         }
         catch (InterruptedException ex) {
-          Logger.info(ex);
+          Logger.info(null, ex);
         }
     }
 
@@ -408,9 +408,7 @@ public class FileChooser extends Frame implements Runnable, ActionListener {
       }
       catch(Throwable t) {
             //#debug warn
-            Logger.warn("faital error in FileChooser thread");
-            //#debug error
-            Logger.error(t);
+            Logger.warn("faital error in FileChooser thread", t);
       }
     }
 

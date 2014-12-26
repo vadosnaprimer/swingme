@@ -25,7 +25,7 @@ public class ProtoFileUtil extends ProtoUtil {
                 return (int)file.fileSize();
             }
             catch(Exception ex) {
-                Logger.warn(ex);
+                Logger.warn("cant get size " + obj, ex);
                 return 0;
             }
         }

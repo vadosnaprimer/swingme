@@ -84,7 +84,7 @@ public class DesktopLogger extends Logger {
         }
     }
     catch(Throwable th) {
-        Logger.error(th);
+        Logger.error("cant log " + message, th);
     }
   }
 }

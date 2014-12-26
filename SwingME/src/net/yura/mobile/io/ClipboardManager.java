@@ -78,7 +78,7 @@ public class ClipboardManager implements ServiceLink.TaskHandler {
                 midlet.platformRequest("clipboard://put/"+text);
             }
             catch(Exception ex) {
-                Logger.warn(ex);
+                Logger.warn("cant put " + text, ex);
             }
         }
     }

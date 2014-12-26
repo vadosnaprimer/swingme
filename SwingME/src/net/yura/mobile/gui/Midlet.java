@@ -234,7 +234,7 @@ public abstract class Midlet extends MIDlet {
             platformRequest(url);
         }
         catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn("cant make request " + url + " " + arg, e);
             throw new RuntimeException(e.toString());
         }
     }
@@ -251,10 +251,8 @@ public abstract class Midlet extends MIDlet {
             getMidlet().platformRequest("tel:" + number);
         }
         catch (Exception e) {
-            //#mdebug warn
-            Logger.warn("can not call: " + number + " " + e.toString());
-            Logger.warn(e);
-            //#enddebug
+            //#debug warn
+            Logger.warn("can not call: " + number, e);
         }
 
     }
@@ -268,10 +266,8 @@ public abstract class Midlet extends MIDlet {
             }
         }
         catch (Exception e) {
-            //#mdebug warn
-            Logger.warn("can not open url: " + url + " " + e.toString());
-            Logger.warn(e);
-            //#enddebug
+            //#debug warn
+            Logger.warn("can not open url: " + url, e);
         }
 
     }
@@ -281,10 +277,8 @@ public abstract class Midlet extends MIDlet {
             Display.getDisplay(getMidlet()).vibrate(duration);
         }
         catch (Exception e) {
-            //#mdebug warn
-            Logger.warn("can not vibration " + e.toString());
-            Logger.warn(e);
-            //#enddebug
+            //#debug warn
+            Logger.warn("can not vibration", e);
         }
     }
 
@@ -297,7 +291,7 @@ public abstract class Midlet extends MIDlet {
         }
         catch (Exception ex) {
             // as you called this yourself, you should not be throwing here
-            Logger.warn(ex);
+            Logger.warn(null, ex);
             throw new RuntimeException();
         }
     }
@@ -319,7 +313,7 @@ public abstract class Midlet extends MIDlet {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn(th);
+            Logger.warn("cant createImage " + name, th);
         }
 
         try {

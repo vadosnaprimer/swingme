@@ -123,8 +123,8 @@ public class Font {
                     return getFont(is, characterImage, colors);
 		}
                 catch (IOException ex) {
-                    Logger.warn(ex);
-                    throw new RuntimeException();
+                    Logger.warn("cant get font " + descriptor, ex);
+                    throw new RuntimeException("cant get font " + descriptor);
 		}
 	}
 
@@ -219,7 +219,7 @@ public class Font {
                             //Logger.debug("FONT: Kerning for "+first+"-"+second+" = "+amount);
                         } catch (EOFException e) {
                             //#debug debug
-                            Logger.debug(e);
+                            Logger.debug(null, e);
                         }
                     }
             }
@@ -409,7 +409,7 @@ public class Font {
                         return f;
 		}
 		catch (IOException ex) {
-                    Logger.warn(ex);
+                    Logger.warn("unable to load font: " + name, ex);
                     throw new RuntimeException("unable to load font: "+name);
 		}
 

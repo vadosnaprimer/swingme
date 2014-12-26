@@ -75,10 +75,8 @@ public class RMSBackup extends QueueProcessorThread {
                         // we can not read this record, lets remove it from the store!
                         recordStore.deleteRecord(id);
 
-                        //#mdebug warn
-                        Logger.warn("Error loading RMS: "+rmsName+" record id="+id);
-                        Logger.warn(ex);
-                        //#enddebug
+                        //#debug warn
+                        Logger.warn("Error loading RMS: " + rmsName + " record id=" + id, ex);
                     }
                 }
 
@@ -105,7 +103,7 @@ public class RMSBackup extends QueueProcessorThread {
                 start();
             }
             catch(IllegalThreadStateException ex) {
-              Logger.info(ex);
+              Logger.info(null, ex);
             } // TODO, find a better way
         }
     }

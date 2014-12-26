@@ -24,10 +24,8 @@ public class RMSUtil {
                     RecordStore.deleteRecordStore(name);
                 }
                 catch (Exception ex) {
-                    //#mdebug info
-                    Logger.info("can not del RMS, this should not happen");
-                    Logger.warn(ex);
-                    //#enddebug
+                    //#debug info
+                    Logger.info("can not del RMS, this should not happen", ex);
                 }
 
 		// Open the record store.

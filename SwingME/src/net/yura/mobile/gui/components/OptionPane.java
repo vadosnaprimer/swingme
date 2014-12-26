@@ -395,7 +395,7 @@ public class OptionPane extends Frame implements Runnable, ActionListener {
             }
         }
         catch(Throwable t) {
-          Logger.error(t);
+          Logger.error(null, t);
         }
     }
 

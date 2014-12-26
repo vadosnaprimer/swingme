@@ -28,7 +28,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
             return true;
           }
         } catch (IOException ex) {
-          Logger.warn(ex);
+          Logger.warn("cant start " + accessCode, ex);
         }
         return false;
     }
@@ -43,7 +43,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
             }
         }
         catch (Throwable t) {
-            Logger.error(t);
+            Logger.error("error " + device + " " + deviceClass, t);
         }
     }
     
@@ -55,7 +55,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
             }
         }
         catch (Throwable t) {
-            Logger.error(t);
+            Logger.error("error" + transId, t);
         }
     }
     public void inquiryCompleted(int discoveryType) {
@@ -63,7 +63,7 @@ public abstract class BTDiscovery implements DiscoveryListener {
             handleInquiryCompleted();
         }
         catch (Throwable t) {
-            Logger.error(t);
+            Logger.error("error" + discoveryType, t);
         }
     }
     public void serviceSearchCompleted(int transId, int responseCode) {

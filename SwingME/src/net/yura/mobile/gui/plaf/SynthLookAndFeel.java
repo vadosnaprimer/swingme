@@ -516,7 +516,7 @@ public class SynthLookAndFeel extends LookAndFeel {
                                     fsize = -Integer.parseInt(fontSize);
                             }
                             catch(Exception ex) {
-                                    Logger.warn(ex);
+                                    Logger.warn("error with " + fontSize, ex);
                             }
                     }
             }

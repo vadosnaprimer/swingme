@@ -100,13 +100,14 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler,Runnabl
 
         private int getPropertyIndex(String[] properties) {
             for (int index=0;index < properties.length;index++) {
+                String name = properties[index];
                 try {
-                    String property = System.getProperty(properties[index]);
+                    String property = System.getProperty(name);
                     if ((property != null) && (property.length() > 0))
                         return index;
                 }
                 catch (Exception t) {
-                  Logger.warn(t);
+                  Logger.warn("cant get " + name, t);
                 }
             }
             return -1;
@@ -166,7 +167,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler,Runnabl
                 }
             }
             catch (Exception t) {
-                Logger.warn(t);
+                Logger.warn(null, t);
             }
             return null;
         }
@@ -209,7 +210,7 @@ public abstract class LocationMonitor implements ServiceLink.TaskHandler,Runnabl
             }
           }
           catch(Throwable t) {
-            Logger.error(t);
+            Logger.error(null, t);
           }
     }
 

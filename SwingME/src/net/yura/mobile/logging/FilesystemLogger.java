@@ -41,32 +41,29 @@ public class FilesystemLogger extends Logger {
       }
       log.println(toString(level) + message);
     } catch (IOException e) {
-      logger.log(e, WARN);
+      logger.log(null, e, WARN);
     }
   }
 
-  protected synchronized void log(Throwable throwable, int level) {
-    logger.log(throwable, level);
+  protected synchronized void log(String error, Throwable throwable, int level) {
+    logger.log(error, throwable, level);
     try {
       if (log == null) {
         open();
       }
       String stacktrace = CallStack.getStacktrace();
-      log.print(toString(level) + (stacktrace.length()==0 ? throwable.toString() + "\n" : stacktrace));
+      log.print(toString(level) + (error == null ? "" : error + " ") + (stacktrace.length() == 0 ? throwable.toString() + "\n" : stacktrace));
     } catch (IOException e) {
-      logger.log(e, WARN);
+      logger.log(null, e, WARN);
     }
   }
 
-  public static void close()
-  {
-    try
-    {
+  public static void close() {
+    try {
       file.close();
     }
-    catch(IOException e)
-    {
-      Logger.warn(e);
+    catch(IOException e) {
+      Logger.warn(null, e);
     }
   }
 }

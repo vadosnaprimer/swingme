@@ -117,10 +117,8 @@ public class ImageUtil {
             return Image.createImage(is);
         }
         catch (Throwable err) {
-          //#mdebug warn
-          Logger.warn("failed to load image for: "+filename+" "+err.toString());
-          Logger.warn(err);
-          //#enddebug
+          //#debug warn
+          Logger.warn("failed to load image for: " + filename, err);
           return null;
         }
         finally {
@@ -151,10 +149,8 @@ public class ImageUtil {
             return getThumbFromFile(dis);
         }
         catch (Throwable err) {
-            //#mdebug warn
-            Logger.warn("failed to load thumb for: "+fileName+" "+err.toString());
-            Logger.warn(err);
-            //#enddebug
+            //#debug warn
+            Logger.warn("failed to load thumb for: " + fileName, err);
             return null;
         }
         finally {
@@ -229,7 +225,7 @@ public class ImageUtil {
       }
     }
     catch (Throwable e) {
-      Logger.error(e);
+      Logger.error(null, e);
     }
 
     return image;
@@ -366,7 +362,7 @@ public class ImageUtil {
        return getScaledImage(Image.createImage (is),cW,cH);
     }
     catch(Exception ex){
-      Logger.warn(ex);
+      Logger.warn(null, ex);
     }
     return null;
   }
@@ -385,13 +381,14 @@ public class ImageUtil {
       if ( dispImage == null ) {
         return Image.createImage ( encodedImage, 0, encodedImage.length );
       }
-    } catch( Exception e ) {
+    }
+    catch(Exception e) {
       System.gc ();
       try {
         return getJPEGthumb ( encodedImage );
       }
-      catch( Exception e2 ) {
-        Logger.warn(e2);
+      catch(Exception e2) {
+        Logger.warn(null, e2);
       }
     }
     return null;
@@ -501,8 +498,8 @@ public class ImageUtil {
                 saveImage(image, outputStream, "png");
             }
             catch(Exception ex2) {
-                Logger.warn(ex);
-                Logger.warn(ex2);
+                Logger.warn(null, ex);
+                Logger.warn(null, ex2);
             }
         }
         

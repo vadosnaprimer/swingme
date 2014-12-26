@@ -72,7 +72,7 @@ public class XHTMLLoader {
             endInlineSection();
         }
         catch(Exception ex) {
-            Logger.warn(ex);
+            Logger.warn("cant load " + resultsStream + " " + actionL, ex);
         }
     }
 
@@ -85,7 +85,7 @@ public class XHTMLLoader {
             read(parser);
         }
         catch(Exception ex) {
-            Logger.warn(ex);
+            Logger.warn("cant set " + pane + " " + string, ex);
         }
     }
 

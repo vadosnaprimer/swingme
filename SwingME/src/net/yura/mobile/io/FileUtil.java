@@ -51,7 +51,7 @@ public class FileUtil {
             }
             catch(IOException ioe) {
             	//#debug info
-                Logger.info(ioe);
+                Logger.info("cant close " + fc, ioe);
             }
         }
     }
@@ -101,10 +101,8 @@ public class FileUtil {
 
         }
         catch(Exception ex) {
-          //#mdebug debug
-          Logger.warn("error moving dir: "+ex.toString());
-          Logger.warn(ex);
-          //#enddebug
+          //#debug debug
+          Logger.warn("error moving dir", ex);
         }
 
         return files;
@@ -227,7 +225,7 @@ public class FileUtil {
             }
         }
         catch(Exception e) {
-          Logger.warn(e);
+          Logger.warn("cant get size " + fileName, e);
         }
         return fileSize;
     }
@@ -249,7 +247,7 @@ public class FileUtil {
             }
         }
         catch(Exception e) {
-          Logger.warn(e);
+          Logger.warn("error " + fileName, e);
         }
 
         //Close the file connection
@@ -277,7 +275,7 @@ public class FileUtil {
             return false;
         }
         catch (Exception e) {
-          Logger.info(e);
+          Logger.info("error " + filePath, e);
           return false;
         }
     }
@@ -304,7 +302,7 @@ public class FileUtil {
             }
         }
         catch(Exception e) {
-          Logger.warn(e);
+          Logger.warn("cant make " + dirName, e);
         }
         return false;
     }
@@ -328,7 +326,7 @@ public class FileUtil {
             en = fc.list();
         }
         catch (Exception ex) {
-          Logger.info(ex);
+          Logger.info("error " + dir, ex);
         }
 
         return en;
@@ -353,7 +351,7 @@ public class FileUtil {
             }
         }
         catch(Exception e) {
-          Logger.warn(e);
+          Logger.warn("cant del " + path, e);
         }
     }
 
@@ -391,14 +389,14 @@ public class FileUtil {
             }
         }
         catch(Exception e) {
-          Logger.warn(e);
+          Logger.warn("cant read " + fileName + " " + startPos + " " + length, e);
         }
         return null;
     }
 
     /**
      * Write the data specified in a array out to the native filesystem.
-     * @param fileName full file name
+     * @param fullname full file name
      * @param append indicates whether to append or create a new file
      * @param fileStartPos start position of file
      * @param data byte[]
@@ -412,7 +410,7 @@ public class FileUtil {
 
     /**
      * Write the data specified in a array out to the native filesystem.
-     * @param fileName full file name
+     * @param fullname full file name
      * @param append indicates whether to append or create a new file
      * @param deleteExisting indicates whether to delete the existing file if there is one
      * @param fileStartPos start position of file
@@ -458,7 +456,7 @@ public class FileUtil {
         catch(Exception e) {
             dstname = null;
 
-          Logger.warn(e);
+          Logger.warn("error " + fullname + " " + append + " " + deleteExisting + " " + fileStartPos + " " + dataStartPos + " " + dataLength, e);
         }
         finally {
             close(os);
@@ -496,11 +494,11 @@ public class FileUtil {
      * copy file to other dir
      * sometimes Attachment.fileName did not equal local file name
      * @param srcfileName original filename
-     * @param srcFullPath src path
+     * @param srcFullName src path
      * @param desFullPath target dir name
      * @return if success return true;
      */
-    public static boolean copyFile(String attachmentName,String srcFullName,String desFullPath) {
+    public static boolean copyFile(String srcfileName,String srcFullName,String desFullPath) {
         int COPY_BLOCK_SIZE=10*1024;
 
         FileConnection dst = null;
@@ -509,11 +507,11 @@ public class FileUtil {
         OutputStream dos = null;
         boolean writesucc = false;
         try {
-            src=(FileConnection)(Connector.open(srcFullName,Connector.READ_WRITE));
+            src = (FileConnection) Connector.open(srcFullName, Connector.READ_WRITE);
             if( src != null && src.exists() ) {
-                dst=(FileConnection)(Connector.open(desFullPath + attachmentName,Connector.READ_WRITE));
+                dst = (FileConnection) Connector.open(desFullPath + srcfileName, Connector.READ_WRITE);
                 if( dst.exists() ) {
-                    dst = findAvailableFile(desFullPath + attachmentName);
+                    dst = findAvailableFile(desFullPath + srcfileName);
                 }
                 else {
                     dst.create();
@@ -533,7 +531,7 @@ public class FileUtil {
         catch (Exception e) {
             writesucc = false;
 
-          Logger.warn(e);
+          Logger.warn("copy error " + srcfileName + " " + srcFullName + " " + desFullPath, e);
         }
         finally {
             close(dis);
@@ -554,7 +552,7 @@ public class FileUtil {
             FileUtil.writeFile(destination, false, true, 0, sourceData, 0, sourceData.length);
         }
         catch(Exception e) {
-          Logger.warn(e);
+          Logger.warn("copy error " + source + " " + destination, e);
         }
     }
 

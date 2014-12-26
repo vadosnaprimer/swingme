@@ -252,8 +252,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn("Error in initialize: " + th.toString());
-            Logger.error(th);
+            Logger.warn("Error in initialize", th);
         }
 
         // Set thread to maximum priority (smother animations and text input)
@@ -279,7 +278,7 @@ public class DesktopPane extends Canvas implements Runnable {
                         uiLock.wait();
                     }
                     catch (InterruptedException e) {
-                        Logger.info(e);
+                        Logger.info(null, e);
                     }
                     continue; // Go to while (true) again
                 }
@@ -297,8 +296,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn("Error in animation: " + th.toString());
-            Logger.error(th);
+            Logger.warn("Error in animation", th);
         }
       }
     }
@@ -748,8 +746,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn("Error in paint: " + th.toString());
-            Logger.error(th);
+            Logger.warn("Error in paint", th);
         }
 
     }
@@ -1335,8 +1332,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn("Error in KeyEvent: "+keyevent+" "+th.toString());
-            Logger.error(th);
+            Logger.warn("Error in KeyEvent: " + keyevent, th);
         }
 
     }
@@ -1508,8 +1504,7 @@ public class DesktopPane extends Canvas implements Runnable {
         }
         catch (Throwable th) {
             //#debug warn
-            Logger.warn("Exception in pointerEvent: " + th.toString());
-            Logger.error(th);
+            Logger.warn("Exception in pointerEvent", th);
         }
 
     }

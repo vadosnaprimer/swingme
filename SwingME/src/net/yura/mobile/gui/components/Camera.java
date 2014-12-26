@@ -297,11 +297,13 @@ public class Camera extends Component implements Runnable, PlayerListener {
                     // picture, to show the security prompt
                     if (cameraPermission < 0) {
                         photoData = null;
-                    } else {
+                    }
+                    else {
                         try {
                             actionListener.actionPerformed(actionCommand);
-                        } catch (Exception e) {
-                          Logger.warn(e);
+                        }
+                        catch (Exception e) {
+                          Logger.warn("error calling " + actionListener + " " + actionCommand, e);
                         }
                     }
 
@@ -311,7 +313,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             }
         }
         catch (Throwable e) {
-            Logger.error(e);
+            Logger.error(null, e);
         }
         finally {
 
@@ -319,7 +321,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
                 closePlayer();
             }
             catch (Exception e) {
-                Logger.warn(e);
+                Logger.warn(null, e);
             }
             //#debug debug
             Logger.debug("Camera Thread GONE.");
@@ -352,7 +354,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             Logger.debug("getSnapshot: Trying " + encoding);
             data = videoCtrl.getSnapshot(encoding);
         } catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn("error encoding " + encoding, e);
         }
 
         if (data != null) {
@@ -545,7 +547,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             }
             catch (MediaException mex) {
                 //#debug debug
-                Logger.debug(mex);
+                Logger.debug("cant set size " + dispW + "," + dispH, mex);
                 //resizing is not supported or the operation failed due to hardware or software limitations.
             }
 
@@ -584,7 +586,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
             }
         }
         catch (Exception e) {
-            Logger.warn(e);
+            Logger.warn("error " + encoding + " " + prefix, e);
         }
         return 0;
     }
@@ -609,7 +611,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         }
         catch (RecordStoreException ex) {
             // this is just a best effort to persist dimensions to rms
-            Logger.info(ex);
+            Logger.info("error setting " + encodingString, ex);
         }
     }
 
@@ -624,7 +626,7 @@ public class Camera extends Component implements Runnable, PlayerListener {
         }
         catch (Exception ex) {
             // again just a best effort to look up dimensions
-            Logger.info(ex);
+            Logger.info("error getting", ex);
         }
         return null;
     }

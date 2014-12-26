@@ -59,7 +59,7 @@ public class Animation extends Thread {
         }
         catch (Throwable th) {
             //#debug info
-            Logger.warn(th);
+            Logger.warn(null, th);
         }
 
         animation = null;

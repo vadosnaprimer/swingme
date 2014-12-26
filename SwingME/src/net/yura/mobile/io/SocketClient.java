@@ -111,8 +111,9 @@ public abstract class SocketClient implements Runnable {
 
                             if(!isRunning()) return;
 
+                            String serv = null;
                             try {
-                                String serv = getNextServer();
+                                serv = getNextServer();
                                 retryCount++;
 
                                 //#debug info
@@ -139,7 +140,7 @@ public abstract class SocketClient implements Runnable {
 
                                 updateState(DISCONNECTED);
                                 //#debug info
-                                Logger.info(s);
+                                Logger.info("cant connect " + serv, s);
 
                                 securityException();
                                 return;
@@ -153,7 +154,7 @@ public abstract class SocketClient implements Runnable {
                                     Logger.info(x.toString()); // we do not want to print the full stack trace as this is not a serious error
                                 }
                                 else {
-                                    Logger.info(x);
+                                    Logger.info("cant connect " + serv, x);
                                 }
                                 //#enddebug
 
@@ -166,7 +167,7 @@ public abstract class SocketClient implements Runnable {
                                         }
                                         catch (Exception e){
                                             //#debug info
-                                            Logger.info(e);
+                                            Logger.info(null, e);
                                         }
                                     }
 
@@ -191,7 +192,7 @@ public abstract class SocketClient implements Runnable {
                                     }
                                     catch (InterruptedException ex) {
                                         //#debug info
-                                        Logger.info(ex);
+                                        Logger.info(null, ex);
                                     }
                                 }
                             }
@@ -232,10 +233,8 @@ public abstract class SocketClient implements Runnable {
                     }
                     catch(Exception ex) {
                         // THIS WILL ONLY HAPPEN IF YOU GET A DISCONNECT DURING A SEND
-                        //#mdebug info
-                        Logger.info("[SocketClient] Exception during a write to socket");
-                        Logger.info(ex);
-                        //#enddebug
+                        //#debug info
+                        Logger.info("[SocketClient] Exception during a write to socket", ex);
 
                         // move this and any queued objects to offline inbox
                         addToOfflineBox(object, true);

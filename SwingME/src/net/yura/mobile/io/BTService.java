@@ -42,7 +42,7 @@ public class BTService extends ServiceLink {
                    bRegistered = true;
               }
               catch (Exception ex) {
-                Logger.warn(ex);
+                Logger.warn("cant reg " + aUuid, ex);
               }
          }
          return bRegistered;
@@ -60,7 +60,7 @@ public class BTService extends ServiceLink {
                     bRegistered = true;
                 }
                 catch (Exception ex) {
-                    Logger.warn(ex);
+                    Logger.warn("cant reg " + aUuid + " " + serviceName, ex);
                 }
          }
          return bRegistered;

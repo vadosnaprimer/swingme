@@ -57,7 +57,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug debug
-			Logger.warn(e);
+			Logger.warn(null, e);
 		}
     return false;
 	}
@@ -74,7 +74,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug debug
-			Logger.warn(e);
+			Logger.warn(null, e);
 		}
     return null;
 	}
@@ -95,7 +95,7 @@ public class CallStack
 		catch(Exception e)
 		{
 			//#debug debug
-			Logger.warn(e);
+			Logger.warn("cant write to " + dir, e);
 		}
   }
 
@@ -110,7 +110,7 @@ public class CallStack
 		catch(RecordStoreException e)
 		{
 			//#debug debug
-			Logger.warn(e);
+			Logger.warn(null, e);
 		}
 	}
 
@@ -307,7 +307,7 @@ public class CallStack
 			catch(RecordStoreException e)
 			{
 				//#debug debug
-				Logger.warn(e);
+				Logger.warn(null, e);
 			}
 		}
 	}
