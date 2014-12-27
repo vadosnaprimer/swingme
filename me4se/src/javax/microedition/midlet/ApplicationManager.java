@@ -1116,6 +1116,7 @@ public class ApplicationManager {
     case KeyEvent.VK_SPACE:
       return "SPACE";
     case KeyEvent.VK_CONTROL:
+    case KeyEvent.VK_META: // YURA: on OS X META is the cmd "MenuShortcutKey"
         return "CONTROL";
     }
 
