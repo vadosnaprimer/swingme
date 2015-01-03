@@ -89,7 +89,7 @@ public class Image {
         }
         else {
             int available = stream.available();
-            int size = Math.max(stream.available(), 8 * 1024);
+            int size = Math.max(available, 8 * 1024);
             BufferedInputStream buffInput = new BufferedInputStream(stream, size);
 
             BitmapFactory.Options options = new BitmapFactory.Options();
