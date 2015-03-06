@@ -11,7 +11,7 @@ public class QueueProcessorThread implements Runnable {
     public static boolean CHANGE_PRIORITY=true;
 
     private Vector inbox = new Vector();
-    private boolean runnning;
+    private boolean running;
     private Vector threads = new Vector(1);
 
     public QueueProcessorThread(String name) {
@@ -30,6 +30,7 @@ public class QueueProcessorThread implements Runnable {
     }
 
     public void start() {
+        running = true;
         for (int c=0;c<threads.size();c++) {
             ((Thread)threads.elementAt(c)).start();
         }
@@ -37,11 +38,15 @@ public class QueueProcessorThread implements Runnable {
 
     /**
      * @see java.util.concurrent.ExecutorService#shutdown()
+     * @see java.util.concurrent.ExecutorService#shutdownNow()
      */
     public void kill() {
         synchronized(this) {
-            runnning = false;
+            running = false;
             notifyAll();
+            //for (int c=0;c<threads.size();c++) {
+            //    ((Thread)threads.elementAt(c)).interrupt();
+            //}
         }
     }
 
@@ -63,9 +68,7 @@ public class QueueProcessorThread implements Runnable {
                 Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
             }
 
-            runnning = true;
-
-            runLoop: while (runnning) {
+            runLoop: while (running) {
 
                 Object object=null;
 
@@ -73,16 +76,10 @@ public class QueueProcessorThread implements Runnable {
 
                     synchronized(this) {
                         while(inbox.isEmpty()) {
-                            if (!runnning) {
+                            if (!running) {
                                 break runLoop;
                             }
-                            try {
-                                wait();
-                            }
-                            catch (InterruptedException ex) {
-                                Logger.info(null, ex);
-                                // TODO do something!!!!
-                            }
+                            wait();
                         }
                         object = inbox.elementAt(0);
                         inbox.removeElementAt(0);
@@ -102,6 +99,9 @@ public class QueueProcessorThread implements Runnable {
                         Thread.sleep(0);
                     }
                 }
+                catch(InterruptedException ex) {
+                    break runLoop;
+                }
                 catch (Exception ex) {
                     //#debug warn
                     Logger.warn("[QueueProcessorThread-" + Thread.currentThread().getName() + "] error processing "+object, ex);
@@ -116,6 +116,7 @@ public class QueueProcessorThread implements Runnable {
 
     /**
      * @see java.util.concurrent.Executor#execute(java.lang.Runnable)
+     * @see java.util.concurrent.ExecutorService#submit(java.lang.Runnable)
      */
     public void addToInbox(Object obj) {
         synchronized(this) {
@@ -124,8 +125,11 @@ public class QueueProcessorThread implements Runnable {
         }
     }
 
+    /**
+     * @see java.util.concurrent.ExecutorService#isShutdown()
+     */
     public boolean isRunning() {
-        return runnning;
+        return running;
     }
 
     public void clearInbox() {
