@@ -44,6 +44,7 @@ public class QueueProcessorThread implements Runnable {
         synchronized(this) {
             running = false;
             notifyAll();
+            // interrupt does not work on some devices, so we can not rely on it.
             //for (int c=0;c<threads.size();c++) {
             //    ((Thread)threads.elementAt(c)).interrupt();
             //}
@@ -100,6 +101,8 @@ public class QueueProcessorThread implements Runnable {
                     }
                 }
                 catch(InterruptedException ex) {
+                    //#debug info
+                    Logger.info("[QueueProcessorThread-"+Thread.currentThread().getName()+"] Interrupted");
                     break runLoop;
                 }
                 catch (Exception ex) {
@@ -112,6 +115,9 @@ public class QueueProcessorThread implements Runnable {
             //#debug error
             Logger.error("[QueueProcessorThread-" + Thread.currentThread().getName() + "] fatal error", t);
         }
+
+        //#debug info
+        Logger.info("[QueueProcessorThread-"+Thread.currentThread().getName()+"] Finished");
     }
 
     /**
