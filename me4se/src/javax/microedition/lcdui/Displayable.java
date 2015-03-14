@@ -114,7 +114,7 @@ public abstract class Displayable {
     }
 
     if (selectButtonRequired
-        && ApplicationManager.getInstance().getProperty("command.menu.select",
+        && ApplicationManager.getProperty("command.menu.select",
             "").toUpperCase().startsWith("SOFT")) {
       v.insertElementAt(new CmdInfo(ScmDisplayable.ITEM_SELECT_COMMAND, null),
           0);

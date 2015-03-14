@@ -67,7 +67,7 @@ public class FontInfo {
 				? type
 				: (property.equals("font") ? "font." + type : type + "." + property);
 
-		String v = ApplicationManager.getInstance().getProperty(fullName);
+		String v = ApplicationManager.getProperty(fullName);
 
 		//System.out.println("property: '"+fullName+ (v == null ? "' not found " : "' found: '"+v+"'"));
 
@@ -203,7 +203,7 @@ public class FontInfo {
 
 		int height;
 
-		if ("ME4SE-iPhoneEmulator".equals(ApplicationManager.getInstance().getProperty("microedition.platform"))) {
+		if ("ME4SE-iPhoneEmulator".equals(ApplicationManager.getProperty("microedition.platform"))) {
 	    if (font != null) {
 	      height = font.height;
 	    }

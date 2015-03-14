@@ -154,7 +154,7 @@ public class Skin extends ScmContainer {
     }
 
     public int getInt(String name, int dflt) {
-        return ApplicationManager.getInstance().getIntProperty(name, dflt);
+        return ApplicationManager.getIntProperty(name, dflt);
     }
 
     public String getName(String name) {
@@ -175,7 +175,7 @@ public class Skin extends ScmContainer {
     public Skin() {
         ApplicationManager manager = ApplicationManager.getInstance();
         //		setBackground(Color.white);
-        skinUrl = manager.getProperty("skin");
+        skinUrl = ApplicationManager.getProperty("skin");
 
         try {
             BufferedReader reader =
@@ -244,7 +244,7 @@ public class Skin extends ScmContainer {
                 e.hasMoreElements();
                 ) {
                 String key = (String) e.nextElement();
-                String value = (String) manager.getProperty(key);
+                String value = ApplicationManager.getProperty(key);
 
                 try {
 

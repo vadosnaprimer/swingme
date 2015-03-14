@@ -344,7 +344,7 @@ public class ApplicationManager {
    * @return
    */
 
-  public Object instantiate(String name) throws ClassNotFoundException {
+  public static Object instantiate(String name) throws ClassNotFoundException {
 
     String implementation = getProperty("me4se.implementation");
 
@@ -483,12 +483,16 @@ public class ApplicationManager {
     }
   }
 
-  public String getProperty(String name) {
-    String result = properties.getProperty(name.toLowerCase());
+  public static String getProperty(String name) {
+
+    // if we dont have a ApplicationManager, no point in making it, as properties will be empty.
+    ApplicationManager am = isInitialized() ? getInstance() : null;
+      
+    String result = am == null ? null : am.properties.getProperty(name.toLowerCase());
 
     if (result == null) {
-        if (applet != null) {
-            result = applet.getParameter(name);
+        if (am !=null && am.applet != null) {
+            result = am.applet.getParameter(name);
         }
         else {
             try {
@@ -497,11 +501,10 @@ public class ApplicationManager {
             catch(Throwable th) { }
         }
     }
-
     return result;
   }
 
-  public String getProperty(String name, String dflt) {
+  public static String getProperty(String name, String dflt) {
     String result = getProperty(name);
     return result != null ? result : dflt;
   }
@@ -877,10 +880,9 @@ public class ApplicationManager {
     }
   }
 
-  public int getIntProperty(String name, int dflt) {
+  public static int getIntProperty(String name, int dflt) {
     try {
-      return Integer.decode(
-          (String) ApplicationManager.manager.getProperty(name)).intValue();
+      return Integer.decode(getProperty(name)).intValue();
     } catch (Exception e) {
       return dflt;
     }

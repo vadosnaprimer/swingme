@@ -54,7 +54,7 @@ public class CommConnectionImpl extends ConnectionImpl implements CommConnection
 	 */
 	public void open(String url, int mode, boolean timeouts) throws IOException {
 
-		String useCommPortsString = ApplicationManager.getInstance().getProperty("me4se.comm.enable");
+		String useCommPortsString = ApplicationManager.getProperty("me4se.comm.enable");
 
 		if (useCommPortsString != null) {
 			Hashtable ht = new Hashtable();

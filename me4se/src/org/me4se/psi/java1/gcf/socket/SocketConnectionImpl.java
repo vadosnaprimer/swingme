@@ -26,7 +26,7 @@ public class SocketConnectionImpl extends ConnectionImpl implements StreamConnec
                     throw new IOException("socket blocked by no.socket file");
                 }
             
-		String proxy = ApplicationManager.getInstance().getProperty("me4se.socketproxy");
+		String proxy = ApplicationManager.getProperty("me4se.socketproxy");
         
         // System.out.println("Connecting to: "+url);
         

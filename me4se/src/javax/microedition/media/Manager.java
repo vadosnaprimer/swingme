@@ -105,7 +105,7 @@ public final class Manager {
         
 
 		try {
-			BasicMMPlayer player = (BasicMMPlayer) ApplicationManager.getInstance().instantiate(className);
+			BasicMMPlayer player = (BasicMMPlayer) ApplicationManager.instantiate(className);
 			player.setSource((BasicMMDataSource) source);
 			return player;
 		}

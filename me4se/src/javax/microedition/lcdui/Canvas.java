@@ -144,7 +144,7 @@ public abstract class Canvas extends Displayable {
     public static final int KEY_STAR = '*';
 
     ScmCanvas component = new ScmCanvas(this);
-    boolean hasPointerEvents = !"false".equalsIgnoreCase(ApplicationManager.getInstance().getProperty("touch_screen"));;
+    boolean hasPointerEvents = !"false".equalsIgnoreCase(ApplicationManager.getProperty("touch_screen"));;
     
     /**
      * @ME4SE INTERNAL

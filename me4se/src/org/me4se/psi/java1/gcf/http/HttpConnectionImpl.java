@@ -108,7 +108,7 @@ public class HttpConnectionImpl extends ConnectionImpl implements HttpConnection
     Log.log(Log.IO, "entering http open '" + url + "' mode: " + mode);
 
     this.url = new URL(url);
-    proxy = url.startsWith("https") ? null : ApplicationManager.getInstance().getProperty("me4se.httpproxy");
+    proxy = url.startsWith("https") ? null : ApplicationManager.getProperty("me4se.httpproxy");
 
     Log.log(Log.IO, "using proxy: " + proxy);
 
@@ -120,8 +120,8 @@ public class HttpConnectionImpl extends ConnectionImpl implements HttpConnection
     con.setDoOutput(doOutput);
     con.setDoInput(true);
     // con.setRequestProperty("connection", "close");
-    con.setRequestProperty("User-Agent", ApplicationManager.getInstance().getProperty("me4se.useragent",
-        ApplicationManager.getInstance().getProperty("microedition.platform", "MobileRunner-J2ME")));
+    con.setRequestProperty("User-Agent", ApplicationManager.getProperty("me4se.useragent",
+        ApplicationManager.getProperty("microedition.platform", "MobileRunner-J2ME")));
     if (proxy != null) {
       con.setRequestProperty("me4se-target-url", url);
     }

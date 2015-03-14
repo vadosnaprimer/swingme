@@ -88,7 +88,7 @@ public abstract class MIDlet {
     String result = ApplicationManager.getInstance().jadFile.getValue(key);
 
     if (result == null) {
-      result = ApplicationManager.getInstance().getProperty(key);
+      result = ApplicationManager.getProperty(key);
     }
 
     // System.out.println("getAppProperty("+key+")='"+result+"'");

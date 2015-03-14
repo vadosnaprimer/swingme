@@ -216,8 +216,8 @@ public class Display {
     if (manager.currentlyShown instanceof Canvas)
       ((Canvas) manager.currentlyShown).hideNotify();
 
-    d.container.setX(manager.getIntProperty("screen.x", 0));
-    d.container.setY(manager.getIntProperty("screen.y", 0));
+    d.container.setX(ApplicationManager.getIntProperty("screen.x", 0));
+    d.container.setY(ApplicationManager.getIntProperty("screen.y", 0));
 
     if (d instanceof Alert) {
       Alert alert = (Alert) d;
@@ -298,22 +298,22 @@ public class Display {
   public int getColor(int type) {
     switch (type) {
     case COLOR_BACKGROUND:
-      return ApplicationManager.getInstance().getIntProperty("item.background",
+      return ApplicationManager.getIntProperty("item.background",
           0x0ffffff);
     case COLOR_FOREGROUND:
-      return ApplicationManager.getInstance().getIntProperty("item.foreground",
+      return ApplicationManager.getIntProperty("item.foreground",
           0);
     case COLOR_HIGHLIGHTED_BACKGROUND:
-      return ApplicationManager.getInstance().getIntProperty(
+      return ApplicationManager.getIntProperty(
           "item.focus.background", 0x00000ff);
     case COLOR_HIGHLIGHTED_FOREGROUND:
-      return ApplicationManager.getInstance().getIntProperty(
+      return ApplicationManager.getIntProperty(
           "item.focus.foreground", 0);
     case COLOR_BORDER:
-      return ApplicationManager.getInstance().getIntProperty("item.border",
+      return ApplicationManager.getIntProperty("item.border",
           0x0ffffff);
     case COLOR_HIGHLIGHTED_BORDER:
-      return ApplicationManager.getInstance().getIntProperty(
+      return ApplicationManager.getIntProperty(
           "item.focus.border", 0x08888ff);
     }
     return 0x08888ff;

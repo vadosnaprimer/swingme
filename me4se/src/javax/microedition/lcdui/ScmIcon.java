@@ -39,14 +39,14 @@ class ScmIcon extends ScmComponent {
 		for (Enumeration e = manager.properties.keys(); e.hasMoreElements();) {
 			String key = (String) e.nextElement();
 			if (key.toLowerCase().startsWith(seek)) {
-				String value = manager.getProperty(key).trim();
+				String value = ApplicationManager.getProperty(key).trim();
 				String state = key.substring(seek.length());
 			//	System.out.println("item state '" + state + "' for " + name + " is " + value);
 
 				if (!value.equals("")) {
 					BufferedImage image;
 					try {
-						image = manager.getImage(ApplicationManager.concatPath(manager.getProperty("skin"), value));
+						image = manager.getImage(ApplicationManager.concatPath(ApplicationManager.getProperty("skin"), value));
 						int w = image.getWidth();
 						int h = image.getHeight();
 						if(w > getWidth()) setWidth(w);
@@ -83,7 +83,7 @@ class ScmIcon extends ScmComponent {
 	}
 
 	public static ScmIcon create(String name) {
-		String propStr = ApplicationManager.getInstance().getProperty(name);
+		String propStr = ApplicationManager.getProperty(name);
 	//	System.out.println("creating icon '" + name + "'; entry found: " + propStr);
 		return (propStr == null) ? null : new ScmIcon(name, propStr);
 	}

@@ -7,14 +7,13 @@ import javax.microedition.midlet.ApplicationManager;
 class CommandList extends List implements CommandListener {
 
   private Displayable owner;
-  ApplicationManager manager = ApplicationManager.getInstance();
-  private Command cancel = new Command(manager.getProperty("cancel.command.label", "Cancel"), Command.CANCEL, 0);
+  private Command cancel = new Command(ApplicationManager.getProperty("cancel.command.label", "Cancel"), Command.CANCEL, 0);
 
   protected CommandList(Displayable d) {
 
     super("Select", Choice.IMPLICIT);
 
-    String t = manager.getProperty("options.menu.title");
+    String t = ApplicationManager.getProperty("options.menu.title");
     if (t != null)
       setTitle(t);
 

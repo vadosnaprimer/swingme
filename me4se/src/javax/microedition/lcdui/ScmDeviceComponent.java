@@ -48,7 +48,7 @@ public class ScmDeviceComponent extends ScmComponent {
 
     setFocusable(focusable);
 
-    String props = (ApplicationManager.getInstance().getProperty(type));
+    String props = ApplicationManager.getProperty(type);
     if (props != null) {
       // System.out.println("props: "+props);
       location = Csv.decode(props);

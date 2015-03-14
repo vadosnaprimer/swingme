@@ -89,7 +89,7 @@ public class Connector {
 		try {
 //			System.out.println("try to load " + name);
 			
-			ConnectionImpl connection = (ConnectionImpl) ApplicationManager.getInstance().instantiate(name);
+			ConnectionImpl connection = (ConnectionImpl) ApplicationManager.instantiate(name);
 			
 //			System.out.println("loaded.");
 			

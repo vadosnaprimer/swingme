@@ -29,7 +29,7 @@ public class RecordStoreInitializer implements Initializer {
             }
             else {
 
-        	RecordStoreImpl.rmsDir = new File(am.getProperty("rms.home", ".rms"));
+        	RecordStoreImpl.rmsDir = new File(ApplicationManager.getProperty("rms.home", ".rms"));
 
                 boolean hasRms;
                 try {

@@ -18,7 +18,7 @@ class ScmDisplayable extends ScmContainer {
 
   static String[] TYPES = { "null", "SCREEN", "BACK", "CANCEL", "OK", "HELP", "STOP", "EXIT", "ITEM" };
 
-  static final Command OPTIONS_COMMAND = new Command(ApplicationManager.getInstance().getProperty(
+  static final Command OPTIONS_COMMAND = new Command(ApplicationManager.getProperty(
       "options.command.label", "Menu"), Command.SCREEN, 0);
 
   /**
@@ -113,11 +113,11 @@ class ScmDisplayable extends ScmContainer {
     }
 
     int cnt;
-    if (manager.getProperty("skin") == null)
+    if (ApplicationManager.getProperty("skin") == null)
       cnt = 2;
     else {
       cnt = 0;
-      while (manager.getProperty("softbutton." + (cnt)) != null) {
+      while (ApplicationManager.getProperty("softbutton." + (cnt)) != null) {
         cnt++;
       }
     }
@@ -168,7 +168,7 @@ class ScmDisplayable extends ScmContainer {
 
     shutdownTrigger = "POWER".equals(key);
 
-    String timeout = manager.getProperty("me4se.timeout");
+    String timeout = ApplicationManager.getProperty("me4se.timeout");
     if (timeout != null && !timeout.equals("")) {
       if (manager.firstKeyPress == 0) {
         manager.firstKeyPress = System.currentTimeMillis();
@@ -176,7 +176,7 @@ class ScmDisplayable extends ScmContainer {
 
         if (manager.timeoutImage == null) {
           try {
-            manager.timeoutImage = manager.getImage(manager.getProperty("me4se.timeout-image", "/timeout.png"));
+            manager.timeoutImage = manager.getImage(ApplicationManager.getProperty("me4se.timeout-image", "/timeout.png"));
           } catch (IOException e) {
             throw new RuntimeException(e);
           }
@@ -252,7 +252,7 @@ class ScmDisplayable extends ScmContainer {
       CmdInfo ci = (CmdInfo) commands.elementAt(i);
       Command cmd = ci.command;
 
-      String desired[] = ApplicationManager.split(ApplicationManager.getInstance().getProperty(
+      String desired[] = ApplicationManager.split(ApplicationManager.getProperty(
           "command.keys." + cmd.getTypeName()));
 
       for (int j = 0; j < desired.length; j++) {
@@ -295,7 +295,7 @@ class ScmDisplayable extends ScmContainer {
         CmdInfo ci = (CmdInfo) remaining.elementAt(i);
         Command cmd = ci.command;
 
-        String[] desired = ApplicationManager.split(ApplicationManager.getInstance().getProperty(
+        String[] desired = ApplicationManager.split(ApplicationManager.getProperty(
             cmd == OPTIONS_COMMAND ? "command.menu.activate" : ("command.keys." + cmd.getTypeName())));
 
         if (cmd == OPTIONS_COMMAND && desired.length == 0) {
@@ -352,26 +352,24 @@ class ScmDisplayable extends ScmContainer {
 
   public void doLayout() {
 
-    ApplicationManager manager = ApplicationManager.getInstance();
-
     int x = 0;
     int y = 0;
     int w = manager.screenWidth;
     int h = manager.screenHeight;
 
-    x = manager.getIntProperty("screenPaintableRegion.x", x);
-    y = manager.getIntProperty("screenPaintableRegion.y", y);
-    w = manager.getIntProperty("screenPaintableRegion.width", w);
-    h = manager.getIntProperty("screenPaintableRegion.height", h);
+    x = ApplicationManager.getIntProperty("screenPaintableRegion.x", x);
+    y = ApplicationManager.getIntProperty("screenPaintableRegion.y", y);
+    w = ApplicationManager.getIntProperty("screenPaintableRegion.width", w);
+    h = ApplicationManager.getIntProperty("screenPaintableRegion.height", h);
 
     if (fullScreen) {
-      x = manager.getIntProperty("canvasPaintableRegion.x", x);
-      y = manager.getIntProperty("canvasPaintableRegion.y", y);
-      w = manager.getIntProperty("canvasPaintableRegion.width", w);
-      h = manager.getIntProperty("canvasPaintableRegion.height", h);
+      x = ApplicationManager.getIntProperty("canvasPaintableRegion.x", x);
+      y = ApplicationManager.getIntProperty("canvasPaintableRegion.y", y);
+      w = ApplicationManager.getIntProperty("canvasPaintableRegion.width", w);
+      h = ApplicationManager.getIntProperty("canvasPaintableRegion.height", h);
     }
 
-    if (manager.getProperty("skin") == null && h == manager.screenHeight && softButtons!=null && softButtons.length > 0
+    if (ApplicationManager.getProperty("skin") == null && h == manager.screenHeight && softButtons!=null && softButtons.length > 0
         && softButtons[0] != null) {
       h -= softButtons[0].getHeight();
     }

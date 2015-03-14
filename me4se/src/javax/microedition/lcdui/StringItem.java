@@ -55,8 +55,8 @@ public class StringItem extends Item {
     }
 
     if (text != null && text.length() > 0) {
-      WordWrap ww = new WordWrap(FontInfo.getFontInfo(type).font, text, ApplicationManager.getInstance()
-          .getIntProperty("screenPaintableRegion.width", ApplicationManager.getInstance().screenWidth));
+      WordWrap ww = new WordWrap(FontInfo.getFontInfo(type).font, text,
+          ApplicationManager.getIntProperty("screenPaintableRegion.width", ApplicationManager.getInstance().screenWidth));
 
       int p0 = 0;
 
