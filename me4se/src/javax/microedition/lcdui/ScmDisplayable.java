@@ -214,7 +214,7 @@ class ScmDisplayable extends ScmContainer {
     if (scrollable) {
       ScmScrollPane scrollPane = new ScmScrollPane();
       scrollPane.add(main);
-      if (ApplicationManager.getInstance().getFlag("scrollbar")) {
+      if (ApplicationManager.getFlag("scrollbar")) {
         ScmScrollBar sb = new ScmScrollBar();
         sb.setBackground(javax.microedition.midlet.ApplicationManager.getInstance().bgColor);
         scrollPane.setVerticalBar(sb);

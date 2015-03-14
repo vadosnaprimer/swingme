@@ -37,7 +37,7 @@ public class System {
     public static String   getProperty(String key) {
 //        System.out.println("org.me4se.System.getProperty(): trying to access property: "+key);
         
-        String result = ApplicationManager.getInstance().applet == null 
+        String result = !ApplicationManager.isInitialized() || ApplicationManager.getInstance().applet == null
             ? java.lang.System.getProperty(key) 
                 : (String) properties.get(key);
         

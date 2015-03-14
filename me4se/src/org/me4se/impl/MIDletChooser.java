@@ -95,7 +95,7 @@ public class MIDletChooser extends MIDlet implements CommandListener { //, Runna
 	 * Is called when the MIDletChooser is started, activates the list screen.
 	 */
 	protected void startApp() {
-		if(ApplicationManager.getInstance().getBooleanProperty("me4se.autorestart", false)){
+		if(ApplicationManager.getBooleanProperty("me4se.autorestart", false)){
 //        if ("com.google.googlenav.GoogleNav".equals(ApplicationManager.manager.jadFile.getMIDlet(1).getClassName())){
             commandAction(CMD_RESTART, infoAlert);
         }
@@ -139,7 +139,7 @@ public class MIDletChooser extends MIDlet implements CommandListener { //, Runna
                 
                 if(cmd == CMD_RELOAD || 
                 		(manager.applet != null 
-                		 && !manager.getBooleanProperty("me4se.restartable", true)
+                		 && !ApplicationManager.getBooleanProperty("me4se.restartable", true)
                      && (!firstLaunch || manager.jadFile.getMIDletCount() == 1))){
 
                     manager.applet.getAppletContext().showDocument(manager.applet.getDocumentBase());

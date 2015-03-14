@@ -48,7 +48,7 @@ public class Gauge extends Item {
 		this.maximum = maxValue;
 		this.value = initialValue;
 
-		component = (ScmGauge) ApplicationManager.getInstance().getComponent(interactive ? "item.gauge.interactive" : "item.gauge");
+		component = (ScmGauge) ApplicationManager.getComponent(interactive ? "item.gauge.interactive" : "item.gauge");
 
 		if (component == null)
 			component = new ScmGauge(interactive);

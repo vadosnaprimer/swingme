@@ -1031,7 +1031,7 @@ public class ApplicationManager {
    * active = midlet; start(); }
    */
 
-  public Object getComponent(String name) {
+  public static Object getComponent(String name) {
     String custom = getProperty(name + ".component");
     if (custom == null)
       return null;
@@ -1042,13 +1042,13 @@ public class ApplicationManager {
     }
   }
 
-  public boolean getFlag(String flag) {
+  public static boolean getFlag(String flag) {
     String f = getProperty("me4se.flags");
     return f == null ? false
         : f.toLowerCase().indexOf(flag.toLowerCase()) != -1;
   }
 
-  public boolean getBooleanProperty(String name, boolean dflt) {
+  public static boolean getBooleanProperty(String name, boolean dflt) {
     String v = getProperty(name);
     return v == null ? dflt : "true".equalsIgnoreCase(v.trim());
   }

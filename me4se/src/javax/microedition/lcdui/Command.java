@@ -75,7 +75,7 @@ public class Command {
 			throw new IllegalArgumentException();
 		this.priority = priority;
         
-        if(ApplicationManager.getInstance().getFlag("SiemensCK")) {
+        if(ApplicationManager.getFlag("SiemensCK")) {
             this.label[0] = SIEMENS_TYPE_CHARS[type];
         }
 	}

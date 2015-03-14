@@ -45,8 +45,7 @@ public class MIDletRunner extends Applet {
     if (!ApplicationManager.isInitialized()) {
       startMIDlet(null, -1, this, null);
     } else {
-      boolean restartable = ApplicationManager.getInstance()
-          .getBooleanProperty("me4se.restartable", true);
+      boolean restartable = ApplicationManager.getBooleanProperty("me4se.restartable", true);
 
       System.out
           .println("Calling ApplicationManager.manager.start(); restartable: "
@@ -82,8 +81,7 @@ public class MIDletRunner extends Applet {
 
   public void stop() {
 
-    boolean restartable = ApplicationManager.getInstance().getBooleanProperty(
-        "me4se.restartable", true);
+    boolean restartable = ApplicationManager.getBooleanProperty("me4se.restartable", true);
 
     System.out.println("Applet stop() was called. Restartable: " + restartable);
 

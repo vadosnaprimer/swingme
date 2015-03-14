@@ -149,7 +149,7 @@ public abstract class Canvas extends Displayable {
     /**
      * @ME4SE INTERNAL
      */
-    protected boolean _fullScreenMode =  ApplicationManager.getInstance().getFlag("canvasHideSoftButtons");
+    protected boolean _fullScreenMode =  ApplicationManager.getFlag("canvasHideSoftButtons");
 
     	Image videoFrameImage;
 	
@@ -170,7 +170,7 @@ public abstract class Canvas extends Displayable {
         container.setMain(component, false);
         
 
-        if(ApplicationManager.getInstance().getFlag("SiemensCK")){
+        if(ApplicationManager.getFlag("SiemensCK")){
             centerCommand = new Command("CenterBlocker", Command.SCREEN, -15); // label must not be empty to avoid filtering
             centerCommand.type = Command.CENTERBLOCKER;
             addCommand(centerCommand);

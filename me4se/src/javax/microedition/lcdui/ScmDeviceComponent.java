@@ -146,7 +146,7 @@ public class ScmDeviceComponent extends ScmComponent {
     int count = parent.getComponentCount();
     int i0 = parent.indexOf(this);
     int i = i0;
-    boolean cycle = ApplicationManager.getInstance().getFlag("cycleList");
+    boolean cycle = ApplicationManager.getFlag("cycleList");
     do {
       i += dir;
 

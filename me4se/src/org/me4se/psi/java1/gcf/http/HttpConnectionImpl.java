@@ -84,7 +84,7 @@ public class HttpConnectionImpl extends ConnectionImpl implements HttpConnection
   Object doPrivileged(int action) throws IOException {
     Privileged pa = new Privileged(action);
     try {
-      return ApplicationManager.getInstance().getBooleanProperty("me4se.signed", false) ? AccessController
+      return ApplicationManager.getBooleanProperty("me4se.signed", false) ? AccessController
           .doPrivileged(pa) : pa.run();
     } catch (PrivilegedActionException e) {
       throw new SecurityException(e);
