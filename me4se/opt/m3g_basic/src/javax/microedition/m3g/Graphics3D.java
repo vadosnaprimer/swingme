@@ -42,7 +42,7 @@ public final class Graphics3D {
             targetGraphics.fillRect(vpX, vpY, vpW, vpH);
         }
         else {
-            targetGraphics._getAwtGraphics().drawImage( background.getImage().getImage()._image, vpX, vpY, vpX + vpW, vpY + vpH, 0, 0, background.getImage().getImage().getWidth(), background.getImage().getImage().getHeight(), null);
+            targetGraphics._getAwtGraphics().drawImage(background.getImage().getImage()._image, vpX, vpY, vpW, vpH, null);
         }
     }
 

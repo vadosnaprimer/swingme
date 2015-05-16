@@ -161,9 +161,14 @@ public class Image {
             }
 
             BufferedImage img = ApplicationManager.getInstance().getImage(name);
+            int type = img.getType();
+            // we cant create images of TYPE_CUSTOM
+            if (type == BufferedImage.TYPE_CUSTOM) {
+                type = BufferedImage.TYPE_INT_ARGB;
+            }
             if (density != 1) {
                 if (name.endsWith(".9.png")) {
-                    BufferedImage newImg = new BufferedImage((int)(density*(img.getWidth()-2))+2, (int)(density*(img.getHeight()-2))+2, img.getType());
+                    BufferedImage newImg = new BufferedImage((int)(density*(img.getWidth()-2))+2, (int)(density*(img.getHeight()-2))+2, type);
                     java.awt.Graphics g = newImg.getGraphics();
                     g.drawImage(img, 1, 1, newImg.getWidth()-1, newImg.getHeight()-1, 1, 1, img.getWidth()-1, img.getHeight()-1, null); // center
                     g.drawImage(img, 1, 0, newImg.getWidth()-1, 1, 1, 0, img.getWidth()-1, 1, null); // top
@@ -174,7 +179,7 @@ public class Image {
                     img=newImg;
                 }
                 else {
-                    BufferedImage newImg = new BufferedImage((int)(density*img.getWidth()), (int)(density*img.getHeight()), img.getType());
+                    BufferedImage newImg = new BufferedImage((int)(density*img.getWidth()), (int)(density*img.getHeight()), type);
                     java.awt.Graphics g = newImg.getGraphics();
                     g.drawImage(img, 0, 0, newImg.getWidth(), newImg.getHeight(), 0, 0, img.getWidth(), img.getHeight(), null);
                     g.dispose();
