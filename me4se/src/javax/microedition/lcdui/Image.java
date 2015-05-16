@@ -161,12 +161,12 @@ public class Image {
             }
 
             BufferedImage img = ApplicationManager.getInstance().getImage(name);
-            int type = img.getType();
-            // we cant create images of TYPE_CUSTOM
-            if (type == BufferedImage.TYPE_CUSTOM) {
-                type = BufferedImage.TYPE_INT_ARGB;
-            }
             if (density != 1) {
+                int type = img.getType();
+                // We can't create images of TYPE_CUSTOM
+                if (type == BufferedImage.TYPE_CUSTOM) {
+                    type = BufferedImage.TYPE_INT_ARGB;
+                }
                 if (name.endsWith(".9.png")) {
                     BufferedImage newImg = new BufferedImage((int)(density*(img.getWidth()-2))+2, (int)(density*(img.getHeight()-2))+2, type);
                     java.awt.Graphics g = newImg.getGraphics();
