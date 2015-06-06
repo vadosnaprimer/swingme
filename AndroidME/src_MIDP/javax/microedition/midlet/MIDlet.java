@@ -1,5 +1,6 @@
 package javax.microedition.midlet;
 
+import java.io.File;
 import java.util.Map;
 import java.util.Properties;
 import javax.microedition.io.ConnectionNotFoundException;
@@ -16,6 +17,7 @@ import android.app.PendingIntent;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.net.MailTo;
 import android.net.Uri;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
@@ -89,7 +91,7 @@ public abstract class MIDlet {
     public boolean platformRequest(String url) throws ConnectionNotFoundException {
 
         try {
-            Uri content = Uri.parse(url);
+            final Uri content = Uri.parse(url);
             boolean isProtoNative = url.startsWith(PROTOCOL_NATIVE);
             boolean isProtoNativeNoRes = url.startsWith(PROTOCOL_NATIVE_NO_RESULT);
             Activity activity = AndroidMeActivity.DEFAULT_ACTIVITY;
@@ -219,7 +221,7 @@ public abstract class MIDlet {
             }
             else if (url.startsWith("geo:")) {
             	// eg (with the brackets and everything else past the = URL encoded): geo://lat,long?q=lat,long(description)
-            	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            	Intent intent = new Intent(Intent.ACTION_VIEW, content);
             	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             	try {
             		AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(intent);
@@ -227,7 +229,7 @@ public abstract class MIDlet {
             	catch (ActivityNotFoundException anf) {
             		// there's nothing on the phone that knows how to process a geo: URI.
             		url = "http://maps.google.com/" + url.substring(url.indexOf("?q="));
-            		Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url) );
+            		Intent browserIntent = new Intent(Intent.ACTION_VIEW, content);
             		browserIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                		AndroidMeActivity.DEFAULT_ACTIVITY.startActivity(browserIntent);
             	}
@@ -240,6 +242,50 @@ public abstract class MIDlet {
                 i.setData(content);
                 activity.startActivity(i);
                 
+            }
+            else if (url.startsWith("mailto:") && containsQueryParameter(url, "attachment")) {
+
+                // use swingme to correctly parse the query as android has bugs
+                Map<String, String> query = Url.toHashtable(content.getEncodedQuery());
+                // use android to correctly parse the recipient, as swingme does not support that
+                MailTo mailto = MailTo.parse(url);
+
+                File attachment = new File(query.get("attachment"));
+                File privateDir = activity.getFilesDir().getParentFile();
+
+                final Uri attachmentUri;
+                if (attachment.toString().startsWith(privateDir.toString())) {
+                    String authority = query.get("authority");
+                    if (authority == null) {
+                        throw new IllegalArgumentException("need to give 'authority' for FileProvider for sending private files");
+                    }
+                    Class<?> fileProvider = Class.forName("android.support.v4.content.FileProvider");
+                    java.lang.reflect.Method getUriForFile = fileProvider.getMethod("getUriForFile", new Class[] {Context.class, String.class, File.class});
+                    attachmentUri = (Uri) getUriForFile.invoke(null, new Object[] {activity, authority, attachment});
+                }
+                else {
+                    attachmentUri = Uri.fromFile(attachment);
+                }
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_STREAM, attachmentUri);
+                shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                if (mailto.getTo() != null) {
+                    shareIntent.putExtra(Intent.EXTRA_EMAIL, mailto.getTo().split(","));
+                }
+                if (mailto.getCc() != null) {
+                    shareIntent.putExtra(Intent.EXTRA_CC, mailto.getCc().split(","));
+                }
+                if (query.get("subject") != null) {
+                    shareIntent.putExtra(Intent.EXTRA_SUBJECT, query.get("subject"));
+                }
+                if (query.get("body") != null) {
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, query.get("body"));
+                }
+
+                activity.startActivity(Intent.createChooser(shareIntent, "Choose an app"));
             }
             else {
                 String action = (url.startsWith(PROTOCOL_PHONE)) ?
@@ -258,6 +304,11 @@ public abstract class MIDlet {
         }
 
         return false;
+    }
+
+    private boolean containsQueryParameter(String urlString, String param) {
+        Url url = new Url(urlString);
+        return !"".equals(url.getQueryParameter(param));
     }
 
     public String getAppProperty(String key) {
