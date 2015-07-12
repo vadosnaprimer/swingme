@@ -624,10 +624,9 @@ public class ApplicationManager {
       }
     }
 
-    double displayDensity = getDisplayDensity();
-    setSystemProperty("display.density",String.valueOf(displayDensity));
+    setSystemProperty("display.density",String.valueOf(getDisplayDensity()));
 
-    wrapper = new ScmWrapper(this, new Float(getProperty("scale", String.valueOf( 1/displayDensity )))
+    wrapper = new ScmWrapper(this, new Float(getProperty("scale", String.valueOf( 1/getScale() )))
         .floatValue());
     // FontInfo.cache = new Hashtable ();
 
@@ -1319,8 +1318,29 @@ public class ApplicationManager {
 
     return menuBar;
   }
+  
+  /**
+   * code "borrowed" from com.intellij.util.ui.JBUI
+   */
+  public static boolean IS_HIDPI = java.lang.System.getProperty("os.name").toLowerCase().startsWith("windows") && Toolkit.getDefaultToolkit().getScreenResolution() > 144;
 
+  /**
+   * tell us what assets to load and display:
+   * 1 is mdpi normal,
+   * 2 is hi-res/retina.
+   */
   public static double getDisplayDensity() {
+      if (IS_HIDPI) {
+          return 2;
+      }
+      return getScale();
+  }
+  
+  /**
+   * tells us how many pixels actually go into 1 pixel in swing
+   * this is used by apple for retina screens.
+   */
+  public static double getScale() {
 
       // Apple Java 1.6 check
       try {
