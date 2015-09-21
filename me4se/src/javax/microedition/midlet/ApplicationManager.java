@@ -1318,20 +1318,25 @@ public class ApplicationManager {
 
     return menuBar;
   }
-  
-  /**
-   * code "borrowed" from com.intellij.util.ui.JBUI
-   */
-  public static boolean IS_HIDPI = java.lang.System.getProperty("os.name").toLowerCase().startsWith("windows") && Toolkit.getDefaultToolkit().getScreenResolution() > 144;
 
   /**
    * tell us what assets to load and display:
    * 1 is mdpi normal,
    * 2 is hi-res/retina.
+   * code "borrowed" from com.intellij.util.ui.JBUI
    */
   public static double getDisplayDensity() {
-      if (IS_HIDPI) {
-          return 2;
+      String osNameLowerCase = java.lang.System.getProperty("os.name").toLowerCase();
+      if (!osNameLowerCase.startsWith("mac")) {
+          int dpi = 96; // this is the default
+          try {
+              dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+              // windows e.g. 96 120 144 192
+          }
+          catch (Exception ex) {}
+          // we subtract 0.01, so that if its on a border, it goes to the smaller scale
+          // between 1 and 3, rounded to the closest 0.5
+          return Math.min(3, Math.max(1, Math.round(((dpi / 96.0) - 0.01) * 2.0) / 2.0));
       }
       return getScale();
   }
