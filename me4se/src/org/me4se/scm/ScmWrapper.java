@@ -200,7 +200,10 @@ public class ScmWrapper extends Canvas implements MouseMotionListener,
 
   // app-triggered paint events come here
   public void update(Graphics g) {
-
+    if (!isShowing()) {
+        // YURA: Only do something if we are showing, same logic as {@see java.awt.Container#update(java.awt.Graphics)}
+        return;
+    }
 
     if (invalid) {
       component.doLayout();
