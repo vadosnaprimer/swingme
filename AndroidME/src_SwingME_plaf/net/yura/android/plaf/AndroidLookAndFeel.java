@@ -377,19 +377,6 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         indeterminateSpinner3.addProperty( new AndroidSprite(spin3, w3, h3), "sprite", Style.ALL);
         setStyleFor("IndeterminateSpinnerSmallInverse",indeterminateSpinner3);
 
-
-        // yes = ok, no = cencel, dont use this as it seems to be wrong
-        //ctx.getResources().getString(android.R.string.ok);
-
-
-        DesktopPane.put("cutText", ctx.getResources().getString(android.R.string.cut) );
-        DesktopPane.put("copyText", ctx.getResources().getString(android.R.string.copy) );
-        DesktopPane.put("pasteText", ctx.getResources().getString(android.R.string.paste) );
-        //DesktopPane.put("deleteText", ctx.getResources().getString(android.R.string.del)); // do not have string
-        DesktopPane.put("selectAllText", ctx.getResources().getString(android.R.string.selectAll)); // not yet used
-
-
-
         // -- Slider --
         Style sliderThumbStyle = new Style(defaultStyle);
         Drawable slider = getDrawable(ctx,  android.R.style.Widget_SeekBar, android.R.attr.thumb);
@@ -442,7 +429,19 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
         Rect spinnerBorder = getAdjustedDensityRect(ctx,25,5,25,5);
         spinner.addBorder( new EmptyBorder(spinnerBorder.top, spinnerBorder.left, spinnerBorder.bottom, spinnerBorder.right) , Style.ALL );
         setStyleFor("Spinner",spinner);
-        
+
+
+
+
+
+        DesktopPane.put("cancelText", ctx.getString(android.R.string.cancel));
+        DesktopPane.put("okText", ctx.getString(android.R.string.ok));
+        //DesktopPane.put("yesText", ctx.getString(android.R.string.yes)); // framework uses OK
+        //DesktopPane.put("noText", ctx.getString(android.R.string.no)); // framework uses Cancel
+        DesktopPane.put("cutText", ctx.getString(android.R.string.cut));
+        DesktopPane.put("copyText", ctx.getString(android.R.string.copy));
+        DesktopPane.put("pasteText", ctx.getString(android.R.string.paste));
+        DesktopPane.put("selectAllText", ctx.getString(android.R.string.selectAll));
 
         OptionPane.optionPaneClass = AlertOptionPane.class;
         DesktopPane.getDesktopPane().menuSystem = new NativeAndroidMenu();
@@ -695,7 +694,7 @@ public class AndroidLookAndFeel extends SynthLookAndFeel {
             dp.HIDDEN_MENU = ViewConfiguration.get( AndroidMeActivity.DEFAULT_ACTIVITY ).hasPermanentMenuKey();
             dp.GRID_MENU = dp.HIDDEN_MENU;
         }
-        catch (Throwable th) { }
+        catch (Throwable ignored) { }
     }
 
 }
