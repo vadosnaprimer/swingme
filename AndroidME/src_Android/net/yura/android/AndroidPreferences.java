@@ -9,10 +9,12 @@ import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
 
 import android.content.SharedPreferences;
+import android.os.Build;
 
 public class AndroidPreferences extends Preferences {
 
     private SharedPreferences preferences;
+    private SharedPreferences.Editor editor;
     
     public AndroidPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
@@ -59,8 +61,52 @@ public class AndroidPreferences extends Preferences {
         return preferences.toString();
     }
 
+    private SharedPreferences.Editor getEditor() {
+        if (editor == null) {
+            editor = preferences.edit();
+        }
+        return editor;
+    }
 
+    @Override
+    public void put(String key, String value) {
+        getEditor().putString(key, value);
+    }
 
+    @Override
+    public void putBoolean(String key, boolean value) {
+        getEditor().putBoolean(key, value);
+    }
+
+    @Override
+    public void putFloat(String key, float value) {
+        getEditor().putFloat(key, value);
+    }
+
+    @Override
+    public void putInt(String key, int value) {
+        getEditor().putInt(key, value);
+    }
+
+    @Override
+    public void putLong(String key, long value) {
+        getEditor().putLong(key, value);
+    }
+
+    @Override
+    public void flush() throws BackingStoreException {
+        if (editor != null) {
+            SharedPreferences.Editor theEditor = editor;
+            editor = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                theEditor.apply();
+            } else {
+                if (!theEditor.commit()) {
+                    throw new BackingStoreException("not able to save");
+                }
+            }
+        }
+    }
 
 
 
@@ -114,11 +160,6 @@ public class AndroidPreferences extends Preferences {
     }
 
     @Override
-    public void flush() throws BackingStoreException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean isUserNode() {
         throw new UnsupportedOperationException();
     }
@@ -139,37 +180,12 @@ public class AndroidPreferences extends Preferences {
     }
 
     @Override
-    public void put(String key, String value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void putBoolean(String key, boolean value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void putByteArray(String key, byte[] value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void putDouble(String key, double value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void putFloat(String key, float value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void putInt(String key, int value) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void putLong(String key, long value) {
         throw new UnsupportedOperationException();
     }
 
