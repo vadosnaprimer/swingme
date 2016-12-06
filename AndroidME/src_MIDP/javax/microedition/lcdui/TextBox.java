@@ -579,5 +579,10 @@ public class TextBox extends Screen {
         public boolean setComposingRegion(int arg0, int arg1) {
             return false;
         }
+
+        //Override API 21
+        public boolean requestCursorUpdates(int cursorUpdateMode) {
+            return false;
+        }
     }
 }
